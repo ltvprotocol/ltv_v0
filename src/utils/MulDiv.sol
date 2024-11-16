@@ -13,7 +13,20 @@ library MulDiv {
 
         /// @solidity memory-safe-assembly
         assembly {
-            if iszero(mul(denominator, iszero(mul(factorB, gt(factorA, div(MAX_UINT256, factorB)))))) {
+            if iszero(
+                mul(
+                    denominator,
+                    iszero(
+                        mul(
+                            factorB,
+                            gt(
+                                factorA,
+                                div(MAX_UINT256, factorB)
+                            )
+                        )
+                    )
+                )
+            ) {
                 revert(0, 0)
             }
 
