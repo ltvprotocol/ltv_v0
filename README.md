@@ -1,4 +1,4 @@
-# LTV protocol: proof of concept
+# LTV protocol: proof-of-concept
 
 This is a proof-of-concept implementation of the LTV protocol: Curatorless Leveraged Tokenized Vault with a Constant Target Loan-To-Value Ratio
 
@@ -15,6 +15,57 @@ To build the project, execute the following command:
 ```bash
 forge build
 ```
+
+## What is implemented
+
+### General
+
+- [x] Basic and Complex Math
+- [ ] Correct Rounding
+- [ ] Debug
+- [ ] Test
+- [ ] Documentation
+- [ ] Audit
+
+### EIP4626 (Borrow)
+
+- [ ] assets
+- [x] totalAssets
+- [x] convertToShares
+- [x] convertToAssets
+- [ ] maxDeposit
+- [x] previewDeposit
+- [ ] deposit
+- [ ] maxMint
+- [x] previewMint
+- [ ] mint
+- [ ] maxWithdraw
+- [x] previewWithdraw
+- [ ] withdraw
+- [ ] maxRedeem
+- [x] previewRedeem
+- [ ] redeem
+
+### EIP4626 (Collateral)
+
+- [ ] assets
+- [ ] totalAssets
+- [ ] convertToShares
+- [ ] convertToAssets
+- [ ] maxDeposit
+- [ ] previewDeposit
+- [ ] deposit
+- [ ] maxMint
+- [ ] previewMint
+- [ ] mint
+- [ ] maxWithdraw
+- [ ] previewWithdraw
+- [ ] withdraw
+- [ ] maxRedeem
+- [ ] previewRedeem
+- [ ] redeem
+
+### EIP4626 (Collateral)
 
 ## Original paper
 
