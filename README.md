@@ -1,16 +1,16 @@
 # LTV protocol: proof of concept
 
-This is a proof of concept implementation of the LTV protocol: Curatorless Leveraged Tokenized Vault with a Constant Target Loan-To-Value Ratio
+This is a proof-of-concept implementation of the LTV protocol: Curatorless Leveraged Tokenized Vault with a Constant Target Loan-To-Value Ratio
 
-**THIS IS A PROOF OF CONCEPT IMPLEMENTATION AND SHOULD NOT BE USED IN PRODUCTION**
+**THIS IS A PROOF-OF-CONCEPT IMPLEMENTATION AND SHOULD NOT BE USED IN PRODUCTION.**
 
-**PLEASE DONT EVEN TRY TO USE THIS IN PRODUCTION**
+**PLEASE DO NOT ATTEMPT TO USE THIS IN PRODUCTION.**
 
-**IT'S RISKY AND NOT AUDITED**
+**IT IS RISKY AND HAS NOT BEEN AUDITED.**
 
 ## Build
 
-To build the project, run:
+To build the project, execute the following command:
 
 ```bash
 forge build
@@ -18,7 +18,7 @@ forge build
 
 ## Original paper
 
-The original paper can be found here:
+The original paper is available here:
 
 [LTV: Curatorless Leveraged Tokenized Vault with a Constant Target Loan-To-Value Ratio](https://github.com/ltvprotocol/papers/blob/main/LTV_Curatorless_Leveraged_Tokenized_Vault_with_a_Constant_Target_Loan-To-Value_Ratio.pdf)
 
