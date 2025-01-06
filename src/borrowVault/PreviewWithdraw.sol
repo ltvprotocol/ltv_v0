@@ -23,7 +23,7 @@ abstract contract PreviewWithdraw is State, TotalAssets, ERC20, DepositWithdrawB
 
         uint256 supply = totalSupply;
 
-        uint256 shares = supply == 0 ? assets : assets.mulDivDown(supply, totalAssets());
+        shares = supply == 0 ? assets : assets.mulDivDown(supply, totalAssets());
 
         return shares;
     }
