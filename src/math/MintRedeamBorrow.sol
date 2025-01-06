@@ -11,7 +11,7 @@ import "./CommonBorrowCollateral.sol";
 
 abstract contract MintRedeamBorrow is State, SharesAndRealCollateral, CommonBorrowCollateral {
 
-    using MulDiv for uint256;
+    using uMulDiv for uint256;
 
     function previewMintRedeamBorrow(int256 shares) internal view returns (int256 assets) {
 

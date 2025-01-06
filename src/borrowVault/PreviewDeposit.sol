@@ -11,7 +11,7 @@ import "../math/DepositWithdrawallBorrow.sol";
 
 abstract contract PreviewDeposit is State, TotalAssets, ERC20, DepositWithdrawallBorrow {
 
-    using MulDiv for uint256;
+    using uMulDiv for uint256;
 
     function previewDeposit(uint256 assets) external view returns (uint256 shares) {
 

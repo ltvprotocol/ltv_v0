@@ -11,7 +11,7 @@ import "../math/MintRedeamBorrow.sol";
 
 abstract contract PreviewMint is State, MintRedeamBorrow {
 
-    using MulDiv for uint256;
+    using uMulDiv for uint256;
 
     function previewMint(uint256 shares) external view returns (uint256 assets) {
 

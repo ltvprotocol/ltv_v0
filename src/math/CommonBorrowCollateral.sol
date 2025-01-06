@@ -10,7 +10,7 @@ import "../utils/MulDiv.sol";
 
 abstract contract CommonBorrowCollateral is State {
 
-    using MulDiv for uint256;
+    using uMulDiv for uint256;
 
     function calculateDeltaFutureBorrowFromDeltaFutureCollateral(
         Cases memory ncase,

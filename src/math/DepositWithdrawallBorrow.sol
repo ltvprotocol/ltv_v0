@@ -11,7 +11,7 @@ import "./CommonBorrowCollateral.sol";
 
 abstract contract DepositWithdrawallBorrow is State, RealBorrowAndRealCollateral, CommonBorrowCollateral {
 
-    using MulDiv for uint256;
+    using uMulDiv for uint256;
 
     function previewDepositWithdrawallBorrow(int256 assets) internal view returns (int256 shares) {
 

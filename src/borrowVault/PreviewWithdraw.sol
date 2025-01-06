@@ -11,7 +11,7 @@ import "../math/DepositWithdrawallBorrow.sol";
 
 abstract contract PreviewWithdraw is State, TotalAssets, ERC20, DepositWithdrawallBorrow {
 
-    using MulDiv for uint256;
+    using uMulDiv for uint256;
 
     function previewWithdraw(uint256 assets) external view returns (uint256 shares) {
 
