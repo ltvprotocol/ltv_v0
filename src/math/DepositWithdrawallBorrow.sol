@@ -5,11 +5,11 @@ import "../State.sol";
 import "../Constants.sol";
 import "../Structs.sol";
 import "../Cases.sol";
-import "../RealBorrowAndRealCollateral.sol";
+import "./deltaFutureCollateral/DeltaRealBorrowAndDeltaRealCollateral.sol";
 import "../utils/MulDiv.sol";
 import "./CommonBorrowCollateral.sol";
 
-abstract contract DepositWithdrawallBorrow is State, RealBorrowAndRealCollateral, CommonBorrowCollateral {
+abstract contract DepositWithdrawallBorrow is State, DeltaRealBorrowAndDeltaRealCollateral, CommonBorrowCollateral {
 
     using uMulDiv for uint256;
 
@@ -23,7 +23,7 @@ abstract contract DepositWithdrawallBorrow is State, RealBorrowAndRealCollateral
 
         Cases memory cases = CasesOperator.generateCase(0);
 
-        int256 deltaFutureCollateral = calculateDeltaFutureCollateralRealBorrowAndRealCollateral(prices, convertedAssets, deltaRealCollateral, deltaRealBorrow);
+        int256 deltaFutureCollateral = calculateDeltaFutureCollateralByDeltaRealBorrowAndDeltaRealCollateral(prices, convertedAssets, deltaRealCollateral, deltaRealBorrow);
 
         // ∆shares = ∆userCollateral − ∆userBorrow
         // ∆userCollateral = ∆realCollateral + ∆futureCollateral + ∆userFutureRewardCollateral + ∆futurePaymentCollateral
