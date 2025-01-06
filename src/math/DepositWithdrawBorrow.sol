@@ -9,11 +9,9 @@ import "./deltaFutureCollateral/DeltaRealBorrowAndDeltaRealCollateral.sol";
 import "../utils/MulDiv.sol";
 import "./CommonBorrowCollateral.sol";
 
-abstract contract DepositWithdrawallBorrow is State, DeltaRealBorrowAndDeltaRealCollateral, CommonBorrowCollateral {
+abstract contract DepositWithdrawBorrow is State, DeltaRealBorrowAndDeltaRealCollateral, CommonBorrowCollateral {
 
-    using uMulDiv for uint256;
-
-    function previewDepositWithdrawallBorrow(int256 assets) internal view returns (int256 shares) {
+    function previewDepositWithdrawBorrow(int256 assets) internal view returns (int256 shares) {
 
         int256 deltaRealBorrow = assets * int256(getPriceBorrowOracle() / Constants.ORACLE_DEVIDER);
         int256 deltaRealCollateral = 0;

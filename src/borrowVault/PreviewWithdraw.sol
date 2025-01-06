@@ -7,15 +7,15 @@ import "../Structs.sol";
 import "./totalAssets.sol";
 import "../ERC20.sol";
 import "../Cases.sol";
-import "../math/DepositWithdrawallBorrow.sol";
+import "../math/DepositWithdrawBorrow.sol";
 
-abstract contract PreviewWithdraw is State, TotalAssets, ERC20, DepositWithdrawallBorrow {
+abstract contract PreviewWithdraw is State, TotalAssets, ERC20, DepositWithdrawBorrow {
 
     using uMulDiv for uint256;
 
     function previewWithdraw(uint256 assets) external view returns (uint256 shares) {
 
-        int256 signedShares = previewDepositWithdrawallBorrow(int256(assets));
+        int256 signedShares = previewDepositWithdrawBorrow(int256(assets));
         
         if (signedShares < 0) {
             return 0;
