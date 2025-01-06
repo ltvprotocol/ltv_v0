@@ -15,7 +15,7 @@ abstract contract PreviewMint is State, MintRedeamBorrow {
 
     function previewMint(uint256 shares) external view returns (uint256 assets) {
 
-        int256 signedAssets = previewMintRedeamBorrow(-1*int256(assets));
+        int256 signedAssets = previewMintRedeamBorrow(-1*int256(shares));
         // int256 signedShares = previewMintRedeamBorrow(-1*int256(assets));
 
         if (signedAssets > 0) {
