@@ -16,16 +16,16 @@ abstract contract PreviewWithdraw is State, TotalAssets, ERC20, DepositWithdrawB
     function previewWithdraw(uint256 assets) external view returns (uint256 shares) {
 
         int256 signedShares = previewDepositWithdrawBorrow(int256(assets));
-        
+
         if (signedShares < 0) {
             return 0;
+        } else{
+            shares = uint256(-signedShares);
         }
 
         uint256 supply = totalSupply;
 
-        shares = supply == 0 ? assets : assets.mulDivDown(supply, totalAssets());
-
-        return shares;
+        return supply == 0 ? shares : shares.mulDivDown(supply, totalAssets());
     }
 
 }
