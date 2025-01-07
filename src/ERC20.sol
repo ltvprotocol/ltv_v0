@@ -37,7 +37,6 @@ abstract contract ERC20 is State {
         return true;
     }
 
-    /*
     function _mint(address to, uint256 amount) internal {
         balanceOf[to] += amount;
         totalSupply += amount;
@@ -49,7 +48,6 @@ abstract contract ERC20 is State {
         totalSupply -= amount;
         emit Transfer(from, address(0), amount);
     }
-    */
 
     /*
     function mint(address to, uint256 amount) external {

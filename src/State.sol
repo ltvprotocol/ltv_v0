@@ -9,6 +9,8 @@ import "./Oracles.sol";
 
 import "./utils/MulDiv.sol";
 
+import "./interfaces/IERC20.sol";
+
 abstract contract State is Oracles {
     int256 public futureBorrowAssets;
     int256 public futureCollateralAssets;
@@ -23,6 +25,9 @@ abstract contract State is Oracles {
     string public name;
     string public symbol;
     uint8 public decimals;
+
+    IERC20 public collateralToken;
+    IERC20 public borrowToken;
 
     using uMulDiv for uint256;
     using sMulDiv for int256;
@@ -102,7 +107,8 @@ abstract contract State is Oracles {
             protocolFutureRewardBorrow: protocolFutureRewardBorrow,
             protocolFutureRewardCollateral: protocolFutureRewardCollateral,
             userFutureRewardBorrow: userFutureRewardBorrow,
-            userFutureRewardCollateral: userFutureRewardCollateral
+            userFutureRewardCollateral: userFutureRewardCollateral,
+            auctionStep: int256(getAuctionStep())
         });
     }
 }

@@ -11,7 +11,10 @@ import "./CommonBorrowCollateral.sol";
 
 abstract contract DepositWithdrawBorrow is State, DeltaRealBorrowAndDeltaRealCollateral, CommonBorrowCollateral {
 
-    function previewDepositWithdrawBorrow(int256 assets) internal view returns (int256 shares) {
+    function calculateDepositWithdrawBorrow(int256 assets) internal view returns (
+        int256 shares,
+        DeltaFuture memory deltaFuture
+    ) {
 
         int256 deltaRealBorrow = assets * int256(getPriceBorrowOracle() / Constants.ORACLE_DEVIDER);
         int256 deltaRealCollateral = 0;
@@ -21,24 +24,37 @@ abstract contract DepositWithdrawBorrow is State, DeltaRealBorrowAndDeltaRealCol
 
         Cases memory cases = CasesOperator.generateCase(0);
 
-        int256 deltaFutureCollateral = calculateDeltaFutureCollateralByDeltaRealBorrowAndDeltaRealCollateral(prices, convertedAssets, deltaRealCollateral, deltaRealBorrow);
+        deltaFuture.deltaFutureCollateral = calculateDeltaFutureCollateralByDeltaRealBorrowAndDeltaRealCollateral(prices, convertedAssets, deltaRealCollateral, deltaRealBorrow);
 
         // ∆shares = ∆userCollateral − ∆userBorrow
         // ∆userCollateral = ∆realCollateral + ∆futureCollateral + ∆userFutureRewardCollateral + ∆futurePaymentCollateral
         // ∆userBorrow = ∆realBorrow + ∆futureBorrow + ∆userFutureRewardBorrow + ∆futurePaymentBorrow
 
-        int256 deltaFutureBorrow = calculateDeltaFutureBorrowFromDeltaFutureCollateral(cases, convertedAssets, deltaFutureCollateral);
+        deltaFuture.deltaFutureBorrow = calculateDeltaFutureBorrowFromDeltaFutureCollateral(cases, convertedAssets, deltaFuture.deltaFutureCollateral);
 
-        int256 signedShares = deltaRealCollateral 
-                        + deltaFutureCollateral
-                        + calculateDeltaUserFutureRewardCollateral(cases, convertedAssets, deltaFutureCollateral)
-                        + calculateDeltaFuturePaymentCollateral(cases, convertedAssets, deltaFutureCollateral)
-                        - deltaRealBorrow
-                        - deltaFutureBorrow
-                        - calculateDeltaUserFutureRewardBorrow(cases, convertedAssets, deltaFutureBorrow)
-                        - calculateDeltaFuturePaymentBorrow(cases, convertedAssets, deltaFutureBorrow);
+        deltaFuture.deltaUserFutureRewardCollateral = calculateDeltaUserFutureRewardCollateral(cases, convertedAssets, deltaFuture.deltaFutureCollateral);
 
-        return signedShares;
+        deltaFuture.deltaFuturePaymentCollateral = calculateDeltaFuturePaymentCollateral(cases, convertedAssets, deltaFuture.deltaFutureCollateral);
+
+        deltaFuture.deltaUserFutureRewardBorrow = calculateDeltaUserFutureRewardBorrow(cases, convertedAssets, deltaFuture.deltaFutureBorrow);
+
+        deltaFuture.deltaFuturePaymentBorrow = calculateDeltaFuturePaymentBorrow(cases, convertedAssets, deltaFuture.deltaFutureBorrow);
+
+        shares = deltaRealCollateral 
+               + deltaFuture.deltaFutureCollateral
+               + deltaFuture.deltaUserFutureRewardCollateral
+               + deltaFuture.deltaFuturePaymentCollateral
+               - deltaRealBorrow
+               - deltaFuture.deltaFutureBorrow
+               - deltaFuture.deltaUserFutureRewardBorrow
+               - deltaFuture.deltaFuturePaymentBorrow;
+
+    }
+
+    function previewDepositWithdrawBorrow(int256 assets) internal view returns (int256 shares) {
+
+        (shares, ) = calculateDepositWithdrawBorrow(assets);
+
     }
 
 }

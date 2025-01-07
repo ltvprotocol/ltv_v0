@@ -21,6 +21,7 @@ struct ConvertedAssets {
     int256 protocolFutureRewardCollateral;
     int256 userFutureRewardBorrow;
     int256 userFutureRewardCollateral;
+    int256 auctionStep;
 }
 
 struct Cases {
@@ -32,4 +33,24 @@ struct Cases {
     uint8 ceccb;
     uint8 cecbc;
     uint8 ncase;
+}
+
+struct DeltaFuture {
+    int256 deltaFutureCollateral;
+    int256 deltaFutureBorrow;
+    int256 deltaProtocolFutureRewardCollateral;
+    int256 deltaUserFutureRewardCollateral;
+    int256 deltaFuturePaymentCollateral;
+    int256 deltaProtocolFutureRewardBorrow;
+    int256 deltaUserFutureRewardBorrow;
+    int256 deltaFuturePaymentBorrow;
+}
+
+struct NextState {
+    int256 futureBorrow;
+    int256 futureCollateral;
+    int256 futureRewardBorrow;
+    int256 futureRewardCollateral;
+    uint256 startAuction;
+    bool merge;
 }
