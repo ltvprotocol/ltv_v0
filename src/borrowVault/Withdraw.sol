@@ -12,28 +12,25 @@ import "../Lending.sol";
 import "../math/DepositWithdrawBorrow.sol";
 import "../math/NextStep.sol";
 
-abstract contract Deposit is State, StateTransition, TotalAssets, ERC20, DepositWithdrawBorrow, Lending, NextStep {
+abstract contract Withdraw is State, StateTransition, TotalAssets, ERC20, DepositWithdrawBorrow, Lending, NextStep{
 
     using uMulDiv for uint256;
 
-    function deposit(uint256 assets, address receiver) external returns (uint256 shares) {
+    function withdraw(uint256 assets, address receiver, address owner) external returns (uint256 shares) {
 
-        (int256 signedShares, DeltaFuture memory deltaFuture) = calculateDepositWithdrawBorrow(-1*int256(assets));
-        
-        if (signedShares > 0) {
+        (int256 signedShares, DeltaFuture memory deltaFuture) = calculateDepositWithdrawBorrow(int256(assets));
+
+        if (signedShares < 0) {
             return 0;
         } else{
-            shares = uint256(signedShares);
+            shares = uint256(-signedShares);
         }
 
         uint256 supply = totalSupply;
 
-        supply = supply == 0 ? shares : shares.mulDivDown(supply, totalAssets());
+        supply == 0 ? shares : shares.mulDivDown(supply, totalAssets());
 
-        // TODO: double check that Token should be transfered from msg.sender or from receiver
-        borrowToken.transferFrom(msg.sender, address(this), assets);
-
-        repay(assets);
+        _burn(owner, supply);
 
         // TODO: fix this - return from calculateDepositWithdrawBorrow
         ConvertedAssets memory convertedAssets = recoverConvertedAssets();
@@ -42,7 +39,9 @@ abstract contract Deposit is State, StateTransition, TotalAssets, ERC20, Deposit
 
         applyStateTransition(nextState);
 
-        _mint(receiver, shares);
+        borrow(assets);
+
+        borrowToken.transferFrom(address(this), receiver, assets);
 
         return shares;
     }
