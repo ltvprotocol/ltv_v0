@@ -21,6 +21,7 @@ forge build
 ### General
 
 - [x] Basic and Complex Math
+- [x] More or Less Correct Rounding
 - [ ] Correct Rounding
 - [ ] Debug
 - [ ] Test
@@ -35,13 +36,13 @@ forge build
 - [x] convertToAssets
 - [ ] maxDeposit
 - [x] previewDeposit
-- [ ] deposit
+- [x] deposit
 - [ ] maxMint
 - [x] previewMint
 - [ ] mint
 - [ ] maxWithdraw
 - [x] previewWithdraw
-- [ ] withdraw
+- [x] withdraw
 - [ ] maxRedeem
 - [x] previewRedeem
 - [ ] redeem
