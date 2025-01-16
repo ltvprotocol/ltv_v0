@@ -4,11 +4,15 @@ pragma solidity ^0.8.13;
 import "../../Structs.sol";
 import "../../Constants.sol";
 import "../../Cases.sol";
+import "../../utils/MulDiv.sol";
 
 contract DeltaSharesAndDeltaRealCollateral {
 
     // TODO: make correct round here
     // Up and Down
+
+    using uMulDiv for uint256;
+    using sMulDiv for int256;
 
     function calculateDividentByDeltaSharesAndRealCollateral(
         Cases memory cases,
@@ -34,13 +38,13 @@ contract DeltaSharesAndDeltaRealCollateral {
 
         int256 divindentWithOneMinusTargetLTV = deltaRealCollateral;
         divindentWithOneMinusTargetLTV -= int256(int8(cases.cecbc)) * int256(convertedAssets.userFutureRewardCollateral);
-        divindentWithOneMinusTargetLTV -= int256(int8(cases.ceccb)) * int256(convertedAssets.futureCollateral) * int256(prices.collateralSlippage) / DEVIDER;
+        divindentWithOneMinusTargetLTV -= int256(int8(cases.ceccb)) * convertedAssets.futureCollateral.mulDivDown(int256(prices.collateralSlippage), DEVIDER);
 
         int256 divindentWithTargetLTV = -int256(convertedAssets.collateral);
         divindentWithTargetLTV -= int256(int8(cases.ceccb)) * convertedAssets.protocolFutureRewardCollateral;
 
-        divindent += (divindentWithOneMinusTargetLTV * int256(Constants.TARGET_LTV_DEVIDER - Constants.TARGET_LTV)) / int256(Constants.TARGET_LTV_DEVIDER);
-        divindent += (divindentWithTargetLTV * int256(Constants.TARGET_LTV)) / int256(Constants.TARGET_LTV_DEVIDER);
+        divindent += divindentWithOneMinusTargetLTV.mulDivUp(int256(Constants.TARGET_LTV_DEVIDER - Constants.TARGET_LTV), int256(Constants.TARGET_LTV_DEVIDER));
+        divindent += divindentWithTargetLTV.mulDivUp(int256(Constants.TARGET_LTV), int256(Constants.TARGET_LTV_DEVIDER));
 
         return divindent;
     }
@@ -53,23 +57,23 @@ contract DeltaSharesAndDeltaRealCollateral {
         //int256 deltaShares
     ) public view returns (int256) {
         // (1 - targetLTV) x -1
-        // (1 - targetLTV) x cebc x (userFutureRewardCollateral / futureCollateral)
+        // (1 - targetLTV) x cebc x (userFutureRewardCollateral / futureCollateral) x -1
         // (1 - targetLTV) x cmcb x collateralSlippage
         // (1 - targetLTV) x ceccb x collateralSlippage
-        // cebc x (protocolFutureRewardBorrow / futureCollateral)
-        // -targetLTV x cecb x (protocolFutureRewardCollateral / futureCollateral)
+        // cebc x (protocolFutureRewardBorrow / futureCollateral) x -1
+        // targetLTV x cecb x (protocolFutureRewardCollateral / futureCollateral)
         
         int256 DEVIDER = 10**18;
 
         int256 deviderWithOneMinusTargetLTV = -DEVIDER;
-        deviderWithOneMinusTargetLTV = -int256(int8(cases.cebc)) * convertedAssets.userFutureRewardBorrow * DEVIDER / convertedAssets.futureBorrow;
-        deviderWithOneMinusTargetLTV = -int256(int8(cases.cmcb)) * int256(prices.borrowSlippage) * DEVIDER;
-        deviderWithOneMinusTargetLTV = -int256(int8(cases.ceccb)) * int256(prices.borrowSlippage) * DEVIDER;
+        deviderWithOneMinusTargetLTV = -int256(int8(cases.cebc)) * convertedAssets.userFutureRewardCollateral.mulDivUp(DEVIDER, convertedAssets.futureCollateral);
+        deviderWithOneMinusTargetLTV = -int256(int8(cases.cmcb)) * int256(prices.collateralSlippage) * DEVIDER;
+        deviderWithOneMinusTargetLTV = -int256(int8(cases.ceccb)) * int256(prices.collateralSlippage) * DEVIDER;
 
-        int256 devider = deviderWithOneMinusTargetLTV * int256(Constants.TARGET_LTV_DEVIDER - Constants.TARGET_LTV) / int256(Constants.TARGET_LTV_DEVIDER);
+        int256 devider = deviderWithOneMinusTargetLTV.mulDivDown(int256(Constants.TARGET_LTV_DEVIDER - Constants.TARGET_LTV), int256(Constants.TARGET_LTV_DEVIDER));
 
-        devider += -int256(int8(cases.cebc)) * convertedAssets.protocolFutureRewardBorrow * DEVIDER / convertedAssets.futureCollateral;
-        devider = int256(int8(cases.cecb)) * convertedAssets.protocolFutureRewardCollateral * DEVIDER * int256(Constants.TARGET_LTV) / (convertedAssets.futureCollateral * int256(Constants.TARGET_LTV_DEVIDER));
+        devider += -int256(int8(cases.cebc)) * convertedAssets.protocolFutureRewardBorrow.mulDivUp(DEVIDER, convertedAssets.futureCollateral);
+        devider = int256(int8(cases.cecb)) * convertedAssets.protocolFutureRewardCollateral.mulDivDown((DEVIDER * int256(Constants.TARGET_LTV)), (convertedAssets.futureCollateral * int256(Constants.TARGET_LTV_DEVIDER)));
 
         return devider;
     }
@@ -95,7 +99,8 @@ contract DeltaSharesAndDeltaRealCollateral {
 
             int256 DEVIDER = 10**18;
 
-            deltaFutureCollateral = divindent * DEVIDER / divider;
+            // up because it's better for protocol
+            deltaFutureCollateral = divindent.mulDivUp(DEVIDER, divider);
 
             bool validity = CasesOperator.checkCaseDeltaFutureCollateral(cases, convertedAssets, deltaFutureCollateral);
 

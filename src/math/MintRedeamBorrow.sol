@@ -8,12 +8,16 @@ import "../Cases.sol";
 import "../SharesAndRealCollateral.sol";
 import "../utils/MulDiv.sol";
 import "./CommonBorrowCollateral.sol";
+import "./deltaFutureCollateral/DeltaSharesAndDeltaRealCollateral.sol";
 
-abstract contract MintRedeamBorrow is State, SharesAndRealCollateral, CommonBorrowCollateral {
+abstract contract MintRedeamBorrow is State, SharesAndRealCollateral, DeltaSharesAndDeltaRealCollateral,  CommonBorrowCollateral {
 
     using uMulDiv for uint256;
 
-    function previewMintRedeamBorrow(int256 shares) internal view returns (int256 assets) {
+    function calculateMintRedeamBorrow(int256 shares) internal view returns (
+        int256 assets,
+        DeltaFuture memory deltaFuture
+    ) {
 
         int256 deltaShares = shares;
         int256 deltaRealCollateral = 0;
@@ -23,22 +27,40 @@ abstract contract MintRedeamBorrow is State, SharesAndRealCollateral, CommonBorr
 
         Cases memory cases = CasesOperator.generateCase(0);
 
-        int256 deltaFutureCollateral = calculateDeltaFutureCollateralSharesAndRealCollateral(prices, convertedAssets, deltaRealCollateral, deltaShares);
-
+        deltaFuture.deltaFutureCollateral = calculateDeltaFutureCollateralByDeltaSharesAndDeltaRealCollateral(prices, convertedAssets, deltaRealCollateral, deltaShares);
+                                       
         // ∆shares = ∆userCollateral − ∆userBorrow
         // ∆userBorrow = ∆userCollateral - ∆shares
-        // ∆userCollateral = ∆realCollateral + ∆futureCollateral + ∆userFutureRewardCollateral + ∆futurePaymentCollateral
-        // 
 
-        int256 deltaFutureBorrow = calculateDeltaFutureBorrowFromDeltaFutureCollateral(cases, convertedAssets, deltaFutureCollateral);
+        // ∆userCollateral = ∆realCollateral + ∆futureCollateral + ∆userFutureRewardCollateral + ∆futurePaymentCollateral 
+        // ∆userBorrow = ∆realBorrow + ∆futureBorrow + ∆userFutureRewardBorrow + ∆futurePaymentBorrow
 
-        int256 signedShares = deltaRealCollateral 
-                        + deltaFutureCollateral
-                        + calculateDeltaUserFutureRewardCollateral(cases, convertedAssets, deltaFutureCollateral)
-                        + calculateDeltaFuturePaymentCollateral(cases, convertedAssets, deltaFutureCollateral)
-                        - deltaShares;
+        // ∆realBorrow = ∆realCollateral + ∆futureCollateral + ∆userFutureRewardCollateral + ∆futurePaymentCollateral - ∆shares - ∆futureBorrow - ∆userFutureRewardBorrow - ∆futurePaymentBorrow
 
-        return signedShares;
+        deltaFuture.deltaFutureBorrow = calculateDeltaFutureBorrowFromDeltaFutureCollateral(cases, convertedAssets, deltaFuture.deltaFutureCollateral);
+
+        deltaFuture.deltaUserFutureRewardCollateral = calculateDeltaUserFutureRewardCollateral(cases, convertedAssets, deltaFuture.deltaFutureCollateral);
+
+        deltaFuture.deltaFuturePaymentCollateral = calculateDeltaFuturePaymentCollateral(cases, convertedAssets, deltaFuture.deltaFutureCollateral);
+
+        deltaFuture.deltaUserFutureRewardBorrow = calculateDeltaUserFutureRewardBorrow(cases, convertedAssets, deltaFuture.deltaFutureBorrow);
+
+        deltaFuture.deltaFuturePaymentBorrow = calculateDeltaFuturePaymentBorrow(cases, convertedAssets, deltaFuture.deltaFutureBorrow);
+
+        assets = deltaRealCollateral 
+                        + deltaFuture.deltaFutureCollateral
+                        + deltaFuture.deltaUserFutureRewardCollateral
+                        + deltaFuture.deltaFuturePaymentCollateral
+                        - deltaShares
+                        - deltaFuture.deltaFutureBorrow
+                        - deltaFuture.deltaUserFutureRewardBorrow
+                        - deltaFuture.deltaFuturePaymentBorrow;
+    }
+
+    function previewMintRedeamBorrow(int256 shares) internal view returns (
+        int256 assets
+    ) {
+        (assets, ) = calculateMintRedeamBorrow(shares);
     }
 
 }
