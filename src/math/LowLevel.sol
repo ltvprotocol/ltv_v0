@@ -90,5 +90,6 @@ abstract contract MintRedeamBorrow is State,  CommonBorrowCollateral {
             cases = CasesOperator.generateCase(cases.ncase + 1);
         }
         
+        return shares;
     }
 }
