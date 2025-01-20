@@ -5,7 +5,7 @@ import "../State.sol";
 import "../StateTransition.sol";
 import "../Constants.sol";
 import "../Structs.sol";
-import "./totalAssets.sol";
+import "./TotalAssets.sol";
 import "../ERC20.sol";
 import "../Cases.sol";
 import "../Lending.sol";

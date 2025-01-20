@@ -10,7 +10,7 @@ import "../utils/MulDiv.sol";
 import "./CommonBorrowCollateral.sol";
 import "./deltaFutureCollateral/DeltaSharesAndDeltaRealCollateral.sol";
 
-abstract contract MintRedeamBorrow is State,  CommonBorrowCollateral {
+abstract contract LowLevel is State,  CommonBorrowCollateral {
 
     function calculateLowLevel(int256 borrow, int256 collateral) internal view returns (int256 shares) {
 
@@ -18,7 +18,6 @@ abstract contract MintRedeamBorrow is State,  CommonBorrowCollateral {
         int256 deltaRealCollateral = collateral * int256(getPriceBorrowOracle() / Constants.ORACLE_DEVIDER);
 
         ConvertedAssets memory convertedAssets = recoverConvertedAssets();
-        Prices memory prices = getPrices();
 
         uint8[3] memory possibleCases = [0, 2, 5];
 

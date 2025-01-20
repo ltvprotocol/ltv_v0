@@ -4,7 +4,7 @@ pragma solidity ^0.8.13;
 import "../State.sol";
 import "../Constants.sol";
 import "../Structs.sol";
-import "./totalAssets.sol";
+import "./TotalAssets.sol";
 import "../ERC20.sol";
 import "../Cases.sol";
 import "../math/DepositWithdrawBorrow.sol";
