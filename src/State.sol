@@ -5,13 +5,13 @@ import "./Constants.sol";
 
 import "./Structs.sol";
 
-import "./Oracles.sol";
+import "./interfaces/IOracle.sol";
 
 import "./utils/MulDiv.sol";
 
 import "./interfaces/IERC20.sol";
 
-abstract contract State is Oracles {
+abstract contract State is IOracle {
     int256 public futureBorrowAssets;
     int256 public futureCollateralAssets;
     int256 public futureRewardBorrowAssets;
@@ -109,6 +109,15 @@ abstract contract State is Oracles {
             userFutureRewardBorrow: userFutureRewardBorrow,
             userFutureRewardCollateral: userFutureRewardCollateral,
             auctionStep: int256(getAuctionStep())
+        });
+    }
+
+    function getPrices() internal view returns (Prices memory) {
+        return Prices({
+            borrow: getPriceBorrowOracle(),
+            collateral: getPriceCollateralOracle(),
+            borrowSlippage: 0,
+            collateralSlippage: 0
         });
     }
 }

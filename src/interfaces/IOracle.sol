@@ -1,10 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity ^0.8.13;
+pragma solidity ^0.8.0;
 
-import "./Structs.sol";
-import "./Constants.sol";
-
-abstract contract Oracles {
+abstract contract IOracle {
 
     function getPriceBorrowOracle() public virtual view returns (uint256);
 
@@ -13,5 +10,4 @@ abstract contract Oracles {
     function getRealBorrowAssets() public virtual view returns (uint256);
 
     function getRealCollateralAssets() public virtual view returns (uint256);
-
 }
