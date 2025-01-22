@@ -38,8 +38,8 @@ abstract contract State is IOracle {
     using sMulDiv for int256;
 
     function totalSupply() public view returns(uint256) {
-        // add 1 to avoid vault inflation attack
-        return _totalSupply + 1; 
+        // add 100 to avoid vault inflation attack
+        return _totalSupply + 100; 
     }
 
     function getAuctionStep() public view returns (uint256) {
