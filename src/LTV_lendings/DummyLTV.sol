@@ -29,11 +29,11 @@ contract DummyLTV is LTV {
     }
 
     function getRealBorrowAssets() public view override returns (uint256) {
-        return lendingProtocol.supplyBalance(address(borrowToken));
+        return lendingProtocol.borrowBalance(address(borrowToken));
     }
 
     function getRealCollateralAssets() public view override returns (uint256) {
-        return lendingProtocol.borrowBalance(address(collateralToken));
+        return lendingProtocol.supplyBalance(address(collateralToken));
     }
 
     function setLendingProtocol(IDummyLending _lendingProtocol) public {
