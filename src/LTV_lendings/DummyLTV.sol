@@ -49,10 +49,12 @@ contract DummyLTV is LTV {
     }
 
     function repay(uint256 assets) internal override {
+        borrowToken.approve(address(lendingProtocol), assets);
         lendingProtocol.repay(address(borrowToken), assets);
     }
 
     function supply(uint256 assets) internal override {
+        collateralToken.approve(address(lendingProtocol), assets);
         lendingProtocol.supply(address(collateralToken), assets);
     }
 
