@@ -30,7 +30,7 @@ abstract contract Mint is State, StateTransition, MintRedeamBorrow, TotalAssets,
             assets = uint256(-signedAssets);
         }
 
-        uint256 supply = totalSupply;
+        uint256 supply = totalSupply();
 
         supply = supply == 0 ? shares : shares.mulDivDown(supply, totalAssets());
 

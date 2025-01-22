@@ -1,19 +1,25 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.13;
 
-import '../LTV.sol';
-import '../dummy/interfaces/IDummyLending.sol';
-import '../dummy/interfaces/IDummyOracle.sol';
+import "../LTV.sol";
+import "../dummy/interfaces/IDummyLending.sol";
+import "../dummy/interfaces/IDummyOracle.sol";
 
 contract DummyLTV is LTV {
     IDummyLending private lendingProtocol;
     IDummyOracle private oracle;
 
-    constructor(address initialOwner, IDummyLending _lendingProtocol, IDummyOracle _oracle) LTV(initialOwner) {
+    constructor(
+        address initialOwner,
+        address collateralToken,
+        address borrowToken,
+        IDummyLending _lendingProtocol,
+        IDummyOracle _oracle
+    ) LTV(initialOwner) State(collateralToken, borrowToken) {
         lendingProtocol = _lendingProtocol;
         oracle = _oracle;
     }
-    
+
     function getPriceBorrowOracle() public view override returns (uint256) {
         return oracle.getAssetPrice(address(borrowToken));
     }

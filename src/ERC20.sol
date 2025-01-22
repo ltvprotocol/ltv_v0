@@ -39,13 +39,13 @@ abstract contract ERC20 is State {
 
     function _mint(address to, uint256 amount) internal {
         balanceOf[to] += amount;
-        totalSupply += amount;
+        _totalSupply += amount;
         emit Transfer(address(0), to, amount);
     }
 
     function _burn(address from, uint256 amount) internal {
         balanceOf[from] -= amount;
-        totalSupply -= amount;
+        _totalSupply -= amount;
         emit Transfer(from, address(0), amount);
     }
 
