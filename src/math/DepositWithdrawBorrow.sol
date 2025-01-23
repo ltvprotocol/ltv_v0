@@ -12,7 +12,7 @@ import "./CommonBorrowCollateral.sol";
 abstract contract DepositWithdrawBorrow is State, DeltaRealBorrowAndDeltaRealCollateral, CommonBorrowCollateral {
 
     function calculateDepositWithdrawBorrow(int256 assets) internal view returns (
-        int256 shares,
+        int256 sharesAsAssets,
         DeltaFuture memory deltaFuture
     ) {
 
@@ -40,7 +40,7 @@ abstract contract DepositWithdrawBorrow is State, DeltaRealBorrowAndDeltaRealCol
 
         deltaFuture.deltaFuturePaymentBorrow = calculateDeltaFuturePaymentBorrow(cases, convertedAssets, deltaFuture.deltaFutureBorrow);
 
-        shares = deltaRealCollateral 
+        sharesAsAssets = deltaRealCollateral 
                + deltaFuture.deltaFutureCollateral
                + deltaFuture.deltaUserFutureRewardCollateral
                + deltaFuture.deltaFuturePaymentCollateral

@@ -22,6 +22,7 @@ contract DummyLTVTest is Test {
     ) {
         vm.assume(owner != address(0));
         vm.assume(user != address(0));
+        vm.assume(user != owner);
         collateralToken = new MockERC20();
         collateralToken.initialize("Collateral", "COL", 18);
         borrowToken = new MockERC20();
@@ -73,6 +74,18 @@ contract DummyLTVTest is Test {
         );
         lendingProtocol.setBorrowBalance(address(borrowToken), amount);
         assertEq(dummyLTV.totalAssets(), 3 * uint256(amount) * 100 + 1);
+    }
+
+    function test_convertToAssets(
+        address owner,
+        uint112 amount,
+        address user
+    ) public initializeTest(owner, amount, user) {
+        dummyLTV.setFutureBorrowAssets(7500);
+        dummyLTV.setFutureCollateralAssets(5000);
+        dummyLTV.mintFreeTokens(2500 * 10000, owner);
+
+        assertEq(dummyLTV.convertToAssets(uint256(amount) * 100), uint256(amount));
     }
 
     function test_basicCmbc(

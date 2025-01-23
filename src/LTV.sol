@@ -8,8 +8,9 @@ import "./borrowVault/PreviewRedeem.sol";
 import "./borrowVault/Deposit.sol";
 import "./borrowVault/Withdraw.sol";
 import './utils/Ownable.sol';
+import './borrowVault/ConvertToAssets.sol';
 
-abstract contract LTV is PreviewWithdraw, PreviewDeposit, PreviewMint, PreviewRedeem, Deposit, Withdraw, Ownable {
+abstract contract LTV is PreviewWithdraw, PreviewDeposit, PreviewMint, PreviewRedeem, Deposit, Withdraw, ConvertToAssets, Ownable {
 
     constructor(address initialOwner) ERC20("LTV", "LTV", 18) Ownable(initialOwner) {
         //
