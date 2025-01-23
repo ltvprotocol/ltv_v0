@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.13;
 
-import "../src/LTV_lendings/DummyLTV.sol";
 import "../src/dummy/DummyOracle.sol";
 import "forge-std/Test.sol";
 import {MockERC20} from "forge-std/mocks/MockERC20.sol";
 import {MockDummyLending} from "./utils/MockDummyLending.sol";
+import './utils/MockDummyLTV.sol';
 import "../src/Constants.sol";
 
 contract DummyLTVTest is Test {
-    DummyLTV public dummyLTV;
+    MockDummyLTV public dummyLTV;
     MockERC20 public collateralToken;
     MockERC20 public borrowToken;
     MockDummyLending public lendingProtocol;
@@ -17,9 +17,11 @@ contract DummyLTVTest is Test {
 
     modifier initializeTest(
         address owner,
-        uint160 amount,
+        uint256 borrowAmount,
         address user
     ) {
+        vm.assume(owner != address(0));
+        vm.assume(user != address(0));
         collateralToken = new MockERC20();
         collateralToken.initialize("Collateral", "COL", 18);
         borrowToken = new MockERC20();
@@ -28,7 +30,7 @@ contract DummyLTVTest is Test {
         lendingProtocol = new MockDummyLending(owner);
         oracle = IDummyOracle(new DummyOracle(owner));
 
-        dummyLTV = new DummyLTV(
+        dummyLTV = new MockDummyLTV(
             owner,
             address(collateralToken),
             address(borrowToken),
@@ -38,29 +40,42 @@ contract DummyLTVTest is Test {
 
         vm.startPrank(owner);
         Ownable(address(lendingProtocol)).transferOwnership(address(dummyLTV));
-        oracle.setAssetPrice(address(borrowToken), 1000000);
-        oracle.setAssetPrice(address(collateralToken), 2000000);
+        oracle.setAssetPrice(address(borrowToken), 100 * 10**18);
+        oracle.setAssetPrice(address(collateralToken), 200 * 10**18);
 
-        deal(address(collateralToken), user, amount);
-        deal(address(borrowToken), address(lendingProtocol), amount);
+        deal(address(borrowToken), address(lendingProtocol), borrowAmount);
+        deal(address(borrowToken), user, borrowAmount);
 
-        lendingProtocol.setSupplyBalance(address(collateralToken), amount * 10);
-        lendingProtocol.setBorrowBalance(address(borrowToken),
-            (((amount * oracle.getAssetPrice(address(collateralToken))) /
-                oracle.getAssetPrice(address(borrowToken))) *
-                Constants.TARGET_LTV) / Constants.TARGET_LTV_DEVIDER
-        );
+        lendingProtocol.setSupplyBalance(address(collateralToken), borrowAmount * 5 * 4);
+        lendingProtocol.setBorrowBalance(address(borrowToken), borrowAmount * 10 * 3);
 
         vm.startPrank(user);
         _;
     }
 
-    function test_basic(
+    function test_totalAssets(address owner, uint160 amount, address user) public initializeTest(owner, 0, user) {
+        assertEq(dummyLTV.totalAssets(), 1);
+        lendingProtocol.setSupplyBalance(address(collateralToken), uint256(amount) * 2);
+        lendingProtocol.setBorrowBalance(address(borrowToken), amount);
+        assertEq(dummyLTV.totalAssets(), 3 * uint256(amount) * 100 + 1);
+    }
+
+    function test_basicCmbc(
         address owner,
         uint160 amount,
         address user
     ) public initializeTest(owner, amount, user) {
-        collateralToken.approve(address(dummyLTV), amount);
+        // auction + current state = balanced vault. State is balanced. Auction is also satisfies LTV(not really realistic but acceptable)
+        dummyLTV.setFutureBorrowAssets(7500);
+        dummyLTV.setFutureCollateralAssets(5005);
+        
+        vm.roll(20);
+        dummyLTV.setStartAuction(10);
+        dummyLTV.setFutureRewardCollateralAssets(-5);
+
+        borrowToken.approve(address(dummyLTV), amount);
         dummyLTV.deposit(amount, user);
+
+        assertEq(dummyLTV.balanceOf(user), uint256(amount) * 100);
     }
 }

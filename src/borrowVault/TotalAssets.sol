@@ -9,7 +9,7 @@ abstract contract TotalAssets is State {
 
     function totalAssets() public view returns (uint256) {
         ConvertedAssets memory convertedAssets = recoverConvertedAssets();
-        int256 signedTotalAssets = convertedAssets.collateral + convertedAssets.borrow;
+        int256 signedTotalAssets = convertedAssets.collateral - convertedAssets.borrow;
         // Add 1 to avoid vault attack
         return uint256(signedTotalAssets) + 1;
     }
