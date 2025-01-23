@@ -40,5 +40,9 @@ contract MockDummyLTV is DummyLTV {
 
     function setStartAuction(uint256 value) public {
       startAuction = value;
-    } 
+    }
+
+    function mintFreeTokens(uint256 amount, address receiver) public {
+      _mint(receiver, amount);
+    }
 }

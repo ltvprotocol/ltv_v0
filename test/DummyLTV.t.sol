@@ -5,7 +5,7 @@ import "../src/dummy/DummyOracle.sol";
 import "forge-std/Test.sol";
 import {MockERC20} from "forge-std/mocks/MockERC20.sol";
 import {MockDummyLending} from "./utils/MockDummyLending.sol";
-import './utils/MockDummyLTV.sol';
+import "./utils/MockDummyLTV.sol";
 import "../src/Constants.sol";
 
 contract DummyLTVTest is Test {
@@ -40,35 +40,51 @@ contract DummyLTVTest is Test {
 
         vm.startPrank(owner);
         Ownable(address(lendingProtocol)).transferOwnership(address(dummyLTV));
-        oracle.setAssetPrice(address(borrowToken), 100 * 10**18);
-        oracle.setAssetPrice(address(collateralToken), 200 * 10**18);
+        oracle.setAssetPrice(address(borrowToken), 100 * 10 ** 18);
+        oracle.setAssetPrice(address(collateralToken), 200 * 10 ** 18);
 
         deal(address(borrowToken), address(lendingProtocol), borrowAmount);
         deal(address(borrowToken), user, borrowAmount);
 
-        lendingProtocol.setSupplyBalance(address(collateralToken), borrowAmount * 5 * 4);
-        lendingProtocol.setBorrowBalance(address(borrowToken), borrowAmount * 10 * 3);
+        lendingProtocol.setSupplyBalance(
+            address(collateralToken),
+            borrowAmount * 5 * 4
+        );
+        lendingProtocol.setBorrowBalance(
+            address(borrowToken),
+            borrowAmount * 10 * 3
+        );
+
+        dummyLTV.mintFreeTokens(borrowAmount * 100000, owner);
 
         vm.startPrank(user);
         _;
     }
 
-    function test_totalAssets(address owner, uint160 amount, address user) public initializeTest(owner, 0, user) {
+    function test_totalAssets(
+        address owner,
+        uint160 amount,
+        address user
+    ) public initializeTest(owner, 0, user) {
         assertEq(dummyLTV.totalAssets(), 1);
-        lendingProtocol.setSupplyBalance(address(collateralToken), uint256(amount) * 2);
+        lendingProtocol.setSupplyBalance(
+            address(collateralToken),
+            uint256(amount) * 2
+        );
         lendingProtocol.setBorrowBalance(address(borrowToken), amount);
         assertEq(dummyLTV.totalAssets(), 3 * uint256(amount) * 100 + 1);
     }
 
     function test_basicCmbc(
         address owner,
-        uint160 amount,
+        uint112 amount,
         address user
     ) public initializeTest(owner, amount, user) {
         // auction + current state = balanced vault. State is balanced. Auction is also satisfies LTV(not really realistic but acceptable)
         dummyLTV.setFutureBorrowAssets(7500);
         dummyLTV.setFutureCollateralAssets(5005);
-        
+        dummyLTV.mintFreeTokens(2500 * 10000, owner);
+
         vm.roll(20);
         dummyLTV.setStartAuction(10);
         dummyLTV.setFutureRewardCollateralAssets(-5);
@@ -76,6 +92,6 @@ contract DummyLTVTest is Test {
         borrowToken.approve(address(dummyLTV), amount);
         dummyLTV.deposit(amount, user);
 
-        assertEq(dummyLTV.balanceOf(user), uint256(amount) * 100);
+        assertEq(dummyLTV.balanceOf(user), uint256(amount) * 10000);
     }
 }
