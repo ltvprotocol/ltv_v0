@@ -16,7 +16,7 @@ abstract contract DepositWithdrawBorrow is State, DeltaRealBorrowAndDeltaRealCol
         DeltaFuture memory deltaFuture
     ) {
 
-        int256 deltaRealBorrow = assets * int256(getPriceBorrowOracle() / Constants.ORACLE_DEVIDER);
+        int256 deltaRealBorrow = assets * int256(getPriceBorrowOracle() / Constants.ORACLE_DIVIDER);
         int256 deltaRealCollateral = 0;
 
         ConvertedAssets memory convertedAssets = recoverConvertedAssets();
@@ -51,9 +51,9 @@ abstract contract DepositWithdrawBorrow is State, DeltaRealBorrowAndDeltaRealCol
 
     }
 
-    function previewDepositWithdrawBorrow(int256 assets) internal view returns (int256 shares) {
+    function previewDepositWithdrawBorrow(int256 assets) internal view returns (int256 sharesAsAssets) {
 
-        (shares, ) = calculateDepositWithdrawBorrow(assets);
+        (sharesAsAssets, ) = calculateDepositWithdrawBorrow(assets);
 
     }
 

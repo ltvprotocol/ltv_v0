@@ -40,8 +40,8 @@ contract DeltaSharesAndDeltaRealBorrow {
         divindentWithTargetLTV -= int256(int8(cases.ceccb)) * deltaShares;
         divindentWithTargetLTV -= int256(int8(cases.ceccb)) * convertedAssets.protocolFutureRewardCollateral;
 
-        divindent += divindentWithOneMinusTargetLTV.mulDivDown(int256(Constants.TARGET_LTV_DEVIDER - Constants.TARGET_LTV), int256(Constants.TARGET_LTV_DEVIDER));
-        divindent += divindentWithTargetLTV.mulDivDown(int256(Constants.TARGET_LTV), int256(Constants.TARGET_LTV_DEVIDER));
+        divindent += divindentWithOneMinusTargetLTV.mulDivDown(int256(Constants.TARGET_LTV_DIVIDER - Constants.TARGET_LTV), int256(Constants.TARGET_LTV_DIVIDER));
+        divindent += divindentWithTargetLTV.mulDivDown(int256(Constants.TARGET_LTV), int256(Constants.TARGET_LTV_DIVIDER));
 
         return divindent;
     }
@@ -67,10 +67,10 @@ contract DeltaSharesAndDeltaRealBorrow {
         deviderWithOneMinusTargetLTV = -int256(int8(cases.cmcb)) * int256(prices.borrowSlippage) * DEVIDER;
         deviderWithOneMinusTargetLTV = -int256(int8(cases.ceccb)) * int256(prices.borrowSlippage) * DEVIDER;
 
-        int256 devider = deviderWithOneMinusTargetLTV.mulDivUp(int256(Constants.TARGET_LTV_DEVIDER - Constants.TARGET_LTV), int256(Constants.TARGET_LTV_DEVIDER));
+        int256 devider = deviderWithOneMinusTargetLTV.mulDivUp(int256(Constants.TARGET_LTV_DIVIDER - Constants.TARGET_LTV), int256(Constants.TARGET_LTV_DIVIDER));
 
         devider += -int256(int8(cases.cebc)) * convertedAssets.protocolFutureRewardBorrow.mulDivDown(DEVIDER, convertedAssets.futureBorrow);
-        devider = int256(int8(cases.cecb)) * convertedAssets.protocolFutureRewardCollateral.mulDivUp((DEVIDER * int256(Constants.TARGET_LTV)), (convertedAssets.futureBorrow * int256(Constants.TARGET_LTV_DEVIDER)));
+        devider = int256(int8(cases.cecb)) * convertedAssets.protocolFutureRewardCollateral.mulDivUp((DEVIDER * int256(Constants.TARGET_LTV)), (convertedAssets.futureBorrow * int256(Constants.TARGET_LTV_DIVIDER)));
 
         return devider;
     }

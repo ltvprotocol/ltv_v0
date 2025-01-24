@@ -17,15 +17,13 @@ abstract contract PreviewDeposit is State, TotalAssets, ERC20, DepositWithdrawBo
 
         int256 signedShares = previewDepositWithdrawBorrow(-1*int256(assets));
         
-        if (signedShares > 0) {
+        if (signedShares < 0) {
             return 0;
         } else{
             shares = uint256(signedShares);
         }
 
-        uint256 supply = totalSupply();
-
-        return supply == 0 ? shares : shares.mulDivDown(supply, totalAssets());
+        return shares.mulDivDown(totalSupply(), totalAssets());
     }
 
 }

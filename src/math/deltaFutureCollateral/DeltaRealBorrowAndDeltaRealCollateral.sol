@@ -59,7 +59,7 @@ abstract contract DeltaRealBorrowAndDeltaRealCollateral {
 
         divindentWithTargetLTV -= int256(int8(cases.ceccb)) * int256(convertedAssets.protocolFutureRewardCollateral);
 
-        divindent += divindentWithTargetLTV * int256(Constants.TARGET_LTV) / int256(Constants.TARGET_LTV_DEVIDER);
+        divindent += divindentWithTargetLTV * int256(Constants.TARGET_LTV) / int256(Constants.TARGET_LTV_DIVIDER);
 
         return divindent;
     }
@@ -153,7 +153,7 @@ abstract contract DeltaRealBorrowAndDeltaRealCollateral {
 
         // end
         // TODO: explain why should be round down
-        dividerTargetLTV = dividerTargetLTV.mulDivDown(int256(Constants.TARGET_LTV), int256(Constants.TARGET_LTV_DEVIDER));
+        dividerTargetLTV = dividerTargetLTV.mulDivDown(int256(Constants.TARGET_LTV), int256(Constants.TARGET_LTV_DIVIDER));
 
         divider += dividerTargetLTV;
 
