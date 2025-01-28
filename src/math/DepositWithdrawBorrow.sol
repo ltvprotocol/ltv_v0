@@ -8,6 +8,7 @@ import "../Cases.sol";
 import "./deltaFutureCollateral/DeltaRealBorrowAndDeltaRealCollateral.sol";
 import "../utils/MulDiv.sol";
 import "./CommonBorrowCollateral.sol";
+import "forge-std/console.sol";
 
 abstract contract DepositWithdrawBorrow is State, DeltaRealBorrowAndDeltaRealCollateral, CommonBorrowCollateral {
 
@@ -24,7 +25,7 @@ abstract contract DepositWithdrawBorrow is State, DeltaRealBorrowAndDeltaRealCol
 
         Cases memory cases = CasesOperator.generateCase(0);
 
-        deltaFuture.deltaFutureCollateral = calculateDeltaFutureCollateralByDeltaRealBorrowAndDeltaRealCollateral(prices, convertedAssets, deltaRealCollateral, deltaRealBorrow);
+        deltaFuture.deltaFutureCollateral = calculateDeltaFutureCollateralByDeltaRealBorrowAndDeltaRealCollateral(prices, convertedAssets, cases, deltaRealCollateral, deltaRealBorrow);
 
         // ∆shares = ∆userCollateral − ∆userBorrow
         // ∆userCollateral = ∆realCollateral + ∆futureCollateral + ∆userFutureRewardCollateral + ∆futurePaymentCollateral
@@ -39,6 +40,9 @@ abstract contract DepositWithdrawBorrow is State, DeltaRealBorrowAndDeltaRealCol
         deltaFuture.deltaUserFutureRewardBorrow = calculateDeltaUserFutureRewardBorrow(cases, convertedAssets, deltaFuture.deltaFutureBorrow);
 
         deltaFuture.deltaFuturePaymentBorrow = calculateDeltaFuturePaymentBorrow(cases, convertedAssets, deltaFuture.deltaFutureBorrow);
+
+        console.log("deltaFuture.deltaUserFutureRewardCollateral", deltaFuture.deltaUserFutureRewardCollateral);
+        console.log("deltaFuture.deltaUserFutureRewardBorrow", deltaFuture.deltaUserFutureRewardBorrow);
 
         sharesAsAssets = deltaRealCollateral 
                + deltaFuture.deltaFutureCollateral

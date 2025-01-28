@@ -18,14 +18,15 @@ abstract contract Deposit is State, StateTransition, TotalAssets, ERC20, Deposit
 
     function deposit(uint256 assets, address receiver) external returns (uint256 shares) {
         (
-            int256 signedSharesInAssets,
+            int256 signedSharesInUnderlying,
             DeltaFuture memory deltaFuture
         ) = calculateDepositWithdrawBorrow(-1 * int256(assets));
 
-        if (signedSharesInAssets < 0) {
+        if (signedSharesInUnderlying < 0) {
             return 0;
         } else {
-            shares = uint256(signedSharesInAssets).mulDivDown(totalSupply(), totalAssets());
+            uint256 sharesInAssets = uint256(signedSharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, getPrices().borrow);
+            shares = sharesInAssets.mulDivDown(totalSupply(), totalAssets());
         }
 
         // TODO: double check that Token should be transfered from msg.sender or from receiver

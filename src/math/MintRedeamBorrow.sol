@@ -28,7 +28,7 @@ abstract contract MintRedeamBorrow is State, SharesAndRealCollateral, DeltaShare
 
         Cases memory cases = CasesOperator.generateCase(0);
 
-        deltaFuture.deltaFutureCollateral = calculateDeltaFutureCollateralByDeltaSharesAndDeltaRealCollateral(prices, convertedAssets, deltaRealCollateral, deltaShares);
+        deltaFuture.deltaFutureCollateral = calculateDeltaFutureCollateralByDeltaSharesAndDeltaRealCollateral(prices, convertedAssets, cases, deltaRealCollateral, deltaShares);
                                        
         // ∆shares = ∆userCollateral − ∆userBorrow
         // ∆userBorrow = ∆userCollateral - ∆shares
@@ -56,6 +56,7 @@ abstract contract MintRedeamBorrow is State, SharesAndRealCollateral, DeltaShare
                         - deltaFuture.deltaFutureBorrow
                         - deltaFuture.deltaUserFutureRewardBorrow
                         - deltaFuture.deltaFuturePaymentBorrow;
+        console.log('assets: ', assets);
     }
 
     function previewMintRedeamBorrow(int256 shares) internal view returns (

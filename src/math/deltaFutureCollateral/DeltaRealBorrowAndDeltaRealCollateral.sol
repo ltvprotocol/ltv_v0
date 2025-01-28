@@ -164,11 +164,10 @@ abstract contract DeltaRealBorrowAndDeltaRealCollateral {
     function calculateDeltaFutureCollateralByDeltaRealBorrowAndDeltaRealCollateral(
         Prices memory prices, 
         ConvertedAssets memory convertedAssets,
+        Cases memory cases,
         int256 deltaRealCollateral,
         int256 deltaRealBorrow
     ) public pure returns (int256) {
-
-        Cases memory cases = CasesOperator.generateCase(0);
 
         int256 deltaFutureCollateral = 0;
 

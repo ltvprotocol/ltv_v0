@@ -12,29 +12,27 @@ import "./TotalAssets.sol";
 import "../Lending.sol";
 import "../math/DepositWithdrawBorrow.sol";
 import "../math/NextStep.sol";
-import "./ConvertToAssets.sol";
 import "../StateTransition.sol";
 
-abstract contract Mint is State, StateTransition, MintRedeamBorrow, TotalAssets, ERC20, Lending, DepositWithdrawBorrow, NextStep, ConvertToAssets {
+abstract contract Redeem is State, StateTransition, TotalAssets, ERC20, MintRedeamBorrow, Lending, NextStep{
 
     using uMulDiv for uint256;
 
     function redeem(uint256 shares, address receiver, address owner) external returns (uint256 assets) {
 
-        (int256 signedAssets, DeltaFuture memory deltaFuture) = calculateMintRedeamBorrow(int256(convertToAssets(shares)));
+        uint256 sharesInAssets = shares.mulDivUp(totalAssets(), totalSupply());
+        uint256 sharesInUnderlying = sharesInAssets.mulDivUp(getPrices().borrow, Constants.ORACLE_DIVIDER);
+
+        (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = calculateMintRedeamBorrow(int256(sharesInUnderlying));
         // int256 signedShares = previewMintRedeamBorrow(-1*int256(assets));
 
-        if (signedAssets < 0) {
+        if (assetsInUnderlying > 0) {
             return 0;
         } else {
-            assets = uint256(-signedAssets);
+            assets = uint256(-assetsInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, getPrices().borrow);
         }
 
-        uint256 supply = totalSupply();
-
-        supply = supply == 0 ? shares : shares.mulDivDown(supply, totalAssets());
-
-        _burn(owner, supply);
+        _burn(owner, shares);
 
         // TODO: fix this - return from calculateDepositWithdrawBorrow
         ConvertedAssets memory convertedAssets = recoverConvertedAssets();
@@ -45,7 +43,7 @@ abstract contract Mint is State, StateTransition, MintRedeamBorrow, TotalAssets,
 
         borrow(assets);
 
-        borrowToken.transferFrom(address(this), receiver, assets);
+        borrowToken.transfer(receiver, assets);
 
         return shares;
 
