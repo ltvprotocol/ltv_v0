@@ -22,6 +22,10 @@ abstract contract CommonBorrowCollateral is State {
         // + (ceccb + cecbc) × (futureCollateral − futureBorrow)
 
         int256 deltaFutureBorrow = int256(int8(ncase.cna + ncase.cmcb + ncase.cmbc + ncase.ceccb + ncase.cecbc)) * deltaFutureCollateral;
+        if (convertedAssets.futureCollateral == 0) {
+            return deltaFutureBorrow;
+        }
+
         deltaFutureBorrow += int256(int8(ncase.cecb + ncase.cebc)) * deltaFutureCollateral * convertedAssets.futureBorrow / convertedAssets.futureCollateral;
         deltaFutureBorrow += int256(int8(ncase.ceccb + ncase.cecbc)) * (convertedAssets.futureCollateral - convertedAssets.futureBorrow);
 
@@ -36,6 +40,10 @@ abstract contract CommonBorrowCollateral is State {
         // cecb × userFutureRewardCollateral × ∆futureCollateral / futureCollateral +
         // + ceccb × −userFutureRewardCollateral
 
+        if (convertedAssets.futureCollateral == 0) {
+            return 0;
+        }
+        
         int256 deltaUserFutureRewardCollateral = int256(int8(ncase.cecb)) * convertedAssets.userFutureRewardCollateral * deltaFutureCollateral / convertedAssets.futureCollateral;
         deltaUserFutureRewardCollateral -= int256(int8(ncase.ceccb)) * convertedAssets.userFutureRewardCollateral;
         return deltaUserFutureRewardCollateral;
@@ -63,9 +71,12 @@ abstract contract CommonBorrowCollateral is State {
         ConvertedAssets memory convertedAssets,
         int256 deltaFutureBorrow
     ) internal pure returns (int256) {
-
         // cebc × userF utureRewardBorrow × ∆futureBorrow / futureBorrow +
         // + cecbc × −userFutureRewardBorrow
+
+        if (convertedAssets.futureBorrow == 0) {
+            return 0;
+        }
 
         int256 deltaUserFutureRewardBorrow = int256(int8(ncase.cebc)) * convertedAssets.userFutureRewardBorrow * deltaFutureBorrow / convertedAssets.futureBorrow;
         deltaUserFutureRewardBorrow -= int256(int8(ncase.cecbc)) * convertedAssets.userFutureRewardBorrow;

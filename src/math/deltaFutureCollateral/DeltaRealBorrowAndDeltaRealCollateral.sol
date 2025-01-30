@@ -5,6 +5,7 @@ import "../../Structs.sol";
 import "../../Constants.sol";
 import "../../Cases.sol";
 import "../../utils/MulDiv.sol";
+import "forge-std/console.sol";
 
 abstract contract DeltaRealBorrowAndDeltaRealCollateral {
 
@@ -20,7 +21,7 @@ abstract contract DeltaRealBorrowAndDeltaRealCollateral {
         //bool isUp
     ) public pure returns (int256) {
 
-        // divindent:
+        // dividend:
         //
         // -borrow
         // -ΔrealBorrow
@@ -34,34 +35,34 @@ abstract contract DeltaRealBorrowAndDeltaRealCollateral {
         // targetLTV x cecbc x -futureCollateral x collateralSlippage
         // targetLTV x ceccb x - protocolFutureRewardCollateral
 
-        int256 divindent = -int256(convertedAssets.borrow);
-        divindent -= deltaRealBorrow;
-        divindent -= int256(int8(cases.ceccb + cases.cecbc)) * (int256(convertedAssets.futureCollateral) - int256(convertedAssets.futureBorrow));
-        divindent += int256(int8(cases.cecbc)) * int256(convertedAssets.userFutureRewardBorrow);
+        int256 dividend = -int256(convertedAssets.borrow);
+        dividend -= deltaRealBorrow;
+        dividend -= int256(int8(cases.ceccb + cases.cecbc)) * (int256(convertedAssets.futureCollateral) - int256(convertedAssets.futureBorrow));
+        dividend += int256(int8(cases.cecbc)) * int256(convertedAssets.userFutureRewardBorrow);
 
         //if(isUp) {
-            divindent += int256(int8(cases.ceccb)) * convertedAssets.futureCollateral.mulDivUp(int256(prices.borrowSlippage), 10**18);
+            dividend += int256(int8(cases.ceccb)) * convertedAssets.futureCollateral.mulDivUp(int256(prices.borrowSlippage), 10**18);
         //} else {
-        //    divindent += int256(int8(cases.ceccb)) * convertedAssets.futureCollateral.mulDivDown(int256(prices.borrowSlippage), 10**18);
+        //    dividend += int256(int8(cases.ceccb)) * convertedAssets.futureCollateral.mulDivDown(int256(prices.borrowSlippage), 10**18);
         //}
 
-        divindent += int256(int8(cases.cecbc)) * int256(convertedAssets.protocolFutureRewardBorrow);
+        dividend += int256(int8(cases.cecbc)) * int256(convertedAssets.protocolFutureRewardBorrow);
 
-        int256 divindentWithTargetLTV = int256(convertedAssets.collateral);
-        divindentWithTargetLTV += deltaRealCollateral;
-        divindentWithTargetLTV -= int256(int8(cases.ceccb)) * int256(convertedAssets.userFutureRewardCollateral);
+        int256 dividendWithTargetLTV = int256(convertedAssets.collateral);
+        dividendWithTargetLTV += deltaRealCollateral;
+        dividendWithTargetLTV -= int256(int8(cases.ceccb)) * int256(convertedAssets.userFutureRewardCollateral);
 
         //if(isUp) {
-        //    divindentWithTargetLTV -= int256(int8(cases.cecbc)) * convertedAssets.futureCollateral.mulDivUp(int256(prices.collateralSlippage), 10**18);
+        //    dividendWithTargetLTV -= int256(int8(cases.cecbc)) * convertedAssets.futureCollateral.mulDivUp(int256(prices.collateralSlippage), 10**18);
         //} else {
-            divindentWithTargetLTV -= int256(int8(cases.cecbc)) * convertedAssets.futureCollateral.mulDivDown(int256(prices.collateralSlippage), 10**18);
+            dividendWithTargetLTV -= int256(int8(cases.cecbc)) * convertedAssets.futureCollateral.mulDivDown(int256(prices.collateralSlippage), 10**18);
         //}
 
-        divindentWithTargetLTV -= int256(int8(cases.ceccb)) * int256(convertedAssets.protocolFutureRewardCollateral);
+        dividendWithTargetLTV -= int256(int8(cases.ceccb)) * int256(convertedAssets.protocolFutureRewardCollateral);
 
-        divindent += divindentWithTargetLTV * int256(Constants.TARGET_LTV) / int256(Constants.TARGET_LTV_DIVIDER);
+        dividend += dividendWithTargetLTV * int256(Constants.TARGET_LTV) / int256(Constants.TARGET_LTV_DIVIDER);
 
-        return divindent;
+        return dividend;
     }
 
     function calculateDividerByDeltaRealBorrowAndDeltaRealCollateral(
@@ -105,21 +106,23 @@ abstract contract DeltaRealBorrowAndDeltaRealCollateral {
 
 
         // part 1
-        int256 DEVIDER = 10**18;
+        int256 DIVIDER = 10**18;
 
-        int256 divider = DEVIDER * int256(int8(cases.cna + cases.cmcb + cases.cmbc + cases.ceccb + cases.cecbc));
+        int256 divider = DIVIDER * int256(int8(cases.cna + cases.cmcb + cases.cmbc + cases.ceccb + cases.cecbc));
 
         // part 2
-        int256 dividerDivFutureCollateral = int256(int8(cases.cecb + cases.cebc)) * int256(convertedAssets.futureBorrow);
-        dividerDivFutureCollateral += int256(int8(cases.cebc)) * int256(convertedAssets.userFutureRewardBorrow);
-        dividerDivFutureCollateral += int256(int8(cases.cebc)) * int256(convertedAssets.protocolFutureRewardBorrow);
+        if (convertedAssets.futureCollateral != 0) {
+            int256 dividerDivFutureCollateral = int256(int8(cases.cecb + cases.cebc)) * int256(convertedAssets.futureBorrow);
+            dividerDivFutureCollateral += int256(int8(cases.cebc)) * int256(convertedAssets.userFutureRewardBorrow);
+            dividerDivFutureCollateral += int256(int8(cases.cebc)) * int256(convertedAssets.protocolFutureRewardBorrow);
 
-        // futureBorrow should be round down
-        // futureRewardBorrow should be round down
-        // futureCollateral should be round up
-        dividerDivFutureCollateral = dividerDivFutureCollateral.mulDivDown(DEVIDER, convertedAssets.futureCollateral);
+            // futureBorrow should be round down
+            // futureRewardBorrow should be round down
+            // futureCollateral should be round up
+            dividerDivFutureCollateral = dividerDivFutureCollateral.mulDivDown(DIVIDER, convertedAssets.futureCollateral);
 
-        divider += dividerDivFutureCollateral;
+            divider += dividerDivFutureCollateral;
+        }
 
         // part 3
 
@@ -133,16 +136,17 @@ abstract contract DeltaRealBorrowAndDeltaRealCollateral {
         // part 4-6
 
         // part 4
-        int256 dividerTargetLTV = -DEVIDER;
+        int256 dividerTargetLTV = -DIVIDER;
 
         // part 5
 
-        int256 dividerTargetLTVDivFutureCollateral = -int256(int8(cases.cecb)) * int256(convertedAssets.userFutureRewardCollateral);
-        dividerTargetLTVDivFutureCollateral -= int256(int8(cases.cecb)) * int256(convertedAssets.protocolFutureRewardCollateral);
-
-        // TODO: explain why should be round down
-        dividerTargetLTVDivFutureCollateral = dividerTargetLTVDivFutureCollateral.mulDivDown(DEVIDER, int256(convertedAssets.futureCollateral));
-        dividerTargetLTV += dividerTargetLTVDivFutureCollateral;
+        if (convertedAssets.futureCollateral != 0) {
+            int256 dividerTargetLTVDivFutureCollateral = -int256(int8(cases.cecb)) * int256(convertedAssets.userFutureRewardCollateral);
+            dividerTargetLTVDivFutureCollateral -= int256(int8(cases.cecb)) * int256(convertedAssets.protocolFutureRewardCollateral);
+            // TODO: explain why should be round down
+            dividerTargetLTVDivFutureCollateral = dividerTargetLTVDivFutureCollateral.mulDivDown(DIVIDER, int256(convertedAssets.futureCollateral));
+            dividerTargetLTV += dividerTargetLTVDivFutureCollateral;
+        }
 
         // part 6
         int256 dividerTargetLTVCollateralSlippage = int256(int8(cases.cmbc));
@@ -176,10 +180,13 @@ abstract contract DeltaRealBorrowAndDeltaRealCollateral {
 
             int256 divider = calculateDividerByDeltaRealBorrowAndDeltaRealCollateral(cases, prices, convertedAssets);
 
-            int256 DEVIDER = 10**18;
+            int256 DIVIDER = 10**18;
 
+            if (divider == 0) {
+                continue;
+            }
             // up because it's better for protocol
-            deltaFutureCollateral = dividend.mulDivUp(DEVIDER, divider);
+            deltaFutureCollateral = dividend.mulDivUp(DIVIDER, divider);
 
             bool validity = CasesOperator.checkCaseDeltaFutureCollateral(cases, convertedAssets, deltaFutureCollateral);
 

@@ -73,10 +73,9 @@ abstract contract NextStep {
             deltaAuctionWeight = deltaFuture.deltaFuturePaymentCollateral;
         }
 
-        // TODO: think about Up or Down
-        uint256 nextAuctionStep = uint256((convertedAssets.auctionStep * auctionWeight) / (auctionWeight + deltaAuctionWeight));
-
         if (merge) {
+            // TODO: think about Up or Down
+            uint256 nextAuctionStep = uint256((convertedAssets.auctionStep * auctionWeight) / (auctionWeight + deltaAuctionWeight));
             startAuction = blockNumber - nextAuctionStep;
         }
     }

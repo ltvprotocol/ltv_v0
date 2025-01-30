@@ -184,4 +184,8 @@ contract DummyLTVTest is Test {
         assertEq(dummyLTV.balanceOf(user), 0);
     }
 
+    function test_zeroAuction(address owner, address user, uint112 amount) public initializeBalancedTest(owner, user, amount, 0, 0, 0) {
+        assertEq(dummyLTV.previewDeposit(amount), uint256(amount) * 100);
+    }
+
 }

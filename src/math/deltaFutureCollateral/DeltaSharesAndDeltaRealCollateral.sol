@@ -66,14 +66,16 @@ contract DeltaSharesAndDeltaRealCollateral {
         int256 DIVIDER = 10**18;
 
         int256 dividerWithOneMinusTargetLTV = -DIVIDER;
-        dividerWithOneMinusTargetLTV -= int256(int8(cases.cebc)) * convertedAssets.userFutureRewardCollateral.mulDivUp(DIVIDER, convertedAssets.futureCollateral);
+        int256 divider; 
+        if (convertedAssets.futureCollateral != 0) {
+            dividerWithOneMinusTargetLTV -= int256(int8(cases.cebc)) * convertedAssets.userFutureRewardCollateral.mulDivUp(DIVIDER, convertedAssets.futureCollateral);
+            dividerWithOneMinusTargetLTV -= int256(int8(cases.ceccb)) * int256(prices.collateralSlippage) * DIVIDER;
+            divider -= int256(int8(cases.cebc)) * convertedAssets.protocolFutureRewardBorrow.mulDivUp(DIVIDER, convertedAssets.futureCollateral);
+            divider -= int256(int8(cases.cecb)) * convertedAssets.protocolFutureRewardCollateral.mulDivDown((DIVIDER * int256(Constants.TARGET_LTV)), (convertedAssets.futureCollateral * int256(Constants.TARGET_LTV_DIVIDER)));
+        }
         dividerWithOneMinusTargetLTV -= int256(int8(cases.cmcb)) * int256(prices.collateralSlippage) * DIVIDER;
-        dividerWithOneMinusTargetLTV -= int256(int8(cases.ceccb)) * int256(prices.collateralSlippage) * DIVIDER;
-
-        int256 divider = dividerWithOneMinusTargetLTV.mulDivDown(int256(Constants.TARGET_LTV_DIVIDER - Constants.TARGET_LTV), int256(Constants.TARGET_LTV_DIVIDER));
-
-        divider -= int256(int8(cases.cebc)) * convertedAssets.protocolFutureRewardBorrow.mulDivUp(DIVIDER, convertedAssets.futureCollateral);
-        divider -= int256(int8(cases.cecb)) * convertedAssets.protocolFutureRewardCollateral.mulDivDown((DIVIDER * int256(Constants.TARGET_LTV)), (convertedAssets.futureCollateral * int256(Constants.TARGET_LTV_DIVIDER)));
+        
+        divider += dividerWithOneMinusTargetLTV.mulDivDown(int256(Constants.TARGET_LTV_DIVIDER - Constants.TARGET_LTV), int256(Constants.TARGET_LTV_DIVIDER));
 
         return divider;
     }
@@ -96,6 +98,9 @@ contract DeltaSharesAndDeltaRealCollateral {
 
             int256 DIVIDER = 10**18;
 
+            if (divider == 0) {
+                continue;
+            }
             // up because it's better for protocol
             deltaFutureCollateral = dividend.mulDivUp(DIVIDER, divider);
 
