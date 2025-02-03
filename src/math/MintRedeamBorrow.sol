@@ -9,7 +9,6 @@ import "../SharesAndRealCollateral.sol";
 import "../utils/MulDiv.sol";
 import "./CommonBorrowCollateral.sol";
 import "./deltaFutureCollateral/DeltaSharesAndDeltaRealCollateral.sol";
-import "forge-std/console.sol";
 
 abstract contract MintRedeamBorrow is State, SharesAndRealCollateral, DeltaSharesAndDeltaRealCollateral,  CommonBorrowCollateral {
 
@@ -56,7 +55,6 @@ abstract contract MintRedeamBorrow is State, SharesAndRealCollateral, DeltaShare
                         - deltaFuture.deltaFutureBorrow
                         - deltaFuture.deltaUserFutureRewardBorrow
                         - deltaFuture.deltaFuturePaymentBorrow;
-        console.log('assets: ', assets);
     }
 
     function previewMintRedeamBorrow(int256 shares) internal view returns (

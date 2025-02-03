@@ -5,7 +5,6 @@ import "../../Structs.sol";
 import "../../Constants.sol";
 import "../../Cases.sol";
 import "../../utils/MulDiv.sol";
-import "forge-std/console.sol";
 
 abstract contract DeltaRealBorrowAndDeltaRealCollateral {
 

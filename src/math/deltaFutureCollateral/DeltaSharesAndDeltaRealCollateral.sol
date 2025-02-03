@@ -5,7 +5,6 @@ import "../../Structs.sol";
 import "../../Constants.sol";
 import "../../Cases.sol";
 import "../../utils/MulDiv.sol";
-import "forge-std/console.sol";
 
 contract DeltaSharesAndDeltaRealCollateral {
 
@@ -105,14 +104,11 @@ contract DeltaSharesAndDeltaRealCollateral {
                 continue;
             }
             // up because it's better for protocol
-            console.log('dividend: ', dividend);
-            console.log('divider : ', divider);
             deltaFutureCollateral = dividend.mulDivUp(DIVIDER, divider);
 
             bool validity = CasesOperator.checkCaseDeltaFutureCollateral(cases, convertedAssets, deltaFutureCollateral);
 
             if (validity) {
-                console.log(cases.ncase);
                 break;
             }
 
