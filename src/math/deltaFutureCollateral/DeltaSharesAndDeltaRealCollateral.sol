@@ -81,13 +81,10 @@ contract DeltaSharesAndDeltaRealCollateral {
     function calculateDeltaFutureCollateralByDeltaSharesAndDeltaRealCollateral(
         Prices memory prices, 
         ConvertedAssets memory convertedAssets,
+        Cases memory cases,
         int256 deltaRealCollateral,
         int256 deltaShares
     ) public pure returns (int256) {
-
-        // ConvertedAssets memory convertedAssets = recoverConvertedAssets();
-        // Prices memory prices = getPrices();
-        Cases memory cases = CasesOperator.generateCase(0);
 
         int256 deltaFutureCollateral = 0;
 

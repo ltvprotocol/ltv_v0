@@ -20,11 +20,12 @@ abstract contract Deposit is State, StateTransition, TotalAssets, ERC20, Deposit
 
         (int256 signedShares, DeltaFuture memory deltaFuture) = calculateDepositWithdrawBorrow(-1*int256(assets));
         
-        if (signedShares > 0) {
+        if (signedShares < 0) {
             return 0;
         } else{
             shares = uint256(signedShares);
         }
+
 
         uint256 supply = totalSupply();
 

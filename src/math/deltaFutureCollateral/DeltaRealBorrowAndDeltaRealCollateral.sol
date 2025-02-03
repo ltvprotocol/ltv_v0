@@ -15,8 +15,8 @@ abstract contract DeltaRealBorrowAndDeltaRealCollateral {
         Cases memory cases,
         Prices memory prices, 
         ConvertedAssets memory convertedAssets,
-        int256 deltaRealBorrow,
-        int256 deltaRealCollateral
+        int256 deltaRealCollateral,
+        int256 deltaRealBorrow
         //bool isUp
     ) public pure returns (int256) {
 
@@ -164,24 +164,22 @@ abstract contract DeltaRealBorrowAndDeltaRealCollateral {
     function calculateDeltaFutureCollateralByDeltaRealBorrowAndDeltaRealCollateral(
         Prices memory prices, 
         ConvertedAssets memory convertedAssets,
+        Cases memory cases,
         int256 deltaRealCollateral,
         int256 deltaRealBorrow
     ) public pure returns (int256) {
 
-        Cases memory cases = CasesOperator.generateCase(0);
-
         int256 deltaFutureCollateral = 0;
 
         while (true) {
-
-            int256 divindent = calculateDividendByDeltaRealBorrowAndDeltaRealCollateral(cases, prices, convertedAssets, deltaRealCollateral, deltaRealBorrow);
+            int256 dividend = calculateDividendByDeltaRealBorrowAndDeltaRealCollateral(cases, prices, convertedAssets, deltaRealCollateral, deltaRealBorrow);
 
             int256 divider = calculateDividerByDeltaRealBorrowAndDeltaRealCollateral(cases, prices, convertedAssets);
 
             int256 DEVIDER = 10**18;
 
             // up because it's better for protocol
-            deltaFutureCollateral = divindent.mulDivUp(DEVIDER, divider);
+            deltaFutureCollateral = dividend.mulDivUp(DEVIDER, divider);
 
             bool validity = CasesOperator.checkCaseDeltaFutureCollateral(cases, convertedAssets, deltaFutureCollateral);
 
