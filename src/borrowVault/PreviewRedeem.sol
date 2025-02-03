@@ -4,7 +4,7 @@ pragma solidity ^0.8.13;
 import "../State.sol";
 import "../Constants.sol";
 import "../Structs.sol";
-import "./totalAssets.sol";
+import "./TotalAssets.sol";
 import "../ERC20.sol";
 import "../Cases.sol";
 import "../math/MintRedeamBorrow.sol";
@@ -15,7 +15,7 @@ abstract contract PreviewRedeem is State, MintRedeamBorrow {
 
     function previewRedeem(uint256 shares) external view returns (uint256 assets) {
 
-        int256 signedAssets = previewMintRedeamBorrow(-1*int256(assets));
+        int256 signedAssets = previewMintRedeamBorrow(-1*int256(shares));
 
         if (signedAssets < 0) {
             return 0;

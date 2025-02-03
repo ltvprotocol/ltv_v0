@@ -7,10 +7,11 @@ import "./borrowVault/PreviewMint.sol";
 import "./borrowVault/PreviewRedeem.sol";
 import "./borrowVault/Deposit.sol";
 import "./borrowVault/Withdraw.sol";
+import './utils/Ownable.sol';
 
-contract LTV is PreviewWithdraw, PreviewDeposit, PreviewMint, PreviewRedeem, Deposit, Withdraw {
+abstract contract LTV is PreviewWithdraw, PreviewDeposit, PreviewMint, PreviewRedeem, Deposit, Withdraw, Ownable {
 
-    constructor(string memory _name, uint _value) ERC20("LTV", "LTV", 18) {
+    constructor(address initialOwner) ERC20("LTV", "LTV", 18) Ownable(initialOwner) {
         //
     }
 

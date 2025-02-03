@@ -17,7 +17,7 @@ contract DeltaSharesAndDeltaRealBorrow {
         ConvertedAssets memory convertedAssets,
         int256 deltaRealBorrow,
         int256 deltaShares
-    ) public view returns (int256) {
+    ) public pure returns (int256) {
         // borrow
         // (1 - targetLTV) x deltaRealBorrow
         // (1 - targetLTV) x cecbc x -userFutureRewardBorrow
@@ -52,7 +52,7 @@ contract DeltaSharesAndDeltaRealBorrow {
         ConvertedAssets memory convertedAssets
         //int256 deltaRealBorrow,
         //int256 deltaShares
-    ) public view returns (int256) {
+    ) public pure returns (int256) {
         // (1 - targetLTV) x -1
         // (1 - targetLTV) x cebc x (userFutureRewardBorrow / futureBorrow)
         // (1 - targetLTV) x cmcb x borrowSlippage
@@ -76,11 +76,11 @@ contract DeltaSharesAndDeltaRealBorrow {
     }
 
     function calculateDeltaFutureBorrowByDeltaSharesAndDeltaRealBorrow(
-        Prices memory prices, 
+        Prices memory prices,
         ConvertedAssets memory convertedAssets,
         int256 deltaRealBorrow,
         int256 deltaShares
-    ) public view returns (int256) {
+    ) public pure returns (int256) {
 
         // ConvertedAssets memory convertedAssets = recoverConvertedAssets();
         // Prices memory prices = getPrices();

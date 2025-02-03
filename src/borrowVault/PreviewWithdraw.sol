@@ -4,7 +4,7 @@ pragma solidity ^0.8.13;
 import "../State.sol";
 import "../Constants.sol";
 import "../Structs.sol";
-import "./totalAssets.sol";
+import "./TotalAssets.sol";
 import "../ERC20.sol";
 import "../Cases.sol";
 import "../math/DepositWithdrawBorrow.sol";
@@ -23,7 +23,7 @@ abstract contract PreviewWithdraw is State, TotalAssets, ERC20, DepositWithdrawB
             shares = uint256(-signedShares);
         }
 
-        uint256 supply = totalSupply;
+        uint256 supply = totalSupply();
 
         return supply == 0 ? shares : shares.mulDivDown(supply, totalAssets());
     }

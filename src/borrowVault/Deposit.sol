@@ -5,7 +5,7 @@ import "../State.sol";
 import "../StateTransition.sol";
 import "../Constants.sol";
 import "../Structs.sol";
-import "./totalAssets.sol";
+import "./TotalAssets.sol";
 import "../ERC20.sol";
 import "../Cases.sol";
 import "../Lending.sol";
@@ -26,7 +26,7 @@ abstract contract Deposit is State, StateTransition, TotalAssets, ERC20, Deposit
             shares = uint256(signedShares);
         }
 
-        uint256 supply = totalSupply;
+        uint256 supply = totalSupply();
 
         supply = supply == 0 ? shares : shares.mulDivDown(supply, totalAssets());
 

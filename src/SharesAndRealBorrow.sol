@@ -6,8 +6,4 @@ import "./Constants.sol";
 import "./Cases.sol";
 
 contract SharesAndRealBorrow {
-
-    // TODO: remove it
-
-    }
 }

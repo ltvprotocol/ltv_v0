@@ -5,13 +5,18 @@ import "./Constants.sol";
 
 import "./Structs.sol";
 
-import "./Oracles.sol";
+import "./interfaces/IOracle.sol";
 
 import "./utils/MulDiv.sol";
 
 import "./interfaces/IERC20.sol";
 
-abstract contract State is Oracles {
+abstract contract State is IOracle {
+    constructor(address _collateralToken, address _borrowToken) {
+        collateralToken = IERC20(_collateralToken);
+        borrowToken = IERC20(_borrowToken);
+    }
+
     int256 public futureBorrowAssets;
     int256 public futureCollateralAssets;
     int256 public futureRewardBorrowAssets;
@@ -19,7 +24,7 @@ abstract contract State is Oracles {
     uint256 public startAuction;
 
     // ERC 20 state
-    uint256 public totalSupply;
+    uint256 public baseTotalSupply;
     mapping(address => uint256) public balanceOf;
     mapping(address => mapping(address => uint256)) public allowance;
     string public name;
@@ -31,6 +36,11 @@ abstract contract State is Oracles {
 
     using uMulDiv for uint256;
     using sMulDiv for int256;
+
+    function totalSupply() public view returns(uint256) {
+        // add 100 to avoid vault inflation attack
+        return baseTotalSupply + 100; 
+    }
 
     function getAuctionStep() public view returns (uint256) {
 
@@ -109,6 +119,15 @@ abstract contract State is Oracles {
             userFutureRewardBorrow: userFutureRewardBorrow,
             userFutureRewardCollateral: userFutureRewardCollateral,
             auctionStep: int256(getAuctionStep())
+        });
+    }
+
+    function getPrices() internal view returns (Prices memory) {
+        return Prices({
+            borrow: getPriceBorrowOracle(),
+            collateral: getPriceCollateralOracle(),
+            borrowSlippage: 0,
+            collateralSlippage: 0
         });
     }
 }
