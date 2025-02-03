@@ -24,7 +24,7 @@ abstract contract State is IOracle {
     uint256 public startAuction;
 
     // ERC 20 state
-    uint256 public _totalSupply;
+    uint256 public baseTotalSupply;
     mapping(address => uint256) public balanceOf;
     mapping(address => mapping(address => uint256)) public allowance;
     string public name;
@@ -39,7 +39,7 @@ abstract contract State is IOracle {
 
     function totalSupply() public view returns(uint256) {
         // add 100 to avoid vault inflation attack
-        return _totalSupply + 100; 
+        return baseTotalSupply + 100; 
     }
 
     function getAuctionStep() public view returns (uint256) {
