@@ -81,14 +81,13 @@ contract DeltaSharesAndDeltaRealBorrow {
     function calculateDeltaFutureBorrowByDeltaSharesAndDeltaRealBorrow(
         Prices memory prices,
         ConvertedAssets memory convertedAssets,
+        Cases memory cases,
         int256 deltaRealBorrow,
         int256 deltaShares
     ) public pure returns (int256) {
 
         // ConvertedAssets memory convertedAssets = recoverConvertedAssets();
         // Prices memory prices = getPrices();
-        Cases memory cases = CasesOperator.generateCase(0);
-
         int256 deltaFutureBorrow = 0;
 
         while (true) {
