@@ -5,6 +5,7 @@ import "../../Structs.sol";
 import "../../Constants.sol";
 import "../../Cases.sol";
 import "../../utils/MulDiv.sol";
+import "forge-std/console.sol";
 
 contract DeltaSharesAndDeltaRealCollateral {
 
@@ -32,16 +33,17 @@ contract DeltaSharesAndDeltaRealCollateral {
 
         int256 DIVIDER = 10**18;
 
-        int256 dividend = -int256(convertedAssets.borrow);
+        int256 dividend = int256(convertedAssets.borrow);
         dividend -= int256(int8(cases.cecbc)) * convertedAssets.protocolFutureRewardBorrow;
-        dividend -= int256(int8(cases.ceccb)) * deltaShares;
+        dividend -= deltaShares;
+
+        int256 dividendWithTargetLTV = -int256(convertedAssets.collateral);
+        dividendWithTargetLTV -= int256(int8(cases.ceccb)) * convertedAssets.protocolFutureRewardCollateral;
 
         int256 dividendWithOneMinusTargetLTV = deltaRealCollateral;
         dividendWithOneMinusTargetLTV -= int256(int8(cases.cecbc)) * int256(convertedAssets.userFutureRewardCollateral);
         dividendWithOneMinusTargetLTV -= int256(int8(cases.ceccb)) * convertedAssets.futureCollateral.mulDivDown(int256(prices.collateralSlippage), DIVIDER);
 
-        int256 dividendWithTargetLTV = -int256(convertedAssets.collateral);
-        dividendWithTargetLTV -= int256(int8(cases.ceccb)) * convertedAssets.protocolFutureRewardCollateral;
 
         dividend += dividendWithOneMinusTargetLTV.mulDivUp(int256(Constants.TARGET_LTV_DIVIDER - Constants.TARGET_LTV), int256(Constants.TARGET_LTV_DIVIDER));
         dividend += dividendWithTargetLTV.mulDivUp(int256(Constants.TARGET_LTV), int256(Constants.TARGET_LTV_DIVIDER));
@@ -99,14 +101,18 @@ contract DeltaSharesAndDeltaRealCollateral {
             int256 DIVIDER = 10**18;
 
             if (divider == 0) {
+                cases = CasesOperator.generateCase(cases.ncase + 1);
                 continue;
             }
             // up because it's better for protocol
+            console.log('dividend: ', dividend);
+            console.log('divider : ', divider);
             deltaFutureCollateral = dividend.mulDivUp(DIVIDER, divider);
 
             bool validity = CasesOperator.checkCaseDeltaFutureCollateral(cases, convertedAssets, deltaFutureCollateral);
 
             if (validity) {
+                console.log(cases.ncase);
                 break;
             }
 

@@ -100,6 +100,7 @@ contract DeltaSharesAndDeltaRealBorrow {
             int256 DIVIDER = 10**18;
 
             if (divider == 0) {
+                cases = CasesOperator.generateCase(cases.ncase + 1);
                 continue;
             }
             deltaFutureBorrow = dividend.mulDivDown(DIVIDER, divider);

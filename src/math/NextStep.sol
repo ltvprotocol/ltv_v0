@@ -75,7 +75,12 @@ abstract contract NextStep {
 
         if (merge) {
             // TODO: think about Up or Down
-            uint256 nextAuctionStep = uint256((convertedAssets.auctionStep * auctionWeight) / (auctionWeight + deltaAuctionWeight));
+            uint256 nextAuctionStep;
+            if (auctionWeight + deltaAuctionWeight == 0) {
+                nextAuctionStep = 0;
+            } else {
+                nextAuctionStep = uint256((convertedAssets.auctionStep * auctionWeight) / (auctionWeight + deltaAuctionWeight));
+            }
             startAuction = blockNumber - nextAuctionStep;
         }
     }

@@ -11,6 +11,7 @@ library uMulDiv {
         uint256 factorB,
         uint256 denominator
     ) internal pure returns (uint256 result) {
+        require(denominator != 0, "Denominator cannot be zero");
 
         /// @solidity memory-safe-assembly
         assembly {
@@ -49,6 +50,7 @@ library uMulDiv {
         uint256 y,
         uint256 denominator
     ) internal pure returns (uint256 z) {
+        require(denominator != 0, "Denominator cannot be zero");
         /// @solidity memory-safe-assembly
         assembly {
             if iszero(

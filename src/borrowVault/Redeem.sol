@@ -23,13 +23,13 @@ abstract contract Redeem is State, StateTransition, TotalAssets, ERC20, MintRede
         uint256 sharesInAssets = shares.mulDivUp(totalAssets(), totalSupply());
         uint256 sharesInUnderlying = sharesInAssets.mulDivUp(getPrices().borrow, Constants.ORACLE_DIVIDER);
 
-        (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = calculateMintRedeamBorrow(int256(sharesInUnderlying));
+        (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = calculateMintRedeamBorrow(-int256(sharesInUnderlying));
         // int256 signedShares = previewMintRedeamBorrow(-1*int256(assets));
 
-        if (assetsInUnderlying > 0) {
+        if (assetsInUnderlying < 0) {
             return 0;
         } else {
-            assets = uint256(-assetsInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, getPrices().borrow);
+            assets = uint256(assetsInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, getPrices().borrow);
         }
 
         _burn(owner, shares);

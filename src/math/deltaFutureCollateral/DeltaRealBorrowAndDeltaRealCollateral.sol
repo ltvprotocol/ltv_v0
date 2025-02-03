@@ -183,6 +183,7 @@ abstract contract DeltaRealBorrowAndDeltaRealCollateral {
             int256 DIVIDER = 10**18;
 
             if (divider == 0) {
+                cases = CasesOperator.generateCase(cases.ncase + 1);
                 continue;
             }
             // up because it's better for protocol
