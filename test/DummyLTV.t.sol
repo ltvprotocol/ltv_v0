@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.13;
 
-import '../src/dummy/DummyOracle.sol';
-import 'forge-std/Test.sol';
-import {MockERC20} from 'forge-std/mocks/MockERC20.sol';
-import {MockDummyLending} from './utils/MockDummyLending.sol';
-import './utils/MockDummyLTV.sol';
-import '../src/Constants.sol';
+import "../src/ltv_lendings/DummyLTV.sol";
+import "../src/dummy/DummyOracle.sol";
+import "forge-std/Test.sol";
+import {MockERC20} from "forge-std/mocks/MockERC20.sol";
+import {MockDummyLending} from "./utils/MockDummyLending.sol";
+import "./utils/MockDummyLTV.sol";
+import "../src/Constants.sol";
 
 contract DummyLTVTest is Test {
     MockDummyLTV public dummyLTV;
