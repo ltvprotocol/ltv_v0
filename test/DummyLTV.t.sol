@@ -59,7 +59,7 @@ contract DummyLTVTest is Test {
         dummyLTV.setFutureBorrowAssets(futureBorrow);
         dummyLTV.setFutureCollateralAssets(futureCollateral / 2);
         
-        if (futureBorrow > 0) {
+        if (futureBorrow < 0) {
             lendingProtocol.setSupplyBalance(address(collateralToken), uint256(int256(borrowAmount) * 5 * 4 - futureCollateral / 2));
             lendingProtocol.setBorrowBalance(address(borrowToken), uint256(int256(borrowAmount) * 10 * 3 - futureBorrow - auctionReward));
             dummyLTV.setFutureRewardBorrowAssets(auctionReward);
@@ -88,7 +88,7 @@ contract DummyLTVTest is Test {
         address owner,
         address user,
         uint112 amount
-    ) public initializeBalancedTest(owner, user, amount, 10000, 9500, 1000) {
+    ) public initializeBalancedTest(owner, user, amount, 9500, 9500, -1000) {
         assertEq(dummyLTV.convertToAssets(uint256(amount) * 100), amount);
     }
 
@@ -96,7 +96,7 @@ contract DummyLTVTest is Test {
         address owner,
         address user,
         uint112 amount
-    ) public initializeBalancedTest(owner, user, amount, 10000, 9500, 1000) {
+    ) public initializeBalancedTest(owner, user, amount, 9500, 9500, -1000) {
         assertEq(dummyLTV.convertToShares(amount), uint256(amount) * 100);
     }
 
@@ -104,15 +104,15 @@ contract DummyLTVTest is Test {
         address owner,
         address user,
         uint112 amount
-    ) public initializeBalancedTest(owner, user, amount, 10000, 9500, 1000) {
-        assertEq(dummyLTV.previewDeposit(amount), uint256(amount) * 100);
+    ) public initializeBalancedTest(owner, user, amount, 9500, 9500, -1000) {
+        assertEq(dummyLTV.previewDeposit(amount), uint256(amount) * 100); 
     }
 
     function test_previewMint(
         address owner,
         address user,
         uint112 amount
-    ) public initializeBalancedTest(owner, user, amount, 10000, 9500, 1000) {
+    ) public initializeBalancedTest(owner, user, amount, 9500, 9500, -1000) {
         assertEq(dummyLTV.previewMint(uint256(amount) * 100), amount);
     }
 
@@ -120,7 +120,7 @@ contract DummyLTVTest is Test {
         address owner,
         address user,
         uint112 amount
-    ) public initializeBalancedTest(owner, user, amount, 10000, 9500, 1000) {
+    ) public initializeBalancedTest(owner, user, amount, 9500, 9500, -1000) {
         // auction + current state = balanced vault. State is balanced. Auction is also satisfies LTV(not really realistic but acceptable)
         borrowToken.approve(address(dummyLTV), amount);
         dummyLTV.deposit(amount, user);
@@ -132,7 +132,7 @@ contract DummyLTVTest is Test {
         address owner,
         address user,
         uint112 amount
-    ) public initializeBalancedTest(owner, user, amount, 10000, 9500, 1000) {
+    ) public initializeBalancedTest(owner, user, amount, 9500, 9500, -1000) {
         borrowToken.approve(address(dummyLTV), amount);
         dummyLTV.mint(uint256(amount) * 100, user);
 
@@ -143,7 +143,7 @@ contract DummyLTVTest is Test {
         address owner,
         address user,
         uint112 amount
-    ) public initializeBalancedTest(owner, user, amount, -9000, -9500, -1000) {
+    ) public initializeBalancedTest(owner, user, amount, -9500, -9500, 1000) {
         assertEq(dummyLTV.previewWithdraw(uint256(amount)), uint256(amount) * 100);
     }
 
@@ -151,7 +151,7 @@ contract DummyLTVTest is Test {
         address owner,
         address user,
         uint112 amount
-    ) public initializeBalancedTest(owner, user, amount, -9000, -9500, -1000) {
+    ) public initializeBalancedTest(owner, user, amount, -9500, -9500, 1000) {
         assertEq(dummyLTV.previewRedeem(uint256(amount) * 100), uint256(amount));
     }
 
@@ -159,7 +159,7 @@ contract DummyLTVTest is Test {
         address owner,
         address user,
         uint112 amount
-    ) public initializeBalancedTest(owner, user, amount, -9000, -9500, -1000) {
+    ) public initializeBalancedTest(owner, user, amount, -9500, -9500, 1000) {
         vm.stopPrank();
         vm.startPrank(owner);
         dummyLTV.transfer(user, uint256(amount) * 100);
@@ -174,7 +174,7 @@ contract DummyLTVTest is Test {
         address owner,
         address user,
         uint112 amount
-    ) public initializeBalancedTest(owner, user, amount, -9000, -9500, -1000) {
+    ) public initializeBalancedTest(owner, user, amount, -9500, -9500, 1000) {
         vm.stopPrank();
         vm.startPrank(owner);
         dummyLTV.transfer(user, uint256(amount) * 100);
