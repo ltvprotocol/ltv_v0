@@ -59,33 +59,33 @@ abstract contract State is IOracle {
         
         // borrow should be round up
         // because this is the amount that protocol should pay
-        int256 realBorrow = int256(getRealBorrowAssets().mulDivUp(getPriceBorrowOracle(), Constants.ORACLE_DEVIDER));
+        int256 realBorrow = int256(getRealBorrowAssets().mulDivUp(getPriceBorrowOracle(), Constants.ORACLE_DIVIDER));
 
         // collateral should be round down
         // because this is the amount that protocol owns
-        int256 realCollateral = int256(getRealCollateralAssets().mulDivDown(getPriceCollateralOracle(), Constants.ORACLE_DEVIDER));
+        int256 realCollateral = int256(getRealCollateralAssets().mulDivDown(getPriceCollateralOracle(), Constants.ORACLE_DIVIDER));
 
         // futureBorrow should be round down
         // because we want to minimize the amount that protocol will pay to the user
         // TODO: double check this with experts
-        int256 futureBorrow = futureBorrowAssets.mulDivDown(int256(getPriceBorrowOracle()), int256(Constants.ORACLE_DEVIDER));
+        int256 futureBorrow = futureBorrowAssets.mulDivDown(int256(getPriceBorrowOracle()), int256(Constants.ORACLE_DIVIDER));
 
         // futureCollateral should be round up
         // because we want to maximize the amount that protocol will get from the user
         // TODO: double check this with experts
-        int256 futureCollateral = futureCollateralAssets.mulDivUp(int256(getPriceCollateralOracle()), int256(Constants.ORACLE_DEVIDER));
+        int256 futureCollateral = futureCollateralAssets.mulDivUp(int256(getPriceCollateralOracle()), int256(Constants.ORACLE_DIVIDER));
 
         // futureRewardBorrow should be round down
         // because we want to minimize the amount that protocol will pay to the user
         // TODO: double check this with experts
-        int256 futureRewardBorrow = futureRewardBorrowAssets.mulDivDown(int256(getPriceBorrowOracle()), int256(Constants.ORACLE_DEVIDER));
+        int256 futureRewardBorrow = futureRewardBorrowAssets.mulDivDown(int256(getPriceBorrowOracle()), int256(Constants.ORACLE_DIVIDER));
 
         // TODO: precheck futureRewardBorrow >= 0
 
         // futureRewardCollateral should be round up
         // because we want to maximize the amount that protocol will get from the user
         // TODO: double check this with experts
-        int256 futureRewardCollateral = futureRewardCollateralAssets.mulDivUp(int256(getPriceCollateralOracle()), int256(Constants.ORACLE_DEVIDER));
+        int256 futureRewardCollateral = futureRewardCollateralAssets.mulDivUp(int256(getPriceCollateralOracle()), int256(Constants.ORACLE_DIVIDER));
 
         // TODO: precheck futureRewardCollateral <= 0
 

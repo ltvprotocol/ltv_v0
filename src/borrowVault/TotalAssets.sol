@@ -4,14 +4,15 @@ pragma solidity ^0.8.13;
 import "../State.sol";
 import "../Constants.sol";
 import "../Structs.sol";
+import '../utils/MulDiv.sol';
 
 abstract contract TotalAssets is State {
 
+    using uMulDiv for uint256;
     function totalAssets() public view returns (uint256) {
         ConvertedAssets memory convertedAssets = recoverConvertedAssets();
-        int256 signedTotalAssets = convertedAssets.collateral - convertedAssets.borrow;
         // Add 1 to avoid vault attack
-        return uint256(signedTotalAssets) + 1;
+        return uint256(convertedAssets.collateral - convertedAssets.borrow).mulDivUp(Constants.ORACLE_DIVIDER, getPrices().borrow) + 1;
     }
 
 }

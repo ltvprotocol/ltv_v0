@@ -45,4 +45,8 @@ contract MockDummyLTV is DummyLTV {
     function mintFreeTokens(uint256 amount, address receiver) public {
       _mint(receiver, amount);
     }
+
+    function burnTokens(uint256 amount, address owner) public {
+      _burn(owner, amount);
+    }
 }

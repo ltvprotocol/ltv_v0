@@ -9,20 +9,23 @@ import "../ERC20.sol";
 import "../Cases.sol";
 import "../math/MintRedeamBorrow.sol";
 
-abstract contract PreviewMint is State, MintRedeamBorrow {
+abstract contract PreviewMint is State, TotalAssets, MintRedeamBorrow {
 
     using uMulDiv for uint256;
 
     function previewMint(uint256 shares) external view returns (uint256 assets) {
 
-        int256 signedAssets = previewMintRedeamBorrow(-1*int256(shares));
+        uint256 sharesInAssets = shares.mulDivUp(totalAssets(), totalSupply());
+        uint256 sharesInUnderlying = sharesInAssets.mulDivUp(getPrices().borrow, Constants.ORACLE_DIVIDER);
+
+        int256 assetsInUnderlying = previewMintRedeamBorrow(int256(sharesInUnderlying));
         // int256 signedShares = previewMintRedeamBorrow(-1*int256(assets));
 
-        if (signedAssets > 0) {
+        if (assetsInUnderlying > 0) {
             return 0;
         }
 
-        return uint256(signedAssets);
+        return uint256(-assetsInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, getPrices().borrow);
     }
 
 }

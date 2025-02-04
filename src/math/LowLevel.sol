@@ -14,8 +14,8 @@ abstract contract LowLevel is State,  CommonBorrowCollateral {
 
     function calculateLowLevel(int256 borrow, int256 collateral) internal view returns (int256 shares) {
 
-        int256 deltaRealBorrow = borrow * int256(getPriceBorrowOracle() / Constants.ORACLE_DEVIDER);
-        int256 deltaRealCollateral = collateral * int256(getPriceBorrowOracle() / Constants.ORACLE_DEVIDER);
+        int256 deltaRealBorrow = borrow * int256(getPriceBorrowOracle() / Constants.ORACLE_DIVIDER);
+        int256 deltaRealCollateral = collateral * int256(getPriceBorrowOracle() / Constants.ORACLE_DIVIDER);
 
         ConvertedAssets memory convertedAssets = recoverConvertedAssets();
 
@@ -57,7 +57,7 @@ abstract contract LowLevel is State,  CommonBorrowCollateral {
                 + deltaFuture.deltaFuturePaymentBorrow;
                 // + deltaFuture.deltaProtocolFutureRewardBorrow
 
-            bool validityTargetLTV = (convertedAssets.collateral + deltaCollateral) * int256(Constants.TARGET_LTV) == int256(Constants.TARGET_LTV_DEVIDER) * (convertedAssets.borrow + deltaBorrow);
+            bool validityTargetLTV = (convertedAssets.collateral + deltaCollateral) * int256(Constants.TARGET_LTV) == int256(Constants.TARGET_LTV_DIVIDER) * (convertedAssets.borrow + deltaBorrow);
 
             // TODO: mb think about delta here, not exact ==
 

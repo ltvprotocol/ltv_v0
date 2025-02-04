@@ -18,19 +18,16 @@ abstract contract Withdraw is State, StateTransition, TotalAssets, ERC20, Deposi
 
     function withdraw(uint256 assets, address receiver, address owner) external returns (uint256 shares) {
 
-        (int256 signedShares, DeltaFuture memory deltaFuture) = calculateDepositWithdrawBorrow(int256(assets));
+        (int256 sharesInUnderlying, DeltaFuture memory deltaFuture) = calculateDepositWithdrawBorrow(int256(assets));
 
-        if (signedShares < 0) {
+        if (sharesInUnderlying > 0) {
             return 0;
         } else{
-            shares = uint256(-signedShares);
+            uint256 sharesInAssets = uint256(-sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, getPrices().borrow);
+            shares = sharesInAssets.mulDivDown(totalSupply(), totalAssets());
         }
 
-        uint256 supply = totalSupply();
-
-        supply == 0 ? shares : shares.mulDivDown(supply, totalAssets());
-
-        _burn(owner, supply);
+        _burn(owner, shares);
 
         // TODO: fix this - return from calculateDepositWithdrawBorrow
         ConvertedAssets memory convertedAssets = recoverConvertedAssets();
@@ -41,7 +38,7 @@ abstract contract Withdraw is State, StateTransition, TotalAssets, ERC20, Deposi
 
         borrow(assets);
 
-        borrowToken.transferFrom(address(this), receiver, assets);
+        borrowToken.transfer(receiver, assets);
 
         return shares;
     }

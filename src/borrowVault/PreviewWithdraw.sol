@@ -14,18 +14,16 @@ abstract contract PreviewWithdraw is State, TotalAssets, ERC20, DepositWithdrawB
     using uMulDiv for uint256;
 
     function previewWithdraw(uint256 assets) external view returns (uint256 shares) {
+        int256 sharesInUnderlying = previewDepositWithdrawBorrow(int256(assets));
 
-        int256 signedShares = previewDepositWithdrawBorrow(int256(assets));
-
-        if (signedShares < 0) {
+        if (sharesInUnderlying > 0) {
             return 0;
         } else{
-            shares = uint256(-signedShares);
+            uint256 sharesInAssets = uint256(-sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, getPrices().borrow);
+            shares = sharesInAssets.mulDivDown(totalSupply(), totalAssets());
         }
 
-        uint256 supply = totalSupply();
-
-        return supply == 0 ? shares : shares.mulDivDown(supply, totalAssets());
+        return shares;
     }
 
 }

@@ -12,11 +12,11 @@ import "./CommonBorrowCollateral.sol";
 abstract contract DepositWithdrawBorrow is State, DeltaRealBorrowAndDeltaRealCollateral, CommonBorrowCollateral {
 
     function calculateDepositWithdrawBorrow(int256 assets) internal view returns (
-        int256 shares,
+        int256 sharesAsAssets,
         DeltaFuture memory deltaFuture
     ) {
 
-        int256 deltaRealBorrow = assets * int256(getPriceBorrowOracle() / Constants.ORACLE_DEVIDER);
+        int256 deltaRealBorrow = assets * int256(getPriceBorrowOracle() / Constants.ORACLE_DIVIDER);
         int256 deltaRealCollateral = 0;
 
         ConvertedAssets memory convertedAssets = recoverConvertedAssets();
@@ -40,7 +40,7 @@ abstract contract DepositWithdrawBorrow is State, DeltaRealBorrowAndDeltaRealCol
 
         deltaFuture.deltaFuturePaymentBorrow = calculateDeltaFuturePaymentBorrow(cases, convertedAssets, deltaFuture.deltaFutureBorrow);
 
-        shares = deltaRealCollateral 
+        sharesAsAssets = deltaRealCollateral 
                + deltaFuture.deltaFutureCollateral
                + deltaFuture.deltaUserFutureRewardCollateral
                + deltaFuture.deltaFuturePaymentCollateral
@@ -51,9 +51,9 @@ abstract contract DepositWithdrawBorrow is State, DeltaRealBorrowAndDeltaRealCol
 
     }
 
-    function previewDepositWithdrawBorrow(int256 assets) internal view returns (int256 shares) {
+    function previewDepositWithdrawBorrow(int256 assets) internal view returns (int256 sharesAsAssets) {
 
-        (shares, ) = calculateDepositWithdrawBorrow(assets);
+        (sharesAsAssets, ) = calculateDepositWithdrawBorrow(assets);
 
     }
 

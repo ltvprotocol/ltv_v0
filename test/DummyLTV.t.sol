@@ -16,17 +16,22 @@ contract DummyLTVTest is Test {
     MockDummyLending public lendingProtocol;
     IDummyOracle public oracle;
 
-    modifier initializeTest(
+    modifier initializeBalancedTest(
         address owner,
+        address user,
         uint256 borrowAmount,
-        address user
+        int256 futureBorrow,
+        int256 futureCollateral,
+        int256 auctionReward
     ) {
         vm.assume(owner != address(0));
         vm.assume(user != address(0));
+        vm.assume(user != owner);
+        vm.assume(int256(borrowAmount) >= futureBorrow);
         collateralToken = new MockERC20();
-        collateralToken.initialize("Collateral", "COL", 18);
+        collateralToken.initialize('Collateral', 'COL', 18);
         borrowToken = new MockERC20();
-        borrowToken.initialize("Borrow", "BOR", 18);
+        borrowToken.initialize('Borrow', 'BOR', 18);
 
         lendingProtocol = new MockDummyLending(owner);
         oracle = IDummyOracle(new DummyOracle(owner));
@@ -47,52 +52,141 @@ contract DummyLTVTest is Test {
         deal(address(borrowToken), address(lendingProtocol), borrowAmount);
         deal(address(borrowToken), user, borrowAmount);
 
-        lendingProtocol.setSupplyBalance(
-            address(collateralToken),
-            borrowAmount * 5 * 4
-        );
-        lendingProtocol.setBorrowBalance(
-            address(borrowToken),
-            borrowAmount * 10 * 3
-        );
+        dummyLTV.mintFreeTokens(borrowAmount * 1000, owner);
 
-        dummyLTV.mintFreeTokens(borrowAmount * 100000, owner);
-
+        vm.roll(20);
+        dummyLTV.setStartAuction(10);
+        dummyLTV.setFutureBorrowAssets(futureBorrow);
+        dummyLTV.setFutureCollateralAssets(futureCollateral / 2);
+        
+        if (futureBorrow < 0) {
+            lendingProtocol.setSupplyBalance(address(collateralToken), uint256(int256(borrowAmount) * 5 * 4 - futureCollateral / 2));
+            lendingProtocol.setBorrowBalance(address(borrowToken), uint256(int256(borrowAmount) * 10 * 3 - futureBorrow - auctionReward));
+            dummyLTV.setFutureRewardBorrowAssets(auctionReward);
+        } else {
+            lendingProtocol.setSupplyBalance(address(collateralToken), uint256(int256(borrowAmount) * 5 * 4 - futureCollateral / 2 - auctionReward / 2));
+            lendingProtocol.setBorrowBalance(address(borrowToken), uint256(int256(borrowAmount) * 10 * 3 - futureBorrow));
+            dummyLTV.setFutureRewardCollateralAssets(auctionReward / 2);
+        }
+        
         vm.startPrank(user);
         _;
     }
 
     function test_totalAssets(
         address owner,
-        uint160 amount,
-        address user
-    ) public initializeTest(owner, 0, user) {
+        address user,
+        uint160 amount
+    ) public initializeBalancedTest(owner, user, 0, 0, 0, 0) {
         assertEq(dummyLTV.totalAssets(), 1);
-        lendingProtocol.setSupplyBalance(
-            address(collateralToken),
-            uint256(amount) * 2
-        );
+        lendingProtocol.setSupplyBalance(address(collateralToken), uint256(amount) * 2);
         lendingProtocol.setBorrowBalance(address(borrowToken), amount);
-        assertEq(dummyLTV.totalAssets(), 3 * uint256(amount) * 100 + 1);
+        assertEq(dummyLTV.totalAssets(), 3 * uint256(amount) + 1);
     }
 
-    function test_basicCmbc(
+    function test_convertToAssets(
         address owner,
-        uint112 amount,
-        address user
-    ) public initializeTest(owner, amount, user) {
+        address user,
+        uint112 amount
+    ) public initializeBalancedTest(owner, user, amount, 9500, 9500, -1000) {
+        assertEq(dummyLTV.convertToAssets(uint256(amount) * 100), amount);
+    }
+
+    function test_convertToShares(
+        address owner,
+        address user,
+        uint112 amount
+    ) public initializeBalancedTest(owner, user, amount, 9500, 9500, -1000) {
+        assertEq(dummyLTV.convertToShares(amount), uint256(amount) * 100);
+    }
+
+    function test_previewDeposit(
+        address owner,
+        address user,
+        uint112 amount
+    ) public initializeBalancedTest(owner, user, amount, 9500, 9500, -1000) {
+        assertEq(dummyLTV.previewDeposit(amount), uint256(amount) * 100); 
+    }
+
+    function test_previewMint(
+        address owner,
+        address user,
+        uint112 amount
+    ) public initializeBalancedTest(owner, user, amount, 9500, 9500, -1000) {
+        assertEq(dummyLTV.previewMint(uint256(amount) * 100), amount);
+    }
+
+    function test_basicCmbcDeposit(
+        address owner,
+        address user,
+        uint112 amount
+    ) public initializeBalancedTest(owner, user, amount, 9500, 9500, -1000) {
         // auction + current state = balanced vault. State is balanced. Auction is also satisfies LTV(not really realistic but acceptable)
-        dummyLTV.setFutureBorrowAssets(7500);
-        dummyLTV.setFutureCollateralAssets(5005);
-        dummyLTV.mintFreeTokens(2500 * 10000, owner);
-
-        vm.roll(20);
-        dummyLTV.setStartAuction(10);
-        dummyLTV.setFutureRewardCollateralAssets(-5);
-
         borrowToken.approve(address(dummyLTV), amount);
         dummyLTV.deposit(amount, user);
 
-        assertEq(dummyLTV.balanceOf(user), uint256(amount) * 10000);
+        assertEq(dummyLTV.balanceOf(user), uint256(amount) * 100);
     }
+
+    function test_basicCmbcMint(
+        address owner,
+        address user,
+        uint112 amount
+    ) public initializeBalancedTest(owner, user, amount, 9500, 9500, -1000) {
+        borrowToken.approve(address(dummyLTV), amount);
+        dummyLTV.mint(uint256(amount) * 100, user);
+
+        assertEq(dummyLTV.balanceOf(user), uint256(amount) * 100);
+    }
+
+    function test_previewWithdraw(
+        address owner,
+        address user,
+        uint112 amount
+    ) public initializeBalancedTest(owner, user, amount, -9500, -9500, 1000) {
+        assertEq(dummyLTV.previewWithdraw(uint256(amount)), uint256(amount) * 100);
+    }
+
+    function test_previewRedeem(
+        address owner,
+        address user,
+        uint112 amount
+    ) public initializeBalancedTest(owner, user, amount, -9500, -9500, 1000) {
+        assertEq(dummyLTV.previewRedeem(uint256(amount) * 100), uint256(amount));
+    }
+
+    function test_withdraw(
+        address owner,
+        address user,
+        uint112 amount
+    ) public initializeBalancedTest(owner, user, amount, -9500, -9500, 1000) {
+        vm.stopPrank();
+        vm.startPrank(owner);
+        dummyLTV.transfer(user, uint256(amount) * 100);
+
+        vm.startPrank(user);
+        assertEq(dummyLTV.balanceOf(user), uint256(amount) * 100);
+        dummyLTV.withdraw(uint256(amount), user, user);
+        assertEq(dummyLTV.balanceOf(user), 0);
+    }
+
+    function test_redeem(
+        address owner,
+        address user,
+        uint112 amount
+    ) public initializeBalancedTest(owner, user, amount, -9500, -9500, 1000) {
+        vm.stopPrank();
+        vm.startPrank(owner);
+        dummyLTV.transfer(user, uint256(amount) * 100);
+
+        vm.startPrank(user);
+        assertEq(dummyLTV.balanceOf(user), uint256(amount) * 100);
+        dummyLTV.redeem(uint256(amount) * 100, user, user);
+        assertEq(dummyLTV.balanceOf(user), 0);
+    }
+
+    function test_zeroAuction(address owner, address user, uint112 amount) public initializeBalancedTest(owner, user, amount, 0, 0, 0) {
+        assertEq(dummyLTV.previewDeposit(amount), uint256(amount) * 100);
+    }
+
 }
