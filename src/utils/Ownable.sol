@@ -5,24 +5,24 @@ contract Ownable {
 
   address public owner;
 
-  error IvalidOwner(address user);
+  //error IvalidOwner(address user);
 
-  error UserRestricted(address user);
+  //error UserRestricted(address user);
 
   event OwnerUpdated(address oldOwner, address newOwner);
 
   constructor(address initialOwner) {
-    require(initialOwner != address(0), IvalidOwner(initialOwner));
+    require(initialOwner != address(0), "");
     _transferOwnership(initialOwner);
   }
 
   modifier onlyOwner() {
-    require(msg.sender == owner, UserRestricted(msg.sender));
+    require(msg.sender == owner, "");
     _;
   }
 
   function transferOwnership(address newOwner) external onlyOwner {
-    require(newOwner != address(0), IvalidOwner(newOwner));
+    require(newOwner != address(0), "");
     _transferOwnership(newOwner);
   }
 
