@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.13;
 
-//import './interfaces/IDummyLending.sol';
-//import '../utils/Ownable.sol';
 import 'forge-std/interfaces/IERC20.sol';
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-contract HodlMyBeer {
+contract HodlMyBeerLending is Initializable {
     mapping(address => uint256) public supplyBalance;
     mapping(address => uint256) public borrowBalance;
 
@@ -14,6 +13,11 @@ contract HodlMyBeer {
     // TODO: add space for upgradability
 
     // TODO: add events
+
+    function initialize(address _borrowToken, address _collateralToken) public initializer {
+        borrowToken = _borrowToken;
+        collateralToken = _collateralToken;
+    }
 
     function borrow(uint256 amount) external {
 
