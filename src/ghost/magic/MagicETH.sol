@@ -9,7 +9,15 @@ contract MagicETH is Initializable, OwnableUpgradeable, ERC20Upgradeable {
 
     function initialize(address _owner) public initializer {
         __Ownable_init(_owner);
-        __Context_init();
+        //__Context_init();
         __ERC20_init("MagicETH", "MAE");
+    }
+
+    function mint(address to, uint256 amount) public onlyOwner {
+        _mint(to, amount);
+    }
+
+    function burn(address from, uint256 amount) public {
+        _burn(from, amount);
     }
 }
