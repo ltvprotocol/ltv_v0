@@ -122,7 +122,7 @@ abstract contract State is IOracle {
         });
     }
 
-    function getPrices() internal view returns (Prices memory) {
+    function getPrices() internal view virtual returns (Prices memory) {
         return Prices({
             borrow: getPriceBorrowOracle(),
             collateral: getPriceCollateralOracle(),

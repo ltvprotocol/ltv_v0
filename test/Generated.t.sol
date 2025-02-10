@@ -1,0 +1,328 @@
+
+// SPDX-License-Identifier: BUSL-1.1
+pragma solidity ^0.8.13;
+
+import '../src/ltv_lendings/DummyLTV.sol';
+import '../src/dummy/DummyOracle.sol';
+import 'forge-std/Test.sol';
+import {MockERC20} from 'forge-std/mocks/MockERC20.sol';
+import {MockDummyLending} from './utils/MockDummyLending.sol';
+import './utils/MockDummyLTV.sol';
+import '../src/Constants.sol';
+
+contract GeneratedTests is Test {
+    MockDummyLTV public dummyLTV;
+    MockERC20 public collateralToken;
+    MockERC20 public borrowToken;
+    MockDummyLending public lendingProtocol;
+    IDummyOracle public oracle;
+
+    modifier initializeTest(
+        uint256 realBorrow,
+        uint256 realCollateral,
+        int256 futureBorrow,
+        int256 futureCollateral,
+        int256 auctionReward,
+        uint16 auctionStep
+    ) {
+        address owner = msg.sender;
+
+        collateralToken = new MockERC20();
+        collateralToken.initialize('Collateral', 'COL', 18);
+        borrowToken = new MockERC20();
+        borrowToken.initialize('Borrow', 'BOR', 18);
+
+        lendingProtocol = new MockDummyLending(owner);
+        oracle = IDummyOracle(new DummyOracle(owner));
+
+        dummyLTV = new MockDummyLTV(
+            owner,
+            address(collateralToken),
+            address(borrowToken),
+            lendingProtocol,
+            oracle,
+            10**16,
+            10**16
+        );
+
+        vm.startPrank(owner);
+        Ownable(address(lendingProtocol)).transferOwnership(address(dummyLTV));
+        oracle.setAssetPrice(address(borrowToken), 100 * 10 ** 18);
+        oracle.setAssetPrice(address(collateralToken), 100 * 10 ** 18);
+
+        lendingProtocol.setBorrowBalance(address(borrowToken), realBorrow);
+        lendingProtocol.setSupplyBalance(address(collateralToken), realCollateral);
+
+        vm.roll(Constants.AMOUNT_OF_STEPS);
+        dummyLTV.setStartAuction(auctionStep);
+        dummyLTV.setFutureBorrowAssets(futureBorrow);
+        dummyLTV.setFutureCollateralAssets(futureCollateral);
+        
+        if (auctionReward > 0) {
+          dummyLTV.setFutureRewardBorrowAssets(auctionReward);
+        } else {
+          dummyLTV.setFutureRewardCollateralAssets(auctionReward);
+        }
+        dummyLTV.mintFreeTokens((dummyLTV.totalAssets() - 1) * 100, address(this));
+        vm.stopPrank();
+
+        deal(address(borrowToken), address(lendingProtocol), type(uint112).max);
+        deal(address(borrowToken), address(this), type(uint112).max);
+        borrowToken.approve(address(dummyLTV), type(uint112).max);
+        _;
+    }
+
+    
+  function test_cna_deposit() public initializeTest(56000, 75050, 5000, 5000, -50, 600.0) {
+      uint256 deltaShares = dummyLTV.deposit(1000, address(this));
+      
+      assertEq(deltaShares, 1000 * 100);
+      assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 75050);
+      assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 55000);
+      assertEq(dummyLTV.futureBorrowAssets(), 5000);
+      assertEq(dummyLTV.futureCollateralAssets(), 5000);
+    }
+  function test_cna_mint() public initializeTest(56000, 75050, 5000, 5000, -50, 600.0) {
+      uint256 deltaBorrow = dummyLTV.mint(1000 * 100, address(this));
+      
+      assertEq(deltaBorrow, 1000);
+      assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 75050);
+      assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 55000);
+      assertEq(dummyLTV.futureBorrowAssets(), 5000);
+      assertEq(dummyLTV.futureCollateralAssets(), 5000);
+    }
+  function test_cna_withdraw() public initializeTest(54000, 75050, 5000, 5000, -50, 600.0) {
+      uint256 deltaShares = dummyLTV.withdraw(1000, address(this), address(this));
+      
+      assertEq(deltaShares, 1000 * 100);
+      assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 75050);
+      assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 55000);
+      assertEq(dummyLTV.futureBorrowAssets(), 5000);
+      assertEq(dummyLTV.futureCollateralAssets(), 5000);
+    }
+  function test_cna_redeem() public initializeTest(54000, 75050, 5000, 5000, -50, 600.0) {
+      uint256 deltaBorrow = dummyLTV.redeem(100000, address(this), address(this));
+      
+      assertEq(deltaBorrow, 1000);
+      assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 75050);
+      assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 55000);
+      assertEq(dummyLTV.futureBorrowAssets(), 5000);
+      assertEq(dummyLTV.futureCollateralAssets(), 5000);
+    }
+  function test_cmbc_deposit() public initializeTest(55000, 75050, 5000, 5000, -50, 600.0) {
+      uint256 deltaShares = dummyLTV.deposit(2060, address(this));
+      
+      assertEq(deltaShares, 1980 * 100);
+      assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 75050);
+      assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 52940);
+      assertEq(dummyLTV.futureBorrowAssets(), 13000);
+      assertEq(dummyLTV.futureCollateralAssets(), 13000);
+    }
+  function test_cmbc_mint() public initializeTest(55000, 75050, 5000, 5000, -50, 600.0) {
+      uint256 deltaBorrow = dummyLTV.mint(1980 * 100, address(this));
+      
+      assertEq(deltaBorrow, 2060);
+      assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 75050);
+      assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 52940);
+      assertEq(dummyLTV.futureBorrowAssets(), 13000);
+      assertEq(dummyLTV.futureCollateralAssets(), 13000);
+    }
+  function test_cmbc_withdraw() public initializeTest(35000, 75050, 5000, 5000, -50, 600.0) {
+      uint256 deltaShares = dummyLTV.withdraw(9700, address(this), address(this));
+      
+      assertEq(deltaShares, 10100 * 100);
+      assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 75050);
+      assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 44700);
+      assertEq(dummyLTV.futureBorrowAssets(), 45000);
+      assertEq(dummyLTV.futureCollateralAssets(), 45000);
+    }
+  function test_cmbc_redeem() public initializeTest(35000, 75050, 5000, 5000, -50, 600.0) {
+      uint256 deltaBorrow = dummyLTV.redeem(1010000, address(this), address(this));
+      
+      assertEq(deltaBorrow, 9700);
+      assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 75050);
+      assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 44700);
+      assertEq(dummyLTV.futureBorrowAssets(), 45000);
+      assertEq(dummyLTV.futureCollateralAssets(), 45000);
+    }
+  function test_cmcb_deposit() public initializeTest(74950, 85000, -5000, -5000, 50, 600.0) {
+      uint256 deltaShares = dummyLTV.deposit(9040, address(this));
+      
+      assertEq(deltaShares, 9000 * 100);
+      assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 85000);
+      assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 65910);
+      assertEq(dummyLTV.futureBorrowAssets(), -9000);
+      assertEq(dummyLTV.futureCollateralAssets(), -9000);
+    }
+  function test_cmcb_mint() public initializeTest(74950, 85000, -5000, -5000, 50, 600.0) {
+      uint256 deltaBorrow = dummyLTV.mint(9000 * 100, address(this));
+      
+      assertEq(deltaBorrow, 9040);
+      assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 85000);
+      assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 65910);
+      assertEq(dummyLTV.futureBorrowAssets(), -9000);
+      assertEq(dummyLTV.futureCollateralAssets(), -9000);
+    }
+  function test_cmcb_withdraw() public initializeTest(64950, 85000, -5000, -5000, 50, 600.0) {
+      uint256 deltaShares = dummyLTV.withdraw(960, address(this), address(this));
+      
+      assertEq(deltaShares, 1000 * 100);
+      assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 85000);
+      assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 65910);
+      assertEq(dummyLTV.futureBorrowAssets(), -9000);
+      assertEq(dummyLTV.futureCollateralAssets(), -9000);
+    }
+  function test_cmcb_redeem() public initializeTest(64950, 85000, -5000, -5000, 50, 600.0) {
+      uint256 deltaBorrow = dummyLTV.redeem(100000, address(this), address(this));
+      
+      assertEq(deltaBorrow, 960);
+      assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 85000);
+      assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 65910);
+      assertEq(dummyLTV.futureBorrowAssets(), -9000);
+      assertEq(dummyLTV.futureCollateralAssets(), -9000);
+    }
+  function test_cebc_deposit() public initializeTest(64950, 85000, -5000, -5000, 50, 600.0) {
+      uint256 deltaShares = dummyLTV.deposit(960, address(this));
+      
+      assertEq(deltaShares, 976 * 100);
+      assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 85000);
+      assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 63990);
+      assertEq(dummyLTV.futureBorrowAssets(), -1000);
+      assertEq(dummyLTV.futureCollateralAssets(), -1000);
+    }
+  function test_cebc_mint() public initializeTest(64950, 85000, -5000, -5000, 50, 600.0) {
+      uint256 deltaBorrow = dummyLTV.mint(976 * 100, address(this));
+      
+      assertEq(deltaBorrow, 960);
+      assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 85000);
+      assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 63990);
+      assertEq(dummyLTV.futureBorrowAssets(), -1000);
+      assertEq(dummyLTV.futureCollateralAssets(), -1000);
+    }
+  function test_cebc_withdraw() public initializeTest(54950, 85000, -5000, -5000, 50, 600.0) {
+      uint256 deltaShares = dummyLTV.withdraw(9040, address(this), address(this));
+      
+      assertEq(deltaShares, 9024 * 100);
+      assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 85000);
+      assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 63990);
+      assertEq(dummyLTV.futureBorrowAssets(), -1000);
+      assertEq(dummyLTV.futureCollateralAssets(), -1000);
+    }
+  function test_cebc_redeem() public initializeTest(54950, 85000, -5000, -5000, 50, 600.0) {
+      uint256 deltaBorrow = dummyLTV.redeem(902400, address(this), address(this));
+      
+      assertEq(deltaBorrow, 9040);
+      assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 85000);
+      assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 63990);
+      assertEq(dummyLTV.futureBorrowAssets(), -1000);
+      assertEq(dummyLTV.futureCollateralAssets(), -1000);
+    }
+  function test_cecb_deposit() public initializeTest(65000, 75050, 5000, 5000, -50, 600.0) {
+      uint256 deltaShares = dummyLTV.deposit(8970, address(this));
+      
+      assertEq(deltaShares, 8986 * 100);
+      assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 75050);
+      assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 56030);
+      assertEq(dummyLTV.futureBorrowAssets(), 1000);
+      assertEq(dummyLTV.futureCollateralAssets(), 1000);
+    }
+  function test_cecb_mint() public initializeTest(65000, 75050, 5000, 5000, -50, 600.0) {
+      uint256 deltaBorrow = dummyLTV.mint(8986 * 100, address(this));
+      
+      assertEq(deltaBorrow, 8970);
+      assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 75050);
+      assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 56030);
+      assertEq(dummyLTV.futureBorrowAssets(), 1000);
+      assertEq(dummyLTV.futureCollateralAssets(), 1000);
+    }
+  function test_cecb_withdraw() public initializeTest(55000, 75050, 5000, 5000, -50, 600.0) {
+      uint256 deltaShares = dummyLTV.withdraw(1030, address(this), address(this));
+      
+      assertEq(deltaShares, 1014 * 100);
+      assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 75050);
+      assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 56030);
+      assertEq(dummyLTV.futureBorrowAssets(), 1000);
+      assertEq(dummyLTV.futureCollateralAssets(), 1000);
+    }
+  function test_cecb_redeem() public initializeTest(55000, 75050, 5000, 5000, -50, 600.0) {
+      uint256 deltaBorrow = dummyLTV.redeem(101400, address(this), address(this));
+      
+      assertEq(deltaBorrow, 1030);
+      assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 75050);
+      assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 56030);
+      assertEq(dummyLTV.futureBorrowAssets(), 1000);
+      assertEq(dummyLTV.futureCollateralAssets(), 1000);
+    }
+  function test_ceccb_deposit() public initializeTest(66000, 76040, 4000, 4000, -40, 600.0) {
+      uint256 deltaShares = dummyLTV.deposit(8010, address(this));
+      
+      assertEq(deltaShares, 7986 * 100);
+      assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 76040);
+      assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 57990);
+      assertEq(dummyLTV.futureBorrowAssets(), -4000);
+      assertEq(dummyLTV.futureCollateralAssets(), -4000);
+    }
+  function test_ceccb_mint() public initializeTest(66000, 76040, 4000, 4000, -40, 600.0) {
+      uint256 deltaBorrow = dummyLTV.mint(7986 * 100, address(this));
+      
+      assertEq(deltaBorrow, 8010);
+      assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 76040);
+      assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 57990);
+      assertEq(dummyLTV.futureBorrowAssets(), -4000);
+      assertEq(dummyLTV.futureCollateralAssets(), -4000);
+    }
+  function test_ceccb_withdraw() public initializeTest(56000, 76040, 4000, 4000, -40, 600.0) {
+      uint256 deltaShares = dummyLTV.withdraw(1990, address(this), address(this));
+      
+      assertEq(deltaShares, 2014 * 100);
+      assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 76040);
+      assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 57990);
+      assertEq(dummyLTV.futureBorrowAssets(), -4000);
+      assertEq(dummyLTV.futureCollateralAssets(), -4000);
+    }
+  function test_ceccb_redeem() public initializeTest(56000, 76040, 4000, 4000, -40, 600.0) {
+      uint256 deltaBorrow = dummyLTV.redeem(201400, address(this), address(this));
+      
+      assertEq(deltaBorrow, 1990);
+      assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 76040);
+      assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 57990);
+      assertEq(dummyLTV.futureBorrowAssets(), -4000);
+      assertEq(dummyLTV.futureCollateralAssets(), -4000);
+    }
+  function test_cecbc_deposit() public initializeTest(64950, 85000, -5000, -5000, 50, 600.0) {
+      uint256 deltaShares = dummyLTV.deposit(2230, address(this));
+      
+      assertEq(deltaShares, 2210 * 100);
+      assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 85000);
+      assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 62720);
+      assertEq(dummyLTV.futureBorrowAssets(), 4000);
+      assertEq(dummyLTV.futureCollateralAssets(), 4000);
+    }
+  function test_cecbc_mint() public initializeTest(64950, 85000, -5000, -5000, 50, 600.0) {
+      uint256 deltaBorrow = dummyLTV.mint(2210 * 100, address(this));
+      
+      assertEq(deltaBorrow, 2230);
+      assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 85000);
+      assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 62720);
+      assertEq(dummyLTV.futureBorrowAssets(), 4000);
+      assertEq(dummyLTV.futureCollateralAssets(), 4000);
+    }
+  function test_cecbc_withdraw() public initializeTest(54950, 85000, -5000, -5000, 50, 600.0) {
+      uint256 deltaShares = dummyLTV.withdraw(7770, address(this), address(this));
+      
+      assertEq(deltaShares, 7790 * 100);
+      assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 85000);
+      assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 62720);
+      assertEq(dummyLTV.futureBorrowAssets(), 4000);
+      assertEq(dummyLTV.futureCollateralAssets(), 4000);
+    }
+  function test_cecbc_redeem() public initializeTest(54950, 85000, -5000, -5000, 50, 600.0) {
+      uint256 deltaBorrow = dummyLTV.redeem(779000, address(this), address(this));
+      
+      assertEq(deltaBorrow, 7770);
+      assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 85000);
+      assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 62720);
+      assertEq(dummyLTV.futureBorrowAssets(), 4000);
+      assertEq(dummyLTV.futureCollateralAssets(), 4000);
+    }
+}

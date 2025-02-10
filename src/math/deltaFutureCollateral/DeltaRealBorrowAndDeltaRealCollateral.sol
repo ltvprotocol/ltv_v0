@@ -170,7 +170,7 @@ abstract contract DeltaRealBorrowAndDeltaRealCollateral {
         Cases memory cases,
         int256 deltaRealCollateral,
         int256 deltaRealBorrow
-    ) public pure returns (int256) {
+    ) public pure returns (int256, Cases memory) {
 
         int256 deltaFutureCollateral = 0;
 
@@ -196,12 +196,12 @@ abstract contract DeltaRealBorrowAndDeltaRealCollateral {
 
             if (cases.ncase == 6) {
                 // unexpected bihaviour
-                return 0;
+                return (0, cases);
             }
 
             cases = CasesOperator.generateCase(cases.ncase + 1);
         }
 
-        return deltaFutureCollateral;
+        return (deltaFutureCollateral, cases);
     }
 }

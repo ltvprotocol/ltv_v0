@@ -24,7 +24,7 @@ abstract contract DepositWithdrawBorrow is State, DeltaRealBorrowAndDeltaRealCol
 
         Cases memory cases = CasesOperator.generateCase(0);
 
-        deltaFuture.deltaFutureCollateral = calculateDeltaFutureCollateralByDeltaRealBorrowAndDeltaRealCollateral(prices, convertedAssets, cases, deltaRealCollateral, deltaRealBorrow);
+        (deltaFuture.deltaFutureCollateral, cases) = calculateDeltaFutureCollateralByDeltaRealBorrowAndDeltaRealCollateral(prices, convertedAssets, cases, deltaRealCollateral, deltaRealBorrow);
 
         // ∆shares = ∆userCollateral − ∆userBorrow
         // ∆userCollateral = ∆realCollateral + ∆futureCollateral + ∆userFutureRewardCollateral + ∆futurePaymentCollateral
