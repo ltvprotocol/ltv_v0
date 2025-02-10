@@ -3,9 +3,8 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-contract MagicETH is Initializable, OwnableUpgradeable, ERC20Upgradeable {
+contract MagicETH is OwnableUpgradeable, ERC20Upgradeable {
 
     function initialize(address _owner) public initializer {
         __Ownable_init(_owner);
