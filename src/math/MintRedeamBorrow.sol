@@ -5,7 +5,6 @@ import "../State.sol";
 import "../Constants.sol";
 import "../Structs.sol";
 import "../Cases.sol";
-import "../SharesAndRealCollateral.sol";
 import "../utils/MulDiv.sol";
 import "./CommonBorrowCollateral.sol";
 import "./deltaFutureCollateral/DeltaSharesAndDeltaRealCollateral.sol";
