@@ -7,4 +7,5 @@ library Constants {
     uint256 public constant TARGET_LTV = 3;
     uint256 public constant TARGET_LTV_DIVIDER = 4;
     int256 public constant SLIPPAGE_PRECISION = 10**18;
+    uint256 public constant LTV_PRECISION = 10**18;
 }

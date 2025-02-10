@@ -1,25 +1,23 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.13;
 
-import "../State.sol";
 import "../Constants.sol";
-import "../Structs.sol";
-import "./TotalAssets.sol";
 import "../ERC20.sol";
-import "../Cases.sol";
-import "../math/MintRedeamBorrow.sol";
-import "./TotalAssets.sol";
 import "../Lending.sol";
-import "../math/DepositWithdrawBorrow.sol";
 import "../math/NextStep.sol";
-import "./ConvertToAssets.sol";
 import "../StateTransition.sol";
+import './MaxMint.sol';
 
-abstract contract Mint is State, StateTransition, TotalAssets, ERC20, MintRedeamBorrow, Lending, NextStep {
+abstract contract Mint is MaxMint, ERC20, StateTransition, Lending, NextStep {
 
     using uMulDiv for uint256;
 
+    error ExceedsMaxMint(address receiver, uint256 shares, uint256 max);
+
     function mint(uint256 shares, address receiver) external returns (uint256 assets) {
+        uint256 max = maxMint(address(receiver));
+        require(shares <= max, ExceedsMaxMint(receiver, shares, max));
+
         uint256 sharesInAssets = shares.mulDivDown(totalAssets(), totalSupply());
         uint256 sharesInUnderlying = sharesInAssets.mulDivDown(getPrices().borrow, Constants.ORACLE_DIVIDER);
         (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = calculateMintRedeamBorrow(int256(sharesInUnderlying));

@@ -48,6 +48,14 @@ contract MockDummyLTV is DummyLTV {
         _burn(owner, amount);
     }
 
+    function setCollateralSlippage(uint256 value) public {
+        collateralSlippage = value;
+    }
+
+    function setBorrowSlippage(uint256 value) public {
+        borrowSlippage = value;
+    }
+
     function getPrices() internal view override returns (Prices memory) {
         Prices memory prices = super.getPrices();
         prices.collateralSlippage = collateralSlippage;

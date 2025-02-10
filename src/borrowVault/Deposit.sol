@@ -1,22 +1,25 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.13;
 
-import '../State.sol';
 import '../StateTransition.sol';
 import '../Constants.sol';
-import '../Structs.sol';
 import './TotalAssets.sol';
 import '../ERC20.sol';
-import '../Cases.sol';
 import '../Lending.sol';
 import '../math/DepositWithdrawBorrow.sol';
 import '../math/NextStep.sol';
+import './MaxDeposit.sol';
 
-abstract contract Deposit is State, StateTransition, TotalAssets, ERC20, DepositWithdrawBorrow, Lending, NextStep {
+abstract contract Deposit is MaxDeposit, TotalAssets, DepositWithdrawBorrow, ERC20, StateTransition, Lending, NextStep  {
 
     using uMulDiv for uint256;
+    
+    error ExceedsMaxDeposit(address receiver, uint256 assets, uint256 max);
 
     function deposit(uint256 assets, address receiver) external returns (uint256 shares) {
+        uint256 max = maxDeposit(address(receiver));
+        require(assets <= max, ExceedsMaxDeposit(receiver, assets, max));
+
         (
             int256 signedSharesInUnderlying,
             DeltaFuture memory deltaFuture

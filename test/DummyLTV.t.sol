@@ -70,6 +70,9 @@ contract DummyLTVTest is Test {
             lendingProtocol.setBorrowBalance(address(borrowToken), uint256(int256(borrowAmount) * 10 * 3 - futureBorrow));
             dummyLTV.setFutureRewardCollateralAssets(auctionReward / 2);
         }
+
+        dummyLTV.setMaxSafeLTV(9*10**17);
+        dummyLTV.setMinProfitLTV(5*10**17);
         
         vm.startPrank(user);
         _;
@@ -190,5 +193,33 @@ contract DummyLTVTest is Test {
     function test_zeroAuction(address owner, address user, uint112 amount) public initializeBalancedTest(owner, user, amount, 0, 0, 0) {
         assertEq(dummyLTV.previewDeposit(amount), uint256(amount) * 100);
     }
+
+    function test_maxDeposit(address owner, address user) public initializeBalancedTest(owner, user, 100000, 9500, 9500, -1000) {
+        assertEq(dummyLTV.maxDeposit(user), 994750);
+    }
+
+    function test_maxMint(address owner, address user) public initializeBalancedTest(owner, user, 100000, 9500, 9500, -1000) {
+        dummyLTV.setCollateralSlippage(10**16);
+
+        assertEq(dummyLTV.maxMint(user), 956118 * 100);
+    }
+
+    function test_maxWithdraw(address owner, address user) public initializeBalancedTest(owner, user, 100000, -9500, -9500, 1000) {
+        vm.stopPrank();
+        vm.startPrank(owner);
+        dummyLTV.transfer(user, dummyLTV.balanceOf(owner));
+        
+        dummyLTV.setBorrowSlippage(10**16);
+
+        assertEq(dummyLTV.maxWithdraw(user), 576048);
+    }
+
+    function test_maxRedeem(address owner, address user) public initializeBalancedTest(owner, user, 100000, -9500, -9500, 1000) {
+        vm.stopPrank();
+        vm.startPrank(owner);
+        dummyLTV.transfer(user, dummyLTV.balanceOf(owner));
+        assertEq(dummyLTV.maxRedeem(user), 600050 * 100);
+    }
+
 
 }

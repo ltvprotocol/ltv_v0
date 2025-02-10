@@ -1,22 +1,22 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.13;
 
-import "../State.sol";
 import "../StateTransition.sol";
 import "../Constants.sol";
-import "../Structs.sol";
-import "./TotalAssets.sol";
 import "../ERC20.sol";
-import "../Cases.sol";
 import "../Lending.sol";
-import "../math/DepositWithdrawBorrow.sol";
 import "../math/NextStep.sol";
+import './MaxWithdraw.sol';
 
-abstract contract Withdraw is State, StateTransition, TotalAssets, ERC20, DepositWithdrawBorrow, Lending, NextStep{
+abstract contract Withdraw is MaxWithdraw, ERC20, StateTransition, Lending, NextStep{
 
     using uMulDiv for uint256;
+    
+    error ExceedsMaxWithdraw(address owner, uint256 assets, uint256 max);
 
     function withdraw(uint256 assets, address receiver, address owner) external returns (uint256 shares) {
+        uint256 max = maxWithdraw(address(owner));
+        require(assets <= max, ExceedsMaxWithdraw(owner, assets, max));
 
         (int256 sharesInUnderlying, DeltaFuture memory deltaFuture) = calculateDepositWithdrawBorrow(int256(assets));
 
@@ -25,6 +25,10 @@ abstract contract Withdraw is State, StateTransition, TotalAssets, ERC20, Deposi
         } else{
             uint256 sharesInAssets = uint256(-sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, getPrices().borrow);
             shares = sharesInAssets.mulDivDown(totalSupply(), totalAssets());
+        }
+
+        if (owner != receiver) {
+            allowance[owner][receiver] -= shares;
         }
 
         _burn(owner, shares);
