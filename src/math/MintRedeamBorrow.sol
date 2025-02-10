@@ -9,7 +9,7 @@ import "../utils/MulDiv.sol";
 import "./CommonBorrowCollateral.sol";
 import "./deltaFutureCollateral/DeltaSharesAndDeltaRealCollateral.sol";
 
-abstract contract MintRedeamBorrow is State, SharesAndRealCollateral, DeltaSharesAndDeltaRealCollateral,  CommonBorrowCollateral {
+abstract contract MintRedeamBorrow is State, DeltaSharesAndDeltaRealCollateral,  CommonBorrowCollateral {
 
     using uMulDiv for uint256;
 
