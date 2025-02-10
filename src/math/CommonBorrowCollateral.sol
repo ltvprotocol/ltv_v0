@@ -5,7 +5,6 @@ import "../State.sol";
 import "../Constants.sol";
 import "../Structs.sol";
 import "../Cases.sol";
-import "../RealBorrowAndRealCollateral.sol";
 import "../utils/MulDiv.sol";
 
 abstract contract CommonBorrowCollateral is State {
