@@ -45,7 +45,7 @@ abstract contract Redeem is State, StateTransition, TotalAssets, ERC20, MintRede
 
         borrowToken.transfer(receiver, assets);
 
-        return shares;
+        return assets;
 
     }
 

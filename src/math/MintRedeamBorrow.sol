@@ -27,7 +27,7 @@ abstract contract MintRedeamBorrow is State, SharesAndRealCollateral, DeltaShare
 
         Cases memory cases = CasesOperator.generateCase(0);
 
-        deltaFuture.deltaFutureCollateral = calculateDeltaFutureCollateralByDeltaSharesAndDeltaRealCollateral(prices, convertedAssets, cases, deltaRealCollateral, deltaShares);
+        (deltaFuture.deltaFutureCollateral, cases) = calculateDeltaFutureCollateralByDeltaSharesAndDeltaRealCollateral(prices, convertedAssets, cases, deltaRealCollateral, deltaShares);
                                        
         // ∆shares = ∆userCollateral − ∆userBorrow
         // ∆userBorrow = ∆userCollateral - ∆shares

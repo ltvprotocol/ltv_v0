@@ -67,12 +67,12 @@ contract DeltaSharesAndDeltaRealBorrow {
 
         if (convertedAssets.futureBorrow != 0) {
             dividerWithOneMinusTargetLTV = -int256(int8(cases.cebc)) * convertedAssets.userFutureRewardBorrow.mulDivDown(DIVIDER, convertedAssets.futureBorrow);
-            dividerWithOneMinusTargetLTV = -int256(int8(cases.ceccb)) * int256(prices.borrowSlippage) * DIVIDER;
+            dividerWithOneMinusTargetLTV = -int256(int8(cases.ceccb)) * int256(prices.borrowSlippage);
             divider += -int256(int8(cases.cebc)) * convertedAssets.protocolFutureRewardBorrow.mulDivDown(DIVIDER, convertedAssets.futureBorrow);
             divider = int256(int8(cases.cecb)) * convertedAssets.protocolFutureRewardCollateral.mulDivUp((DIVIDER * int256(Constants.TARGET_LTV)), (convertedAssets.futureBorrow * int256(Constants.TARGET_LTV_DIVIDER)));
         }
 
-        dividerWithOneMinusTargetLTV = -int256(int8(cases.cmcb)) * int256(prices.borrowSlippage) * DIVIDER;
+        dividerWithOneMinusTargetLTV = -int256(int8(cases.cmcb)) * int256(prices.borrowSlippage);
         divider += dividerWithOneMinusTargetLTV.mulDivUp(int256(Constants.TARGET_LTV_DIVIDER - Constants.TARGET_LTV), int256(Constants.TARGET_LTV_DIVIDER));
 
         return divider;
@@ -84,14 +84,13 @@ contract DeltaSharesAndDeltaRealBorrow {
         Cases memory cases,
         int256 deltaRealBorrow,
         int256 deltaShares
-    ) public pure returns (int256) {
+    ) public pure returns (int256, Cases memory) {
 
         // ConvertedAssets memory convertedAssets = recoverConvertedAssets();
         // Prices memory prices = getPrices();
         int256 deltaFutureBorrow = 0;
 
         while (true) {
-
             int256 dividend = calculateDividentByDeltaSharesAndDeltaRealBorrow(cases, prices, convertedAssets, deltaRealBorrow, deltaShares);
 
             int256 divider = calculateDividerByDeltaSharesAndDeltaRealBorrow(cases, prices, convertedAssets);
@@ -112,12 +111,12 @@ contract DeltaSharesAndDeltaRealBorrow {
 
             if (cases.ncase == 6) {
                 // unexpected bihaviour
-                return 0;
+                return (0, cases);
             }
 
             cases = CasesOperator.generateCase(cases.ncase + 1);
         }
 
-        return deltaFutureBorrow;
+        return (deltaFutureBorrow, cases);
     }
 }

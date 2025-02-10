@@ -45,7 +45,7 @@ abstract contract Mint is State, StateTransition, TotalAssets, ERC20, MintRedeam
 
         _mint(receiver, shares);
 
-        return shares;
+        return assets;
     }
 
 }

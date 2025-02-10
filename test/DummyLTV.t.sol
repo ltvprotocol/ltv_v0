@@ -41,7 +41,9 @@ contract DummyLTVTest is Test {
             address(collateralToken),
             address(borrowToken),
             lendingProtocol,
-            oracle
+            oracle,
+            0,
+            0
         );
 
         vm.startPrank(owner);

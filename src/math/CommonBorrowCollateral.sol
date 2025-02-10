@@ -90,14 +90,13 @@ abstract contract CommonBorrowCollateral is State {
         int256 deltaFutureBorrow
     ) internal view returns (int256) {
         // cmcb × −∆futureBorrow × borrowSlippage +
-        // + cecb × −(∆futureBorrow + futureBorrow) × borrowSlippage
+        // + ceccb × −(∆futureBorrow + futureBorrow) × borrowSlippage
 
         int256 deltaFuturePaymentBorrow = -int256(int8(ncase.cmcb)) * deltaFutureBorrow * int256(getPrices().borrowSlippage);
-        deltaFuturePaymentBorrow -= int256(int8(ncase.cecb)) * (deltaFutureBorrow + convertedAssets.futureBorrow) * int256(getPrices().borrowSlippage);
+        deltaFuturePaymentBorrow -= int256(int8(ncase.ceccb)) * (deltaFutureBorrow + convertedAssets.futureBorrow) * int256(getPrices().borrowSlippage);
 
-        deltaFuturePaymentBorrow = deltaFuturePaymentBorrow / 10**18;
+        deltaFuturePaymentBorrow = deltaFuturePaymentBorrow / 10 ** 18;
 
         return deltaFuturePaymentBorrow;
     }
-
 }
