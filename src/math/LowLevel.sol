@@ -5,12 +5,11 @@ import "../State.sol";
 import "../Constants.sol";
 import "../Structs.sol";
 import "../Cases.sol";
-import "../SharesAndRealCollateral.sol";
 import "../utils/MulDiv.sol";
 import "./CommonBorrowCollateral.sol";
 import "./deltaFutureCollateral/DeltaSharesAndDeltaRealCollateral.sol";
 
-abstract contract LowLevel is State,  CommonBorrowCollateral {
+abstract contract LowLevel is State, CommonBorrowCollateral {
 
     function calculateLowLevel(int256 borrow, int256 collateral) internal view returns (int256 shares) {
 
