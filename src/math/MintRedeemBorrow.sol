@@ -10,11 +10,11 @@ import "../utils/MulDiv.sol";
 import "./CommonBorrowCollateral.sol";
 import "./deltaFutureCollateral/DeltaSharesAndDeltaRealCollateral.sol";
 
-abstract contract MintRedeamBorrow is CommonBorrowCollateral, SharesAndRealCollateral, DeltaSharesAndDeltaRealCollateral {
+abstract contract MintRedeemBorrow is CommonBorrowCollateral, SharesAndRealCollateral, DeltaSharesAndDeltaRealCollateral {
 
     using uMulDiv for uint256;
 
-    function calculateMintRedeamBorrow(int256 shares) internal view returns (
+    function calculateMintRedeemBorrow(int256 shares) internal view returns (
         int256 assets,
         DeltaFuture memory deltaFuture
     ) {
@@ -57,10 +57,10 @@ abstract contract MintRedeamBorrow is CommonBorrowCollateral, SharesAndRealColla
                         - deltaFuture.deltaFuturePaymentBorrow;
     }
 
-    function previewMintRedeamBorrow(int256 shares) internal view returns (
+    function previewMintRedeemBorrow(int256 shares) internal view returns (
         int256 assets
     ) {
-        (assets, ) = calculateMintRedeamBorrow(shares);
+        (assets, ) = calculateMintRedeemBorrow(shares);
     }
 
 }
