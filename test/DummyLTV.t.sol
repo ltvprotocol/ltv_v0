@@ -214,9 +214,7 @@ contract DummyLTVTest is Test {
         vm.startPrank(owner);
         dummyLTV.transfer(user, dummyLTV.balanceOf(owner));
 
-        dummyLTV.setBorrowSlippage(10**16);
-
-        assertEq(dummyLTV.maxWithdraw(user), 576048);
+        assertEq(dummyLTV.maxWithdraw(user), 600050);
         dummyLTV.withdraw(dummyLTV.maxWithdraw(user), user, user);
     }
 
@@ -224,7 +222,9 @@ contract DummyLTVTest is Test {
         vm.stopPrank();
         vm.startPrank(owner);
         dummyLTV.transfer(user, dummyLTV.balanceOf(owner));
-        assertEq(dummyLTV.maxRedeem(user), 600050 * 100);
+        dummyLTV.setBorrowSlippage(10**16);
+
+        assertEq(dummyLTV.maxRedeem(user), 625052 * 100);
         dummyLTV.redeem(dummyLTV.maxRedeem(user), user, user);
     }
 

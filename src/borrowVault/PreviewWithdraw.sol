@@ -9,7 +9,7 @@ abstract contract PreviewWithdraw is TotalAssets, DepositWithdrawBorrow {
 
     using uMulDiv for uint256;
 
-    function previewWithdraw(uint256 assets) external view returns (uint256 shares) {
+    function previewWithdraw(uint256 assets) public view returns (uint256 shares) {
         int256 sharesInUnderlying = previewDepositWithdrawBorrow(int256(assets));
 
         if (sharesInUnderlying > 0) {

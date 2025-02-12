@@ -7,8 +7,9 @@ import "../ERC20.sol";
 import "../Lending.sol";
 import "../math/NextStep.sol";
 import './MaxWithdraw.sol';
+import '../math/DepositWithdrawBorrow.sol';
 
-abstract contract Withdraw is MaxWithdraw, ERC20, StateTransition, Lending, NextStep{
+abstract contract Withdraw is MaxWithdraw, DepositWithdrawBorrow, ERC20, StateTransition, Lending, NextStep{
 
     using uMulDiv for uint256;
     
