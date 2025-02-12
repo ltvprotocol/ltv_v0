@@ -3,13 +3,13 @@ pragma solidity ^0.8.13;
 
 import "../Constants.sol";
 import "../ERC20.sol";
-import "../math/MintRedeemBorrow.sol";
+import "../math/MintRedeem.sol";
 import "../Lending.sol";
 import "../math/NextStep.sol";
 import "../StateTransition.sol";
 import './MaxRedeem.sol';
 
-abstract contract Redeem is MaxRedeem, MintRedeemBorrow, ERC20, StateTransition, Lending, NextStep{
+abstract contract Redeem is MaxRedeem, MintRedeem, ERC20, StateTransition, Lending, NextStep{
 
     using uMulDiv for uint256;
 
@@ -25,8 +25,8 @@ abstract contract Redeem is MaxRedeem, MintRedeemBorrow, ERC20, StateTransition,
         uint256 sharesInAssets = shares.mulDivUp(totalAssets(), totalSupply());
         uint256 sharesInUnderlying = sharesInAssets.mulDivUp(getPrices().borrow, Constants.ORACLE_DIVIDER);
 
-        (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = calculateMintRedeemBorrow(-int256(sharesInUnderlying));
-        // int256 signedShares = previewMintRedeemBorrow(-1*int256(assets));
+        (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = calculateMintRedeem(-int256(sharesInUnderlying));
+        // int256 signedShares = previewMintRedeem(-1*int256(assets));
 
         if (assetsInUnderlying < 0) {
             return 0;
