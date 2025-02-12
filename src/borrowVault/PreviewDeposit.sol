@@ -13,7 +13,7 @@ abstract contract PreviewDeposit is TotalAssets, DepositWithdraw, MintRedeem {
     function previewDeposit(uint256 assets) public view returns (uint256 shares) {
 
         int256 sharesInUnderlying = previewDepositWithdraw(-1*int256(assets), true);
-        
+
         uint256 sharesInAssets;
         if (sharesInUnderlying < 0) {
             return 0;

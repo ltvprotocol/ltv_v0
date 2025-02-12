@@ -20,7 +20,7 @@ abstract contract Mint is MaxMint, ERC20, StateTransition, Lending, NextStep {
 
         uint256 sharesInAssets = shares.mulDivDown(totalAssets(), totalSupply());
         uint256 sharesInUnderlying = sharesInAssets.mulDivDown(getPrices().borrow, Constants.ORACLE_DIVIDER);
-        (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = calculateMintRedeem(int256(sharesInUnderlying));
+        (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = calculateMintRedeem(int256(sharesInUnderlying), true);
         // int256 signedShares = previewMintRedeem(-1*int256(assets));
 
         if (assetsInUnderlying > 0) {

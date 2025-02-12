@@ -13,7 +13,7 @@ abstract contract PreviewRedeem is TotalAssets, DepositWithdraw, MintRedeem {
     function previewRedeem(uint256 shares) external view returns (uint256 assets) {
         uint256 sharesInAssets = shares.mulDivUp(totalAssets(), totalSupply());
         uint256 sharesInUnderlying = sharesInAssets.mulDivUp(getPrices().borrow, Constants.ORACLE_DIVIDER);
-        int256 assetsInUnderlying = previewMintRedeem(-1*int256(sharesInUnderlying));
+        int256 assetsInUnderlying = previewMintRedeem(-1*int256(sharesInUnderlying), true);
 
         if (assetsInUnderlying < 0) {
             return 0;

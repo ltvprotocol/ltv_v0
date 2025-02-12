@@ -15,7 +15,7 @@ abstract contract PreviewMint is TotalAssets, DepositWithdraw, MintRedeem {
         uint256 sharesInAssets = shares.mulDivUp(totalAssets(), totalSupply());
         uint256 sharesInUnderlying = sharesInAssets.mulDivUp(getPrices().borrow, Constants.ORACLE_DIVIDER);
 
-        int256 assetsInUnderlying = previewMintRedeem(int256(sharesInUnderlying));
+        int256 assetsInUnderlying = previewMintRedeem(int256(sharesInUnderlying), true);
         // int256 signedShares = previewMintRedeem(-1*int256(assets));
 
         if (assetsInUnderlying > 0) {

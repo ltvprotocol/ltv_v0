@@ -25,7 +25,7 @@ abstract contract Redeem is MaxRedeem, MintRedeem, ERC20, StateTransition, Lendi
         uint256 sharesInAssets = shares.mulDivUp(totalAssets(), totalSupply());
         uint256 sharesInUnderlying = sharesInAssets.mulDivUp(getPrices().borrow, Constants.ORACLE_DIVIDER);
 
-        (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = calculateMintRedeem(-int256(sharesInUnderlying));
+        (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = calculateMintRedeem(-int256(sharesInUnderlying), true);
         // int256 signedShares = previewMintRedeem(-1*int256(assets));
 
         if (assetsInUnderlying < 0) {
