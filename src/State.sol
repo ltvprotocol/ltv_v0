@@ -22,9 +22,7 @@ abstract contract State is IOracle {
     int256 public futureRewardBorrowAssets;
     int256 public futureRewardCollateralAssets;
     uint256 public startAuction;
-    uint128 public maxSafeLTV;
-    uint128 public minProfitLTV; 
-    
+
 
     // ERC 20 state
     uint256 public baseTotalSupply;
@@ -36,6 +34,10 @@ abstract contract State is IOracle {
 
     IERC20 public collateralToken;
     IERC20 public borrowToken;
+
+    uint128 public maxSafeLTV;
+    uint128 public minProfitLTV;
+    uint128 public targetLTV;
 
     using uMulDiv for uint256;
     using sMulDiv for int256;

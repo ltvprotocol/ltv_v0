@@ -48,6 +48,7 @@ contract GeneratedTests is Test {
         vm.startPrank(owner);
         dummyLTV.setMaxSafeLTV(9 * 10**17);
         dummyLTV.setMinProfitLTV(5 * 10**17);
+        dummyLTV.setTargetLTV(75*10**16);
         
         Ownable(address(lendingProtocol)).transferOwnership(address(dummyLTV));
         oracle.setAssetPrice(address(borrowToken), 100 * 10 ** 18);

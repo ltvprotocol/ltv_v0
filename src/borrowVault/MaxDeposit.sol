@@ -11,7 +11,7 @@ abstract contract MaxDeposit is State {
   function maxDeposit(address) public view returns(uint256) {
     ConvertedAssets memory convertedAssets = recoverConvertedAssets();
     
-    uint256 minProfitRealBorrow = uint256(convertedAssets.realCollateral).mulDivDown(minProfitLTV, Constants.LTV_PRECISION);
+    uint256 minProfitRealBorrow = uint256(convertedAssets.realCollateral).mulDivDown(minProfitLTV, Constants.LTV_DIVIDER);
     if (uint256(convertedAssets.realBorrow) <= minProfitRealBorrow) {
       return 0;
     }

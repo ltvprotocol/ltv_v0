@@ -73,6 +73,7 @@ contract DummyLTVTest is Test {
 
         dummyLTV.setMaxSafeLTV(9*10**17);
         dummyLTV.setMinProfitLTV(5*10**17);
+        dummyLTV.setTargetLTV(75*10**16);
         
         vm.startPrank(user);
         _;

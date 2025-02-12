@@ -57,7 +57,7 @@ abstract contract LowLevel is CommonBorrowCollateral {
                 + deltaFuture.deltaFuturePaymentBorrow;
                 // + deltaFuture.deltaProtocolFutureRewardBorrow
 
-            bool validityTargetLTV = (convertedAssets.collateral + deltaCollateral) * int256(Constants.TARGET_LTV) == int256(Constants.TARGET_LTV_DIVIDER) * (convertedAssets.borrow + deltaBorrow);
+            bool validityTargetLTV = (convertedAssets.collateral + deltaCollateral) * int128(targetLTV) == int256(Constants.LTV_DIVIDER) * (convertedAssets.borrow + deltaBorrow);
 
             // TODO: mb think about delta here, not exact ==
 

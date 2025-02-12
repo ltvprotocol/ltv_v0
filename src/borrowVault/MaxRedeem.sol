@@ -8,7 +8,7 @@ abstract contract MaxRedeem is TotalAssets {
   using uMulDiv for uint256;
   function maxRedeem(address owner) public view returns(uint256) {
     ConvertedAssets memory convertedAssets = recoverConvertedAssets();
-    uint256 maxSafeRealBorrow = uint256(convertedAssets.realCollateral).mulDivDown(maxSafeLTV, Constants.LTV_PRECISION);
+    uint256 maxSafeRealBorrow = uint256(convertedAssets.realCollateral).mulDivDown(maxSafeLTV, Constants.LTV_DIVIDER);
     if (maxSafeRealBorrow <= uint256(convertedAssets.realBorrow)) {
       return 0;
     }
