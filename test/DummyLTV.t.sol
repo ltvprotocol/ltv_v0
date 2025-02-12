@@ -51,8 +51,8 @@ contract DummyLTVTest is Test {
         oracle.setAssetPrice(address(borrowToken), 100 * 10 ** 18);
         oracle.setAssetPrice(address(collateralToken), 200 * 10 ** 18);
 
-        deal(address(borrowToken), address(lendingProtocol), borrowAmount);
-        deal(address(borrowToken), user, borrowAmount);
+        deal(address(borrowToken), address(lendingProtocol), type(uint112).max);
+        deal(address(borrowToken), user, type(uint112).max);
 
         dummyLTV.mintFreeTokens(borrowAmount * 1000, owner);
 
@@ -197,22 +197,27 @@ contract DummyLTVTest is Test {
 
     function test_maxDeposit(address owner, address user) public initializeBalancedTest(owner, user, 100000, 9500, 9500, -1000) {
         assertEq(dummyLTV.maxDeposit(user), 994750);
+        borrowToken.approve(address(dummyLTV), type(uint112).max);
+        dummyLTV.deposit(dummyLTV.maxDeposit(user), user);
     }
 
     function test_maxMint(address owner, address user) public initializeBalancedTest(owner, user, 100000, 9500, 9500, -1000) {
         dummyLTV.setCollateralSlippage(10**16);
 
         assertEq(dummyLTV.maxMint(user), 956118 * 100);
+        borrowToken.approve(address(dummyLTV), type(uint112).max);
+        dummyLTV.mint(dummyLTV.maxMint(user), user);
     }
 
     function test_maxWithdraw(address owner, address user) public initializeBalancedTest(owner, user, 100000, -9500, -9500, 1000) {
         vm.stopPrank();
         vm.startPrank(owner);
         dummyLTV.transfer(user, dummyLTV.balanceOf(owner));
-        
+
         dummyLTV.setBorrowSlippage(10**16);
 
         assertEq(dummyLTV.maxWithdraw(user), 576048);
+        dummyLTV.withdraw(dummyLTV.maxWithdraw(user), user, user);
     }
 
     function test_maxRedeem(address owner, address user) public initializeBalancedTest(owner, user, 100000, -9500, -9500, 1000) {
@@ -220,6 +225,7 @@ contract DummyLTVTest is Test {
         vm.startPrank(owner);
         dummyLTV.transfer(user, dummyLTV.balanceOf(owner));
         assertEq(dummyLTV.maxRedeem(user), 600050 * 100);
+        dummyLTV.redeem(dummyLTV.maxRedeem(user), user, user);
     }
 
 
