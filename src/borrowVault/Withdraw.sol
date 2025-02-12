@@ -7,9 +7,9 @@ import "../ERC20.sol";
 import "../Lending.sol";
 import "../math/NextStep.sol";
 import './MaxWithdraw.sol';
-import '../math/DepositWithdrawBorrow.sol';
+import '../math/DepositWithdraw.sol';
 
-abstract contract Withdraw is MaxWithdraw, DepositWithdrawBorrow, ERC20, StateTransition, Lending, NextStep{
+abstract contract Withdraw is MaxWithdraw, DepositWithdraw, ERC20, StateTransition, Lending, NextStep{
 
     using uMulDiv for uint256;
     
@@ -19,7 +19,7 @@ abstract contract Withdraw is MaxWithdraw, DepositWithdrawBorrow, ERC20, StateTr
         uint256 max = maxWithdraw(address(owner));
         require(assets <= max, ExceedsMaxWithdraw(owner, assets, max));
 
-        (int256 sharesInUnderlying, DeltaFuture memory deltaFuture) = calculateDepositWithdrawBorrow(int256(assets));
+        (int256 sharesInUnderlying, DeltaFuture memory deltaFuture) = calculateDepositWithdraw(int256(assets), true);
 
         if (sharesInUnderlying > 0) {
             return 0;
@@ -34,7 +34,7 @@ abstract contract Withdraw is MaxWithdraw, DepositWithdrawBorrow, ERC20, StateTr
 
         _burn(owner, shares);
 
-        // TODO: fix this - return from calculateDepositWithdrawBorrow
+        // TODO: fix this - return from calculateDepositWithdraw
         ConvertedAssets memory convertedAssets = recoverConvertedAssets();
 
         NextState memory nextState = calculateNextStep(convertedAssets, deltaFuture, block.number);

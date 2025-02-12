@@ -34,7 +34,7 @@ abstract contract Mint is MaxMint, ERC20, StateTransition, Lending, NextStep {
 
         repay(assets);
 
-        // TODO: fix this - return from calculateDepositWithdrawBorrow
+        // TODO: fix this - return from calculateDepositWithdraw
         ConvertedAssets memory convertedAssets = recoverConvertedAssets();
 
         NextState memory nextState = calculateNextStep(convertedAssets, deltaFuture, block.number);

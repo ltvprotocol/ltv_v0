@@ -36,7 +36,7 @@ abstract contract Redeem is MaxRedeem, MintRedeemBorrow, ERC20, StateTransition,
 
         _burn(owner, shares);
 
-        // TODO: fix this - return from calculateDepositWithdrawBorrow
+        // TODO: fix this - return from calculateDepositWithdraw
         ConvertedAssets memory convertedAssets = recoverConvertedAssets();
 
         NextState memory nextState = calculateNextStep(convertedAssets, deltaFuture, block.number);

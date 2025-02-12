@@ -6,11 +6,11 @@ import '../Constants.sol';
 import './TotalAssets.sol';
 import '../ERC20.sol';
 import '../Lending.sol';
-import '../math/DepositWithdrawBorrow.sol';
+import '../math/DepositWithdraw.sol';
 import '../math/NextStep.sol';
 import './MaxDeposit.sol';
 
-abstract contract Deposit is MaxDeposit, TotalAssets, DepositWithdrawBorrow, ERC20, StateTransition, Lending, NextStep  {
+abstract contract Deposit is MaxDeposit, TotalAssets, DepositWithdraw, ERC20, StateTransition, Lending, NextStep  {
 
     using uMulDiv for uint256;
     
@@ -23,7 +23,7 @@ abstract contract Deposit is MaxDeposit, TotalAssets, DepositWithdrawBorrow, ERC
         (
             int256 signedSharesInUnderlying,
             DeltaFuture memory deltaFuture
-        ) = calculateDepositWithdrawBorrow(-1 * int256(assets));
+        ) = calculateDepositWithdraw(-1 * int256(assets), true);
 
         if (signedSharesInUnderlying < 0) {
             return 0;
@@ -37,7 +37,7 @@ abstract contract Deposit is MaxDeposit, TotalAssets, DepositWithdrawBorrow, ERC
 
         repay(assets);
 
-        // TODO: fix this - return from calculateDepositWithdrawBorrow
+        // TODO: fix this - return from calculateDepositWithdraw
         ConvertedAssets memory convertedAssets = recoverConvertedAssets();
 
         NextState memory nextState = calculateNextStep(convertedAssets, deltaFuture, block.number);
