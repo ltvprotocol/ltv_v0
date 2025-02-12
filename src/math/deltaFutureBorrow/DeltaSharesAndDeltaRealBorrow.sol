@@ -7,6 +7,7 @@ import "../../Cases.sol";
 import "../../utils/MulDiv.sol";
 import '../../State.sol';
 
+
 abstract contract DeltaSharesAndDeltaRealBorrow is State {
 
     using uMulDiv for uint256;
@@ -26,20 +27,18 @@ abstract contract DeltaSharesAndDeltaRealBorrow is State {
         // cecbc x - protocolFutureRewardBorrow
         // -targetLTV x collateral
         // -targetLTV x \Delta shares
-        // -targetLTV x \Delta ceccb x - protocolFutureRewardCollateral
+        // -targetLTV x ceccb x - protocolFutureRewardCollateral
 
-        int256 DIVIDER = 10**18;
-
-        int256 dividend = -int256(convertedAssets.borrow);
+        int256 dividend = int256(convertedAssets.borrow);
         dividend -= int256(int8(cases.cecbc)) * convertedAssets.protocolFutureRewardBorrow;
 
         int256 dividendWithOneMinusTargetLTV = deltaRealBorrow;
         dividendWithOneMinusTargetLTV -= int256(int8(cases.cecbc)) * int256(convertedAssets.userFutureRewardBorrow);
-        dividendWithOneMinusTargetLTV -= int256(int8(cases.ceccb)) * int256(convertedAssets.futureBorrow).mulDivUp(int256(prices.borrowSlippage), DIVIDER);
+        dividendWithOneMinusTargetLTV -= int256(int8(cases.ceccb)) * int256(convertedAssets.futureBorrow).mulDivUp(int256(prices.borrowSlippage), Constants.SLIPPAGE_PRECISION);
 
         int256 dividendWithTargetLTV = -int256(convertedAssets.collateral);
-        dividendWithTargetLTV -= int256(int8(cases.ceccb)) * deltaShares;
-        dividendWithTargetLTV -= int256(int8(cases.ceccb)) * convertedAssets.protocolFutureRewardCollateral;
+        dividendWithTargetLTV -= deltaShares;
+        dividendWithTargetLTV += int256(int8(cases.ceccb)) * convertedAssets.protocolFutureRewardCollateral;
 
         dividend += dividendWithOneMinusTargetLTV.mulDivDown(int256(Constants.LTV_DIVIDER - targetLTV), int256(Constants.LTV_DIVIDER));
         dividend += dividendWithTargetLTV.mulDivDown(int128(targetLTV), int256(Constants.LTV_DIVIDER));
@@ -67,13 +66,13 @@ abstract contract DeltaSharesAndDeltaRealBorrow is State {
         int256 divider;
 
         if (convertedAssets.futureBorrow != 0) {
-            dividerWithOneMinusTargetLTV = -int256(int8(cases.cebc)) * convertedAssets.userFutureRewardBorrow.mulDivDown(DIVIDER, convertedAssets.futureBorrow);
-            dividerWithOneMinusTargetLTV = -int256(int8(cases.ceccb)) * int256(prices.borrowSlippage);
-            divider += -int256(int8(cases.cebc)) * convertedAssets.protocolFutureRewardBorrow.mulDivDown(DIVIDER, convertedAssets.futureBorrow);
-            divider = int256(int8(cases.cecb)) * convertedAssets.protocolFutureRewardCollateral.mulDivUp((DIVIDER * int128(targetLTV)), (convertedAssets.futureBorrow * int256(Constants.LTV_DIVIDER)));
+            dividerWithOneMinusTargetLTV -= int256(int8(cases.cebc)) * convertedAssets.userFutureRewardBorrow.mulDivDown(DIVIDER, convertedAssets.futureBorrow);
+            divider -= int256(int8(cases.cebc)) * convertedAssets.protocolFutureRewardBorrow.mulDivDown(DIVIDER, convertedAssets.futureBorrow);
+            divider += int256(int8(cases.cecb)) * convertedAssets.protocolFutureRewardCollateral.mulDivUp((DIVIDER * int128(targetLTV)), (convertedAssets.futureBorrow * int256(Constants.LTV_DIVIDER)));
         }
 
-        dividerWithOneMinusTargetLTV = -int256(int8(cases.cmcb)) * int256(prices.borrowSlippage);
+        dividerWithOneMinusTargetLTV += int256(int8(cases.ceccb)) * int256(prices.borrowSlippage);
+        dividerWithOneMinusTargetLTV += int256(int8(cases.cmcb)) * int256(prices.borrowSlippage);
         divider += dividerWithOneMinusTargetLTV.mulDivUp(int256(Constants.LTV_DIVIDER - targetLTV), int256(Constants.LTV_DIVIDER));
 
         return divider;
@@ -99,6 +98,10 @@ abstract contract DeltaSharesAndDeltaRealBorrow is State {
             int256 DIVIDER = 10**18;
 
             if (divider == 0) {
+                if (cases.ncase >= 6) {
+                    // unexpected behavior
+                    return (0, cases);
+                }
                 cases = CasesOperator.generateCase(cases.ncase + 1);
                 continue;
             }

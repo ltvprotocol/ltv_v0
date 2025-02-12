@@ -4,8 +4,9 @@ pragma solidity ^0.8.13;
 import "../Constants.sol";
 import "./TotalAssets.sol";
 import "../math/DepositWithdraw.sol";
+import '../math/MintRedeem.sol';
 
-abstract contract PreviewWithdraw is TotalAssets, DepositWithdraw {
+abstract contract PreviewWithdraw is TotalAssets, DepositWithdraw, MintRedeem {
 
     using uMulDiv for uint256;
 

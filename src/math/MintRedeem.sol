@@ -52,10 +52,12 @@ abstract contract MintRedeem is CommonBorrowCollateral, DeltaSharesAndDeltaRealC
         assets = deltaFuture.deltaFutureCollateral
                + deltaFuture.deltaUserFutureRewardCollateral
                + deltaFuture.deltaFuturePaymentCollateral
-               + (isBorrow ? -deltaShares : deltaShares)
+               - deltaShares
                - deltaFuture.deltaFutureBorrow
                - deltaFuture.deltaUserFutureRewardBorrow
                - deltaFuture.deltaFuturePaymentBorrow;
+
+        assets = isBorrow ? assets : -assets;
     }
 
     function previewMintRedeem(int256 shares, bool isBorrow) internal view returns (

@@ -12,11 +12,11 @@ abstract contract MaxDepositCollateral is State {
     ConvertedAssets memory convertedAssets = recoverConvertedAssets();
     
     uint256 minProfitRealCollateral = uint256(convertedAssets.realBorrow).mulDivDown(Constants.LTV_DIVIDER, minProfitLTV);
-    if (uint256(convertedAssets.realCollateral) <= minProfitRealCollateral) {
+    if (uint256(convertedAssets.realCollateral) >= minProfitRealCollateral) {
       return 0;
     }
 
-    uint256 maxDepositInUnderlying = uint256(convertedAssets.realCollateral) - minProfitRealCollateral;
+    uint256 maxDepositInUnderlying = minProfitRealCollateral - uint256(convertedAssets.realCollateral);
     return maxDepositInUnderlying.mulDivDown(Constants.ORACLE_DIVIDER, getPriceCollateralOracle());
   }
 }

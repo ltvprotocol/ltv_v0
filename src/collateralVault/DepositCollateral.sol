@@ -1,51 +1,51 @@
-// // SPDX-License-Identifier: BUSL-1.1
-// pragma solidity ^0.8.13;
+// SPDX-License-Identifier: BUSL-1.1
+pragma solidity ^0.8.13;
 
-// import '../StateTransition.sol';
-// import '../Constants.sol';
-// import '../borrowVault/TotalAssets.sol';
-// import '../ERC20.sol';
-// import '../Lending.sol';
-// import '../math/DepositWithdraw.sol';
-// import '../math/NextStep.sol';
-// import './MaxDeposit.sol';
+import '../StateTransition.sol';
+import '../Constants.sol';
+import '../borrowVault/TotalAssets.sol';
+import '../ERC20.sol';
+import '../Lending.sol';
+import '../math/DepositWithdraw.sol';
+import '../math/NextStep.sol';
+import './MaxDepositCollateral.sol';
 
-// abstract contract Deposit is MaxDeposit, TotalAssets, DepositWithdraw, ERC20, StateTransition, Lending, NextStep  {
+abstract contract DepositCollateral is MaxDepositCollateral, TotalAssets, DepositWithdraw, ERC20, StateTransition, Lending, NextStep  {
 
-//     using uMulDiv for uint256;
+    using uMulDiv for uint256;
     
-//     error ExceedsMaxDeposit(address receiver, uint256 assets, uint256 max);
+    error ExceedsMaxDepositCollateral(address receiver, uint256 collateralAssets, uint256 max);
 
-//     function deposit(uint256 assets, address receiver) external returns (uint256 shares) {
-//         uint256 max = maxDeposit(address(receiver));
-//         require(assets <= max, ExceedsMaxDeposit(receiver, assets, max));
+    function depositCollateral(uint256 collateralAssets, address receiver) external returns (uint256 shares) {
+        uint256 max = maxDepositCollateral(address(receiver));
+        require(collateralAssets <= max, ExceedsMaxDepositCollateral(receiver, collateralAssets, max));
 
-//         (
-//             int256 signedSharesInUnderlying,
-//             DeltaFuture memory deltaFuture
-//         ) = calculateDepositWithdraw(-1 * int256(assets), true);
+        (
+            int256 signedSharesInUnderlying,
+            DeltaFuture memory deltaFuture
+        ) = calculateDepositWithdraw(int256(collateralAssets), false);
 
-//         if (signedSharesInUnderlying < 0) {
-//             return 0;
-//         } else {
-//             uint256 sharesInAssets = uint256(signedSharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, getPrices().borrow);
-//             shares = sharesInAssets.mulDivDown(totalSupply(), totalAssets());
-//         }
+        if (signedSharesInUnderlying < 0) {
+            return 0;
+        } else {
+            uint256 sharesInAssets = uint256(signedSharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, getPriceCollateralOracle());
+            shares = sharesInAssets.mulDivDown(totalSupply(), totalAssets());
+        }
 
-//         // TODO: double check that Token should be transfered from msg.sender or from receiver
-//         borrowToken.transferFrom(msg.sender, address(this), assets);
+        // TODO: double check that Token should be transfered from msg.sender or from receiver
+        collateralToken.transferFrom(msg.sender, address(this), collateralAssets);
 
-//         repay(assets);
+        supply(collateralAssets);
 
-//         // TODO: fix this - return from calculateDepositWithdraw
-//         ConvertedAssets memory convertedAssets = recoverConvertedAssets();
+        // TODO: fix this - return from calculateDepositWithdraw
+        ConvertedAssets memory convertedAssets = recoverConvertedAssets();
 
-//         NextState memory nextState = calculateNextStep(convertedAssets, deltaFuture, block.number);
+        NextState memory nextState = calculateNextStep(convertedAssets, deltaFuture, block.number);
 
-//         applyStateTransition(nextState);
+        applyStateTransition(nextState);
 
-//         _mint(receiver, shares);
+        _mint(receiver, shares);
 
-//         return shares;
-//     }
-// }
+        return shares;
+    }
+}

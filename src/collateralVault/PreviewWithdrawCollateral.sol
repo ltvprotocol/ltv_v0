@@ -4,8 +4,9 @@ pragma solidity ^0.8.27;
 import "../Constants.sol";
 import "../borrowVault/TotalAssets.sol";
 import "../math/DepositWithdraw.sol";
+import "../math/MintRedeem.sol";
 
-abstract contract PreviewWithdrawCollateral is TotalAssets, DepositWithdraw {
+abstract contract PreviewWithdrawCollateral is TotalAssets, DepositWithdraw, MintRedeem {
     using uMulDiv for uint256;
 
     function previewWithdrawCollateral(uint256 assets) public view returns (uint256 shares) {
