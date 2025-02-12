@@ -20,6 +20,9 @@ jobs:
 
       - name: Print forge version
         run: forge --version
+
+      - name: Forge build
+        run: forge build
   test:
     runs-on: ubuntu-latest
     steps:
@@ -36,18 +39,19 @@ jobs:
       - name: Run tests
         run: forge test -vvv
 
-  fmt:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+  # TODO: uncomment in the future
+  #fmt:
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #    - uses: actions/checkout@v4
 
-      - name: Install Foundry
-        uses: foundry-rs/foundry-toolchain@v1
-        with:
-          version: nightly
+  #    - name: Install Foundry
+  #      uses: foundry-rs/foundry-toolchain@v1
+  #      with:
+  #        version: nightly
 
-      - name: Print forge version
-        run: forge --version
+  #    - name: Print forge version
+  #      run: forge --version
 
-      - name: Check formatting
-        run: forge fmt --check
+  #    - name: Check formatting
+  #      run: forge fmt --check

@@ -5,12 +5,11 @@ import "../State.sol";
 import "../Constants.sol";
 import "../Structs.sol";
 import "../Cases.sol";
-import "../SharesAndRealCollateral.sol";
 import "../utils/MulDiv.sol";
 import "./CommonBorrowCollateral.sol";
 import "./deltaFutureCollateral/DeltaSharesAndDeltaRealCollateral.sol";
 
-abstract contract MintRedeemBorrow is CommonBorrowCollateral, SharesAndRealCollateral, DeltaSharesAndDeltaRealCollateral {
+abstract contract MintRedeemBorrow is CommonBorrowCollateral, DeltaSharesAndDeltaRealCollateral {
 
     using uMulDiv for uint256;
 
