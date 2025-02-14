@@ -46,6 +46,10 @@ contract GeneratedTests is Test {
         );
 
         vm.startPrank(owner);
+        dummyLTV.setMaxSafeLTV(9 * 10**17);
+        dummyLTV.setMinProfitLTV(5 * 10**17);
+        dummyLTV.setTargetLTV(75*10**16);
+        
         Ownable(address(lendingProtocol)).transferOwnership(address(dummyLTV));
         oracle.setAssetPrice(address(borrowToken), 100 * 10 ** 18);
         oracle.setAssetPrice(address(collateralToken), 100 * 10 ** 18);
@@ -57,6 +61,7 @@ contract GeneratedTests is Test {
         dummyLTV.setStartAuction(auctionStep);
         dummyLTV.setFutureBorrowAssets(futureBorrow);
         dummyLTV.setFutureCollateralAssets(futureCollateral);
+
         
         if (auctionReward > 0) {
           dummyLTV.setFutureRewardBorrowAssets(auctionReward);

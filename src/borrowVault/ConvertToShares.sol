@@ -1,14 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.13;
 
-import "../State.sol";
-import "../Constants.sol";
-import "../Structs.sol";
 import "./TotalAssets.sol";
 import "../ERC20.sol";
 import "../utils/MulDiv.sol";
 
-abstract contract ConvertToShares is State, TotalAssets, ERC20 {
+abstract contract ConvertToShares is TotalAssets, ERC20 {
 
     using uMulDiv for uint256;
 

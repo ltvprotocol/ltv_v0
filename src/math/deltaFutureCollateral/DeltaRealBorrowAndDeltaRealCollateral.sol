@@ -5,8 +5,9 @@ import "../../Structs.sol";
 import "../../Constants.sol";
 import "../../Cases.sol";
 import "../../utils/MulDiv.sol";
+import '../../State.sol';
 
-abstract contract DeltaRealBorrowAndDeltaRealCollateral {
+abstract contract DeltaRealBorrowAndDeltaRealCollateral is State {
 
     using uMulDiv for uint256;
     using sMulDiv for int256;
@@ -18,7 +19,7 @@ abstract contract DeltaRealBorrowAndDeltaRealCollateral {
         int256 deltaRealCollateral,
         int256 deltaRealBorrow
         //bool isUp
-    ) public pure returns (int256) {
+    ) public view returns (int256) {
 
         // dividend:
         //
@@ -59,7 +60,7 @@ abstract contract DeltaRealBorrowAndDeltaRealCollateral {
 
         dividendWithTargetLTV -= int256(int8(cases.ceccb)) * int256(convertedAssets.protocolFutureRewardCollateral);
 
-        dividend += dividendWithTargetLTV * int256(Constants.TARGET_LTV) / int256(Constants.TARGET_LTV_DIVIDER);
+        dividend += dividendWithTargetLTV * int128(targetLTV) / int256(Constants.LTV_DIVIDER);
 
         return dividend;
     }
@@ -68,7 +69,7 @@ abstract contract DeltaRealBorrowAndDeltaRealCollateral {
         Cases memory cases,
         Prices memory prices, 
         ConvertedAssets memory convertedAssets
-    ) public pure returns (int256) {
+    ) public view returns (int256) {
 
         // divider
         //
@@ -156,7 +157,7 @@ abstract contract DeltaRealBorrowAndDeltaRealCollateral {
 
         // end
         // TODO: explain why should be round down
-        dividerTargetLTV = dividerTargetLTV.mulDivDown(int256(Constants.TARGET_LTV), int256(Constants.TARGET_LTV_DIVIDER));
+        dividerTargetLTV = dividerTargetLTV.mulDivDown(int128(targetLTV), int256(Constants.LTV_DIVIDER));
 
         divider += dividerTargetLTV;
 
@@ -170,7 +171,7 @@ abstract contract DeltaRealBorrowAndDeltaRealCollateral {
         Cases memory cases,
         int256 deltaRealCollateral,
         int256 deltaRealBorrow
-    ) public pure returns (int256, Cases memory) {
+    ) public view returns (int256, Cases memory) {
 
         int256 deltaFutureCollateral = 0;
 

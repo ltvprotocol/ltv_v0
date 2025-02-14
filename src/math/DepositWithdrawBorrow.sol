@@ -9,7 +9,7 @@ import "./deltaFutureCollateral/DeltaRealBorrowAndDeltaRealCollateral.sol";
 import "../utils/MulDiv.sol";
 import "./CommonBorrowCollateral.sol";
 
-abstract contract DepositWithdrawBorrow is State, DeltaRealBorrowAndDeltaRealCollateral, CommonBorrowCollateral {
+abstract contract DepositWithdrawBorrow is CommonBorrowCollateral, DeltaRealBorrowAndDeltaRealCollateral {
 
     function calculateDepositWithdrawBorrow(int256 assets) internal view returns (
         int256 sharesAsAssets,

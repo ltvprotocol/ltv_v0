@@ -5,8 +5,9 @@ import "../../Structs.sol";
 import "../../Constants.sol";
 import "../../Cases.sol";
 import "../../utils/MulDiv.sol";
+import '../../State.sol';
 
-contract DeltaSharesAndDeltaRealBorrow {
+abstract contract DeltaSharesAndDeltaRealBorrow is State {
 
     using uMulDiv for uint256;
     using sMulDiv for int256;
@@ -17,7 +18,7 @@ contract DeltaSharesAndDeltaRealBorrow {
         ConvertedAssets memory convertedAssets,
         int256 deltaRealBorrow,
         int256 deltaShares
-    ) public pure returns (int256) {
+    ) public view returns (int256) {
         // borrow
         // (1 - targetLTV) x deltaRealBorrow
         // (1 - targetLTV) x cecbc x -userFutureRewardBorrow
@@ -40,8 +41,8 @@ contract DeltaSharesAndDeltaRealBorrow {
         dividendWithTargetLTV -= int256(int8(cases.ceccb)) * deltaShares;
         dividendWithTargetLTV -= int256(int8(cases.ceccb)) * convertedAssets.protocolFutureRewardCollateral;
 
-        dividend += dividendWithOneMinusTargetLTV.mulDivDown(int256(Constants.TARGET_LTV_DIVIDER - Constants.TARGET_LTV), int256(Constants.TARGET_LTV_DIVIDER));
-        dividend += dividendWithTargetLTV.mulDivDown(int256(Constants.TARGET_LTV), int256(Constants.TARGET_LTV_DIVIDER));
+        dividend += dividendWithOneMinusTargetLTV.mulDivDown(int256(Constants.LTV_DIVIDER - targetLTV), int256(Constants.LTV_DIVIDER));
+        dividend += dividendWithTargetLTV.mulDivDown(int128(targetLTV), int256(Constants.LTV_DIVIDER));
 
         return dividend;
     }
@@ -52,7 +53,7 @@ contract DeltaSharesAndDeltaRealBorrow {
         ConvertedAssets memory convertedAssets
         //int256 deltaRealBorrow,
         //int256 deltaShares
-    ) public pure returns (int256) {
+    ) public view returns (int256) {
         // (1 - targetLTV) x -1
         // (1 - targetLTV) x cebc x (userFutureRewardBorrow / futureBorrow)
         // (1 - targetLTV) x cmcb x borrowSlippage
@@ -69,11 +70,11 @@ contract DeltaSharesAndDeltaRealBorrow {
             dividerWithOneMinusTargetLTV = -int256(int8(cases.cebc)) * convertedAssets.userFutureRewardBorrow.mulDivDown(DIVIDER, convertedAssets.futureBorrow);
             dividerWithOneMinusTargetLTV = -int256(int8(cases.ceccb)) * int256(prices.borrowSlippage);
             divider += -int256(int8(cases.cebc)) * convertedAssets.protocolFutureRewardBorrow.mulDivDown(DIVIDER, convertedAssets.futureBorrow);
-            divider = int256(int8(cases.cecb)) * convertedAssets.protocolFutureRewardCollateral.mulDivUp((DIVIDER * int256(Constants.TARGET_LTV)), (convertedAssets.futureBorrow * int256(Constants.TARGET_LTV_DIVIDER)));
+            divider = int256(int8(cases.cecb)) * convertedAssets.protocolFutureRewardCollateral.mulDivUp((DIVIDER * int128(targetLTV)), (convertedAssets.futureBorrow * int256(Constants.LTV_DIVIDER)));
         }
 
         dividerWithOneMinusTargetLTV = -int256(int8(cases.cmcb)) * int256(prices.borrowSlippage);
-        divider += dividerWithOneMinusTargetLTV.mulDivUp(int256(Constants.TARGET_LTV_DIVIDER - Constants.TARGET_LTV), int256(Constants.TARGET_LTV_DIVIDER));
+        divider += dividerWithOneMinusTargetLTV.mulDivUp(int256(Constants.LTV_DIVIDER - targetLTV), int256(Constants.LTV_DIVIDER));
 
         return divider;
     }
@@ -84,7 +85,7 @@ contract DeltaSharesAndDeltaRealBorrow {
         Cases memory cases,
         int256 deltaRealBorrow,
         int256 deltaShares
-    ) public pure returns (int256, Cases memory) {
+    ) public view returns (int256, Cases memory) {
 
         // ConvertedAssets memory convertedAssets = recoverConvertedAssets();
         // Prices memory prices = getPrices();
