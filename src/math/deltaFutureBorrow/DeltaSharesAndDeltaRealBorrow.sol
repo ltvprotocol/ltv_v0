@@ -54,11 +54,11 @@ abstract contract DeltaSharesAndDeltaRealBorrow is State {
         //int256 deltaShares
     ) public view returns (int256) {
         // (1 - targetLTV) x -1
-        // (1 - targetLTV) x cebc x (userFutureRewardBorrow / futureBorrow)
+        // (1 - targetLTV) x cebc x -(userFutureRewardBorrow / futureBorrow)
         // (1 - targetLTV) x cmcb x borrowSlippage
         // (1 - targetLTV) x ceccb x borrowSlippage
-        // cebc x (protocolFutureRewardBorrow / futureBorrow)
-        // -targetLTV x cecb x (protocolFutureRewardCollateral / futureBorrow)
+        // cebc x -(protocolFutureRewardBorrow / futureBorrow)
+        // -targetLTV x cecb x -(protocolFutureRewardCollateral / futureBorrow)
         
         int256 DIVIDER = 10**18;
 
