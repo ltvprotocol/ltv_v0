@@ -31,6 +31,22 @@ abstract contract CommonBorrowCollateral is State {
         return deltaFutureBorrow;
     }
 
+    function calculateDeltaFutureCollateralFromDeltaFutureBorrow(
+        Cases memory ncase,
+        ConvertedAssets memory convertedAssets,
+        int256 deltaFutureBorrow
+    ) internal pure returns (int256) {
+        int256 deltaFutureCollateral = int256(int8(ncase.cna + ncase.cmcb + ncase.cmbc + ncase.ceccb + ncase.cecbc)) * deltaFutureBorrow;
+        if (convertedAssets.futureCollateral == 0) {
+            return deltaFutureCollateral;
+        }
+
+        deltaFutureCollateral += int256(int8(ncase.cecb + ncase.cebc)) * deltaFutureBorrow * convertedAssets.futureCollateral / convertedAssets.futureBorrow;
+        deltaFutureCollateral += int256(int8(ncase.ceccb + ncase.cecbc)) * (convertedAssets.futureBorrow - convertedAssets.futureCollateral);
+
+        return deltaFutureCollateral;
+    }
+
     function calculateDeltaUserFutureRewardCollateral(
         Cases memory ncase,
         ConvertedAssets memory convertedAssets,

@@ -9,15 +9,14 @@ import "./deltaFutureCollateral/DeltaRealBorrowAndDeltaRealCollateral.sol";
 import "../utils/MulDiv.sol";
 import "./CommonBorrowCollateral.sol";
 
-abstract contract DepositWithdrawBorrow is CommonBorrowCollateral, DeltaRealBorrowAndDeltaRealCollateral {
+abstract contract DepositWithdraw is CommonBorrowCollateral, DeltaRealBorrowAndDeltaRealCollateral {
 
-    function calculateDepositWithdrawBorrow(int256 assets) internal view returns (
+    function calculateDepositWithdraw(int256 assets, bool isBorrowAssets) internal view returns (
         int256 sharesAsAssets,
         DeltaFuture memory deltaFuture
     ) {
-
-        int256 deltaRealBorrow = assets * int256(getPriceBorrowOracle() / Constants.ORACLE_DIVIDER);
-        int256 deltaRealCollateral = 0;
+        int256 deltaRealBorrow = isBorrowAssets ? assets * int256(getPriceBorrowOracle() / Constants.ORACLE_DIVIDER) : int256(0);
+        int256 deltaRealCollateral = isBorrowAssets ? int256(0) : assets * int256(getPriceCollateralOracle() / Constants.ORACLE_DIVIDER);
 
         ConvertedAssets memory convertedAssets = recoverConvertedAssets();
         Prices memory prices = getPrices();
@@ -40,7 +39,7 @@ abstract contract DepositWithdrawBorrow is CommonBorrowCollateral, DeltaRealBorr
 
         deltaFuture.deltaFuturePaymentBorrow = calculateDeltaFuturePaymentBorrow(cases, convertedAssets, deltaFuture.deltaFutureBorrow);
 
-        sharesAsAssets = deltaRealCollateral 
+        sharesAsAssets = deltaRealCollateral
                + deltaFuture.deltaFutureCollateral
                + deltaFuture.deltaUserFutureRewardCollateral
                + deltaFuture.deltaFuturePaymentCollateral
@@ -51,9 +50,9 @@ abstract contract DepositWithdrawBorrow is CommonBorrowCollateral, DeltaRealBorr
 
     }
 
-    function previewDepositWithdrawBorrow(int256 assets) internal view returns (int256 sharesAsAssets) {
+    function previewDepositWithdraw(int256 assets, bool isBorrowAssets) internal view returns (int256 sharesAsAssets) {
 
-        (sharesAsAssets, ) = calculateDepositWithdrawBorrow(assets);
+        (sharesAsAssets, ) = calculateDepositWithdraw(assets, isBorrowAssets);
 
     }
 

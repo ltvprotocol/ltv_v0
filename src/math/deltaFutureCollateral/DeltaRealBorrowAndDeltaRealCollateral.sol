@@ -183,6 +183,10 @@ abstract contract DeltaRealBorrowAndDeltaRealCollateral is State {
             int256 DIVIDER = 10**18;
 
             if (divider == 0) {
+                if (cases.ncase >= 6) {
+                    // unexpected behavior
+                    return (0, cases);
+                }
                 cases = CasesOperator.generateCase(cases.ncase + 1);
                 continue;
             }
