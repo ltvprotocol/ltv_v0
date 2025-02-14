@@ -14,8 +14,9 @@ contract MockDummyLTV is DummyLTV {
         IDummyLending _lendingProtocol,
         IDummyOracle _oracle,
         uint256 customCollateralSlippage,
-        uint256 customBorrowSlippage
-    ) DummyLTV(initialOwner, collateralToken, borrowToken, _lendingProtocol, _oracle) {
+        uint256 customBorrowSlippage,
+        address feeCollector
+    ) DummyLTV(initialOwner, collateralToken, borrowToken, _lendingProtocol, _oracle, feeCollector) {
         collateralSlippage = customCollateralSlippage;
         borrowSlippage = customBorrowSlippage;
     }
