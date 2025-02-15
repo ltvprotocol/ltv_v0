@@ -6,20 +6,20 @@ import "../Constants.sol";
 import "../ERC20.sol";
 import "../Lending.sol";
 import "../math/NextStep.sol";
-import './MaxWithdraw.sol';
+import './MaxWithdrawCollateral.sol';
 import '../math/DepositWithdraw.sol';
 
-abstract contract Withdraw is MaxWithdraw, DepositWithdraw, ERC20, StateTransition, Lending, NextStep{
+abstract contract WithdrawCollateral is MaxWithdrawCollateral, DepositWithdraw, ERC20, StateTransition, Lending, NextStep{
 
     using uMulDiv for uint256;
     
-    error ExceedsMaxWithdraw(address owner, uint256 assets, uint256 max);
+    error ExceedsMaxWithdrawCollateral(address owner, uint256 collateralAssets, uint256 max);
 
-    function withdraw(uint256 assets, address receiver, address owner) external returns (uint256 shares) {
-        uint256 max = maxWithdraw(address(owner));
-        require(assets <= max, ExceedsMaxWithdraw(owner, assets, max));
+    function withdrawCollateral(uint256 collateralAssets, address receiver, address owner) external returns (uint256 shares) {
+        uint256 max = maxWithdrawCollateral(address(owner));
+        require(collateralAssets <= max, ExceedsMaxWithdrawCollateral(owner, collateralAssets, max));
 
-        (int256 sharesInUnderlying, DeltaFuture memory deltaFuture) = calculateDepositWithdraw(int256(assets), true);
+        (int256 sharesInUnderlying, DeltaFuture memory deltaFuture) = calculateDepositWithdraw(-int256(collateralAssets), false);
 
         if (sharesInUnderlying > 0) {
             return 0;
@@ -41,9 +41,9 @@ abstract contract Withdraw is MaxWithdraw, DepositWithdraw, ERC20, StateTransiti
 
         applyStateTransition(nextState);
 
-        borrow(assets);
+        withdraw(collateralAssets);
 
-        borrowToken.transfer(receiver, assets);
+        collateralToken.transfer(receiver, collateralAssets);
 
         return shares;
     }

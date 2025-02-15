@@ -3,14 +3,15 @@ pragma solidity ^0.8.13;
 
 import "../Constants.sol";
 import "./TotalAssets.sol";
-import "../math/DepositWithdrawBorrow.sol";
+import "../math/DepositWithdraw.sol";
+import '../math/MintRedeem.sol';
 
-abstract contract PreviewWithdraw is TotalAssets, DepositWithdrawBorrow {
+abstract contract PreviewWithdraw is TotalAssets, DepositWithdraw, MintRedeem {
 
     using uMulDiv for uint256;
 
     function previewWithdraw(uint256 assets) public view returns (uint256 shares) {
-        int256 sharesInUnderlying = previewDepositWithdrawBorrow(int256(assets));
+        int256 sharesInUnderlying = previewDepositWithdraw(int256(assets), true);
 
         if (sharesInUnderlying > 0) {
             return 0;
