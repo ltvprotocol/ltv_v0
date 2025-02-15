@@ -14,8 +14,9 @@ contract DummyLTV is LTV {
         address collateralToken,
         address borrowToken,
         IDummyLending _lendingProtocol,
-        IDummyOracle _oracle
-    ) LTV(initialOwner) State(collateralToken, borrowToken) {
+        IDummyOracle _oracle,
+        address feeCollector
+    ) LTV(initialOwner) State(collateralToken, borrowToken, feeCollector) {
         lendingProtocol = _lendingProtocol;
         oracle = _oracle;
     }
