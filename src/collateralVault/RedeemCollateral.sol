@@ -36,6 +36,18 @@ abstract contract RedeemCollateral is MaxRedeemCollateral, ERC20, StateTransitio
 
         _burn(owner, shares);
 
+        if (deltaFuture.deltaProtocolFutureRewardBorrow < 0) {
+            uint256 amountInAssets = uint256(-deltaFuture.deltaProtocolFutureRewardBorrow).mulDivDown(Constants.ORACLE_DIVIDER, getPriceBorrowOracle());
+            uint256 amountInShares = amountInAssets.mulDivDown(totalSupply(), totalAssets());
+            _mint(FEE_COLLECTOR, amountInShares);
+        }
+
+        if (deltaFuture.deltaProtocolFutureRewardCollateral > 0) {
+            uint256 amountInAssets = uint256(deltaFuture.deltaProtocolFutureRewardCollateral).mulDivDown(Constants.ORACLE_DIVIDER, getPriceBorrowOracle());
+            uint256 amountInShares = amountInAssets.mulDivDown(totalSupply(), totalAssets());
+            _mint(FEE_COLLECTOR, amountInShares);
+        }
+
         // TODO: fix this - return from calculateDepositWithdraw
         ConvertedAssets memory convertedAssets = recoverConvertedAssets();
 

@@ -42,10 +42,14 @@ abstract contract MintRedeem is CommonBorrowCollateral, DeltaSharesAndDeltaRealC
         }
 
         deltaFuture.deltaUserFutureRewardCollateral = calculateDeltaUserFutureRewardCollateral(cases, convertedAssets, deltaFuture.deltaFutureCollateral);
+        
+        deltaFuture.deltaProtocolFutureRewardCollateral = calculateDeltaProtocolFutureRewardCollateral(cases, convertedAssets, deltaFuture.deltaFutureCollateral);
 
         deltaFuture.deltaFuturePaymentCollateral = calculateDeltaFuturePaymentCollateral(cases, convertedAssets, deltaFuture.deltaFutureCollateral);
 
         deltaFuture.deltaUserFutureRewardBorrow = calculateDeltaUserFutureRewardBorrow(cases, convertedAssets, deltaFuture.deltaFutureBorrow);
+
+        deltaFuture.deltaProtocolFutureRewardBorrow = calculateDeltaProtocolFutureRewardBorrow(cases, convertedAssets, deltaFuture.deltaFutureBorrow);
 
         deltaFuture.deltaFuturePaymentBorrow = calculateDeltaFuturePaymentBorrow(cases, convertedAssets, deltaFuture.deltaFutureBorrow);
 

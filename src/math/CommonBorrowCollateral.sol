@@ -64,6 +64,23 @@ abstract contract CommonBorrowCollateral is State {
         return deltaUserFutureRewardCollateral;
     }
 
+    function calculateDeltaProtocolFutureRewardCollateral(
+        Cases memory ncase,
+        ConvertedAssets memory convertedAssets,
+        int256 deltaFutureCollateral
+    ) internal pure returns (int256) {
+        // cecb × userFutureRewardCollateral × ∆futureCollateral / futureCollateral +
+        // + ceccb × −userFutureRewardCollateral
+
+        if (convertedAssets.futureCollateral == 0) {
+            return 0;
+        }
+        
+        int256 deltaProtocolFutureRewardCollateral = int256(int8(ncase.cecb)) * convertedAssets.protocolFutureRewardCollateral * deltaFutureCollateral / convertedAssets.futureCollateral;
+        deltaProtocolFutureRewardCollateral -= int256(int8(ncase.ceccb)) * convertedAssets.userFutureRewardCollateral;
+        return deltaProtocolFutureRewardCollateral;
+    }
+
     function calculateDeltaFuturePaymentCollateral(
         Cases memory ncase,
         ConvertedAssets memory convertedAssets,
@@ -97,6 +114,21 @@ abstract contract CommonBorrowCollateral is State {
         deltaUserFutureRewardBorrow -= int256(int8(ncase.cecbc)) * convertedAssets.userFutureRewardBorrow;
         
         return deltaUserFutureRewardBorrow;
+    }
+
+    function calculateDeltaProtocolFutureRewardBorrow(
+        Cases memory ncase,
+        ConvertedAssets memory convertedAssets,
+        int256 deltaFutureBorrow
+    ) internal pure returns(int256) {
+        if (convertedAssets.futureBorrow == 0) {
+            return 0;
+        }
+
+        int256 deltaProtocolFutureRewardBorrow = int256(int8(ncase.cebc)) * convertedAssets.protocolFutureRewardBorrow * deltaFutureBorrow / convertedAssets.futureBorrow;
+        deltaProtocolFutureRewardBorrow -= int256(int8(ncase.cecbc)) * convertedAssets.protocolFutureRewardBorrow;
+
+        return deltaProtocolFutureRewardBorrow;
     }
 
     function calculateDeltaFuturePaymentBorrow(

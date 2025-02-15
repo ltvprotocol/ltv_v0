@@ -12,10 +12,15 @@ import "./utils/MulDiv.sol";
 import 'forge-std/interfaces/IERC20.sol';
 
 abstract contract State is IOracle {
-    constructor(address _collateralToken, address _borrowToken) {
+
+    constructor(address _collateralToken, address _borrowToken, address feeCollector) {
         collateralToken = IERC20(_collateralToken);
         borrowToken = IERC20(_borrowToken);
+
+        FEE_COLLECTOR = feeCollector;
     }
+
+    address public immutable FEE_COLLECTOR;
 
     int256 public futureBorrowAssets;
     int256 public futureCollateralAssets;

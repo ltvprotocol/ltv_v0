@@ -42,7 +42,8 @@ contract GeneratedTests is Test {
             lendingProtocol,
             oracle,
             10**16,
-            10**16
+            10**16,
+            address(123)
           );
 
         vm.startPrank(owner);
