@@ -47,7 +47,9 @@ abstract contract WithdrawAuction is State, Lending {
         repay(uint256(deltaUserBorrow + protocolReward));
         withdraw(uint256(deltaUserCollateral));
         collateralToken.transfer(msg.sender, uint256(deltaUserCollateral));
-        borrowToken.transfer(FEE_COLLECTOR, uint256(-protocolReward));
+        if (protocolReward != 0) {
+          borrowToken.transfer(FEE_COLLECTOR, uint256(-protocolReward));
+        }
     }
 
     function calculateExecuteWithdrawAuctionBorrow(uint256 borrow) internal view returns (int256, int256, int256) {

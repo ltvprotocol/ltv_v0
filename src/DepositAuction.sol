@@ -47,7 +47,9 @@ abstract contract DepositAuction is State, Lending {
         supply(uint256(-deltaUserCollateral - protocolReward));
         borrow(uint256(-deltaUserBorrow));
         borrowToken.transfer(msg.sender, uint256(-deltaUserBorrow));
-        collateralToken.transfer(FEE_COLLECTOR, uint256(protocolReward));
+        if (protocolReward != 0) {
+            collateralToken.transfer(FEE_COLLECTOR, uint256(protocolReward));
+        }
     }
 
     function calculateExecuteDepositAuctionCollateral(uint256 collateral) internal view returns (int256, int256, int256) {
