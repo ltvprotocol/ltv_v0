@@ -3,6 +3,7 @@ pragma solidity ^0.8.13;
 
 import 'forge-std/interfaces/IERC20.sol';
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "../spooky/ISpookyOracle.sol";
 
 contract HodlMyBeerLending is Initializable {
     mapping(address => uint256) public supplyBalance;
@@ -10,18 +11,27 @@ contract HodlMyBeerLending is Initializable {
 
     address public borrowToken;
     address public collateralToken;
-    // TODO: add space for upgradability
+    address public oracle;
 
     // TODO: add events
 
-    function initialize(address _borrowToken, address _collateralToken) public initializer {
+    function initialize(address _borrowToken, address _collateralToken, address _oracle) public initializer {
         borrowToken = _borrowToken;
         collateralToken = _collateralToken;
+        oracle = _oracle;
     }
 
     function borrow(uint256 amount) external {
 
-        // TODO: check collateral ratio with some specific LTV
+        // LTV = 9/10
+
+        uint256 borrowPrice = ISpookyOracle(oracle).getAssetPrice(borrowToken);
+        uint256 collateralPrice = ISpookyOracle(oracle).getAssetPrice(collateralToken);
+
+        if((supplyBalance[msg.sender] * collateralPrice) * 9 < (borrowPrice * borrowBalance[msg.sender] + amount) * 10) {
+            require(false, "Collateral ratio is too low");
+        }
+
         // TODO: add reentrancy guard
 
         borrowBalance[msg.sender] += amount;
@@ -37,21 +47,27 @@ contract HodlMyBeerLending is Initializable {
         borrowBalance[borrowToken] -= amount;
     }
 
-    function supply(address asset, uint256 amount) external {
+    function supply(uint256 amount) external {
 
         // TODO: add reentrancy guard
 
         IERC20(collateralToken).transferFrom(msg.sender, address(this), amount);
-        supplyBalance[asset] += amount;
+        supplyBalance[collateralToken] += amount;
     }
 
-    function withdraw(address asset, uint256 amount) external {
+    function withdraw(uint256 amount) external {
 
-        // TODO: add reentrancy guard
+        uint256 borrowPrice = ISpookyOracle(oracle).getAssetPrice(borrowToken);
+        uint256 collateralPrice = ISpookyOracle(oracle).getAssetPrice(collateralToken);
+
+        if(((supplyBalance[msg.sender] - amount) * collateralPrice) * 9 < (borrowPrice * borrowBalance[msg.sender]) * 10) {
+            require(false, "Collateral ratio is too low");
+        }
+
         // TODO: check possible liquidation
 
         require(supplyBalance[msg.sender] >= amount, "Withdraw amount exceeds supply balance");
         IERC20(collateralToken).transfer(msg.sender, amount);
-        supplyBalance[asset] -= amount;
+        supplyBalance[collateralToken] -= amount;
     }
 }

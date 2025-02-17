@@ -28,43 +28,34 @@ contract DeployScript is Script {
 
         vm.startBroadcast(); // Start broadcasting transactions
 
-        MagicETH magicETH = new MagicETH();
-
-        address proxyMagicETH = Upgrades.deployTransparentProxy(
+        address magicETHProxy = Upgrades.deployTransparentProxy(
             "MagicETH.sol",
             address(0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266),
-            abi.encodeCall(magicETH.initialize, (0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266))
+            abi.encodeCall(MagicETH.initialize, (0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266))
         );
 
         // ------------------------------------------------
 
-        HodlMyBeerLending hodlMyBeerLending = new HodlMyBeerLending();
+        address spookyOracleProxy = Upgrades.deployTransparentProxy(
+            "SpookyOracle.sol",
+            address(0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266),
+            abi.encodeCall(SpookyOracle.initialize, (0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266))
+        );
+
+        // ------------------------------------------------
 
         // TODO: add link to WETH
 
         address hodlMyBeerLendingProxy = Upgrades.deployTransparentProxy(
             "HodlMyBeerLending.sol",
             address(0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266),
-            abi.encodeCall(hodlMyBeerLending.initialize, (address(0), address(proxyMagicETH)))
+            abi.encodeCall(HodlMyBeerLending.initialize, (address(0), address(magicETHProxy), address(spookyOracleProxy)))
         );
 
         // ------------------------------------------------
 
-        SpookyOracle spookyOracle = new SpookyOracle();
-
-        address spookyOracleProxy = Upgrades.deployTransparentProxy(
-            "SpookyOracle.sol",
-            address(0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266),
-            abi.encodeCall(spookyOracle.initialize, (0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266))
-        );
-
-        // ------------------------------------------------
-
-        console.log("magicETH at:              ", address(magicETH));
-        console.log("proxyMagicETH at:         ", proxyMagicETH);
-        console.log("hodlMyBeerLending at:     ", address(hodlMyBeerLending));
+        console.log("proxyMagicETH at:         ", magicETHProxy);
         console.log("hodlMyBeerLendingProxy at:", hodlMyBeerLendingProxy);
-        console.log("spookyOracle at:          ", address(spookyOracle));
         console.log("spookyOracleProxy at:     ", spookyOracleProxy);
 
         vm.stopBroadcast();
