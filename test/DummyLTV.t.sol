@@ -233,28 +233,28 @@ contract DummyLTVTest is Test {
 
     function test_executeDepositAuctionBorrow(address owner, address user) public initializeBalancedTest(owner, user, 100000, 10000, 10000, -1000) {
         collateralToken.approve(address(dummyLTV), type(uint112).max);
-        uint256 deltaCollateral = dummyLTV.executeDepositAuctionBorrow(1000);
+        int256 deltaCollateral = dummyLTV.executeAuctionBorrow(-1000);
 
-        assertEq(deltaCollateral, 475);
+        assertEq(deltaCollateral, -475);
     }
 
     function test_executeDepositAuctionCollateral(address owner, address user) public initializeBalancedTest(owner, user, 100000, 10000, 10000, -1000) {
         collateralToken.approve(address(dummyLTV), type(uint112).max);
-        uint256 deltaBorrow = dummyLTV.executeDepositAuctionCollateral(475);
+        int256 deltaBorrow = dummyLTV.executeAuctionCollateral(-475);
 
-        assertEq(deltaBorrow, 1000);
+        assertEq(deltaBorrow, -1000);
     }
 
     function test_executeWithdrawAuctionBorrow(address owner, address user) public initializeBalancedTest(owner, user, 100000, -10000, -10000, 1000) {
         borrowToken.approve(address(dummyLTV), type(uint112).max);
-        uint256 deltaCollateral = dummyLTV.executeWithdrawAuctionBorrow(950);
+        int256 deltaCollateral = dummyLTV.executeAuctionBorrow(950);
 
         assertEq(deltaCollateral, 500);
     }
 
     function test_executeWithdrawAuctionCollateral(address owner, address user) public initializeBalancedTest(owner, user, 100000, -10000, -10000, 1000) {
         borrowToken.approve(address(dummyLTV), type(uint112).max);
-        uint256 deltaBorrow = dummyLTV.executeWithdrawAuctionCollateral(500);
+        int256 deltaBorrow = dummyLTV.executeAuctionCollateral(500);
 
         assertEq(deltaBorrow, 950);
     }
