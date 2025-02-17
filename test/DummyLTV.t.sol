@@ -43,7 +43,8 @@ contract DummyLTVTest is Test {
             lendingProtocol,
             oracle,
             0,
-            0
+            0,
+            address(123)
         );
 
         vm.startPrank(owner);
