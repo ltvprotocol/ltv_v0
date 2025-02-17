@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.13;
 
-import "../LTV.sol";
-import "../dummy/interfaces/IDummyLending.sol";
-import "../dummy/interfaces/IDummyOracle.sol";
+import '../LTV.sol';
+import '../dummy/interfaces/IDummyLending.sol';
+import '../dummy/interfaces/IDummyOracle.sol';
 
 contract DummyLTV is LTV {
     IDummyLending private lendingProtocol;

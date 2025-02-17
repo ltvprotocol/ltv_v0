@@ -44,6 +44,14 @@ abstract contract State is IOracle {
     uint128 public minProfitLTV;
     uint128 public targetLTV;
 
+    bool isNotFirstTime;
+
+    modifier onlyOneTime() {
+        require(!isNotFirstTime, "Only one time");
+        isNotFirstTime = true;
+        _;
+    }
+
     using uMulDiv for uint256;
     using sMulDiv for int256;
 
