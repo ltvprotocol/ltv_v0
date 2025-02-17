@@ -145,8 +145,8 @@ abstract contract State is Initializable, IOracle {
         return Prices({
             borrow: getPriceBorrowOracle(),
             collateral: getPriceCollateralOracle(),
-            borrowSlippage: 0,
-            collateralSlippage: 0
+            borrowSlippage: 10**16,
+            collateralSlippage: 10**16
         });
     }
 }

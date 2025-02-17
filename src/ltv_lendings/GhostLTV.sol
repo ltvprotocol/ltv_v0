@@ -28,11 +28,11 @@ contract GhostLTV is LTV {
     }
 
     function getRealBorrowAssets() public view override returns (uint256) {
-        return lendingProtocol.borrowBalance(address(borrowToken));
+        return lendingProtocol.borrowBalance(address(this));
     }
 
     function getRealCollateralAssets() public view override returns (uint256) {
-        return lendingProtocol.supplyBalance(address(collateralToken));
+        return lendingProtocol.supplyBalance(address(this));
     }
 
     function setLendingProtocol(IHodlMyBeerLending _lendingProtocol) public {
