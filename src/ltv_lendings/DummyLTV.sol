@@ -6,8 +6,6 @@ import '../dummy/interfaces/IDummyLending.sol';
 import '../dummy/interfaces/IDummyOracle.sol';
 
 contract DummyLTV is LTV {
-    using uMulDiv for uint256;
-
     IDummyLending private lendingProtocol;
     IDummyOracle private oracle;
 
@@ -63,22 +61,5 @@ contract DummyLTV is LTV {
 
     function withdraw(uint256 assets) internal override {
         lendingProtocol.withdraw(address(collateralToken), assets);
-    }
-
-    function firstTimeDeposit(uint256 collateralAssets, uint256 borrowAssets) external onlyOneTime returns (uint256) {
-        uint256 sharesInUnderlying = collateralAssets.mulDivDown(getPriceCollateralOracle(), Constants.ORACLE_DIVIDER) -
-            borrowAssets.mulDivDown(getPriceBorrowOracle(), Constants.ORACLE_DIVIDER);
-        uint256 sharesInAssets = sharesInUnderlying.mulDivDown(getPriceBorrowOracle(), Constants.ORACLE_DIVIDER);
-        uint256 shares = sharesInAssets.mulDivDown(totalSupply(), totalAssets());
-        
-        collateralToken.transferFrom(msg.sender, address(this), collateralAssets);
-        supply(collateralAssets);
-
-        _mint(msg.sender, shares);
-        
-        borrow(borrowAssets);
-        borrowToken.transfer(msg.sender, borrowAssets);
-
-        return shares;
     }
 }
