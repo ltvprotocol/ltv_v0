@@ -15,6 +15,8 @@ import {HodlMyBeerLending} from "src/ghost/hodlmybeer/HodlMyBeerLending.sol";
 
 import {SpookyOracle} from "src/ghost/spooky/SpookyOracle.sol";
 
+import "../src/ltv_lendings/GhostLTV.sol";
+
 contract DeployScript is Script {
     function setUp() public {}
 
@@ -26,6 +28,8 @@ contract DeployScript is Script {
         address magicETHOwner = vm.envAddress("MAGIC_ETH_OWNER");
         address oracleOwner = vm.envAddress("ORACLE_OWNER");
         address weth = vm.envAddress("WETH");
+        address ltvOwner = vm.envAddress("LTV_OWNER");
+        address feeCollector = vm.envAddress("FEE_COLLECTOR");
 
         console.log("proxyOwner: ", proxyOwner);
         console.log("magicETHOwner: ", magicETHOwner);
@@ -54,8 +58,14 @@ contract DeployScript is Script {
 
         address hodlMyBeerLendingProxy = Upgrades.deployTransparentProxy(
             "HodlMyBeerLending.sol",
-            address(0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266),
+            proxyOwner,
             abi.encodeCall(HodlMyBeerLending.initialize, (weth, address(magicETHProxy), address(spookyOracleProxy)))
+        );
+
+        address ltv = Upgrades.deployTransparentProxy(
+            "GhostLTV.sol",
+            proxyOwner,
+            abi.encodeCall(GhostLTV.initialize, (ltvOwner, IHodlMyBeerLending(hodlMyBeerLendingProxy), ISpookyOracle(spookyOracleProxy), magicETHProxy, weth, feeCollector))
         );
 
         // ------------------------------------------------
@@ -63,6 +73,7 @@ contract DeployScript is Script {
         console.log("proxyMagicETH at:         ", magicETHProxy);
         console.log("hodlMyBeerLendingProxy at:", hodlMyBeerLendingProxy);
         console.log("spookyOracleProxy at:     ", spookyOracleProxy);
+        console.log("ltv at:                   ", ltv);
 
         vm.stopBroadcast();
     }

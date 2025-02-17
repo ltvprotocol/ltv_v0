@@ -4,13 +4,13 @@ pragma solidity >=0.8.13;
 // TODO: refactor to UMulDiv or UnsignedMulDiv
 library uMulDiv {
 
-    uint256 internal constant MAX_UINT256 = 2**256 - 1;
+    uint256 public constant MAX_UINT256 = 2**256 - 1;
 
     function mulDivDown(
         uint256 factorA,
         uint256 factorB,
         uint256 denominator
-    ) internal pure returns (uint256 result) {
+    ) public pure returns (uint256 result) {
         require(denominator != 0, "Denominator cannot be zero");
 
         /// @solidity memory-safe-assembly
@@ -49,7 +49,7 @@ library uMulDiv {
         uint256 x,
         uint256 y,
         uint256 denominator
-    ) internal pure returns (uint256 z) {
+    ) public pure returns (uint256 z) {
         require(denominator != 0, "Denominator cannot be zero");
         /// @solidity memory-safe-assembly
         assembly {

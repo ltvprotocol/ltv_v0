@@ -2,16 +2,16 @@
 pragma solidity ^0.8.13;
 
 import '../LTV.sol';
-import '../dummy/interfaces/IDummyLending.sol';
-import '../dummy/interfaces/IDummyOracle.sol';
+import '../ghost/spooky/ISpookyOracle.sol';
+import '../ghost/hodlmybeer/IHodlMyBeerLending.sol';
 
-contract DummyLTV is LTV {
-    using uMulDiv for uint256;
+contract GhostLTV is LTV {
+    IHodlMyBeerLending public lendingProtocol;
+    ISpookyOracle public oracle;
 
-    IDummyLending public lendingProtocol;
-    IDummyOracle public oracle;
+    // constructor(address collateralToken, address borrowToken, address feeCollector) State(collateralToken, borrowToken, feeCollector) {}
 
-    function initialize(address initialOwner, IDummyLending _lendingProtocol, IDummyOracle _oracle, address collateralToken, address borrowToken, address feeCollector) public initializer {
+    function initialize(address initialOwner, IHodlMyBeerLending _lendingProtocol, ISpookyOracle _oracle, address collateralToken, address borrowToken, address feeCollector) public initializer {
         __Ownable_init(initialOwner);
         __ERC20_init('Ghost Magic ETH', 'GME', 18);
         __State_init(collateralToken, borrowToken, feeCollector);
@@ -35,29 +35,29 @@ contract DummyLTV is LTV {
         return lendingProtocol.supplyBalance(address(collateralToken));
     }
 
-    function setLendingProtocol(IDummyLending _lendingProtocol) public {
+    function setLendingProtocol(IHodlMyBeerLending _lendingProtocol) public {
         lendingProtocol = _lendingProtocol;
     }
 
-    function setOracle(IDummyOracle _oracle) public {
+    function setOracle(ISpookyOracle _oracle) public {
         oracle = _oracle;
     }
 
     function borrow(uint256 assets) internal override {
-        lendingProtocol.borrow(address(borrowToken), assets);
+        lendingProtocol.borrow(assets);
     }
 
     function repay(uint256 assets) internal override {
         borrowToken.approve(address(lendingProtocol), assets);
-        lendingProtocol.repay(address(borrowToken), assets);
+        lendingProtocol.repay(assets);
     }
 
     function supply(uint256 assets) internal override {
         collateralToken.approve(address(lendingProtocol), assets);
-        lendingProtocol.supply(address(collateralToken), assets);
+        lendingProtocol.supply(assets);
     }
 
     function withdraw(uint256 assets) internal override {
-        lendingProtocol.withdraw(address(collateralToken), assets);
+        lendingProtocol.withdraw(assets);
     }
 }

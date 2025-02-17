@@ -4,7 +4,7 @@ pragma solidity ^0.8.13;
 import "./State.sol";
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 
-abstract contract ERC20 is State, Initializable {
+abstract contract ERC20 is State {
 
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Approval(

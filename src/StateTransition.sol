@@ -4,8 +4,6 @@ pragma solidity ^0.8.13;
 import "./State.sol";
 import "./Structs.sol";
 
-
-
 abstract contract StateTransition is State {
     
     event StateUpdated(
