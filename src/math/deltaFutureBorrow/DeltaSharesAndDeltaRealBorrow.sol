@@ -21,7 +21,7 @@ abstract contract DeltaSharesAndDeltaRealBorrow is State {
         ConvertedAssets memory convertedAssets,
         int256 deltaRealBorrow,
         int256 deltaShares
-    ) public view returns (int256) {
+    ) private view returns (int256) {
         // borrow
         // (1 - targetLTV) x deltaRealBorrow
         // (1 - targetLTV) x cecbc x -userFutureRewardBorrow
@@ -54,7 +54,7 @@ abstract contract DeltaSharesAndDeltaRealBorrow is State {
         ConvertedAssets memory convertedAssets
         //int256 deltaRealBorrow,
         //int256 deltaShares
-    ) public view returns (int256) {
+    ) private view returns (int256) {
         // (1 - targetLTV) x -1
         // (1 - targetLTV) x cebc x -(userFutureRewardBorrow / futureBorrow)
         // (1 - targetLTV) x cmcb x borrowSlippage
@@ -86,7 +86,7 @@ abstract contract DeltaSharesAndDeltaRealBorrow is State {
         Cases memory cases,
         int256 deltaRealBorrow,
         int256 deltaShares
-    ) public view returns (int256, Cases memory) {
+    ) internal view returns (int256, Cases memory) {
 
         // ConvertedAssets memory convertedAssets = recoverConvertedAssets();
         // Prices memory prices = getPrices();

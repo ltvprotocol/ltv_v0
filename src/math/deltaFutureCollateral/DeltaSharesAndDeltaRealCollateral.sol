@@ -22,7 +22,7 @@ abstract contract DeltaSharesAndDeltaRealCollateral is State {
         ConvertedAssets memory convertedAssets,
         int256 deltaRealCollateral,
         int256 deltaShares
-    ) public view returns (int256) {
+    ) private view returns (int256) {
         // borrow
         // (1 - targetLTV) x deltaRealCollateral
         // (1 - targetLTV) x ceccb x -userFutureRewardCollateral
@@ -56,7 +56,7 @@ abstract contract DeltaSharesAndDeltaRealCollateral is State {
         ConvertedAssets memory convertedAssets
         //int256 deltaRealCollateral,
         //int256 deltaShares
-    ) public view returns (int256) {
+    ) private view returns (int256) {
         // (1 - targetLTV) x -1
         // (1 - targetLTV) x cecb x (userFutureRewardCollateral / futureCollateral) x -1
         // (1 - targetLTV) x cmbc x collateralSlippage
@@ -87,7 +87,7 @@ abstract contract DeltaSharesAndDeltaRealCollateral is State {
         Cases memory cases,
         int256 deltaRealCollateral,
         int256 deltaShares
-    ) public view returns (int256, Cases memory) {
+    ) internal view returns (int256, Cases memory) {
 
         int256 deltaFutureCollateral = 0;
 

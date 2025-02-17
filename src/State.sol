@@ -10,17 +10,18 @@ import "./interfaces/IOracle.sol";
 import "./utils/MulDiv.sol";
 
 import 'forge-std/interfaces/IERC20.sol';
+import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 
-abstract contract State is IOracle {
+abstract contract State is Initializable, IOracle {
 
-    constructor(address _collateralToken, address _borrowToken, address feeCollector) {
+    function __State_init(address _collateralToken, address _borrowToken, address feeCollector) internal initializer {
         collateralToken = IERC20(_collateralToken);
         borrowToken = IERC20(_borrowToken);
         
         FEE_COLLECTOR = feeCollector;
     }
 
-    address public immutable FEE_COLLECTOR;
+    address public FEE_COLLECTOR;
 
     int256 public futureBorrowAssets;
     int256 public futureCollateralAssets;
@@ -37,8 +38,8 @@ abstract contract State is IOracle {
     string public symbol;
     uint8 public decimals;
 
-    IERC20 public immutable collateralToken;
-    IERC20 public immutable borrowToken;
+    IERC20 public collateralToken;
+    IERC20 public borrowToken;
 
     uint128 public maxSafeLTV;
     uint128 public minProfitLTV;
@@ -60,7 +61,7 @@ abstract contract State is IOracle {
         return baseTotalSupply + 100; 
     }
 
-    function getAuctionStep() public view returns (uint256) {
+    function getAuctionStep() internal view returns (uint256) {
 
         uint256 auctionStep = block.number - startAuction;
 
@@ -144,8 +145,8 @@ abstract contract State is IOracle {
         return Prices({
             borrow: getPriceBorrowOracle(),
             collateral: getPriceCollateralOracle(),
-            borrowSlippage: 0,
-            collateralSlippage: 0
+            borrowSlippage: 10**16,
+            collateralSlippage: 10**16
         });
     }
 }

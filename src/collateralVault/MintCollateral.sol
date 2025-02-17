@@ -36,15 +36,11 @@ abstract contract MintCollateral is MaxMintCollateral, ERC20, StateTransition, L
         supply(collateralAssets);
 
         if (deltaFuture.deltaProtocolFutureRewardBorrow < 0) {
-            uint256 amountInAssets = uint256(-deltaFuture.deltaProtocolFutureRewardBorrow).mulDivDown(Constants.ORACLE_DIVIDER, getPriceBorrowOracle());
-            uint256 amountInShares = amountInAssets.mulDivDown(totalSupply(), totalAssets());
-            _mint(FEE_COLLECTOR, amountInShares);
+            _mint(FEE_COLLECTOR, underlyingToShares(uint256(-deltaFuture.deltaProtocolFutureRewardBorrow)));
         }
 
         if (deltaFuture.deltaProtocolFutureRewardCollateral > 0) {
-            uint256 amountInAssets = uint256(deltaFuture.deltaProtocolFutureRewardCollateral).mulDivDown(Constants.ORACLE_DIVIDER, getPriceBorrowOracle());
-            uint256 amountInShares = amountInAssets.mulDivDown(totalSupply(), totalAssets());
-            _mint(FEE_COLLECTOR, amountInShares);
+            _mint(FEE_COLLECTOR, underlyingToShares(uint256(deltaFuture.deltaProtocolFutureRewardCollateral)));
         }
 
         // TODO: fix this - return from calculateDepositWithdraw

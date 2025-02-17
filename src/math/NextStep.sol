@@ -19,7 +19,7 @@ abstract contract NextStep {
         int256 deltaFuturePaymentBorrow,
         int256 deltaUserFutureRewardBorrow,
         int256 deltaProtocolFutureRewardBorrow
-    ) internal pure returns (int256 nextFutureRewardBorrow) {
+    ) private pure returns (int256 nextFutureRewardBorrow) {
         return futureRewardBorrow + deltaFuturePaymentBorrow + deltaUserFutureRewardBorrow + deltaProtocolFutureRewardBorrow;
     }
 
@@ -28,21 +28,21 @@ abstract contract NextStep {
         int256 deltaFuturePaymentCollateral,
         int256 deltaUserFutureRewardCollateral,
         int256 deltaProtocolFutureRewardCollateral
-    ) internal pure returns (int256 nextFutureRewardCollateral) {
+    ) private pure returns (int256 nextFutureRewardCollateral) {
         return futureRewardCollateral + deltaFuturePaymentCollateral + deltaUserFutureRewardCollateral + deltaProtocolFutureRewardCollateral;
     }
 
     function calculateNextFutureBorrow(
         int256 futureBorrow,
         int256 deltaFutureBorrow
-    ) internal pure returns (int256 nextFutureBorrow) {
+    ) private pure returns (int256 nextFutureBorrow) {
         return futureBorrow + deltaFutureBorrow;
     }
 
     function calculateNextFutureCollateral(
         int256 futureCollateral,
         int256 deltaFutureCollateral
-    ) internal pure returns (int256 nextFutureCollateral) {
+    ) private pure returns (int256 nextFutureCollateral) {
         return futureCollateral + deltaFutureCollateral;
     }
 

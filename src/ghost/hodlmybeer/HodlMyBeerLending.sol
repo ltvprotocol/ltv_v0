@@ -23,12 +23,12 @@ contract HodlMyBeerLending is Initializable {
 
     function borrow(uint256 amount) external {
 
-        // LTV = 9/10
+        // LTV = 95/100
 
         uint256 borrowPrice = ISpookyOracle(oracle).getAssetPrice(borrowToken);
         uint256 collateralPrice = ISpookyOracle(oracle).getAssetPrice(collateralToken);
 
-        if((supplyBalance[msg.sender] * collateralPrice) * 9 < (borrowPrice * borrowBalance[msg.sender] + amount) * 10) {
+        if((supplyBalance[msg.sender] * collateralPrice) * 95 < (borrowPrice * (borrowBalance[msg.sender] + amount)) * 100) {
             require(false, "Collateral ratio is too low");
         }
 
@@ -44,7 +44,7 @@ contract HodlMyBeerLending is Initializable {
 
         require(borrowBalance[msg.sender] >= amount, "Repay amount exceeds borrow balance");
         IERC20(borrowToken).transferFrom(msg.sender, address(this), amount);
-        borrowBalance[borrowToken] -= amount;
+        borrowBalance[msg.sender] -= amount;
     }
 
     function supply(uint256 amount) external {
@@ -52,7 +52,7 @@ contract HodlMyBeerLending is Initializable {
         // TODO: add reentrancy guard
 
         IERC20(collateralToken).transferFrom(msg.sender, address(this), amount);
-        supplyBalance[collateralToken] += amount;
+        supplyBalance[msg.sender] += amount;
     }
 
     function withdraw(uint256 amount) external {
@@ -60,7 +60,7 @@ contract HodlMyBeerLending is Initializable {
         uint256 borrowPrice = ISpookyOracle(oracle).getAssetPrice(borrowToken);
         uint256 collateralPrice = ISpookyOracle(oracle).getAssetPrice(collateralToken);
 
-        if(((supplyBalance[msg.sender] - amount) * collateralPrice) * 9 < (borrowPrice * borrowBalance[msg.sender]) * 10) {
+        if(((supplyBalance[msg.sender] - amount) * collateralPrice) * 95 < (borrowPrice * borrowBalance[msg.sender]) * 100) {
             require(false, "Collateral ratio is too low");
         }
 
@@ -68,6 +68,6 @@ contract HodlMyBeerLending is Initializable {
 
         require(supplyBalance[msg.sender] >= amount, "Withdraw amount exceeds supply balance");
         IERC20(collateralToken).transfer(msg.sender, amount);
-        supplyBalance[collateralToken] -= amount;
+        supplyBalance[msg.sender] -= amount;
     }
 }

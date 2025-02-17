@@ -21,7 +21,7 @@ abstract contract DeltaRealBorrowAndDeltaRealCollateral is State {
         int256 deltaRealCollateral,
         int256 deltaRealBorrow
         //bool isUp
-    ) public view returns (int256) {
+    ) private view returns (int256) {
 
         // dividend:
         //
@@ -71,7 +71,7 @@ abstract contract DeltaRealBorrowAndDeltaRealCollateral is State {
         Cases memory cases,
         Prices memory prices, 
         ConvertedAssets memory convertedAssets
-    ) public view returns (int256) {
+    ) private view returns (int256) {
 
         // divider
         //
@@ -173,7 +173,7 @@ abstract contract DeltaRealBorrowAndDeltaRealCollateral is State {
         Cases memory cases,
         int256 deltaRealCollateral,
         int256 deltaRealBorrow
-    ) public view returns (int256, Cases memory) {
+    ) internal view returns (int256, Cases memory) {
 
         int256 deltaFutureCollateral = 0;
 

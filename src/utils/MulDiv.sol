@@ -101,12 +101,12 @@ library uMulDiv {
 library sMulDiv {
 
     // Maximum value of a signed 256-bit integer
-    int256 public constant MAX_INT256 = type(int256).max;
+    int256 internal constant MAX_INT256 = type(int256).max;
 
     // Minimum value of a signed 256-bit integer
-    int256 public constant MIN_INT256 = type(int256).min;
+    int256 internal constant MIN_INT256 = type(int256).min;
 
-    function mulDivDown(int256 x, int256 y, int256 denominator) public pure returns (int256) {
+    function mulDivDown(int256 x, int256 y, int256 denominator) internal pure returns (int256) {
         require(denominator != 0, "Denominator cannot be zero");
 
         if (y != 0 && x != 0) {
@@ -136,7 +136,7 @@ library sMulDiv {
         }
     }
 
-    function mulDivUp(int256 x, int256 y, int256 denominator) public pure returns (int256) {
+    function mulDivUp(int256 x, int256 y, int256 denominator) internal pure returns (int256) {
         require(denominator != 0, "Denominator cannot be zero");
 
         if (y != 0 && x != 0) {
