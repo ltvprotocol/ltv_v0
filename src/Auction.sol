@@ -91,8 +91,8 @@ abstract contract Auction is AuctionMath, Lending {
     function applyDeltaState(DeltaAuctionState memory deltaState) internal {
         futureBorrowAssets += deltaState.deltaFutureBorrowAssets;
         futureCollateralAssets += deltaState.deltaFutureCollateralAssets;
-        futureRewardBorrowAssets += deltaState.deltaProtocolFutureRewardBorrowAssets;
-        futureRewardCollateralAssets += deltaState.deltaProtocolFutureRewardCollateralAssets;
+        futureRewardBorrowAssets += deltaState.deltaProtocolFutureRewardBorrowAssets + deltaState.deltaUserFutureRewardBorrowAssets;
+        futureRewardCollateralAssets += deltaState.deltaProtocolFutureRewardCollateralAssets + deltaState.deltaUserFutureRewardCollateralAssets;
 
         if (deltaState.deltaUserBorrowAssets < 0) {
             collateralToken.transferFrom(msg.sender, address(this), uint256(-deltaState.deltaUserCollateralAssets));
