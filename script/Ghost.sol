@@ -22,49 +22,46 @@ contract DeployScript is Script {
 
         // TODO: deploy LTV also
 
-        // TODO: get contracts owner as parameter
-        // TODO: get magicETH owner as parameter
-        // TODO: oracle owner as parameter
+        address proxyOwner = vm.envAddress("PROXY_OWNER");
+        address magicETHOwner = vm.envAddress("MAGIC_ETH_OWNER");
+        address oracleOwner = vm.envAddress("ORACLE_OWNER");
+        address weth = vm.envAddress("WETH");
+
+        console.log("proxyOwner: ", proxyOwner);
+        console.log("magicETHOwner: ", magicETHOwner);
+        console.log("oracleOwner: ", oracleOwner);
+        console.log("weth: ", weth);
 
         vm.startBroadcast(); // Start broadcasting transactions
 
-        MagicETH magicETH = new MagicETH();
-
-        address proxyMagicETH = Upgrades.deployTransparentProxy(
+        address magicETHProxy = Upgrades.deployTransparentProxy(
             "MagicETH.sol",
-            address(0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266),
-            abi.encodeCall(magicETH.initialize, (0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266))
+            proxyOwner,
+            abi.encodeCall(MagicETH.initialize, (magicETHOwner))
         );
 
         // ------------------------------------------------
 
-        HodlMyBeerLending hodlMyBeerLending = new HodlMyBeerLending();
+        address spookyOracleProxy = Upgrades.deployTransparentProxy(
+            "SpookyOracle.sol",
+            proxyOwner,
+            abi.encodeCall(SpookyOracle.initialize, oracleOwner)
+        );
+
+        // ------------------------------------------------
 
         // TODO: add link to WETH
 
         address hodlMyBeerLendingProxy = Upgrades.deployTransparentProxy(
             "HodlMyBeerLending.sol",
             address(0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266),
-            abi.encodeCall(hodlMyBeerLending.initialize, (address(0), address(proxyMagicETH)))
+            abi.encodeCall(HodlMyBeerLending.initialize, (weth, address(magicETHProxy), address(spookyOracleProxy)))
         );
 
         // ------------------------------------------------
 
-        SpookyOracle spookyOracle = new SpookyOracle();
-
-        address spookyOracleProxy = Upgrades.deployTransparentProxy(
-            "SpookyOracle.sol",
-            address(0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266),
-            abi.encodeCall(spookyOracle.initialize, (0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266))
-        );
-
-        // ------------------------------------------------
-
-        console.log("magicETH at:              ", address(magicETH));
-        console.log("proxyMagicETH at:         ", proxyMagicETH);
-        console.log("hodlMyBeerLending at:     ", address(hodlMyBeerLending));
+        console.log("proxyMagicETH at:         ", magicETHProxy);
         console.log("hodlMyBeerLendingProxy at:", hodlMyBeerLendingProxy);
-        console.log("spookyOracle at:          ", address(spookyOracle));
         console.log("spookyOracleProxy at:     ", spookyOracleProxy);
 
         vm.stopBroadcast();

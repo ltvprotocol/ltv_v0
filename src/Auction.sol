@@ -5,6 +5,7 @@ import './math/AuctionMath.sol';
 import './Lending.sol';
 import "forge-std/console.sol";
 
+// @todo: consider renaming User -> Real 
 struct DeltaAuctionState {
     int256 deltaFutureBorrowAssets;
     int256 deltaFutureCollateralAssets;
