@@ -2,15 +2,16 @@
 pragma solidity ^0.8.13;
 
 import "./State.sol";
+import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 
-abstract contract ERC20 is State {
+abstract contract ERC20 is State, Initializable {
 
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Approval(
         address indexed owner, address indexed spender, uint256 value
     );
 
-    constructor(string memory _name, string memory _symbol, uint8 _decimals) {
+    function __ERC20_init(string memory _name, string memory _symbol, uint8 _decimals) internal onlyInitializing {
         name = _name;
         symbol = _symbol;
         decimals = _decimals;

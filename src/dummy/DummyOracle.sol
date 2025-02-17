@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import "./interfaces/IDummyOracle.sol";
-import "../utils/Ownable.sol";
+import '@openzeppelin/contracts/access/Ownable.sol';
 
 contract DummyOracle is IDummyOracle, Ownable {
     mapping(address => uint256) private prices;

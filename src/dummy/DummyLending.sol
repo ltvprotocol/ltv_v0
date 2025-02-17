@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import './interfaces/IDummyLending.sol';
-import '../utils/Ownable.sol';
+import '@openzeppelin/contracts/access/Ownable.sol';
 import 'forge-std/interfaces/IERC20.sol';
 
 contract DummyLending is IDummyLending, Ownable {

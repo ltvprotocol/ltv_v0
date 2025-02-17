@@ -8,17 +8,14 @@ import '../dummy/interfaces/IDummyOracle.sol';
 contract DummyLTV is LTV {
     using uMulDiv for uint256;
 
-    IDummyLending private lendingProtocol;
-    IDummyOracle private oracle;
+    IDummyLending public lendingProtocol;
+    IDummyOracle public oracle;
 
-    constructor(
-        address initialOwner,
-        address collateralToken,
-        address borrowToken,
-        IDummyLending _lendingProtocol,
-        IDummyOracle _oracle,
-        address feeCollector
-    ) LTV(initialOwner) State(collateralToken, borrowToken, feeCollector) {
+    constructor(address collateralToken, address borrowToken, address feeCollector) State(collateralToken, borrowToken, feeCollector) {}
+
+    function initialize(address initialOwner, IDummyLending _lendingProtocol, IDummyOracle _oracle) public initializer {
+        __Ownable_init(initialOwner);
+        __ERC20_init('LTV', 'LTV', 18);
         lendingProtocol = _lendingProtocol;
         oracle = _oracle;
     }
@@ -70,12 +67,12 @@ contract DummyLTV is LTV {
             borrowAssets.mulDivDown(getPriceBorrowOracle(), Constants.ORACLE_DIVIDER);
         uint256 sharesInAssets = sharesInUnderlying.mulDivDown(getPriceBorrowOracle(), Constants.ORACLE_DIVIDER);
         uint256 shares = sharesInAssets.mulDivDown(totalSupply(), totalAssets());
-        
+
         collateralToken.transferFrom(msg.sender, address(this), collateralAssets);
         supply(collateralAssets);
 
         _mint(msg.sender, shares);
-        
+
         borrow(borrowAssets);
         borrowToken.transfer(msg.sender, borrowAssets);
 
