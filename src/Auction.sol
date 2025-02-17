@@ -16,7 +16,7 @@ struct DeltaAuctionState {
     int256 deltaProtocolFutureRewardBorrowAssets;
 }
 
-event AuctionExecuted(DeltaAuctionState deltaState);
+event AuctionExecuted(address executor, int256 deltaRealCollateralAssets, int256 deltaRealBorrowAssets);
 
 abstract contract Auction is AuctionMath, Lending {
     error NoAuctionForProvidedDeltaFutureCollateral(int256 futureCollateralAssets, int256 futureRewardCollateralAssets, int256 deltaUserCollateralAssets);
@@ -114,6 +114,6 @@ abstract contract Auction is AuctionMath, Lending {
             }
         }
 
-        emit AuctionExecuted(deltaState);
+        emit AuctionExecuted(msg.sender, deltaState.deltaFutureCollateralAssets, deltaState.deltaFutureBorrowAssets);
     }
 }
