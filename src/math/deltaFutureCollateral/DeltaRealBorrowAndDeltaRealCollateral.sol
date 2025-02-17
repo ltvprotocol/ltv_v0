@@ -12,6 +12,8 @@ abstract contract DeltaRealBorrowAndDeltaRealCollateral is State {
     using uMulDiv for uint256;
     using sMulDiv for int256;
 
+    error DeltaRealBorrowAndDeltaRealCollateralUnexpectedError(ConvertedAssets convertedAssets, Prices prices, int256 deltaRealCollateral, int256 deltaRealBorrow);
+
     function calculateDividendByDeltaRealBorrowAndDeltaRealCollateral(
         Cases memory cases,
         Prices memory prices, 
@@ -184,8 +186,7 @@ abstract contract DeltaRealBorrowAndDeltaRealCollateral is State {
 
             if (divider == 0) {
                 if (cases.ncase >= 6) {
-                    // unexpected behavior
-                    return (0, cases);
+                    revert DeltaRealBorrowAndDeltaRealCollateralUnexpectedError(convertedAssets, prices, deltaRealCollateral, deltaRealBorrow);
                 }
                 cases = CasesOperator.generateCase(cases.ncase + 1);
                 continue;
@@ -200,8 +201,7 @@ abstract contract DeltaRealBorrowAndDeltaRealCollateral is State {
             }
 
             if (cases.ncase == 6) {
-                // unexpected bihaviour
-                return (0, cases);
+                revert DeltaRealBorrowAndDeltaRealCollateralUnexpectedError(convertedAssets, prices, deltaRealCollateral, deltaRealBorrow);
             }
 
             cases = CasesOperator.generateCase(cases.ncase + 1);
