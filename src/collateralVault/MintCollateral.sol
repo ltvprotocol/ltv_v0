@@ -7,8 +7,9 @@ import "../Lending.sol";
 import "../math/NextStep.sol";
 import "../StateTransition.sol";
 import './MaxMintCollateral.sol';
+import '../ERC4626Events.sol';
 
-abstract contract MintCollateral is MaxMintCollateral, ERC20, StateTransition, Lending, NextStep {
+abstract contract MintCollateral is MaxMintCollateral, ERC20, StateTransition, Lending, NextStep, ERC4626Events {
 
     using uMulDiv for uint256;
 
@@ -52,6 +53,8 @@ abstract contract MintCollateral is MaxMintCollateral, ERC20, StateTransition, L
         NextState memory nextState = calculateNextStep(convertedAssets, deltaFuture, block.number);
 
         applyStateTransition(nextState);
+
+        emit DepositCollateral(msg.sender, receiver, collateralAssets, shares);
 
         _mint(receiver, shares);
 

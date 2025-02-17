@@ -9,8 +9,9 @@ import '../Lending.sol';
 import '../math/DepositWithdraw.sol';
 import '../math/NextStep.sol';
 import './MaxDepositCollateral.sol';
+import '../ERC4626Events.sol';
 
-abstract contract DepositCollateral is MaxDepositCollateral, TotalAssets, DepositWithdraw, ERC20, StateTransition, Lending, NextStep  {
+abstract contract DepositCollateral is MaxDepositCollateral, TotalAssets, DepositWithdraw, ERC20, StateTransition, Lending, NextStep, ERC4626Events  {
 
     using uMulDiv for uint256;
     
@@ -55,6 +56,8 @@ abstract contract DepositCollateral is MaxDepositCollateral, TotalAssets, Deposi
         NextState memory nextState = calculateNextStep(convertedAssets, deltaFuture, block.number);
 
         applyStateTransition(nextState);
+
+        emit DepositCollateral(msg.sender, receiver, collateralAssets, shares);
 
         _mint(receiver, shares);
 

@@ -8,8 +8,9 @@ import "../Lending.sol";
 import "../math/NextStep.sol";
 import "../StateTransition.sol";
 import './MaxRedeem.sol';
+import '../ERC4626Events.sol';
 
-abstract contract Redeem is MaxRedeem, ERC20, StateTransition, Lending, NextStep{
+abstract contract Redeem is MaxRedeem, ERC20, StateTransition, Lending, NextStep, ERC4626Events{
 
     using uMulDiv for uint256;
 
@@ -58,6 +59,8 @@ abstract contract Redeem is MaxRedeem, ERC20, StateTransition, Lending, NextStep
         borrow(assets);
 
         borrowToken.transfer(receiver, assets);
+
+        emit Withdraw(msg.sender, receiver, owner, assets, shares);
 
         return assets;
 

@@ -8,8 +8,9 @@ import "../Lending.sol";
 import "../math/NextStep.sol";
 import './MaxWithdraw.sol';
 import '../math/DepositWithdraw.sol';
+import '../ERC4626Events.sol';
 
-abstract contract Withdraw is MaxWithdraw, DepositWithdraw, ERC20, StateTransition, Lending, NextStep{
+abstract contract Withdraw is MaxWithdraw, DepositWithdraw, ERC20, StateTransition, Lending, NextStep, ERC4626Events{
 
     using uMulDiv for uint256;
     
@@ -56,6 +57,8 @@ abstract contract Withdraw is MaxWithdraw, DepositWithdraw, ERC20, StateTransiti
         borrow(assets);
 
         borrowToken.transfer(receiver, assets);
+
+        emit Withdraw(msg.sender, receiver, owner, assets, shares);
 
         return shares;
     }

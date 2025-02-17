@@ -7,8 +7,9 @@ import "../Lending.sol";
 import "../math/NextStep.sol";
 import "../StateTransition.sol";
 import './MaxMint.sol';
+import '../ERC4626Events.sol';
 
-abstract contract Mint is MaxMint, ERC20, StateTransition, Lending, NextStep {
+abstract contract Mint is MaxMint, ERC20, StateTransition, Lending, NextStep, ERC4626Events {
 
     using uMulDiv for uint256;
 
@@ -52,6 +53,8 @@ abstract contract Mint is MaxMint, ERC20, StateTransition, Lending, NextStep {
         NextState memory nextState = calculateNextStep(convertedAssets, deltaFuture, block.number);
 
         applyStateTransition(nextState);
+
+        emit Deposit(msg.sender, receiver, assets, shares);
 
         _mint(receiver, shares);
 
