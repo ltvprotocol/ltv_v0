@@ -22,24 +22,30 @@ contract DeployScript is Script {
 
         // TODO: deploy LTV also
 
-        // TODO: get contracts owner as parameter
-        // TODO: get magicETH owner as parameter
-        // TODO: oracle owner as parameter
+        address proxyOwner = vm.envAddress("PROXY_OWNER");
+        address magicETHOwner = vm.envAddress("MAGIC_ETH_OWNER");
+        address oracleOwner = vm.envAddress("ORACLE_OWNER");
+        address weth = vm.envAddress("WETH");
+
+        console.log("proxyOwner: ", proxyOwner);
+        console.log("magicETHOwner: ", magicETHOwner);
+        console.log("oracleOwner: ", oracleOwner);
+        console.log("weth: ", weth);
 
         vm.startBroadcast(); // Start broadcasting transactions
 
         address magicETHProxy = Upgrades.deployTransparentProxy(
             "MagicETH.sol",
-            address(0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266),
-            abi.encodeCall(MagicETH.initialize, (0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266))
+            proxyOwner,
+            abi.encodeCall(MagicETH.initialize, (magicETHOwner))
         );
 
         // ------------------------------------------------
 
         address spookyOracleProxy = Upgrades.deployTransparentProxy(
             "SpookyOracle.sol",
-            address(0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266),
-            abi.encodeCall(SpookyOracle.initialize, (0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266))
+            proxyOwner,
+            abi.encodeCall(SpookyOracle.initialize, oracleOwner)
         );
 
         // ------------------------------------------------
@@ -49,7 +55,7 @@ contract DeployScript is Script {
         address hodlMyBeerLendingProxy = Upgrades.deployTransparentProxy(
             "HodlMyBeerLending.sol",
             address(0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266),
-            abi.encodeCall(HodlMyBeerLending.initialize, (address(0), address(magicETHProxy), address(spookyOracleProxy)))
+            abi.encodeCall(HodlMyBeerLending.initialize, (weth, address(magicETHProxy), address(spookyOracleProxy)))
         );
 
         // ------------------------------------------------
