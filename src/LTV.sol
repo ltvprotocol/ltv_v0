@@ -20,9 +20,10 @@ import './collateralVault/PreviewDepositCollateral.sol';
 import './collateralVault/PreviewWithdrawCollateral.sol';
 import './collateralVault/PreviewMintCollateral.sol';
 import './collateralVault/PreviewRedeemCollateral.sol';
+import './Auction.sol';
 
 
-abstract contract LTV is PreviewWithdraw, PreviewDeposit, PreviewMint, PreviewRedeem, PreviewWithdrawCollateral, PreviewDepositCollateral, PreviewMintCollateral, PreviewRedeemCollateral, Mint, MintCollateral, Deposit, DepositCollateral, Withdraw, WithdrawCollateral, Redeem, RedeemCollateral, ConvertToAssets, ConvertToShares, Ownable {
+abstract contract LTV is PreviewWithdraw, PreviewDeposit, PreviewMint, PreviewRedeem, PreviewWithdrawCollateral, PreviewDepositCollateral, PreviewMintCollateral, PreviewRedeemCollateral, Auction, Mint, MintCollateral, Deposit, DepositCollateral, Withdraw, WithdrawCollateral, Redeem, RedeemCollateral, ConvertToAssets, ConvertToShares, Ownable {
     event MaxSafeLTVChanged(uint128 oldValue, uint128 newValue);
     event MinProfitLTVChanged(uint128 oldValue, uint128 newValue);
     event TargetLTVChanged(uint128 oldValue, uint128 newValue);

@@ -54,11 +54,13 @@ contract DummyLTVTest is Test {
 
         deal(address(borrowToken), address(lendingProtocol), type(uint112).max);
         deal(address(borrowToken), user, type(uint112).max);
+        deal(address(collateralToken), address(lendingProtocol), type(uint112).max);
+        deal(address(collateralToken), user, type(uint112).max);
 
         dummyLTV.mintFreeTokens(borrowAmount * 1000, owner);
 
-        vm.roll(20);
-        dummyLTV.setStartAuction(10);
+        vm.roll(Constants.AMOUNT_OF_STEPS);
+        dummyLTV.setStartAuction(Constants.AMOUNT_OF_STEPS / 2);
         dummyLTV.setFutureBorrowAssets(futureBorrow);
         dummyLTV.setFutureCollateralAssets(futureCollateral / 2);
         
@@ -229,5 +231,32 @@ contract DummyLTVTest is Test {
         dummyLTV.redeem(dummyLTV.maxRedeem(user), user, user);
     }
 
+    function test_executeDepositAuctionBorrow(address owner, address user) public initializeBalancedTest(owner, user, 100000, 10000, 10000, -1000) {
+        collateralToken.approve(address(dummyLTV), type(uint112).max);
+        int256 deltaCollateral = dummyLTV.executeAuctionBorrow(-1000);
+
+        assertEq(deltaCollateral, -475);
+    }
+
+    function test_executeDepositAuctionCollateral(address owner, address user) public initializeBalancedTest(owner, user, 100000, 10000, 10000, -1000) {
+        collateralToken.approve(address(dummyLTV), type(uint112).max);
+        int256 deltaBorrow = dummyLTV.executeAuctionCollateral(-475);
+
+        assertEq(deltaBorrow, -1000);
+    }
+
+    function test_executeWithdrawAuctionBorrow(address owner, address user) public initializeBalancedTest(owner, user, 100000, -10000, -10000, 1000) {
+        borrowToken.approve(address(dummyLTV), type(uint112).max);
+        int256 deltaCollateral = dummyLTV.executeAuctionBorrow(950);
+
+        assertEq(deltaCollateral, 500);
+    }
+
+    function test_executeWithdrawAuctionCollateral(address owner, address user) public initializeBalancedTest(owner, user, 100000, -10000, -10000, 1000) {
+        borrowToken.approve(address(dummyLTV), type(uint112).max);
+        int256 deltaBorrow = dummyLTV.executeAuctionCollateral(500);
+
+        assertEq(deltaBorrow, 950);
+    }
 
 }
