@@ -5,7 +5,7 @@ pragma solidity ^0.8.13;
 
 import "forge-std/Script.sol";
 
-import {Upgrades} from "openzeppelin-foundry-upgrades/Upgrades.sol";
+import {Upgrades, Options} from "openzeppelin-foundry-upgrades/Upgrades.sol";
 
 import {ProxyAdmin} from "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
 
@@ -16,6 +16,8 @@ import {HodlMyBeerLending} from "src/ghost/hodlmybeer/HodlMyBeerLending.sol";
 import {SpookyOracle} from "src/ghost/spooky/SpookyOracle.sol";
 
 import "../src/ltv_lendings/GhostLTV.sol";
+
+import '@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol';
 
 contract DeployScript is Script {
     function setUp() public {}
@@ -62,11 +64,12 @@ contract DeployScript is Script {
             abi.encodeCall(HodlMyBeerLending.initialize, (weth, address(magicETHProxy), address(spookyOracleProxy)))
         );
 
-        address ltv = Upgrades.deployTransparentProxy(
-            "GhostLTV.sol",
-            proxyOwner,
-            abi.encodeCall(GhostLTV.initialize, (ltvOwner, IHodlMyBeerLending(hodlMyBeerLendingProxy), ISpookyOracle(spookyOracleProxy), magicETHProxy, weth, feeCollector))
-        );
+        Options memory options;
+        options.unsafeAllow = 'external-library-linking';
+
+        address impl = address(new GhostLTV());
+
+        address ltv = address(new TransparentUpgradeableProxy(impl, proxyOwner, abi.encodeCall(GhostLTV.initialize, (ltvOwner, IHodlMyBeerLending(hodlMyBeerLendingProxy), ISpookyOracle(spookyOracleProxy), magicETHProxy, weth, feeCollector))));
 
         // ------------------------------------------------
 

@@ -12,9 +12,9 @@ contract GhostLTV is LTV {
     // constructor(address collateralToken, address borrowToken, address feeCollector) State(collateralToken, borrowToken, feeCollector) {}
 
     function initialize(address initialOwner, IHodlMyBeerLending _lendingProtocol, ISpookyOracle _oracle, address collateralToken, address borrowToken, address feeCollector) public initializer {
-        __Ownable_init(initialOwner);
-        __ERC20_init('Ghost Magic ETH', 'GME', 18);
         __State_init(collateralToken, borrowToken, feeCollector);
+        __ERC20_init('Ghost Magic ETH', 'GME', 18);
+        __Ownable_init(initialOwner);
         lendingProtocol = _lendingProtocol;
         oracle = _oracle;
     }
