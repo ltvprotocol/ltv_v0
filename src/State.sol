@@ -16,7 +16,7 @@ abstract contract State is IOracle {
     constructor(address _collateralToken, address _borrowToken, address feeCollector) {
         collateralToken = IERC20(_collateralToken);
         borrowToken = IERC20(_borrowToken);
-
+        
         FEE_COLLECTOR = feeCollector;
     }
 
@@ -37,8 +37,8 @@ abstract contract State is IOracle {
     string public symbol;
     uint8 public decimals;
 
-    IERC20 public collateralToken;
-    IERC20 public borrowToken;
+    IERC20 public immutable collateralToken;
+    IERC20 public immutable borrowToken;
 
     uint128 public maxSafeLTV;
     uint128 public minProfitLTV;

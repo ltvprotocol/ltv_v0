@@ -6,17 +6,16 @@ import '../dummy/interfaces/IDummyLending.sol';
 import '../dummy/interfaces/IDummyOracle.sol';
 
 contract DummyLTV is LTV {
-    IDummyLending private lendingProtocol;
-    IDummyOracle private oracle;
+    using uMulDiv for uint256;
 
-    constructor(
-        address initialOwner,
-        address collateralToken,
-        address borrowToken,
-        IDummyLending _lendingProtocol,
-        IDummyOracle _oracle,
-        address feeCollector
-    ) LTV(initialOwner) State(collateralToken, borrowToken, feeCollector) {
+    IDummyLending public lendingProtocol;
+    IDummyOracle public oracle;
+
+    constructor(address collateralToken, address borrowToken, address feeCollector) State(collateralToken, borrowToken, feeCollector) {}
+
+    function initialize(address initialOwner, IDummyLending _lendingProtocol, IDummyOracle _oracle) public initializer {
+        __Ownable_init(initialOwner);
+        __ERC20_init('LTV', 'LTV', 18);
         lendingProtocol = _lendingProtocol;
         oracle = _oracle;
     }

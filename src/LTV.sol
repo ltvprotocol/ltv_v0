@@ -9,7 +9,6 @@ import "./borrowVault/Deposit.sol";
 import "./borrowVault/Withdraw.sol";
 import './borrowVault/Redeem.sol';
 import './borrowVault/Mint.sol';
-import './utils/Ownable.sol';
 import './borrowVault/ConvertToAssets.sol';
 import './borrowVault/ConvertToShares.sol';
 import './collateralVault/DepositCollateral.sol';
@@ -21,18 +20,15 @@ import './collateralVault/PreviewWithdrawCollateral.sol';
 import './collateralVault/PreviewMintCollateral.sol';
 import './collateralVault/PreviewRedeemCollateral.sol';
 import './Auction.sol';
+import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 
 
-abstract contract LTV is PreviewWithdraw, PreviewDeposit, PreviewMint, PreviewRedeem, PreviewWithdrawCollateral, PreviewDepositCollateral, PreviewMintCollateral, PreviewRedeemCollateral, Auction, Mint, MintCollateral, Deposit, DepositCollateral, Withdraw, WithdrawCollateral, Redeem, RedeemCollateral, ConvertToAssets, ConvertToShares, Ownable {
+abstract contract LTV is PreviewWithdraw, PreviewDeposit, PreviewMint, PreviewRedeem, PreviewWithdrawCollateral, PreviewDepositCollateral, PreviewMintCollateral, PreviewRedeemCollateral, Auction, Mint, MintCollateral, Deposit, DepositCollateral, Withdraw, WithdrawCollateral, Redeem, RedeemCollateral, ConvertToAssets, ConvertToShares, OwnableUpgradeable {
     using uMulDiv for uint256;
     
     event MaxSafeLTVChanged(uint128 oldValue, uint128 newValue);
     event MinProfitLTVChanged(uint128 oldValue, uint128 newValue);
     event TargetLTVChanged(uint128 oldValue, uint128 newValue);
-
-    constructor(address initialOwner) ERC20("LTV", "LTV", 18) Ownable(initialOwner) {
-        //
-    }
 
     function setTargetLTV(uint128 value) external onlyOwner {
         uint128 oldValue = targetLTV;
