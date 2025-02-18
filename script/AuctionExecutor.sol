@@ -22,19 +22,15 @@ contract AuctionExecutor is Ownable {
 
     function closeCurrentAuction() external onlyOwner {
         int256 auctionBorrow = targetContract.futureBorrowAssets();
-        int256 deltaBorrow;
-        int256 deltaCollateral;
-        if (auctionBorrow > 0) {
-            deltaBorrow = -auctionBorrow;
-            deltaCollateral = targetContract.previewExecuteAuctionBorrow(deltaBorrow);
-            targetContract.collateralToken().approve(address(targetContract), uint256(deltaCollateral));
-            targetContract.executeAuctionBorrow(deltaBorrow);
+        if (auctionBorrow > 10**17) {
+            IERC20 collateralToken = IERC20(address(targetContract.collateralToken()));
+            collateralToken.approve(address(targetContract), collateralToken.balanceOf(address(this)));
+            targetContract.executeAuctionBorrow(-auctionBorrow);
         }
-        else if (auctionBorrow < 0) {
-            deltaCollateral = targetContract.futureCollateralAssets();
-            deltaBorrow = targetContract.previewExecuteAuctionCollateral(deltaCollateral);
-            targetContract.borrowToken().approve(address(targetContract), uint256(-deltaBorrow));
-            targetContract.executeAuctionCollateral(deltaCollateral);
+        else if (auctionBorrow < 10**17) {
+            IERC20 borrowToken = IERC20(address(targetContract.borrowToken()));
+            borrowToken.approve(address(targetContract), borrowToken.balanceOf(address(this)));
+            targetContract.executeAuctionCollateral(-targetContract.futureCollateralAssets());
         }
     }
 }
