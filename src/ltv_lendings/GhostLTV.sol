@@ -32,7 +32,7 @@ contract GhostLTV is LTV {
     }
 
     function getRealCollateralAssets() public view override returns (uint256) {
-        return lendingProtocol.supplyBalance(address(this));
+        return lendingProtocol.supplyCollateralBalance(address(this));
     }
 
     function setLendingProtocol(IHodlMyBeerLending _lendingProtocol) public {
@@ -54,10 +54,10 @@ contract GhostLTV is LTV {
 
     function supply(uint256 assets) internal override {
         collateralToken.approve(address(lendingProtocol), assets);
-        lendingProtocol.supply(assets);
+        lendingProtocol.supplyCollateral(assets);
     }
 
     function withdraw(uint256 assets) internal override {
-        lendingProtocol.withdraw(assets);
+        lendingProtocol.withdrawCollateral(assets);
     }
 }

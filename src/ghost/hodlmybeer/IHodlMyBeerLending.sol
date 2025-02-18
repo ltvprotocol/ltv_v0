@@ -5,12 +5,14 @@ interface IHodlMyBeerLending {
     /// @notice Get the supply balance for a given address
     /// @param account The address to check
     /// @return The supply balance
-    function supplyBalance(address account) external view returns (uint256);
+    function supplyCollateralBalance(address account) external view returns (uint256);
 
     /// @notice Get the borrow balance for a given address
     /// @param account The address to check
     /// @return The borrow balance
     function borrowBalance(address account) external view returns (uint256);
+
+    function supplyBalance(address account) external view returns (uint256);
 
     /// @notice Get the borrow token address
     function borrowToken() external view returns (address);
@@ -41,9 +43,14 @@ interface IHodlMyBeerLending {
 
     /// @notice Supply collateral tokens
     /// @param amount The amount of tokens to supply
-    function supply(uint256 amount) external;
+    function supplyCollateral(uint256 amount) external;
 
     /// @notice Withdraw supplied collateral tokens
     /// @param amount The amount of tokens to withdraw
+    function withdrawCollateral(uint256 amount) external;
+
+    function supply(uint256 amount) external;
+
     function withdraw(uint256 amount) external;
+
 }
