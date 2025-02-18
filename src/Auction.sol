@@ -58,13 +58,16 @@ abstract contract Auction is AuctionMath, Lending {
 
         deltaState.deltaFutureBorrowAssets = calculateDeltaFutureBorrowAssetsFromDeltaFutureCollateralAssets(deltaState.deltaFutureCollateralAssets);
 
-        deltaState.deltaUserFutureRewardBorrowAssets = calculateDeltaUserFutureRewardBorrowAssetsFromDeltaFutureBorrowAssets(deltaState.deltaFutureBorrowAssets);
+        int256 deltaFutureRewardBorrowAssets = calculateDeltaFutureRewardBorrowAssetsFromDeltaFutureBorrowAssets(deltaState.deltaFutureBorrowAssets);
+        int256 deltaFutureRewardCollateralAssets = calculateDeltaFutureRewardCollateralAssetsFromDeltaFutureCollateralAssets(deltaState.deltaFutureCollateralAssets);
+
+        deltaState.deltaUserFutureRewardBorrowAssets = calculateDeltaUserFutureRewardBorrowAssetsFromDeltaFutureRewardBorrowAssets(deltaFutureRewardBorrowAssets);
         deltaState.deltaUserFutureRewardCollateralAssets = deltaState.deltaUserCollateralAssets - deltaState.deltaFutureCollateralAssets;
 
         deltaState.deltaUserBorrowAssets = deltaState.deltaFutureBorrowAssets + deltaState.deltaUserFutureRewardBorrowAssets;
 
-        deltaState.deltaProtocolFutureRewardBorrowAssets = calculateDeltaProtocolFutureRewardBorrowAssetsFromDeltaFutureBorrowAssets(deltaState.deltaFutureBorrowAssets);
-        deltaState.deltaProtocolFutureRewardCollateralAssets = calculateDeltaProtocolFutureRewardCollateralAssetsFromDeltaFutureCollateralAssets(deltaState.deltaFutureCollateralAssets);
+        deltaState.deltaProtocolFutureRewardBorrowAssets = deltaFutureRewardBorrowAssets - deltaState.deltaUserFutureRewardBorrowAssets;
+        deltaState.deltaProtocolFutureRewardCollateralAssets = deltaFutureRewardCollateralAssets - deltaState.deltaUserFutureRewardCollateralAssets;
 
         return deltaState;
     }
@@ -80,13 +83,17 @@ abstract contract Auction is AuctionMath, Lending {
 
       deltaState.deltaFutureCollateralAssets = calculateDeltaFutureCollateralAssetsFromDeltaFutureBorrowAssets(deltaState.deltaFutureBorrowAssets);
 
-      deltaState.deltaUserFutureRewardCollateralAssets = calculateDeltaUserFutureRewardCollateralAssetsFromDeltaFutureCollateralAssets(deltaState.deltaFutureCollateralAssets);
+      
+      int256 deltaFutureRewardBorrowAssets = calculateDeltaFutureRewardBorrowAssetsFromDeltaFutureBorrowAssets(deltaState.deltaFutureBorrowAssets);
+      int256 deltaFutureRewardCollateralAssets = calculateDeltaFutureRewardCollateralAssetsFromDeltaFutureCollateralAssets(deltaState.deltaFutureCollateralAssets);
+
+      deltaState.deltaUserFutureRewardCollateralAssets = calculateDeltaUserFutureRewardCollateralAssetsFromDeltaFutureRewardCollateralAssets(deltaFutureRewardCollateralAssets);
       deltaState.deltaUserFutureRewardBorrowAssets = deltaState.deltaUserBorrowAssets - deltaState.deltaFutureBorrowAssets;
 
       deltaState.deltaUserCollateralAssets = deltaState.deltaFutureCollateralAssets + deltaState.deltaUserFutureRewardCollateralAssets;
 
-      deltaState.deltaProtocolFutureRewardCollateralAssets = calculateDeltaProtocolFutureRewardCollateralAssetsFromDeltaFutureCollateralAssets(deltaState.deltaFutureCollateralAssets);
-      deltaState.deltaProtocolFutureRewardBorrowAssets = calculateDeltaProtocolFutureRewardBorrowAssetsFromDeltaFutureBorrowAssets(deltaState.deltaFutureBorrowAssets);
+      deltaState.deltaProtocolFutureRewardBorrowAssets = deltaFutureRewardBorrowAssets - deltaState.deltaUserFutureRewardBorrowAssets;
+      deltaState.deltaProtocolFutureRewardCollateralAssets = deltaFutureRewardCollateralAssets - deltaState.deltaUserFutureRewardCollateralAssets;
 
       return deltaState;
     }
