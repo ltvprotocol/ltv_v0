@@ -105,7 +105,7 @@ contract DeployScript is Script {
         console.log("futureBorrowAssets", GhostLTV(ltv).futureBorrowAssets());
         console.log("futureRewardCollateralAssets", GhostLTV(ltv).futureRewardCollateralAssets());
         console.log("futureRewardBorrowAssets", GhostLTV(ltv).futureRewardBorrowAssets());
-        console.log("real collateral", IHodlMyBeerLending(hodlMyBeerLendingProxy).supplyBalance(ltv));
+        console.log("real collateral", IHodlMyBeerLending(hodlMyBeerLendingProxy).supplyCollateralBalance(ltv));
         console.log("real borrow    ", IHodlMyBeerLending(hodlMyBeerLendingProxy).borrowBalance(ltv));
 
         console.log('proxyMagicETH at:         ', magicETHProxy);
