@@ -35,8 +35,6 @@ abstract contract Redeem is MaxRedeem, ERC20, StateTransition, Lending, NextStep
             assets = uint256(assetsInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, getPrices().borrow);
         }
 
-        _burn(owner, shares);
-
         if (deltaFuture.deltaProtocolFutureRewardBorrow < 0) {
             _mint(FEE_COLLECTOR, underlyingToShares(uint256(-deltaFuture.deltaProtocolFutureRewardBorrow)));
         }
@@ -44,6 +42,8 @@ abstract contract Redeem is MaxRedeem, ERC20, StateTransition, Lending, NextStep
         if (deltaFuture.deltaProtocolFutureRewardCollateral > 0) {
             _mint(FEE_COLLECTOR, underlyingToShares(uint256(deltaFuture.deltaProtocolFutureRewardCollateral)));
         }
+        
+        _burn(owner, shares);
 
         // TODO: fix this - return from calculateDepositWithdraw
         ConvertedAssets memory convertedAssets = recoverConvertedAssets();
