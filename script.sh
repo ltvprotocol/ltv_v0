@@ -12,7 +12,9 @@ THRESHOLD=$(echo "10^17" | bc)
 THRESHOLD=$(cast to-int256 $THRESHOLD)
 NEGATIVE_THRESHOLD=$(cast to-int256 -- -$THRESHOLD)
 
-if [[ $FUTURE_BORROW > $THRESHOLD ]]; then
+NEGATIVE=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+
+if [[ $FUTURE_BORROW > $THRESHOLD ]] && [[ $FUTURE_BORROW < $NEGATIVE ]]; then
   collateralToken=$(cast call --rpc-url localhost:8545 ${LTV} "collateralToken()")
   collateralToken=${collateralToken:26}
   collateralToken="0x${collateralToken}"
@@ -20,7 +22,7 @@ if [[ $FUTURE_BORROW > $THRESHOLD ]]; then
   cast send --private-key $PRIVATE_KEY --rpc-url localhost:8545 ${collateralToken} "approve(address,uint256)" ${LTV} ${collateralBalance}
   cast send --private-key $PRIVATE_KEY  --rpc-url localhost:8545 ${LTV} "executeAuctionBorrow(int256)" -- $DELTA_FUTURE_BORROW
   echo "Deposit auction terminated"
-elif [[ $FUTURE_BORROW < $NEGATIVE_THRESHOLD ]]; then
+elif [[ $FUTURE_BORROW < $NEGATIVE_THRESHOLD ]] && [[ $FUTURE_BORROW > $NEGATIVE ]]; then
   borrowToken=$(cast call --rpc-url localhost:8545 ${LTV} "borrowToken()")
   borrowToken=${borrowToken:26}
   borrowToken="0x${borrowToken}"
