@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.13;
 
-import "../Constants.sol";
-import "../ERC20.sol";
-import "../Lending.sol";
-import "../math/NextStep.sol";
-import "../StateTransition.sol";
+import '../Constants.sol';
+import '../ERC20.sol';
+import '../Lending.sol';
+import '../math/NextStep.sol';
+import '../StateTransition.sol';
 import './MaxMint.sol';
 import '../ERC4626Events.sol';
+import '../math/MintRedeem.sol';
 
-abstract contract Mint is MaxMint, ERC20, StateTransition, Lending, NextStep, ERC4626Events {
-
+abstract contract Mint is MaxMint, ERC20, StateTransition, Lending, ERC4626Events {
     using uMulDiv for uint256;
 
     error ExceedsMaxMint(address receiver, uint256 shares, uint256 max);
@@ -21,18 +21,26 @@ abstract contract Mint is MaxMint, ERC20, StateTransition, Lending, NextStep, ER
 
         uint256 sharesInAssets = shares.mulDivDown(totalAssets(), totalSupply());
         uint256 sharesInUnderlying = sharesInAssets.mulDivDown(getPrices().borrow, Constants.ORACLE_DIVIDER);
-        (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = calculateMintRedeem(int256(sharesInUnderlying), true);
+        ConvertedAssets memory convertedAssets = recoverConvertedAssets();
+        Prices memory prices = getPrices();
+        (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = MintRedeem.calculateMintRedeem(
+            int256(sharesInUnderlying),
+            true,
+            convertedAssets,
+            prices,
+            targetLTV
+        );
         // int256 signedShares = previewMintRedeem(-1*int256(assets));
 
         if (assetsInUnderlying > 0) {
             return 0;
         }
 
-        assets = uint256(-assetsInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, getPrices().borrow);
+        assets = uint256(-assetsInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow);
 
         // TODO: double check that Token should be transfered from msg.sender or from receiver
         borrowToken.transferFrom(msg.sender, address(this), assets);
-        
+
         if (deltaFuture.deltaProtocolFutureRewardBorrow < 0) {
             _mint(FEE_COLLECTOR, underlyingToShares(uint256(-deltaFuture.deltaProtocolFutureRewardBorrow)));
         }
@@ -44,9 +52,8 @@ abstract contract Mint is MaxMint, ERC20, StateTransition, Lending, NextStep, ER
         repay(assets);
 
         // TODO: fix this - return from calculateDepositWithdraw
-        ConvertedAssets memory convertedAssets = recoverConvertedAssets();
 
-        NextState memory nextState = calculateNextStep(convertedAssets, deltaFuture, block.number);
+        NextState memory nextState = NextStep.calculateNextStep(convertedAssets, deltaFuture, block.number);
 
         applyStateTransition(nextState);
 
@@ -56,5 +63,4 @@ abstract contract Mint is MaxMint, ERC20, StateTransition, Lending, NextStep, ER
 
         return assets;
     }
-
 }

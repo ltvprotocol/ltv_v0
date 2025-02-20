@@ -7,7 +7,7 @@ import "../../Cases.sol";
 import "../../utils/MulDiv.sol";
 import '../../State.sol';
 
-abstract contract DeltaRealBorrowAndDeltaRealCollateral is State {
+library DeltaRealBorrowAndDeltaRealCollateral {
 
     using uMulDiv for uint256;
     using sMulDiv for int256;
@@ -19,9 +19,10 @@ abstract contract DeltaRealBorrowAndDeltaRealCollateral is State {
         Prices memory prices, 
         ConvertedAssets memory convertedAssets,
         int256 deltaRealCollateral,
-        int256 deltaRealBorrow
+        int256 deltaRealBorrow,
+        uint128 targetLTV
         //bool isUp
-    ) private view returns (int256) {
+    ) private pure returns (int256) {
 
         // dividend:
         //
@@ -70,8 +71,9 @@ abstract contract DeltaRealBorrowAndDeltaRealCollateral is State {
     function calculateDividerByDeltaRealBorrowAndDeltaRealCollateral(
         Cases memory cases,
         Prices memory prices, 
-        ConvertedAssets memory convertedAssets
-    ) private view returns (int256) {
+        ConvertedAssets memory convertedAssets,
+        uint128 targetLTV
+    ) private pure returns (int256) {
 
         // divider
         //
@@ -172,15 +174,16 @@ abstract contract DeltaRealBorrowAndDeltaRealCollateral is State {
         ConvertedAssets memory convertedAssets,
         Cases memory cases,
         int256 deltaRealCollateral,
-        int256 deltaRealBorrow
-    ) internal view returns (int256, Cases memory) {
+        int256 deltaRealBorrow,
+        uint128 targetLTV
+    ) external pure returns (int256, Cases memory) {
 
         int256 deltaFutureCollateral = 0;
 
         while (true) {
-            int256 dividend = calculateDividendByDeltaRealBorrowAndDeltaRealCollateral(cases, prices, convertedAssets, deltaRealCollateral, deltaRealBorrow);
+            int256 dividend = calculateDividendByDeltaRealBorrowAndDeltaRealCollateral(cases, prices, convertedAssets, deltaRealCollateral, deltaRealBorrow, targetLTV);
 
-            int256 divider = calculateDividerByDeltaRealBorrowAndDeltaRealCollateral(cases, prices, convertedAssets);
+            int256 divider = calculateDividerByDeltaRealBorrowAndDeltaRealCollateral(cases, prices, convertedAssets, targetLTV);
 
             int256 DIVIDER = 10**18;
 

@@ -7,7 +7,7 @@ import "../Structs.sol";
 import "../Cases.sol";
 import "../utils/MulDiv.sol";
 
-abstract contract CommonBorrowCollateral is State {
+library CommonBorrowCollateral {
 
     using uMulDiv for uint256;
 
@@ -84,14 +84,15 @@ abstract contract CommonBorrowCollateral is State {
     function calculateDeltaFuturePaymentCollateral(
         Cases memory ncase,
         ConvertedAssets memory convertedAssets,
-        int256 deltaFutureCollateral
-    ) internal view returns (int256) {
+        int256 deltaFutureCollateral,
+        uint256 collateralSlippage
+    ) internal pure returns (int256) {
 
         // cmbc × −∆futureCollateral × collateralSlippage +
         // + cecbc × −(∆futureCollateral + futureCollateral) × collateralSlippage
 
-        int256 deltaFuturePaymentCollateral = -int256(int8(ncase.cmbc)) * deltaFutureCollateral * int256(getPrices().collateralSlippage);
-        deltaFuturePaymentCollateral -= int256(int8(ncase.cecbc)) * (deltaFutureCollateral + convertedAssets.futureCollateral) * int256(getPrices().collateralSlippage);
+        int256 deltaFuturePaymentCollateral = -int256(int8(ncase.cmbc)) * deltaFutureCollateral * int256(collateralSlippage);
+        deltaFuturePaymentCollateral -= int256(int8(ncase.cecbc)) * (deltaFutureCollateral + convertedAssets.futureCollateral) * int256(collateralSlippage);
 
         deltaFuturePaymentCollateral = deltaFuturePaymentCollateral / 10**18;
 
@@ -134,13 +135,14 @@ abstract contract CommonBorrowCollateral is State {
     function calculateDeltaFuturePaymentBorrow(
         Cases memory ncase,
         ConvertedAssets memory convertedAssets,
-        int256 deltaFutureBorrow
-    ) internal view returns (int256) {
+        int256 deltaFutureBorrow,
+        uint256 borrowSlippage
+    ) internal pure returns (int256) {
         // cmcb × −∆futureBorrow × borrowSlippage +
         // + ceccb × −(∆futureBorrow + futureBorrow) × borrowSlippage
 
-        int256 deltaFuturePaymentBorrow = -int256(int8(ncase.cmcb)) * deltaFutureBorrow * int256(getPrices().borrowSlippage);
-        deltaFuturePaymentBorrow -= int256(int8(ncase.ceccb)) * (deltaFutureBorrow + convertedAssets.futureBorrow) * int256(getPrices().borrowSlippage);
+        int256 deltaFuturePaymentBorrow = -int256(int8(ncase.cmcb)) * deltaFutureBorrow * int256(borrowSlippage);
+        deltaFuturePaymentBorrow -= int256(int8(ncase.ceccb)) * (deltaFutureBorrow + convertedAssets.futureBorrow) * int256(borrowSlippage);
 
         deltaFuturePaymentBorrow = deltaFuturePaymentBorrow / 10 ** 18;
 
