@@ -59,12 +59,15 @@ contract DeployScript is Script {
             abi.encodeCall(HodlMyBeerLending.initialize, (weth, address(magicETHProxy), address(spookyOracleProxy)))
         );
 
-        address ltv = Upgrades.deployTransparentProxy(
-            'GhostLTV.sol',
-            proxyOwner,
-            abi.encodeCall(
-                GhostLTV.initialize,
-                (ltvOwner, IHodlMyBeerLending(hodlMyBeerLendingProxy), ISpookyOracle(spookyOracleProxy), magicETHProxy, weth, feeCollector)
+        address ltvImpl = address(new GhostLTV());
+        address ltv = address(
+            new TransparentUpgradeableProxy(
+                ltvImpl,
+                proxyOwner,
+                abi.encodeCall(
+                    GhostLTV.initialize,
+                    (ltvOwner, IHodlMyBeerLending(hodlMyBeerLendingProxy), ISpookyOracle(spookyOracleProxy), magicETHProxy, weth, feeCollector)
+                )
             )
         );
 
