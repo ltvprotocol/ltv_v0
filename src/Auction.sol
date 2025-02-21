@@ -3,7 +3,6 @@ pragma solidity ^0.8.27;
 
 import './math/AuctionMath.sol';
 import './Lending.sol';
-import "forge-std/console.sol";
 
 // @todo: consider renaming User -> Real 
 struct DeltaAuctionState {

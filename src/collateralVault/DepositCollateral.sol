@@ -36,8 +36,6 @@ abstract contract DepositCollateral is MaxDepositCollateral, TotalAssets, Deposi
         // TODO: double check that Token should be transfered from msg.sender or from receiver
         collateralToken.transferFrom(msg.sender, address(this), collateralAssets);
 
-        supply(collateralAssets);
-
         if (deltaFuture.deltaProtocolFutureRewardBorrow < 0) {
             _mint(FEE_COLLECTOR, underlyingToShares(uint256(-deltaFuture.deltaProtocolFutureRewardBorrow)));
         }
@@ -45,6 +43,8 @@ abstract contract DepositCollateral is MaxDepositCollateral, TotalAssets, Deposi
         if (deltaFuture.deltaProtocolFutureRewardCollateral > 0) {
             _mint(FEE_COLLECTOR, underlyingToShares(uint256(deltaFuture.deltaProtocolFutureRewardCollateral)));
         }
+
+        supply(collateralAssets);
 
         // TODO: fix this - return from calculateDepositWithdraw
         ConvertedAssets memory convertedAssets = recoverConvertedAssets();

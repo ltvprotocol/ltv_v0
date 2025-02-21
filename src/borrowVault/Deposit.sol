@@ -36,8 +36,6 @@ abstract contract Deposit is MaxDeposit, TotalAssets, DepositWithdraw, ERC20, St
         // TODO: double check that Token should be transfered from msg.sender or from receiver
         borrowToken.transferFrom(msg.sender, address(this), assets);
 
-        repay(assets);
-
         if (deltaFuture.deltaProtocolFutureRewardBorrow < 0) {
             _mint(FEE_COLLECTOR, underlyingToShares(uint256(-deltaFuture.deltaProtocolFutureRewardBorrow)));
         }
@@ -45,6 +43,8 @@ abstract contract Deposit is MaxDeposit, TotalAssets, DepositWithdraw, ERC20, St
         if (deltaFuture.deltaProtocolFutureRewardCollateral > 0) {
             _mint(FEE_COLLECTOR, underlyingToShares(uint256(deltaFuture.deltaProtocolFutureRewardCollateral)));
         }
+
+        repay(assets);
 
         // TODO: fix this - return from calculateDepositWithdraw
         ConvertedAssets memory convertedAssets = recoverConvertedAssets();
