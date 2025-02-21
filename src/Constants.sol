@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity ^0.8.13;
+pragma solidity ^0.8.28;
 
 library Constants {
     uint256 public constant AMOUNT_OF_STEPS = 1000;
