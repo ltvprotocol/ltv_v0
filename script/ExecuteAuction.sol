@@ -36,7 +36,7 @@ contract ExecuteAuction is Script {
 
             collateral.approve(ltv, collateralBalance);
 
-            GhostLTV(ltv).executeAuctionBorrow(futureBorrowAssets);
+            GhostLTV(ltv).executeAuctionBorrow(-futureBorrowAssets);
 
             vm.stopBroadcast();
 
