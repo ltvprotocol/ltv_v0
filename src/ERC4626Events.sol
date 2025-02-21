@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity ^0.8.27;
+pragma solidity ^0.8.28;
 
 contract ERC4626Events {
   event Deposit(address sender, address owner, uint256 assets, uint256 shares);
