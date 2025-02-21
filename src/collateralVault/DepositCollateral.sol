@@ -11,7 +11,7 @@ import '../math/NextStep.sol';
 import './MaxDepositCollateral.sol';
 import '../ERC4626Events.sol';
 
-abstract contract DepositCollateral is MaxDepositCollateral, TotalAssets, DepositWithdraw, ERC20, StateTransition, Lending, NextStep, ERC4626Events  {
+abstract contract DepositCollateral is MaxDepositCollateral, TotalAssets, ERC20, StateTransition, Lending, ERC4626Events  {
 
     using uMulDiv for uint256;
     
@@ -21,10 +21,12 @@ abstract contract DepositCollateral is MaxDepositCollateral, TotalAssets, Deposi
         uint256 max = maxDepositCollateral(address(receiver));
         require(collateralAssets <= max, ExceedsMaxDepositCollateral(receiver, collateralAssets, max));
 
+        ConvertedAssets memory convertedAssets = recoverConvertedAssets();
+        Prices memory prices = getPrices();
         (
             int256 signedSharesInUnderlying,
             DeltaFuture memory deltaFuture
-        ) = calculateDepositWithdraw(int256(collateralAssets), false);
+        ) = DepositWithdraw.calculateDepositWithdraw(int256(collateralAssets), false, convertedAssets, prices, targetLTV);
 
         if (signedSharesInUnderlying < 0) {
             return 0;
@@ -36,8 +38,6 @@ abstract contract DepositCollateral is MaxDepositCollateral, TotalAssets, Deposi
         // TODO: double check that Token should be transfered from msg.sender or from receiver
         collateralToken.transferFrom(msg.sender, address(this), collateralAssets);
 
-        supply(collateralAssets);
-
         if (deltaFuture.deltaProtocolFutureRewardBorrow < 0) {
             _mint(FEE_COLLECTOR, underlyingToShares(uint256(-deltaFuture.deltaProtocolFutureRewardBorrow)));
         }
@@ -46,10 +46,9 @@ abstract contract DepositCollateral is MaxDepositCollateral, TotalAssets, Deposi
             _mint(FEE_COLLECTOR, underlyingToShares(uint256(deltaFuture.deltaProtocolFutureRewardCollateral)));
         }
 
-        // TODO: fix this - return from calculateDepositWithdraw
-        ConvertedAssets memory convertedAssets = recoverConvertedAssets();
+        supply(collateralAssets);
 
-        NextState memory nextState = calculateNextStep(convertedAssets, deltaFuture, block.number);
+        NextState memory nextState = NextStep.calculateNextStep(convertedAssets, deltaFuture, block.number);
 
         applyStateTransition(nextState);
 

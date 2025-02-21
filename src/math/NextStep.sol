@@ -3,7 +3,7 @@ pragma solidity ^0.8.13;
 
 import "../Structs.sol";
 
-abstract contract NextStep {
+library NextStep {
 
     // futureBorrow i+1 = futureBorrow i + ∆futureBorrow
     // futureCollateral i+1 = futureCollateral i + ∆futureCollateral
@@ -50,7 +50,7 @@ abstract contract NextStep {
         ConvertedAssets memory convertedAssets,
         DeltaFuture memory deltaFuture,
         uint256 blockNumber
-    ) internal pure returns (uint256 startAuction, bool merge) {
+    ) private pure returns (uint256 startAuction, bool merge) {
 
         startAuction = 0;
 
