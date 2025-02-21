@@ -48,7 +48,7 @@ contract ExecuteAuction is Script {
 
                 int256 futureBorrowAssets = GhostLTV(ltv).futureBorrowAssets();
 
-                uint256 borrowBalance = borrow.balanceOf(address(this));
+                uint256 borrowBalance = borrow.balanceOf(msg.sender);
 
                 int256 futureCollateralAssets = GhostLTV(ltv).futureCollateralAssets();
 
