@@ -25,7 +25,7 @@ contract ExecuteAuction is Script {
             int256 futureBorrowAssets = GhostLTV(ltv).futureBorrowAssets();
             int256 futureCollateralAssets = GhostLTV(ltv).futureBorrowAssets();
 
-            uint256 collateralBalance = collateral.balanceOf(address(this));
+            uint256 collateralBalance = collateral.balanceOf(msg.sender);
 
             if (collateralBalance < uint256(futureCollateralAssets)) {
                 console.log('Collateral balance is too low');
