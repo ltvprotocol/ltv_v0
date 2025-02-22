@@ -4,14 +4,19 @@ pragma solidity ^0.8.28;
 import '../Constants.sol';
 import '../borrowVault/TotalAssets.sol';
 import '../math/DepositWithdraw.sol';
-import '../math/MintRedeem.sol';
 
-abstract contract PreviewDepositCollateral is TotalAssets, DepositWithdraw, MintRedeem {
-
+abstract contract PreviewDepositCollateral is TotalAssets {
     using uMulDiv for uint256;
 
     function previewDepositCollateral(uint256 collateralAssets) public view returns (uint256 shares) {
-        int256 sharesInUnderlying = previewDepositWithdraw(int256(collateralAssets), false);
+        Prices memory prices = getPrices();
+        int256 sharesInUnderlying = DepositWithdraw.previewDepositWithdraw(
+            int256(collateralAssets),
+            false,
+            recoverConvertedAssets(),
+            prices,
+            targetLTV
+        );
 
         uint256 sharesInAssets;
         if (sharesInUnderlying < 0) {
@@ -22,5 +27,4 @@ abstract contract PreviewDepositCollateral is TotalAssets, DepositWithdraw, Mint
 
         return sharesInAssets.mulDivDown(totalSupply(), totalAssets());
     }
-
 }

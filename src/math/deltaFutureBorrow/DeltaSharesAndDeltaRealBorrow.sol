@@ -5,10 +5,9 @@ import "../../Structs.sol";
 import "../../Constants.sol";
 import "../../Cases.sol";
 import "../../utils/MulDiv.sol";
-import '../../State.sol';
 
 
-abstract contract DeltaSharesAndDeltaRealBorrow is State {
+library DeltaSharesAndDeltaRealBorrow {
 
     using uMulDiv for uint256;
     using sMulDiv for int256;
@@ -20,8 +19,9 @@ abstract contract DeltaSharesAndDeltaRealBorrow is State {
         Prices memory prices, 
         ConvertedAssets memory convertedAssets,
         int256 deltaRealBorrow,
-        int256 deltaShares
-    ) private view returns (int256) {
+        int256 deltaShares,
+        uint128 targetLTV
+    ) private pure returns (int256) {
         // borrow
         // (1 - targetLTV) x deltaRealBorrow
         // (1 - targetLTV) x cecbc x -userFutureRewardBorrow
@@ -51,10 +51,11 @@ abstract contract DeltaSharesAndDeltaRealBorrow is State {
     function calculateDividerByDeltaSharesAndDeltaRealBorrow(
         Cases memory cases,
         Prices memory prices, 
-        ConvertedAssets memory convertedAssets
+        ConvertedAssets memory convertedAssets,
+        uint128 targetLTV
         //int256 deltaRealBorrow,
         //int256 deltaShares
-    ) private view returns (int256) {
+    ) private pure returns (int256) {
         // (1 - targetLTV) x -1
         // (1 - targetLTV) x cebc x -(userFutureRewardBorrow / futureBorrow)
         // (1 - targetLTV) x cmcb x borrowSlippage
@@ -85,17 +86,18 @@ abstract contract DeltaSharesAndDeltaRealBorrow is State {
         ConvertedAssets memory convertedAssets,
         Cases memory cases,
         int256 deltaRealBorrow,
-        int256 deltaShares
-    ) internal view returns (int256, Cases memory) {
+        int256 deltaShares,
+        uint128 targetLTV
+    ) external pure returns (int256, Cases memory) {
 
         // ConvertedAssets memory convertedAssets = recoverConvertedAssets();
         // Prices memory prices = getPrices();
         int256 deltaFutureBorrow = 0;
 
         while (true) {
-            int256 dividend = calculateDividentByDeltaSharesAndDeltaRealBorrow(cases, prices, convertedAssets, deltaRealBorrow, deltaShares);
+            int256 dividend = calculateDividentByDeltaSharesAndDeltaRealBorrow(cases, prices, convertedAssets, deltaRealBorrow, deltaShares, targetLTV);
 
-            int256 divider = calculateDividerByDeltaSharesAndDeltaRealBorrow(cases, prices, convertedAssets);
+            int256 divider = calculateDividerByDeltaSharesAndDeltaRealBorrow(cases, prices, convertedAssets, targetLTV);
 
             int256 DIVIDER = 10**18;
 
