@@ -2,11 +2,11 @@
 pragma solidity ^0.8.28;
 
 import "../Constants.sol";
-import "./TotalAssets.sol";
 import "../math/DepositWithdraw.sol";
 import "../math/MintRedeem.sol";
+import '../MaxGrowthFee.sol';
 
-abstract contract PreviewDeposit is TotalAssets, DepositWithdraw, MintRedeem {
+abstract contract PreviewDeposit is MaxGrowthFee, DepositWithdraw, MintRedeem {
 
     using uMulDiv for uint256;
 
@@ -21,7 +21,7 @@ abstract contract PreviewDeposit is TotalAssets, DepositWithdraw, MintRedeem {
             sharesInAssets = uint256(sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, getPrices().borrow);
         }
 
-        return sharesInAssets.mulDivDown(totalSupply(), totalAssets());
+        return sharesInAssets.mulDivDown(previewSupplyAfterFee(), totalAssets());
     }
 
 }

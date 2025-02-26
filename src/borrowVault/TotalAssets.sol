@@ -9,7 +9,7 @@ import '../utils/MulDiv.sol';
 abstract contract TotalAssets is State {
 
     using uMulDiv for uint256;
-    function totalAssets() public view returns (uint256) {
+    function totalAssets() public view override returns (uint256) {
         ConvertedAssets memory convertedAssets = recoverConvertedAssets();
         // Add 1 to avoid vault attack
         return uint256(convertedAssets.collateral - convertedAssets.borrow).mulDivUp(Constants.ORACLE_DIVIDER, getPrices().borrow) + 1;

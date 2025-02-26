@@ -1,25 +1,20 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "./Constants.sol";
+import './Constants.sol';
 
-import "./Structs.sol";
+import './Structs.sol';
 
-import "./interfaces/IOracle.sol";
+import './interfaces/IOracle.sol';
 
-import "./utils/MulDiv.sol";
+import './utils/MulDiv.sol';
 
 import 'forge-std/interfaces/IERC20.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 
 abstract contract State is Initializable, IOracle {
-
-    function __State_init(address _collateralToken, address _borrowToken, address feeCollector) internal initializer {
-        collateralToken = IERC20(_collateralToken);
-        borrowToken = IERC20(_borrowToken);
-        
-        FEE_COLLECTOR = feeCollector;
-    }
+    using uMulDiv for uint256;
+    using sMulDiv for int256;
 
     address public FEE_COLLECTOR;
 
@@ -28,7 +23,6 @@ abstract contract State is Initializable, IOracle {
     int256 public futureRewardBorrowAssets;
     int256 public futureRewardCollateralAssets;
     uint256 public startAuction;
-
 
     // ERC 20 state
     uint256 public baseTotalSupply;
@@ -47,22 +41,31 @@ abstract contract State is Initializable, IOracle {
 
     bool isNotFirstTime;
 
+    uint256 internal lastSeenTokenPrice;
+    uint256 internal maxGrowthFee;
+
     modifier onlyOneTime() {
-        require(!isNotFirstTime, "Only one time");
+        require(!isNotFirstTime, 'Only one time');
         isNotFirstTime = true;
         _;
     }
 
-    using uMulDiv for uint256;
-    using sMulDiv for int256;
+    function __State_init(address _collateralToken, address _borrowToken, address feeCollector) internal initializer {
+        collateralToken = IERC20(_collateralToken);
+        borrowToken = IERC20(_borrowToken);
 
-    function totalSupply() public view returns(uint256) {
+        FEE_COLLECTOR = feeCollector;
+        lastSeenTokenPrice = totalAssets().mulDivDown(Constants.LAST_SEEN_PRICE_PRECISION, totalSupply());
+    }
+
+    function totalAssets() public view virtual returns (uint256);
+
+    function totalSupply() public view returns (uint256) {
         // add 100 to avoid vault inflation attack
-        return baseTotalSupply + 100; 
+        return baseTotalSupply + 100;
     }
 
     function getAuctionStep() internal view returns (uint256) {
-
         uint256 auctionStep = block.number - startAuction;
 
         bool stuck = auctionStep > Constants.AMOUNT_OF_STEPS;
@@ -75,7 +78,6 @@ abstract contract State is Initializable, IOracle {
     }
 
     function recoverConvertedAssets() internal view returns (ConvertedAssets memory) {
-        
         // borrow should be round up
         // because this is the amount that protocol should pay
         int256 realBorrow = int256(getRealBorrowAssets().mulDivUp(getPriceBorrowOracle(), Constants.ORACLE_DIVIDER));
@@ -124,29 +126,26 @@ abstract contract State is Initializable, IOracle {
         int256 borrow = realBorrow + futureBorrow + futureRewardBorrow;
         int256 collateral = realCollateral + futureCollateral + futureRewardCollateral;
 
-        return ConvertedAssets({
-            borrow: borrow,
-            collateral: collateral,
-            realBorrow: realBorrow,
-            realCollateral: realCollateral,
-            futureBorrow: futureBorrow,
-            futureCollateral: futureCollateral,
-            futureRewardBorrow: futureRewardBorrow,
-            futureRewardCollateral: futureRewardCollateral,
-            protocolFutureRewardBorrow: protocolFutureRewardBorrow,
-            protocolFutureRewardCollateral: protocolFutureRewardCollateral,
-            userFutureRewardBorrow: userFutureRewardBorrow,
-            userFutureRewardCollateral: userFutureRewardCollateral,
-            auctionStep: int256(getAuctionStep())
-        });
+        return
+            ConvertedAssets({
+                borrow: borrow,
+                collateral: collateral,
+                realBorrow: realBorrow,
+                realCollateral: realCollateral,
+                futureBorrow: futureBorrow,
+                futureCollateral: futureCollateral,
+                futureRewardBorrow: futureRewardBorrow,
+                futureRewardCollateral: futureRewardCollateral,
+                protocolFutureRewardBorrow: protocolFutureRewardBorrow,
+                protocolFutureRewardCollateral: protocolFutureRewardCollateral,
+                userFutureRewardBorrow: userFutureRewardBorrow,
+                userFutureRewardCollateral: userFutureRewardCollateral,
+                auctionStep: int256(getAuctionStep())
+            });
     }
 
     function getPrices() internal view virtual returns (Prices memory) {
-        return Prices({
-            borrow: getPriceBorrowOracle(),
-            collateral: getPriceCollateralOracle(),
-            borrowSlippage: 10**16,
-            collateralSlippage: 10**16
-        });
+        return
+            Prices({borrow: getPriceBorrowOracle(), collateral: getPriceCollateralOracle(), borrowSlippage: 10 ** 16, collateralSlippage: 10 ** 16});
     }
 }

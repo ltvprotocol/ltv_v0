@@ -3,15 +3,14 @@ pragma solidity ^0.8.28;
 
 import '../StateTransition.sol';
 import '../Constants.sol';
-import './TotalAssets.sol';
-import '../ERC20.sol';
+import '../MaxGrowthFee.sol';
 import '../Lending.sol';
 import '../math/DepositWithdraw.sol';
 import '../math/NextStep.sol';
 import './MaxDeposit.sol';
 import '../ERC4626Events.sol';
 
-abstract contract Deposit is MaxDeposit, TotalAssets, DepositWithdraw, ERC20, StateTransition, Lending, NextStep, ERC4626Events {
+abstract contract Deposit is MaxDeposit, MaxGrowthFee, DepositWithdraw, StateTransition, Lending, NextStep, ERC4626Events {
 
     using uMulDiv for uint256;
     
@@ -25,16 +24,19 @@ abstract contract Deposit is MaxDeposit, TotalAssets, DepositWithdraw, ERC20, St
             int256 signedSharesInUnderlying,
             DeltaFuture memory deltaFuture
         ) = calculateDepositWithdraw(-1 * int256(assets), true);
-
+        
+        uint256 supplyAfterFee = previewSupplyAfterFee();
         if (signedSharesInUnderlying < 0) {
             return 0;
         } else {
             uint256 sharesInAssets = uint256(signedSharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, getPrices().borrow);
-            shares = sharesInAssets.mulDivDown(totalSupply(), totalAssets());
+            shares = sharesInAssets.mulDivDown(supplyAfterFee, totalAssets());
         }
 
         // TODO: double check that Token should be transfered from msg.sender or from receiver
         borrowToken.transferFrom(msg.sender, address(this), assets);
+
+        applyMaxGrowthFee(supplyAfterFee);
 
         if (deltaFuture.deltaProtocolFutureRewardBorrow < 0) {
             _mint(FEE_COLLECTOR, underlyingToShares(uint256(-deltaFuture.deltaProtocolFutureRewardBorrow)));

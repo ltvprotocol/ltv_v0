@@ -3,14 +3,13 @@ pragma solidity ^0.8.28;
 
 import "../StateTransition.sol";
 import "../Constants.sol";
-import "../ERC20.sol";
 import "../Lending.sol";
 import "../math/NextStep.sol";
 import './MaxWithdraw.sol';
 import '../math/DepositWithdraw.sol';
 import '../ERC4626Events.sol';
 
-abstract contract Withdraw is MaxWithdraw, DepositWithdraw, ERC20, StateTransition, Lending, NextStep, ERC4626Events{
+abstract contract Withdraw is MaxWithdraw, DepositWithdraw, StateTransition, Lending, NextStep, ERC4626Events{
 
     using uMulDiv for uint256;
     
@@ -22,16 +21,19 @@ abstract contract Withdraw is MaxWithdraw, DepositWithdraw, ERC20, StateTransiti
 
         (int256 sharesInUnderlying, DeltaFuture memory deltaFuture) = calculateDepositWithdraw(int256(assets), true);
 
+        uint256 supplyAfterFee = previewSupplyAfterFee();
         if (sharesInUnderlying > 0) {
             return 0;
         } else{
             uint256 sharesInAssets = uint256(-sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, getPrices().borrow);
-            shares = sharesInAssets.mulDivDown(totalSupply(), totalAssets());
-        }
+            shares = sharesInAssets.mulDivDown(supplyAfterFee, totalAssets());
+        }        
 
         if (owner != receiver) {
             allowance[owner][receiver] -= shares;
         }
+
+        applyMaxGrowthFee(supplyAfterFee);
 
         if (deltaFuture.deltaProtocolFutureRewardBorrow < 0) {
             _mint(FEE_COLLECTOR, underlyingToShares(uint256(-deltaFuture.deltaProtocolFutureRewardBorrow)));

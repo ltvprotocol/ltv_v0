@@ -1,17 +1,16 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../Constants.sol";
-import "../ERC20.sol";
-import "../math/MintRedeem.sol";
-import "../Lending.sol";
-import "../math/NextStep.sol";
-import "../StateTransition.sol";
+import '../Constants.sol';
+import '../ERC20.sol';
+import '../math/MintRedeem.sol';
+import '../Lending.sol';
+import '../math/NextStep.sol';
+import '../StateTransition.sol';
 import './MaxRedeemCollateral.sol';
 import '../ERC4626Events.sol';
 
-abstract contract RedeemCollateral is MaxRedeemCollateral, ERC20, StateTransition, Lending, NextStep, ERC4626Events {
-
+abstract contract RedeemCollateral is MaxRedeemCollateral, StateTransition, Lending, NextStep, ERC4626Events {
     using uMulDiv for uint256;
 
     error ExceedsMaxRedeemCollateral(address owner, uint256 shares, uint256 max);
@@ -23,16 +22,23 @@ abstract contract RedeemCollateral is MaxRedeemCollateral, ERC20, StateTransitio
             allowance[owner][receiver] -= shares;
         }
 
-        uint256 sharesInAssets = shares.mulDivUp(totalAssets(), totalSupply());
-        uint256 sharesInUnderlying = sharesInAssets.mulDivUp(getPrices().borrow, Constants.ORACLE_DIVIDER);
+        DeltaFuture memory deltaFuture;
+        {
+            uint256 supplyAfterFee = previewSupplyAfterFee();
+            uint256 sharesInAssets = shares.mulDivUp(totalAssets(), supplyAfterFee);
+            uint256 sharesInUnderlying = sharesInAssets.mulDivUp(getPrices().borrow, Constants.ORACLE_DIVIDER);
 
-        (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = calculateMintRedeem(-int256(sharesInUnderlying), false);
-        // int256 signedShares = previewMintRedeem(-1*int256(assets));
+            int256 assetsInUnderlying;
+            (assetsInUnderlying, deltaFuture) = calculateMintRedeem(-int256(sharesInUnderlying), false);
+            // int256 signedShares = previewMintRedeem(-1*int256(assets));
 
-        if (assetsInUnderlying > 0) {
-            return 0;
-        } else {
-            collateralAssets = uint256(-assetsInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, getPriceCollateralOracle());
+            if (assetsInUnderlying > 0) {
+                return 0;
+            } else {
+                collateralAssets = uint256(-assetsInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, getPriceCollateralOracle());
+            }
+
+            applyMaxGrowthFee(supplyAfterFee);
         }
 
         if (deltaFuture.deltaProtocolFutureRewardBorrow < 0) {
@@ -60,5 +66,4 @@ abstract contract RedeemCollateral is MaxRedeemCollateral, ERC20, StateTransitio
 
         return collateralAssets;
     }
-
 }

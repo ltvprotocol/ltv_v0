@@ -5,8 +5,9 @@ import '../Constants.sol';
 import '../borrowVault/TotalAssets.sol';
 import '../math/DepositWithdraw.sol';
 import '../math/MintRedeem.sol';
+import '../MaxGrowthFee.sol';
 
-abstract contract PreviewDepositCollateral is TotalAssets, DepositWithdraw, MintRedeem {
+abstract contract PreviewDepositCollateral is MaxGrowthFee, DepositWithdraw, MintRedeem {
 
     using uMulDiv for uint256;
 
@@ -20,7 +21,7 @@ abstract contract PreviewDepositCollateral is TotalAssets, DepositWithdraw, Mint
             sharesInAssets = uint256(sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, getPrices().collateral);
         }
 
-        return sharesInAssets.mulDivDown(totalSupply(), totalAssets());
+        return sharesInAssets.mulDivDown(previewSupplyAfterFee(), totalAssets());
     }
 
 }

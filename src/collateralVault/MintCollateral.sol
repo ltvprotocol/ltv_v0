@@ -9,7 +9,7 @@ import "../StateTransition.sol";
 import './MaxMintCollateral.sol';
 import '../ERC4626Events.sol';
 
-abstract contract MintCollateral is MaxMintCollateral, ERC20, StateTransition, Lending, NextStep, ERC4626Events {
+abstract contract MintCollateral is MaxMintCollateral, StateTransition, Lending, NextStep, ERC4626Events {
 
     using uMulDiv for uint256;
 
@@ -19,7 +19,8 @@ abstract contract MintCollateral is MaxMintCollateral, ERC20, StateTransition, L
         uint256 max = maxMintCollateral(address(receiver));
         require(shares <= max, ExceedsMaxMintCollateral(receiver, shares, max));
 
-        uint256 sharesInAssets = shares.mulDivDown(totalAssets(), totalSupply());
+        uint256 supplyAfterFee = previewSupplyAfterFee();
+        uint256 sharesInAssets = shares.mulDivDown(totalAssets(), supplyAfterFee);
         uint256 sharesInUnderlying = sharesInAssets.mulDivDown(getPriceBorrowOracle(), Constants.ORACLE_DIVIDER);
         (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = calculateMintRedeem(int256(sharesInUnderlying), false);
         // int256 signedShares = previewMintRedeem(-1*int256(assets));
@@ -32,6 +33,8 @@ abstract contract MintCollateral is MaxMintCollateral, ERC20, StateTransition, L
 
         // TODO: double check that Token should be transfered from msg.sender or from receiver
         collateralToken.transferFrom(msg.sender, address(this), collateralAssets);
+
+        applyMaxGrowthFee(supplyAfterFee);
 
         if (deltaFuture.deltaProtocolFutureRewardBorrow < 0) {
             _mint(FEE_COLLECTOR, underlyingToShares(uint256(-deltaFuture.deltaProtocolFutureRewardBorrow)));
