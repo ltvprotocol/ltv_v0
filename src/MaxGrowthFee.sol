@@ -16,13 +16,12 @@ abstract contract MaxGrowthFee is TotalAssets, ERC20, OwnableUpgradeable {
         uint256 assets = totalAssets();
         uint256 supply = totalSupply();
 
-        if (assets.mulDivDown(Constants.LAST_SEEN_PRICE_PRECISION, supply) < lastSeenTokenPrice) {
+        if (assets.mulDivDown(Constants.LAST_SEEN_PRICE_PRECISION, supply) <= lastSeenTokenPrice) {
             return supply;
         }
 
         return (assets * supply) / (maxGrowthFee * lastSeenTokenPrice * supply / Constants.LAST_SEEN_PRICE_PRECISION / Constants.MAX_GROWTH_FEE_DIVIDER 
-            + (Constants.MAX_GROWTH_FEE_DIVIDER - maxGrowthFee) * assets / Constants.MAX_GROWTH_FEE_DIVIDER)
-            - supply;
+            + (Constants.MAX_GROWTH_FEE_DIVIDER - maxGrowthFee) * assets / Constants.MAX_GROWTH_FEE_DIVIDER);
     }
 
     function applyMaxGrowthFee(uint256 supplyAfterFee) internal {

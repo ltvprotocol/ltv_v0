@@ -55,7 +55,7 @@ abstract contract State is Initializable, IOracle {
         borrowToken = IERC20(_borrowToken);
 
         FEE_COLLECTOR = feeCollector;
-        lastSeenTokenPrice = totalAssets().mulDivDown(Constants.LAST_SEEN_PRICE_PRECISION, totalSupply());
+        lastSeenTokenPrice = 10**18;
     }
 
     function totalAssets() public view virtual returns (uint256);
