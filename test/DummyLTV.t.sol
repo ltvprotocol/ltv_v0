@@ -320,4 +320,32 @@ contract DummyLTVTest is Test {
         dummyLTV.deposit(1000, user);
         assertEq(dummyLTV.convertToAssets(10**20), 18*10**17 - 1);
     }
+
+    function test_maxDepositFinalBorder(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        vm.stopPrank();
+        vm.startPrank(owner);
+        dummyLTV.setMaxTotalAssetsInUnderlying(10**18 * 100 + 10**8);
+        assertEq(dummyLTV.maxDeposit(user), 10**6);
+    }
+
+    function test_maxMintFinalBorder(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        vm.stopPrank();
+        vm.startPrank(owner);
+        dummyLTV.setMaxTotalAssetsInUnderlying(10**18 * 100 + 10**8);
+        assertEq(dummyLTV.maxMint(user), dummyLTV.previewDeposit(10**6));
+    }
+
+    function test_maxDepositCollateralFinalBorder(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        vm.stopPrank();
+        vm.startPrank(owner);
+        dummyLTV.setMaxTotalAssetsInUnderlying(10**18 * 100 + 10**8);
+        assertEq(dummyLTV.maxDepositCollateral(user), 5 * 10**5);
+    }
+
+    function test_maxMintCollateralFinalBorder(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        vm.stopPrank();
+        vm.startPrank(owner);
+        dummyLTV.setMaxTotalAssetsInUnderlying(10**18 * 100 + 10**8);
+        assertEq(dummyLTV.maxMintCollateral(user), dummyLTV.previewDepositCollateral(5 * 10**5));
+    }
 }

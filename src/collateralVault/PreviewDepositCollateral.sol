@@ -23,7 +23,7 @@ abstract contract PreviewDepositCollateral is MaxGrowthFee {
         if (sharesInUnderlying < 0) {
             return 0;
         } else {
-            sharesInAssets = uint256(sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, getPrices().collateral);
+            sharesInAssets = uint256(sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, getPrices().borrow);
         }
 
         return sharesInAssets.mulDivDown(previewSupplyAfterFee(), totalAssets());
