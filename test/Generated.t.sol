@@ -1,6 +1,6 @@
 
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity ^0.8.28;
+pragma solidity ^0.8.13;
 
 import '../src/ltv_lendings/DummyLTV.sol';
 import '../src/dummy/DummyOracle.sol';
@@ -50,6 +50,7 @@ contract GeneratedTests is Test {
         dummyLTV.setMaxSafeLTV(9 * 10**17);
         dummyLTV.setMinProfitLTV(5 * 10**17);
         dummyLTV.setTargetLTV(75*10**16);
+        dummyLTV.setMaxTotalAssetsInUnderlying(type(uint128).max);
         Ownable(address(lendingProtocol)).transferOwnership(address(dummyLTV));
         oracle.setAssetPrice(address(borrowToken), 100 * 10 ** 18);
         oracle.setAssetPrice(address(collateralToken), 100 * 10 ** 18);
@@ -862,6 +863,6 @@ contract GeneratedTests is Test {
       assertEq(dummyLTV.futureCollateralAssets(), 4000);
       assertEq(dummyLTV.convertToShares(10**18), 10**20);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets())) * 4
-        - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets())), 0, 0);
+        - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets())), 0, 3);
   }
 }

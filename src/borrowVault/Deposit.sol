@@ -3,14 +3,13 @@ pragma solidity ^0.8.28;
 
 import '../StateTransition.sol';
 import '../Constants.sol';
-import '../MaxGrowthFee.sol';
 import '../Lending.sol';
 import '../math/DepositWithdraw.sol';
 import '../math/NextStep.sol';
 import './MaxDeposit.sol';
 import '../ERC4626Events.sol';
 
-abstract contract Deposit is MaxDeposit, MaxGrowthFee, DepositWithdraw, StateTransition, Lending, NextStep, ERC4626Events {
+abstract contract Deposit is MaxDeposit, StateTransition, Lending, NextStep, ERC4626Events {
 
     using uMulDiv for uint256;
     

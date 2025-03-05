@@ -11,7 +11,7 @@ import './MaxDepositCollateral.sol';
 import '../ERC4626Events.sol';
 import '../MaxGrowthFee.sol';
 
-abstract contract DepositCollateral is MaxDepositCollateral, MaxGrowthFee, DepositWithdraw, StateTransition, Lending, NextStep, ERC4626Events  {
+abstract contract DepositCollateral is MaxDepositCollateral, StateTransition, Lending, NextStep, ERC4626Events  {
 
     using uMulDiv for uint256;
     

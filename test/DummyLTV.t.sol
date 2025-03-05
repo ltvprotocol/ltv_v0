@@ -78,6 +78,7 @@ contract DummyLTVTest is Test {
         dummyLTV.setMinProfitLTV(5*10**17);
         dummyLTV.setTargetLTV(75*10**16);
         dummyLTV.setMaxGrowthFee(10**18 / 5);
+        dummyLTV.setMaxTotalAssetsInUnderlying(type(uint128).max);
         
         vm.startPrank(user);
         _;
