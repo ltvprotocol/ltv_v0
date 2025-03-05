@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity ^0.8.13;
+pragma solidity ^0.8.28;
 
 import 'forge-std/Script.sol';
 
@@ -23,8 +23,6 @@ contract DeployScript is Script {
     function setUp() public {}
 
     function run() public {
-        // TODO: deploy LTV also
-
         address proxyOwner = vm.envAddress('PROXY_OWNER');
         address magicETHOwner = vm.envAddress('MAGIC_ETH_OWNER');
         address oracleOwner = vm.envAddress('ORACLE_OWNER');
@@ -51,8 +49,6 @@ contract DeployScript is Script {
 
         // ------------------------------------------------
 
-        // TODO: add link to WETH
-
         address hodlMyBeerLendingProxy = Upgrades.deployTransparentProxy(
             'HodlMyBeerLending.sol',
             proxyOwner,
@@ -73,6 +69,7 @@ contract DeployScript is Script {
 
         // ------------------------------------------------
 
+        /*
         GhostLTV(ltv).setMaxSafeLTV(9 * 10 ** 17);
         GhostLTV(ltv).setMinProfitLTV(5 * 10 ** 17);
         GhostLTV(ltv).setTargetLTV(75 * 10 ** 16);
@@ -101,8 +98,11 @@ contract DeployScript is Script {
 
         WETH(payable(weth)).approve(ltv, 38834951456310679610);
         GhostLTV(ltv).executeAuctionBorrow(-38834951456310679610);
+        */
 
         vm.stopBroadcast();
+
+        /*
         console.log("currentPrice", GhostLTV(ltv).convertToShares(10**18));
         console.log("futureCollateralAssets", GhostLTV(ltv).futureCollateralAssets());
         console.log("futureBorrowAssets", GhostLTV(ltv).futureBorrowAssets());
@@ -110,6 +110,7 @@ contract DeployScript is Script {
         console.log("futureRewardBorrowAssets", GhostLTV(ltv).futureRewardBorrowAssets());
         console.log("real collateral", IHodlMyBeerLending(hodlMyBeerLendingProxy).supplyCollateralBalance(ltv));
         console.log("real borrow    ", IHodlMyBeerLending(hodlMyBeerLendingProxy).borrowBalance(ltv));
+        */
 
         console.log('proxyMagicETH at:         ', magicETHProxy);
         console.log('hodlMyBeerLendingProxy at:', hodlMyBeerLendingProxy);

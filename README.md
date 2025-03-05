@@ -23,48 +23,48 @@ forge build
 - [x] Basic and Complex Math
 - [x] More or Less Correct Rounding
 - [ ] Correct Rounding
-- [ ] Debug
+- [x] Debug
 - [ ] Test
 - [ ] Documentation
 - [ ] Audit
 
 ### EIP4626 (Borrow)
 
-- [ ] assets
+- [x] assets
 - [x] totalAssets
 - [x] convertToShares
 - [x] convertToAssets
-- [ ] maxDeposit
+- [x] maxDeposit
 - [x] previewDeposit
 - [x] deposit
-- [ ] maxMint
+- [x] maxMint
 - [x] previewMint
-- [ ] mint
-- [ ] maxWithdraw
+- [x] mint
+- [x] maxWithdraw
 - [x] previewWithdraw
 - [x] withdraw
-- [ ] maxRedeem
+- [x] maxRedeem
 - [x] previewRedeem
-- [ ] redeem
+- [x] redeem
 
 ### EIP4626 (Collateral)
 
-- [ ] assets
-- [ ] totalAssets
-- [ ] convertToShares
-- [ ] convertToAssets
-- [ ] maxDeposit
-- [ ] previewDeposit
-- [ ] deposit
-- [ ] maxMint
-- [ ] previewMint
-- [ ] mint
-- [ ] maxWithdraw
-- [ ] previewWithdraw
-- [ ] withdraw
-- [ ] maxRedeem
-- [ ] previewRedeem
-- [ ] redeem
+- [x] assets
+- [x] totalAssets
+- [x] convertToShares
+- [x] convertToAssets
+- [x] maxDeposit
+- [x] previewDeposit
+- [x] deposit
+- [x] maxMint
+- [x] previewMint
+- [x] mint
+- [x] maxWithdraw
+- [x] previewWithdraw
+- [x] withdraw
+- [x] maxRedeem
+- [x] previewRedeem
+- [x] redeem
 
 ### EIP4626 (Collateral)
 

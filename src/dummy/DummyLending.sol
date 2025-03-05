@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity ^0.8.13;
+pragma solidity ^0.8.28;
 
 import './interfaces/IDummyLending.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
