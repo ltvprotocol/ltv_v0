@@ -20,10 +20,11 @@ import './collateralVault/PreviewWithdrawCollateral.sol';
 import './collateralVault/PreviewMintCollateral.sol';
 import './collateralVault/PreviewRedeemCollateral.sol';
 import './Auction.sol';
+import './LowLevel.sol';
 import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 
 
-abstract contract LTV is PreviewWithdraw, PreviewDeposit, PreviewMint, PreviewRedeem, PreviewWithdrawCollateral, PreviewDepositCollateral, PreviewMintCollateral, PreviewRedeemCollateral, Auction, Mint, MintCollateral, Deposit, DepositCollateral, Withdraw, WithdrawCollateral, Redeem, RedeemCollateral, ConvertToAssets, ConvertToShares {
+abstract contract LTV is PreviewWithdraw, PreviewDeposit, PreviewMint, PreviewRedeem, PreviewWithdrawCollateral, PreviewDepositCollateral, PreviewMintCollateral, PreviewRedeemCollateral, LowLevel, Auction, Mint, MintCollateral, Deposit, DepositCollateral, Withdraw, WithdrawCollateral, Redeem, RedeemCollateral, ConvertToAssets, ConvertToShares {
     using uMulDiv for uint256;
     
     event MaxSafeLTVChanged(uint128 oldValue, uint128 newValue);

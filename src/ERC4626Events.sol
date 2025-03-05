@@ -2,8 +2,8 @@
 pragma solidity ^0.8.28;
 
 contract ERC4626Events {
-  event Deposit(address sender, address owner, uint256 assets, uint256 shares);
-  event Withdraw(address sender, address receiver, address owner, uint256 assets, uint256 shares);
-  event DepositCollateral(address sender, address owner, uint256 collateralAssets, uint256 shares);
-  event WithdrawCollateral(address sender, address receiver, address owner, uint256 collateralAssets, uint256 shares);
+  event Deposit(address indexed sender, address indexed owner, uint256 assets, uint256 shares);
+  event Withdraw(address indexed sender, address indexed receiver, address indexed owner, uint256 assets, uint256 shares);
+  event DepositCollateral(address indexed sender, address indexed owner, uint256 collateralAssets, uint256 shares);
+  event WithdrawCollateral(address indexed sender, address indexed receiver, address indexed owner, uint256 collateralAssets, uint256 shares);
 }

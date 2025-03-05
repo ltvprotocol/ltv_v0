@@ -11,7 +11,7 @@ import './MaxDepositCollateral.sol';
 import '../ERC4626Events.sol';
 import '../MaxGrowthFee.sol';
 
-abstract contract DepositCollateral is MaxDepositCollateral, MaxGrowthFee, DepositWithdraw, StateTransition, Lending, NextStep, ERC4626Events  {
+abstract contract DepositCollateral is MaxDepositCollateral, MaxGrowthFee, StateTransition, Lending, ERC4626Events  {
 
     using uMulDiv for uint256;
     
@@ -21,11 +21,13 @@ abstract contract DepositCollateral is MaxDepositCollateral, MaxGrowthFee, Depos
         uint256 max = maxDepositCollateral(address(receiver));
         require(collateralAssets <= max, ExceedsMaxDepositCollateral(receiver, collateralAssets, max));
 
+        ConvertedAssets memory convertedAssets = recoverConvertedAssets();
+        Prices memory prices = getPrices();
         uint256 supplyAfterFee = previewSupplyAfterFee();
         (
             int256 signedSharesInUnderlying,
             DeltaFuture memory deltaFuture
-        ) = calculateDepositWithdraw(int256(collateralAssets), false);
+        ) = DepositWithdraw.calculateDepositWithdraw(int256(collateralAssets), false, convertedAssets, prices, targetLTV);
 
         if (signedSharesInUnderlying < 0) {
             return 0;
@@ -49,10 +51,7 @@ abstract contract DepositCollateral is MaxDepositCollateral, MaxGrowthFee, Depos
 
         supply(collateralAssets);
 
-        // TODO: fix this - return from calculateDepositWithdraw
-        ConvertedAssets memory convertedAssets = recoverConvertedAssets();
-
-        NextState memory nextState = calculateNextStep(convertedAssets, deltaFuture, block.number);
+        NextState memory nextState = NextStep.calculateNextStep(convertedAssets, deltaFuture, block.number);
 
         applyStateTransition(nextState);
 

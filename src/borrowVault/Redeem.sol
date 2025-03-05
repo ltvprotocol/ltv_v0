@@ -10,16 +10,18 @@ import '../StateTransition.sol';
 import './MaxRedeem.sol';
 import '../ERC4626Events.sol';
 
-abstract contract Redeem is MaxRedeem, StateTransition, Lending, NextStep, ERC4626Events {
+abstract contract Redeem is MaxRedeem, StateTransition, Lending, ERC4626Events {
     using uMulDiv for uint256;
 
     error ExceedsMaxRedeem(address owner, uint256 shares, uint256 max);
 
     function redeem(uint256 shares, address receiver, address owner) external returns (uint256 assets) {
-        uint256 max = maxRedeem(address(owner));
-        require(shares <= max, ExceedsMaxRedeem(owner, shares, max));
-        if (owner != receiver) {
-            allowance[owner][receiver] -= shares;
+        {
+            uint256 max = maxRedeem(address(owner));
+            require(shares <= max, ExceedsMaxRedeem(owner, shares, max));
+            if (owner != receiver) {
+                allowance[owner][receiver] -= shares;
+            }
         }
 
         DeltaFuture memory deltaFuture;
@@ -28,34 +30,33 @@ abstract contract Redeem is MaxRedeem, StateTransition, Lending, NextStep, ERC46
             uint256 sharesInAssets = shares.mulDivUp(totalAssets(), supplyAfterFee);
             uint256 sharesInUnderlying = sharesInAssets.mulDivUp(getPrices().borrow, Constants.ORACLE_DIVIDER);
 
+            ConvertedAssets memory convertedAssets = recoverConvertedAssets();
+            Prices memory prices = getPrices();
             int256 assetsInUnderlying;
-            (assetsInUnderlying, deltaFuture) = calculateMintRedeem(-int256(sharesInUnderlying), true);
-            // int256 signedShares = previewMintRedeem(-1*int256(assets));
+            (assetsInUnderlying, deltaFuture) = MintRedeem.calculateMintRedeem(-int256(sharesInUnderlying), true, convertedAssets, prices, targetLTV);
 
             if (assetsInUnderlying < 0) {
                 return 0;
             } else {
-                assets = uint256(assetsInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, getPrices().borrow);
+                assets = uint256(assetsInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow);
             }
+
             applyMaxGrowthFee(supplyAfterFee);
+
+            if (deltaFuture.deltaProtocolFutureRewardBorrow < 0) {
+                _mint(FEE_COLLECTOR, underlyingToShares(uint256(-deltaFuture.deltaProtocolFutureRewardBorrow)));
+            }
+
+            if (deltaFuture.deltaProtocolFutureRewardCollateral > 0) {
+                _mint(FEE_COLLECTOR, underlyingToShares(uint256(deltaFuture.deltaProtocolFutureRewardCollateral)));
+            }
+
+            _burn(owner, shares);
+
+            NextState memory nextState = NextStep.calculateNextStep(convertedAssets, deltaFuture, block.number);
+
+            applyStateTransition(nextState);
         }
-
-        if (deltaFuture.deltaProtocolFutureRewardBorrow < 0) {
-            _mint(FEE_COLLECTOR, underlyingToShares(uint256(-deltaFuture.deltaProtocolFutureRewardBorrow)));
-        }
-
-        if (deltaFuture.deltaProtocolFutureRewardCollateral > 0) {
-            _mint(FEE_COLLECTOR, underlyingToShares(uint256(deltaFuture.deltaProtocolFutureRewardCollateral)));
-        }
-
-        _burn(owner, shares);
-
-        // TODO: fix this - return from calculateDepositWithdraw
-        ConvertedAssets memory convertedAssets = recoverConvertedAssets();
-
-        NextState memory nextState = calculateNextStep(convertedAssets, deltaFuture, block.number);
-
-        applyStateTransition(nextState);
 
         borrow(assets);
 
