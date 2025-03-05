@@ -4,9 +4,8 @@ pragma solidity ^0.8.28;
 import "../Constants.sol";
 import "../borrowVault/TotalAssets.sol";
 import "../math/MintRedeem.sol";
-import '../math/DepositWithdraw.sol';
 
-abstract contract PreviewMintCollateral is TotalAssets, DepositWithdraw, MintRedeem {
+abstract contract PreviewMintCollateral is TotalAssets {
 
     using uMulDiv for uint256;
 
@@ -15,13 +14,14 @@ abstract contract PreviewMintCollateral is TotalAssets, DepositWithdraw, MintRed
         uint256 sharesInAssets = shares.mulDivUp(totalAssets(), totalSupply());
         uint256 sharesInUnderlying = sharesInAssets.mulDivUp(getPriceBorrowOracle(), Constants.ORACLE_DIVIDER);
 
-        int256 assetsInUnderlying = previewMintRedeem(int256(sharesInUnderlying), false);
+        Prices memory prices = getPrices();
+        int256 assetsInUnderlying = MintRedeem.previewMintRedeem(int256(sharesInUnderlying), false, recoverConvertedAssets(), prices, targetLTV);
 
         if (assetsInUnderlying < 0) {
             return 0;
         }
 
-        return uint256(assetsInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, getPriceCollateralOracle());
+        return uint256(assetsInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.collateral);
     }
 
 }
