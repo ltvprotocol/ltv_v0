@@ -78,6 +78,8 @@ contract DummyLTVTest is Test {
         dummyLTV.setMaxSafeLTV(9*10**17);
         dummyLTV.setMinProfitLTV(5*10**17);
         dummyLTV.setTargetLTV(75*10**16);
+        dummyLTV.setMaxGrowthFee(10**18 / 5);
+        dummyLTV.setMaxTotalAssetsInUnderlying(type(uint128).max);
         
         vm.startPrank(user);
         collateralToken.approve(address(dummyLTV), type(uint112).max);
@@ -305,4 +307,45 @@ contract DummyLTVTest is Test {
         assertEq(deltaShares, 1000 * 100);
     }
 
+    function test_maxGrowthFee(address owner, address user) public initializeBalancedTest(owner, user, 10**18, 0, 0, 0) {
+        vm.stopPrank();
+        vm.startPrank(owner);
+        // multiplied total assets by 2
+        oracle.setAssetPrice(address(collateralToken), 250 * 10 ** 18);
+
+        // check that price grown not for 100% but for 80%. Precision fail because of vault inflation attack protection
+        assertEq(dummyLTV.convertToAssets(10**20), 18*10**17 - 1);
+        vm.startPrank(user);
+        borrowToken.approve(address(dummyLTV), 1000);
+        dummyLTV.deposit(1000, user);
+        assertEq(dummyLTV.convertToAssets(10**20), 18*10**17 - 1);
+    }
+
+    function test_maxDepositFinalBorder(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        vm.stopPrank();
+        vm.startPrank(owner);
+        dummyLTV.setMaxTotalAssetsInUnderlying(10**18 * 100 + 10**8);
+        assertEq(dummyLTV.maxDeposit(user), 10**6);
+    }
+
+    function test_maxMintFinalBorder(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        vm.stopPrank();
+        vm.startPrank(owner);
+        dummyLTV.setMaxTotalAssetsInUnderlying(10**18 * 100 + 10**8);
+        assertEq(dummyLTV.maxMint(user), dummyLTV.previewDeposit(10**6));
+    }
+
+    function test_maxDepositCollateralFinalBorder(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        vm.stopPrank();
+        vm.startPrank(owner);
+        dummyLTV.setMaxTotalAssetsInUnderlying(10**18 * 100 + 10**8);
+        assertEq(dummyLTV.maxDepositCollateral(user), 5 * 10**5);
+    }
+
+    function test_maxMintCollateralFinalBorder(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        vm.stopPrank();
+        vm.startPrank(owner);
+        dummyLTV.setMaxTotalAssetsInUnderlying(10**18 * 100 + 10**8);
+        assertEq(dummyLTV.maxMintCollateral(user), dummyLTV.previewDepositCollateral(5 * 10**5));
+    }
 }
