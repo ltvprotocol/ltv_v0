@@ -10,7 +10,7 @@ import './MaxWithdrawCollateral.sol';
 import '../math/DepositWithdraw.sol';
 import '../ERC4626Events.sol';
 
-abstract contract WithdrawCollateral is MaxWithdrawCollateral, ERC20, StateTransition, Lending, ERC4626Events {
+abstract contract WithdrawCollateral is MaxWithdrawCollateral, StateTransition, Lending, ERC4626Events {
     using uMulDiv for uint256;
 
     error ExceedsMaxWithdrawCollateral(address owner, uint256 collateralAssets, uint256 max);
@@ -20,32 +20,30 @@ abstract contract WithdrawCollateral is MaxWithdrawCollateral, ERC20, StateTrans
         require(collateralAssets <= max, ExceedsMaxWithdrawCollateral(owner, collateralAssets, max));
 
         ConvertedAssets memory convertedAssets = recoverConvertedAssets();
+        Prices memory prices = getPrices();
         (int256 sharesInUnderlying, DeltaFuture memory deltaFuture) = DepositWithdraw.calculateDepositWithdraw(
             -int256(collateralAssets),
             false,
             convertedAssets,
-            getPrices(),
+            prices,
             targetLTV
         );
 
+        uint256 supplyAfterFee = previewSupplyAfterFee();
         if (sharesInUnderlying > 0) {
             return 0;
         } else {
-            uint256 sharesInAssets = uint256(-sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, getPrices().borrow);
-            shares = sharesInAssets.mulDivDown(totalSupply(), totalAssets());
+            uint256 sharesInAssets = uint256(-sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow);
+            shares = sharesInAssets.mulDivDown(supplyAfterFee, totalAssets());
         }
 
         if (owner != receiver) {
             allowance[owner][receiver] -= shares;
         }
 
-        if (deltaFuture.deltaProtocolFutureRewardBorrow < 0) {
-            _mint(FEE_COLLECTOR, underlyingToShares(uint256(-deltaFuture.deltaProtocolFutureRewardBorrow)));
-        }
+        applyMaxGrowthFee(supplyAfterFee);
 
-        if (deltaFuture.deltaProtocolFutureRewardCollateral > 0) {
-            _mint(FEE_COLLECTOR, underlyingToShares(uint256(deltaFuture.deltaProtocolFutureRewardCollateral)));
-        }
+        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee);
 
         _burn(owner, shares);
 

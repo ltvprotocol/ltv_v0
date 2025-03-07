@@ -1,30 +1,33 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import './borrowVault/TotalAssets.sol';
-import './ERC20.sol';
+import './MaxGrowthFee.sol';
 import './Lending.sol';
 import './math/LowLevelMath.sol';
 
-abstract contract LowLevel is TotalAssets, ERC20, Lending {
+abstract contract LowLevel is MaxGrowthFee, Lending {
     using sMulDiv for int256;
 
     function executeLowLevelShares(int256 deltaShares) external returns (int256, int256) {
+        uint256 supplyAfterFee = previewSupplyAfterFee();
+        applyMaxGrowthFee(supplyAfterFee);
         (int256 deltaRealCollateralAssets, int256 deltaRealBorrowAssets, int256 deltaProtocolFutureRewardShares) = LowLevelMath
-            .calculateLowLevelShares(deltaShares, recoverConvertedAssets(), getPrices(), targetLTV, int256(totalAssets()), int256(totalSupply()));
+            .calculateLowLevelShares(deltaShares, recoverConvertedAssets(), getPrices(), targetLTV, int256(totalAssets()), int256(supplyAfterFee));
         executeLowLevel(deltaRealCollateralAssets, deltaRealBorrowAssets, deltaShares, deltaProtocolFutureRewardShares);
 
         return (deltaRealCollateralAssets, deltaRealBorrowAssets);
     }
 
     function executeLowLevelBorrow(int256 deltaBorrowAssets) external returns (int256, int256) {
+        uint256 supplyAfterFee = previewSupplyAfterFee();
+        applyMaxGrowthFee(supplyAfterFee);
         (int256 deltaRealCollateralAssets, int256 deltaShares, int256 deltaProtocolFutureRewardShares) = LowLevelMath.calculateLowLevelBorrow(
             deltaBorrowAssets,
             recoverConvertedAssets(),
             getPrices(),
             targetLTV,
             int256(totalAssets()),
-            int256(totalSupply())
+            int256(supplyAfterFee)
         );
         executeLowLevel(deltaRealCollateralAssets, deltaBorrowAssets, deltaShares, deltaProtocolFutureRewardShares);
 
@@ -32,13 +35,15 @@ abstract contract LowLevel is TotalAssets, ERC20, Lending {
     }
 
     function executeLowLevelCollateral(int256 deltaCollateralAssets) external returns (int256, int256) {
+        uint256 supplyAfterFee = previewSupplyAfterFee();
+        applyMaxGrowthFee(supplyAfterFee);
         (int256 deltaRealBorrowAssets, int256 deltaShares, int256 deltaProtocolFutureRewardShares) = LowLevelMath.calculateLowLevelCollateral(
             deltaCollateralAssets,
             recoverConvertedAssets(),
             getPrices(),
             targetLTV,
             int256(totalAssets()),
-            int256(totalSupply())
+            int256(supplyAfterFee)
         );
         executeLowLevel(deltaCollateralAssets, deltaRealBorrowAssets, deltaShares, deltaProtocolFutureRewardShares);
 
