@@ -10,7 +10,7 @@ import './MaxWithdrawCollateral.sol';
 import '../math/DepositWithdraw.sol';
 import '../ERC4626Events.sol';
 
-abstract contract WithdrawCollateral is MaxWithdrawCollateral, ERC20, StateTransition, Lending, ERC4626Events {
+abstract contract WithdrawCollateral is MaxWithdrawCollateral, StateTransition, Lending, ERC4626Events {
     using uMulDiv for uint256;
 
     error ExceedsMaxWithdrawCollateral(address owner, uint256 collateralAssets, uint256 max);
@@ -28,16 +28,19 @@ abstract contract WithdrawCollateral is MaxWithdrawCollateral, ERC20, StateTrans
             targetLTV
         );
 
+        uint256 supplyAfterFee = previewSupplyAfterFee();
         if (sharesInUnderlying > 0) {
             return 0;
         } else {
             uint256 sharesInAssets = uint256(-sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, getPrices().borrow);
-            shares = sharesInAssets.mulDivDown(totalSupply(), totalAssets());
+            shares = sharesInAssets.mulDivDown(supplyAfterFee, totalAssets());
         }
 
         if (owner != receiver) {
             allowance[owner][receiver] -= shares;
         }
+
+        applyMaxGrowthFee(supplyAfterFee);
 
         if (deltaFuture.deltaProtocolFutureRewardBorrow < 0) {
             _mint(FEE_COLLECTOR, underlyingToShares(uint256(-deltaFuture.deltaProtocolFutureRewardBorrow)));

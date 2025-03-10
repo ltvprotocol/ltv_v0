@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../Constants.sol';
-import './TotalAssets.sol';
-import '../math/MintRedeem.sol';
+import "../Constants.sol";
+import "../math/MintRedeem.sol";
+import '../MaxGrowthFee.sol';
 
-abstract contract PreviewMint is TotalAssets {
+abstract contract PreviewMint is MaxGrowthFee {
     using uMulDiv for uint256;
 
     function previewMint(uint256 shares) external view returns (uint256 assets) {
-        uint256 sharesInAssets = shares.mulDivUp(totalAssets(), totalSupply());
+        uint256 sharesInAssets = shares.mulDivUp(totalAssets(), previewSupplyAfterFee());
         uint256 sharesInUnderlying = sharesInAssets.mulDivUp(getPrices().borrow, Constants.ORACLE_DIVIDER);
         
         Prices memory prices = getPrices();

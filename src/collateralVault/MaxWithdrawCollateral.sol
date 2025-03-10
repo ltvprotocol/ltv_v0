@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../borrowVault/TotalAssets.sol';
+import '../MaxGrowthFee.sol';
 
-abstract contract MaxWithdrawCollateral is TotalAssets {
+abstract contract MaxWithdrawCollateral is MaxGrowthFee {
   using uMulDiv for uint256;
 
   function maxWithdrawCollateral(address owner) public view returns(uint256) {
@@ -13,7 +13,7 @@ abstract contract MaxWithdrawCollateral is TotalAssets {
       return 0;
     }
     uint256 vaultMaxWithdrawInUnderlying = uint256(convertedAssets.realCollateral) - maxSafeRealCollateral;
-    uint256 userBalanceInAssets = balanceOf[owner].mulDivDown(totalAssets(), totalSupply());
+    uint256 userBalanceInAssets = balanceOf[owner].mulDivDown(totalAssets(), previewSupplyAfterFee());
     uint256 userBalanceInUnderlying = userBalanceInAssets.mulDivDown(getPriceBorrowOracle(), Constants.ORACLE_DIVIDER);
 
     uint256 maxWithdrawInUnderlying = vaultMaxWithdrawInUnderlying < userBalanceInUnderlying ? vaultMaxWithdrawInUnderlying : userBalanceInUnderlying;

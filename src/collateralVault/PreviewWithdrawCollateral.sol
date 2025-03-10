@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../Constants.sol';
-import '../borrowVault/TotalAssets.sol';
-import '../math/DepositWithdraw.sol';
+import "../Constants.sol";
+import "../borrowVault/TotalAssets.sol";
+import "../math/DepositWithdraw.sol";
+import '../MaxGrowthFee.sol';
 
-abstract contract PreviewWithdrawCollateral is TotalAssets {
+abstract contract PreviewWithdrawCollateral is MaxGrowthFee {
     using uMulDiv for uint256;
 
     function previewWithdrawCollateral(uint256 assets) public view returns (uint256 shares) {
@@ -14,9 +15,9 @@ abstract contract PreviewWithdrawCollateral is TotalAssets {
 
         if (sharesInUnderlying > 0) {
             return 0;
-        } else {
+        } else{
             uint256 sharesInAssets = uint256(-sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow);
-            shares = sharesInAssets.mulDivDown(totalSupply(), totalAssets());
+            shares = sharesInAssets.mulDivDown(previewSupplyAfterFee(), totalAssets());
         }
 
         return shares;
