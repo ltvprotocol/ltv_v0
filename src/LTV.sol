@@ -24,9 +24,15 @@ import './LowLevel.sol';
 import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 
 
-abstract contract LTV is PreviewWithdraw, PreviewDeposit, PreviewMint, PreviewRedeem, PreviewWithdrawCollateral, PreviewDepositCollateral, PreviewMintCollateral, PreviewRedeemCollateral, LowLevel, Auction, Mint, MintCollateral, Deposit, DepositCollateral, Withdraw, WithdrawCollateral, Redeem, RedeemCollateral, ConvertToAssets, ConvertToShares {
+contract LTV is PreviewWithdraw, PreviewDeposit, PreviewMint, PreviewRedeem, PreviewWithdrawCollateral, PreviewDepositCollateral, PreviewMintCollateral, PreviewRedeemCollateral, LowLevel, Auction, Mint, MintCollateral, Deposit, DepositCollateral, Withdraw, WithdrawCollateral, Redeem, RedeemCollateral, ConvertToAssets, ConvertToShares {
     using uMulDiv for uint256;
     
+    function initialize(StateInitData memory stateInitData, address initialOwner, string memory _name, string memory _symbol) initializer public {
+        __State_init(stateInitData);
+        __ERC20_init(_name, _symbol, 18);
+        __Ownable_init(initialOwner);
+    }
+
     event MaxSafeLTVChanged(uint128 oldValue, uint128 newValue);
     event MinProfitLTVChanged(uint128 oldValue, uint128 newValue);
     event TargetLTVChanged(uint128 oldValue, uint128 newValue);
@@ -48,25 +54,40 @@ abstract contract LTV is PreviewWithdraw, PreviewDeposit, PreviewMint, PreviewRe
         minProfitLTV = value;
         emit MinProfitLTVChanged(oldValue, value);
     }
+
+    function setLendingConnector(ILendingConnector _lendingConnector) external onlyOwner {
+        lendingConnector = _lendingConnector;
+    }
     
     function setMaxTotalAssetsInUnderlying(uint256 _maxTotalAssetsInUnderlying) external onlyOwner {
         maxTotalAssetsInUnderlying = _maxTotalAssetsInUnderlying;
     }
 
-    function firstTimeDeposit(uint256 collateralAssets, uint256 borrowAssets) external onlyOneTime returns (uint256) {
-        uint256 sharesInUnderlying = collateralAssets.mulDivDown(getPriceCollateralOracle(), Constants.ORACLE_DIVIDER) -
-            borrowAssets.mulDivDown(getPriceBorrowOracle(), Constants.ORACLE_DIVIDER);
-        uint256 sharesInAssets = sharesInUnderlying.mulDivDown(getPriceBorrowOracle(), Constants.ORACLE_DIVIDER);
-        uint256 shares = sharesInAssets.mulDivDown(totalSupply(), totalAssets());
-        
-        collateralToken.transferFrom(msg.sender, address(this), collateralAssets);
-        supply(collateralAssets);
+    function borrow(uint256 assets) internal override {
+        (bool isSuccess, ) = address(lendingConnector).delegatecall(abi.encodeCall(lendingConnector.borrow, (assets)));
+        require(isSuccess);
+    }
 
-        _mint(msg.sender, shares);
-        
-        borrow(borrowAssets);
-        borrowToken.transfer(msg.sender, borrowAssets);
+    function repay(uint256 assets) internal override {
+        (bool isSuccess, ) = address(lendingConnector).delegatecall(abi.encodeCall(lendingConnector.repay, (assets)));
+        require(isSuccess);
+    }
 
-        return shares;
+    function supply(uint256 assets) internal override {
+        (bool isSuccess, ) = address(lendingConnector).delegatecall(abi.encodeCall(lendingConnector.supply, (assets)));
+        require(isSuccess);
+    }
+
+    function withdraw(uint256 assets) internal override {
+        (bool isSuccess, ) = address(lendingConnector).delegatecall(abi.encodeCall(lendingConnector.withdraw, (assets)));
+        require(isSuccess);
+    }
+
+    function setMissingSlots(ILendingConnector _lendingConnector, IOracleConnector _oracleConnector) external onlyOwner {
+        lendingConnector = _lendingConnector;
+        oracleConnector = _oracleConnector;
+        lastSeenTokenPrice = totalAssets().mulDivDown(Constants.LAST_SEEN_PRICE_PRECISION, totalSupply());
+        maxGrowthFee = 10**18 / 5;
+        maxTotalAssetsInUnderlying = type(uint128).max;
     }
 }

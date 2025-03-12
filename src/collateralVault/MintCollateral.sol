@@ -46,11 +46,11 @@ abstract contract MintCollateral is MaxMintCollateral, StateTransition, Lending,
         applyMaxGrowthFee(supplyAfterFee);
 
         if (deltaFuture.deltaProtocolFutureRewardBorrow < 0) {
-            _mint(FEE_COLLECTOR, underlyingToShares(uint256(-deltaFuture.deltaProtocolFutureRewardBorrow)));
+            _mint(feeCollector, underlyingToShares(uint256(-deltaFuture.deltaProtocolFutureRewardBorrow)));
         }
 
         if (deltaFuture.deltaProtocolFutureRewardCollateral > 0) {
-            _mint(FEE_COLLECTOR, underlyingToShares(uint256(deltaFuture.deltaProtocolFutureRewardCollateral)));
+            _mint(feeCollector, underlyingToShares(uint256(deltaFuture.deltaProtocolFutureRewardCollateral)));
         }
 
         supply(collateralAssets);
