@@ -11,7 +11,6 @@ import 'forge-std/interfaces/IERC20.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import './interfaces/ILendingConnector.sol';
 import './interfaces/IOracleConnector.sol';
-import "forge-std/console.sol";
 
 abstract contract State is Initializable {
     using uMulDiv for uint256;

@@ -12,8 +12,6 @@ abstract contract TotalAssets is State {
     function totalAssets() public view override returns (uint256) {
         ConvertedAssets memory convertedAssets = recoverConvertedAssets();
         // Add 1 to avoid vault attack
-        console.log("convertedAssets.collateral", convertedAssets.collateral);
-        console.log("convertedAssets.borrow", convertedAssets.borrow);
         return uint256(convertedAssets.collateral - convertedAssets.borrow).mulDivUp(Constants.ORACLE_DIVIDER, getPriceBorrowOracle()) + 1;
     }
 
