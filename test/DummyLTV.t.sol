@@ -10,6 +10,11 @@ import "../src/Constants.sol";
 import "../src/dummy/DummyLendingConnector.sol";
 import "../src/dummy/DummyOracleConnector.sol";
 
+import '@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol';
+import '../src/ghost/connectors/HodlLendingConnector.sol';
+import '../src/ghost/connectors/SpookyOracleConnector.sol';
+
+
 contract DummyLTVTest is Test {
     DummyLTV public dummyLTV;
     MockERC20 public collateralToken;
@@ -356,5 +361,43 @@ contract DummyLTVTest is Test {
         vm.startPrank(owner);
         dummyLTV.setMaxTotalAssetsInUnderlying(10**18 * 100 + 10**8);
         assertEq(dummyLTV.maxMintCollateral(user), dummyLTV.previewDepositCollateral(5 * 10**5));
+    }
+
+    function test_sepoliaUpgrade() public {
+        vm.createSelectFork('RPC_SEPOLIA');
+        LTV ltv = LTV(0xE2A7f267124AC3E4131f27b9159c78C521A44F3c);
+        uint256 oldPreview = ltv.previewDeposit(10**18);
+
+        ITransparentUpgradeableProxy proxy = ITransparentUpgradeableProxy(payable(address(ltv)));
+        address admin = address(bytes20(uint160(uint256(vm.load(address(ltv), 0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103)))));
+        LTV ltvImpl = new LTV();
+        vm.startPrank(admin);
+
+        address _collateralToken = 0x8f7b2044F9aA6fbf495c1cC3bDE120dF9032aE43;
+        address _borrowToken = 0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14;
+        address _lendingProtocol = 0x1Dcd756db287354c4607D5d57621cdfb4456E2d4;
+        address _oracle = 0x6074D1d4022521147DB1faD7BACC486B35A64dF3;
+
+        HodlLendingConnector lendingConnector = new HodlLendingConnector(
+            IERC20(_collateralToken),
+            IERC20(_borrowToken),
+            IHodlMyBeerLending(_lendingProtocol)
+        );
+
+        SpookyOracleConnector oracleConnector = new SpookyOracleConnector(
+            IERC20(_collateralToken),
+            IERC20(_borrowToken),
+            ISpookyOracle(_oracle)
+        );
+
+        proxy.upgradeToAndCall(address(ltvImpl), '');
+        vm.stopPrank();
+        vm.startPrank(ltv.owner());
+        ltv.setMissingSlots(lendingConnector, oracleConnector);
+
+        assertEq(ltv.previewDeposit(10**18), oldPreview);
+        ltv.previewLowLevelShares(0);
+        require(ltv.maxDeposit(address(this)) > 0);
+
     }
 }
