@@ -20,5 +20,4 @@ abstract contract TotalAssets is State {
         uint256 shares = assets.mulDivDown(totalSupply(), totalAssets());
         return shares;
     }
-
 }

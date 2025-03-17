@@ -3,9 +3,8 @@ pragma solidity ^0.8.27;
 
 import './borrowVault/TotalAssets.sol';
 import './ERC20.sol';
-import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 
-abstract contract MaxGrowthFee is TotalAssets, ERC20, OwnableUpgradeable {
+abstract contract MaxGrowthFee is TotalAssets, ERC20 {
     using uMulDiv for uint256;
 
     function setMaxGrowthFee(uint256 _maxGrowthFee) external onlyOwner {
