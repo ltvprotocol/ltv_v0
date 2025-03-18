@@ -15,10 +15,4 @@ abstract contract TotalAssets is State {
         return uint256(convertedAssets.collateral - convertedAssets.borrow).mulDivUp(Constants.ORACLE_DIVIDER, getPriceBorrowOracle()) + 1;
     }
 
-    function underlyingToShares(uint256 underlying) internal view returns (uint256) {
-        uint256 assets = underlying.mulDivDown(Constants.ORACLE_DIVIDER, getPrices().borrow);
-        uint256 shares = assets.mulDivDown(totalSupply(), totalAssets());
-        return shares;
-    }
-
 }

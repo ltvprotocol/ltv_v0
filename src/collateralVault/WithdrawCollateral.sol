@@ -20,11 +20,12 @@ abstract contract WithdrawCollateral is MaxWithdrawCollateral, StateTransition, 
         require(collateralAssets <= max, ExceedsMaxWithdrawCollateral(owner, collateralAssets, max));
 
         ConvertedAssets memory convertedAssets = recoverConvertedAssets();
+        Prices memory prices = getPrices();
         (int256 sharesInUnderlying, DeltaFuture memory deltaFuture) = DepositWithdraw.calculateDepositWithdraw(
             -int256(collateralAssets),
             false,
             convertedAssets,
-            getPrices(),
+            prices,
             targetLTV
         );
 
@@ -32,7 +33,7 @@ abstract contract WithdrawCollateral is MaxWithdrawCollateral, StateTransition, 
         if (sharesInUnderlying > 0) {
             return 0;
         } else {
-            uint256 sharesInAssets = uint256(-sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, getPrices().borrow);
+            uint256 sharesInAssets = uint256(-sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow);
             shares = sharesInAssets.mulDivDown(supplyAfterFee, totalAssets());
         }
 
@@ -42,13 +43,7 @@ abstract contract WithdrawCollateral is MaxWithdrawCollateral, StateTransition, 
 
         applyMaxGrowthFee(supplyAfterFee);
 
-        if (deltaFuture.deltaProtocolFutureRewardBorrow < 0) {
-            _mint(feeCollector, underlyingToShares(uint256(-deltaFuture.deltaProtocolFutureRewardBorrow)));
-        }
-
-        if (deltaFuture.deltaProtocolFutureRewardCollateral > 0) {
-            _mint(feeCollector, underlyingToShares(uint256(deltaFuture.deltaProtocolFutureRewardCollateral)));
-        }
+        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee);
 
         _burn(owner, shares);
 

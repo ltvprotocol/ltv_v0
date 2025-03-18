@@ -11,7 +11,7 @@ abstract contract PreviewMint is MaxGrowthFee {
     function previewMint(uint256 shares) public view returns (uint256 assets) {
         uint256 sharesInAssets = shares.mulDivUp(totalAssets(), previewSupplyAfterFee());
         uint256 sharesInUnderlying = sharesInAssets.mulDivUp(getPrices().borrow, Constants.ORACLE_DIVIDER);
-        
+
         Prices memory prices = getPrices();
         int256 assetsInUnderlying = MintRedeem.previewMintRedeem(int256(sharesInUnderlying), true, recoverConvertedAssets(), prices, targetLTV);
 
