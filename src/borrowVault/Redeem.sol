@@ -43,14 +43,8 @@ abstract contract Redeem is MaxRedeem, StateTransition, Lending, ERC4626Events {
 
             applyMaxGrowthFee(supplyAfterFee);
 
-            if (deltaFuture.deltaProtocolFutureRewardBorrow < 0) {
-                _mint(feeCollector, underlyingToShares(uint256(-deltaFuture.deltaProtocolFutureRewardBorrow)));
-            }
-
-            if (deltaFuture.deltaProtocolFutureRewardCollateral > 0) {
-                _mint(feeCollector, underlyingToShares(uint256(deltaFuture.deltaProtocolFutureRewardCollateral)));
-            }
-
+            _mintProtocolRewards(deltaFuture, prices, supplyAfterFee);
+            
             _burn(owner, shares);
 
             NextState memory nextState = NextStep.calculateNextStep(convertedAssets, deltaFuture, block.number);
