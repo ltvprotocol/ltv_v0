@@ -46,7 +46,7 @@ abstract contract Auction is State, Lending {
             borrow(uint256(-deltaState.deltaUserBorrowAssets));
             borrowToken.transfer(msg.sender, uint256(-deltaState.deltaUserBorrowAssets));
             if (deltaState.deltaProtocolFutureRewardCollateralAssets != 0) {
-                collateralToken.transfer(FEE_COLLECTOR, uint256(deltaState.deltaProtocolFutureRewardCollateralAssets));
+                collateralToken.transfer(feeCollector, uint256(deltaState.deltaProtocolFutureRewardCollateralAssets));
             }
         } else if (deltaState.deltaUserBorrowAssets > 0) {
             borrowToken.transferFrom(msg.sender, address(this), uint256(deltaState.deltaUserBorrowAssets));
@@ -54,7 +54,7 @@ abstract contract Auction is State, Lending {
             withdraw(uint256(deltaState.deltaUserCollateralAssets));
             collateralToken.transfer(msg.sender, uint256(deltaState.deltaUserCollateralAssets));
             if (deltaState.deltaProtocolFutureRewardBorrowAssets != 0) {
-              borrowToken.transfer(FEE_COLLECTOR, uint256(-deltaState.deltaProtocolFutureRewardBorrowAssets));
+              borrowToken.transfer(feeCollector, uint256(-deltaState.deltaProtocolFutureRewardBorrowAssets));
             }
         }
 
