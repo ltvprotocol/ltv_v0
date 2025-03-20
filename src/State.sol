@@ -175,6 +175,20 @@ abstract contract State is OwnableUpgradeable {
             Prices({borrow: getPriceBorrowOracle(), collateral: getPriceCollateralOracle(), borrowSlippage: 10 ** 16, collateralSlippage: 10 ** 16});
     }
 
+    function getAvailableSpaceInShares(ConvertedAssets memory convertedAssets, uint256 supply) internal view returns (uint256) {
+        uint256 totalAssetsInUnderlying = uint256(convertedAssets.collateral - convertedAssets.borrow);
+
+        if (totalAssetsInUnderlying >= maxTotalAssetsInUnderlying) {
+            return 0;
+        }
+
+        uint256 availableSpaceInShares = (maxTotalAssetsInUnderlying - totalAssetsInUnderlying)
+            .mulDivDown(Constants.ORACLE_DIVIDER, getPriceBorrowOracle())
+            .mulDivDown(supply, totalAssets());
+
+        return availableSpaceInShares;
+    }
+    
     function getPriceBorrowOracle() public view returns (uint256) {
         return oracleConnector.getPriceBorrowOracle();
     }

@@ -9,15 +9,7 @@ abstract contract MaxDeposit is PreviewMint {
     function maxDeposit(address) public view returns (uint256) {
         ConvertedAssets memory convertedAssets = recoverConvertedAssets();
 
-        uint256 totalAssetsInUnderlying = uint256(convertedAssets.collateral - convertedAssets.borrow);
-
-        if (totalAssetsInUnderlying >= maxTotalAssetsInUnderlying) {
-            return 0;
-        }
-
-        uint256 availableSpaceInShares = (maxTotalAssetsInUnderlying - totalAssetsInUnderlying)
-            .mulDivDown(Constants.ORACLE_DIVIDER, getPriceBorrowOracle())
-            .mulDivDown(previewSupplyAfterFee(), totalAssets());
+        uint256 availableSpaceInShares = getAvailableSpaceInShares(convertedAssets, previewSupplyAfterFee());
         uint256 availableSpaceInAssets = previewMint(availableSpaceInShares);
 
         uint256 minProfitRealBorrow = uint256(convertedAssets.realCollateral).mulDivDown(minProfitLTV, Constants.LTV_DIVIDER);
