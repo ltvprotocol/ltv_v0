@@ -30,7 +30,7 @@ abstract contract StateTransition is State {
         uint256 oldStartAuction = startAuction;
 
 
-        futureBorrowAssets = nextState.futureBorrow * 1e18 / int(getPriceBorrowOracle()) ;
+        futureBorrowAssets = nextState.futureBorrow * 1e18 / int(getPriceBorrowOracle());
         futureCollateralAssets = nextState.futureCollateral * 1e18 / int(getPriceCollateralOracle());
         futureRewardBorrowAssets = nextState.futureRewardBorrow * 1e18 / int(getPriceBorrowOracle());
         futureRewardCollateralAssets = nextState.futureRewardCollateral * 1e18 / int(getPriceCollateralOracle());

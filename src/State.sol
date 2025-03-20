@@ -114,37 +114,25 @@ abstract contract State is OwnableUpgradeable {
 
         // futureBorrow should be round down
         // because we want to minimize the amount that protocol will pay to the user
-        // TODO: double check this with experts
         int256 futureBorrow = futureBorrowAssets.mulDivDown(int256(getPriceBorrowOracle()), int256(Constants.ORACLE_DIVIDER));
 
         // futureCollateral should be round up
         // because we want to maximize the amount that protocol will get from the user
-        // TODO: double check this with experts
         int256 futureCollateral = futureCollateralAssets.mulDivUp(int256(getPriceCollateralOracle()), int256(Constants.ORACLE_DIVIDER));
 
         // futureRewardBorrow should be round down
         // because we want to minimize the amount that protocol will pay to the user
-        // TODO: double check this with experts
         int256 futureRewardBorrow = futureRewardBorrowAssets.mulDivDown(int256(getPriceBorrowOracle()), int256(Constants.ORACLE_DIVIDER));
 
         // TODO: precheck futureRewardBorrow >= 0
 
         // futureRewardCollateral should be round up
         // because we want to maximize the amount that protocol will get from the user
-        // TODO: double check this with experts
         int256 futureRewardCollateral = futureRewardCollateralAssets.mulDivUp(int256(getPriceCollateralOracle()), int256(Constants.ORACLE_DIVIDER));
 
-        // TODO: precheck futureRewardCollateral <= 0
+        int256 userFutureRewardBorrow = futureRewardBorrow.mulDivUp(int256(getAuctionStep()), int256(Constants.AMOUNT_OF_STEPS));
 
-        // userFutureRewardBorrow should be round down
-        // because we want to minimize the amount that protocol will pay to the user
-        // TODO: double check this with experts
-        int256 userFutureRewardBorrow = futureRewardBorrow.mulDivDown(int256(getAuctionStep()), int256(Constants.AMOUNT_OF_STEPS));
-
-        // userFutureRewardCollateral should be round down
-        // because we want to minimize the amount that protocol will pay to the user
-        // TODO: double check this with experts
-        int256 userFutureRewardCollateral = futureRewardCollateral.mulDivUp(int256(getAuctionStep()), int256(Constants.AMOUNT_OF_STEPS));
+        int256 userFutureRewardCollateral = futureRewardCollateral.mulDivDown(int256(getAuctionStep()), int256(Constants.AMOUNT_OF_STEPS));
 
         int256 protocolFutureRewardBorrow = futureRewardBorrow - userFutureRewardBorrow;
         int256 protocolFutureRewardCollateral = futureRewardCollateral - userFutureRewardCollateral;
