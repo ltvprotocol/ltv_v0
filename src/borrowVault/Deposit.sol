@@ -41,13 +41,7 @@ abstract contract Deposit is MaxDeposit, StateTransition, Lending, ERC4626Events
 
         applyMaxGrowthFee(supplyAfterFee);
 
-        if (deltaFuture.deltaProtocolFutureRewardBorrow < 0) {
-            _mint(FEE_COLLECTOR, underlyingToShares(uint256(-deltaFuture.deltaProtocolFutureRewardBorrow)));
-        }
-
-        if (deltaFuture.deltaProtocolFutureRewardCollateral > 0) {
-            _mint(FEE_COLLECTOR, underlyingToShares(uint256(deltaFuture.deltaProtocolFutureRewardCollateral)));
-        }
+        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee);
 
         repay(assets);
 
