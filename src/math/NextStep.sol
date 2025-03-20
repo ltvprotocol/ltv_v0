@@ -51,9 +51,6 @@ library NextStep {
         DeltaFuture memory deltaFuture,
         uint256 blockNumber
     ) private pure returns (uint256 startAuction, bool merge) {
-
-        startAuction = 0;
-
         merge = convertedAssets.futureBorrow * deltaFuture.deltaFutureBorrow > 0 &&
                      convertedAssets.futureCollateral * deltaFuture.deltaFutureCollateral > 0;
 
