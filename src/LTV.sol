@@ -48,6 +48,10 @@ abstract contract LTV is PreviewWithdraw, PreviewDeposit, PreviewMint, PreviewRe
         minProfitLTV = value;
         emit MinProfitLTVChanged(oldValue, value);
     }
+    
+    function setMaxTotalAssetsInUnderlying(uint256 _maxTotalAssetsInUnderlying) external onlyOwner {
+        maxTotalAssetsInUnderlying = _maxTotalAssetsInUnderlying;
+    }
 
     function firstTimeDeposit(uint256 collateralAssets, uint256 borrowAssets) external onlyOneTime returns (uint256) {
         uint256 sharesInUnderlying = collateralAssets.mulDivDown(getPriceCollateralOracle(), Constants.ORACLE_DIVIDER) -

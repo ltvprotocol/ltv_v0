@@ -44,6 +44,8 @@ abstract contract State is Initializable, IOracle {
     uint256 internal lastSeenTokenPrice;
     uint256 internal maxGrowthFee;
 
+    uint256 public maxTotalAssetsInUnderlying;
+
     modifier onlyOneTime() {
         require(!isNotFirstTime, 'Only one time');
         isNotFirstTime = true;
@@ -64,7 +66,7 @@ abstract contract State is Initializable, IOracle {
         // add 100 to avoid vault inflation attack
         return baseTotalSupply + 100;
     }
-
+    
     function getAuctionStep() internal view returns (uint256) {
         uint256 auctionStep = block.number - startAuction;
 
@@ -147,5 +149,19 @@ abstract contract State is Initializable, IOracle {
     function getPrices() internal view virtual returns (Prices memory) {
         return
             Prices({borrow: getPriceBorrowOracle(), collateral: getPriceCollateralOracle(), borrowSlippage: 10 ** 16, collateralSlippage: 10 ** 16});
+    }
+
+    function getAvailableSpaceInShares(ConvertedAssets memory convertedAssets, uint256 supply) internal view returns (uint256) {
+        uint256 totalAssetsInUnderlying = uint256(convertedAssets.collateral - convertedAssets.borrow);
+
+        if (totalAssetsInUnderlying >= maxTotalAssetsInUnderlying) {
+            return 0;
+        }
+
+        uint256 availableSpaceInShares = (maxTotalAssetsInUnderlying - totalAssetsInUnderlying)
+            .mulDivDown(Constants.ORACLE_DIVIDER, getPriceBorrowOracle())
+            .mulDivDown(supply, totalAssets());
+
+        return availableSpaceInShares;
     }
 }

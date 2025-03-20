@@ -9,7 +9,7 @@ abstract contract PreviewMintCollateral is MaxGrowthFee {
 
     using uMulDiv for uint256;
 
-    function previewMintCollateral(uint256 shares) external view returns (uint256 collateralAssets) {
+    function previewMintCollateral(uint256 shares) public view returns (uint256 collateralAssets) {
 
         uint256 sharesInAssets = shares.mulDivUp(totalAssets(), previewSupplyAfterFee());
         uint256 sharesInUnderlying = sharesInAssets.mulDivUp(getPriceBorrowOracle(), Constants.ORACLE_DIVIDER);
