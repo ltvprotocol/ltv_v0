@@ -11,7 +11,6 @@ import '../ERC4626Events.sol';
 import '../math/MintRedeem.sol';
 
 abstract contract Mint is MaxMint, StateTransition, Lending, ERC4626Events {
-
     using uMulDiv for uint256;
 
     error ExceedsMaxMint(address receiver, uint256 shares, uint256 max);
@@ -19,10 +18,11 @@ abstract contract Mint is MaxMint, StateTransition, Lending, ERC4626Events {
     function mint(uint256 shares, address receiver) external returns (uint256 assets) {
         uint256 max = maxMint(address(receiver));
         require(shares <= max, ExceedsMaxMint(receiver, shares, max));
-        
+
         uint256 supplyAfterFee = previewSupplyAfterFee();
-        uint256 sharesInAssets = shares.mulDivDown(totalAssets(), supplyAfterFee);
-        uint256 sharesInUnderlying = sharesInAssets.mulDivDown(getPrices().borrow, Constants.ORACLE_DIVIDER);
+        // assume user wants to mint more shares to get more assets
+        uint256 sharesInUnderlying = shares.mulDivUp(totalAssets(), supplyAfterFee).mulDivUp(getPrices().borrow, Constants.ORACLE_DIVIDER);
+        
         ConvertedAssets memory convertedAssets = recoverConvertedAssets();
         Prices memory prices = getPrices();
         (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = MintRedeem.calculateMintRedeem(
@@ -32,20 +32,19 @@ abstract contract Mint is MaxMint, StateTransition, Lending, ERC4626Events {
             prices,
             targetLTV
         );
-        // int256 signedShares = previewMintRedeem(-1*int256(assets));
 
         if (assetsInUnderlying > 0) {
             return 0;
         }
 
-        assets = uint256(-assetsInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow);
+        // round up assets to receive more assets
+        assets = uint256(-assetsInUnderlying).mulDivUp(Constants.ORACLE_DIVIDER, prices.borrow);
 
         // TODO: double check that Token should be transfered from msg.sender or from receiver
         borrowToken.transferFrom(msg.sender, address(this), assets);
 
-        
         applyMaxGrowthFee(supplyAfterFee);
-        
+
         _mintProtocolRewards(deltaFuture, prices, supplyAfterFee);
 
         repay(assets);
