@@ -1,16 +1,14 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "./State.sol";
+import './State.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 
 abstract contract ERC20 is State {
     using uMulDiv for uint256;
 
     event Transfer(address indexed from, address indexed to, uint256 value);
-    event Approval(
-        address indexed owner, address indexed spender, uint256 value
-    );
+    event Approval(address indexed owner, address indexed spender, uint256 value);
 
     function __ERC20_init(string memory _name, string memory _symbol, uint8 _decimals) internal onlyInitializing {
         name = _name;
@@ -53,13 +51,16 @@ abstract contract ERC20 is State {
 
     function _mintProtocolRewards(DeltaFuture memory deltaFuture, Prices memory prices, uint256 supply) internal {
         if (deltaFuture.deltaProtocolFutureRewardBorrow < 0) {
-            uint256 shares = uint256(-deltaFuture.deltaProtocolFutureRewardBorrow)
-                .mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow).mulDivDown(supply, totalAssets());
+            uint256 shares = uint256(-deltaFuture.deltaProtocolFutureRewardBorrow).mulDivDown(
+                Constants.ORACLE_DIVIDER * supply,
+                prices.borrow * totalAssets()
+            );
             _mint(feeCollector, shares);
         } else if (deltaFuture.deltaProtocolFutureRewardCollateral > 0) {
-            _mint(feeCollector, uint256(deltaFuture.deltaProtocolFutureRewardCollateral)
-                .mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow).mulDivDown(supply, totalAssets()));
+            _mint(
+                feeCollector,
+                uint256(deltaFuture.deltaProtocolFutureRewardCollateral).mulDivDown(Constants.ORACLE_DIVIDER * supply, prices.borrow * totalAssets())
+            );
         }
     }
-
 }
