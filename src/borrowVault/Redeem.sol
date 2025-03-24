@@ -24,33 +24,36 @@ abstract contract Redeem is MaxRedeem, StateTransition, Lending, ERC4626Events {
             }
         }
 
-        DeltaFuture memory deltaFuture;
-        {
-            uint256 supplyAfterFee = previewSupplyAfterFee();
-            uint256 sharesInAssets = shares.mulDivUp(totalAssets(), supplyAfterFee);
-            uint256 sharesInUnderlying = sharesInAssets.mulDivUp(getPrices().borrow, Constants.ORACLE_DIVIDER);
+        uint256 supplyAfterFee = previewSupplyAfterFee();
+        // round down to give less assets for provided shares
+        Prices memory prices = getPrices();
+        uint256 sharesInUnderlying = shares.mulDivDown(totalAssets(), supplyAfterFee).mulDivDown(prices.borrow, Constants.ORACLE_DIVIDER);
 
-            ConvertedAssets memory convertedAssets = recoverConvertedAssets();
-            Prices memory prices = getPrices();
-            int256 assetsInUnderlying;
-            (assetsInUnderlying, deltaFuture) = MintRedeem.calculateMintRedeem(-int256(sharesInUnderlying), true, convertedAssets, prices, targetLTV);
+        ConvertedAssets memory convertedAssets = recoverConvertedAssets();
+        (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = MintRedeem.calculateMintRedeem(
+            -int256(sharesInUnderlying),
+            true,
+            convertedAssets,
+            prices,
+            targetLTV
+        );
 
-            if (assetsInUnderlying < 0) {
-                return 0;
-            } else {
-                assets = uint256(assetsInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow);
-            }
-
-            applyMaxGrowthFee(supplyAfterFee);
-
-            _mintProtocolRewards(deltaFuture, prices, supplyAfterFee);
-            
-            _burn(owner, shares);
-
-            NextState memory nextState = NextStep.calculateNextStep(convertedAssets, deltaFuture, block.number);
-
-            applyStateTransition(nextState);
+        if (assetsInUnderlying < 0) {
+            return 0;
+        } else {
+            // round down to give less assets
+            assets = uint256(assetsInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow);
         }
+
+        applyMaxGrowthFee(supplyAfterFee);
+
+        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee);
+
+        _burn(owner, shares);
+
+        NextState memory nextState = NextStep.calculateNextStep(convertedAssets, deltaFuture, block.number);
+
+        applyStateTransition(nextState);
 
         borrow(assets);
 
