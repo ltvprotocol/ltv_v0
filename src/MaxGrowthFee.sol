@@ -15,6 +15,7 @@ abstract contract MaxGrowthFee is TotalAssets, ERC20 {
         uint256 assets = totalAssets();
         uint256 supply = totalSupply();
 
+        // round token price to the bottom
         if (assets.mulDivDown(Constants.LAST_SEEN_PRICE_PRECISION, supply) <= lastSeenTokenPrice) {
             return supply;
         }
@@ -22,13 +23,14 @@ abstract contract MaxGrowthFee is TotalAssets, ERC20 {
         // divident: asset * supply
         // divisor: supply * maxGrowthFee * lastSeenTokenPrice + assets * (1 - maxGrowthFee)
         
-        return assets.mulDivUp(
+        // round new supply to the bottom to avoid minting more tokens than needed
+        return assets.mulDivDown(
               supply,
-              supply.mulDivDown(
+              supply.mulDivUp(
                     maxGrowthFee * lastSeenTokenPrice,
                     Constants.LAST_SEEN_PRICE_PRECISION * Constants.MAX_GROWTH_FEE_DIVIDER
               ) 
-              + assets.mulDivDown(
+              + assets.mulDivUp(
                     Constants.MAX_GROWTH_FEE_DIVIDER - maxGrowthFee,
                     Constants.MAX_GROWTH_FEE_DIVIDER
               )
@@ -39,6 +41,7 @@ abstract contract MaxGrowthFee is TotalAssets, ERC20 {
         uint256 supply = totalSupply();
         if (supplyAfterFee > supply) {
             _mint(feeCollector, supplyAfterFee - supply);
+            // round token price to the bottom
             lastSeenTokenPrice = totalAssets().mulDivDown(Constants.LAST_SEEN_PRICE_PRECISION, supplyAfterFee);
         }
     }
