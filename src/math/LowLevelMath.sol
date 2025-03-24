@@ -37,14 +37,14 @@ library LowLevelMath {
             convertedAssets.realBorrow;
     }
 
-    // delta real collateral needs to be rounded up to leave more collateral in protocol
+    // borrow case, delta real collateral needs to be rounded down to minimize shares minted
     function calculateDeltaRealCollateralFromDeltaRealBorrow(
         int256 deltaBorrow,
         ConvertedAssets memory convertedAssets,
         uint128 targetLTV
     ) private pure returns (int256) {
         return
-            (convertedAssets.realBorrow + deltaBorrow).mulDivUp(int256(Constants.LTV_DIVIDER), int128(targetLTV)) - convertedAssets.realCollateral;
+            (convertedAssets.realBorrow + deltaBorrow).mulDivDown(int256(Constants.LTV_DIVIDER), int128(targetLTV)) - convertedAssets.realCollateral;
     }
 
     function calculateDeltaSharesFromDeltaRealCollateralAndDeltaRealBorrow(
@@ -53,12 +53,12 @@ library LowLevelMath {
         ConvertedAssets memory convertedAssets
     ) private pure returns (int256) {
         return
-            deltaCollateral -
-            deltaBorrow -
-            convertedAssets.futureCollateral -
-            convertedAssets.userFutureRewardCollateral +
-            convertedAssets.futureBorrow +
-            convertedAssets.userFutureRewardBorrow;
+            deltaCollateral
+            - deltaBorrow
+            - convertedAssets.futureCollateral
+            - convertedAssets.userFutureRewardCollateral
+            + convertedAssets.futureBorrow
+            + convertedAssets.userFutureRewardBorrow;
     }
 
     function calculateLowLevelShares(
@@ -107,8 +107,8 @@ library LowLevelMath {
         int256 deltaRealCollateral;
         int256 deltaSharesInUnderlying;
         {
-            // rounding down to leave less borrow in the protocol
-            int256 deltaRealBorrow = deltaBorrowAssets.mulDivDown(int256(prices.borrow), int256(Constants.ORACLE_DIVIDER));
+            // rounding up to give user less shares
+            int256 deltaRealBorrow = deltaBorrowAssets.mulDivUp(int256(prices.borrow), int256(Constants.ORACLE_DIVIDER));
             deltaRealCollateral = calculateDeltaRealCollateralFromDeltaRealBorrow(deltaRealBorrow, convertedAssets, targetLTV);
             deltaSharesInUnderlying = calculateDeltaSharesFromDeltaRealCollateralAndDeltaRealBorrow(
                 deltaRealCollateral,
@@ -144,7 +144,7 @@ library LowLevelMath {
         int256 deltaRealBorrow;
         int256 deltaSharesInUnderlying;
         {
-            // rounding down to make better for protocol
+            // rounding down to mint less shares
             int256 deltaRealCollateral = deltaCollateralAssets.mulDivDown(int256(prices.collateral), int256(Constants.ORACLE_DIVIDER));
 
             deltaRealBorrow = calculateDeltaRealBorrowFromDeltaRealCollateral(deltaRealCollateral, convertedAssets, targetLTV);

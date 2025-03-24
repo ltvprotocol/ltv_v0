@@ -20,7 +20,9 @@ library DepositWithdraw {
         Prices memory prices,
         uint128 targetLTV
     ) public pure returns (int256 sharesAsAssets, DeltaFuture memory deltaFuture) {
+        // round delta real borrow up to make better for protocol
         int256 deltaRealBorrow = isBorrowAssets ? assets.mulDivUp(int256(prices.borrow), int256(Constants.ORACLE_DIVIDER)) : int256(0);
+        // round delta real collateral down to make better for protocol
         int256 deltaRealCollateral = isBorrowAssets ? int256(0) : assets.mulDivDown(int256(prices.collateral), int256(Constants.ORACLE_DIVIDER));
 
         Cases memory cases = CasesOperator.generateCase(0);
