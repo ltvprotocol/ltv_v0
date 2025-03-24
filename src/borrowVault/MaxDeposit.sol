@@ -12,11 +12,13 @@ abstract contract MaxDeposit is PreviewMint {
         uint256 availableSpaceInShares = getAvailableSpaceInShares(convertedAssets, previewSupplyAfterFee());
         uint256 availableSpaceInAssets = previewMint(availableSpaceInShares);
 
-        uint256 minProfitRealBorrow = uint256(convertedAssets.realCollateral).mulDivDown(minProfitLTV, Constants.LTV_DIVIDER);
+        // round up to assume smaller border
+        uint256 minProfitRealBorrow = uint256(convertedAssets.realCollateral).mulDivUp(minProfitLTV, Constants.LTV_DIVIDER);
         if (uint256(convertedAssets.realBorrow) <= minProfitRealBorrow) {
             return 0;
         }
 
+        // round down to assume smaller border
         uint256 maxDepositInAssets = (uint256(convertedAssets.realBorrow) - minProfitRealBorrow).mulDivDown(Constants.ORACLE_DIVIDER, getPriceBorrowOracle());
         return maxDepositInAssets > availableSpaceInAssets ? availableSpaceInAssets : maxDepositInAssets;
     }
