@@ -33,8 +33,7 @@ abstract contract Deposit is MaxDeposit, StateTransition, Lending, ERC4626Events
             return 0;
         } else {
             // less shares are minted - the bigger token price
-            uint256 sharesInAssets = uint256(signedSharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow);
-            shares = sharesInAssets.mulDivDown(supplyAfterFee, totalAssets());
+            shares = uint256(signedSharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER * supplyAfterFee, prices.borrow * totalAssets());
         }
 
         // TODO: double check that Token should be transfered from msg.sender or from receiver
