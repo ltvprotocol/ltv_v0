@@ -9,7 +9,6 @@ import './MaxDeposit.sol';
 import '../ERC4626Events.sol';
 
 abstract contract Deposit is MaxDeposit, StateTransition, Lending, ERC4626Events {
-
     using uMulDiv for uint256;
 
     error ExceedsMaxDeposit(address receiver, uint256 assets, uint256 max);
@@ -33,7 +32,7 @@ abstract contract Deposit is MaxDeposit, StateTransition, Lending, ERC4626Events
             return 0;
         } else {
             // less shares are minted - the bigger token price
-            shares = uint256(signedSharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER * supplyAfterFee, prices.borrow * totalAssets());
+            shares = uint256(signedSharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow).mulDivDown(supplyAfterFee, totalAssets());
         }
 
         // TODO: double check that Token should be transfered from msg.sender or from receiver
