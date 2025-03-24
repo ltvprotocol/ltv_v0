@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../Constants.sol";
-import "../math/DepositWithdraw.sol";
+import '../Constants.sol';
+import '../math/DepositWithdraw.sol';
 import '../MaxGrowthFee.sol';
 
 abstract contract PreviewWithdraw is MaxGrowthFee {
@@ -14,11 +14,10 @@ abstract contract PreviewWithdraw is MaxGrowthFee {
 
         if (sharesInUnderlying > 0) {
             return 0;
-        } else {
-            uint256 sharesInAssets = uint256(-sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, getPrices().borrow);
-            shares = sharesInAssets.mulDivDown(previewSupplyAfterFee(), totalAssets());
         }
-
-        return shares;
+        
+        // round down to mint less shares
+        return
+            uint256(-sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, getPrices().borrow).mulDivDown(previewSupplyAfterFee(), totalAssets());
     }
 }
