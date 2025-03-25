@@ -19,13 +19,11 @@ abstract contract PreviewDepositCollateral is MaxGrowthFee {
             targetLTV
         );
 
-        uint256 sharesInAssets;
         if (sharesInUnderlying < 0) {
             return 0;
-        } else {
-            sharesInAssets = uint256(sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, getPrices().borrow);
         }
 
-        return sharesInAssets.mulDivDown(previewSupplyAfterFee(), totalAssets());
+        // round down to mint less shares
+        return uint256(sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow).mulDivDown(previewSupplyAfterFee(), totalAssets());
     }
 }
