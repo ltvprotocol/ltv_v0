@@ -15,7 +15,7 @@ abstract contract RedeemCollateral is MaxRedeemCollateral, StateTransition, Lend
 
     error ExceedsMaxRedeemCollateral(address owner, uint256 shares, uint256 max);
 
-    function redeemCollateral(uint256 shares, address receiver, address owner) external returns (uint256 collateralAssets) {
+    function redeemCollateral(uint256 shares, address receiver, address owner) external returns (uint256) {
         {
             uint256 max = maxRedeemCollateral(address(owner));
             require(shares <= max, ExceedsMaxRedeemCollateral(owner, shares, max));
@@ -24,40 +24,36 @@ abstract contract RedeemCollateral is MaxRedeemCollateral, StateTransition, Lend
             }
         }
 
-        DeltaFuture memory deltaFuture;
-        {
-            uint256 supplyAfterFee = previewSupplyAfterFee();
-            uint256 sharesInAssets = shares.mulDivUp(totalAssets(), supplyAfterFee);
-            uint256 sharesInUnderlying = sharesInAssets.mulDivUp(getPrices().borrow, Constants.ORACLE_DIVIDER);
+        Prices memory prices = getPrices();
+        uint256 supplyAfterFee = previewSupplyAfterFee();
 
-            int256 assetsInUnderlying;
-            // int256 signedShares = previewMintRedeem(-1*int256(assets));
+        // round down to give less collateral
+        uint256 sharesInUnderlying = shares.mulDivUp(totalAssets(), supplyAfterFee).mulDivUp(prices.borrow, Constants.ORACLE_DIVIDER);
 
-            ConvertedAssets memory convertedAssets = recoverConvertedAssets();
-            Prices memory prices = getPrices();
-            (assetsInUnderlying, deltaFuture) = MintRedeem.calculateMintRedeem(
-                -int256(sharesInUnderlying),
-                false,
-                convertedAssets,
-                prices,
-                targetLTV
-            );
+        ConvertedAssets memory convertedAssets = recoverConvertedAssets();
+        (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = MintRedeem.calculateMintRedeem(
+            -int256(sharesInUnderlying),
+            false,
+            convertedAssets,
+            prices,
+            targetLTV
+        );
 
-            if (assetsInUnderlying > 0) {
-                return 0;
-            } else {
-                collateralAssets = uint256(-assetsInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.collateral);
-            }
-            applyMaxGrowthFee(supplyAfterFee);
-
-            _mintProtocolRewards(deltaFuture, prices, supplyAfterFee);
-
-            _burn(owner, shares);
-
-            NextState memory nextState = NextStep.calculateNextStep(convertedAssets, deltaFuture, block.number);
-
-            applyStateTransition(nextState);
+        if (assetsInUnderlying > 0) {
+            return 0;
         }
+        // round down to give less collateral
+        uint256 collateralAssets = uint256(-assetsInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.collateral);
+        
+        applyMaxGrowthFee(supplyAfterFee);
+
+        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee);
+
+        _burn(owner, shares);
+
+        NextState memory nextState = NextStep.calculateNextStep(convertedAssets, deltaFuture, block.number);
+
+        applyStateTransition(nextState);
 
         withdraw(collateralAssets);
 

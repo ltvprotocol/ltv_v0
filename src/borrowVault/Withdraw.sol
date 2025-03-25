@@ -15,7 +15,7 @@ abstract contract Withdraw is MaxWithdraw, StateTransition, Lending, ERC4626Even
 
     error ExceedsMaxWithdraw(address owner, uint256 assets, uint256 max);
 
-    function withdraw(uint256 assets, address receiver, address owner) external returns (uint256 shares) {
+    function withdraw(uint256 assets, address receiver, address owner) external returns (uint256) {
         uint256 max = maxWithdraw(address(owner));
         require(assets <= max, ExceedsMaxWithdraw(owner, assets, max));
 
@@ -32,10 +32,10 @@ abstract contract Withdraw is MaxWithdraw, StateTransition, Lending, ERC4626Even
         uint256 supplyAfterFee = previewSupplyAfterFee();
         if (sharesInUnderlying > 0) {
             return 0;
-        } else {
-            // round up to burn more shares
-            shares = uint256(-sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow).mulDivDown(supplyAfterFee, totalAssets());
         }
+
+        // round up to burn more shares
+        uint256 shares = uint256(-sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow).mulDivDown(supplyAfterFee, totalAssets());
 
         if (owner != receiver) {
             allowance[owner][receiver] -= shares;

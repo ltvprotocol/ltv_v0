@@ -15,7 +15,7 @@ abstract contract Redeem is MaxRedeem, StateTransition, Lending, ERC4626Events {
 
     error ExceedsMaxRedeem(address owner, uint256 shares, uint256 max);
 
-    function redeem(uint256 shares, address receiver, address owner) external returns (uint256 assets) {
+    function redeem(uint256 shares, address receiver, address owner) external returns (uint256) {
         {
             uint256 max = maxRedeem(address(owner));
             require(shares <= max, ExceedsMaxRedeem(owner, shares, max));
@@ -40,11 +40,10 @@ abstract contract Redeem is MaxRedeem, StateTransition, Lending, ERC4626Events {
 
         if (assetsInUnderlying < 0) {
             return 0;
-        } else {
-            // round down to give less assets
-            assets = uint256(assetsInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow);
         }
 
+        // round down to give less assets
+        uint256 assets = uint256(assetsInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow);
         applyMaxGrowthFee(supplyAfterFee);
 
         _mintProtocolRewards(deltaFuture, prices, supplyAfterFee);

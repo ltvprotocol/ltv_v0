@@ -13,7 +13,7 @@ abstract contract Deposit is MaxDeposit, StateTransition, Lending, ERC4626Events
 
     error ExceedsMaxDeposit(address receiver, uint256 assets, uint256 max);
 
-    function deposit(uint256 assets, address receiver) external returns (uint256 shares) {
+    function deposit(uint256 assets, address receiver) external returns (uint256) {
         uint256 max = maxDeposit(address(receiver));
         require(assets <= max, ExceedsMaxDeposit(receiver, assets, max));
 
@@ -30,12 +30,11 @@ abstract contract Deposit is MaxDeposit, StateTransition, Lending, ERC4626Events
         uint256 supplyAfterFee = previewSupplyAfterFee();
         if (signedSharesInUnderlying < 0) {
             return 0;
-        } else {
-            // less shares are minted - the bigger token price
-            shares = uint256(signedSharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow).mulDivDown(supplyAfterFee, totalAssets());
         }
 
-        // TODO: double check that Token should be transfered from msg.sender or from receiver
+        // less shares are minted - the bigger token price
+        uint256 shares = uint256(signedSharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow).mulDivDown(supplyAfterFee, totalAssets());
+
         borrowToken.transferFrom(msg.sender, address(this), assets);
 
         applyMaxGrowthFee(supplyAfterFee);

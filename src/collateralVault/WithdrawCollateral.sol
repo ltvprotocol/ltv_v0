@@ -15,7 +15,7 @@ abstract contract WithdrawCollateral is MaxWithdrawCollateral, StateTransition, 
 
     error ExceedsMaxWithdrawCollateral(address owner, uint256 collateralAssets, uint256 max);
 
-    function withdrawCollateral(uint256 collateralAssets, address receiver, address owner) external returns (uint256 shares) {
+    function withdrawCollateral(uint256 collateralAssets, address receiver, address owner) external returns (uint256) {
         uint256 max = maxWithdrawCollateral(address(owner));
         require(collateralAssets <= max, ExceedsMaxWithdrawCollateral(owner, collateralAssets, max));
 
@@ -32,10 +32,10 @@ abstract contract WithdrawCollateral is MaxWithdrawCollateral, StateTransition, 
         uint256 supplyAfterFee = previewSupplyAfterFee();
         if (sharesInUnderlying > 0) {
             return 0;
-        } else {
-            uint256 sharesInAssets = uint256(-sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow);
-            shares = sharesInAssets.mulDivDown(supplyAfterFee, totalAssets());
         }
+
+        // round up to burn more shares
+        uint256 shares = uint256(-sharesInUnderlying).mulDivUp(Constants.ORACLE_DIVIDER, prices.borrow).mulDivUp(supplyAfterFee, totalAssets());
 
         if (owner != receiver) {
             allowance[owner][receiver] -= shares;
