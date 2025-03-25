@@ -16,8 +16,8 @@ abstract contract PreviewWithdraw is MaxGrowthFee {
             return 0;
         }
         
-        // round down to mint less shares
+        // round up to burn more shares
         return
-            uint256(-sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, getPrices().borrow).mulDivDown(previewSupplyAfterFee(), totalAssets());
+            uint256(-sharesInUnderlying).mulDivUp(Constants.ORACLE_DIVIDER, prices.borrow).mulDivUp(previewSupplyAfterFee(), totalAssets());
     }
 }
