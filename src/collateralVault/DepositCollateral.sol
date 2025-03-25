@@ -32,8 +32,8 @@ abstract contract DepositCollateral is MaxDepositCollateral, StateTransition, Le
         if (signedSharesInUnderlying < 0) {
             return 0;
         } else {
-            uint256 sharesInAssets = uint256(signedSharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, getPriceCollateralOracle());
-            shares = sharesInAssets.mulDivDown(supplyAfterFee, totalAssets());
+            // round down to mint less shares
+            shares = uint256(signedSharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow).mulDivDown(supplyAfterFee, totalAssets());
         }
 
         // TODO: double check that Token should be transfered from msg.sender or from receiver
