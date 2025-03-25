@@ -15,7 +15,7 @@ abstract contract RedeemCollateral is MaxRedeemCollateral, StateTransition, Lend
 
     error ExceedsMaxRedeemCollateral(address owner, uint256 shares, uint256 max);
 
-    function redeemCollateral(uint256 shares, address receiver, address owner) external returns (uint256) {
+    function redeemCollateral(uint256 shares, address receiver, address owner) external returns (uint256 collateralAssets) {
         {
             uint256 max = maxRedeemCollateral(address(owner));
             require(shares <= max, ExceedsMaxRedeemCollateral(owner, shares, max));
@@ -43,8 +43,8 @@ abstract contract RedeemCollateral is MaxRedeemCollateral, StateTransition, Lend
             return 0;
         }
         // round down to give less collateral
-        uint256 collateralAssets = uint256(-assetsInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.collateral);
-        
+        collateralAssets = uint256(-assetsInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.collateral);
+
         applyMaxGrowthFee(supplyAfterFee);
 
         _mintProtocolRewards(deltaFuture, prices, supplyAfterFee);
