@@ -8,6 +8,45 @@ import './math/LowLevelMath.sol';
 abstract contract LowLevel is MaxGrowthFee, Lending {
     using sMulDiv for int256;
 
+    function previewLowLevelShares(int256 deltaShares) external view returns (int256, int256) {
+        uint256 supplyAfterFee = previewSupplyAfterFee();
+        (int256 deltaRealCollateral, int256 deltaRealBorrow, ) = LowLevelMath.calculateLowLevelShares(
+            deltaShares,
+            recoverConvertedAssets(),
+            getPrices(),
+            targetLTV,
+            int256(totalAssets()),
+            int256(supplyAfterFee)
+        );
+        return (deltaRealCollateral, deltaRealBorrow);
+    }
+
+    function previewLowLevelBorrow(int256 deltaBorrowAssets) external view returns (int256, int256) {
+        uint256 supplyAfterFee = previewSupplyAfterFee();
+        (int256 deltaRealCollateral, int256 deltaShares, ) = LowLevelMath.calculateLowLevelBorrow(
+            deltaBorrowAssets,
+            recoverConvertedAssets(),
+            getPrices(),
+            targetLTV,
+            int256(totalAssets()),
+            int256(supplyAfterFee)
+        );
+        return (deltaRealCollateral, deltaShares);
+    }
+
+    function previewLowLevelCollateral(int256 deltaCollateralAssets) external view returns (int256, int256) {
+        uint256 supplyAfterFee = previewSupplyAfterFee();
+        (int256 deltaRealBorrow, int256 deltaShares, ) = LowLevelMath.calculateLowLevelCollateral(
+            deltaCollateralAssets,
+            recoverConvertedAssets(),
+            getPrices(),
+            targetLTV,
+            int256(totalAssets()),
+            int256(supplyAfterFee)
+        );
+        return (deltaRealBorrow, deltaShares);
+    }
+
     function executeLowLevelShares(int256 deltaShares) external returns (int256, int256) {
         uint256 supplyAfterFee = previewSupplyAfterFee();
         applyMaxGrowthFee(supplyAfterFee);
