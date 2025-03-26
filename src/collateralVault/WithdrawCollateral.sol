@@ -35,7 +35,7 @@ abstract contract WithdrawCollateral is MaxWithdrawCollateral, StateTransition, 
         }
 
         // round up to burn more shares
-        uint256 shares = uint256(-sharesInUnderlying).mulDivUp(Constants.ORACLE_DIVIDER, prices.borrow).mulDivUp(supplyAfterFee, totalAssets());
+        uint256 shares = uint256(-sharesInUnderlying).mulDivUp(Constants.ORACLE_DIVIDER, prices.collateral).mulDivUp(supplyAfterFee, totalAssetsCollateral());
 
         if (owner != receiver) {
             allowance[owner][receiver] -= shares;

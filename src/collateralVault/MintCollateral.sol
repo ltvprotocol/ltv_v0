@@ -24,7 +24,7 @@ abstract contract MintCollateral is MaxMintCollateral, StateTransition, Lending,
         Prices memory prices = getPrices();
 
         // round up to receive more assets
-        uint256 sharesInUnderlying = shares.mulDivUp(totalAssets(), supplyAfterFee).mulDivUp(prices.borrow, Constants.ORACLE_DIVIDER);
+        uint256 sharesInUnderlying = shares.mulDivUp(totalAssetsCollateral(), supplyAfterFee).mulDivUp(prices.collateral, Constants.ORACLE_DIVIDER);
 
         ConvertedAssets memory convertedAssets = recoverConvertedAssets();
         (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = MintRedeem.calculateMintRedeem(

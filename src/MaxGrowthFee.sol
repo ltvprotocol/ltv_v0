@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import './borrowVault/TotalAssets.sol';
+import './collateralVault/TotalAssetsCollateral.sol';
 import './ERC20.sol';
 
-abstract contract MaxGrowthFee is TotalAssets, ERC20 {
+abstract contract MaxGrowthFee is TotalAssetsCollateral, ERC20 {
     using uMulDiv for uint256;
 
     function setMaxGrowthFee(uint256 _maxGrowthFee) external onlyOwner {

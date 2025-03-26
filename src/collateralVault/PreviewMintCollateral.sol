@@ -11,7 +11,8 @@ abstract contract PreviewMintCollateral is MaxGrowthFee {
     function previewMintCollateral(uint256 shares) public view returns (uint256 collateralAssets) {
         Prices memory prices = getPrices();
         // round up to receive more assets
-        uint256 sharesInUnderlying = shares.mulDivUp(totalAssets(), previewSupplyAfterFee()).mulDivUp(prices.borrow, Constants.ORACLE_DIVIDER);
+        uint256 sharesInUnderlying = shares.mulDivUp(totalAssetsCollateral(), previewSupplyAfterFee()).mulDivUp(prices.collateral, Constants.ORACLE_DIVIDER);
+
         int256 assetsInUnderlying = MintRedeem.previewMintRedeem(int256(sharesInUnderlying), false, recoverConvertedAssets(), prices, targetLTV);
 
         if (assetsInUnderlying < 0) {
