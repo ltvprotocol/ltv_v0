@@ -7,8 +7,11 @@ import './Structs.sol';
 
 import './utils/MulDiv.sol';
 
+import 'forge-std/interfaces/IERC20.sol';
+
 import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol';
+
 import './interfaces/ILendingConnector.sol';
 import './interfaces/IOracleConnector.sol';
 
