@@ -166,14 +166,13 @@ abstract contract State is OwnableUpgradeable {
             return 0;
         }
 
-        // round down to assume less available space
         uint256 availableSpaceInShares = (maxTotalAssetsInUnderlying - totalAssetsInUnderlying)
             .mulDivDown(Constants.ORACLE_DIVIDER, getPriceBorrowOracle())
             .mulDivDown(supply, totalAssets());
 
         return availableSpaceInShares;
     }
-    
+
     function getPriceBorrowOracle() public view returns (uint256) {
         return oracleConnector.getPriceBorrowOracle();
     }
