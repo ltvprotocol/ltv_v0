@@ -2,16 +2,17 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../src/ltv_lendings/DummyLTV.sol';
 import '../src/dummy/DummyOracle.sol';
 import 'forge-std/Test.sol';
 import {MockERC20} from 'forge-std/mocks/MockERC20.sol';
 import {MockDummyLending} from './utils/MockDummyLending.sol';
-import './utils/MockDummyLTV.sol';
+import './utils/DummyLTV.sol';
 import '../src/Constants.sol';
+import '../src/dummy/DummyLendingConnector.sol';
+import '../src/dummy/DummyOracleConnector.sol';
 
 contract GeneratedTests is Test {
-    MockDummyLTV public dummyLTV;
+    DummyLTV public dummyLTV;
     MockERC20 public collateralToken;
     MockERC20 public borrowToken;
     MockDummyLending public lendingProtocol;
@@ -35,22 +36,34 @@ contract GeneratedTests is Test {
         lendingProtocol = new MockDummyLending(owner);
         oracle = IDummyOracle(new DummyOracle(owner));
 
-        dummyLTV = new MockDummyLTV(
-            owner,
-            address(collateralToken),
-            address(borrowToken),
-            lendingProtocol,
-            oracle,
-            10**16,
-            10**16,
-            address(123)
-          );
+        ILendingConnector lendingConnector = new DummyLendingConnector(
+            collateralToken,
+            borrowToken,
+            lendingProtocol
+        );
+
+        IOracleConnector oracleConnector = new DummyOracleConnector(
+            collateralToken,
+            borrowToken,
+            oracle
+        );
+
+        State.StateInitData memory initData = State.StateInitData({
+            collateralToken: address(collateralToken),
+            borrowToken: address(borrowToken),
+            feeCollector: address(123),
+            maxSafeLTV: 9*10**17,
+            minProfitLTV: 5*10**17,
+            targetLTV: 75*10**16,
+            lendingConnector: lendingConnector,
+            oracleConnector: oracleConnector,
+            maxGrowthFee: 10**18 / 5,
+            maxTotalAssetsInUnderlying: type(uint128).max
+        }); 
+
+        dummyLTV = new DummyLTV(initData, owner, 10**16, 10**16);
 
         vm.startPrank(owner);
-        dummyLTV.setMaxSafeLTV(9 * 10**17);
-        dummyLTV.setMinProfitLTV(5 * 10**17);
-        dummyLTV.setTargetLTV(75*10**16);
-        dummyLTV.setMaxTotalAssetsInUnderlying(type(uint128).max);
         Ownable(address(lendingProtocol)).transferOwnership(address(dummyLTV));
         oracle.setAssetPrice(address(borrowToken), 100 * 10 ** 18);
         oracle.setAssetPrice(address(collateralToken), 100 * 10 ** 18);

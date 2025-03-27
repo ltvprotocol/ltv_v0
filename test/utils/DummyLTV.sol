@@ -1,23 +1,20 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../../src/ltv_lendings/DummyLTV.sol';
+import '../../src/LTV.sol';
 
-contract MockDummyLTV is DummyLTV {
+contract DummyLTV is LTV {
     uint256 collateralSlippage;
     uint256 borrowSlippage;
 
     constructor(
+        StateInitData memory initData,
         address initialOwner,
-        address collateralToken,
-        address borrowToken,
-        IDummyLending _lendingProtocol,
-        IDummyOracle _oracle,
         uint256 customCollateralSlippage,
-        uint256 customBorrowSlippage,
-        address feeCollector
+        uint256 customBorrowSlippage
     ) {
-        initialize(initialOwner, _lendingProtocol, _oracle, collateralToken, borrowToken, feeCollector);
+        
+        initialize(initData, initialOwner, "Dummy LTV", "DLTV");
         collateralSlippage = customCollateralSlippage;
         borrowSlippage = customBorrowSlippage;
     }

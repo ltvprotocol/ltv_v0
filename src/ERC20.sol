@@ -55,9 +55,9 @@ abstract contract ERC20 is State {
         if (deltaFuture.deltaProtocolFutureRewardBorrow < 0) {
             uint256 shares = uint256(-deltaFuture.deltaProtocolFutureRewardBorrow)
                 .mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow).mulDivDown(supply, totalAssets());
-            _mint(FEE_COLLECTOR, shares);
+            _mint(feeCollector, shares);
         } else if (deltaFuture.deltaProtocolFutureRewardCollateral > 0) {
-            _mint(FEE_COLLECTOR, uint256(deltaFuture.deltaProtocolFutureRewardCollateral)
+            _mint(feeCollector, uint256(deltaFuture.deltaProtocolFutureRewardCollateral)
                 .mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow).mulDivDown(supply, totalAssets()));
         }
     }

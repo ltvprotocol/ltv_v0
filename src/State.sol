@@ -5,18 +5,18 @@ import './Constants.sol';
 
 import './Structs.sol';
 
-import './interfaces/IOracle.sol';
-
 import './utils/MulDiv.sol';
 
 import 'forge-std/interfaces/IERC20.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
+import './interfaces/ILendingConnector.sol';
+import './interfaces/IOracleConnector.sol';
 
-abstract contract State is Initializable, IOracle {
+abstract contract State is Initializable {
     using uMulDiv for uint256;
     using sMulDiv for int256;
 
-    address public FEE_COLLECTOR;
+    address public feeCollector;
 
     int256 public futureBorrowAssets;
     int256 public futureCollateralAssets;
@@ -39,24 +39,39 @@ abstract contract State is Initializable, IOracle {
     uint128 public minProfitLTV;
     uint128 public targetLTV;
 
-    bool isNotFirstTime;
+    ILendingConnector public lendingConnector;
+    IOracleConnector public oracleConnector;
 
     uint256 internal lastSeenTokenPrice;
     uint256 internal maxGrowthFee;
 
     uint256 public maxTotalAssetsInUnderlying;
 
-    modifier onlyOneTime() {
-        require(!isNotFirstTime, 'Only one time');
-        isNotFirstTime = true;
-        _;
+    struct StateInitData {
+        address collateralToken;
+        address borrowToken;
+        address feeCollector;
+        uint128 maxSafeLTV;
+        uint128 minProfitLTV;
+        uint128 targetLTV;
+        ILendingConnector lendingConnector;
+        IOracleConnector oracleConnector;
+        uint256 maxGrowthFee;
+        uint256 maxTotalAssetsInUnderlying;
     }
 
-    function __State_init(address _collateralToken, address _borrowToken, address feeCollector) internal initializer {
-        collateralToken = IERC20(_collateralToken);
-        borrowToken = IERC20(_borrowToken);
+    function __State_init(StateInitData memory initData) internal initializer {
+        collateralToken = IERC20(initData.collateralToken);
+        borrowToken = IERC20(initData.borrowToken);
+        feeCollector = initData.feeCollector;
+        maxSafeLTV = initData.maxSafeLTV;
+        minProfitLTV = initData.minProfitLTV;
+        targetLTV = initData.targetLTV;
+        lendingConnector = initData.lendingConnector;
+        oracleConnector = initData.oracleConnector;
+        maxGrowthFee = initData.maxGrowthFee;
+        maxTotalAssetsInUnderlying = initData.maxTotalAssetsInUnderlying;
 
-        FEE_COLLECTOR = feeCollector;
         lastSeenTokenPrice = 10**18;
     }
 
@@ -163,5 +178,21 @@ abstract contract State is Initializable, IOracle {
             .mulDivDown(supply, totalAssets());
 
         return availableSpaceInShares;
+    }
+
+    function getPriceBorrowOracle() public view returns (uint256) {
+        return oracleConnector.getPriceBorrowOracle();
+    }
+
+    function getPriceCollateralOracle() public view returns (uint256) {
+        return oracleConnector.getPriceCollateralOracle();
+    }
+
+    function getRealBorrowAssets() public view returns (uint256) {
+        return lendingConnector.getRealBorrowAssets();
+    }
+
+    function getRealCollateralAssets() public view returns (uint256) {
+        return lendingConnector.getRealCollateralAssets();
     }
 }
