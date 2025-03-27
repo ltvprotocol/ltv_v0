@@ -188,7 +188,7 @@ abstract contract State is OwnableUpgradeable {
 
         return availableSpaceInShares;
     }
-    
+
     function getPriceBorrowOracle() public view returns (uint256) {
         return oracleConnector.getPriceBorrowOracle();
     }
