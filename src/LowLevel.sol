@@ -47,7 +47,7 @@ abstract contract LowLevel is MaxGrowthFee, Lending {
         return (deltaRealBorrow, deltaShares);
     }
 
-    function executeLowLevelShares(int256 deltaShares) external returns (int256, int256) {
+    function executeLowLevelShares(int256 deltaShares) external nonReentrant returns (int256, int256) {
         uint256 supplyAfterFee = previewSupplyAfterFee();
         applyMaxGrowthFee(supplyAfterFee);
         (int256 deltaRealCollateralAssets, int256 deltaRealBorrowAssets, int256 deltaProtocolFutureRewardShares) = LowLevelMath
@@ -57,7 +57,7 @@ abstract contract LowLevel is MaxGrowthFee, Lending {
         return (deltaRealCollateralAssets, deltaRealBorrowAssets);
     }
 
-    function executeLowLevelBorrow(int256 deltaBorrowAssets) external returns (int256, int256) {
+    function executeLowLevelBorrow(int256 deltaBorrowAssets) external nonReentrant returns (int256, int256) {
         uint256 supplyAfterFee = previewSupplyAfterFee();
         applyMaxGrowthFee(supplyAfterFee);
         (int256 deltaRealCollateralAssets, int256 deltaShares, int256 deltaProtocolFutureRewardShares) = LowLevelMath.calculateLowLevelBorrow(
@@ -73,7 +73,7 @@ abstract contract LowLevel is MaxGrowthFee, Lending {
         return (deltaRealCollateralAssets, deltaShares);
     }
 
-    function executeLowLevelCollateral(int256 deltaCollateralAssets) external returns (int256, int256) {
+    function executeLowLevelCollateral(int256 deltaCollateralAssets) external nonReentrant returns (int256, int256) {
         uint256 supplyAfterFee = previewSupplyAfterFee();
         applyMaxGrowthFee(supplyAfterFee);
         (int256 deltaRealBorrowAssets, int256 deltaShares, int256 deltaProtocolFutureRewardShares) = LowLevelMath.calculateLowLevelCollateral(

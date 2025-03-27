@@ -15,7 +15,7 @@ abstract contract RedeemCollateral is MaxRedeemCollateral, StateTransition, Lend
 
     error ExceedsMaxRedeemCollateral(address owner, uint256 shares, uint256 max);
 
-    function redeemCollateral(uint256 shares, address receiver, address owner) external returns (uint256 collateralAssets) {
+    function redeemCollateral(uint256 shares, address receiver, address owner) external nonReentrant returns (uint256 collateralAssets) {
         {
             uint256 max = maxRedeemCollateral(address(owner));
             require(shares <= max, ExceedsMaxRedeemCollateral(owner, shares, max));
