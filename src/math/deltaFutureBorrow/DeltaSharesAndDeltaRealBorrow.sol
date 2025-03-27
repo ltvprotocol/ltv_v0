@@ -36,18 +36,22 @@ library DeltaSharesAndDeltaRealBorrow {
 
         int256 dividendWithOneMinusTargetLTV = deltaRealBorrow;
         dividendWithOneMinusTargetLTV -= int256(int8(cases.cecbc)) * int256(convertedAssets.userFutureRewardBorrow);
+        // goes to dividend with sign minus, so needs to be rounded up
         dividendWithOneMinusTargetLTV -= int256(int8(cases.ceccb)) * int256(convertedAssets.futureBorrow).mulDivUp(int256(prices.borrowSlippage), Constants.SLIPPAGE_PRECISION);
 
         int256 dividendWithTargetLTV = -int256(convertedAssets.collateral);
         dividendWithTargetLTV -= deltaShares;
         dividendWithTargetLTV += int256(int8(cases.ceccb)) * convertedAssets.protocolFutureRewardCollateral;
-
+        
+        //goes to dividend with sign plus, so needs to be rounded down
         dividend += dividendWithOneMinusTargetLTV.mulDivDown(int256(Constants.LTV_DIVIDER - targetLTV), int256(Constants.LTV_DIVIDER));
+        //goes to dividend with sign plus, so needs to be rounded down
         dividend += dividendWithTargetLTV.mulDivDown(int128(targetLTV), int256(Constants.LTV_DIVIDER));
 
         return dividend;
     }
 
+    // divider always < 0
     function calculateDividerByDeltaSharesAndDeltaRealBorrow(
         Cases memory cases,
         Prices memory prices, 
@@ -69,18 +73,29 @@ library DeltaSharesAndDeltaRealBorrow {
         int256 divider;
 
         if (convertedAssets.futureBorrow != 0) {
+            // in cebc case divider need to be rounded up, it goes to divider with sign minus, so needs to be rounded down. Same for next
             dividerWithOneMinusTargetLTV -= int256(int8(cases.cebc)) * convertedAssets.userFutureRewardBorrow.mulDivDown(DIVIDER, convertedAssets.futureBorrow);
             divider -= int256(int8(cases.cebc)) * convertedAssets.protocolFutureRewardBorrow.mulDivDown(DIVIDER, convertedAssets.futureBorrow);
-            divider += int256(int8(cases.cecb)) * convertedAssets.protocolFutureRewardCollateral.mulDivUp((DIVIDER * int128(targetLTV)), (convertedAssets.futureBorrow * int256(Constants.LTV_DIVIDER)));
+            // in cecb case divider needs to be rounded down, since it goes to divider with sign plus, needs to be rounded down
+            divider += int256(int8(cases.cecb)) * convertedAssets.protocolFutureRewardCollateral.mulDivDown((DIVIDER * int128(targetLTV)), (convertedAssets.futureBorrow * int256(Constants.LTV_DIVIDER)));
         }
 
         dividerWithOneMinusTargetLTV += int256(int8(cases.ceccb)) * int256(prices.borrowSlippage);
         dividerWithOneMinusTargetLTV += int256(int8(cases.cmcb)) * int256(prices.borrowSlippage);
-        divider += dividerWithOneMinusTargetLTV.mulDivUp(int256(Constants.LTV_DIVIDER - targetLTV), int256(Constants.LTV_DIVIDER));
+        if (cases.cmcb + cases.cebc + cases.ceccb != 0) {
+            divider += dividerWithOneMinusTargetLTV.mulDivUp(int256(Constants.LTV_DIVIDER - targetLTV), int256(Constants.LTV_DIVIDER));
+        } else {
+            divider += dividerWithOneMinusTargetLTV.mulDivDown(int256(Constants.LTV_DIVIDER - targetLTV), int256(Constants.LTV_DIVIDER));
+        }
 
         return divider;
     }
 
+    // we need always round delta future borrow to the top because it's better for protocol
+    // divider is always negative
+    // cna - dividend is 0
+    // cmcb, cebc, ceccb - deltaFutureBorrow is positive, so dividend is negative, dividend needs to be rounded down, divider needs to be rounded up
+    // cmbc, cecb, cecbc - deltaFutureBorrow is negative, so dividend is positive, dividend needs to be rounded down, divider needs to be rounded down
     function calculateDeltaFutureBorrowByDeltaSharesAndDeltaRealBorrow(
         Prices memory prices,
         ConvertedAssets memory convertedAssets,
@@ -90,8 +105,6 @@ library DeltaSharesAndDeltaRealBorrow {
         uint128 targetLTV
     ) external pure returns (int256, Cases memory) {
 
-        // ConvertedAssets memory convertedAssets = recoverConvertedAssets();
-        // Prices memory prices = getPrices();
         int256 deltaFutureBorrow = 0;
 
         while (true) {
@@ -108,7 +121,7 @@ library DeltaSharesAndDeltaRealBorrow {
                 cases = CasesOperator.generateCase(cases.ncase + 1);
                 continue;
             }
-            deltaFutureBorrow = dividend.mulDivDown(DIVIDER, divider);
+            deltaFutureBorrow = dividend.mulDivUp(DIVIDER, divider);
 
             bool validity = CasesOperator.checkCaseDeltaFutureBorrow(cases, convertedAssets, deltaFutureBorrow);
 

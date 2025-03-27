@@ -10,13 +10,12 @@ import './MaxWithdraw.sol';
 import '../math/DepositWithdraw.sol';
 import '../ERC4626Events.sol';
 
-abstract contract Withdraw is MaxWithdraw, StateTransition, Lending, ERC4626Events{
-
+abstract contract Withdraw is MaxWithdraw, StateTransition, Lending, ERC4626Events {
     using uMulDiv for uint256;
 
     error ExceedsMaxWithdraw(address owner, uint256 assets, uint256 max);
 
-    function withdraw(uint256 assets, address receiver, address owner) external returns (uint256 shares) {
+    function withdraw(uint256 assets, address receiver, address owner) external returns (uint256) {
         uint256 max = maxWithdraw(address(owner));
         require(assets <= max, ExceedsMaxWithdraw(owner, assets, max));
 
@@ -33,10 +32,10 @@ abstract contract Withdraw is MaxWithdraw, StateTransition, Lending, ERC4626Even
         uint256 supplyAfterFee = previewSupplyAfterFee();
         if (sharesInUnderlying > 0) {
             return 0;
-        } else {
-            uint256 sharesInAssets = uint256(-sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, getPrices().borrow);
-            shares = sharesInAssets.mulDivDown(supplyAfterFee, totalAssets());
-        }  
+        }
+
+        // round up to burn more shares
+        uint256 shares = uint256(-sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow).mulDivDown(supplyAfterFee, totalAssets());
 
         if (owner != receiver) {
             allowance[owner][receiver] -= shares;

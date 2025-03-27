@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import './borrowVault/TotalAssets.sol';
+import './collateralVault/TotalAssetsCollateral.sol';
 import './ERC20.sol';
-import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 
-abstract contract MaxGrowthFee is TotalAssets, ERC20, OwnableUpgradeable {
+abstract contract MaxGrowthFee is TotalAssetsCollateral, ERC20 {
     using uMulDiv for uint256;
 
     function setMaxGrowthFee(uint256 _maxGrowthFee) external onlyOwner {
@@ -16,6 +15,7 @@ abstract contract MaxGrowthFee is TotalAssets, ERC20, OwnableUpgradeable {
         uint256 assets = totalAssets();
         uint256 supply = totalSupply();
 
+        // round token price to the bottom
         if (assets.mulDivDown(Constants.LAST_SEEN_PRICE_PRECISION, supply) <= lastSeenTokenPrice) {
             return supply;
         }
@@ -23,13 +23,14 @@ abstract contract MaxGrowthFee is TotalAssets, ERC20, OwnableUpgradeable {
         // divident: asset * supply
         // divisor: supply * maxGrowthFee * lastSeenTokenPrice + assets * (1 - maxGrowthFee)
         
-        return assets.mulDivUp(
+        // round new supply to the bottom to avoid minting more tokens than needed
+        return assets.mulDivDown(
               supply,
-              supply.mulDivDown(
+              supply.mulDivUp(
                     maxGrowthFee * lastSeenTokenPrice,
                     Constants.LAST_SEEN_PRICE_PRECISION * Constants.MAX_GROWTH_FEE_DIVIDER
               ) 
-              + assets.mulDivDown(
+              + assets.mulDivUp(
                     Constants.MAX_GROWTH_FEE_DIVIDER - maxGrowthFee,
                     Constants.MAX_GROWTH_FEE_DIVIDER
               )
@@ -40,6 +41,7 @@ abstract contract MaxGrowthFee is TotalAssets, ERC20, OwnableUpgradeable {
         uint256 supply = totalSupply();
         if (supplyAfterFee > supply) {
             _mint(feeCollector, supplyAfterFee - supply);
+            // round token price to the bottom
             lastSeenTokenPrice = totalAssets().mulDivDown(Constants.LAST_SEEN_PRICE_PRECISION, supplyAfterFee);
         }
     }

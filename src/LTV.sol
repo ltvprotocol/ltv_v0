@@ -19,12 +19,14 @@ import './collateralVault/PreviewDepositCollateral.sol';
 import './collateralVault/PreviewWithdrawCollateral.sol';
 import './collateralVault/PreviewMintCollateral.sol';
 import './collateralVault/PreviewRedeemCollateral.sol';
+import './collateralVault/ConvertToAssetsCollateral.sol';
+import './collateralVault/ConvertToSharesCollateral.sol';
 import './Auction.sol';
 import './LowLevel.sol';
 import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 
 
-contract LTV is PreviewWithdraw, PreviewDeposit, PreviewMint, PreviewRedeem, PreviewWithdrawCollateral, PreviewDepositCollateral, PreviewMintCollateral, PreviewRedeemCollateral, LowLevel, Auction, Mint, MintCollateral, Deposit, DepositCollateral, Withdraw, WithdrawCollateral, Redeem, RedeemCollateral, ConvertToAssets, ConvertToShares {
+contract LTV is PreviewWithdraw, PreviewDeposit, PreviewMint, PreviewRedeem, PreviewWithdrawCollateral, PreviewDepositCollateral, PreviewMintCollateral, PreviewRedeemCollateral, LowLevel, Auction, Mint, MintCollateral, Deposit, DepositCollateral, Withdraw, WithdrawCollateral, Redeem, RedeemCollateral, ConvertToAssets, ConvertToShares, ConvertToAssetsCollateral, ConvertToSharesCollateral {
     using uMulDiv for uint256;
     
     function initialize(StateInitData memory stateInitData, address initialOwner, string memory _name, string memory _symbol) initializer public {
@@ -89,5 +91,11 @@ contract LTV is PreviewWithdraw, PreviewDeposit, PreviewMint, PreviewRedeem, Pre
         lastSeenTokenPrice = totalAssets().mulDivDown(Constants.LAST_SEEN_PRICE_PRECISION, totalSupply());
         maxGrowthFee = 10**18 / 5;
         maxTotalAssetsInUnderlying = type(uint128).max;
+    }
+
+    function allowDisableFunctions(bytes4[] memory signatures, bool isDisabled) external onlyOwner {
+        for (uint256 i = 0; i < signatures.length; i++) {
+            _isFunctionDisabled[signatures[i]] = isDisabled;
+        }
     }
 }

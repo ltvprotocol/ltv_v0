@@ -9,6 +9,7 @@ abstract contract ConvertToShares is MaxGrowthFee {
     using uMulDiv for uint256;
 
     function convertToShares(uint256 assets) external view virtual returns (uint256) {
-        return assets.mulDivDown(previewSupplyAfterFee(), totalAssets());
+        // assume smaller token price
+        return assets.mulDivUp(previewSupplyAfterFee(), totalAssets());
     }
 }
