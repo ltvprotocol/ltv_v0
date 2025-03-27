@@ -10,14 +10,14 @@ import './State.sol';
 event AuctionExecuted(address executor, int256 deltaRealCollateralAssets, int256 deltaRealBorrowAssets);
 
 abstract contract Auction is State, Lending {
-    function executeAuctionCollateral(int256 deltaUserCollateralAssets) external returns (int256) {
+    function executeAuctionCollateral(int256 deltaUserCollateralAssets) external nonReentrant returns (int256) {
         DeltaAuctionState memory deltaState = AuctionMath.calculateExecuteAuctionCollateral(deltaUserCollateralAssets, getAuctionState());
 
         applyDeltaState(deltaState);
         return deltaState.deltaUserBorrowAssets;
     }
 
-    function executeAuctionBorrow(int256 deltaUserBorrowAssets) external returns (int256) {
+    function executeAuctionBorrow(int256 deltaUserBorrowAssets) external nonReentrant returns (int256) {
         DeltaAuctionState memory deltaState = AuctionMath.calculateExecuteAuctionBorrow(deltaUserBorrowAssets, getAuctionState());
 
         applyDeltaState(deltaState);
