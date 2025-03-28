@@ -22,11 +22,8 @@ struct DeltaAuctionState {
     int256 deltaProtocolFutureRewardBorrowAssets;
 }
 
-// we have 2 principal choises, either we round it to make auction more profitable, then user will give a bit
-// more rewards and auction can become a bit more profitable after execution. But token holders would have to pay
-// for it. Another choise is to round everything to give less money to user and to keep a bit more in protocol. 
-// The second option is chosen. In this case we need to round everything related to collateral to the top and 
-// everything related to borrow to the bottom
+// since auction execution doesn't affect totalAssets we have only one conflict here,
+// between executor and future executor
 library AuctionMath {
     error NoAuctionForProvidedDeltaFutureCollateral(
         int256 futureCollateralAssets,
@@ -36,7 +33,7 @@ library AuctionMath {
     error NoAuctionForProvidedDeltaFutureBorrow(int256 futureBorrowAssets, int256 futureRewardBorrowAssets, int256 deltaUserBorrowAssets);
     using sMulDiv for int256;
 
-    // delta future borrow needs to be rounded down to make it better for protocol
+    // delta future borrow needs to be rounded down to make auction more profitable for future executor
     function calculateDeltaFutureBorrowAssetsFromDeltaUserBorrowAssets(
         int256 deltaUserBorrowAssets,
         AuctionState memory auctionState
@@ -46,7 +43,7 @@ library AuctionMath {
             (int256(Constants.AMOUNT_OF_STEPS) * auctionState.futureBorrowAssets + auctionState.auctionStep * auctionState.futureRewardBorrowAssets);
     }
 
-    // delta future collateral needs to be rounded up to make it better for protocol
+    // delta future collateral needs to be rounded up to make auction more profitable for future executor
     function calculateDeltaFutureCollateralAssetsFromDeltaUserCollateralAssets(
         int256 deltaUserCollateralAssets,
         AuctionState memory auctionState
@@ -61,7 +58,7 @@ library AuctionMath {
             );
     }
 
-    // delta future borrow needs to be rounded down to make it better for protocol
+    // delta future borrow needs to be rounded down to make auction more profitable for future executor
     function calculateDeltaFutureBorrowAssetsFromDeltaFutureCollateralAssets(
         int256 deltaFutureCollateralAssets,
         AuctionState memory auctionState
@@ -69,7 +66,7 @@ library AuctionMath {
         return deltaFutureCollateralAssets.mulDivDown(auctionState.futureBorrowAssets, auctionState.futureCollateralAssets);
     }
 
-    // delta future collateral needs to be rounded up to make it better for protocol
+    // delta future collateral needs to be rounded up to make auction more profitable for future executor
     function calculateDeltaFutureCollateralAssetsFromDeltaFutureBorrowAssets(
         int256 deltaFutureBorrowAssets,
         AuctionState memory auctionState
@@ -77,7 +74,7 @@ library AuctionMath {
         return deltaFutureBorrowAssets.mulDivUp(auctionState.futureCollateralAssets, auctionState.futureBorrowAssets);
     }
 
-    // needs to be rounded down to make it better for protocol
+    // needs to be rounded down to make auction more profitable for future executor
     function calculateDeltaFutureRewardBorrowAssetsFromDeltaFutureBorrowAssets(
         int256 deltaFutureBorrowAssets,
         AuctionState memory auctionState
@@ -85,15 +82,15 @@ library AuctionMath {
         return auctionState.futureRewardBorrowAssets.mulDivDown(deltaFutureBorrowAssets, auctionState.futureBorrowAssets);
     }
     
-    // needs to be rounded down to make it better for protocol
+    // needs to be rounded up to make auction more profitable for future executor
     function calculateDeltaFutureRewardCollateralAssetsFromDeltaFutureCollateralAssets(
         int256 deltaFutureCollateralAssets,
         AuctionState memory auctionState
     ) private pure returns (int256) {
-        return auctionState.futureRewardCollateralAssets.mulDivDown(deltaFutureCollateralAssets, auctionState.futureCollateralAssets);
+        return auctionState.futureRewardCollateralAssets.mulDivUp(deltaFutureCollateralAssets, auctionState.futureCollateralAssets);
     }
 
-    // round up to give a bit more rewards to the user and a bit less to the fee collector
+    // Fee collector and auction executor conflict. Resolve to give more to auction executor
     function calculateDeltaUserFutureRewardBorrowAssetsFromDeltaFutureRewardBorrowAssets(
         int256 deltaFutureRewardBorrowAssets,
         AuctionState memory auctionState
@@ -101,7 +98,7 @@ library AuctionMath {
         return deltaFutureRewardBorrowAssets.mulDivUp(auctionState.auctionStep, int256(Constants.AMOUNT_OF_STEPS));
     }
 
-    // round down to give a bit more rewards to the user and a bit less to the fee collector
+    // Fee collector and auction executor conflict. Resolve to give more to auction executor
     function calculateDeltaUserFutureRewardCollateralAssetsFromDeltaFutureRewardCollateralAssets(
         int256 deltaFutureRewardCollateralAssets,
         AuctionState memory auctionState
