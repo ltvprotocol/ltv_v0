@@ -12,7 +12,7 @@ abstract contract LowLevel is MaxGrowthFee, Lending {
         uint256 supplyAfterFee = previewSupplyAfterFee();
         (int256 deltaRealCollateral, int256 deltaRealBorrow, ) = LowLevelMath.calculateLowLevelShares(
             deltaShares,
-            recoverConvertedAssets(),
+            recoverConvertedAssets(deltaShares > 0),
             getPrices(),
             targetLTV,
             int256(totalAssets()),
@@ -21,72 +21,138 @@ abstract contract LowLevel is MaxGrowthFee, Lending {
         return (deltaRealCollateral, deltaRealBorrow);
     }
 
-    function previewLowLevelBorrow(int256 deltaBorrowAssets) external view returns (int256, int256) {
-        uint256 supplyAfterFee = previewSupplyAfterFee();
-        (int256 deltaRealCollateral, int256 deltaShares, ) = LowLevelMath.calculateLowLevelBorrow(
-            deltaBorrowAssets,
-            recoverConvertedAssets(),
-            getPrices(),
-            targetLTV,
-            int256(totalAssets()),
-            int256(supplyAfterFee)
-        );
-        return (deltaRealCollateral, deltaShares);
-    }
-
-    function previewLowLevelCollateral(int256 deltaCollateralAssets) external view returns (int256, int256) {
-        uint256 supplyAfterFee = previewSupplyAfterFee();
-        (int256 deltaRealBorrow, int256 deltaShares, ) = LowLevelMath.calculateLowLevelCollateral(
-            deltaCollateralAssets,
-            recoverConvertedAssets(),
-            getPrices(),
-            targetLTV,
-            int256(totalAssets()),
-            int256(supplyAfterFee)
-        );
-        return (deltaRealBorrow, deltaShares);
-    }
-
     function executeLowLevelShares(int256 deltaShares) external returns (int256, int256) {
         uint256 supplyAfterFee = previewSupplyAfterFee();
         applyMaxGrowthFee(supplyAfterFee);
         (int256 deltaRealCollateralAssets, int256 deltaRealBorrowAssets, int256 deltaProtocolFutureRewardShares) = LowLevelMath
-            .calculateLowLevelShares(deltaShares, recoverConvertedAssets(), getPrices(), targetLTV, int256(totalAssets()), int256(supplyAfterFee));
+            .calculateLowLevelShares(
+                deltaShares,
+                recoverConvertedAssets(deltaShares > 0),
+                getPrices(),
+                targetLTV,
+                int256(totalAssets()),
+                int256(supplyAfterFee)
+            );
         executeLowLevel(deltaRealCollateralAssets, deltaRealBorrowAssets, deltaShares, deltaProtocolFutureRewardShares);
 
         return (deltaRealCollateralAssets, deltaRealBorrowAssets);
     }
 
-    function executeLowLevelBorrow(int256 deltaBorrowAssets) external returns (int256, int256) {
-        uint256 supplyAfterFee = previewSupplyAfterFee();
-        applyMaxGrowthFee(supplyAfterFee);
-        (int256 deltaRealCollateralAssets, int256 deltaShares, int256 deltaProtocolFutureRewardShares) = LowLevelMath.calculateLowLevelBorrow(
-            deltaBorrowAssets,
-            recoverConvertedAssets(),
-            getPrices(),
-            targetLTV,
-            int256(totalAssets()),
-            int256(supplyAfterFee)
-        );
-        executeLowLevel(deltaRealCollateralAssets, deltaBorrowAssets, deltaShares, deltaProtocolFutureRewardShares);
+    function previewLowLevelBorrow(int256 deltaBorrowAssets) external view returns (int256, int256) {
+        (int256 deltaRealCollateral, int256 deltaShares, ) = previewLowLevelBorrowHint(deltaBorrowAssets, true);
 
-        return (deltaRealCollateralAssets, deltaShares);
+        return (deltaRealCollateral, deltaShares);
+    }
+
+    function executeLowLevelBorrow(int256 deltaBorrowAssets) external returns (int256, int256) {
+        return executeLowLevelBorrowHint(deltaBorrowAssets, true);
+    }
+
+    function previewLowLevelCollateral(int256 deltaCollateralAssets) external view returns (int256, int256) {
+        (int256 deltaRealBorrow, int256 deltaShares, ) = previewLowLevelCollateralHint(deltaCollateralAssets, true);
+        return (deltaRealBorrow, deltaShares);
     }
 
     function executeLowLevelCollateral(int256 deltaCollateralAssets) external returns (int256, int256) {
+        return executeLowLevelCollateralHint(deltaCollateralAssets, true);
+    }
+
+    function executeLowLevelBorrowHint(int256 deltaBorrowAssets, bool isSharesPositiveHint) public returns (int256, int256) {
         uint256 supplyAfterFee = previewSupplyAfterFee();
+        (int256 deltaRealCollateralAssets, int256 deltaShares, int256 deltaProtocolFutureRewardShares) = _previewLowLevelBorrowHint(
+            deltaBorrowAssets,
+            isSharesPositiveHint,
+            supplyAfterFee
+        );
+
         applyMaxGrowthFee(supplyAfterFee);
+
+        executeLowLevel(deltaRealCollateralAssets, deltaBorrowAssets, deltaShares, deltaProtocolFutureRewardShares);
+        return (deltaRealCollateralAssets, deltaShares);
+    }
+
+    function previewLowLevelBorrowHint(int256 deltaBorrowAssets, bool isSharesPositiveHint) public view returns (int256, int256, int256) {
+        return _previewLowLevelBorrowHint(deltaBorrowAssets, isSharesPositiveHint, previewSupplyAfterFee());
+    }
+
+    function previewLowLevelCollateralHint(int256 deltaCollateralAssets, bool isSharesPositiveHint) public view returns (int256, int256, int256) {
+        return _previewLowLevelCollateralHint(deltaCollateralAssets, isSharesPositiveHint, previewSupplyAfterFee());
+    }
+
+    function executeLowLevelCollateralHint(int256 deltaCollateralAssets, bool isSharesPositiveHint) public returns (int256, int256) {
+        uint256 supplyAfterFee = previewSupplyAfterFee();
+        (int256 deltaRealBorrowAssets, int256 deltaShares, int256 deltaProtocolFutureRewardShares) = _previewLowLevelCollateralHint(
+            deltaCollateralAssets,
+            isSharesPositiveHint,
+            supplyAfterFee
+        );
+
+        applyMaxGrowthFee(supplyAfterFee);
+
+        executeLowLevel(deltaCollateralAssets, deltaRealBorrowAssets, deltaShares, deltaProtocolFutureRewardShares);
+        return (deltaRealBorrowAssets, deltaShares);
+    }
+
+    function _previewLowLevelCollateralHint(
+        int256 deltaCollateralAssets,
+        bool isSharesPositiveHint,
+        uint256 supply
+    ) private view returns (int256, int256, int256) {
+        Prices memory prices = getPrices();
+        int256 assets = int256(totalAssets());
+
         (int256 deltaRealBorrowAssets, int256 deltaShares, int256 deltaProtocolFutureRewardShares) = LowLevelMath.calculateLowLevelCollateral(
             deltaCollateralAssets,
-            recoverConvertedAssets(),
-            getPrices(),
+            recoverConvertedAssets(isSharesPositiveHint),
+            prices,
             targetLTV,
-            int256(totalAssets()),
-            int256(supplyAfterFee)
+            assets,
+            int256(supply)
         );
-        executeLowLevel(deltaCollateralAssets, deltaRealBorrowAssets, deltaShares, deltaProtocolFutureRewardShares);
 
-        return (deltaRealBorrowAssets, deltaShares);
+        if ((deltaShares > 0) != isSharesPositiveHint) {
+            (deltaRealBorrowAssets, deltaShares, deltaProtocolFutureRewardShares) = LowLevelMath.calculateLowLevelCollateral(
+                deltaCollateralAssets,
+                recoverConvertedAssets(!isSharesPositiveHint),
+                getPrices(),
+                targetLTV,
+                int256(totalAssets()),
+                int256(supply)
+            );
+        }
+
+        return (deltaRealBorrowAssets, deltaShares, deltaProtocolFutureRewardShares);
+    }
+
+    function _previewLowLevelBorrowHint(
+        int256 deltaBorrowAssets,
+        bool isSharesPositiveHint,
+        uint256 supply
+    ) public view returns (int256, int256, int256) {
+        Prices memory prices = getPrices();
+        int256 assets = int256(totalAssets());
+
+        (int256 deltaRealCollateralAssets, int256 deltaShares, int256 deltaProtocolFutureRewardShares) = LowLevelMath.calculateLowLevelBorrow(
+            deltaBorrowAssets,
+            recoverConvertedAssets(isSharesPositiveHint),
+            prices,
+            targetLTV,
+            assets,
+            int256(supply)
+        );
+
+        if ((deltaShares > 0) != isSharesPositiveHint) {
+            (deltaRealCollateralAssets, deltaShares, deltaProtocolFutureRewardShares) = LowLevelMath.calculateLowLevelBorrow(
+                deltaBorrowAssets,
+                recoverConvertedAssets(!isSharesPositiveHint),
+                prices,
+                targetLTV,
+                assets,
+                int256(supply)
+            );
+        }
+
+        return (deltaRealCollateralAssets, deltaShares, deltaProtocolFutureRewardShares);
     }
 
     function executeLowLevel(

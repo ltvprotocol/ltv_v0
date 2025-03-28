@@ -19,7 +19,7 @@ abstract contract Withdraw is MaxWithdraw, StateTransition, Lending, ERC4626Even
         uint256 max = maxWithdraw(address(owner));
         require(assets <= max, ExceedsMaxWithdraw(owner, assets, max));
 
-        ConvertedAssets memory convertedAssets = recoverConvertedAssets();
+        ConvertedAssets memory convertedAssets = recoverConvertedAssets(false);
         Prices memory prices = getPrices();
         (int256 sharesInUnderlying, DeltaFuture memory deltaFuture) = DepositWithdraw.calculateDepositWithdraw(
             int256(assets),

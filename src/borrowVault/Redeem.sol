@@ -29,7 +29,7 @@ abstract contract Redeem is MaxRedeem, StateTransition, Lending, ERC4626Events {
         Prices memory prices = getPrices();
         uint256 sharesInUnderlying = shares.mulDivDown(totalAssets(), supplyAfterFee).mulDivDown(prices.borrow, Constants.ORACLE_DIVIDER);
 
-        ConvertedAssets memory convertedAssets = recoverConvertedAssets();
+        ConvertedAssets memory convertedAssets = recoverConvertedAssets(false);
         (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = MintRedeem.calculateMintRedeem(
             -int256(sharesInUnderlying),
             true,

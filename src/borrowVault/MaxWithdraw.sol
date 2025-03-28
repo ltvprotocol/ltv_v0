@@ -7,7 +7,7 @@ abstract contract MaxWithdraw is MaxGrowthFee {
     using uMulDiv for uint256;
 
     function maxWithdraw(address owner) public view returns (uint256) {
-        ConvertedAssets memory convertedAssets = recoverConvertedAssets();
+        ConvertedAssets memory convertedAssets = recoverConvertedAssets(false);
         // round down to assume smaller border
         uint256 maxSafeRealBorrow = uint256(convertedAssets.realCollateral).mulDivDown(maxSafeLTV, Constants.LTV_DIVIDER);
         if (maxSafeRealBorrow <= uint256(convertedAssets.realBorrow)) {

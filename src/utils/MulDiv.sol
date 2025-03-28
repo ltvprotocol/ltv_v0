@@ -95,6 +95,13 @@ library uMulDiv {
         }
     }
 
+    function mulDiv(uint256 x, uint256 y, uint256 denominator, bool isUp) internal pure returns (uint256) {
+        if (isUp) {
+            return mulDivUp(x, y, denominator);
+        } else {
+            return mulDivDown(x, y, denominator);
+        }
+    }
 }
 
 // TODO: refactor to SMulDiv or SignedMulDiv
@@ -154,5 +161,13 @@ library sMulDiv {
         }
 
         return division;
+    }
+
+    function mulDiv(int256 x, int256 y, int256 denominator, bool isUp) internal pure returns (int256) {
+        if (isUp) {
+            return mulDivUp(x, y, denominator);
+        } else {
+            return mulDivDown(x, y, denominator);
+        }
     }
 }

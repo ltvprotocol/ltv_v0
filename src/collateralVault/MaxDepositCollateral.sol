@@ -7,7 +7,7 @@ abstract contract MaxDepositCollateral is PreviewMintCollateral {
     using uMulDiv for uint256;
 
     function maxDepositCollateral(address) public view returns (uint256) {
-        ConvertedAssets memory convertedAssets = recoverConvertedAssets();
+        ConvertedAssets memory convertedAssets = recoverConvertedAssets(true);
 
         uint256 availableSpaceInShares = getAvailableSpaceInShares(convertedAssets, previewSupplyAfterFee());
         uint256 availableSpaceInCollateral = previewMintCollateral(availableSpaceInShares);

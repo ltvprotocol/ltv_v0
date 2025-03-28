@@ -19,7 +19,7 @@ abstract contract WithdrawCollateral is MaxWithdrawCollateral, StateTransition, 
         uint256 max = maxWithdrawCollateral(address(owner));
         require(collateralAssets <= max, ExceedsMaxWithdrawCollateral(owner, collateralAssets, max));
 
-        ConvertedAssets memory convertedAssets = recoverConvertedAssets();
+        ConvertedAssets memory convertedAssets = recoverConvertedAssets(false);
         Prices memory prices = getPrices();
         (int256 sharesInUnderlying, DeltaFuture memory deltaFuture) = DepositWithdraw.calculateDepositWithdraw(
             -int256(collateralAssets),

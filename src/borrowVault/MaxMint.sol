@@ -7,7 +7,7 @@ abstract contract MaxMint is PreviewDeposit {
     using uMulDiv for uint256;
 
     function maxMint(address) public view returns (uint256) {
-        ConvertedAssets memory convertedAssets = recoverConvertedAssets();
+        ConvertedAssets memory convertedAssets = recoverConvertedAssets(true);
 
         uint256 availableSpaceInShares = getAvailableSpaceInShares(convertedAssets, previewSupplyAfterFee());
 

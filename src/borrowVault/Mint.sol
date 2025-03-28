@@ -23,7 +23,7 @@ abstract contract Mint is MaxMint, StateTransition, Lending, ERC4626Events {
         // assume user wants to mint more shares to get more assets
         uint256 sharesInUnderlying = shares.mulDivUp(totalAssets(), supplyAfterFee).mulDivUp(getPrices().borrow, Constants.ORACLE_DIVIDER);
         
-        ConvertedAssets memory convertedAssets = recoverConvertedAssets();
+        ConvertedAssets memory convertedAssets = recoverConvertedAssets(true);
         Prices memory prices = getPrices();
         (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = MintRedeem.calculateMintRedeem(
             int256(sharesInUnderlying),

@@ -10,7 +10,8 @@ abstract contract TotalAssets is State {
 
     using uMulDiv for uint256;
     function totalAssets() public view override returns (uint256) {
-        ConvertedAssets memory convertedAssets = recoverConvertedAssets();
+        // default behavior - don't overestimate our assets
+        ConvertedAssets memory convertedAssets = recoverConvertedAssets(false);
         // Add 1 to avoid vault attack
         // round down, assume less assets
         return uint256(convertedAssets.collateral - convertedAssets.borrow).mulDivDown(Constants.ORACLE_DIVIDER, getPriceBorrowOracle()) + 1;

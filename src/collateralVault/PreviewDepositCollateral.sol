@@ -14,7 +14,7 @@ abstract contract PreviewDepositCollateral is MaxGrowthFee {
         int256 sharesInUnderlying = DepositWithdraw.previewDepositWithdraw(
             int256(collateralAssets),
             false,
-            recoverConvertedAssets(),
+            recoverConvertedAssets(true),
             prices,
             targetLTV
         );

@@ -81,7 +81,7 @@ abstract contract State is OwnableUpgradeable {
         maxGrowthFee = initData.maxGrowthFee;
         maxTotalAssetsInUnderlying = initData.maxTotalAssetsInUnderlying;
 
-        lastSeenTokenPrice = 10**18;
+        lastSeenTokenPrice = 10 ** 18;
     }
 
     function totalAssets() public view virtual returns (uint256);
@@ -90,7 +90,7 @@ abstract contract State is OwnableUpgradeable {
         // add 100 to avoid vault inflation attack
         return baseTotalSupply + 100;
     }
-    
+
     function getAuctionStep() internal view returns (uint256) {
         uint256 auctionStep = block.number - startAuction;
 
@@ -103,26 +103,28 @@ abstract contract State is OwnableUpgradeable {
         return auctionStep;
     }
 
-    function recoverConvertedAssets() internal view returns (ConvertedAssets memory) {
-        // borrow should be round up
-        // because this is the amount that protocol should pay
-        int256 realBorrow = int256(getRealBorrowAssets().mulDivUp(getPriceBorrowOracle(), Constants.ORACLE_DIVIDER));
+    function recoverConvertedAssets(bool isDeposit) internal view returns (ConvertedAssets memory) {
+        // in case of deposit we need to assume more assets in the protocol, so round borrow down
+        int256 realBorrow = int256(getRealBorrowAssets().mulDiv(getPriceBorrowOracle(), Constants.ORACLE_DIVIDER, !isDeposit));
 
-        // collateral should be round down
-        // because this is the amount that protocol owns
-        int256 realCollateral = int256(getRealCollateralAssets().mulDivDown(getPriceCollateralOracle(), Constants.ORACLE_DIVIDER));
+        // in case of deposit we need to assume more assets in the protocol, so round collateral up
+        int256 realCollateral = int256(getRealCollateralAssets().mulDiv(getPriceCollateralOracle(), Constants.ORACLE_DIVIDER, isDeposit));
 
-        // futureBorrow should be round up to assume less assets in the protocol
-        int256 futureBorrow = futureBorrowAssets.mulDivUp(int256(getPriceBorrowOracle()), int256(Constants.ORACLE_DIVIDER));
+        // in case of deposit we need to assume more assets in the protocol, so round borrow down
+        int256 futureBorrow = futureBorrowAssets.mulDiv(int256(getPriceBorrowOracle()), int256(Constants.ORACLE_DIVIDER), !isDeposit);
 
-        // futureCollateral should be round down to assume less assets in the protocol
-        int256 futureCollateral = futureCollateralAssets.mulDivDown(int256(getPriceCollateralOracle()), int256(Constants.ORACLE_DIVIDER));
+        // in case of deposit we need to assume more assets in the protocol, so round collateral up
+        int256 futureCollateral = futureCollateralAssets.mulDiv(int256(getPriceCollateralOracle()), int256(Constants.ORACLE_DIVIDER), isDeposit);
 
-        // futureRewardBorrow should be round up to assume less assets in the protocol
-        int256 futureRewardBorrow = futureRewardBorrowAssets.mulDivUp(int256(getPriceBorrowOracle()), int256(Constants.ORACLE_DIVIDER));
+        // in case of deposit we need to assume more assets in the protocol, so round borrow down
+        int256 futureRewardBorrow = futureRewardBorrowAssets.mulDiv(int256(getPriceBorrowOracle()), int256(Constants.ORACLE_DIVIDER), !isDeposit);
 
-        // futureRewardCollateral should be round down to assume less assets in the protocol
-        int256 futureRewardCollateral = futureRewardCollateralAssets.mulDivUp(int256(getPriceCollateralOracle()), int256(Constants.ORACLE_DIVIDER));
+        // in case of deposit we need to assume more assets in the protocol, so round collateral up
+        int256 futureRewardCollateral = futureRewardCollateralAssets.mulDiv(
+            int256(getPriceCollateralOracle()),
+            int256(Constants.ORACLE_DIVIDER),
+            isDeposit
+        );
 
         // give user a bit more rewards
         int256 userFutureRewardBorrow = futureRewardBorrow.mulDivUp(int256(getAuctionStep()), int256(Constants.AMOUNT_OF_STEPS));

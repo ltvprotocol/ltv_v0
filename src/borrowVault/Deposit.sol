@@ -17,7 +17,7 @@ abstract contract Deposit is MaxDeposit, StateTransition, Lending, ERC4626Events
         uint256 max = maxDeposit(address(receiver));
         require(assets <= max, ExceedsMaxDeposit(receiver, assets, max));
 
-        ConvertedAssets memory convertedAssets = recoverConvertedAssets();
+        ConvertedAssets memory convertedAssets = recoverConvertedAssets(true);
         Prices memory prices = getPrices();
         (int256 signedSharesInUnderlying, DeltaFuture memory deltaFuture) = DepositWithdraw.calculateDepositWithdraw(
             -1 * int256(assets),

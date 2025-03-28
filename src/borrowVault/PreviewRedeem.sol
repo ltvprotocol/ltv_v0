@@ -15,7 +15,7 @@ abstract contract PreviewRedeem is MaxGrowthFee {
         int256 assetsInUnderlying = MintRedeem.previewMintRedeem(
             -1 * int256(sharesInUnderlying),
             true,
-            recoverConvertedAssets(),
+            recoverConvertedAssets(false),
             prices,
             targetLTV
         );

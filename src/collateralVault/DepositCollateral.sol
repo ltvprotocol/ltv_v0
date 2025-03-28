@@ -20,7 +20,7 @@ abstract contract DepositCollateral is MaxDepositCollateral, StateTransition, Le
         uint256 max = maxDepositCollateral(address(receiver));
         require(collateralAssets <= max, ExceedsMaxDepositCollateral(receiver, collateralAssets, max));
 
-        ConvertedAssets memory convertedAssets = recoverConvertedAssets();
+        ConvertedAssets memory convertedAssets = recoverConvertedAssets(true);
         Prices memory prices = getPrices();
         uint256 supplyAfterFee = previewSupplyAfterFee();
         (int256 signedSharesInUnderlying, DeltaFuture memory deltaFuture) = DepositWithdraw.calculateDepositWithdraw(

@@ -12,7 +12,7 @@ abstract contract PreviewMintCollateral is MaxGrowthFee {
         Prices memory prices = getPrices();
         // round up to receive more assets
         uint256 sharesInUnderlying = shares.mulDivUp(totalAssets(), previewSupplyAfterFee()).mulDivUp(prices.borrow, Constants.ORACLE_DIVIDER);
-        int256 assetsInUnderlying = MintRedeem.previewMintRedeem(int256(sharesInUnderlying), false, recoverConvertedAssets(), prices, targetLTV);
+        int256 assetsInUnderlying = MintRedeem.previewMintRedeem(int256(sharesInUnderlying), false, recoverConvertedAssets(true), prices, targetLTV);
 
         if (assetsInUnderlying < 0) {
             return 0;

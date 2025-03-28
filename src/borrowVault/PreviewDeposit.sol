@@ -10,7 +10,7 @@ abstract contract PreviewDeposit is MaxGrowthFee {
 
     function previewDeposit(uint256 assets) public view returns (uint256) {
         Prices memory prices = getPrices();
-        int256 sharesInUnderlying = DepositWithdraw.previewDepositWithdraw(-1 * int256(assets), true, recoverConvertedAssets(), prices, targetLTV);
+        int256 sharesInUnderlying = DepositWithdraw.previewDepositWithdraw(-1 * int256(assets), true, recoverConvertedAssets(true), prices, targetLTV);
 
         if (sharesInUnderlying < 0) {
             return 0;
