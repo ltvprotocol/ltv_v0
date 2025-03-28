@@ -27,7 +27,7 @@ import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 contract LTV is PreviewWithdraw, PreviewDeposit, PreviewMint, PreviewRedeem, PreviewWithdrawCollateral, PreviewDepositCollateral, PreviewMintCollateral, PreviewRedeemCollateral, LowLevel, Auction, Mint, MintCollateral, Deposit, DepositCollateral, Withdraw, WithdrawCollateral, Redeem, RedeemCollateral, ConvertToAssets, ConvertToShares {
     using uMulDiv for uint256;
     
-    function initialize(StateInitData memory stateInitData, address initialOwner, string memory _name, string memory _symbol) initializer public {
+    function initialize(StateInitData memory stateInitData, address initialOwner, string memory _name, string memory _symbol) initializer public isFunctionAllowed {
         __State_init(stateInitData);
         __ERC20_init(_name, _symbol, 18);
         __Ownable_init(initialOwner);

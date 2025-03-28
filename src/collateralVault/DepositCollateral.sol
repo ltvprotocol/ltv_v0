@@ -17,7 +17,7 @@ abstract contract DepositCollateral is MaxDepositCollateral, StateTransition, Le
     
     error ExceedsMaxDepositCollateral(address receiver, uint256 collateralAssets, uint256 max);
 
-    function depositCollateral(uint256 collateralAssets, address receiver) external isFunctionAllowed returns (uint256 shares) {
+    function depositCollateral(uint256 collateralAssets, address receiver) external isFunctionAllowed nonReentrant returns (uint256 shares) {
         uint256 max = maxDepositCollateral(address(receiver));
         require(collateralAssets <= max, ExceedsMaxDepositCollateral(receiver, collateralAssets, max));
 

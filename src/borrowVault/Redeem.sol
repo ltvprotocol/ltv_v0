@@ -15,7 +15,7 @@ abstract contract Redeem is MaxRedeem, StateTransition, Lending, ERC4626Events {
 
     error ExceedsMaxRedeem(address owner, uint256 shares, uint256 max);
 
-    function redeem(uint256 shares, address receiver, address owner) external isFunctionAllowed returns (uint256 assets) {
+    function redeem(uint256 shares, address receiver, address owner) external isFunctionAllowed nonReentrant returns (uint256 assets) {
         {
             uint256 max = maxRedeem(address(owner));
             require(shares <= max, ExceedsMaxRedeem(owner, shares, max));

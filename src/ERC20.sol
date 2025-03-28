@@ -18,20 +18,20 @@ abstract contract ERC20 is State {
         decimals = _decimals;
     }
 
-    function transfer(address recipient, uint256 amount) external isFunctionAllowed returns (bool) {
+    function transfer(address recipient, uint256 amount) external isFunctionAllowed nonReentrant returns (bool) {
         balanceOf[msg.sender] -= amount;
         balanceOf[recipient] += amount;
         emit Transfer(msg.sender, recipient, amount);
         return true;
     }
 
-    function approve(address spender, uint256 amount) external isFunctionAllowed returns (bool) {
+    function approve(address spender, uint256 amount) external isFunctionAllowed nonReentrant returns (bool) {
         allowance[msg.sender][spender] = amount;
         emit Approval(msg.sender, spender, amount);
         return true;
     }
 
-    function transferFrom(address sender, address recipient, uint256 amount) external isFunctionAllowed returns (bool) {
+    function transferFrom(address sender, address recipient, uint256 amount) external isFunctionAllowed nonReentrant returns (bool) {
         allowance[sender][msg.sender] -= amount;
         balanceOf[sender] -= amount;
         balanceOf[recipient] += amount;

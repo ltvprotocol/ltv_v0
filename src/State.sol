@@ -8,11 +8,14 @@ import './Structs.sol';
 import './utils/MulDiv.sol';
 
 import 'forge-std/interfaces/IERC20.sol';
-import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
+
+import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
+import '@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol';
+
 import './interfaces/ILendingConnector.sol';
 import './interfaces/IOracleConnector.sol';
 
-abstract contract State is OwnableUpgradeable {
+abstract contract State is Initializable, ReentrancyGuardUpgradeable {
     using uMulDiv for uint256;
     using sMulDiv for int256;
 
@@ -47,8 +50,6 @@ abstract contract State is OwnableUpgradeable {
 
     uint256 public maxTotalAssetsInUnderlying;
 
-    mapping(bytes4 => bool) public _isFunctionDisabled;
-
     struct StateInitData {
         address collateralToken;
         address borrowToken;
@@ -60,13 +61,6 @@ abstract contract State is OwnableUpgradeable {
         IOracleConnector oracleConnector;
         uint256 maxGrowthFee;
         uint256 maxTotalAssetsInUnderlying;
-    }
-
-    error FunctionNotAllowed();
-
-    modifier isFunctionAllowed() {
-        require(msg.sender == owner() || !_isFunctionDisabled[msg.sig], FunctionNotAllowed());
-        _;
     }
 
     function __State_init(StateInitData memory initData) internal initializer {

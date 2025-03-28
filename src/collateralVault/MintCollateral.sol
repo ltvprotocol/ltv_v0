@@ -16,7 +16,7 @@ abstract contract MintCollateral is MaxMintCollateral, StateTransition, Lending,
 
     error ExceedsMaxMintCollateral(address receiver, uint256 shares, uint256 max);
 
-    function mintCollateral(uint256 shares, address receiver) external isFunctionAllowed returns (uint256 collateralAssets) {
+    function mintCollateral(uint256 shares, address receiver) external isFunctionAllowed nonReentrant returns (uint256 collateralAssets) {
         uint256 max = maxMintCollateral(address(receiver));
         require(shares <= max, ExceedsMaxMintCollateral(receiver, shares, max));
 
