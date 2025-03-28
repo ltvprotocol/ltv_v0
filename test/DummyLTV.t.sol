@@ -10,11 +10,6 @@ import "../src/Constants.sol";
 import "../src/dummy/DummyLendingConnector.sol";
 import "../src/dummy/DummyOracleConnector.sol";
 
-import '@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol';
-import '../src/ghost/connectors/HodlLendingConnector.sol';
-import '../src/ghost/connectors/SpookyOracleConnector.sol';
-
-
 contract DummyLTVTest is Test {
     DummyLTV public dummyLTV;
     MockERC20 public collateralToken;

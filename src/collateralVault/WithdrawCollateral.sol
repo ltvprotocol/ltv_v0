@@ -15,7 +15,7 @@ abstract contract WithdrawCollateral is MaxWithdrawCollateral, StateTransition, 
 
     error ExceedsMaxWithdrawCollateral(address owner, uint256 collateralAssets, uint256 max);
 
-    function withdrawCollateral(uint256 collateralAssets, address receiver, address owner) external nonReentrant returns (uint256 shares) {
+    function withdrawCollateral(uint256 collateralAssets, address receiver, address owner) external isFunctionAllowed nonReentrant returns (uint256 shares) {
         uint256 max = maxWithdrawCollateral(address(owner));
         require(collateralAssets <= max, ExceedsMaxWithdrawCollateral(owner, collateralAssets, max));
 
