@@ -35,7 +35,7 @@ abstract contract Withdraw is MaxWithdraw, StateTransition, Lending, ERC4626Even
         }
 
         // round up to burn more shares
-        uint256 shares = uint256(-sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow).mulDivDown(supplyAfterFee, totalAssets());
+        uint256 shares = uint256(-sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow).mulDivDown(supplyAfterFee, _totalAssets(false));
 
         if (owner != receiver) {
             allowance[owner][receiver] -= shares;
@@ -43,7 +43,7 @@ abstract contract Withdraw is MaxWithdraw, StateTransition, Lending, ERC4626Even
 
         applyMaxGrowthFee(supplyAfterFee);
 
-        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee);
+        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee, false);
 
         _burn(owner, shares);
 

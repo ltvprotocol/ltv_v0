@@ -33,13 +33,16 @@ abstract contract Deposit is MaxDeposit, StateTransition, Lending, ERC4626Events
         }
 
         // less shares are minted - the bigger token price
-        uint256 shares = uint256(signedSharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow).mulDivDown(supplyAfterFee, totalAssets());
+        uint256 shares = uint256(signedSharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow).mulDivDown(
+            supplyAfterFee,
+            _totalAssets(true)
+        );
 
         borrowToken.transferFrom(msg.sender, address(this), assets);
 
         applyMaxGrowthFee(supplyAfterFee);
 
-        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee);
+        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee, true);
 
         repay(assets);
 

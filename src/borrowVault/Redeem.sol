@@ -27,7 +27,7 @@ abstract contract Redeem is MaxRedeem, StateTransition, Lending, ERC4626Events {
         uint256 supplyAfterFee = previewSupplyAfterFee();
         // round down to give less assets for provided shares
         Prices memory prices = getPrices();
-        uint256 sharesInUnderlying = shares.mulDivDown(totalAssets(), supplyAfterFee).mulDivDown(prices.borrow, Constants.ORACLE_DIVIDER);
+        uint256 sharesInUnderlying = shares.mulDivDown(_totalAssets(false), supplyAfterFee).mulDivDown(prices.borrow, Constants.ORACLE_DIVIDER);
 
         ConvertedAssets memory convertedAssets = recoverConvertedAssets(false);
         (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = MintRedeem.calculateMintRedeem(
@@ -46,7 +46,7 @@ abstract contract Redeem is MaxRedeem, StateTransition, Lending, ERC4626Events {
         assets = uint256(assetsInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow);
         applyMaxGrowthFee(supplyAfterFee);
 
-        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee);
+        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee, false);
 
         _burn(owner, shares);
 

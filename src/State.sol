@@ -84,7 +84,7 @@ abstract contract State is OwnableUpgradeable {
         lastSeenTokenPrice = 10 ** 18;
     }
 
-    function totalAssets() public view virtual returns (uint256);
+    function _totalAssets(bool isDeposit) internal view virtual returns (uint256);
 
     function totalSupply() public view returns (uint256) {
         // add 100 to avoid vault inflation attack
@@ -161,7 +161,7 @@ abstract contract State is OwnableUpgradeable {
             Prices({borrow: getPriceBorrowOracle(), collateral: getPriceCollateralOracle(), borrowSlippage: 10 ** 16, collateralSlippage: 10 ** 16});
     }
 
-    function getAvailableSpaceInShares(ConvertedAssets memory convertedAssets, uint256 supply) internal view returns (uint256) {
+    function getAvailableSpaceInShares(ConvertedAssets memory convertedAssets, uint256 supply, bool isDeposit) internal view returns (uint256) {
         uint256 totalAssetsInUnderlying = uint256(convertedAssets.collateral - convertedAssets.borrow);
 
         if (totalAssetsInUnderlying >= maxTotalAssetsInUnderlying) {
@@ -171,7 +171,7 @@ abstract contract State is OwnableUpgradeable {
         // round down to assume less available space
         uint256 availableSpaceInShares = (maxTotalAssetsInUnderlying - totalAssetsInUnderlying)
             .mulDivDown(Constants.ORACLE_DIVIDER, getPriceBorrowOracle())
-            .mulDivDown(supply, totalAssets());
+            .mulDivDown(supply, _totalAssets(isDeposit));
 
         return availableSpaceInShares;
     }

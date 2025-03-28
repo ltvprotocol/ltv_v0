@@ -17,6 +17,6 @@ abstract contract PreviewDeposit is MaxGrowthFee {
         }
 
         // round down to mint less shares
-        return uint256(sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow).mulDivDown(previewSupplyAfterFee(), totalAssets());
+        return uint256(sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow).mulDivDown(previewSupplyAfterFee(), _totalAssets(true));
     }
 }

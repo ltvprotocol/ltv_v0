@@ -49,21 +49,20 @@ abstract contract ERC20 is State {
         emit Transfer(from, address(0), amount);
     }
 
-    function _mintProtocolRewards(DeltaFuture memory deltaFuture, Prices memory prices, uint256 supply) internal {
+    function _mintProtocolRewards(DeltaFuture memory deltaFuture, Prices memory prices, uint256 supply, bool isDeposit) internal {
+        // in both cases rounding conflict between HODLer and fee collector. Resolve it in favor of HODLer
         if (deltaFuture.deltaProtocolFutureRewardBorrow < 0) {
-            // less shares - the bigger token price
             uint256 shares = uint256(-deltaFuture.deltaProtocolFutureRewardBorrow).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow).mulDivDown(
                 supply,
-                totalAssets()
+                _totalAssets(isDeposit)
             );
             _mint(feeCollector, shares);
         } else if (deltaFuture.deltaProtocolFutureRewardCollateral > 0) {
-            // less shares - the bigger token price
             _mint(
                 feeCollector,
                 uint256(deltaFuture.deltaProtocolFutureRewardCollateral).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow).mulDivDown(
                     supply,
-                    totalAssets()
+                    _totalAssets(isDeposit)
                 )
             );
         }

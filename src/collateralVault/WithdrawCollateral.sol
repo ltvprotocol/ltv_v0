@@ -35,7 +35,7 @@ abstract contract WithdrawCollateral is MaxWithdrawCollateral, StateTransition, 
         }
 
         // round up to burn more shares
-        uint256 shares = uint256(-sharesInUnderlying).mulDivUp(Constants.ORACLE_DIVIDER, prices.borrow).mulDivUp(supplyAfterFee, totalAssets());
+        uint256 shares = uint256(-sharesInUnderlying).mulDivUp(Constants.ORACLE_DIVIDER, prices.borrow).mulDivUp(supplyAfterFee, _totalAssets(false));
 
         if (owner != receiver) {
             allowance[owner][receiver] -= shares;
@@ -43,7 +43,7 @@ abstract contract WithdrawCollateral is MaxWithdrawCollateral, StateTransition, 
 
         applyMaxGrowthFee(supplyAfterFee);
 
-        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee);
+        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee, false);
 
         _burn(owner, shares);
 

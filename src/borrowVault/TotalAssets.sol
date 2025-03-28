@@ -9,12 +9,16 @@ import '../utils/MulDiv.sol';
 abstract contract TotalAssets is State {
 
     using uMulDiv for uint256;
-    function totalAssets() public view override returns (uint256) {
+    function totalAssets() external view returns (uint256) {
         // default behavior - don't overestimate our assets
-        ConvertedAssets memory convertedAssets = recoverConvertedAssets(false);
+        return _totalAssets(false);
+    }
+
+    function _totalAssets(bool isDeposit) internal view override returns(uint256) {
+        ConvertedAssets memory convertedAssets = recoverConvertedAssets(isDeposit);
         // Add 1 to avoid vault attack
-        // round down, assume less assets
-        return uint256(convertedAssets.collateral - convertedAssets.borrow).mulDivDown(Constants.ORACLE_DIVIDER, getPriceBorrowOracle()) + 1;
+        // in case of deposit need to overestimate our assets
+        return uint256(convertedAssets.collateral - convertedAssets.borrow).mulDiv(Constants.ORACLE_DIVIDER, getPriceBorrowOracle(), isDeposit) + 1;
     }
 
 }

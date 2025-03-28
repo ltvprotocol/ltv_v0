@@ -15,7 +15,7 @@ abstract contract MaxWithdrawCollateral is MaxGrowthFee {
         }
         uint256 vaultMaxWithdrawInUnderlying = uint256(convertedAssets.realCollateral) - maxSafeRealCollateral;
         // round down to assume smaller border
-        uint256 userBalanceInUnderlying = balanceOf[owner].mulDivDown(totalAssets(), previewSupplyAfterFee()).mulDivDown(
+        uint256 userBalanceInUnderlying = balanceOf[owner].mulDivDown(_totalAssets(false), previewSupplyAfterFee()).mulDivDown(
             getPriceBorrowOracle(),
             Constants.ORACLE_DIVIDER
         );

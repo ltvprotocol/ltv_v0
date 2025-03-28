@@ -10,6 +10,6 @@ abstract contract ConvertToAssets is MaxGrowthFee {
 
     function convertToAssets(uint256 shares) external view virtual returns (uint256) {
         // assume smaller token price
-        return shares.mulDivDown(totalAssets(), previewSupplyAfterFee());
+        return shares.mulDivDown(_totalAssets(false), previewSupplyAfterFee());
     }
 }

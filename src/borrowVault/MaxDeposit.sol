@@ -9,7 +9,7 @@ abstract contract MaxDeposit is PreviewMint {
     function maxDeposit(address) public view returns (uint256) {
         ConvertedAssets memory convertedAssets = recoverConvertedAssets(true);
 
-        uint256 availableSpaceInShares = getAvailableSpaceInShares(convertedAssets, previewSupplyAfterFee());
+        uint256 availableSpaceInShares = getAvailableSpaceInShares(convertedAssets, previewSupplyAfterFee(), true);
         uint256 availableSpaceInAssets = previewMint(availableSpaceInShares);
 
         // round up to assume smaller border

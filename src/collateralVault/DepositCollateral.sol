@@ -38,7 +38,7 @@ abstract contract DepositCollateral is MaxDepositCollateral, StateTransition, Le
         // round down to mint less shares
         uint256 shares = uint256(signedSharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow).mulDivDown(
             supplyAfterFee,
-            totalAssets()
+            _totalAssets(true)
         );
 
         // TODO: double check that Token should be transfered from msg.sender or from receiver
@@ -46,7 +46,7 @@ abstract contract DepositCollateral is MaxDepositCollateral, StateTransition, Le
 
         applyMaxGrowthFee(supplyAfterFee);
 
-        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee);
+        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee, true);
 
         supply(collateralAssets);
 

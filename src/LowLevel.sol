@@ -15,7 +15,7 @@ abstract contract LowLevel is MaxGrowthFee, Lending {
             recoverConvertedAssets(deltaShares > 0),
             getPrices(),
             targetLTV,
-            int256(totalAssets()),
+            int256(_totalAssets(deltaShares > 0)),
             int256(supplyAfterFee)
         );
         return (deltaRealCollateral, deltaRealBorrow);
@@ -30,7 +30,7 @@ abstract contract LowLevel is MaxGrowthFee, Lending {
                 recoverConvertedAssets(deltaShares > 0),
                 getPrices(),
                 targetLTV,
-                int256(totalAssets()),
+                int256(_totalAssets(deltaShares > 0)),
                 int256(supplyAfterFee)
             );
         executeLowLevel(deltaRealCollateralAssets, deltaRealBorrowAssets, deltaShares, deltaProtocolFutureRewardShares);
@@ -99,14 +99,13 @@ abstract contract LowLevel is MaxGrowthFee, Lending {
         uint256 supply
     ) private view returns (int256, int256, int256) {
         Prices memory prices = getPrices();
-        int256 assets = int256(totalAssets());
 
         (int256 deltaRealBorrowAssets, int256 deltaShares, int256 deltaProtocolFutureRewardShares) = LowLevelMath.calculateLowLevelCollateral(
             deltaCollateralAssets,
             recoverConvertedAssets(isSharesPositiveHint),
             prices,
             targetLTV,
-            assets,
+            int256(_totalAssets(isSharesPositiveHint)),
             int256(supply)
         );
 
@@ -116,7 +115,7 @@ abstract contract LowLevel is MaxGrowthFee, Lending {
                 recoverConvertedAssets(!isSharesPositiveHint),
                 getPrices(),
                 targetLTV,
-                int256(totalAssets()),
+                int256(_totalAssets(!isSharesPositiveHint)),
                 int256(supply)
             );
         }
@@ -130,14 +129,13 @@ abstract contract LowLevel is MaxGrowthFee, Lending {
         uint256 supply
     ) public view returns (int256, int256, int256) {
         Prices memory prices = getPrices();
-        int256 assets = int256(totalAssets());
 
         (int256 deltaRealCollateralAssets, int256 deltaShares, int256 deltaProtocolFutureRewardShares) = LowLevelMath.calculateLowLevelBorrow(
             deltaBorrowAssets,
             recoverConvertedAssets(isSharesPositiveHint),
             prices,
             targetLTV,
-            assets,
+            int256(_totalAssets(isSharesPositiveHint)),
             int256(supply)
         );
 
@@ -147,7 +145,7 @@ abstract contract LowLevel is MaxGrowthFee, Lending {
                 recoverConvertedAssets(!isSharesPositiveHint),
                 prices,
                 targetLTV,
-                assets,
+                int256(_totalAssets(!isSharesPositiveHint)),
                 int256(supply)
             );
         }

@@ -17,7 +17,7 @@ abstract contract MaxWithdraw is MaxGrowthFee {
         // round down to assume smaller border
         uint256 vaultMaxWithdraw = maxWithdrawInUnderlying.mulDivDown(Constants.ORACLE_DIVIDER, getPriceBorrowOracle());
         // round down to assume smaller border
-        uint256 userBalanceInAssets = balanceOf[owner].mulDivDown(totalAssets(), previewSupplyAfterFee());
+        uint256 userBalanceInAssets = balanceOf[owner].mulDivDown(_totalAssets(false), previewSupplyAfterFee());
 
         return userBalanceInAssets < vaultMaxWithdraw ? userBalanceInAssets : vaultMaxWithdraw;
     }

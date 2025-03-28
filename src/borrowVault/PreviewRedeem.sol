@@ -11,7 +11,7 @@ abstract contract PreviewRedeem is MaxGrowthFee {
     function previewRedeem(uint256 shares) external view returns (uint256 assets) {
         // round down to give less assets for provided shares
         Prices memory prices = getPrices();
-        uint256 sharesInUnderlying = shares.mulDivDown(totalAssets(), previewSupplyAfterFee()).mulDivDown(prices.borrow, Constants.ORACLE_DIVIDER);
+        uint256 sharesInUnderlying = shares.mulDivDown(_totalAssets(false), previewSupplyAfterFee()).mulDivDown(prices.borrow, Constants.ORACLE_DIVIDER);
         int256 assetsInUnderlying = MintRedeem.previewMintRedeem(
             -1 * int256(sharesInUnderlying),
             true,

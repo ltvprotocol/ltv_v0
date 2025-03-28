@@ -18,6 +18,6 @@ abstract contract PreviewWithdrawCollateral is MaxGrowthFee {
         }
 
         // round up to burn more shares
-        return uint256(-sharesInUnderlying).mulDivUp(Constants.ORACLE_DIVIDER, prices.borrow).mulDivUp(previewSupplyAfterFee(), totalAssets());
+        return uint256(-sharesInUnderlying).mulDivUp(Constants.ORACLE_DIVIDER, prices.borrow).mulDivUp(previewSupplyAfterFee(), _totalAssets(false));
     }
 }

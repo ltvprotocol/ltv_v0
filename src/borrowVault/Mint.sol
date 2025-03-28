@@ -21,7 +21,7 @@ abstract contract Mint is MaxMint, StateTransition, Lending, ERC4626Events {
 
         uint256 supplyAfterFee = previewSupplyAfterFee();
         // assume user wants to mint more shares to get more assets
-        uint256 sharesInUnderlying = shares.mulDivUp(totalAssets(), supplyAfterFee).mulDivUp(getPrices().borrow, Constants.ORACLE_DIVIDER);
+        uint256 sharesInUnderlying = shares.mulDivUp(_totalAssets(true), supplyAfterFee).mulDivUp(getPrices().borrow, Constants.ORACLE_DIVIDER);
         
         ConvertedAssets memory convertedAssets = recoverConvertedAssets(true);
         Prices memory prices = getPrices();
@@ -45,7 +45,7 @@ abstract contract Mint is MaxMint, StateTransition, Lending, ERC4626Events {
 
         applyMaxGrowthFee(supplyAfterFee);
 
-        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee);
+        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee, true);
 
         repay(assets);
 
