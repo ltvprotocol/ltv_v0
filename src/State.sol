@@ -69,7 +69,7 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     error FunctionNotAllowed();
 
     modifier isFunctionAllowed() {
-        require(msg.sender == owner() || !_isFunctionDisabled[msg.sig], FunctionNotAllowed());
+        _checkFunctionAllowed();
         _;
     }
 
@@ -93,6 +93,22 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     function totalSupply() public view returns (uint256) {
         // add 100 to avoid vault inflation attack
         return baseTotalSupply + 100;
+    }
+
+    function getPriceBorrowOracle() public view returns (uint256) {
+        return oracleConnector.getPriceBorrowOracle();
+    }
+
+    function getPriceCollateralOracle() public view returns (uint256) {
+        return oracleConnector.getPriceCollateralOracle();
+    }
+
+    function getRealBorrowAssets() public view returns (uint256) {
+        return lendingConnector.getRealBorrowAssets();
+    }
+
+    function getRealCollateralAssets() public view returns (uint256) {
+        return lendingConnector.getRealCollateralAssets();
     }
     
     function getAuctionStep() internal view returns (uint256) {
@@ -193,19 +209,7 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
         return availableSpaceInShares;
     }
 
-    function getPriceBorrowOracle() public view returns (uint256) {
-        return oracleConnector.getPriceBorrowOracle();
-    }
-
-    function getPriceCollateralOracle() public view returns (uint256) {
-        return oracleConnector.getPriceCollateralOracle();
-    }
-
-    function getRealBorrowAssets() public view returns (uint256) {
-        return lendingConnector.getRealBorrowAssets();
-    }
-
-    function getRealCollateralAssets() public view returns (uint256) {
-        return lendingConnector.getRealCollateralAssets();
+    function _checkFunctionAllowed() private view {
+        require(msg.sender == owner() || !_isFunctionDisabled[msg.sig], FunctionNotAllowed());
     }
 }
