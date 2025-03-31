@@ -22,9 +22,6 @@ abstract contract StateTransition is State {
     );
 
     function applyStateTransition(NextState memory nextState) internal {
-
-        // TODO: think about Up and Down
-
         int256 oldFutureBorrowAssets = futureBorrowAssets;
         int256 oldFutureCollateralAssets = futureCollateralAssets;
         int256 oldFutureRewardBorrowAssets = futureRewardBorrowAssets;
@@ -32,13 +29,11 @@ abstract contract StateTransition is State {
         uint256 oldStartAuction = startAuction;
 
 
-        // round down to leave less borrow in protocol
+        // Here we have conflict between HODLer and Future auction executor. Round in favor of HODLer
+
         futureBorrowAssets = nextState.futureBorrow.mulDivDown(int256(Constants.ORACLE_DIVIDER), int256(getPriceBorrowOracle()));
-        // round up to leave more collateral in protocol
         futureCollateralAssets = nextState.futureCollateral.mulDivUp(int256(Constants.ORACLE_DIVIDER), int256(getPriceCollateralOracle()));
-        // round down to leave less borrow in protocol
         futureRewardBorrowAssets = nextState.futureRewardBorrow.mulDivDown(int256(Constants.ORACLE_DIVIDER), int256(getPriceBorrowOracle()));
-        // round up to leave more collateral in protocol
         futureRewardCollateralAssets = nextState.futureRewardCollateral.mulDivUp(int256(Constants.ORACLE_DIVIDER), int256(getPriceCollateralOracle()));
 
         if (nextState.merge) {

@@ -9,7 +9,7 @@ abstract contract ConvertToAssets is MaxGrowthFee {
     using uMulDiv for uint256;
 
     function convertToAssets(uint256 shares) external view virtual returns (uint256) {
-        // assume smaller token price
+        // underestimate total assets and round down to assume lower token price
         return shares.mulDivDown(_totalAssets(false), previewSupplyAfterFee());
     }
 }

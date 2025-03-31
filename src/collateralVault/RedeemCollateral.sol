@@ -27,8 +27,8 @@ abstract contract RedeemCollateral is MaxRedeemCollateral, StateTransition, Lend
         Prices memory prices = getPrices();
         uint256 supplyAfterFee = previewSupplyAfterFee();
 
-        // round down to give less collateral
-        uint256 sharesInUnderlying = shares.mulDivUp(_totalAssets(false), supplyAfterFee).mulDivUp(prices.borrow, Constants.ORACLE_DIVIDER);
+        // HODLer <=> withdrawer conflict, round in favor of HODLer, round down to give less collateral
+        uint256 sharesInUnderlying = shares.mulDivDown(_totalAssets(false), supplyAfterFee).mulDivDown(prices.borrow, Constants.ORACLE_DIVIDER);
 
         ConvertedAssets memory convertedAssets = recoverConvertedAssets(false);
         (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = MintRedeem.calculateMintRedeem(
@@ -42,7 +42,7 @@ abstract contract RedeemCollateral is MaxRedeemCollateral, StateTransition, Lend
         if (assetsInUnderlying > 0) {
             return 0;
         }
-        // round down to give less collateral
+        // HODLer <=> withdrawer conflict, round in favor of HODLer, round down to give less collateral
         collateralAssets = uint256(-assetsInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.collateral);
 
         applyMaxGrowthFee(supplyAfterFee);

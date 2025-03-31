@@ -176,8 +176,9 @@ library DeltaRealBorrowAndDeltaRealCollateral {
         return divider;
     }
 
-    
-    // delta future collateral needs to ber rounded down
+    // These functions are used in Deposit/withdraw/mint/redeem. Since this math implies that deltaTotalAssets = deltaTotalShares, we don't have
+    // HODLer conflict here. So the only conflict is between depositor/withdrawer and future executor. For future executor it's better to have smaller 
+    // futureCollateral, so we need always round delta future collateral to the bottom
     // divider is always positive
     // cna - dividend is 0
     // cmcb, cebc, ceccb - deltaFutureCollateral is positive, so dividend is positive, dividend needs to be rounded down, divider needs to be rounded up

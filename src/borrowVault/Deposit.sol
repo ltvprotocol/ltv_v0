@@ -32,7 +32,7 @@ abstract contract Deposit is MaxDeposit, StateTransition, Lending, ERC4626Events
             return 0;
         }
 
-        // less shares are minted - the bigger token price
+        // Conflict HODLer <=> Depositor, resolve in favor of HODLer
         uint256 shares = uint256(signedSharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow).mulDivDown(
             supplyAfterFee,
             _totalAssets(true)

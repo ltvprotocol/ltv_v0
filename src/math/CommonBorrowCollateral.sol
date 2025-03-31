@@ -11,7 +11,7 @@ library CommonBorrowCollateral {
     using uMulDiv for uint256;
     using sMulDiv for int256;
 
-    // need to round it up to make better for protocol
+    // Future executor <=> executor conflict, round up to make auction more profitable
     function calculateDeltaFutureBorrowFromDeltaFutureCollateral(
         Cases memory ncase,
         ConvertedAssets memory convertedAssets,
@@ -34,7 +34,7 @@ library CommonBorrowCollateral {
         return deltaFutureBorrow;
     }
 
-    // need to round it down to make better for protocol
+    // Future executor <=> executor conflict, round down to make auction more profitable
     function calculateDeltaFutureCollateralFromDeltaFutureBorrow(
         Cases memory ncase,
         ConvertedAssets memory convertedAssets,
@@ -53,7 +53,7 @@ library CommonBorrowCollateral {
         return deltaFutureCollateral;
     }
 
-    // round down to leave more rewards in protocol
+    // Future executor <=> executor conflict, round down to make auction more profitable
     function calculateDeltaUserFutureRewardCollateral(
         Cases memory ncase,
         ConvertedAssets memory convertedAssets,
@@ -72,7 +72,7 @@ library CommonBorrowCollateral {
         return deltaUserFutureRewardCollateral;
     }
 
-    // round up, it'll positively affect the price
+    // No conflict(possible conflict Fee collector <=> future executor), round down to leave a bit more future reward collateral in the protocol
     function calculateDeltaProtocolFutureRewardCollateral(
         Cases memory ncase,
         ConvertedAssets memory convertedAssets,
@@ -91,7 +91,7 @@ library CommonBorrowCollateral {
         return deltaProtocolFutureRewardCollateral;
     }
 
-    // round down to leave more rewards in protocol
+    // auction creator <=> future executor conflict, resolve in favor of future executor, round down to leave more rewards in protocol
     function calculateDeltaFuturePaymentCollateral(
         Cases memory ncase,
         ConvertedAssets memory convertedAssets,
@@ -110,7 +110,7 @@ library CommonBorrowCollateral {
         return deltaFuturePaymentCollateral;
     }
 
-    // round up to leave more rewards in protocol
+    // auction executor <=> future auction executor conflict, resolve in favor of future executor, round up to leave more rewards in protocol
     function calculateDeltaUserFutureRewardBorrow(
         Cases memory ncase,
         ConvertedAssets memory convertedAssets,
@@ -130,7 +130,7 @@ library CommonBorrowCollateral {
         return deltaUserFutureRewardBorrow;
     }
 
-    // round down, it'll positively affect the price
+    // No conflict(possible conflict Fee collector <=> future executor), round up to leave a bit more future reward borrow in the protocol
     function calculateDeltaProtocolFutureRewardBorrow(
         Cases memory ncase,
         ConvertedAssets memory convertedAssets,
@@ -141,13 +141,13 @@ library CommonBorrowCollateral {
         }
 
         int256 deltaProtocolFutureRewardBorrow = int256(int8(ncase.cebc)) *
-            convertedAssets.protocolFutureRewardBorrow.mulDivDown(deltaFutureBorrow, convertedAssets.futureBorrow);
+            convertedAssets.protocolFutureRewardBorrow.mulDivUp(deltaFutureBorrow, convertedAssets.futureBorrow);
         deltaProtocolFutureRewardBorrow -= int256(int8(ncase.cecbc)) * convertedAssets.protocolFutureRewardBorrow;
 
         return deltaProtocolFutureRewardBorrow;
     }
 
-    // round up to leave more rewards in protocol
+    // auction creator <=> future executor conflict, resolve in favor of future executor, round up to leave more rewards in protocol
     function calculateDeltaFuturePaymentBorrow(
         Cases memory ncase,
         ConvertedAssets memory convertedAssets,

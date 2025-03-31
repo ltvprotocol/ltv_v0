@@ -25,8 +25,8 @@ abstract contract Redeem is MaxRedeem, StateTransition, Lending, ERC4626Events {
         }
 
         uint256 supplyAfterFee = previewSupplyAfterFee();
-        // round down to give less assets for provided shares
         Prices memory prices = getPrices();
+        // HODLer <=> withdrawer conflict, round in favor of HODLer, round down to give less assets for provided shares
         uint256 sharesInUnderlying = shares.mulDivDown(_totalAssets(false), supplyAfterFee).mulDivDown(prices.borrow, Constants.ORACLE_DIVIDER);
 
         ConvertedAssets memory convertedAssets = recoverConvertedAssets(false);
@@ -42,7 +42,7 @@ abstract contract Redeem is MaxRedeem, StateTransition, Lending, ERC4626Events {
             return 0;
         }
 
-        // round down to give less assets
+        // HODLer <=> withdrawer conflict, round in favor of HODLer, round down to give less assets
         assets = uint256(assetsInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow);
         applyMaxGrowthFee(supplyAfterFee);
 

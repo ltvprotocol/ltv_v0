@@ -34,8 +34,8 @@ abstract contract Withdraw is MaxWithdraw, StateTransition, Lending, ERC4626Even
             return 0;
         }
 
-        // round up to burn more shares
-        uint256 shares = uint256(-sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow).mulDivDown(supplyAfterFee, _totalAssets(false));
+        // HODLer <=> withdrawer conflict, round in favor of HODLer, round up to burn more shares
+        uint256 shares = uint256(-sharesInUnderlying).mulDivUp(Constants.ORACLE_DIVIDER, prices.borrow).mulDivUp(supplyAfterFee, _totalAssets(false));
 
         if (owner != receiver) {
             allowance[owner][receiver] -= shares;

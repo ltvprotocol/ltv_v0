@@ -104,6 +104,9 @@ abstract contract State is OwnableUpgradeable {
     }
 
     function recoverConvertedAssets(bool isDeposit) internal view returns (ConvertedAssets memory) {
+        // In case of deposit we have HODLer <=> depositor conflict, need to overestimate totalAssets() to underestimate user reward.
+        // It's applied to every single rounding in this file.
+
         // in case of deposit we need to assume more assets in the protocol, so round borrow down
         int256 realBorrow = int256(getRealBorrowAssets().mulDiv(getPriceBorrowOracle(), Constants.ORACLE_DIVIDER, !isDeposit));
 
@@ -126,10 +129,10 @@ abstract contract State is OwnableUpgradeable {
             isDeposit
         );
 
-        // give user a bit more rewards
+        // Fee collector <=> Auction executor conflict. Resolve it in favor of the auction executor.
         int256 userFutureRewardBorrow = futureRewardBorrow.mulDivUp(int256(getAuctionStep()), int256(Constants.AMOUNT_OF_STEPS));
 
-        // give user a bit more rewards
+        // Fee collector <=> Auction executor conflict. Resolve it in favor of the auction executor.
         int256 userFutureRewardCollateral = futureRewardCollateral.mulDivDown(int256(getAuctionStep()), int256(Constants.AMOUNT_OF_STEPS));
 
         int256 protocolFutureRewardBorrow = futureRewardBorrow - userFutureRewardBorrow;

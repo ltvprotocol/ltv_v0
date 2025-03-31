@@ -16,7 +16,7 @@ abstract contract PreviewWithdraw is MaxGrowthFee {
             return 0;
         }
         
-        // round up to burn more shares
+        // HODLer <=> withdrawer conflict, round in favor of HODLer, round up to burn more shares
         return
             uint256(-sharesInUnderlying).mulDivUp(Constants.ORACLE_DIVIDER, prices.borrow).mulDivUp(previewSupplyAfterFee(), _totalAssets(false));
     }

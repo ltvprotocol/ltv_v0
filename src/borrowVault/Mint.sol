@@ -20,6 +20,7 @@ abstract contract Mint is MaxMint, StateTransition, Lending, ERC4626Events {
         require(shares <= max, ExceedsMaxMint(receiver, shares, max));
 
         uint256 supplyAfterFee = previewSupplyAfterFee();
+        // HODLer <=> Depositor conflict, resolve in favor of HODLer
         // assume user wants to mint more shares to get more assets
         uint256 sharesInUnderlying = shares.mulDivUp(_totalAssets(true), supplyAfterFee).mulDivUp(getPrices().borrow, Constants.ORACLE_DIVIDER);
         
@@ -37,7 +38,8 @@ abstract contract Mint is MaxMint, StateTransition, Lending, ERC4626Events {
             return 0;
         }
 
-        // round up assets to receive more assets
+        // 
+        // HODLer <=> Depositor conflict, resolve in favor of HODLer, round up assets to receive more assets
         assets = uint256(-assetsInUnderlying).mulDivUp(Constants.ORACLE_DIVIDER, prices.borrow);
 
         // TODO: double check that Token should be transfered from msg.sender or from receiver
@@ -48,8 +50,6 @@ abstract contract Mint is MaxMint, StateTransition, Lending, ERC4626Events {
         _mintProtocolRewards(deltaFuture, prices, supplyAfterFee, true);
 
         repay(assets);
-
-        // TODO: fix this - return from calculateDepositWithdraw
 
         NextState memory nextState = NextStep.calculateNextStep(convertedAssets, deltaFuture, block.number);
 
