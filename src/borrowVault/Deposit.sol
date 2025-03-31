@@ -13,7 +13,7 @@ abstract contract Deposit is MaxDeposit, StateTransition, Lending, ERC4626Events
 
     error ExceedsMaxDeposit(address receiver, uint256 assets, uint256 max);
 
-    function deposit(uint256 assets, address receiver) external returns (uint256) {
+    function deposit(uint256 assets, address receiver) external isFunctionAllowed nonReentrant returns (uint256) {
         uint256 max = maxDeposit(address(receiver));
         require(assets <= max, ExceedsMaxDeposit(receiver, assets, max));
 

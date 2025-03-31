@@ -15,7 +15,7 @@ abstract contract Mint is MaxMint, StateTransition, Lending, ERC4626Events {
 
     error ExceedsMaxMint(address receiver, uint256 shares, uint256 max);
 
-    function mint(uint256 shares, address receiver) external returns (uint256 assets) {
+    function mint(uint256 shares, address receiver) external isFunctionAllowed nonReentrant returns (uint256 assets) {
         uint256 max = maxMint(address(receiver));
         require(shares <= max, ExceedsMaxMint(receiver, shares, max));
 

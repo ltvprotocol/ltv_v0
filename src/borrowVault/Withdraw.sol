@@ -15,7 +15,7 @@ abstract contract Withdraw is MaxWithdraw, StateTransition, Lending, ERC4626Even
 
     error ExceedsMaxWithdraw(address owner, uint256 assets, uint256 max);
 
-    function withdraw(uint256 assets, address receiver, address owner) external returns (uint256) {
+    function withdraw(uint256 assets, address receiver, address owner) external isFunctionAllowed nonReentrant returns (uint256) {
         uint256 max = maxWithdraw(address(owner));
         require(assets <= max, ExceedsMaxWithdraw(owner, assets, max));
 
