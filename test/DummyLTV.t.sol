@@ -9,6 +9,7 @@ import "./utils/DummyLTV.sol";
 import "../src/Constants.sol";
 import "../src/dummy/DummyLendingConnector.sol";
 import "../src/dummy/DummyOracleConnector.sol";
+import '../src/utils/ConstantSlippageProvider.sol';
 
 contract DummyLTVTest is Test {
     DummyLTV public dummyLTV;
@@ -16,6 +17,7 @@ contract DummyLTVTest is Test {
     MockERC20 public borrowToken;
     MockDummyLending public lendingProtocol;
     IDummyOracle public oracle;
+    ConstantSlippageProvider public slippageProvider;
 
     modifier initializeBalancedTest(
         address owner,
@@ -46,6 +48,12 @@ contract DummyLTVTest is Test {
             borrowToken,
             oracle
         );
+        
+        slippageProvider = new ConstantSlippageProvider(
+            0,
+            0,
+            owner
+        );
 
         State.StateInitData memory initData = State.StateInitData({
             collateralToken: address(collateralToken),
@@ -57,10 +65,11 @@ contract DummyLTVTest is Test {
             lendingConnector: lendingConnector,
             oracleConnector: oracleConnector,
             maxGrowthFee: 10**18 / 5,
-            maxTotalAssetsInUnderlying: type(uint128).max
+            maxTotalAssetsInUnderlying: type(uint128).max,
+            slippageProvider: slippageProvider
         }); 
 
-        dummyLTV = new DummyLTV(initData, owner, 0, 0);
+        dummyLTV = new DummyLTV(initData, owner);
 
         vm.startPrank(owner);
         Ownable(address(lendingProtocol)).transferOwnership(address(dummyLTV));
@@ -219,8 +228,11 @@ contract DummyLTVTest is Test {
     }
 
     function test_maxMint(address owner, address user) public initializeBalancedTest(owner, user, 100000, 9500, 9500, -1000) {
-        dummyLTV.setCollateralSlippage(10**16);
+        vm.stopPrank();
+        vm.startPrank(owner);
+        slippageProvider.setCollateralSlippage(10**16);
 
+        vm.startPrank(user);
         assertEq(dummyLTV.maxMint(user), 956118 * 100);
         borrowToken.approve(address(dummyLTV), type(uint112).max);
         dummyLTV.mint(dummyLTV.maxMint(user), user);
@@ -239,7 +251,7 @@ contract DummyLTVTest is Test {
         vm.stopPrank();
         vm.startPrank(owner);
         dummyLTV.transfer(user, dummyLTV.balanceOf(owner));
-        dummyLTV.setBorrowSlippage(10**16);
+        slippageProvider.setBorrowSlippage(10**16);
 
         assertEq(dummyLTV.maxRedeem(user), 625052 * 100);
         dummyLTV.redeem(dummyLTV.maxRedeem(user), user, user);

@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "./borrowVault/PreviewDeposit.sol";
-import "./borrowVault/PreviewWithdraw.sol";
-import "./borrowVault/PreviewMint.sol";
-import "./borrowVault/PreviewRedeem.sol";
-import "./borrowVault/Deposit.sol";
-import "./borrowVault/Withdraw.sol";
+import './borrowVault/PreviewDeposit.sol';
+import './borrowVault/PreviewWithdraw.sol';
+import './borrowVault/PreviewMint.sol';
+import './borrowVault/PreviewRedeem.sol';
+import './borrowVault/Deposit.sol';
+import './borrowVault/Withdraw.sol';
 import './borrowVault/Redeem.sol';
 import './borrowVault/Mint.sol';
 import './borrowVault/ConvertToAssets.sol';
@@ -23,8 +23,28 @@ import './Auction.sol';
 import './LowLevel.sol';
 import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 
-
-contract LTV is PreviewWithdraw, PreviewDeposit, PreviewMint, PreviewRedeem, PreviewWithdrawCollateral, PreviewDepositCollateral, PreviewMintCollateral, PreviewRedeemCollateral, LowLevel, Auction, Mint, MintCollateral, Deposit, DepositCollateral, Withdraw, WithdrawCollateral, Redeem, RedeemCollateral, ConvertToAssets, ConvertToShares {
+contract LTV is
+    PreviewWithdraw,
+    PreviewDeposit,
+    PreviewMint,
+    PreviewRedeem,
+    PreviewWithdrawCollateral,
+    PreviewDepositCollateral,
+    PreviewMintCollateral,
+    PreviewRedeemCollateral,
+    LowLevel,
+    Auction,
+    Mint,
+    MintCollateral,
+    Deposit,
+    DepositCollateral,
+    Withdraw,
+    WithdrawCollateral,
+    Redeem,
+    RedeemCollateral,
+    ConvertToAssets,
+    ConvertToShares
+{
     using uMulDiv for uint256;
     
     function initialize(StateInitData memory stateInitData, address initialOwner, string memory _name, string memory _symbol) initializer public isFunctionAllowed {
@@ -58,9 +78,27 @@ contract LTV is PreviewWithdraw, PreviewDeposit, PreviewMint, PreviewRedeem, Pre
     function setLendingConnector(ILendingConnector _lendingConnector) external onlyOwner {
         lendingConnector = _lendingConnector;
     }
-    
+
     function setMaxTotalAssetsInUnderlying(uint256 _maxTotalAssetsInUnderlying) external onlyOwner {
         maxTotalAssetsInUnderlying = _maxTotalAssetsInUnderlying;
+    }
+
+    function setMissingSlots(ILendingConnector _lendingConnector, IOracleConnector _oracleConnector) external onlyOwner {
+        lendingConnector = _lendingConnector;
+        oracleConnector = _oracleConnector;
+        lastSeenTokenPrice = totalAssets().mulDivDown(Constants.LAST_SEEN_PRICE_PRECISION, totalSupply());
+        maxGrowthFee = 10 ** 18 / 5;
+        maxTotalAssetsInUnderlying = type(uint128).max;
+    }
+
+    function allowDisableFunctions(bytes4[] memory signatures, bool isDisabled) external onlyOwner {
+        for (uint256 i = 0; i < signatures.length; i++) {
+            _isFunctionDisabled[signatures[i]] = isDisabled;
+        }
+    }
+
+    function setSlippageProvider(ISlippageProvider _slippageProvider) external onlyOwner {
+        slippageProvider = _slippageProvider;
     }
 
     function borrow(uint256 assets) internal override {
@@ -81,19 +119,5 @@ contract LTV is PreviewWithdraw, PreviewDeposit, PreviewMint, PreviewRedeem, Pre
     function withdraw(uint256 assets) internal override {
         (bool isSuccess, ) = address(lendingConnector).delegatecall(abi.encodeCall(lendingConnector.withdraw, (assets)));
         require(isSuccess);
-    }
-
-    function setMissingSlots(ILendingConnector _lendingConnector, IOracleConnector _oracleConnector) external onlyOwner {
-        lendingConnector = _lendingConnector;
-        oracleConnector = _oracleConnector;
-        lastSeenTokenPrice = totalAssets().mulDivDown(Constants.LAST_SEEN_PRICE_PRECISION, totalSupply());
-        maxGrowthFee = 10**18 / 5;
-        maxTotalAssetsInUnderlying = type(uint128).max;
-    }
-
-    function allowDisableFunctions(bytes4[] memory signatures, bool isDisabled) external onlyOwner {
-        for (uint256 i = 0; i < signatures.length; i++) {
-            _isFunctionDisabled[signatures[i]] = isDisabled;
-        }
     }
 }
