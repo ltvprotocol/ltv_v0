@@ -91,9 +91,7 @@ contract LTV is PreviewWithdraw, PreviewDeposit, PreviewMint, PreviewRedeem, Pre
         maxTotalAssetsInUnderlying = type(uint128).max;
     }
 
-    function allowDisableFunctions(bytes4[] memory signatures, bool isDisabled) external onlyOwner {
-        for (uint256 i = 0; i < signatures.length; i++) {
-            _isFunctionDisabled[signatures[i]] = isDisabled;
-        }
+    function allowDisableFunction(bytes4 signature, bool isDisabled) external onlyOwner {
+        _isFunctionDisabled[signature] = isDisabled;
     }
 }
