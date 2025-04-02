@@ -72,7 +72,7 @@ library CommonBorrowCollateral {
         return deltaUserFutureRewardCollateral;
     }
 
-    // No conflict(possible conflict Fee collector <=> future executor), round down to leave a bit more future reward collateral in the protocol
+    //  Fee collector <=> future executor conflict, round down to leave a bit more future reward collateral in the protocol
     function calculateDeltaProtocolFutureRewardCollateral(
         Cases memory ncase,
         ConvertedAssets memory convertedAssets,
@@ -130,7 +130,7 @@ library CommonBorrowCollateral {
         return deltaUserFutureRewardBorrow;
     }
 
-    // No conflict(possible conflict Fee collector <=> future executor), round up to leave a bit more future reward borrow in the protocol
+    // Fee collector <=> future executor conflict, round up to leave a bit more future reward borrow in the protocol
     function calculateDeltaProtocolFutureRewardBorrow(
         Cases memory ncase,
         ConvertedAssets memory convertedAssets,
