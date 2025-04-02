@@ -24,40 +24,36 @@ abstract contract RedeemCollateral is MaxRedeemCollateral, StateTransition, Lend
             }
         }
 
-        DeltaFuture memory deltaFuture;
-        {
-            uint256 supplyAfterFee = previewSupplyAfterFee();
-            uint256 sharesInAssets = shares.mulDivUp(totalAssets(), supplyAfterFee);
-            uint256 sharesInUnderlying = sharesInAssets.mulDivUp(getPrices().borrow, Constants.ORACLE_DIVIDER);
+        Prices memory prices = getPrices();
+        uint256 supplyAfterFee = previewSupplyAfterFee();
 
-            int256 assetsInUnderlying;
-            // int256 signedShares = previewMintRedeem(-1*int256(assets));
+        // HODLer <=> withdrawer conflict, round in favor of HODLer, round down to give less collateral
+        uint256 sharesInUnderlying = shares.mulDivDown(_totalAssets(false), supplyAfterFee).mulDivDown(prices.borrow, Constants.ORACLE_DIVIDER);
 
-            ConvertedAssets memory convertedAssets = recoverConvertedAssets();
-            Prices memory prices = getPrices();
-            (assetsInUnderlying, deltaFuture) = MintRedeem.calculateMintRedeem(
-                -int256(sharesInUnderlying),
-                false,
-                convertedAssets,
-                prices,
-                targetLTV
-            );
+        ConvertedAssets memory convertedAssets = recoverConvertedAssets(false);
+        (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = MintRedeem.calculateMintRedeem(
+            -int256(sharesInUnderlying),
+            false,
+            convertedAssets,
+            prices,
+            targetLTV
+        );
 
-            if (assetsInUnderlying > 0) {
-                return 0;
-            } else {
-                collateralAssets = uint256(-assetsInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.collateral);
-            }
-            applyMaxGrowthFee(supplyAfterFee);
-
-            _mintProtocolRewards(deltaFuture, prices, supplyAfterFee);
-
-            _burn(owner, shares);
-
-            NextState memory nextState = NextStep.calculateNextStep(convertedAssets, deltaFuture, block.number);
-
-            applyStateTransition(nextState);
+        if (assetsInUnderlying > 0) {
+            return 0;
         }
+        // HODLer <=> withdrawer conflict, round in favor of HODLer, round down to give less collateral
+        collateralAssets = uint256(-assetsInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.collateral);
+
+        applyMaxGrowthFee(supplyAfterFee);
+
+        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee, false);
+
+        _burn(owner, shares);
+
+        NextState memory nextState = NextStep.calculateNextStep(convertedAssets, deltaFuture, block.number);
+
+        applyStateTransition(nextState);
 
         withdraw(collateralAssets);
 

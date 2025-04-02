@@ -14,18 +14,16 @@ abstract contract PreviewDepositCollateral is MaxGrowthFee {
         int256 sharesInUnderlying = DepositWithdraw.previewDepositWithdraw(
             int256(collateralAssets),
             false,
-            recoverConvertedAssets(),
+            recoverConvertedAssets(true),
             prices,
             targetLTV
         );
 
-        uint256 sharesInAssets;
         if (sharesInUnderlying < 0) {
             return 0;
-        } else {
-            sharesInAssets = uint256(sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, getPrices().borrow);
         }
 
-        return sharesInAssets.mulDivDown(previewSupplyAfterFee(), totalAssets());
+        // HODLer <=> depositor conflict, round in favor of HODLer, round down to mint less shares
+        return uint256(sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow).mulDivDown(previewSupplyAfterFee(), _totalAssets(true));
     }
 }

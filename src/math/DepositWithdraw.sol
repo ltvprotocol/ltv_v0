@@ -10,6 +10,9 @@ import '../utils/MulDiv.sol';
 import './CommonBorrowCollateral.sol';
 
 library DepositWithdraw {
+    using uMulDiv for uint256;
+    using sMulDiv for int256;
+
     function calculateDepositWithdraw(
         int256 assets,
         bool isBorrowAssets,
@@ -17,8 +20,10 @@ library DepositWithdraw {
         Prices memory prices,
         uint128 targetLTV
     ) public pure returns (int256 sharesAsAssets, DeltaFuture memory deltaFuture) {
-        int256 deltaRealBorrow = isBorrowAssets ? assets * int256(prices.borrow / Constants.ORACLE_DIVIDER) : int256(0);
-        int256 deltaRealCollateral = isBorrowAssets ? int256(0) : assets * int256(prices.collateral / Constants.ORACLE_DIVIDER);
+        // depositor/withdrawer <=> HODLer conflict, assume user deposits less to mint less shares or withdraws more to burn more shares
+        int256 deltaRealBorrow = isBorrowAssets ? assets.mulDivUp(int256(prices.borrow), int256(Constants.ORACLE_DIVIDER)) : int256(0);
+        // depositor/withdrawer <=> HODLer conflict, assume user deposits less to mint less shares or withdraws more to burn more shares
+        int256 deltaRealCollateral = isBorrowAssets ? int256(0) : assets.mulDivDown(int256(prices.collateral), int256(Constants.ORACLE_DIVIDER));
 
         Cases memory cases = CasesOperator.generateCase(0);
 
