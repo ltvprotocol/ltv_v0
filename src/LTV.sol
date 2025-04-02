@@ -63,6 +63,10 @@ contract LTV is PreviewWithdraw, PreviewDeposit, PreviewMint, PreviewRedeem, Pre
         maxTotalAssetsInUnderlying = _maxTotalAssetsInUnderlying;
     }
 
+    function setFeeCollector(address _feeCollector) external onlyOwner {
+        feeCollector = _feeCollector;
+    }
+
     function borrow(uint256 assets) internal override {
         (bool isSuccess, ) = address(lendingConnector).delegatecall(abi.encodeCall(lendingConnector.borrow, (assets)));
         require(isSuccess);
