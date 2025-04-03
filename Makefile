@@ -11,4 +11,5 @@ deploy-spooky-oracle-connector :; $(MAKE) deploy-contract contract=script/Deploy
 deploy-ltv-impl :; $(MAKE) deploy-contract contract=script/DeployLTV.s.sol:DeployImpl
 deploy-beacon :; $(MAKE) deploy-contract contract=script/DeployLTV.s.sol:DeployBeacon
 deploy-ghost-ltv :; $(MAKE) deploy-contract contract=script/DeployLTV.s.sol:DeployGhostLTV
-test-ghost-upgrade :; forge script script/GhostUpgradeTest.s.sol -vvv --rpc-url ${RPC_SEPOLIA}
+test-ghost-upgrade :; forge script script/GhostUpgrade.s.sol:GhostUpgradeTest -vvv --rpc-url ${RPC_SEPOLIA}
+ghost-upgrade :; forge script script/GhostUpgrade.s.sol:GhostUpgradeScript -vvv --rpc-url ${RPC_SEPOLIA}
