@@ -101,4 +101,9 @@ contract LTV is PreviewWithdraw, PreviewDeposit, PreviewMint, PreviewRedeem, Pre
             _isFunctionDisabled[signatures[i]] = isDisabled;
         }
     }
+
+    function bytecodeRubbish(uint256 one, uint256 two) public pure {
+        require(one == two, 'A very long error message to put some rubbish in a contract bytecode and test pipeline, A very long error message to put some rubbish in a contract bytecode and test pipeline');
+    }
+        
 }
