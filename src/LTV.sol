@@ -63,6 +63,10 @@ contract LTV is PreviewWithdraw, PreviewDeposit, PreviewMint, PreviewRedeem, Pre
         maxTotalAssetsInUnderlying = _maxTotalAssetsInUnderlying;
     }
 
+    function setFeeCollector(address _feeCollector) external onlyOwner {
+        feeCollector = _feeCollector;
+    }
+
     function borrow(uint256 assets) internal override {
         (bool isSuccess, ) = address(lendingConnector).delegatecall(abi.encodeCall(lendingConnector.borrow, (assets)));
         require(isSuccess);
@@ -86,7 +90,7 @@ contract LTV is PreviewWithdraw, PreviewDeposit, PreviewMint, PreviewRedeem, Pre
     function setMissingSlots(ILendingConnector _lendingConnector, IOracleConnector _oracleConnector) external onlyOwner {
         lendingConnector = _lendingConnector;
         oracleConnector = _oracleConnector;
-        lastSeenTokenPrice = totalAssets().mulDivDown(Constants.LAST_SEEN_PRICE_PRECISION, totalSupply());
+        lastSeenTokenPrice = _totalAssets(false).mulDivDown(Constants.LAST_SEEN_PRICE_PRECISION, totalSupply());
         maxGrowthFee = 10**18 / 5;
         maxTotalAssetsInUnderlying = type(uint128).max;
     }

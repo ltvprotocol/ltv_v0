@@ -12,9 +12,11 @@ abstract contract MaxGrowthFee is TotalAssets, ERC20 {
     }
 
     function previewSupplyAfterFee() internal view returns (uint256) {
-        uint256 assets = totalAssets();
+        // fee collector has the lowest priority, so need to underestimate reward
+        uint256 assets = _totalAssets(false);
         uint256 supply = totalSupply();
 
+        // underestimate current price
         if (assets.mulDivDown(Constants.LAST_SEEN_PRICE_PRECISION, supply) <= lastSeenTokenPrice) {
             return supply;
         }
@@ -22,13 +24,14 @@ abstract contract MaxGrowthFee is TotalAssets, ERC20 {
         // divident: asset * supply
         // divisor: supply * maxGrowthFee * lastSeenTokenPrice + assets * (1 - maxGrowthFee)
         
-        return assets.mulDivUp(
+        // underestimate new supply to mint less tokens
+        return assets.mulDivDown(
               supply,
-              supply.mulDivDown(
+              supply.mulDivUp(
                     maxGrowthFee * lastSeenTokenPrice,
                     Constants.LAST_SEEN_PRICE_PRECISION * Constants.MAX_GROWTH_FEE_DIVIDER
               ) 
-              + assets.mulDivDown(
+              + assets.mulDivUp(
                     Constants.MAX_GROWTH_FEE_DIVIDER - maxGrowthFee,
                     Constants.MAX_GROWTH_FEE_DIVIDER
               )
@@ -39,7 +42,8 @@ abstract contract MaxGrowthFee is TotalAssets, ERC20 {
         uint256 supply = totalSupply();
         if (supplyAfterFee > supply) {
             _mint(feeCollector, supplyAfterFee - supply);
-            lastSeenTokenPrice = totalAssets().mulDivDown(Constants.LAST_SEEN_PRICE_PRECISION, supplyAfterFee);
+            // round new token price to the top to underestimate next fee
+            lastSeenTokenPrice = _totalAssets(true).mulDivUp(Constants.LAST_SEEN_PRICE_PRECISION, supplyAfterFee);
         }
     }
 }
