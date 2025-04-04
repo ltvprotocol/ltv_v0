@@ -46,8 +46,13 @@ contract LTV is
     ConvertToShares
 {
     using uMulDiv for uint256;
-    
-    function initialize(StateInitData memory stateInitData, address initialOwner, string memory _name, string memory _symbol) initializer public isFunctionAllowed {
+
+    function initialize(
+        StateInitData memory stateInitData,
+        address initialOwner,
+        string memory _name,
+        string memory _symbol
+    ) public initializer isFunctionAllowed {
         __State_init(stateInitData);
         __ERC20_init(_name, _symbol, 18);
         __Ownable_init(initialOwner);
@@ -83,12 +88,17 @@ contract LTV is
         maxTotalAssetsInUnderlying = _maxTotalAssetsInUnderlying;
     }
 
-    function setMissingSlots(ILendingConnector _lendingConnector, IOracleConnector _oracleConnector) external onlyOwner {
+    function setMissingSlots(
+        ILendingConnector _lendingConnector,
+        IOracleConnector _oracleConnector,
+        ISlippageProvider _slippageProvider
+    ) external onlyOwner {
         lendingConnector = _lendingConnector;
         oracleConnector = _oracleConnector;
         lastSeenTokenPrice = _totalAssets(false).mulDivDown(Constants.LAST_SEEN_PRICE_PRECISION, totalSupply());
         maxGrowthFee = 10 ** 18 / 5;
         maxTotalAssetsInUnderlying = type(uint128).max;
+        slippageProvider = _slippageProvider;
     }
 
     // batch can be removed to save ~250 bytes of contract size
