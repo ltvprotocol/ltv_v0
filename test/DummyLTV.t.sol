@@ -253,7 +253,7 @@ contract DummyLTVTest is Test {
         dummyLTV.transfer(user, dummyLTV.balanceOf(owner));
         slippageProvider.setBorrowSlippage(10**16);
 
-        assertEq(dummyLTV.maxRedeem(user), 625052 * 100);
+        assertEq(dummyLTV.maxRedeem(user), 625053 * 100);
         dummyLTV.redeem(dummyLTV.maxRedeem(user), user, user);
     }
 
@@ -334,12 +334,12 @@ contract DummyLTVTest is Test {
         // multiplied total assets by 2
         oracle.setAssetPrice(address(collateralToken), 250 * 10 ** 18);
 
-        // check that price grown not for 100% but for 80%. Precision fail because of vault inflation attack protection
-        assertEq(dummyLTV.convertToAssets(10**20), 18*10**17 - 1);
+        // check that price grown not for 100% but for 80%.
+        assertEq(dummyLTV.convertToAssets(10**20), 18*10**17);
         vm.startPrank(user);
         borrowToken.approve(address(dummyLTV), 1000);
         dummyLTV.deposit(1000, user);
-        assertEq(dummyLTV.convertToAssets(10**20), 18*10**17 - 1);
+        assertEq(dummyLTV.convertToAssets(10**20), 18*10**17);
     }
 
     function test_maxDepositFinalBorder(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {

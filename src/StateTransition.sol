@@ -3,9 +3,11 @@ pragma solidity ^0.8.28;
 
 import "./State.sol";
 import "./Structs.sol";
+import './Constants.sol';
 
 abstract contract StateTransition is State {
-    
+    using sMulDiv for int256;
+
     event StateUpdated(
         int256 oldFutureBorrowAssets,
         int256 oldFutureCollateralAssets,
@@ -20,9 +22,6 @@ abstract contract StateTransition is State {
     );
 
     function applyStateTransition(NextState memory nextState) internal {
-
-        // TODO: think about Up and Down
-
         int256 oldFutureBorrowAssets = futureBorrowAssets;
         int256 oldFutureCollateralAssets = futureCollateralAssets;
         int256 oldFutureRewardBorrowAssets = futureRewardBorrowAssets;
@@ -30,10 +29,12 @@ abstract contract StateTransition is State {
         uint256 oldStartAuction = startAuction;
 
 
-        futureBorrowAssets = nextState.futureBorrow * 1e18 / int(getPriceBorrowOracle()) ;
-        futureCollateralAssets = nextState.futureCollateral * 1e18 / int(getPriceCollateralOracle());
-        futureRewardBorrowAssets = nextState.futureRewardBorrow * 1e18 / int(getPriceBorrowOracle());
-        futureRewardCollateralAssets = nextState.futureRewardCollateral * 1e18 / int(getPriceCollateralOracle());
+        // Here we have conflict between HODLer and Future auction executor. Round in favor of HODLer
+
+        futureBorrowAssets = nextState.futureBorrow.mulDivDown(int256(Constants.ORACLE_DIVIDER), int256(getPriceBorrowOracle()));
+        futureCollateralAssets = nextState.futureCollateral.mulDivUp(int256(Constants.ORACLE_DIVIDER), int256(getPriceCollateralOracle()));
+        futureRewardBorrowAssets = nextState.futureRewardBorrow.mulDivDown(int256(Constants.ORACLE_DIVIDER), int256(getPriceBorrowOracle()));
+        futureRewardCollateralAssets = nextState.futureRewardCollateral.mulDivUp(int256(Constants.ORACLE_DIVIDER), int256(getPriceCollateralOracle()));
 
         if (nextState.merge) {
             startAuction = nextState.startAuction;

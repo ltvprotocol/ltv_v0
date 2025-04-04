@@ -21,11 +21,12 @@ abstract contract MintCollateral is MaxMintCollateral, StateTransition, Lending,
         require(shares <= max, ExceedsMaxMintCollateral(receiver, shares, max));
 
         uint256 supplyAfterFee = previewSupplyAfterFee();
-        uint256 sharesInAssets = shares.mulDivDown(totalAssets(), supplyAfterFee);
-        uint256 sharesInUnderlying = sharesInAssets.mulDivDown(getPriceBorrowOracle(), Constants.ORACLE_DIVIDER);
-
-        ConvertedAssets memory convertedAssets = recoverConvertedAssets();
         Prices memory prices = getPrices();
+
+        // round up to receive more assets
+        uint256 sharesInUnderlying = shares.mulDivUp(_totalAssets(true), supplyAfterFee).mulDivUp(prices.borrow, Constants.ORACLE_DIVIDER);
+
+        ConvertedAssets memory convertedAssets = recoverConvertedAssets(true);
         (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = MintRedeem.calculateMintRedeem(
             int256(sharesInUnderlying),
             false,
@@ -38,14 +39,15 @@ abstract contract MintCollateral is MaxMintCollateral, StateTransition, Lending,
             return 0;
         }
 
-        collateralAssets = uint256(assetsInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, getPriceCollateralOracle());
+        // round up to get more collateral
+        collateralAssets = uint256(assetsInUnderlying).mulDivUp(Constants.ORACLE_DIVIDER, prices.collateral);
 
-        // TODO: double check that Token should be transfered from msg.sender or from receiver
+        // TODO: safeTransfer
         collateralToken.transferFrom(msg.sender, address(this), collateralAssets);
 
         applyMaxGrowthFee(supplyAfterFee);
         
-        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee);
+        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee, true);
 
         supply(collateralAssets);
 

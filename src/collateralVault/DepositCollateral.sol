@@ -11,37 +11,42 @@ import './MaxDepositCollateral.sol';
 import '../ERC4626Events.sol';
 import '../MaxGrowthFee.sol';
 
-abstract contract DepositCollateral is MaxDepositCollateral, StateTransition, Lending, ERC4626Events  {
-
+abstract contract DepositCollateral is MaxDepositCollateral, StateTransition, Lending, ERC4626Events {
     using uMulDiv for uint256;
-    
+
     error ExceedsMaxDepositCollateral(address receiver, uint256 collateralAssets, uint256 max);
 
-    function depositCollateral(uint256 collateralAssets, address receiver) external isFunctionAllowed nonReentrant returns (uint256 shares) {
+    function depositCollateral(uint256 collateralAssets, address receiver) external isFunctionAllowed nonReentrant returns (uint256) {
         uint256 max = maxDepositCollateral(address(receiver));
         require(collateralAssets <= max, ExceedsMaxDepositCollateral(receiver, collateralAssets, max));
 
-        ConvertedAssets memory convertedAssets = recoverConvertedAssets();
+        ConvertedAssets memory convertedAssets = recoverConvertedAssets(true);
         Prices memory prices = getPrices();
         uint256 supplyAfterFee = previewSupplyAfterFee();
-        (
-            int256 signedSharesInUnderlying,
-            DeltaFuture memory deltaFuture
-        ) = DepositWithdraw.calculateDepositWithdraw(int256(collateralAssets), false, convertedAssets, prices, targetLTV);
+        (int256 signedSharesInUnderlying, DeltaFuture memory deltaFuture) = DepositWithdraw.calculateDepositWithdraw(
+            int256(collateralAssets),
+            false,
+            convertedAssets,
+            prices,
+            targetLTV
+        );
 
         if (signedSharesInUnderlying < 0) {
             return 0;
-        } else {
-            uint256 sharesInAssets = uint256(signedSharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, getPriceCollateralOracle());
-            shares = sharesInAssets.mulDivDown(supplyAfterFee, totalAssets());
         }
+
+        // HODLer <=> depositor conflict, round in favor of HODLer, round down to mint less shares
+        uint256 shares = uint256(signedSharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow).mulDivDown(
+            supplyAfterFee,
+            _totalAssets(true)
+        );
 
         // TODO: double check that Token should be transfered from msg.sender or from receiver
         collateralToken.transferFrom(msg.sender, address(this), collateralAssets);
-        
+
         applyMaxGrowthFee(supplyAfterFee);
 
-        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee);
+        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee, true);
 
         supply(collateralAssets);
 
