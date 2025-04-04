@@ -8,7 +8,7 @@ import './math/LowLevelMath.sol';
 abstract contract LowLevel is MaxGrowthFee, Lending {
     using sMulDiv for int256;
 
-    function previewLowLevelShares(int256 deltaShares) external view returns (int256, int256) {
+    function previewLowLevelRebalanceShares(int256 deltaShares) external view returns (int256, int256) {
         uint256 supplyAfterFee = previewSupplyAfterFee();
         (int256 deltaRealCollateral, int256 deltaRealBorrow, ) = LowLevelMath.calculateLowLevelShares(
             deltaShares,
@@ -21,7 +21,7 @@ abstract contract LowLevel is MaxGrowthFee, Lending {
         return (deltaRealCollateral, deltaRealBorrow);
     }
 
-    function executeLowLevelShares(int256 deltaShares) external isFunctionAllowed nonReentrant returns (int256, int256) {
+    function executeLowLevelRebalanceShares(int256 deltaShares) external isFunctionAllowed nonReentrant returns (int256, int256) {
         uint256 supplyAfterFee = previewSupplyAfterFee();
         applyMaxGrowthFee(supplyAfterFee);
         (int256 deltaRealCollateralAssets, int256 deltaRealBorrowAssets, int256 deltaProtocolFutureRewardShares) = LowLevelMath
@@ -38,26 +38,26 @@ abstract contract LowLevel is MaxGrowthFee, Lending {
         return (deltaRealCollateralAssets, deltaRealBorrowAssets);
     }
 
-    function previewLowLevelBorrow(int256 deltaBorrowAssets) external view returns (int256, int256) {
+    function previewLowLevelRebalanceBorrow(int256 deltaBorrowAssets) external view returns (int256, int256) {
         (int256 deltaRealCollateral, int256 deltaShares, ) = previewLowLevelBorrowHint(deltaBorrowAssets, true);
 
         return (deltaRealCollateral, deltaShares);
     }
 
-    function executeLowLevelBorrow(int256 deltaBorrowAssets) external returns (int256, int256) {
+    function executeLowLevelRebalanceBorrow(int256 deltaBorrowAssets) external returns (int256, int256) {
         return executeLowLevelBorrowHint(deltaBorrowAssets, true);
     }
 
-    function previewLowLevelCollateral(int256 deltaCollateralAssets) external view returns (int256, int256) {
+    function previewLowLevelRebalanceCollateral(int256 deltaCollateralAssets) external view returns (int256, int256) {
         (int256 deltaRealBorrow, int256 deltaShares, ) = previewLowLevelCollateralHint(deltaCollateralAssets, true);
         return (deltaRealBorrow, deltaShares);
     }
 
-    function executeLowLevelCollateral(int256 deltaCollateralAssets) external returns (int256, int256) {
+    function executeLowLevelRebalanceCollateral(int256 deltaCollateralAssets) external returns (int256, int256) {
         return executeLowLevelCollateralHint(deltaCollateralAssets, true);
     }
 
-    function executeLowLevelBorrowHint(int256 deltaBorrowAssets, bool isSharesPositiveHint) public isFunctionAllowed nonReentrant returns (int256, int256) {
+    function executeLowLevelRebalanceBorrowHint(int256 deltaBorrowAssets, bool isSharesPositiveHint) public isFunctionAllowed nonReentrant returns (int256, int256) {
         uint256 supplyAfterFee = previewSupplyAfterFee();
         (int256 deltaRealCollateralAssets, int256 deltaShares, int256 deltaProtocolFutureRewardShares) = _previewLowLevelBorrowHint(
             deltaBorrowAssets,
@@ -71,15 +71,15 @@ abstract contract LowLevel is MaxGrowthFee, Lending {
         return (deltaRealCollateralAssets, deltaShares);
     }
 
-    function previewLowLevelBorrowHint(int256 deltaBorrowAssets, bool isSharesPositiveHint) public view returns (int256, int256, int256) {
+    function previewLowLevelRebalanceBorrowHint(int256 deltaBorrowAssets, bool isSharesPositiveHint) public view returns (int256, int256, int256) {
         return _previewLowLevelBorrowHint(deltaBorrowAssets, isSharesPositiveHint, previewSupplyAfterFee());
     }
 
-    function previewLowLevelCollateralHint(int256 deltaCollateralAssets, bool isSharesPositiveHint) public view returns (int256, int256, int256) {
+    function previewLowLevelRebalanceCollateralHint(int256 deltaCollateralAssets, bool isSharesPositiveHint) public view returns (int256, int256, int256) {
         return _previewLowLevelCollateralHint(deltaCollateralAssets, isSharesPositiveHint, previewSupplyAfterFee());
     }
 
-    function executeLowLevelCollateralHint(int256 deltaCollateralAssets, bool isSharesPositiveHint) public isFunctionAllowed nonReentrant returns (int256, int256) {
+    function executeLowLevelRebalanceCollateralHint(int256 deltaCollateralAssets, bool isSharesPositiveHint) public isFunctionAllowed nonReentrant returns (int256, int256) {
         uint256 supplyAfterFee = previewSupplyAfterFee();
         (int256 deltaRealBorrowAssets, int256 deltaShares, int256 deltaProtocolFutureRewardShares) = _previewLowLevelCollateralHint(
             deltaCollateralAssets,
