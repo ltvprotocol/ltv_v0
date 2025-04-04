@@ -39,22 +39,22 @@ abstract contract LowLevel is MaxGrowthFee, Lending {
     }
 
     function previewLowLevelRebalanceBorrow(int256 deltaBorrowAssets) external view returns (int256, int256) {
-        (int256 deltaRealCollateral, int256 deltaShares, ) = previewLowLevelBorrowHint(deltaBorrowAssets, true);
+        (int256 deltaRealCollateral, int256 deltaShares, ) = previewLowLevelRebalanceBorrowHint(deltaBorrowAssets, true);
 
         return (deltaRealCollateral, deltaShares);
     }
 
     function executeLowLevelRebalanceBorrow(int256 deltaBorrowAssets) external returns (int256, int256) {
-        return executeLowLevelBorrowHint(deltaBorrowAssets, true);
+        return executeLowLevelRebalanceBorrowHint(deltaBorrowAssets, true);
     }
 
     function previewLowLevelRebalanceCollateral(int256 deltaCollateralAssets) external view returns (int256, int256) {
-        (int256 deltaRealBorrow, int256 deltaShares, ) = previewLowLevelCollateralHint(deltaCollateralAssets, true);
+        (int256 deltaRealBorrow, int256 deltaShares, ) = previewLowLevelRebalanceCollateralHint(deltaCollateralAssets, true);
         return (deltaRealBorrow, deltaShares);
     }
 
     function executeLowLevelRebalanceCollateral(int256 deltaCollateralAssets) external returns (int256, int256) {
-        return executeLowLevelCollateralHint(deltaCollateralAssets, true);
+        return executeLowLevelRebalanceCollateralHint(deltaCollateralAssets, true);
     }
 
     function executeLowLevelRebalanceBorrowHint(int256 deltaBorrowAssets, bool isSharesPositiveHint) public isFunctionAllowed nonReentrant returns (int256, int256) {
