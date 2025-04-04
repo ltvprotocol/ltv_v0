@@ -4,23 +4,26 @@ pragma solidity ^0.8.28;
 import '../Constants.sol';
 import '../borrowVault/TotalAssets.sol';
 import '../math/DepositWithdraw.sol';
-import '../math/MintRedeem.sol';
+import '../MaxGrowthFee.sol';
 
-abstract contract PreviewDepositCollateral is TotalAssets, DepositWithdraw, MintRedeem {
-
+abstract contract PreviewDepositCollateral is MaxGrowthFee {
     using uMulDiv for uint256;
 
     function previewDepositCollateral(uint256 collateralAssets) public view returns (uint256 shares) {
-        int256 sharesInUnderlying = previewDepositWithdraw(int256(collateralAssets), false);
+        Prices memory prices = getPrices();
+        int256 sharesInUnderlying = DepositWithdraw.previewDepositWithdraw(
+            int256(collateralAssets),
+            false,
+            recoverConvertedAssets(true),
+            prices,
+            targetLTV
+        );
 
-        uint256 sharesInAssets;
         if (sharesInUnderlying < 0) {
             return 0;
-        } else {
-            sharesInAssets = uint256(sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, getPrices().collateral);
         }
 
-        return sharesInAssets.mulDivDown(totalSupply(), totalAssets());
+        // HODLer <=> depositor conflict, round in favor of HODLer, round down to mint less shares
+        return uint256(sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow).mulDivDown(previewSupplyAfterFee(), _totalAssets(true));
     }
-
 }

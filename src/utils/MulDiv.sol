@@ -95,11 +95,17 @@ library uMulDiv {
         }
     }
 
+    function mulDiv(uint256 x, uint256 y, uint256 denominator, bool isUp) internal pure returns (uint256) {
+        if (isUp) {
+            return mulDivUp(x, y, denominator);
+        } else {
+            return mulDivDown(x, y, denominator);
+        }
+    }
 }
 
-// TODO: refactor to SMulDiv or SignedMulDiv 
+// TODO: refactor to SMulDiv or SignedMulDiv
 library sMulDiv {
-
     // Maximum value of a signed 256-bit integer
     int256 internal constant MAX_INT256 = type(int256).max;
 
@@ -107,63 +113,61 @@ library sMulDiv {
     int256 internal constant MIN_INT256 = type(int256).min;
 
     function mulDivDown(int256 x, int256 y, int256 denominator) internal pure returns (int256) {
-        require(denominator != 0, "Denominator cannot be zero");
+        require(denominator != 0, 'Denominator cannot be zero');
 
         if (y != 0 && x != 0) {
-            require((y > 0 && x <= MAX_INT256 / y && x >= MIN_INT256 / y) ||
-                    (y < 0 && x >= MAX_INT256 / y && x <= MIN_INT256 / y),
-                    "Multiplication overflow detected");
+            require(
+                (y > 0 && x <= MAX_INT256 / y && x >= MIN_INT256 / y) || (y < 0 && x >= MAX_INT256 / y && x <= MIN_INT256 / y),
+                'Multiplication overflow detected'
+            );
         }
 
         // Perform the multiplication
         int256 product = x * y;
 
-        // If both x and y are positive or negative, result is positive
-        // If one is negative and the other positive, result is negative
-        if ((x > 0 && y > 0) || (x < 0 && y < 0)) {
-            return product / denominator;
-        } else {
-            // To handle negative results correctly
-            int256 division = product / denominator;
-            int256 remainder = product % denominator;
-
-            // When x and y have opposite signs, the product is negative
-            // If there's a remainder, we adjust the division to round towards zero
-            if (remainder != 0) {
-                division -= 1;
-            }
+        int256 division = product / denominator;
+        if (division >= 0) {
             return division;
         }
+
+        if (product % denominator != 0) {
+            division -= 1;
+        }
+
+        return division;
     }
 
     function mulDivUp(int256 x, int256 y, int256 denominator) internal pure returns (int256) {
-        require(denominator != 0, "Denominator cannot be zero");
+        require(denominator != 0, 'Denominator cannot be zero');
 
         if (y != 0 && x != 0) {
-            require((y > 0 && x <= MAX_INT256 / y && x >= MIN_INT256 / y) ||
-                    (y < 0 && x >= MAX_INT256 / y && x <= MIN_INT256 / y),
-                    "Multiplication overflow detected");
+            require(
+                (y > 0 && x <= MAX_INT256 / y && x >= MIN_INT256 / y) || (y < 0 && x >= MAX_INT256 / y && x <= MIN_INT256 / y),
+                'Multiplication overflow detected'
+            );
         }
 
         // Perform the multiplication
         int256 product = x * y;
 
-        // If both x and y are positive or negative, result is positive
-        // If one is negative and the other positive, result is negative
-        if ((x > 0 && y > 0) || (x < 0 && y < 0)) {
-            // To handle negative results correctly
-            int256 division = product / denominator;
-            int256 remainder = product % denominator;
+        int256 division = product / denominator;
 
-            // When x and y have opposite signs, the product is negative
-            // If there's a remainder, we adjust the division to round towards zero
-            if (remainder != 0) {
-                division -= 1;
-            }
+        if (division <= 0) {
             return division;
-        } else {
-            return product / denominator;
         }
+
+        if (product % denominator != 0) {
+            division += 1;
+        }
+
+        return division;
     }
 
+    function mulDiv(int256 x, int256 y, int256 denominator, bool isUp) internal pure returns (int256) {
+        if (isUp) {
+            return mulDivUp(x, y, denominator);
+        } else {
+            return mulDivDown(x, y, denominator);
+        }
+    }
 }

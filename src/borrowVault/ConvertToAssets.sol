@@ -1,15 +1,17 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "./TotalAssets.sol";
-import "../ERC20.sol";
+import '../MaxGrowthFee.sol';
 import "../utils/MulDiv.sol";
 
-abstract contract ConvertToAssets is TotalAssets, ERC20 {
+abstract contract ConvertToAssets is MaxGrowthFee {
 
     using uMulDiv for uint256;
 
     function convertToAssets(uint256 shares) external view virtual returns (uint256) {
-        return shares.mulDivDown(totalAssets(), totalSupply());
+        // count with withdraw
+        return shares.mulDivDown(_totalAssets(false), previewSupplyAfterFee());
+        // count with deposit
+        // return shares.mulDivUp(_totalAssets(true), previewSupplyAfterFee());
     }
 }

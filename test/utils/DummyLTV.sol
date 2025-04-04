@@ -1,23 +1,14 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../../src/ltv_lendings/DummyLTV.sol';
+import '../../src/LTV.sol';
 
-contract MockDummyLTV is DummyLTV {
+contract DummyLTV is LTV {
     uint256 collateralSlippage;
     uint256 borrowSlippage;
 
-    constructor(
-        address initialOwner,
-        address collateralToken,
-        address borrowToken,
-        IDummyLending _lendingProtocol,
-        IDummyOracle _oracle,
-        uint256 customCollateralSlippage,
-        uint256 customBorrowSlippage,
-        address feeCollector
-    ) {
-        initialize(initialOwner, _lendingProtocol, _oracle, collateralToken, borrowToken, feeCollector);
+    constructor(StateInitData memory initData, address initialOwner, uint256 customCollateralSlippage, uint256 customBorrowSlippage) {
+        initialize(initData, initialOwner, 'Dummy LTV', 'DLTV');
         collateralSlippage = customCollateralSlippage;
         borrowSlippage = customBorrowSlippage;
     }
@@ -59,9 +50,12 @@ contract MockDummyLTV is DummyLTV {
     }
 
     function getPrices() internal view override returns (Prices memory) {
-        Prices memory prices = super.getPrices();
-        prices.collateralSlippage = collateralSlippage;
-        prices.borrowSlippage = borrowSlippage;
-        return prices;
+        return
+            Prices({
+                borrow: getPriceBorrowOracle(),
+                collateral: getPriceCollateralOracle(),
+                borrowSlippage: borrowSlippage,
+                collateralSlippage: collateralSlippage
+            });
     }
 }

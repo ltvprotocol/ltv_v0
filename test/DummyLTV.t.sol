@@ -1,16 +1,17 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../src/ltv_lendings/DummyLTV.sol";
 import "../src/dummy/DummyOracle.sol";
 import "forge-std/Test.sol";
 import {MockERC20} from "forge-std/mocks/MockERC20.sol";
 import {MockDummyLending} from "./utils/MockDummyLending.sol";
-import "./utils/MockDummyLTV.sol";
+import "./utils/DummyLTV.sol";
 import "../src/Constants.sol";
+import "../src/dummy/DummyLendingConnector.sol";
+import "../src/dummy/DummyOracleConnector.sol";
 
 contract DummyLTVTest is Test {
-    MockDummyLTV public dummyLTV;
+    DummyLTV public dummyLTV;
     MockERC20 public collateralToken;
     MockERC20 public borrowToken;
     MockDummyLending public lendingProtocol;
@@ -35,17 +36,31 @@ contract DummyLTVTest is Test {
 
         lendingProtocol = new MockDummyLending(owner);
         oracle = IDummyOracle(new DummyOracle(owner));
-
-        dummyLTV = new MockDummyLTV(
-            owner,
-            address(collateralToken),
-            address(borrowToken),
-            lendingProtocol,
-            oracle,
-            0,
-            0,
-            address(123)
+        DummyLendingConnector lendingConnector = new DummyLendingConnector(
+            collateralToken,
+            borrowToken,
+            lendingProtocol
         );
+        DummyOracleConnector oracleConnector = new DummyOracleConnector(
+            collateralToken,
+            borrowToken,
+            oracle
+        );
+
+        State.StateInitData memory initData = State.StateInitData({
+            collateralToken: address(collateralToken),
+            borrowToken: address(borrowToken),
+            feeCollector: owner,
+            maxSafeLTV: 9*10**17,
+            minProfitLTV: 5*10**17,
+            targetLTV: 75*10**16,
+            lendingConnector: lendingConnector,
+            oracleConnector: oracleConnector,
+            maxGrowthFee: 10**18 / 5,
+            maxTotalAssetsInUnderlying: type(uint128).max
+        }); 
+
+        dummyLTV = new DummyLTV(initData, owner, 0, 0);
 
         vm.startPrank(owner);
         Ownable(address(lendingProtocol)).transferOwnership(address(dummyLTV));
@@ -56,6 +71,7 @@ contract DummyLTVTest is Test {
         deal(address(borrowToken), user, type(uint112).max);
         deal(address(collateralToken), address(lendingProtocol), type(uint112).max);
         deal(address(collateralToken), user, type(uint112).max);
+
 
         dummyLTV.mintFreeTokens(borrowAmount * 1000, owner);
 
@@ -73,12 +89,10 @@ contract DummyLTVTest is Test {
             lendingProtocol.setBorrowBalance(address(borrowToken), uint256(int256(borrowAmount) * 10 * 3 - futureBorrow));
             dummyLTV.setFutureRewardCollateralAssets(auctionReward / 2);
         }
-
-        dummyLTV.setMaxSafeLTV(9*10**17);
-        dummyLTV.setMinProfitLTV(5*10**17);
-        dummyLTV.setTargetLTV(75*10**16);
         
         vm.startPrank(user);
+        collateralToken.approve(address(dummyLTV), type(uint112).max);
+        borrowToken.approve(address(dummyLTV), type(uint112).max);
         _;
     }
 
@@ -227,7 +241,7 @@ contract DummyLTVTest is Test {
         dummyLTV.transfer(user, dummyLTV.balanceOf(owner));
         dummyLTV.setBorrowSlippage(10**16);
 
-        assertEq(dummyLTV.maxRedeem(user), 625052 * 100);
+        assertEq(dummyLTV.maxRedeem(user), 625053 * 100);
         dummyLTV.redeem(dummyLTV.maxRedeem(user), user, user);
     }
 
@@ -259,4 +273,88 @@ contract DummyLTVTest is Test {
         assertEq(deltaBorrow, 950);
     }
 
+    function test_lowLevelNegativeAuctionShares(address owner, address user) public initializeBalancedTest(owner, user, 100000, -10000, -10000, 1000) {
+        (int256 deltaRealCollateralAssets, int256 deltaRealBorrowAssets) = dummyLTV.executeLowLevelShares(0);
+
+        assertEq(deltaRealCollateralAssets, -4000);
+        assertEq(deltaRealBorrowAssets, -7500);
+
+    }
+
+    function test_lowLevelNegativeAuctionCollateral(address owner, address user) public initializeBalancedTest(owner, user, 100000, -10000, -10000, 1000) {
+        (int256 deltaRealBorrowAssets, int256 deltaShares) = dummyLTV.executeLowLevelCollateral(-4000);
+
+        assertEq(deltaShares, 0);
+        assertEq(deltaRealBorrowAssets, -7500);
+    }    
+    
+    function test_lowLevelNegativeAuctionBorrow(address owner, address user) public initializeBalancedTest(owner, user, 100000, -10000, -10000, 1000) {
+        (int256 deltaRealCollateralAssets, int256 deltaShares) = dummyLTV.executeLowLevelBorrow(-7500);
+
+        assertEq(deltaShares, 0);
+        assertEq(deltaRealCollateralAssets, -4000);
+    }
+
+    function test_lowLevelPositiveAuctionShares(address owner, address user) public initializeBalancedTest(owner, user, 100000, 10000, 10000, -1000) {
+        (int256 deltaRealCollateralAssets, int256 deltaRealBorrowAssets) = dummyLTV.executeLowLevelShares(1000 * 100);
+
+        assertEq(deltaRealCollateralAssets, 7500);
+        assertEq(deltaRealBorrowAssets, 14500);
+    }
+
+    function test_lowLevelPositiveAuctionBorrow(address owner, address user) public initializeBalancedTest(owner, user, 100000, 10000, 10000, -1000) {
+        (int256 deltaRealCollateralAssets, int256 deltaShares) = dummyLTV.executeLowLevelBorrow(14500);
+
+        assertEq(deltaRealCollateralAssets, 7500);
+        assertEq(deltaShares, 1000 * 100);
+    }
+
+    function test_lowLevelPositiveAuctionCollateral(address owner, address user) public initializeBalancedTest(owner, user, 100000, 10000, 10000, -1000) {
+        (int256 deltaRealBorrowAssets, int256 deltaShares) = dummyLTV.executeLowLevelCollateral(7500);
+
+        assertEq(deltaRealBorrowAssets, 14500);
+        assertEq(deltaShares, 1000 * 100);
+    }
+
+    function test_maxGrowthFee(address owner, address user) public initializeBalancedTest(owner, user, 10**18, 0, 0, 0) {
+        vm.stopPrank();
+        vm.startPrank(owner);
+        // multiplied total assets by 2
+        oracle.setAssetPrice(address(collateralToken), 250 * 10 ** 18);
+
+        // check that price grown not for 100% but for 80%.
+        assertEq(dummyLTV.convertToAssets(10**20), 18*10**17);
+        vm.startPrank(user);
+        borrowToken.approve(address(dummyLTV), 1000);
+        dummyLTV.deposit(1000, user);
+        assertEq(dummyLTV.convertToAssets(10**20), 18*10**17);
+    }
+
+    function test_maxDepositFinalBorder(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        vm.stopPrank();
+        vm.startPrank(owner);
+        dummyLTV.setMaxTotalAssetsInUnderlying(10**18 * 100 + 10**8);
+        assertEq(dummyLTV.maxDeposit(user), 10**6);
+    }
+
+    function test_maxMintFinalBorder(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        vm.stopPrank();
+        vm.startPrank(owner);
+        dummyLTV.setMaxTotalAssetsInUnderlying(10**18 * 100 + 10**8);
+        assertEq(dummyLTV.maxMint(user), dummyLTV.previewDeposit(10**6));
+    }
+
+    function test_maxDepositCollateralFinalBorder(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        vm.stopPrank();
+        vm.startPrank(owner);
+        dummyLTV.setMaxTotalAssetsInUnderlying(10**18 * 100 + 10**8);
+        assertEq(dummyLTV.maxDepositCollateral(user), 5 * 10**5);
+    }
+
+    function test_maxMintCollateralFinalBorder(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        vm.stopPrank();
+        vm.startPrank(owner);
+        dummyLTV.setMaxTotalAssetsInUnderlying(10**18 * 100 + 10**8);
+        assertEq(dummyLTV.maxMintCollateral(user), dummyLTV.previewDepositCollateral(5 * 10**5));
+    }
 }
