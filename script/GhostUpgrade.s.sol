@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import '@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol';
 import {LTV} from '../src/LTV.sol';
 import {HodlLendingConnector} from '../src/ghost/connectors/HodlLendingConnector.sol';
 import {SpookyOracleConnector} from '../src/ghost/connectors/SpookyOracleConnector.sol';
@@ -9,21 +8,24 @@ import {IHodlMyBeerLending} from '../src/ghost/hodlmybeer/IHodlMyBeerLending.sol
 import {ConstantSlippageProvider} from '../src/utils/ConstantSlippageProvider.sol';
 import {ISpookyOracle} from '../src/ghost/spooky/ISpookyOracle.sol';
 import {IERC20} from 'forge-std/interfaces/IERC20.sol';
+import '@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol';
 import 'forge-std/StdAssertions.sol';
 import 'forge-std/StdCheats.sol';
 import 'forge-std/Script.sol';
 
 contract GhostUpgradeCommon is Script {
     address internal constant LTV_ADDRESS = 0xE2A7f267124AC3E4131f27b9159c78C521A44F3c;
+    address internal constant PROXY_ADMIN_ADDRESS = 0xCeF37fa937b8b38DEA0BdF417074025aE916E8D0;
     address internal constant COLLATERAL_TOKEN = 0x8f7b2044F9aA6fbf495c1cC3bDE120dF9032aE43;
     address internal constant BORROW_TOKEN = 0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14;
+    address internal constant PROXY_ADMIN_OWNER = 0xe79782D86D26c745B3407e102A9D3Ea1A7158929;
 
     function upgrade() internal {
-        ITransparentUpgradeableProxy proxy = ITransparentUpgradeableProxy(LTV_ADDRESS);
+        ProxyAdmin proxyAdmin = ProxyAdmin(PROXY_ADMIN_ADDRESS);
 
         LTV ltvImpl = new LTV();
 
-        proxy.upgradeToAndCall(address(ltvImpl), '');
+        proxyAdmin.upgradeAndCall(ITransparentUpgradeableProxy(LTV_ADDRESS), address(ltvImpl), '');
         console.log('Upgraded LTV to: ', address(ltvImpl));
     }
 
@@ -50,12 +52,11 @@ contract GhostUpgradeCommon is Script {
 
 contract GhostUpgradeTest is GhostUpgradeCommon, StdAssertions, StdCheats {
     function run() public {
-        address admin = address(bytes20(uint160(uint256(vm.load(LTV_ADDRESS, 0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103)))));
         LTV ltv = LTV(LTV_ADDRESS);
         uint256 depositAmount = 10 ** 16;
         uint256 oldPreview = ltv.previewDeposit(depositAmount);
-
-        vm.startPrank(admin);
+        
+        vm.startPrank(PROXY_ADMIN_OWNER);
         upgrade();
         vm.stopPrank();
         vm.startPrank(ltv.owner());
@@ -72,11 +73,14 @@ contract GhostUpgradeTest is GhostUpgradeCommon, StdAssertions, StdCheats {
 
 contract GhostUpgradeScript is GhostUpgradeCommon {
     function run() public {
-        uint256 proxyOwnerPrivateKey = vm.envUint('PROXY_OWNER_PRIVATE_KEY');
+        uint256 proxyAdminOwnerPrivateKey = vm.envUint('PROXY_ADMIN_OWNER_PRIVATE_KEY');
         uint256 ltvOwnerPrivateKey = vm.envUint('LTV_OWNER_PRIVATE_KEY');
         address slippageProviderOwner = vm.envAddress('SLIPPAGE_PROVIDER_OWNER');
 
-        vm.startBroadcast(proxyOwnerPrivateKey);
+        require(vm.addr(proxyAdminOwnerPrivateKey) == PROXY_ADMIN_OWNER, 'Invalid proxy admin owner private key');
+        require(vm.addr(ltvOwnerPrivateKey) == LTV(LTV_ADDRESS).owner(), 'Invalid LTV owner private key');
+
+        vm.startBroadcast(proxyAdminOwnerPrivateKey);
         upgrade();
         vm.stopBroadcast();
         vm.startBroadcast(ltvOwnerPrivateKey);
