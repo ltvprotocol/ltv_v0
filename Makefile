@@ -8,6 +8,7 @@ deploy-spooky-oracle :; $(MAKE) deploy-contract contract=script/ghost/DeploySpoo
 deploy-hodl-my-beer-lending :; $(MAKE) deploy-contract contract=script/ghost/DeployHodlMyBeerLending.s.sol
 deploy-hodl-lending-connector :; $(MAKE) deploy-contract contract=script/DeployLendingConnector.s.sol:DeployHodlLendingConnector
 deploy-spooky-oracle-connector :; $(MAKE) deploy-contract contract=script/DeployOracleConnector.s.sol:DeploySpookyOracleConnector
+deploy-constant-slippage-provider :; $(MAKE) deploy-contract contract=script/DeployConstantSlippageProvider.s.sol
 deploy-ltv-impl :; $(MAKE) deploy-contract contract=script/DeployLTV.s.sol:DeployImpl
 deploy-beacon :; $(MAKE) deploy-contract contract=script/DeployLTV.s.sol:DeployBeacon
 deploy-ghost-ltv :; $(MAKE) deploy-contract contract=script/DeployLTV.s.sol:DeployGhostLTV
