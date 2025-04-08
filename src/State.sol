@@ -52,6 +52,7 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     uint256 public maxTotalAssetsInUnderlying;
 
     mapping(bytes4 => bool) public _isFunctionDisabled;
+    address whitelistedAddress;
 
     struct StateInitData {
         address collateralToken;
@@ -66,7 +67,8 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
         uint256 maxTotalAssetsInUnderlying;
     }
 
-    error FunctionNotAllowed();
+    error FunctionStopped(bytes4 functionSignature);
+    error SenderNotWhitelisted(address sender);
 
     modifier isFunctionAllowed() {
         _checkFunctionAllowed();
@@ -200,6 +202,7 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     }
 
     function _checkFunctionAllowed() private view {
-        require(msg.sender == owner() || !_isFunctionDisabled[msg.sig], FunctionNotAllowed());
+        require(msg.sender == owner() || !_isFunctionDisabled[msg.sig], FunctionStopped(msg.sig));
+        require(whitelistedAddress == address(0) || msg.sender == whitelistedAddress, SenderNotWhitelisted(msg.sender));
     }
 }
