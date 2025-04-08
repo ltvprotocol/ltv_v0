@@ -24,8 +24,8 @@ jobs:
       - name: Forge build
         run: forge build
 
-      - name: Check contract sizes
-        # run: forge build --skip test --sizes
+      # - name: Check contract sizes
+      #   run: forge build --skip test --sizes
   test:
     runs-on: ubuntu-latest
     steps:
