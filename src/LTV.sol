@@ -37,19 +37,24 @@ contract LTV is PreviewWithdraw, PreviewDeposit, PreviewMint, PreviewRedeem, Pre
     event MinProfitLTVChanged(uint128 oldValue, uint128 newValue);
     event TargetLTVChanged(uint128 oldValue, uint128 newValue);
 
+    error InvalidLTVSet(uint128 targetLTV, uint128 maxSafeLTV, uint128 minProfitLTV);
+
     function setTargetLTV(uint128 value) external onlyOwner {
+        require(value <= maxSafeLTV && value >= minProfitLTV, InvalidLTVSet(value, maxSafeLTV, minProfitLTV));
         uint128 oldValue = targetLTV;
         targetLTV = value;
         emit TargetLTVChanged(oldValue, targetLTV);
     }
 
     function setMaxSafeLTV(uint128 value) external onlyOwner {
+        require(value >= targetLTV, InvalidLTVSet(targetLTV, value, minProfitLTV));
         uint128 oldValue = maxSafeLTV;
         maxSafeLTV = value;
         emit MaxSafeLTVChanged(oldValue, value);
     }
 
     function setMinProfitLTV(uint128 value) external onlyOwner {
+        require(value <= targetLTV, InvalidLTVSet(targetLTV, maxSafeLTV, value));
         uint128 oldValue = minProfitLTV;
         minProfitLTV = value;
         emit MinProfitLTVChanged(oldValue, value);
