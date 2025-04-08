@@ -9,6 +9,7 @@ import "./utils/DummyLTV.t.sol";
 import "../src/Constants.sol";
 import "../src/dummy/DummyLendingConnector.sol";
 import "../src/dummy/DummyOracleConnector.sol";
+import '../src/utils/ContractBalanceLendingConnector.sol';
 
 contract DummyLTVTest is Test {
     DummyLTV public dummyLTV;
@@ -356,5 +357,29 @@ contract DummyLTVTest is Test {
         vm.startPrank(owner);
         dummyLTV.setMaxTotalAssetsInUnderlying(10**18 * 100 + 10**8);
         assertEq(dummyLTV.maxMintCollateral(user), dummyLTV.previewDepositCollateral(5 * 10**5));
+    }
+
+    function test_delevarage(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        vm.stopPrank();
+        vm.startPrank(owner);
+        dummyLTV.setMinProfitLTV(0);
+        dummyLTV.setTargetLTV(0);
+        vm.startPrank(user);
+        dummyLTV.executeLowLevelShares(0);
+        assertEq(dummyLTV.getRealBorrowAssets(), 0);
+        assertEq(dummyLTV.getRealCollateralAssets(), 5 * 10**17);
+        assertGt(dummyLTV.totalAssets(), 0);
+    }
+
+    function test_leave_lending(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        vm.stopPrank();
+        vm.startPrank(owner);
+        dummyLTV.setMinProfitLTV(0);
+        dummyLTV.setTargetLTV(0);
+        vm.startPrank(user);
+        dummyLTV.executeLowLevelShares(0);
+        vm.startPrank(owner);
+        dummyLTV.leaveLendingProtocol(address(new ContractBalanceLendingConnector(collateralToken, borrowToken)));
+        assertEq(dummyLTV.withdrawCollateral(10**10, owner, owner), 2 * 10**12);
     }
 }
