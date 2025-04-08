@@ -15,7 +15,7 @@ abstract contract RedeemCollateral is MaxRedeemCollateral, StateTransition, Lend
 
     error ExceedsMaxRedeemCollateral(address owner, uint256 shares, uint256 max);
 
-    function redeemCollateral(uint256 shares, address receiver, address owner) external returns (uint256 collateralAssets) {
+    function redeemCollateral(uint256 shares, address receiver, address owner) external isFunctionAllowed nonReentrant returns (uint256 collateralAssets) {
         {
             uint256 max = maxRedeemCollateral(address(owner));
             require(shares <= max, ExceedsMaxRedeemCollateral(owner, shares, max));
@@ -27,10 +27,10 @@ abstract contract RedeemCollateral is MaxRedeemCollateral, StateTransition, Lend
         Prices memory prices = getPrices();
         uint256 supplyAfterFee = previewSupplyAfterFee();
 
-        // round down to give less collateral
-        uint256 sharesInUnderlying = shares.mulDivUp(totalAssetsCollateral(), supplyAfterFee).mulDivUp(prices.collateral, Constants.ORACLE_DIVIDER);
+        // HODLer <=> withdrawer conflict, round in favor of HODLer, round down to give less collateral
+        uint256 sharesInUnderlying = shares.mulDivDown(_totalAssetsCollateral(false), supplyAfterFee).mulDivDown(prices.collateral, Constants.ORACLE_DIVIDER);
 
-        ConvertedAssets memory convertedAssets = recoverConvertedAssets();
+        ConvertedAssets memory convertedAssets = recoverConvertedAssets(false);
         (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = MintRedeem.calculateMintRedeem(
             -int256(sharesInUnderlying),
             false,
@@ -42,12 +42,12 @@ abstract contract RedeemCollateral is MaxRedeemCollateral, StateTransition, Lend
         if (assetsInUnderlying > 0) {
             return 0;
         }
-        // round down to give less collateral
+        // HODLer <=> withdrawer conflict, round in favor of HODLer, round down to give less collateral
         collateralAssets = uint256(-assetsInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.collateral);
 
         applyMaxGrowthFee(supplyAfterFee);
 
-        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee);
+        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee, false);
 
         _burn(owner, shares);
 

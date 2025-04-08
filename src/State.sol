@@ -8,11 +8,15 @@ import './Structs.sol';
 import './utils/MulDiv.sol';
 
 import 'forge-std/interfaces/IERC20.sol';
+
+import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
+import '@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
+
 import './interfaces/ILendingConnector.sol';
 import './interfaces/IOracleConnector.sol';
 
-abstract contract State is OwnableUpgradeable {
+abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     using uMulDiv for uint256;
     using sMulDiv for int256;
 
@@ -65,7 +69,7 @@ abstract contract State is OwnableUpgradeable {
     error FunctionNotAllowed();
 
     modifier isFunctionAllowed() {
-        require(msg.sender == owner() || !_isFunctionDisabled[msg.sig], FunctionNotAllowed());
+        _checkFunctionAllowed();
         _;
     }
 
@@ -81,14 +85,30 @@ abstract contract State is OwnableUpgradeable {
         maxGrowthFee = initData.maxGrowthFee;
         maxTotalAssetsInUnderlying = initData.maxTotalAssetsInUnderlying;
 
-        lastSeenTokenPrice = 10**18;
+        lastSeenTokenPrice = 10 ** 18;
     }
 
-    function totalAssets() public view virtual returns (uint256);
+    function _totalAssets(bool isDeposit) internal view virtual returns (uint256);
 
     function totalSupply() public view returns (uint256) {
         // add 100 to avoid vault inflation attack
         return baseTotalSupply + 100;
+    }
+
+    function getPriceBorrowOracle() public view returns (uint256) {
+        return oracleConnector.getPriceBorrowOracle();
+    }
+
+    function getPriceCollateralOracle() public view returns (uint256) {
+        return oracleConnector.getPriceCollateralOracle();
+    }
+
+    function getRealBorrowAssets() public view returns (uint256) {
+        return lendingConnector.getRealBorrowAssets();
+    }
+
+    function getRealCollateralAssets() public view returns (uint256) {
+        return lendingConnector.getRealCollateralAssets();
     }
     
     function getAuctionStep() internal view returns (uint256) {
@@ -103,31 +123,36 @@ abstract contract State is OwnableUpgradeable {
         return auctionStep;
     }
 
-    function recoverConvertedAssets() internal view returns (ConvertedAssets memory) {
-        // borrow should be round up
-        // because this is the amount that protocol should pay
-        int256 realBorrow = int256(getRealBorrowAssets().mulDivUp(getPriceBorrowOracle(), Constants.ORACLE_DIVIDER));
+    function recoverConvertedAssets(bool isDeposit) internal view returns (ConvertedAssets memory) {
+        // In case of deposit we have HODLer <=> depositor conflict, need to overestimate totalAssets() to underestimate user reward.
+        // It's applied to every single rounding in this file.
 
-        // collateral should be round down
-        // because this is the amount that protocol owns
-        int256 realCollateral = int256(getRealCollateralAssets().mulDivDown(getPriceCollateralOracle(), Constants.ORACLE_DIVIDER));
+        // in case of deposit we need to assume more assets in the protocol, so round borrow down
+        int256 realBorrow = int256(getRealBorrowAssets().mulDiv(getPriceBorrowOracle(), Constants.ORACLE_DIVIDER, !isDeposit));
 
-        // futureBorrow should be round up to assume less assets in the protocol
-        int256 futureBorrow = futureBorrowAssets.mulDivUp(int256(getPriceBorrowOracle()), int256(Constants.ORACLE_DIVIDER));
+        // in case of deposit we need to assume more assets in the protocol, so round collateral up
+        int256 realCollateral = int256(getRealCollateralAssets().mulDiv(getPriceCollateralOracle(), Constants.ORACLE_DIVIDER, isDeposit));
 
-        // futureCollateral should be round down to assume less assets in the protocol
-        int256 futureCollateral = futureCollateralAssets.mulDivDown(int256(getPriceCollateralOracle()), int256(Constants.ORACLE_DIVIDER));
+        // in case of deposit we need to assume more assets in the protocol, so round borrow down
+        int256 futureBorrow = futureBorrowAssets.mulDiv(int256(getPriceBorrowOracle()), int256(Constants.ORACLE_DIVIDER), !isDeposit);
 
-        // futureRewardBorrow should be round up to assume less assets in the protocol
-        int256 futureRewardBorrow = futureRewardBorrowAssets.mulDivUp(int256(getPriceBorrowOracle()), int256(Constants.ORACLE_DIVIDER));
+        // in case of deposit we need to assume more assets in the protocol, so round collateral up
+        int256 futureCollateral = futureCollateralAssets.mulDiv(int256(getPriceCollateralOracle()), int256(Constants.ORACLE_DIVIDER), isDeposit);
 
-        // futureRewardCollateral should be round down to assume less assets in the protocol
-        int256 futureRewardCollateral = futureRewardCollateralAssets.mulDivUp(int256(getPriceCollateralOracle()), int256(Constants.ORACLE_DIVIDER));
+        // in case of deposit we need to assume more assets in the protocol, so round borrow down
+        int256 futureRewardBorrow = futureRewardBorrowAssets.mulDiv(int256(getPriceBorrowOracle()), int256(Constants.ORACLE_DIVIDER), !isDeposit);
 
-        // give user a bit more rewards
+        // in case of deposit we need to assume more assets in the protocol, so round collateral up
+        int256 futureRewardCollateral = futureRewardCollateralAssets.mulDiv(
+            int256(getPriceCollateralOracle()),
+            int256(Constants.ORACLE_DIVIDER),
+            isDeposit
+        );
+
+        // Fee collector <=> Auction executor conflict. Resolve it in favor of the auction executor.
         int256 userFutureRewardBorrow = futureRewardBorrow.mulDivUp(int256(getAuctionStep()), int256(Constants.AMOUNT_OF_STEPS));
 
-        // give user a bit more rewards
+        // Fee collector <=> Auction executor conflict. Resolve it in favor of the auction executor.
         int256 userFutureRewardCollateral = futureRewardCollateral.mulDivDown(int256(getAuctionStep()), int256(Constants.AMOUNT_OF_STEPS));
 
         int256 protocolFutureRewardBorrow = futureRewardBorrow - userFutureRewardBorrow;
@@ -159,33 +184,22 @@ abstract contract State is OwnableUpgradeable {
             Prices({borrow: getPriceBorrowOracle(), collateral: getPriceCollateralOracle(), borrowSlippage: 10 ** 16, collateralSlippage: 10 ** 16});
     }
 
-    function getAvailableSpaceInShares(ConvertedAssets memory convertedAssets, uint256 supply) internal view returns (uint256) {
+    function getAvailableSpaceInShares(ConvertedAssets memory convertedAssets, uint256 supply, bool isDeposit) internal view returns (uint256) {
         uint256 totalAssetsInUnderlying = uint256(convertedAssets.collateral - convertedAssets.borrow);
 
         if (totalAssetsInUnderlying >= maxTotalAssetsInUnderlying) {
             return 0;
         }
 
+        // round down to assume less available space
         uint256 availableSpaceInShares = (maxTotalAssetsInUnderlying - totalAssetsInUnderlying)
             .mulDivDown(Constants.ORACLE_DIVIDER, getPriceBorrowOracle())
-            .mulDivDown(supply, totalAssets());
+            .mulDivDown(supply, _totalAssets(isDeposit));
 
         return availableSpaceInShares;
     }
 
-    function getPriceBorrowOracle() public view returns (uint256) {
-        return oracleConnector.getPriceBorrowOracle();
-    }
-
-    function getPriceCollateralOracle() public view returns (uint256) {
-        return oracleConnector.getPriceCollateralOracle();
-    }
-
-    function getRealBorrowAssets() public view returns (uint256) {
-        return lendingConnector.getRealBorrowAssets();
-    }
-
-    function getRealCollateralAssets() public view returns (uint256) {
-        return lendingConnector.getRealCollateralAssets();
+    function _checkFunctionAllowed() private view {
+        require(msg.sender == owner() || !_isFunctionDisabled[msg.sig], FunctionNotAllowed());
     }
 }

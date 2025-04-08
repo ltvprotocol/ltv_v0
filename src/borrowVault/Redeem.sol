@@ -15,7 +15,7 @@ abstract contract Redeem is MaxRedeem, StateTransition, Lending, ERC4626Events {
 
     error ExceedsMaxRedeem(address owner, uint256 shares, uint256 max);
 
-    function redeem(uint256 shares, address receiver, address owner) external returns (uint256 assets) {
+    function redeem(uint256 shares, address receiver, address owner) external isFunctionAllowed nonReentrant returns (uint256 assets) {
         {
             uint256 max = maxRedeem(address(owner));
             require(shares <= max, ExceedsMaxRedeem(owner, shares, max));
@@ -25,11 +25,11 @@ abstract contract Redeem is MaxRedeem, StateTransition, Lending, ERC4626Events {
         }
 
         uint256 supplyAfterFee = previewSupplyAfterFee();
-        // round down to give less assets for provided shares
         Prices memory prices = getPrices();
-        uint256 sharesInUnderlying = shares.mulDivDown(totalAssets(), supplyAfterFee).mulDivDown(prices.borrow, Constants.ORACLE_DIVIDER);
+        // HODLer <=> withdrawer conflict, round in favor of HODLer, round down to give less assets for provided shares
+        uint256 sharesInUnderlying = shares.mulDivDown(_totalAssets(false), supplyAfterFee).mulDivDown(prices.borrow, Constants.ORACLE_DIVIDER);
 
-        ConvertedAssets memory convertedAssets = recoverConvertedAssets();
+        ConvertedAssets memory convertedAssets = recoverConvertedAssets(false);
         (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = MintRedeem.calculateMintRedeem(
             -int256(sharesInUnderlying),
             true,
@@ -42,11 +42,11 @@ abstract contract Redeem is MaxRedeem, StateTransition, Lending, ERC4626Events {
             return 0;
         }
 
-        // round down to give less assets
+        // HODLer <=> withdrawer conflict, round in favor of HODLer, round down to give less assets
         assets = uint256(assetsInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow);
         applyMaxGrowthFee(supplyAfterFee);
 
-        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee);
+        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee, false);
 
         _burn(owner, shares);
 

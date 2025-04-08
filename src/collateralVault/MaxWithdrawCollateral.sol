@@ -7,7 +7,7 @@ abstract contract MaxWithdrawCollateral is MaxGrowthFee {
     using uMulDiv for uint256;
 
     function maxWithdrawCollateral(address owner) public view returns (uint256) {
-        ConvertedAssets memory convertedAssets = recoverConvertedAssets();
+        ConvertedAssets memory convertedAssets = recoverConvertedAssets(false);
         // round up to assume smaller border
         uint256 maxSafeRealCollateral = uint256(convertedAssets.realBorrow).mulDivUp(Constants.LTV_DIVIDER, maxSafeLTV);
         if (uint256(convertedAssets.realCollateral) <= maxSafeRealCollateral) {
@@ -15,7 +15,7 @@ abstract contract MaxWithdrawCollateral is MaxGrowthFee {
         }
         uint256 vaultMaxWithdrawInUnderlying = uint256(convertedAssets.realCollateral) - maxSafeRealCollateral;
         // round down to assume smaller border
-        uint256 userBalanceInUnderlying = balanceOf[owner].mulDivDown(totalAssets(), previewSupplyAfterFee()).mulDivDown(
+        uint256 userBalanceInUnderlying = balanceOf[owner].mulDivDown(_totalAssets(false), previewSupplyAfterFee()).mulDivDown(
             getPriceBorrowOracle(),
             Constants.ORACLE_DIVIDER
         );

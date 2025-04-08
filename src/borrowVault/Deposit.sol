@@ -13,11 +13,11 @@ abstract contract Deposit is MaxDeposit, StateTransition, Lending, ERC4626Events
 
     error ExceedsMaxDeposit(address receiver, uint256 assets, uint256 max);
 
-    function deposit(uint256 assets, address receiver) external returns (uint256) {
+    function deposit(uint256 assets, address receiver) external isFunctionAllowed nonReentrant returns (uint256) {
         uint256 max = maxDeposit(address(receiver));
         require(assets <= max, ExceedsMaxDeposit(receiver, assets, max));
 
-        ConvertedAssets memory convertedAssets = recoverConvertedAssets();
+        ConvertedAssets memory convertedAssets = recoverConvertedAssets(true);
         Prices memory prices = getPrices();
         (int256 signedSharesInUnderlying, DeltaFuture memory deltaFuture) = DepositWithdraw.calculateDepositWithdraw(
             -1 * int256(assets),
@@ -32,14 +32,17 @@ abstract contract Deposit is MaxDeposit, StateTransition, Lending, ERC4626Events
             return 0;
         }
 
-        // less shares are minted - the bigger token price
-        uint256 shares = uint256(signedSharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow).mulDivDown(supplyAfterFee, totalAssets());
+        // Conflict HODLer <=> Depositor, resolve in favor of HODLer
+        uint256 shares = uint256(signedSharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow).mulDivDown(
+            supplyAfterFee,
+            _totalAssets(true)
+        );
 
         borrowToken.transferFrom(msg.sender, address(this), assets);
 
         applyMaxGrowthFee(supplyAfterFee);
 
-        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee);
+        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee, true);
 
         repay(assets);
 

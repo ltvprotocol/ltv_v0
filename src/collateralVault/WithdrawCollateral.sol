@@ -15,11 +15,11 @@ abstract contract WithdrawCollateral is MaxWithdrawCollateral, StateTransition, 
 
     error ExceedsMaxWithdrawCollateral(address owner, uint256 collateralAssets, uint256 max);
 
-    function withdrawCollateral(uint256 collateralAssets, address receiver, address owner) external returns (uint256) {
+    function withdrawCollateral(uint256 collateralAssets, address receiver, address owner) external isFunctionAllowed nonReentrant returns (uint256) {
         uint256 max = maxWithdrawCollateral(address(owner));
         require(collateralAssets <= max, ExceedsMaxWithdrawCollateral(owner, collateralAssets, max));
 
-        ConvertedAssets memory convertedAssets = recoverConvertedAssets();
+        ConvertedAssets memory convertedAssets = recoverConvertedAssets(false);
         Prices memory prices = getPrices();
         (int256 sharesInUnderlying, DeltaFuture memory deltaFuture) = DepositWithdraw.calculateDepositWithdraw(
             -int256(collateralAssets),
@@ -34,8 +34,8 @@ abstract contract WithdrawCollateral is MaxWithdrawCollateral, StateTransition, 
             return 0;
         }
 
-        // round up to burn more shares
-        uint256 shares = uint256(-sharesInUnderlying).mulDivUp(Constants.ORACLE_DIVIDER, prices.collateral).mulDivUp(supplyAfterFee, totalAssetsCollateral());
+        // HODLer <=> withdrawer conflict, round in favor of HODLer, round up to burn more shares
+        uint256 shares = uint256(-sharesInUnderlying).mulDivUp(Constants.ORACLE_DIVIDER, prices.collateral).mulDivUp(supplyAfterFee, _totalAssetsCollateral(false));
 
         if (owner != receiver) {
             allowance[owner][receiver] -= shares;
@@ -43,7 +43,7 @@ abstract contract WithdrawCollateral is MaxWithdrawCollateral, StateTransition, 
 
         applyMaxGrowthFee(supplyAfterFee);
 
-        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee);
+        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee, false);
 
         _burn(owner, shares);
 

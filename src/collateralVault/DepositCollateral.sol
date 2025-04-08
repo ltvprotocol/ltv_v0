@@ -16,11 +16,11 @@ abstract contract DepositCollateral is MaxDepositCollateral, StateTransition, Le
 
     error ExceedsMaxDepositCollateral(address receiver, uint256 collateralAssets, uint256 max);
 
-    function depositCollateral(uint256 collateralAssets, address receiver) external returns (uint256) {
+    function depositCollateral(uint256 collateralAssets, address receiver) external isFunctionAllowed nonReentrant returns (uint256) {
         uint256 max = maxDepositCollateral(address(receiver));
         require(collateralAssets <= max, ExceedsMaxDepositCollateral(receiver, collateralAssets, max));
 
-        ConvertedAssets memory convertedAssets = recoverConvertedAssets();
+        ConvertedAssets memory convertedAssets = recoverConvertedAssets(true);
         Prices memory prices = getPrices();
         uint256 supplyAfterFee = previewSupplyAfterFee();
         (int256 signedSharesInUnderlying, DeltaFuture memory deltaFuture) = DepositWithdraw.calculateDepositWithdraw(
@@ -35,10 +35,10 @@ abstract contract DepositCollateral is MaxDepositCollateral, StateTransition, Le
             return 0;
         }
 
-        // round down to mint less shares
-        uint256 shares = uint256(signedSharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.collateral).mulDivDown(
+        // HODLer <=> depositor conflict, round in favor of HODLer, round down to mint less shares
+        uint256 shares = uint256(signedSharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow).mulDivDown(
             supplyAfterFee,
-            totalAssetsCollateral()
+            _totalAssetsCollateral(true)
         );
 
         // TODO: double check that Token should be transfered from msg.sender or from receiver
@@ -46,7 +46,7 @@ abstract contract DepositCollateral is MaxDepositCollateral, StateTransition, Le
 
         applyMaxGrowthFee(supplyAfterFee);
 
-        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee);
+        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee, true);
 
         supply(collateralAssets);
 

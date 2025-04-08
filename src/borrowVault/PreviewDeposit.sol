@@ -10,13 +10,13 @@ abstract contract PreviewDeposit is MaxGrowthFee {
 
     function previewDeposit(uint256 assets) public view returns (uint256) {
         Prices memory prices = getPrices();
-        int256 sharesInUnderlying = DepositWithdraw.previewDepositWithdraw(-1 * int256(assets), true, recoverConvertedAssets(), prices, targetLTV);
+        int256 sharesInUnderlying = DepositWithdraw.previewDepositWithdraw(-1 * int256(assets), true, recoverConvertedAssets(true), prices, targetLTV);
 
         if (sharesInUnderlying < 0) {
             return 0;
         }
 
-        // round down to mint less shares
-        return uint256(sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow).mulDivDown(previewSupplyAfterFee(), totalAssets());
+        // HODLer <=> depositor conflict, resolve in favor of HODLer, round down to mint less shares
+        return uint256(sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow).mulDivDown(previewSupplyAfterFee(), _totalAssets(true));
     }
 }

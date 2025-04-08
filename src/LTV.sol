@@ -29,7 +29,7 @@ import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 contract LTV is PreviewWithdraw, PreviewDeposit, PreviewMint, PreviewRedeem, PreviewWithdrawCollateral, PreviewDepositCollateral, PreviewMintCollateral, PreviewRedeemCollateral, LowLevel, Auction, Mint, MintCollateral, Deposit, DepositCollateral, Withdraw, WithdrawCollateral, Redeem, RedeemCollateral, ConvertToAssets, ConvertToShares, ConvertToAssetsCollateral, ConvertToSharesCollateral {
     using uMulDiv for uint256;
     
-    function initialize(StateInitData memory stateInitData, address initialOwner, string memory _name, string memory _symbol) initializer public {
+    function initialize(StateInitData memory stateInitData, address initialOwner, string memory _name, string memory _symbol) initializer public isFunctionAllowed {
         __State_init(stateInitData);
         __ERC20_init(_name, _symbol, 18);
         __Ownable_init(initialOwner);
@@ -39,19 +39,24 @@ contract LTV is PreviewWithdraw, PreviewDeposit, PreviewMint, PreviewRedeem, Pre
     event MinProfitLTVChanged(uint128 oldValue, uint128 newValue);
     event TargetLTVChanged(uint128 oldValue, uint128 newValue);
 
+    error InvalidLTVSet(uint128 targetLTV, uint128 maxSafeLTV, uint128 minProfitLTV);
+
     function setTargetLTV(uint128 value) external onlyOwner {
+        require(value <= maxSafeLTV && value >= minProfitLTV, InvalidLTVSet(value, maxSafeLTV, minProfitLTV));
         uint128 oldValue = targetLTV;
         targetLTV = value;
         emit TargetLTVChanged(oldValue, targetLTV);
     }
 
     function setMaxSafeLTV(uint128 value) external onlyOwner {
+        require(value >= targetLTV, InvalidLTVSet(targetLTV, value, minProfitLTV));
         uint128 oldValue = maxSafeLTV;
         maxSafeLTV = value;
         emit MaxSafeLTVChanged(oldValue, value);
     }
 
     function setMinProfitLTV(uint128 value) external onlyOwner {
+        require(value <= targetLTV, InvalidLTVSet(targetLTV, maxSafeLTV, value));
         uint128 oldValue = minProfitLTV;
         minProfitLTV = value;
         emit MinProfitLTVChanged(oldValue, value);
@@ -63,6 +68,10 @@ contract LTV is PreviewWithdraw, PreviewDeposit, PreviewMint, PreviewRedeem, Pre
     
     function setMaxTotalAssetsInUnderlying(uint256 _maxTotalAssetsInUnderlying) external onlyOwner {
         maxTotalAssetsInUnderlying = _maxTotalAssetsInUnderlying;
+    }
+
+    function setFeeCollector(address _feeCollector) external onlyOwner {
+        feeCollector = _feeCollector;
     }
 
     function borrow(uint256 assets) internal override {
@@ -88,11 +97,12 @@ contract LTV is PreviewWithdraw, PreviewDeposit, PreviewMint, PreviewRedeem, Pre
     function setMissingSlots(ILendingConnector _lendingConnector, IOracleConnector _oracleConnector) external onlyOwner {
         lendingConnector = _lendingConnector;
         oracleConnector = _oracleConnector;
-        lastSeenTokenPrice = totalAssets().mulDivDown(Constants.LAST_SEEN_PRICE_PRECISION, totalSupply());
+        lastSeenTokenPrice = _totalAssets(false).mulDivDown(Constants.LAST_SEEN_PRICE_PRECISION, totalSupply());
         maxGrowthFee = 10**18 / 5;
         maxTotalAssetsInUnderlying = type(uint128).max;
     }
 
+    // batch can be removed to save ~250 bytes of contract size
     function allowDisableFunctions(bytes4[] memory signatures, bool isDisabled) external onlyOwner {
         for (uint256 i = 0; i < signatures.length; i++) {
             _isFunctionDisabled[signatures[i]] = isDisabled;

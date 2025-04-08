@@ -90,8 +90,10 @@ library DeltaSharesAndDeltaRealBorrow {
 
         return divider;
     }
-
-    // we need always round delta future borrow to the top because it's better for protocol
+    
+    // These functions are used in Deposit/withdraw/mint/redeem. Since this math implies that deltaTotalAssets = deltaTotalShares, we don't have
+    // HODLer conflict here. So the only conflict is between depositor/withdrawer and future executor. For future executor it's better to have bigger 
+    // futureBorrow, so we need always round delta future borrow to the top
     // divider is always negative
     // cna - dividend is 0
     // cmcb, cebc, ceccb - deltaFutureBorrow is positive, so dividend is negative, dividend needs to be rounded down, divider needs to be rounded up

@@ -11,13 +11,13 @@ abstract contract PreviewWithdrawCollateral is MaxGrowthFee {
 
     function previewWithdrawCollateral(uint256 assets) public view returns (uint256 shares) {
         Prices memory prices = getPrices();
-        int256 sharesInUnderlying = DepositWithdraw.previewDepositWithdraw(-int256(assets), false, recoverConvertedAssets(), prices, targetLTV);
+        int256 sharesInUnderlying = DepositWithdraw.previewDepositWithdraw(-int256(assets), false, recoverConvertedAssets(false), prices, targetLTV);
 
         if (sharesInUnderlying > 0) {
             return 0;
         }
 
-        // round up to burn more shares
-        return uint256(-sharesInUnderlying).mulDivUp(Constants.ORACLE_DIVIDER, prices.collateral).mulDivUp(previewSupplyAfterFee(), totalAssetsCollateral());
+        // HODLer <=> withdrawer conflict, round in favor of HODLer, round up to burn more shares
+        return uint256(-sharesInUnderlying).mulDivUp(Constants.ORACLE_DIVIDER, prices.collateral).mulDivUp(previewSupplyAfterFee(), _totalAssetsCollateral(false));
     }
 }

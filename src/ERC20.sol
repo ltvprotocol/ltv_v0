@@ -16,20 +16,20 @@ abstract contract ERC20 is State {
         decimals = _decimals;
     }
 
-    function transfer(address recipient, uint256 amount) external returns (bool) {
+    function transfer(address recipient, uint256 amount) external isFunctionAllowed nonReentrant returns (bool) {
         balanceOf[msg.sender] -= amount;
         balanceOf[recipient] += amount;
         emit Transfer(msg.sender, recipient, amount);
         return true;
     }
 
-    function approve(address spender, uint256 amount) external returns (bool) {
+    function approve(address spender, uint256 amount) external isFunctionAllowed nonReentrant returns (bool) {
         allowance[msg.sender][spender] = amount;
         emit Approval(msg.sender, spender, amount);
         return true;
     }
 
-    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool) {
+    function transferFrom(address sender, address recipient, uint256 amount) external isFunctionAllowed nonReentrant returns (bool) {
         allowance[sender][msg.sender] -= amount;
         balanceOf[sender] -= amount;
         balanceOf[recipient] += amount;
@@ -49,21 +49,20 @@ abstract contract ERC20 is State {
         emit Transfer(from, address(0), amount);
     }
 
-    function _mintProtocolRewards(DeltaFuture memory deltaFuture, Prices memory prices, uint256 supply) internal {
+    function _mintProtocolRewards(DeltaFuture memory deltaFuture, Prices memory prices, uint256 supply, bool isDeposit) internal {
+        // in both cases rounding conflict between HODLer and fee collector. Resolve it in favor of HODLer
         if (deltaFuture.deltaProtocolFutureRewardBorrow < 0) {
-            // less shares - the bigger token price
             uint256 shares = uint256(-deltaFuture.deltaProtocolFutureRewardBorrow).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow).mulDivDown(
                 supply,
-                totalAssets()
+                _totalAssets(isDeposit)
             );
             _mint(feeCollector, shares);
         } else if (deltaFuture.deltaProtocolFutureRewardCollateral > 0) {
-            // less shares - the bigger token price
             _mint(
                 feeCollector,
                 uint256(deltaFuture.deltaProtocolFutureRewardCollateral).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow).mulDivDown(
                     supply,
-                    totalAssets()
+                    _totalAssets(isDeposit)
                 )
             );
         }

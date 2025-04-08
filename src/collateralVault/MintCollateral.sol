@@ -16,7 +16,7 @@ abstract contract MintCollateral is MaxMintCollateral, StateTransition, Lending,
 
     error ExceedsMaxMintCollateral(address receiver, uint256 shares, uint256 max);
 
-    function mintCollateral(uint256 shares, address receiver) external returns (uint256 collateralAssets) {
+    function mintCollateral(uint256 shares, address receiver) external isFunctionAllowed nonReentrant returns (uint256 collateralAssets) {
         uint256 max = maxMintCollateral(address(receiver));
         require(shares <= max, ExceedsMaxMintCollateral(receiver, shares, max));
 
@@ -24,9 +24,9 @@ abstract contract MintCollateral is MaxMintCollateral, StateTransition, Lending,
         Prices memory prices = getPrices();
 
         // round up to receive more assets
-        uint256 sharesInUnderlying = shares.mulDivUp(totalAssetsCollateral(), supplyAfterFee).mulDivUp(prices.collateral, Constants.ORACLE_DIVIDER);
+        uint256 sharesInUnderlying = shares.mulDivUp(_totalAssetsCollateral(true), supplyAfterFee).mulDivUp(prices.collateral, Constants.ORACLE_DIVIDER);
 
-        ConvertedAssets memory convertedAssets = recoverConvertedAssets();
+        ConvertedAssets memory convertedAssets = recoverConvertedAssets(true);
         (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = MintRedeem.calculateMintRedeem(
             int256(sharesInUnderlying),
             false,
@@ -47,7 +47,7 @@ abstract contract MintCollateral is MaxMintCollateral, StateTransition, Lending,
 
         applyMaxGrowthFee(supplyAfterFee);
         
-        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee);
+        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee, true);
 
         supply(collateralAssets);
 

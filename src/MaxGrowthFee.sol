@@ -12,10 +12,11 @@ abstract contract MaxGrowthFee is TotalAssetsCollateral, ERC20 {
     }
 
     function previewSupplyAfterFee() internal view returns (uint256) {
-        uint256 assets = totalAssets();
+        // fee collector has the lowest priority, so need to underestimate reward
+        uint256 assets = _totalAssets(false);
         uint256 supply = totalSupply();
 
-        // round token price to the bottom
+        // underestimate current price
         if (assets.mulDivDown(Constants.LAST_SEEN_PRICE_PRECISION, supply) <= lastSeenTokenPrice) {
             return supply;
         }
@@ -23,7 +24,7 @@ abstract contract MaxGrowthFee is TotalAssetsCollateral, ERC20 {
         // divident: asset * supply
         // divisor: supply * maxGrowthFee * lastSeenTokenPrice + assets * (1 - maxGrowthFee)
         
-        // round new supply to the bottom to avoid minting more tokens than needed
+        // underestimate new supply to mint less tokens
         return assets.mulDivDown(
               supply,
               supply.mulDivUp(
@@ -41,8 +42,8 @@ abstract contract MaxGrowthFee is TotalAssetsCollateral, ERC20 {
         uint256 supply = totalSupply();
         if (supplyAfterFee > supply) {
             _mint(feeCollector, supplyAfterFee - supply);
-            // round token price to the bottom
-            lastSeenTokenPrice = totalAssets().mulDivDown(Constants.LAST_SEEN_PRICE_PRECISION, supplyAfterFee);
+            // round new token price to the top to underestimate next fee
+            lastSeenTokenPrice = _totalAssets(true).mulDivUp(Constants.LAST_SEEN_PRICE_PRECISION, supplyAfterFee);
         }
     }
 }

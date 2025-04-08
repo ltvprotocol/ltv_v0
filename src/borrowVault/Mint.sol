@@ -15,15 +15,16 @@ abstract contract Mint is MaxMint, StateTransition, Lending, ERC4626Events {
 
     error ExceedsMaxMint(address receiver, uint256 shares, uint256 max);
 
-    function mint(uint256 shares, address receiver) external returns (uint256 assets) {
+    function mint(uint256 shares, address receiver) external isFunctionAllowed nonReentrant returns (uint256 assets) {
         uint256 max = maxMint(address(receiver));
         require(shares <= max, ExceedsMaxMint(receiver, shares, max));
 
         uint256 supplyAfterFee = previewSupplyAfterFee();
+        // HODLer <=> Depositor conflict, resolve in favor of HODLer
         // assume user wants to mint more shares to get more assets
-        uint256 sharesInUnderlying = shares.mulDivUp(totalAssets(), supplyAfterFee).mulDivUp(getPrices().borrow, Constants.ORACLE_DIVIDER);
+        uint256 sharesInUnderlying = shares.mulDivUp(_totalAssets(true), supplyAfterFee).mulDivUp(getPrices().borrow, Constants.ORACLE_DIVIDER);
         
-        ConvertedAssets memory convertedAssets = recoverConvertedAssets();
+        ConvertedAssets memory convertedAssets = recoverConvertedAssets(true);
         Prices memory prices = getPrices();
         (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = MintRedeem.calculateMintRedeem(
             int256(sharesInUnderlying),
@@ -37,7 +38,8 @@ abstract contract Mint is MaxMint, StateTransition, Lending, ERC4626Events {
             return 0;
         }
 
-        // round up assets to receive more assets
+        // 
+        // HODLer <=> Depositor conflict, resolve in favor of HODLer, round up assets to receive more assets
         assets = uint256(-assetsInUnderlying).mulDivUp(Constants.ORACLE_DIVIDER, prices.borrow);
 
         // TODO: double check that Token should be transfered from msg.sender or from receiver
@@ -45,11 +47,9 @@ abstract contract Mint is MaxMint, StateTransition, Lending, ERC4626Events {
 
         applyMaxGrowthFee(supplyAfterFee);
 
-        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee);
+        _mintProtocolRewards(deltaFuture, prices, supplyAfterFee, true);
 
         repay(assets);
-
-        // TODO: fix this - return from calculateDepositWithdraw
 
         NextState memory nextState = NextStep.calculateNextStep(convertedAssets, deltaFuture, block.number);
 
