@@ -38,6 +38,7 @@ contract LTV is PreviewWithdraw, PreviewDeposit, PreviewMint, PreviewRedeem, Pre
     event TargetLTVChanged(uint128 oldValue, uint128 newValue);
 
     error InvalidLTVSet(uint128 targetLTV, uint128 maxSafeLTV, uint128 minProfitLTV);
+    event WhitelistedAddressUpdated(address oldValue, address newValue);
 
     function setTargetLTV(uint128 value) external onlyOwner {
         require(value <= maxSafeLTV && value >= minProfitLTV, InvalidLTVSet(value, maxSafeLTV, minProfitLTV));
@@ -105,5 +106,11 @@ contract LTV is PreviewWithdraw, PreviewDeposit, PreviewMint, PreviewRedeem, Pre
         for (uint256 i = 0; i < signatures.length; i++) {
             _isFunctionDisabled[signatures[i]] = isDisabled;
         }
+    }
+
+    function setWhitelistedAddress(address value) external onlyOwner {
+        address oldAddress = whitelistedAddress;
+        whitelistedAddress = value;
+        emit WhitelistedAddressUpdated(oldAddress, value);
     }
 }
