@@ -274,7 +274,7 @@ contract DummyLTVTest is Test {
     }
 
     function test_lowLevelNegativeAuctionShares(address owner, address user) public initializeBalancedTest(owner, user, 100000, -10000, -10000, 1000) {
-        (int256 deltaRealCollateralAssets, int256 deltaRealBorrowAssets) = dummyLTV.executeLowLevelShares(0);
+        (int256 deltaRealCollateralAssets, int256 deltaRealBorrowAssets) = dummyLTV.executeLowLevelRebalanceShares(0);
 
         assertEq(deltaRealCollateralAssets, -4000);
         assertEq(deltaRealBorrowAssets, -7500);
@@ -282,35 +282,35 @@ contract DummyLTVTest is Test {
     }
 
     function test_lowLevelNegativeAuctionCollateral(address owner, address user) public initializeBalancedTest(owner, user, 100000, -10000, -10000, 1000) {
-        (int256 deltaRealBorrowAssets, int256 deltaShares) = dummyLTV.executeLowLevelCollateral(-4000);
+        (int256 deltaRealBorrowAssets, int256 deltaShares) = dummyLTV.executeLowLevelRebalanceCollateral(-4000);
 
         assertEq(deltaShares, 0);
         assertEq(deltaRealBorrowAssets, -7500);
     }    
     
     function test_lowLevelNegativeAuctionBorrow(address owner, address user) public initializeBalancedTest(owner, user, 100000, -10000, -10000, 1000) {
-        (int256 deltaRealCollateralAssets, int256 deltaShares) = dummyLTV.executeLowLevelBorrow(-7500);
+        (int256 deltaRealCollateralAssets, int256 deltaShares) = dummyLTV.executeLowLevelRebalanceBorrow(-7500);
 
         assertEq(deltaShares, 0);
         assertEq(deltaRealCollateralAssets, -4000);
     }
 
     function test_lowLevelPositiveAuctionShares(address owner, address user) public initializeBalancedTest(owner, user, 100000, 10000, 10000, -1000) {
-        (int256 deltaRealCollateralAssets, int256 deltaRealBorrowAssets) = dummyLTV.executeLowLevelShares(1000 * 100);
+        (int256 deltaRealCollateralAssets, int256 deltaRealBorrowAssets) = dummyLTV.executeLowLevelRebalanceShares(1000 * 100);
 
         assertEq(deltaRealCollateralAssets, 7500);
         assertEq(deltaRealBorrowAssets, 14500);
     }
 
     function test_lowLevelPositiveAuctionBorrow(address owner, address user) public initializeBalancedTest(owner, user, 100000, 10000, 10000, -1000) {
-        (int256 deltaRealCollateralAssets, int256 deltaShares) = dummyLTV.executeLowLevelBorrow(14500);
+        (int256 deltaRealCollateralAssets, int256 deltaShares) = dummyLTV.executeLowLevelRebalanceBorrow(14500);
 
         assertEq(deltaRealCollateralAssets, 7500);
         assertEq(deltaShares, 1000 * 100);
     }
 
     function test_lowLevelPositiveAuctionCollateral(address owner, address user) public initializeBalancedTest(owner, user, 100000, 10000, 10000, -1000) {
-        (int256 deltaRealBorrowAssets, int256 deltaShares) = dummyLTV.executeLowLevelCollateral(7500);
+        (int256 deltaRealBorrowAssets, int256 deltaShares) = dummyLTV.executeLowLevelRebalanceCollateral(7500);
 
         assertEq(deltaRealBorrowAssets, 14500);
         assertEq(deltaShares, 1000 * 100);

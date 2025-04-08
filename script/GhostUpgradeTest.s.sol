@@ -46,6 +46,6 @@ contract GhostUpgradeTest is Script, StdAssertions {
 
         assertEq(ltv.previewDeposit(10**18), oldPreview);
         require(ltv.maxDeposit(address(this)) > 0);
-        ltv.previewLowLevelShares(0);
+        ltv.previewLowLevelRebalanceShares(0);
     }
 }
