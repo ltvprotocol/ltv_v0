@@ -6,17 +6,17 @@ import './Constants.sol';
 import './Structs.sol';
 
 import './utils/MulDiv.sol';
+import './utils/UpgradeableOwnableWithGovernor.sol';
 
 import 'forge-std/interfaces/IERC20.sol';
 
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol';
-import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 
 import './interfaces/ILendingConnector.sol';
 import './interfaces/IOracleConnector.sol';
 
-abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
+abstract contract State is UpgradeableOwnableWithGovernor, ReentrancyGuardUpgradeable {
     using uMulDiv for uint256;
     using sMulDiv for int256;
 
@@ -200,6 +200,6 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     }
 
     function _checkFunctionAllowed() private view {
-        require(msg.sender == owner() || !_isFunctionDisabled[msg.sig], FunctionNotAllowed());
+        require(_checkOwnerOrGovernor() || !_isFunctionDisabled[msg.sig], FunctionNotAllowed());
     }
 }
