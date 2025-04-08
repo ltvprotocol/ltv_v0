@@ -21,6 +21,25 @@ abstract contract LowLevel is MaxGrowthFee, Lending {
         return (deltaRealCollateral, deltaRealBorrow);
     }
 
+    function previewLowLevelBorrow(int256 deltaBorrowAssets) external view returns (int256, int256) {
+        (int256 deltaRealCollateral, int256 deltaShares, ) = previewLowLevelBorrowHint(deltaBorrowAssets, true);
+
+        return (deltaRealCollateral, deltaShares);
+    }
+
+    function previewLowLevelCollateral(int256 deltaCollateralAssets) external view returns (int256, int256) {
+        (int256 deltaRealBorrow, int256 deltaShares, ) = previewLowLevelCollateralHint(deltaCollateralAssets, true);
+        return (deltaRealBorrow, deltaShares);
+    }
+
+    function previewLowLevelBorrowHint(int256 deltaBorrowAssets, bool isSharesPositiveHint) public view returns (int256, int256, int256) {
+        return _previewLowLevelBorrowHint(deltaBorrowAssets, isSharesPositiveHint, previewSupplyAfterFee());
+    }
+
+    function previewLowLevelCollateralHint(int256 deltaCollateralAssets, bool isSharesPositiveHint) public view returns (int256, int256, int256) {
+        return _previewLowLevelCollateralHint(deltaCollateralAssets, isSharesPositiveHint, previewSupplyAfterFee());
+    }
+
     function executeLowLevelShares(int256 deltaShares) external isFunctionAllowed nonReentrant returns (int256, int256) {
         uint256 supplyAfterFee = previewSupplyAfterFee();
         applyMaxGrowthFee(supplyAfterFee);
@@ -38,23 +57,8 @@ abstract contract LowLevel is MaxGrowthFee, Lending {
         return (deltaRealCollateralAssets, deltaRealBorrowAssets);
     }
 
-    function previewLowLevelBorrow(int256 deltaBorrowAssets) external view returns (int256, int256) {
-        (int256 deltaRealCollateral, int256 deltaShares, ) = previewLowLevelBorrowHint(deltaBorrowAssets, true);
-
-        return (deltaRealCollateral, deltaShares);
-    }
-
-    function executeLowLevelBorrow(int256 deltaBorrowAssets) external isFunctionAllowed returns (int256, int256) {
+    function executeLowLevelBorrow(int256 deltaBorrowAssets) external isFunctionAllowed nonReentrant returns (int256, int256) {
         return _executeLowLevelBorrowHint(deltaBorrowAssets, true);
-    }
-
-    function previewLowLevelCollateral(int256 deltaCollateralAssets) external view isFunctionAllowed returns (int256, int256) {
-        (int256 deltaRealBorrow, int256 deltaShares, ) = previewLowLevelCollateralHint(deltaCollateralAssets, true);
-        return (deltaRealBorrow, deltaShares);
-    }
-
-    function executeLowLevelCollateral(int256 deltaCollateralAssets) external isFunctionAllowed returns (int256, int256) {
-        return executeLowLevelCollateralHint(deltaCollateralAssets, true);
     }
 
     function executeLowLevelBorrowHint(
@@ -64,19 +68,15 @@ abstract contract LowLevel is MaxGrowthFee, Lending {
         return _executeLowLevelBorrowHint(deltaBorrowAssets, isSharesPositiveHint);
     }
 
-    function previewLowLevelBorrowHint(int256 deltaBorrowAssets, bool isSharesPositiveHint) public view returns (int256, int256, int256) {
-        return _previewLowLevelBorrowHint(deltaBorrowAssets, isSharesPositiveHint, previewSupplyAfterFee());
-    }
-
-    function previewLowLevelCollateralHint(int256 deltaCollateralAssets, bool isSharesPositiveHint) public view returns (int256, int256, int256) {
-        return _previewLowLevelCollateralHint(deltaCollateralAssets, isSharesPositiveHint, previewSupplyAfterFee());
-    }
-
     function executeLowLevelCollateralHint(
         int256 deltaCollateralAssets,
         bool isSharesPositiveHint
-    ) public isFunctionAllowed nonReentrant returns (int256, int256) {
-        executeLowLevelCollateralHint(deltaCollateralAssets, isSharesPositiveHint);
+    ) external isFunctionAllowed nonReentrant returns (int256, int256) {
+        return _executeLowLevelCollateralHint(deltaCollateralAssets, isSharesPositiveHint);
+    }
+
+    function executeLowLevelCollateral(int256 deltaCollateralAssets) external isFunctionAllowed nonReentrant returns (int256, int256) {
+        return _executeLowLevelCollateralHint(deltaCollateralAssets, true);
     }
 
     function _previewLowLevelCollateralHint(
