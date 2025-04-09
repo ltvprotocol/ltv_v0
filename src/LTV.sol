@@ -34,7 +34,7 @@ contract LTV is
     PreviewDepositCollateral,
     PreviewMintCollateral,
     PreviewRedeemCollateral,
-    LowLevel,
+    LowLevelRebalance,
     Auction,
     Mint,
     MintCollateral,
