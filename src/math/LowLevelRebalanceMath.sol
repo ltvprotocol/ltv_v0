@@ -5,7 +5,7 @@ import '../Structs.sol';
 import '../Constants.sol';
 import '../utils/MulDiv.sol';
 
-library LowLevelMath {
+library LowLevelRebalanceMath {
     using sMulDiv for int256;
 
     // HODLer <=> depositor/withdrawer conflict, round up to leave more collateral in protocol
@@ -62,7 +62,7 @@ library LowLevelMath {
             + convertedAssets.userFutureRewardBorrow;
     }
 
-    function calculateLowLevelShares(
+    function calculateLowLevelRebalanceShares(
         int256 deltaShares,
         ConvertedAssets memory convertedAssets,
         Prices memory prices,
@@ -92,7 +92,7 @@ library LowLevelMath {
         return (deltaRealCollateralAssets, deltaRealBorrowAssets, deltaProtocolFutureRewardShares);
     }
 
-    function calculateLowLevelBorrow(
+    function calculateLowLevelRebalanceBorrow(
         int256 deltaBorrowAssets,
         ConvertedAssets memory convertedAssets,
         Prices memory prices,
@@ -130,7 +130,7 @@ library LowLevelMath {
         return (deltaRealCollateralAssets, deltaShares, deltaProtocolFutureRewardShares);
     }
 
-    function calculateLowLevelCollateral(
+    function calculateLowLevelRebalanceCollateral(
         int256 deltaCollateralAssets,
         ConvertedAssets memory convertedAssets,
         Prices memory prices,

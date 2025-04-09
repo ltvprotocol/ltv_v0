@@ -22,7 +22,7 @@ import './collateralVault/PreviewRedeemCollateral.sol';
 import './collateralVault/ConvertToAssetsCollateral.sol';
 import './collateralVault/ConvertToSharesCollateral.sol';
 import './Auction.sol';
-import './LowLevel.sol';
+import './LowLevelRebalance.sol';
 import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 
 contract LTV is
@@ -34,7 +34,7 @@ contract LTV is
     PreviewDepositCollateral,
     PreviewMintCollateral,
     PreviewRedeemCollateral,
-    LowLevel,
+    LowLevelRebalance,
     Auction,
     Mint,
     MintCollateral,

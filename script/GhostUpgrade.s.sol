@@ -67,7 +67,7 @@ contract GhostUpgradeTest is GhostUpgradeCommon, StdAssertions, StdCheats {
         IERC20(BORROW_TOKEN).approve(LTV_ADDRESS, depositAmount);
         assertEq(ltv.deposit(depositAmount, address(this)), oldPreview - 100);
         require(ltv.maxDeposit(address(this)) > 0);
-        ltv.previewLowLevelShares(0);
+        ltv.previewLowLevelRebalanceShares(0);
     }
 }
 
