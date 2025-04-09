@@ -19,6 +19,8 @@ import './collateralVault/PreviewDepositCollateral.sol';
 import './collateralVault/PreviewWithdrawCollateral.sol';
 import './collateralVault/PreviewMintCollateral.sol';
 import './collateralVault/PreviewRedeemCollateral.sol';
+import './collateralVault/ConvertToAssetsCollateral.sol';
+import './collateralVault/ConvertToSharesCollateral.sol';
 import './Auction.sol';
 import './LowLevel.sol';
 import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
