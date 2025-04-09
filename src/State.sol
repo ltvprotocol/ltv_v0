@@ -15,6 +15,7 @@ import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 
 import './interfaces/ILendingConnector.sol';
 import './interfaces/IOracleConnector.sol';
+import './interfaces/IWhitelistRegistry.sol';
 
 abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     using uMulDiv for uint256;
@@ -52,7 +53,7 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     uint256 public maxTotalAssetsInUnderlying;
 
     mapping(bytes4 => bool) public _isFunctionDisabled;
-    address whitelistedAddress;
+    IWhitelistRegistry public whitelistRegistry;
 
     struct StateInitData {
         address collateralToken;
@@ -202,7 +203,7 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     }
 
     function _checkFunctionAllowed() private view {
-        require(msg.sender == owner() || !_isFunctionDisabled[msg.sig], FunctionStopped(msg.sig));
-        require(whitelistedAddress == address(0) || msg.sender == whitelistedAddress, SenderNotWhitelisted(msg.sender));
+        require(!_isFunctionDisabled[msg.sig] || msg.sender == owner(), FunctionStopped(msg.sig));
+        require(address(whitelistRegistry) == address(0) || whitelistRegistry.isAddressWhitelisted(msg.sender), SenderNotWhitelisted(msg.sender));
     }
 }
