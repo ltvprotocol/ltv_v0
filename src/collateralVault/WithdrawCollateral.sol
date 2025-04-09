@@ -35,7 +35,7 @@ abstract contract WithdrawCollateral is MaxWithdrawCollateral, StateTransition, 
         }
 
         // HODLer <=> withdrawer conflict, round in favor of HODLer, round up to burn more shares
-        uint256 shares = uint256(-sharesInUnderlying).mulDivUp(Constants.ORACLE_DIVIDER, prices.borrow).mulDivUp(supplyAfterFee, _totalAssets(false));
+        uint256 shares = uint256(-sharesInUnderlying).mulDivUp(Constants.ORACLE_DIVIDER, prices.collateral).mulDivUp(supplyAfterFee, _totalAssetsCollateral(false));
 
         if (owner != receiver) {
             allowance[owner][receiver] -= shares;
