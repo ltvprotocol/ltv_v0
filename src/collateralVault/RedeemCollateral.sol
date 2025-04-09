@@ -28,7 +28,7 @@ abstract contract RedeemCollateral is MaxRedeemCollateral, StateTransition, Lend
         uint256 supplyAfterFee = previewSupplyAfterFee();
 
         // HODLer <=> withdrawer conflict, round in favor of HODLer, round down to give less collateral
-        uint256 sharesInUnderlying = shares.mulDivDown(_totalAssets(false), supplyAfterFee).mulDivDown(prices.borrow, Constants.ORACLE_DIVIDER);
+        uint256 sharesInUnderlying = shares.mulDivDown(_totalAssetsCollateral(false), supplyAfterFee).mulDivDown(prices.collateral, Constants.ORACLE_DIVIDER);
 
         ConvertedAssets memory convertedAssets = recoverConvertedAssets(false);
         (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = MintRedeem.calculateMintRedeem(

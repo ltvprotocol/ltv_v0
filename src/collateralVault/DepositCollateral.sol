@@ -38,7 +38,7 @@ abstract contract DepositCollateral is MaxDepositCollateral, StateTransition, Le
         // HODLer <=> depositor conflict, round in favor of HODLer, round down to mint less shares
         uint256 shares = uint256(signedSharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, prices.borrow).mulDivDown(
             supplyAfterFee,
-            _totalAssets(true)
+            _totalAssetsCollateral(true)
         );
 
         // TODO: double check that Token should be transfered from msg.sender or from receiver
