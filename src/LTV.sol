@@ -102,6 +102,10 @@ contract LTV is
         lendingConnector = _lendingConnector;
     }
 
+    function setSlippageProvider(ISlippageProvider _slippageProvider) external onlyOwner {
+        slippageProvider = _slippageProvider;
+    }
+
     function setFeeCollector(address _feeCollector) external onlyOwner {
         feeCollector = _feeCollector;
     }
