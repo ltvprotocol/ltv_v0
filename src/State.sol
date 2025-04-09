@@ -200,6 +200,6 @@ abstract contract State is UpgradeableOwnableWithGovernor, ReentrancyGuardUpgrad
     }
 
     function _checkFunctionAllowed() private view {
-        require(_checkOwnerOrGovernor() || !_isFunctionDisabled[msg.sig], FunctionNotAllowed());
+        require(!_isFunctionDisabled[msg.sig] || _msgSender() == owner() || _msgSender() == governor(), FunctionNotAllowed());
     }
 }

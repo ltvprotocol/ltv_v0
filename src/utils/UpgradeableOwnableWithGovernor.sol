@@ -4,6 +4,8 @@ pragma solidity ^0.8.20;
 import {OwnableUpgradeable} from 'openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol';
 
 abstract contract UpgradeableOwnableWithGovernor is OwnableUpgradeable {
+    error OnlyGovernorInvalidCaller(address caller);
+    error OnlyGovernorOrOwnerInvalidCaller(address caller);
     event GovernorUpdated(address indexed oldGovernor, address indexed newGovernor);
 
     struct OwnableWithGovernor {
@@ -38,12 +40,12 @@ abstract contract UpgradeableOwnableWithGovernor is OwnableUpgradeable {
         _;
     }
 
-    function governor() public view override returns (address) {
+    function governor() public view returns (address) {
         OwnableWithGovernor storage $ = _getOwnableWithGovernorStorage();
         return $._governor;
     }
 
-    function updateGovernor(address newGovernor) external override onlyOwnerOrGovernor {
+    function updateGovernor(address newGovernor) external onlyOwnerOrGovernor {
         _updateGovernor(newGovernor);
     }
 
