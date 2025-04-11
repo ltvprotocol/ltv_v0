@@ -26,7 +26,7 @@ contract DeployImpl is Script {
         vm.startBroadcast();
         address ltv = address(new LTV());
         vm.stopBroadcast();
-        console.log("impl deployed at: ", ltv);
+        console.log('impl deployed at: ', ltv);
     }
 }
 
@@ -37,13 +37,15 @@ contract DeployBeacon is Script {
         vm.startBroadcast();
         address ltv = address(new UpgradeableBeacon(ltvImpl, proxyOwner));
         vm.stopBroadcast();
-        console.log("beacon deployed at: ", ltv);
+        console.log('beacon deployed at: ', ltv);
     }
 }
 
 contract DeployGhostLTV is Script {
     function run() public {
         address ltvOwner = vm.envAddress('LTV_OWNER');
+        address ltvGuardian = vm.envAddress('LTV_GUARDIAN');
+        address ltvGovernor = vm.envAddress('LTV_GOVERNOR');
         address feeCollector = vm.envAddress('FEE_COLLECTOR');
         address beacon = vm.envAddress('BEACON');
         address collateralToken = vm.envAddress('COLLATERAL_TOKEN');
@@ -57,28 +59,22 @@ contract DeployGhostLTV is Script {
             collateralToken: collateralToken,
             borrowToken: borrowToken,
             feeCollector: feeCollector,
-            maxSafeLTV: 9*10**17,
-            minProfitLTV: 5*10**17,
-            targetLTV: 75*10**16,
+            maxSafeLTV: 9 * 10 ** 17,
+            minProfitLTV: 5 * 10 ** 17,
+            targetLTV: 75 * 10 ** 16,
             lendingConnector: ILendingConnector(hodlLendingConnector),
             oracleConnector: IOracleConnector(spookyOracleConnector),
-            maxGrowthFee: 10**18 / 5,
+            maxGrowthFee: 10 ** 18 / 5,
             maxTotalAssetsInUnderlying: type(uint128).max,
             slippageProvider: ISlippageProvider(slippageProvider),
-            maxDeleverageFee: 2 * 10**16,
+            maxDeleverageFee: 2 * 10 ** 16,
             vaultBalanceAsLendingConnector: ILendingConnector(vaultBalanceAsLendingConnector)
         });
 
         vm.startBroadcast(); // Start broadcasting transactions
 
         address ltv = address(
-            new BeaconProxy(
-                beacon,
-                abi.encodeCall(
-                    LTV.initialize,
-                    (initData, ltvOwner, 'Ghost Magic ETH', 'GME')
-                )
-            )
+            new BeaconProxy(beacon, abi.encodeCall(LTV.initialize, (initData, ltvOwner, ltvGuardian, ltvGovernor, 'Ghost Magic ETH', 'GME')))
         );
         vm.stopBroadcast();
         console.log('ltv at: ', ltv);

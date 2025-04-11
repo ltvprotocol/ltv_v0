@@ -53,12 +53,14 @@ contract LTV is
     function initialize(
         StateInitData memory stateInitData,
         address initialOwner,
+        address initialGuardian,
+        address initialGovernor,
         string memory _name,
         string memory _symbol
     ) public initializer isFunctionAllowed {
         __State_init(stateInitData);
         __ERC20_init(_name, _symbol, 18);
-        __Ownable_init(initialOwner);
+        __Ownable_With_Guardian_And_Governor_init(initialGuardian, initialGovernor, initialOwner);
     }
 
     event MaxSafeLTVChanged(uint128 oldValue, uint128 newValue);
@@ -126,7 +128,7 @@ contract LTV is
     }
 
     function setMaxDeleverageFee(uint256 value) external onlyOwner {
-        require(value < 10**18, InvalidMaxDeleverageFee(value));
+        require(value < 10 ** 18, InvalidMaxDeleverageFee(value));
         maxDeleverageFee = value;
     }
 
@@ -141,7 +143,7 @@ contract LTV is
         uint256 realBorrowAssets = getRealBorrowAssets();
 
         require(closeAmountBorrow >= realBorrowAssets, ImpossibleToCoverDeleverage(realBorrowAssets, closeAmountBorrow));
-        
+
         uint256 collateralToTransfer = realBorrowAssets.mulDivUp(10 ** 18 + deleverageFee, 10 ** 18).mulDivDown(
             getPriceBorrowOracle(),
             getPriceCollateralOracle()
