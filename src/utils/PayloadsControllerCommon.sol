@@ -35,13 +35,6 @@ abstract contract PayloadsControllerCommon is WithPayloadsManager {
     uint40 public payloadsCount;
     mapping(uint40 => Payload) private _payloads;
 
-    // constructor(
-    //     address initialOwner,
-    //     address initialGuardian,
-    //     address initialPayloadsManager
-    // ) WithPayloadsManager(initialOwner, initialGuardian, initialPayloadsManager) {
-    // }
-
     function delay() public virtual view returns (uint40);
 
     function getPayload(uint40 payloadId) external view returns (Payload memory) {
