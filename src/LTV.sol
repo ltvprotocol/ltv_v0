@@ -48,6 +48,7 @@ contract LTV is
     ConvertToShares
 {
     using uMulDiv for uint256;
+    using sMulDiv for int256;
 
     function initialize(
         StateInitData memory stateInitData,
@@ -65,6 +66,9 @@ contract LTV is
     event TargetLTVChanged(uint128 oldValue, uint128 newValue);
 
     error InvalidLTVSet(uint128 targetLTV, uint128 maxSafeLTV, uint128 minProfitLTV);
+    error ImpossibleToCoverDeleverage(uint256 realBorrowAssets, uint256 providedAssets);
+    error InvalidMaxDeleverageFee(uint256 deleverageFee);
+    error ExceedsMaxDeleverageFee(uint256 deleverageFee, uint256 maxDeleverageFee);
     event WhitelistRegistryUpdated(address oldValue, address newValue);
 
     function setTargetLTV(uint128 value) external onlyOwnerOrGovernor {
@@ -99,8 +103,8 @@ contract LTV is
         }
     }
 
-    function setLendingConnector(ILendingConnector _lendingConnector) external onlyOwner {
-        lendingConnector = _lendingConnector;
+    function setLendingConnector(ILendingConnector __lendingConnector) external onlyOwner {
+        _lendingConnector = __lendingConnector;
     }
 
     function setSlippageProvider(ISlippageProvider _slippageProvider) external onlyOwner {
@@ -121,32 +125,52 @@ contract LTV is
         emit WhitelistRegistryUpdated(oldAddress, address(value));
     }
 
+    function setMaxDeleverageFee(uint256 value) external onlyOwner {
+        require(value < 10**18, InvalidMaxDeleverageFee(value));
+        maxDeleverageFee = value;
+    }
+
+    function deleverageAndWithdraw(uint256 closeAmountBorrow, uint256 deleverageFee) external onlyOwner {
+        require(deleverageFee <= maxDeleverageFee, ExceedsMaxDeleverageFee(deleverageFee, maxDeleverageFee));
+        futureBorrowAssets = 0;
+        futureCollateralAssets = 0;
+        futureRewardBorrowAssets = 0;
+        futureRewardCollateralAssets = 0;
+        startAuction = 0;
+
+        uint256 realBorrowAssets = getRealBorrowAssets();
+
+        require(closeAmountBorrow >= realBorrowAssets, ImpossibleToCoverDeleverage(realBorrowAssets, closeAmountBorrow));
+        
+        uint256 collateralToTransfer = realBorrowAssets.mulDivUp(10 ** 18 + deleverageFee, 10 ** 18).mulDivDown(
+            getPriceBorrowOracle(),
+            getPriceCollateralOracle()
+        );
+
+        borrowToken.transferFrom(msg.sender, address(this), realBorrowAssets);
+        repay(realBorrowAssets);
+        withdraw(getRealCollateralAssets());
+        collateralToken.transfer(msg.sender, collateralToTransfer);
+        isVaultDeleveraged = true;
+    }
+
     function borrow(uint256 assets) internal override {
-        (bool isSuccess, ) = address(lendingConnector).delegatecall(abi.encodeCall(lendingConnector.borrow, (assets)));
+        (bool isSuccess, ) = address(lendingConnector()).delegatecall(abi.encodeCall(ILendingConnector.borrow, (assets)));
         require(isSuccess);
     }
 
     function repay(uint256 assets) internal override {
-        (bool isSuccess, ) = address(lendingConnector).delegatecall(abi.encodeCall(lendingConnector.repay, (assets)));
+        (bool isSuccess, ) = address(lendingConnector()).delegatecall(abi.encodeCall(ILendingConnector.repay, (assets)));
         require(isSuccess);
     }
 
     function supply(uint256 assets) internal override {
-        (bool isSuccess, ) = address(lendingConnector).delegatecall(abi.encodeCall(lendingConnector.supply, (assets)));
+        (bool isSuccess, ) = address(lendingConnector()).delegatecall(abi.encodeCall(ILendingConnector.supply, (assets)));
         require(isSuccess);
     }
 
     function withdraw(uint256 assets) internal override {
-        (bool isSuccess, ) = address(lendingConnector).delegatecall(abi.encodeCall(lendingConnector.withdraw, (assets)));
+        (bool isSuccess, ) = address(lendingConnector()).delegatecall(abi.encodeCall(ILendingConnector.withdraw, (assets)));
         require(isSuccess);
-    }
-
-    function setMissingSlots(ILendingConnector _lendingConnector, IOracleConnector _oracleConnector, ISlippageProvider _slippageProvider) external onlyOwner {
-        lendingConnector = _lendingConnector;
-        oracleConnector = _oracleConnector;
-        lastSeenTokenPrice = _totalAssets(false).mulDivDown(Constants.LAST_SEEN_PRICE_PRECISION, totalSupply());
-        maxGrowthFee = 10 ** 18 / 5;
-        maxTotalAssetsInUnderlying = type(uint128).max;
-        slippageProvider = _slippageProvider;
     }
 }
