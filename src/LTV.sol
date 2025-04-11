@@ -97,7 +97,7 @@ contract LTV is
     }
 
     // batch can be removed to save ~250 bytes of contract size
-    function allowDisableFunctions(bytes4[] memory signatures, bool isDisabled) external onlyOwnerOrGovernor {
+    function allowDisableFunctions(bytes4[] memory signatures, bool isDisabled) external onlyGuardian {
         for (uint256 i = 0; i < signatures.length; i++) {
             _isFunctionDisabled[signatures[i]] = isDisabled;
         }

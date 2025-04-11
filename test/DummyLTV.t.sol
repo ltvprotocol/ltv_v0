@@ -12,6 +12,7 @@ import "../src/dummy/DummyOracleConnector.sol";
 import "../src/utils/ConstantSlippageProvider.sol";
 import "../src/utils/WhitelistRegistry.sol";
 import "../src/utils/VaultBalanceAsLendingConnector.sol";
+import "../src/utils/LTVGuardianPayloadsController.sol";
 
 contract DummyLTVTest is Test {
     DummyLTV public dummyLTV;
@@ -354,18 +355,18 @@ contract DummyLTVTest is Test {
         vm.startPrank(owner);
         deal(address(borrowToken), address(owner), type(uint112).max);
         borrowToken.approve(address(dummyLTV), type(uint112).max);
-        dummyLTV.deleverageAndWithdraw(dummyLTV.getRealBorrowAssets(), 5 * 10**15);
+        dummyLTV.deleverageAndWithdraw(dummyLTV.getRealBorrowAssets(), 5 * 10 ** 15);
 
         // total assets were reduced for 6% according to target LTV = 3/4 and 2% fee for deleverage
         assertEq(dummyLTV.totalAssets(), 985 * 10 ** 15 + 1);
-        console.log("total assets collateral", dummyLTV.totalAssetsCollateral());
-        console.log("Another metrics:       ", dummyLTV.getRealCollateralAssets());
+        console.log('total assets collateral', dummyLTV.totalAssetsCollateral());
+        console.log('Another metrics:       ', dummyLTV.getRealCollateralAssets());
 
         assertEq(dummyLTV.withdrawCollateral(985 * 10 ** 14, address(owner), address(owner)), 2 * 10 ** 19 + 20);
         dummyLTV.redeemCollateral(2 * 10 ** 19, address(owner), address(owner));
     }
 
-    function test_whitelist(address owner, address user, address randUser) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+    function test_whitelist(address owner, address user, address randUser) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
         vm.stopPrank();
         vm.startPrank(owner);
         deal(address(borrowToken), randUser, type(uint112).max);
@@ -375,13 +376,65 @@ contract DummyLTVTest is Test {
 
         dummyLTV.setIsWhitelistActivated(true);
         whitelistRegistry.addAddressToWhitelist(randUser);
-        
+
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(State.ReceiverNotWhitelisted.selector, user));
-        dummyLTV.deposit(10**17, user);
-        
+        dummyLTV.deposit(10 ** 17, user);
+
         vm.startPrank(randUser);
-        borrowToken.approve(address(dummyLTV), 10**17);
-        dummyLTV.deposit(10**17, randUser);
+        borrowToken.approve(address(dummyLTV), 10 ** 17);
+        dummyLTV.deposit(10 ** 17, randUser);
+    }
+
+    function test_governor(
+        address ltvOwner,
+        address user,
+        address owner,
+        address payloadsManager,
+        address guardian,
+        uint32 delay
+    ) public initializeBalancedTest(ltvOwner, user, 10 ** 17, 0, 0, 0) {
+        vm.assume(user != payloadsManager);
+        vm.assume(delay != 0);
+        vm.assume(user != owner);
+        vm.assume(user != guardian);
+
+        vm.stopPrank();
+        vm.startPrank(ltvOwner);
+
+        LTVGuardianPayloadsController controller = new LTVGuardianPayloadsController(owner, guardian, payloadsManager, address(dummyLTV), delay);
+
+        dummyLTV.updateGovernor(address(controller));
+
+        vm.startPrank(user);
+        
+        bytes[] memory actions = new bytes[](1);
+        actions[0] = abi.encodeCall(dummyLTV.setTargetLTV, (6 * 10**17));
+
+        vm.expectRevert(abi.encodeWithSelector(IWithPayloadsManager.OnlyPayloadsManagerOrOwnerInvalidCaller.selector, user));
+        controller.createPayload(new bytes[](0));
+
+        vm.startPrank(payloadsManager);
+        uint40 payloadId = controller.createPayload(actions);
+
+        vm.startPrank(user);
+        vm.expectPartialRevert(LTVGuardianPayloadsController.DelayNotPassed.selector);
+        controller.executePayload(payloadId);
+
+        vm.expectPartialRevert(IWithGuardian.OnlyGuardianOrOwnerInvalidCaller.selector);
+        controller.cancelPayload(payloadId);
+
+        vm.startPrank(guardian);
+        controller.cancelPayload(payloadId);
+        require(controller.getPayload(payloadId).state == PayloadState.Cancelled);
+        
+        vm.startPrank(payloadsManager);
+        payloadId = controller.createPayload(actions);
+        vm.warp(block.timestamp + delay + 1);
+
+        vm.startPrank(user);
+        controller.executePayload(payloadId);
+
+        require(dummyLTV.targetLTV() == 6 * 10**17);
     }
 }

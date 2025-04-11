@@ -36,7 +36,7 @@ contract LTVGuardianPayloadsController is WithPayloadsManager {
 
     uint40 public payloadsCount;
     address public ltvAddress;
-    mapping(uint40 => Payload) public payloads;
+    mapping(uint40 => Payload) private _payloads;
     uint40 public delay;
 
     constructor(
@@ -58,8 +58,12 @@ contract LTVGuardianPayloadsController is WithPayloadsManager {
         delay = _delay;
     }
 
+    function getPayload(uint40 payloadId) external view returns (Payload memory) {
+        return _payloads[payloadId];
+    }
+
     function createPayload(bytes[] calldata actions) external onlyPayloadsManagerOrGuardian returns (uint40) {
-        Payload storage payload = payloads[payloadsCount];
+        Payload storage payload = _payloads[payloadsCount];
         payload.state = PayloadState.Created;
         payload.createdAt = uint40(block.timestamp);
         payload.delay = delay;
@@ -72,7 +76,7 @@ contract LTVGuardianPayloadsController is WithPayloadsManager {
     }
 
     function cancelPayload(uint40 payloadId) external onlyOwnerOrGuardian {
-        Payload storage payload = payloads[payloadId];
+        Payload storage payload = _payloads[payloadId];
         require(payload.state == PayloadState.Created, PayloadCancellationInvalidState(payloadId, payload.state));
         payload.state = PayloadState.Cancelled;
         payload.cancelledAt = uint40(block.timestamp);
@@ -80,10 +84,10 @@ contract LTVGuardianPayloadsController is WithPayloadsManager {
     }
 
     function executePayload(uint40 payloadId) external {
-        Payload storage payload = payloads[payloadId];
+        Payload storage payload = _payloads[payloadId];
         require(payload.state == PayloadState.Created, PayloadExecutionInvalidState(payloadId, payload.state));
         require(
-            payload.createdAt + payload.delay <= block.timestamp,
+            payload.createdAt + payload.delay < block.timestamp,
             DelayNotPassed(payloadId, payload.createdAt + payload.delay, uint40(block.timestamp))
         );
 
