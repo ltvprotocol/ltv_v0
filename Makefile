@@ -9,8 +9,11 @@ deploy-hodl-my-beer-lending :; $(MAKE) deploy-contract contract=script/ghost/Dep
 deploy-hodl-lending-connector :; $(MAKE) deploy-contract contract=script/DeployLendingConnector.s.sol:DeployHodlLendingConnector
 deploy-spooky-oracle-connector :; $(MAKE) deploy-contract contract=script/DeployOracleConnector.s.sol:DeploySpookyOracleConnector
 deploy-constant-slippage-provider :; $(MAKE) deploy-contract contract=script/DeployConstantSlippageProvider.s.sol
+deploy-vault-balance-as-lending-connector :; $(MAKE) deploy-contract contract=script/DeployVaultBalanceAsLendingConnector.s.sol:DeployVaultBalanceAsLendingConnector
 deploy-ltv-impl :; $(MAKE) deploy-contract contract=script/DeployLTV.s.sol:DeployImpl
 deploy-beacon :; $(MAKE) deploy-contract contract=script/DeployLTV.s.sol:DeployBeacon
 deploy-ghost-ltv :; $(MAKE) deploy-contract contract=script/DeployLTV.s.sol:DeployGhostLTV
 test-ghost-upgrade :; forge script script/GhostUpgrade.s.sol:GhostUpgradeTest -vvv --rpc-url ${RPC_SEPOLIA}
 ghost-upgrade :; forge script script/GhostUpgrade.s.sol:GhostUpgradeScript -vvv --rpc-url ${RPC_SEPOLIA}
+
+deploy-whitelist-registry :; $(MAKE) deploy-contract contract=script/DeployWhitelistRegistry.s.sol

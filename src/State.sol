@@ -6,18 +6,19 @@ import './Constants.sol';
 import './Structs.sol';
 
 import './utils/MulDiv.sol';
+import './utils/UpgradeableOwnableWithGuardianAndGovernor.sol';
 
 import 'forge-std/interfaces/IERC20.sol';
 
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol';
-import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 
 import './interfaces/ILendingConnector.sol';
 import './interfaces/IOracleConnector.sol';
+import './interfaces/IWhitelistRegistry.sol';
 import './interfaces/ISlippageProvider.sol';
 
-abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
+abstract contract State is UpgradeableOwnableWithGuardianAndGovernor, ReentrancyGuardUpgradeable {
     using uMulDiv for uint256;
     using sMulDiv for int256;
 
@@ -43,8 +44,9 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     uint128 public maxSafeLTV;
     uint128 public minProfitLTV;
     uint128 public targetLTV;
-
-    ILendingConnector public lendingConnector;
+    
+    ILendingConnector internal _lendingConnector;
+    bool isVaultDeleveraged;
     IOracleConnector public oracleConnector;
 
     uint256 internal lastSeenTokenPrice;
@@ -54,6 +56,11 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
 
     mapping(bytes4 => bool) public _isFunctionDisabled;
     ISlippageProvider public slippageProvider;
+    IWhitelistRegistry public whitelistRegistry;
+    bool public isWhitelistActivated;
+
+    uint256 public maxDeleverageFee;
+    ILendingConnector public vaultBalanceAsLendingConnector;
 
     struct StateInitData {
         address collateralToken;
@@ -67,12 +74,20 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
         uint256 maxGrowthFee;
         uint256 maxTotalAssetsInUnderlying;
         ISlippageProvider slippageProvider;
+        uint256 maxDeleverageFee;
+        ILendingConnector vaultBalanceAsLendingConnector;
     }
 
-    error FunctionNotAllowed();
+    error FunctionStopped(bytes4 functionSignature);
+    error ReceiverNotWhitelisted(address receiver);
 
     modifier isFunctionAllowed() {
         _checkFunctionAllowed();
+        _;
+    }
+
+    modifier isReceiverWhitelisted(address to) {
+        _isReceiverWhitelisted(to);
         _;
     }
 
@@ -83,16 +98,16 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
         maxSafeLTV = initData.maxSafeLTV;
         minProfitLTV = initData.minProfitLTV;
         targetLTV = initData.targetLTV;
-        lendingConnector = initData.lendingConnector;
+        _lendingConnector = initData.lendingConnector;
         oracleConnector = initData.oracleConnector;
         maxGrowthFee = initData.maxGrowthFee;
         maxTotalAssetsInUnderlying = initData.maxTotalAssetsInUnderlying;
         slippageProvider = initData.slippageProvider;
+        maxDeleverageFee = initData.maxDeleverageFee;
+        vaultBalanceAsLendingConnector = initData.vaultBalanceAsLendingConnector;
 
         lastSeenTokenPrice = 10 ** 18;
     }
-
-    function _totalAssets(bool isDeposit) internal view virtual returns (uint256);
 
     function totalSupply() public view returns (uint256) {
         // add 100 to avoid vault inflation attack
@@ -108,12 +123,18 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     }
 
     function getRealBorrowAssets() public view returns (uint256) {
-        return lendingConnector.getRealBorrowAssets();
+        return lendingConnector().getRealBorrowAssets();
     }
 
     function getRealCollateralAssets() public view returns (uint256) {
-        return lendingConnector.getRealCollateralAssets();
+        return lendingConnector().getRealCollateralAssets();
     }
+
+    function lendingConnector() public view returns (ILendingConnector) {
+        return isVaultDeleveraged ? vaultBalanceAsLendingConnector : _lendingConnector;
+    }
+
+    function _totalAssets(bool isDeposit) internal virtual view returns(uint256);
     
     function getAuctionStep() internal view returns (uint256) {
         uint256 auctionStep = block.number - startAuction;
@@ -209,6 +230,10 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     }
 
     function _checkFunctionAllowed() private view {
-        require(msg.sender == owner() || !_isFunctionDisabled[msg.sig], FunctionNotAllowed());
+        require(!_isFunctionDisabled[msg.sig] || _msgSender() == owner() || _msgSender() == governor(), FunctionStopped(msg.sig));
+    }
+
+    function _isReceiverWhitelisted(address receiver) internal view {
+        require(!isWhitelistActivated || whitelistRegistry.isAddressWhitelisted(receiver), ReceiverNotWhitelisted(receiver));
     }
 }

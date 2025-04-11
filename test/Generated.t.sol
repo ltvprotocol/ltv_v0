@@ -11,6 +11,7 @@ import './utils/DummyLTV.t.sol';
 import '../src/Constants.sol';
 import '../src/dummy/DummyLendingConnector.sol';
 import '../src/dummy/DummyOracleConnector.sol';
+import '../src/utils/VaultBalanceAsLendingConnector.sol';
 
 contract GeneratedTests is Test {
     DummyLTV public dummyLTV;
@@ -49,6 +50,10 @@ contract GeneratedTests is Test {
             oracle
         );
 
+        address vaultBalanceAsLendingConnector = address(
+            new VaultBalanceAsLendingConnector(collateralToken, borrowToken)
+        );
+        
         ConstantSlippageProvider slippageProvider = new ConstantSlippageProvider(
             10**16,
             10**16,
@@ -66,7 +71,9 @@ contract GeneratedTests is Test {
             oracleConnector: oracleConnector,
             maxGrowthFee: 10**18 / 5,
             maxTotalAssetsInUnderlying: type(uint128).max,
-            slippageProvider: slippageProvider
+            slippageProvider: slippageProvider,
+            maxDeleverageFee: 2*10**16,
+            vaultBalanceAsLendingConnector: ILendingConnector(vaultBalanceAsLendingConnector)
         }); 
 
         dummyLTV = new DummyLTV(initData, owner);
