@@ -12,7 +12,7 @@ import "../src/dummy/DummyOracleConnector.sol";
 import "../src/utils/ConstantSlippageProvider.sol";
 import "../src/utils/WhitelistRegistry.sol";
 import "../src/utils/VaultBalanceAsLendingConnector.sol";
-import "../src/utils/LTVGuardianPayloadsController.sol";
+import "../src/utils/PayloadsController.sol";
 
 contract DummyLTVTest is Test {
     DummyLTV public dummyLTV;
@@ -402,7 +402,7 @@ contract DummyLTVTest is Test {
         vm.stopPrank();
         vm.startPrank(ltvOwner);
 
-        LTVGuardianPayloadsController controller = new LTVGuardianPayloadsController(owner, guardian, payloadsManager, address(dummyLTV), delay);
+        PayloadsController controller = new PayloadsController(owner, guardian, payloadsManager, delay);
 
         dummyLTV.updateGovernor(address(controller));
 
@@ -412,13 +412,13 @@ contract DummyLTVTest is Test {
         actions[0] = abi.encodeCall(dummyLTV.setTargetLTV, (6 * 10**17));
 
         vm.expectRevert(abi.encodeWithSelector(IWithPayloadsManager.OnlyPayloadsManagerOrOwnerInvalidCaller.selector, user));
-        controller.createPayload(new bytes[](0));
+        controller.createPayload(address(dummyLTV), new bytes[](0));
 
         vm.startPrank(payloadsManager);
-        uint40 payloadId = controller.createPayload(actions);
+        uint40 payloadId = controller.createPayload(address(dummyLTV), actions);
 
         vm.startPrank(user);
-        vm.expectPartialRevert(LTVGuardianPayloadsController.DelayNotPassed.selector);
+        vm.expectPartialRevert(PayloadsControllerCommon.DelayNotPassed.selector);
         controller.executePayload(payloadId);
 
         vm.expectPartialRevert(IWithGuardian.OnlyGuardianOrOwnerInvalidCaller.selector);
@@ -429,7 +429,7 @@ contract DummyLTVTest is Test {
         require(controller.getPayload(payloadId).state == PayloadState.Cancelled);
         
         vm.startPrank(payloadsManager);
-        payloadId = controller.createPayload(actions);
+        payloadId = controller.createPayload(address(dummyLTV), actions);
         vm.warp(block.timestamp + delay + 1);
 
         vm.startPrank(user);

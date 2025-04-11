@@ -17,16 +17,14 @@ struct Payload {
     uint40 executedAt;
     uint40 cancelledAt;
     uint40 delay;
+    address target;
     bytes[] actions;
 }
 
-contract LTVGuardianPayloadsController is WithPayloadsManager {
+abstract contract PayloadsControllerCommon is WithPayloadsManager {
     event PayloadCreated(uint40 indexed payloadId, bytes[] actions);
-
     event PayloadExecuted(uint40 payloadId);
-
     event PayloadQueued(uint40 payloadId);
-
     event PayloadCancelled(uint40 payloadId);
 
     error PayloadCancellationInvalidState(uint40 payloadId, PayloadState state);
@@ -35,38 +33,27 @@ contract LTVGuardianPayloadsController is WithPayloadsManager {
     error PayloadExecutionFailed(uint40 payloadId);
 
     uint40 public payloadsCount;
-    address public ltvAddress;
     mapping(uint40 => Payload) private _payloads;
-    uint40 public delay;
 
-    constructor(
-        address initialOwner,
-        address initialGuardian,
-        address initialPayloadsManager,
-        address _ltvAddress,
-        uint40 _delay
-    ) WithPayloadsManager(initialOwner, initialGuardian, initialPayloadsManager) {
-        ltvAddress = _ltvAddress;
-        delay = _delay;
-    }
+    // constructor(
+    //     address initialOwner,
+    //     address initialGuardian,
+    //     address initialPayloadsManager
+    // ) WithPayloadsManager(initialOwner, initialGuardian, initialPayloadsManager) {
+    // }
 
-    function setLtvAddress(address _ltvAddress) external onlyOwner {
-        ltvAddress = _ltvAddress;
-    }
-
-    function setDelay(uint40 _delay) external onlyOwner {
-        delay = _delay;
-    }
+    function delay() public virtual view returns (uint40);
 
     function getPayload(uint40 payloadId) external view returns (Payload memory) {
         return _payloads[payloadId];
     }
 
-    function createPayload(bytes[] calldata actions) external onlyPayloadsManagerOrGuardian returns (uint40) {
+    function createPayload(address target, bytes[] calldata actions) external onlyPayloadsManagerOrGuardian returns (uint40) {
         Payload storage payload = _payloads[payloadsCount];
+        payload.target = target;
         payload.state = PayloadState.Created;
         payload.createdAt = uint40(block.timestamp);
-        payload.delay = delay;
+        payload.delay = delay();
         for (uint256 i = 0; i < actions.length; i++) {
             payload.actions.push(actions[i]);
         }
@@ -94,7 +81,7 @@ contract LTVGuardianPayloadsController is WithPayloadsManager {
         payload.state = PayloadState.Executed;
         payload.executedAt = uint40(block.timestamp);
         for (uint256 i = 0; i < payload.actions.length; i++) {
-            (bool success, ) = ltvAddress.call(payload.actions[i]);
+            (bool success, ) = payload.target.call(payload.actions[i]);
             require(success, PayloadExecutionFailed(payloadId));
         }
         emit PayloadExecuted(payloadId);
