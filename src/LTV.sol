@@ -46,6 +46,7 @@ contract LTV is
     ConvertToShares
 {
     using uMulDiv for uint256;
+    using sMulDiv for int256;
 
     function initialize(
         StateInitData memory stateInitData,
@@ -63,6 +64,8 @@ contract LTV is
     event TargetLTVChanged(uint128 oldValue, uint128 newValue);
 
     error InvalidLTVSet(uint128 targetLTV, uint128 maxSafeLTV, uint128 minProfitLTV);
+    error ImpossibleToCoverDeleverage(uint256 realBorrowAssets, uint256 providedAssets);
+    error InvalidDeleverageFee(uint256 deleverageFee);
 
     function setTargetLTV(uint128 value) external onlyOwner {
         require(value <= maxSafeLTV && value >= minProfitLTV, InvalidLTVSet(value, maxSafeLTV, minProfitLTV));
@@ -85,8 +88,8 @@ contract LTV is
         emit MinProfitLTVChanged(oldValue, value);
     }
 
-    function setLendingConnector(ILendingConnector _lendingConnector) external onlyOwner {
-        lendingConnector = _lendingConnector;
+    function setLendingConnector(ILendingConnector __lendingConnector) external onlyOwner {
+        _lendingConnector = __lendingConnector;
     }
 
     function setMaxTotalAssetsInUnderlying(uint256 _maxTotalAssetsInUnderlying) external onlyOwner {
@@ -97,14 +100,6 @@ contract LTV is
         feeCollector = _feeCollector;
     }
 
-    function setMissingSlots(ILendingConnector _lendingConnector, IOracleConnector _oracleConnector) external onlyOwner {
-        lendingConnector = _lendingConnector;
-        oracleConnector = _oracleConnector;
-        lastSeenTokenPrice = _totalAssets(false).mulDivDown(Constants.LAST_SEEN_PRICE_PRECISION, totalSupply());
-        maxGrowthFee = 10 ** 18 / 5;
-        maxTotalAssetsInUnderlying = type(uint128).max;
-    }
-
     // batch can be removed to save ~250 bytes of contract size
     function allowDisableFunctions(bytes4[] memory signatures, bool isDisabled) external onlyOwner {
         for (uint256 i = 0; i < signatures.length; i++) {
@@ -112,28 +107,51 @@ contract LTV is
         }
     }
 
-    function leaveLendingProtocol(address lendingIsContractBalanceConnector) external onlyOwner {
+    function setDeleverageFee(uint256 _deleverageFee) external onlyOwner {
+        require(_deleverageFee < 10**18, InvalidDeleverageFee(_deleverageFee));
+        deleverageFee = _deleverageFee;
+    }
+
+    function deleverageAndWithdraw(uint256 closeAmountBorrow) external onlyOwner {
+        futureBorrowAssets = 0;
+        futureCollateralAssets = 0;
+        futureRewardBorrowAssets = 0;
+        futureRewardCollateralAssets = 0;
+        startAuction = 0;
+
+        uint256 realBorrowAssets = getRealBorrowAssets();
+
+        require(closeAmountBorrow >= realBorrowAssets, ImpossibleToCoverDeleverage(realBorrowAssets, closeAmountBorrow));
+        
+        uint256 collateralToTransfer = realBorrowAssets.mulDivUp(10 ** 18 + deleverageFee, 10 ** 18).mulDivDown(
+            getPriceBorrowOracle(),
+            getPriceCollateralOracle()
+        );
+
+        borrowToken.transferFrom(msg.sender, address(this), realBorrowAssets);
+        repay(realBorrowAssets);
         withdraw(getRealCollateralAssets());
-        lendingConnector = ILendingConnector(lendingIsContractBalanceConnector);
+        collateralToken.transfer(msg.sender, collateralToTransfer);
+        isVaultDeleveraged = true;
     }
 
     function borrow(uint256 assets) internal override {
-        (bool isSuccess, ) = address(lendingConnector).delegatecall(abi.encodeCall(lendingConnector.borrow, (assets)));
+        (bool isSuccess, ) = address(lendingConnector()).delegatecall(abi.encodeCall(ILendingConnector.borrow, (assets)));
         require(isSuccess);
     }
 
     function repay(uint256 assets) internal override {
-        (bool isSuccess, ) = address(lendingConnector).delegatecall(abi.encodeCall(lendingConnector.repay, (assets)));
+        (bool isSuccess, ) = address(lendingConnector()).delegatecall(abi.encodeCall(ILendingConnector.repay, (assets)));
         require(isSuccess);
     }
 
     function supply(uint256 assets) internal override {
-        (bool isSuccess, ) = address(lendingConnector).delegatecall(abi.encodeCall(lendingConnector.supply, (assets)));
+        (bool isSuccess, ) = address(lendingConnector()).delegatecall(abi.encodeCall(ILendingConnector.supply, (assets)));
         require(isSuccess);
     }
 
     function withdraw(uint256 assets) internal override {
-        (bool isSuccess, ) = address(lendingConnector).delegatecall(abi.encodeCall(lendingConnector.withdraw, (assets)));
+        (bool isSuccess, ) = address(lendingConnector()).delegatecall(abi.encodeCall(ILendingConnector.withdraw, (assets)));
         require(isSuccess);
     }
 }

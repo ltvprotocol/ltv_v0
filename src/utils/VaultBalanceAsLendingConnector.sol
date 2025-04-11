@@ -3,7 +3,7 @@ pragma solidity ^0.8.27;
 
 import 'forge-std/interfaces/IERC20.sol';
 
-contract ContractBalanceLendingConnector {
+contract VaultBalanceAsLendingConnector {
     IERC20 public immutable COLLATERAL_TOKEN;
     IERC20 public immutable BORROW_TOKEN;
 

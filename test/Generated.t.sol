@@ -10,6 +10,7 @@ import './utils/DummyLTV.t.sol';
 import '../src/Constants.sol';
 import '../src/dummy/DummyLendingConnector.sol';
 import '../src/dummy/DummyOracleConnector.sol';
+import '../src/utils/VaultBalanceAsLendingConnector.sol';
 
 contract GeneratedTests is Test {
     DummyLTV public dummyLTV;
@@ -48,6 +49,10 @@ contract GeneratedTests is Test {
             oracle
         );
 
+        address vaultBalanceAsLendingConnector = address(
+            new VaultBalanceAsLendingConnector(collateralToken, borrowToken)
+        );
+
         State.StateInitData memory initData = State.StateInitData({
             collateralToken: address(collateralToken),
             borrowToken: address(borrowToken),
@@ -58,7 +63,9 @@ contract GeneratedTests is Test {
             lendingConnector: lendingConnector,
             oracleConnector: oracleConnector,
             maxGrowthFee: 10**18 / 5,
-            maxTotalAssetsInUnderlying: type(uint128).max
+            maxTotalAssetsInUnderlying: type(uint128).max,
+            deleverageFee: 2*10**16,
+            vaultBalanceAsLendingConnector: ILendingConnector(vaultBalanceAsLendingConnector)
         }); 
 
         dummyLTV = new DummyLTV(initData, owner, 10**16, 10**16);

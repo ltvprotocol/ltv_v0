@@ -50,6 +50,7 @@ contract DeployGhostLTV is Script {
         address borrowToken = vm.envAddress('BORROW_TOKEN');
         address hodlLendingConnector = vm.envAddress('HODL_LENDING_CONNECTOR');
         address spookyOracleConnector = vm.envAddress('SPOOKY_ORACLE_CONNECTOR');
+        address vaultBalanceAsLendingConnector = vm.envAddress('VAULT_BALANCE_AS_LENDING_CONNECTOR');
 
         State.StateInitData memory initData = State.StateInitData({
             collateralToken: collateralToken,
@@ -61,7 +62,9 @@ contract DeployGhostLTV is Script {
             lendingConnector: ILendingConnector(hodlLendingConnector),
             oracleConnector: IOracleConnector(spookyOracleConnector),
             maxGrowthFee: 10**18 / 5,
-            maxTotalAssetsInUnderlying: type(uint128).max
+            maxTotalAssetsInUnderlying: type(uint128).max,
+            deleverageFee: 2 * 10**16,
+            vaultBalanceAsLendingConnector: ILendingConnector(vaultBalanceAsLendingConnector)
         });
 
         vm.startBroadcast(); // Start broadcasting transactions

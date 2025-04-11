@@ -45,7 +45,7 @@ contract GhostUpgradeCommon is Script {
             ISpookyOracle(_oracle)
         );
 
-        LTV(LTV_ADDRESS).setMissingSlots(lendingConnector, oracleConnector);
+        // LTV(LTV_ADDRESS).setMissingSlots(lendingConnector, oracleConnector);
 
         console.log('Lending connector is at ', address(lendingConnector));
         console.log('Oracle connector is at ', address(oracleConnector));
