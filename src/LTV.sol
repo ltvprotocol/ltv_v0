@@ -124,6 +124,16 @@ contract LTV is
         feeCollector = _feeCollector;
     }
 
+    function setIsWhitelistActivated(bool activate) external onlyOwner {
+        isWhitelistActivated = activate;
+    }
+
+    function setWhitelistRegistry(IWhitelistRegistry value) external onlyOwner {
+        address oldAddress = address(whitelistRegistry);
+        whitelistRegistry = value;
+        emit WhitelistRegistryUpdated(oldAddress, address(value));
+    }
+
     function borrow(uint256 assets) internal override {
         (bool isSuccess, ) = address(lendingConnector).delegatecall(abi.encodeCall(lendingConnector.borrow, (assets)));
         require(isSuccess);
@@ -142,11 +152,5 @@ contract LTV is
     function withdraw(uint256 assets) internal override {
         (bool isSuccess, ) = address(lendingConnector).delegatecall(abi.encodeCall(lendingConnector.withdraw, (assets)));
         require(isSuccess);
-    }
-
-    function setWhitelistRegistry(IWhitelistRegistry value) external onlyOwner {
-        address oldAddress = address(whitelistRegistry);
-        whitelistRegistry = value;
-        emit WhitelistRegistryUpdated(oldAddress, address(value));
     }
 }

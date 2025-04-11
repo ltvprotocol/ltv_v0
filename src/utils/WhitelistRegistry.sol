@@ -2,8 +2,9 @@
 pragma solidity ^0.8.27;
 
 import '@openzeppelin/contracts/access/Ownable.sol';
+import '../interfaces/IWhitelistRegistry.sol';
 
-contract WhitelistRegistry is Ownable {
+contract WhitelistRegistry is IWhitelistRegistry, Ownable {
     mapping(address => bool) public isAddressWhitelisted;
 
     event AddressWhitelisted(address indexed account, bool isWhitelisted);

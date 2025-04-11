@@ -56,6 +56,7 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     mapping(bytes4 => bool) public _isFunctionDisabled;
     ISlippageProvider public slippageProvider;
     IWhitelistRegistry public whitelistRegistry;
+    bool public isWhitelistActivated;
 
     struct StateInitData {
         address collateralToken;
@@ -213,6 +214,6 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
 
     function _checkFunctionAllowed() private view {
         require(!_isFunctionDisabled[msg.sig] || msg.sender == owner(), FunctionStopped(msg.sig));
-        require(address(whitelistRegistry) == address(0) || whitelistRegistry.isAddressWhitelisted(msg.sender), SenderNotWhitelisted(msg.sender));
+        require(!isWhitelistActivated || whitelistRegistry.isAddressWhitelisted(msg.sender), SenderNotWhitelisted(msg.sender));
     }
 }
