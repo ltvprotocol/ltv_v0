@@ -73,10 +73,15 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     }
 
     error FunctionStopped(bytes4 functionSignature);
-    error SenderNotWhitelisted(address sender);
+    error ReceiverNotWhitelisted(address receiver);
 
     modifier isFunctionAllowed() {
         _checkFunctionAllowed();
+        _;
+    }
+
+    modifier isReceiverWhitelisted(address to) {
+        _isReceiverWhitelisted(to);
         _;
     }
 
@@ -214,6 +219,11 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
 
     function _checkFunctionAllowed() private view {
         require(!_isFunctionDisabled[msg.sig] || msg.sender == owner(), FunctionStopped(msg.sig));
-        require(!isWhitelistActivated || whitelistRegistry.isAddressWhitelisted(msg.sender), SenderNotWhitelisted(msg.sender));
+    }
+
+    function _isReceiverWhitelisted(address sender) internal view {
+        if (isWhitelistActivated) {
+            require(whitelistRegistry.isAddressWhitelisted(sender), ReceiverNotWhitelisted(sender));
+        }
     }
 }

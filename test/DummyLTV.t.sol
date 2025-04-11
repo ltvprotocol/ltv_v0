@@ -383,7 +383,7 @@ contract DummyLTVTest is Test {
         whitelistRegistry.addAddressToWhitelist(randUser);
         
         vm.startPrank(user);
-        vm.expectRevert(abi.encodeWithSelector(State.SenderNotWhitelisted.selector, user));
+        vm.expectRevert(abi.encodeWithSelector(State.ReceiverNotWhitelisted.selector, user));
         dummyLTV.deposit(10**17, user);
         
         vm.startPrank(randUser);
