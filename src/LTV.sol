@@ -19,8 +19,10 @@ import './collateralVault/PreviewDepositCollateral.sol';
 import './collateralVault/PreviewWithdrawCollateral.sol';
 import './collateralVault/PreviewMintCollateral.sol';
 import './collateralVault/PreviewRedeemCollateral.sol';
+import './collateralVault/ConvertToAssetsCollateral.sol';
+import './collateralVault/ConvertToSharesCollateral.sol';
 import './Auction.sol';
-import './LowLevel.sol';
+import './LowLevelRebalance.sol';
 import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 
 contract LTV is
@@ -32,7 +34,7 @@ contract LTV is
     PreviewDepositCollateral,
     PreviewMintCollateral,
     PreviewRedeemCollateral,
-    LowLevel,
+    LowLevelRebalance,
     Auction,
     Mint,
     MintCollateral,
@@ -96,15 +98,19 @@ contract LTV is
         maxTotalAssetsInUnderlying = _maxTotalAssetsInUnderlying;
     }
 
-    function setFeeCollector(address _feeCollector) external onlyOwner {
-        feeCollector = _feeCollector;
-    }
-
     // batch can be removed to save ~250 bytes of contract size
     function allowDisableFunctions(bytes4[] memory signatures, bool isDisabled) external onlyOwner {
         for (uint256 i = 0; i < signatures.length; i++) {
             _isFunctionDisabled[signatures[i]] = isDisabled;
         }
+    }
+
+    function setSlippageProvider(ISlippageProvider _slippageProvider) external onlyOwner {
+        slippageProvider = _slippageProvider;
+    }
+
+    function setFeeCollector(address _feeCollector) external onlyOwner {
+        feeCollector = _feeCollector;
     }
 
     function setDeleverageFee(uint256 _deleverageFee) external onlyOwner {

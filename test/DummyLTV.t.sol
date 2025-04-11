@@ -9,6 +9,7 @@ import './utils/DummyLTV.t.sol';
 import '../src/Constants.sol';
 import '../src/dummy/DummyLendingConnector.sol';
 import '../src/dummy/DummyOracleConnector.sol';
+import '../src/utils/ConstantSlippageProvider.sol';
 import '../src/utils/VaultBalanceAsLendingConnector.sol';
 
 contract DummyLTVTest is Test {
@@ -17,6 +18,7 @@ contract DummyLTVTest is Test {
     MockERC20 public borrowToken;
     MockDummyLending public lendingProtocol;
     IDummyOracle public oracle;
+    ConstantSlippageProvider public slippageProvider;
 
     modifier initializeBalancedTest(
         address owner,
@@ -43,6 +45,7 @@ contract DummyLTVTest is Test {
             DummyOracleConnector oracleConnector = new DummyOracleConnector(collateralToken, borrowToken, oracle);
 
             address vaultBalanceAsLendingConnector = address(new VaultBalanceAsLendingConnector(collateralToken, borrowToken));
+            slippageProvider = new ConstantSlippageProvider(0, 0, owner);
 
             State.StateInitData memory initData = State.StateInitData({
                 collateralToken: address(collateralToken),
@@ -55,11 +58,12 @@ contract DummyLTVTest is Test {
                 oracleConnector: oracleConnector,
                 maxGrowthFee: 10 ** 18 / 5,
                 maxTotalAssetsInUnderlying: type(uint128).max,
+                slippageProvider: slippageProvider,
                 deleverageFee: 2 * 10 ** 16,
                 vaultBalanceAsLendingConnector: ILendingConnector(vaultBalanceAsLendingConnector)
             });
 
-            dummyLTV = new DummyLTV(initData, owner, 0, 0);
+            dummyLTV = new DummyLTV(initData, owner);
         }
 
         vm.startPrank(owner);
@@ -185,8 +189,11 @@ contract DummyLTVTest is Test {
     }
 
     function test_maxMint(address owner, address user) public initializeBalancedTest(owner, user, 100000, 9500, 9500, -1000) {
-        dummyLTV.setCollateralSlippage(10 ** 16);
+        vm.stopPrank();
+        vm.startPrank(owner);
+        slippageProvider.setCollateralSlippage(10 ** 16);
 
+        vm.startPrank(user);
         assertEq(dummyLTV.maxMint(user), 956118 * 100);
         borrowToken.approve(address(dummyLTV), type(uint112).max);
         dummyLTV.mint(dummyLTV.maxMint(user), user);
@@ -205,7 +212,7 @@ contract DummyLTVTest is Test {
         vm.stopPrank();
         vm.startPrank(owner);
         dummyLTV.transfer(user, dummyLTV.balanceOf(owner));
-        dummyLTV.setBorrowSlippage(10 ** 16);
+        slippageProvider.setBorrowSlippage(10 ** 16);
 
         assertEq(dummyLTV.maxRedeem(user), 625053 * 100);
         dummyLTV.redeem(dummyLTV.maxRedeem(user), user, user);
@@ -249,7 +256,7 @@ contract DummyLTVTest is Test {
         address owner,
         address user
     ) public initializeBalancedTest(owner, user, 100000, -10000, -10000, 1000) {
-        (int256 deltaRealCollateralAssets, int256 deltaRealBorrowAssets) = dummyLTV.executeLowLevelShares(0);
+        (int256 deltaRealCollateralAssets, int256 deltaRealBorrowAssets) = dummyLTV.executeLowLevelRebalanceShares(0);
 
         assertEq(deltaRealCollateralAssets, -4000);
         assertEq(deltaRealBorrowAssets, -7500);
@@ -259,7 +266,7 @@ contract DummyLTVTest is Test {
         address owner,
         address user
     ) public initializeBalancedTest(owner, user, 100000, -10000, -10000, 1000) {
-        (int256 deltaRealBorrowAssets, int256 deltaShares) = dummyLTV.executeLowLevelCollateral(-4000);
+        (int256 deltaRealBorrowAssets, int256 deltaShares) = dummyLTV.executeLowLevelRebalanceCollateral(-4000);
 
         assertEq(deltaShares, 0);
         assertEq(deltaRealBorrowAssets, -7500);
@@ -269,21 +276,21 @@ contract DummyLTVTest is Test {
         address owner,
         address user
     ) public initializeBalancedTest(owner, user, 100000, -10000, -10000, 1000) {
-        (int256 deltaRealCollateralAssets, int256 deltaShares) = dummyLTV.executeLowLevelBorrow(-7500);
+        (int256 deltaRealCollateralAssets, int256 deltaShares) = dummyLTV.executeLowLevelRebalanceBorrow(-7500);
 
         assertEq(deltaShares, 0);
         assertEq(deltaRealCollateralAssets, -4000);
     }
 
     function test_lowLevelPositiveAuctionShares(address owner, address user) public initializeBalancedTest(owner, user, 100000, 10000, 10000, -1000) {
-        (int256 deltaRealCollateralAssets, int256 deltaRealBorrowAssets) = dummyLTV.executeLowLevelShares(1000 * 100);
+        (int256 deltaRealCollateralAssets, int256 deltaRealBorrowAssets) = dummyLTV.executeLowLevelRebalanceShares(1000 * 100);
 
         assertEq(deltaRealCollateralAssets, 7500);
         assertEq(deltaRealBorrowAssets, 14500);
     }
 
     function test_lowLevelPositiveAuctionBorrow(address owner, address user) public initializeBalancedTest(owner, user, 100000, 10000, 10000, -1000) {
-        (int256 deltaRealCollateralAssets, int256 deltaShares) = dummyLTV.executeLowLevelBorrow(14500);
+        (int256 deltaRealCollateralAssets, int256 deltaShares) = dummyLTV.executeLowLevelRebalanceBorrow(14500);
 
         assertEq(deltaRealCollateralAssets, 7500);
         assertEq(deltaShares, 1000 * 100);
@@ -293,7 +300,7 @@ contract DummyLTVTest is Test {
         address owner,
         address user
     ) public initializeBalancedTest(owner, user, 100000, 10000, 10000, -1000) {
-        (int256 deltaRealBorrowAssets, int256 deltaShares) = dummyLTV.executeLowLevelCollateral(7500);
+        (int256 deltaRealBorrowAssets, int256 deltaShares) = dummyLTV.executeLowLevelRebalanceCollateral(7500);
 
         assertEq(deltaRealBorrowAssets, 14500);
         assertEq(deltaShares, 1000 * 100);
@@ -350,8 +357,10 @@ contract DummyLTVTest is Test {
 
         // total assets were reduced for 6% according to target LTV = 3/4 and 2% fee for deleverage
         assertEq(dummyLTV.totalAssets(), 94 * 10 ** 16 + 1);
+        console.log("total assets collateral", dummyLTV.totalAssetsCollateral());
+        console.log("Another metrics:       ", dummyLTV.getRealCollateralAssets());
 
-        assertEq(dummyLTV.withdrawCollateral(94 * 10 ** 15, address(owner), address(owner)), 2 * 10 ** 19 - 1);
+        assertEq(dummyLTV.withdrawCollateral(94 * 10 ** 15, address(owner), address(owner)), 2 * 10 ** 19 + 20);
         dummyLTV.redeemCollateral(2 * 10 ** 19, address(owner), address(owner));
     }
 }

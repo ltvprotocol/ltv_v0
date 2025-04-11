@@ -15,6 +15,7 @@ import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 
 import './interfaces/ILendingConnector.sol';
 import './interfaces/IOracleConnector.sol';
+import './interfaces/ISlippageProvider.sol';
 
 abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     using uMulDiv for uint256;
@@ -53,6 +54,7 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     uint256 public maxTotalAssetsInUnderlying;
 
     mapping(bytes4 => bool) public _isFunctionDisabled;
+    ISlippageProvider public slippageProvider;
 
     uint256 public deleverageFee;
     ILendingConnector public vaultBalanceAsLendingConnector;
@@ -68,6 +70,7 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
         IOracleConnector oracleConnector;
         uint256 maxGrowthFee;
         uint256 maxTotalAssetsInUnderlying;
+        ISlippageProvider slippageProvider;
         uint256 deleverageFee;
         ILendingConnector vaultBalanceAsLendingConnector;
     }
@@ -90,6 +93,7 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
         oracleConnector = initData.oracleConnector;
         maxGrowthFee = initData.maxGrowthFee;
         maxTotalAssetsInUnderlying = initData.maxTotalAssetsInUnderlying;
+        slippageProvider = initData.slippageProvider;
         deleverageFee = initData.deleverageFee;
         vaultBalanceAsLendingConnector = initData.vaultBalanceAsLendingConnector;
 
@@ -193,7 +197,12 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
 
     function getPrices() internal view virtual returns (Prices memory) {
         return
-            Prices({borrow: getPriceBorrowOracle(), collateral: getPriceCollateralOracle(), borrowSlippage: 10 ** 16, collateralSlippage: 10 ** 16});
+            Prices({
+                borrow: getPriceBorrowOracle(),
+                collateral: getPriceCollateralOracle(),
+                borrowSlippage: slippageProvider.borrowSlippage(),
+                collateralSlippage: slippageProvider.collateralSlippage()
+            });
     }
 
     function getAvailableSpaceInShares(ConvertedAssets memory convertedAssets, uint256 supply, bool isDeposit) internal view returns (uint256) {

@@ -10,8 +10,8 @@ import {ProxyAdmin} from '@openzeppelin/contracts/proxy/transparent/ProxyAdmin.s
 import {MagicETH} from 'src/ghost/magic/MagicETH.sol';
 
 import 'src/ghost/connectors/HodlLendingConnector.sol';
-
 import 'src/ghost/connectors/SpookyOracleConnector.sol';
+import 'src/interfaces/ISlippageProvider.sol';
 
 import {WETH} from '../src/dummy/weth/WETH.sol';
 
@@ -50,6 +50,7 @@ contract DeployGhostLTV is Script {
         address borrowToken = vm.envAddress('BORROW_TOKEN');
         address hodlLendingConnector = vm.envAddress('HODL_LENDING_CONNECTOR');
         address spookyOracleConnector = vm.envAddress('SPOOKY_ORACLE_CONNECTOR');
+        address slippageProvider = vm.envAddress('SLIPPAGE_PROVIDER');
         address vaultBalanceAsLendingConnector = vm.envAddress('VAULT_BALANCE_AS_LENDING_CONNECTOR');
 
         State.StateInitData memory initData = State.StateInitData({
@@ -63,6 +64,7 @@ contract DeployGhostLTV is Script {
             oracleConnector: IOracleConnector(spookyOracleConnector),
             maxGrowthFee: 10**18 / 5,
             maxTotalAssetsInUnderlying: type(uint128).max,
+            slippageProvider: ISlippageProvider(slippageProvider),
             deleverageFee: 2 * 10**16,
             vaultBalanceAsLendingConnector: ILendingConnector(vaultBalanceAsLendingConnector)
         });
