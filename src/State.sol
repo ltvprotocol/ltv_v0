@@ -56,7 +56,7 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     mapping(bytes4 => bool) public _isFunctionDisabled;
     ISlippageProvider public slippageProvider;
 
-    uint256 public deleverageFee;
+    uint256 public maxDeleverageFee;
     ILendingConnector public vaultBalanceAsLendingConnector;
 
     struct StateInitData {
@@ -71,7 +71,7 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
         uint256 maxGrowthFee;
         uint256 maxTotalAssetsInUnderlying;
         ISlippageProvider slippageProvider;
-        uint256 deleverageFee;
+        uint256 maxDeleverageFee;
         ILendingConnector vaultBalanceAsLendingConnector;
     }
 
@@ -94,7 +94,7 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
         maxGrowthFee = initData.maxGrowthFee;
         maxTotalAssetsInUnderlying = initData.maxTotalAssetsInUnderlying;
         slippageProvider = initData.slippageProvider;
-        deleverageFee = initData.deleverageFee;
+        maxDeleverageFee = initData.maxDeleverageFee;
         vaultBalanceAsLendingConnector = initData.vaultBalanceAsLendingConnector;
 
         lastSeenTokenPrice = 10 ** 18;

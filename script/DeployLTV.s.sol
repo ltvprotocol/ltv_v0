@@ -65,7 +65,7 @@ contract DeployGhostLTV is Script {
             maxGrowthFee: 10**18 / 5,
             maxTotalAssetsInUnderlying: type(uint128).max,
             slippageProvider: ISlippageProvider(slippageProvider),
-            deleverageFee: 2 * 10**16,
+            maxDeleverageFee: 2 * 10**16,
             vaultBalanceAsLendingConnector: ILendingConnector(vaultBalanceAsLendingConnector)
         });
 

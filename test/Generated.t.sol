@@ -72,7 +72,7 @@ contract GeneratedTests is Test {
             maxGrowthFee: 10**18 / 5,
             maxTotalAssetsInUnderlying: type(uint128).max,
             slippageProvider: slippageProvider,
-            deleverageFee: 2*10**16,
+            maxDeleverageFee: 2*10**16,
             vaultBalanceAsLendingConnector: ILendingConnector(vaultBalanceAsLendingConnector)
         }); 
 

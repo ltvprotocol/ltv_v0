@@ -67,7 +67,8 @@ contract LTV is
 
     error InvalidLTVSet(uint128 targetLTV, uint128 maxSafeLTV, uint128 minProfitLTV);
     error ImpossibleToCoverDeleverage(uint256 realBorrowAssets, uint256 providedAssets);
-    error InvalidDeleverageFee(uint256 deleverageFee);
+    error InvalidMaxDeleverageFee(uint256 deleverageFee);
+    error ExceedsMaxDeleverageFee(uint256 deleverageFee, uint256 maxDeleverageFee);
 
     function setTargetLTV(uint128 value) external onlyOwner {
         require(value <= maxSafeLTV && value >= minProfitLTV, InvalidLTVSet(value, maxSafeLTV, minProfitLTV));
@@ -113,12 +114,13 @@ contract LTV is
         feeCollector = _feeCollector;
     }
 
-    function setDeleverageFee(uint256 _deleverageFee) external onlyOwner {
-        require(_deleverageFee < 10**18, InvalidDeleverageFee(_deleverageFee));
-        deleverageFee = _deleverageFee;
+    function setMaxDeleverageFee(uint256 value) external onlyOwner {
+        require(value < 10**18, InvalidMaxDeleverageFee(value));
+        maxDeleverageFee = value;
     }
 
-    function deleverageAndWithdraw(uint256 closeAmountBorrow) external onlyOwner {
+    function deleverageAndWithdraw(uint256 closeAmountBorrow, uint256 deleverageFee) external onlyOwner {
+        require(deleverageFee <= maxDeleverageFee, ExceedsMaxDeleverageFee(deleverageFee, maxDeleverageFee));
         futureBorrowAssets = 0;
         futureCollateralAssets = 0;
         futureRewardBorrowAssets = 0;
