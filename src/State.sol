@@ -6,7 +6,7 @@ import './Constants.sol';
 import './Structs.sol';
 
 import './utils/MulDiv.sol';
-import './utils/UpgradeableOwnableWithGovernor.sol';
+import './utils/UpgradeableOwnableWithGuardianAndGovernor.sol';
 
 import 'forge-std/interfaces/IERC20.sol';
 
@@ -18,7 +18,7 @@ import './interfaces/IOracleConnector.sol';
 import './interfaces/IWhitelistRegistry.sol';
 import './interfaces/ISlippageProvider.sol';
 
-abstract contract State is UpgradeableOwnableWithGovernor, ReentrancyGuardUpgradeable {
+abstract contract State is UpgradeableOwnableWithGuardianAndGovernor, ReentrancyGuardUpgradeable {
     using uMulDiv for uint256;
     using sMulDiv for int256;
 
