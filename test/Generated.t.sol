@@ -3,6 +3,7 @@
 pragma solidity ^0.8.28;
 
 import '../src/dummy/DummyOracle.sol';
+import '../src/utils/ConstantSlippageProvider.sol';
 import 'forge-std/Test.sol';
 import {MockERC20} from 'forge-std/mocks/MockERC20.sol';
 import {MockDummyLending} from './utils/MockDummyLending.t.sol';
@@ -48,6 +49,12 @@ contract GeneratedTests is Test {
             oracle
         );
 
+        ConstantSlippageProvider slippageProvider = new ConstantSlippageProvider(
+            10**16,
+            10**16,
+            owner
+        );
+
         State.StateInitData memory initData = State.StateInitData({
             collateralToken: address(collateralToken),
             borrowToken: address(borrowToken),
@@ -58,10 +65,11 @@ contract GeneratedTests is Test {
             lendingConnector: lendingConnector,
             oracleConnector: oracleConnector,
             maxGrowthFee: 10**18 / 5,
-            maxTotalAssetsInUnderlying: type(uint128).max
+            maxTotalAssetsInUnderlying: type(uint128).max,
+            slippageProvider: slippageProvider
         }); 
 
-        dummyLTV = new DummyLTV(initData, owner, 10**16, 10**16);
+        dummyLTV = new DummyLTV(initData, owner);
 
         vm.startPrank(owner);
         Ownable(address(lendingProtocol)).transferOwnership(address(dummyLTV));
