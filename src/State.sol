@@ -123,7 +123,7 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     function getRealCollateralAssets() public view returns (uint256) {
         return lendingConnector.getRealCollateralAssets();
     }
-    
+
     function getAuctionStep() internal view returns (uint256) {
         uint256 auctionStep = block.number - startAuction;
 
@@ -221,9 +221,7 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
         require(!_isFunctionDisabled[msg.sig] || msg.sender == owner(), FunctionStopped(msg.sig));
     }
 
-    function _isReceiverWhitelisted(address sender) internal view {
-        if (isWhitelistActivated) {
-            require(whitelistRegistry.isAddressWhitelisted(sender), ReceiverNotWhitelisted(sender));
-        }
+    function _isReceiverWhitelisted(address receiver) internal view {
+        require(!isWhitelistActivated || whitelistRegistry.isAddressWhitelisted(receiver), ReceiverNotWhitelisted(receiver));
     }
 }
