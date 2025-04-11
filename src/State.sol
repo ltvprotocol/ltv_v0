@@ -43,8 +43,9 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     uint128 public maxSafeLTV;
     uint128 public minProfitLTV;
     uint128 public targetLTV;
-
-    ILendingConnector public lendingConnector;
+    
+    ILendingConnector internal _lendingConnector;
+    bool isVaultDeleveraged;
     IOracleConnector public oracleConnector;
 
     uint256 internal lastSeenTokenPrice;
@@ -54,6 +55,9 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
 
     mapping(bytes4 => bool) public _isFunctionDisabled;
     ISlippageProvider public slippageProvider;
+
+    uint256 public maxDeleverageFee;
+    ILendingConnector public vaultBalanceAsLendingConnector;
 
     struct StateInitData {
         address collateralToken;
@@ -67,6 +71,8 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
         uint256 maxGrowthFee;
         uint256 maxTotalAssetsInUnderlying;
         ISlippageProvider slippageProvider;
+        uint256 maxDeleverageFee;
+        ILendingConnector vaultBalanceAsLendingConnector;
     }
 
     error FunctionNotAllowed();
@@ -83,16 +89,16 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
         maxSafeLTV = initData.maxSafeLTV;
         minProfitLTV = initData.minProfitLTV;
         targetLTV = initData.targetLTV;
-        lendingConnector = initData.lendingConnector;
+        _lendingConnector = initData.lendingConnector;
         oracleConnector = initData.oracleConnector;
         maxGrowthFee = initData.maxGrowthFee;
         maxTotalAssetsInUnderlying = initData.maxTotalAssetsInUnderlying;
         slippageProvider = initData.slippageProvider;
+        maxDeleverageFee = initData.maxDeleverageFee;
+        vaultBalanceAsLendingConnector = initData.vaultBalanceAsLendingConnector;
 
         lastSeenTokenPrice = 10 ** 18;
     }
-
-    function _totalAssets(bool isDeposit) internal view virtual returns (uint256);
 
     function totalSupply() public view returns (uint256) {
         // add 100 to avoid vault inflation attack
@@ -108,12 +114,18 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     }
 
     function getRealBorrowAssets() public view returns (uint256) {
-        return lendingConnector.getRealBorrowAssets();
+        return lendingConnector().getRealBorrowAssets();
     }
 
     function getRealCollateralAssets() public view returns (uint256) {
-        return lendingConnector.getRealCollateralAssets();
+        return lendingConnector().getRealCollateralAssets();
     }
+
+    function lendingConnector() public view returns (ILendingConnector) {
+        return isVaultDeleveraged ? vaultBalanceAsLendingConnector : _lendingConnector;
+    }
+    
+    function _totalAssets(bool isDeposit) internal view virtual returns (uint256);
     
     function getAuctionStep() internal view returns (uint256) {
         uint256 auctionStep = block.number - startAuction;
