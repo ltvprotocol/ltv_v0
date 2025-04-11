@@ -22,7 +22,7 @@ import './collateralVault/PreviewRedeemCollateral.sol';
 import './collateralVault/ConvertToAssetsCollateral.sol';
 import './collateralVault/ConvertToSharesCollateral.sol';
 import './Auction.sol';
-import './LowLevel.sol';
+import './LowLevelRebalance.sol';
 import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 
 contract LTV is
@@ -34,7 +34,7 @@ contract LTV is
     PreviewDepositCollateral,
     PreviewMintCollateral,
     PreviewRedeemCollateral,
-    LowLevel,
+    LowLevelRebalance,
     Auction,
     Mint,
     MintCollateral,
@@ -65,6 +65,7 @@ contract LTV is
     event TargetLTVChanged(uint128 oldValue, uint128 newValue);
 
     error InvalidLTVSet(uint128 targetLTV, uint128 maxSafeLTV, uint128 minProfitLTV);
+    event WhitelistRegistryUpdated(address oldValue, address newValue);
 
     function setTargetLTV(uint128 value) external onlyOwnerOrGovernor {
         require(value <= maxSafeLTV && value >= minProfitLTV, InvalidLTVSet(value, maxSafeLTV, minProfitLTV));
@@ -108,6 +109,16 @@ contract LTV is
 
     function setFeeCollector(address _feeCollector) external onlyOwner {
         feeCollector = _feeCollector;
+    }
+
+    function setIsWhitelistActivated(bool activate) external onlyOwner {
+        isWhitelistActivated = activate;
+    }
+
+    function setWhitelistRegistry(IWhitelistRegistry value) external onlyOwner {
+        address oldAddress = address(whitelistRegistry);
+        whitelistRegistry = value;
+        emit WhitelistRegistryUpdated(oldAddress, address(value));
     }
 
     function borrow(uint256 assets) internal override {

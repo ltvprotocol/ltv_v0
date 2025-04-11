@@ -9,7 +9,8 @@ import "./utils/DummyLTV.t.sol";
 import "../src/Constants.sol";
 import "../src/dummy/DummyLendingConnector.sol";
 import "../src/dummy/DummyOracleConnector.sol";
-import '../src/utils/ConstantSlippageProvider.sol';
+import "../src/utils/ConstantSlippageProvider.sol";
+import "../src/utils/WhitelistRegistry.sol";
 
 contract DummyLTVTest is Test {
     DummyLTV public dummyLTV;
@@ -286,7 +287,7 @@ contract DummyLTVTest is Test {
     }
 
     function test_lowLevelNegativeAuctionShares(address owner, address user) public initializeBalancedTest(owner, user, 100000, -10000, -10000, 1000) {
-        (int256 deltaRealCollateralAssets, int256 deltaRealBorrowAssets) = dummyLTV.executeLowLevelShares(0);
+        (int256 deltaRealCollateralAssets, int256 deltaRealBorrowAssets) = dummyLTV.executeLowLevelRebalanceShares(0);
 
         assertEq(deltaRealCollateralAssets, -4000);
         assertEq(deltaRealBorrowAssets, -7500);
@@ -294,35 +295,35 @@ contract DummyLTVTest is Test {
     }
 
     function test_lowLevelNegativeAuctionCollateral(address owner, address user) public initializeBalancedTest(owner, user, 100000, -10000, -10000, 1000) {
-        (int256 deltaRealBorrowAssets, int256 deltaShares) = dummyLTV.executeLowLevelCollateral(-4000);
+        (int256 deltaRealBorrowAssets, int256 deltaShares) = dummyLTV.executeLowLevelRebalanceCollateral(-4000);
 
         assertEq(deltaShares, 0);
         assertEq(deltaRealBorrowAssets, -7500);
     }    
     
     function test_lowLevelNegativeAuctionBorrow(address owner, address user) public initializeBalancedTest(owner, user, 100000, -10000, -10000, 1000) {
-        (int256 deltaRealCollateralAssets, int256 deltaShares) = dummyLTV.executeLowLevelBorrow(-7500);
+        (int256 deltaRealCollateralAssets, int256 deltaShares) = dummyLTV.executeLowLevelRebalanceBorrow(-7500);
 
         assertEq(deltaShares, 0);
         assertEq(deltaRealCollateralAssets, -4000);
     }
 
     function test_lowLevelPositiveAuctionShares(address owner, address user) public initializeBalancedTest(owner, user, 100000, 10000, 10000, -1000) {
-        (int256 deltaRealCollateralAssets, int256 deltaRealBorrowAssets) = dummyLTV.executeLowLevelShares(1000 * 100);
+        (int256 deltaRealCollateralAssets, int256 deltaRealBorrowAssets) = dummyLTV.executeLowLevelRebalanceShares(1000 * 100);
 
         assertEq(deltaRealCollateralAssets, 7500);
         assertEq(deltaRealBorrowAssets, 14500);
     }
 
     function test_lowLevelPositiveAuctionBorrow(address owner, address user) public initializeBalancedTest(owner, user, 100000, 10000, 10000, -1000) {
-        (int256 deltaRealCollateralAssets, int256 deltaShares) = dummyLTV.executeLowLevelBorrow(14500);
+        (int256 deltaRealCollateralAssets, int256 deltaShares) = dummyLTV.executeLowLevelRebalanceBorrow(14500);
 
         assertEq(deltaRealCollateralAssets, 7500);
         assertEq(deltaShares, 1000 * 100);
     }
 
     function test_lowLevelPositiveAuctionCollateral(address owner, address user) public initializeBalancedTest(owner, user, 100000, 10000, 10000, -1000) {
-        (int256 deltaRealBorrowAssets, int256 deltaShares) = dummyLTV.executeLowLevelCollateral(7500);
+        (int256 deltaRealBorrowAssets, int256 deltaShares) = dummyLTV.executeLowLevelRebalanceCollateral(7500);
 
         assertEq(deltaRealBorrowAssets, 14500);
         assertEq(deltaShares, 1000 * 100);
@@ -368,5 +369,25 @@ contract DummyLTVTest is Test {
         vm.startPrank(owner);
         dummyLTV.setMaxTotalAssetsInUnderlying(10**18 * 100 + 10**8);
         assertEq(dummyLTV.maxMintCollateral(user), dummyLTV.previewDepositCollateral(5 * 10**5));
+    }
+
+    function test_whitelist(address owner, address user, address randUser) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        vm.stopPrank();
+        vm.startPrank(owner);
+        deal(address(borrowToken), randUser, type(uint112).max);
+
+        WhitelistRegistry whitelistRegistry = new WhitelistRegistry(owner);
+        dummyLTV.setWhitelistRegistry(whitelistRegistry);
+
+        dummyLTV.setIsWhitelistActivated(true);
+        whitelistRegistry.addAddressToWhitelist(randUser);
+        
+        vm.startPrank(user);
+        vm.expectRevert(abi.encodeWithSelector(State.ReceiverNotWhitelisted.selector, user));
+        dummyLTV.deposit(10**17, user);
+        
+        vm.startPrank(randUser);
+        borrowToken.approve(address(dummyLTV), 10**17);
+        dummyLTV.deposit(10**17, randUser);
     }
 }
