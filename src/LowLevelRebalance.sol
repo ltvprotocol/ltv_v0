@@ -7,6 +7,44 @@ import './math/LowLevelRebalanceMath.sol';
 
 abstract contract LowLevelRebalance is MaxGrowthFee, Lending {
     using sMulDiv for int256;
+    using uMulDiv for uint256;
+
+    error ExceedsLowLevelRebalanceMaxDeltaCollareral(int256 deltaCollateral, int256 max);
+    error ExceedsLowLevelRebalanceMaxDeltaBorrow(int256 deltaBorrow, int256 max);
+    error ExceedsLowLevelRebalanceMaxDeltaShares(int256 deltaShares, int256 max);
+
+    function maxLowLevelRebalanceBorrow() public view returns (int256) {
+        // rounding down assuming smaller border
+        uint256 maxTotalAssetsInBorrow = maxTotalAssetsInUnderlying.mulDivDown(Constants.ORACLE_DIVIDER, getPriceBorrowOracle());
+        // rounding down assuming smaller border
+        uint256 maxBorrow = maxTotalAssetsInBorrow.mulDivDown(Constants.LTV_DIVIDER * targetLTV, (Constants.LTV_DIVIDER - targetLTV) * Constants.LTV_DIVIDER);
+        uint256 currentBorrow = getRealBorrowAssets();
+        return int256(maxBorrow) - int256(currentBorrow);
+    }
+
+    function maxLowLevelRebalanceCollateral() public view returns(int256) {
+        // rounding down assuming smaller border
+        uint256 maxTotalAssetsInCollateral = maxTotalAssetsInUnderlying.mulDivDown(Constants.ORACLE_DIVIDER, getPriceCollateralOracle());
+        // rounding down assuming smaller border
+        uint256 maxCollateral = maxTotalAssetsInCollateral.mulDivDown(Constants.LTV_DIVIDER, Constants.LTV_DIVIDER - targetLTV);
+        uint256 currentCollateral = getRealCollateralAssets();
+        return int256(maxCollateral) - int256(currentCollateral);
+    }
+
+    function maxLowLevelRebalanceShares() public view returns(int256) {
+        uint256 supplyAfterFee = previewSupplyAfterFee();
+        uint256 borrowPrice = getPriceBorrowOracle();
+        // rounding down assuming smaller border
+        uint256 realCollateralUnderlying = getRealCollateralAssets().mulDivDown(getPriceCollateralOracle(), Constants.ORACLE_DIVIDER);
+        // rounding up assuming smaller border
+        uint256 realBorrowUnderlying = getRealBorrowAssets().mulDivUp(borrowPrice, Constants.ORACLE_DIVIDER);
+
+        int256 maxDeltaSharesInUnderlying = int256(maxTotalAssetsInUnderlying + realBorrowUnderlying) - int256(realCollateralUnderlying);
+        uint256 totalAssets = maxDeltaSharesInUnderlying > 0 ? _totalAssets(true) : _totalAssets(false);
+
+        // rounding down assuming smaller border
+        return maxDeltaSharesInUnderlying.mulDivDown(int256(Constants.ORACLE_DIVIDER), int256(borrowPrice)).mulDivDown(int256(supplyAfterFee), int256(totalAssets));
+    }
 
     function previewLowLevelRebalanceShares(int256 deltaShares) external view returns (int256, int256) {
         uint256 supplyAfterFee = previewSupplyAfterFee();
@@ -41,6 +79,8 @@ abstract contract LowLevelRebalance is MaxGrowthFee, Lending {
     }
 
     function executeLowLevelRebalanceShares(int256 deltaShares) external isFunctionAllowed nonReentrant returns (int256, int256) {
+        int256 max = maxLowLevelRebalanceShares();
+        require(deltaShares <= max, ExceedsLowLevelRebalanceMaxDeltaShares(deltaShares, max));
         uint256 supplyAfterFee = previewSupplyAfterFee();
         applyMaxGrowthFee(supplyAfterFee);
         (int256 deltaRealCollateralAssets, int256 deltaRealBorrowAssets, int256 deltaProtocolFutureRewardShares) = LowLevelRebalanceMath
@@ -140,6 +180,8 @@ abstract contract LowLevelRebalance is MaxGrowthFee, Lending {
     }
 
     function _executeLowLevelRebalanceCollateralHint(int256 deltaCollateralAssets, bool isSharesPositiveHint) private returns (int256, int256) {
+        int256 max = maxLowLevelRebalanceCollateral();
+        require(deltaCollateralAssets <= max, ExceedsLowLevelRebalanceMaxDeltaShares(deltaCollateralAssets, max));
         uint256 supplyAfterFee = previewSupplyAfterFee();
         (int256 deltaRealBorrowAssets, int256 deltaShares, int256 deltaProtocolFutureRewardShares) = _previewLowLevelRebalanceCollateralHint(
             deltaCollateralAssets,
@@ -154,6 +196,8 @@ abstract contract LowLevelRebalance is MaxGrowthFee, Lending {
     }
 
     function _executeLowLevelRebalanceBorrowHint(int256 deltaBorrowAssets, bool isSharesPositiveHint) private returns (int256, int256) {
+        int256 max = maxLowLevelRebalanceBorrow();
+        require(deltaBorrowAssets <= max, ExceedsLowLevelRebalanceMaxDeltaBorrow(deltaBorrowAssets, max));
         uint256 supplyAfterFee = previewSupplyAfterFee();
         (int256 deltaRealCollateralAssets, int256 deltaShares, int256 deltaProtocolFutureRewardShares) = _previewLowLevelRebalanceBorrowHint(
             deltaBorrowAssets,

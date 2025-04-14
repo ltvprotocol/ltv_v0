@@ -390,4 +390,25 @@ contract DummyLTVTest is Test {
         borrowToken.approve(address(dummyLTV), 10**17);
         dummyLTV.deposit(10**17, randUser);
     }
+
+    function test_maxLowLevelRebalanceCollateral(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        vm.stopPrank();
+        vm.startPrank(owner);
+        dummyLTV.setMaxTotalAssetsInUnderlying(10**18 * 100 + 10**8);
+        assertEq(dummyLTV.maxLowLevelRebalanceCollateral(), 2 * 10**6);
+    }
+
+    function test_maxLowLevelRebalanceBorrow(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        vm.stopPrank();
+        vm.startPrank(owner);
+        dummyLTV.setMaxTotalAssetsInUnderlying(10**18 * 100 + 10**8);
+        assertEq(dummyLTV.maxLowLevelRebalanceBorrow(), 3 * 10**6);
+    }
+
+    function test_maxLowLevelRebalanceShares(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        vm.stopPrank();
+        vm.startPrank(owner);
+        dummyLTV.setMaxTotalAssetsInUnderlying(10**18 * 100 + 10**8);
+        assertEq(dummyLTV.maxLowLevelRebalanceShares(), 10**8);
+    }
 }
