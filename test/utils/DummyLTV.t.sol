@@ -9,7 +9,7 @@ contract DummyLTV is LTV {
         address initialOwner
     ) {
         
-        initialize(initData, initialOwner, initialOwner, initialOwner, "Dummy LTV", "DLTV");
+        initialize(initData, initialOwner, initialOwner, initialOwner, initialOwner, "Dummy LTV", "DLTV");
     }
 
     function setFutureBorrowAssets(int256 value) public {

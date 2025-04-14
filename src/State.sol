@@ -7,6 +7,7 @@ import './Structs.sol';
 
 import './utils/MulDiv.sol';
 import './utils/UpgradeableOwnableWithGuardianAndGovernor.sol';
+import './utils/UpgradeableOwnableWithEmergencyDeleverager.sol';
 
 import 'forge-std/interfaces/IERC20.sol';
 
@@ -18,7 +19,7 @@ import './interfaces/IOracleConnector.sol';
 import './interfaces/IWhitelistRegistry.sol';
 import './interfaces/ISlippageProvider.sol';
 
-abstract contract State is UpgradeableOwnableWithGuardianAndGovernor, ReentrancyGuardUpgradeable {
+abstract contract State is UpgradeableOwnableWithGuardianAndGovernor, UpgradeableOwnableWithEmergencyDeleverager, ReentrancyGuardUpgradeable {
     using uMulDiv for uint256;
     using sMulDiv for int256;
 
@@ -44,7 +45,7 @@ abstract contract State is UpgradeableOwnableWithGuardianAndGovernor, Reentrancy
     uint128 public maxSafeLTV;
     uint128 public minProfitLTV;
     uint128 public targetLTV;
-    
+
     ILendingConnector internal _lendingConnector;
     bool isVaultDeleveraged;
     IOracleConnector public oracleConnector;
@@ -134,8 +135,8 @@ abstract contract State is UpgradeableOwnableWithGuardianAndGovernor, Reentrancy
         return isVaultDeleveraged ? vaultBalanceAsLendingConnector : _lendingConnector;
     }
 
-    function _totalAssets(bool isDeposit) internal virtual view returns(uint256);
-    
+    function _totalAssets(bool isDeposit) internal view virtual returns (uint256);
+
     function getAuctionStep() internal view returns (uint256) {
         uint256 auctionStep = block.number - startAuction;
 

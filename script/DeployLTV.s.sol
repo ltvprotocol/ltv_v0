@@ -46,6 +46,7 @@ contract DeployGhostLTV is Script {
         address ltvOwner = vm.envAddress('LTV_OWNER');
         address ltvGuardian = vm.envAddress('LTV_GUARDIAN');
         address ltvGovernor = vm.envAddress('LTV_GOVERNOR');
+        address ltvEmergencyDeleverager = vm.envAddress('LTV_EMERGENCY_DELEVERAGER');
         address feeCollector = vm.envAddress('FEE_COLLECTOR');
         address beacon = vm.envAddress('BEACON');
         address collateralToken = vm.envAddress('COLLATERAL_TOKEN');
@@ -74,7 +75,10 @@ contract DeployGhostLTV is Script {
         vm.startBroadcast(); // Start broadcasting transactions
 
         address ltv = address(
-            new BeaconProxy(beacon, abi.encodeCall(LTV.initialize, (initData, ltvOwner, ltvGuardian, ltvGovernor, 'Ghost Magic ETH', 'GME')))
+            new BeaconProxy(
+                beacon,
+                abi.encodeCall(LTV.initialize, (initData, ltvOwner, ltvGuardian, ltvGovernor, ltvEmergencyDeleverager, 'Ghost Magic ETH', 'GME'))
+            )
         );
         vm.stopBroadcast();
         console.log('ltv at: ', ltv);

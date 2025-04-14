@@ -55,12 +55,14 @@ contract LTV is
         address initialOwner,
         address initialGuardian,
         address initialGovernor,
+        address initialEmergencyDeleverager,
         string memory _name,
         string memory _symbol
     ) public initializer isFunctionAllowed {
         __State_init(stateInitData);
         __ERC20_init(_name, _symbol, 18);
         __Ownable_With_Guardian_And_Governor_init(initialGuardian, initialGovernor, initialOwner);
+        __Ownable_With_EmergencyDeleverager_init_unchained(initialEmergencyDeleverager);
     }
 
     event MaxSafeLTVChanged(uint128 oldValue, uint128 newValue);
