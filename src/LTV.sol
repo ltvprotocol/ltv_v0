@@ -87,6 +87,10 @@ contract LTV is
         emit MinProfitLTVChanged(oldValue, value);
     }
 
+    function setOracleConnector(IOracleConnector _oracleConnector) external onlyOwner {
+        oracleConnector = _oracleConnector;
+    }
+
     function setLendingConnector(ILendingConnector _lendingConnector) external onlyOwner {
         lendingConnector = _lendingConnector;
     }
