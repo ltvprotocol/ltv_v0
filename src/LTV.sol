@@ -127,6 +127,16 @@ contract LTV is
         feeCollector = _feeCollector;
     }
 
+    // TODO: GIVE THIS PERMISSION ALSO TO GOVERNOR
+    function setIsDepositDisabled(bool value) external onlyOwner {
+        isDepositDisabled = value;
+    }
+    
+    // TODO: GIVE THIS PERMISSION ALSO TO GOVERNOR
+    function setIsWithdrawDisabled(bool value) external onlyOwner {
+        isWithdrawDisabled = value;
+    }
+
     function borrow(uint256 assets) internal override {
         (bool isSuccess, ) = address(lendingConnector).delegatecall(abi.encodeCall(lendingConnector.borrow, (assets)));
         require(isSuccess);
