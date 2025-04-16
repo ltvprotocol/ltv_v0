@@ -168,10 +168,16 @@ contract LTV is
             getPriceCollateralOracle()
         );
 
-        borrowToken.transferFrom(msg.sender, address(this), realBorrowAssets);
-        repay(realBorrowAssets);
+        if (realBorrowAssets != 0) {
+            borrowToken.transferFrom(msg.sender, address(this), realBorrowAssets);
+            repay(realBorrowAssets);
+        }
         withdraw(getRealCollateralAssets());
-        collateralToken.transfer(msg.sender, collateralToTransfer);
+        
+        if (collateralToTransfer != 0) {
+            collateralToken.transfer(msg.sender, collateralToTransfer);
+        }
+
         isVaultDeleveraged = true;
     }
 

@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../src/dummy/DummyOracle.sol";
-import "forge-std/Test.sol";
-import {MockERC20} from "forge-std/mocks/MockERC20.sol";
-import {MockDummyLending} from "./utils/MockDummyLending.t.sol";
-import "./utils/DummyLTV.t.sol";
-import "../src/Constants.sol";
-import "../src/dummy/DummyLendingConnector.sol";
-import "../src/dummy/DummyOracleConnector.sol";
-import "../src/utils/ConstantSlippageProvider.sol";
-import "../src/utils/WhitelistRegistry.sol";
-import "../src/utils/VaultBalanceAsLendingConnector.sol";
-import "../src/utils/PayloadsController.sol";
+import '../src/dummy/DummyOracle.sol';
+import 'forge-std/Test.sol';
+import {MockERC20} from 'forge-std/mocks/MockERC20.sol';
+import {MockDummyLending} from './utils/MockDummyLending.t.sol';
+import './utils/DummyLTV.t.sol';
+import '../src/Constants.sol';
+import '../src/dummy/DummyLendingConnector.sol';
+import '../src/dummy/DummyOracleConnector.sol';
+import '../src/utils/ConstantSlippageProvider.sol';
+import '../src/utils/WhitelistRegistry.sol';
+import '../src/utils/VaultBalanceAsLendingConnector.sol';
+import '../src/utils/PayloadsController.sol';
 
 contract DummyLTVTest is Test {
     DummyLTV public dummyLTV;
@@ -436,5 +436,26 @@ contract DummyLTVTest is Test {
         controller.executePayload(payloadId);
 
         require(dummyLTV.targetLTV() == 6 * 10**17);
+    }
+
+    function test_maxLowLevelRebalanceCollateral(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        vm.stopPrank();
+        vm.startPrank(owner);
+        dummyLTV.setMaxTotalAssetsInUnderlying(10**18 * 100 + 10**8);
+        assertEq(dummyLTV.maxLowLevelRebalanceCollateral(), 2 * 10**6);
+    }
+
+    function test_maxLowLevelRebalanceBorrow(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        vm.stopPrank();
+        vm.startPrank(owner);
+        dummyLTV.setMaxTotalAssetsInUnderlying(10**18 * 100 + 10**8);
+        assertEq(dummyLTV.maxLowLevelRebalanceBorrow(), 3 * 10**6);
+    }
+
+    function test_maxLowLevelRebalanceShares(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        vm.stopPrank();
+        vm.startPrank(owner);
+        dummyLTV.setMaxTotalAssetsInUnderlying(10**18 * 100 + 10**8);
+        assertEq(dummyLTV.maxLowLevelRebalanceShares(), 10**8);
     }
 }
