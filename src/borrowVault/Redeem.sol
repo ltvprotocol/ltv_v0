@@ -56,7 +56,7 @@ abstract contract Redeem is MaxRedeem, StateTransition, Lending, ERC4626Events {
 
         borrow(assets);
 
-        borrowToken.transfer(receiver, assets);
+        transferBorrowToken(receiver, assets);
 
         emit Withdraw(msg.sender, receiver, owner, assets, shares);
 

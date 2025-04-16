@@ -9,7 +9,8 @@ import "./utils/DummyLTV.t.sol";
 import "../src/Constants.sol";
 import "../src/dummy/DummyLendingConnector.sol";
 import "../src/dummy/DummyOracleConnector.sol";
-import '../src/utils/ConstantSlippageProvider.sol';
+import "../src/utils/ConstantSlippageProvider.sol";
+import "../src/utils/WhitelistRegistry.sol";
 
 contract DummyLTVTest is Test {
     DummyLTV public dummyLTV;
@@ -368,5 +369,25 @@ contract DummyLTVTest is Test {
         vm.startPrank(owner);
         dummyLTV.setMaxTotalAssetsInUnderlying(10**18 * 100 + 10**8);
         assertEq(dummyLTV.maxMintCollateral(user), dummyLTV.previewDepositCollateral(5 * 10**5));
+    }
+
+    function test_whitelist(address owner, address user, address randUser) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        vm.stopPrank();
+        vm.startPrank(owner);
+        deal(address(borrowToken), randUser, type(uint112).max);
+
+        WhitelistRegistry whitelistRegistry = new WhitelistRegistry(owner);
+        dummyLTV.setWhitelistRegistry(whitelistRegistry);
+
+        dummyLTV.setIsWhitelistActivated(true);
+        whitelistRegistry.addAddressToWhitelist(randUser);
+        
+        vm.startPrank(user);
+        vm.expectRevert(abi.encodeWithSelector(State.ReceiverNotWhitelisted.selector, user));
+        dummyLTV.deposit(10**17, user);
+        
+        vm.startPrank(randUser);
+        borrowToken.approve(address(dummyLTV), 10**17);
+        dummyLTV.deposit(10**17, randUser);
     }
 }
