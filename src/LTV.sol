@@ -104,19 +104,33 @@ contract LTV is
         slippageProvider = _slippageProvider;
     }
 
+    function setOracleConnector(IOracleConnector _oracleConnector) external onlyOwner {
+        oracleConnector = _oracleConnector;
+    }
+
+    function setLendingConnector(ILendingConnector _lendingConnector) external onlyOwner {
+        lendingConnector = _lendingConnector;
+    }
+
     // batch can be removed to save ~250 bytes of contract size
     function allowDisableFunctions(bytes4[] memory signatures, bool isDisabled) external onlyOwnerOrGuardian {
         for (uint256 i = 0; i < signatures.length; i++) {
             _isFunctionDisabled[signatures[i]] = isDisabled;
         }
     }
-
-    function setLendingConnector(ILendingConnector __lendingConnector) external onlyOwner {
-        _lendingConnector = __lendingConnector;
-    }
-
+    
     function setFeeCollector(address _feeCollector) external onlyOwner {
         feeCollector = _feeCollector;
+    }
+
+    // TODO: GIVE THIS PERMISSION ALSO TO GOVERNOR
+    function setIsDepositDisabled(bool value) external onlyOwner {
+        isDepositDisabled = value;
+    }
+    
+    // TODO: GIVE THIS PERMISSION ALSO TO GOVERNOR
+    function setIsWithdrawDisabled(bool value) external onlyOwner {
+        isWithdrawDisabled = value;
     }
 
     function setIsWhitelistActivated(bool activate) external onlyOwner {

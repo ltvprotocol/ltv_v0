@@ -23,6 +23,9 @@ abstract contract State is UpgradeableOwnableWithGuardianAndGovernor, Upgradeabl
     using uMulDiv for uint256;
     using sMulDiv for int256;
 
+    error DepositIsDisabled();
+    error WithdrawIsDisabled();
+
     address public feeCollector;
 
     int256 public futureBorrowAssets;
@@ -57,6 +60,8 @@ abstract contract State is UpgradeableOwnableWithGuardianAndGovernor, Upgradeabl
 
     mapping(bytes4 => bool) public _isFunctionDisabled;
     ISlippageProvider public slippageProvider;
+    bool public isDepositDisabled;
+    bool public isWithdrawDisabled;
     IWhitelistRegistry public whitelistRegistry;
     bool public isWhitelistActivated;
 
