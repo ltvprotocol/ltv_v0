@@ -42,7 +42,7 @@ abstract contract UpgradeableOwnableWithGovernor is OwnableUpgradeable, IWithGov
         return governorStorage._governor;
     }
 
-    function updateGovernor(address newGovernor) external override onlyOwnerOrGovernor {
+    function updateGovernor(address newGovernor) external override onlyOwner {
         _updateGovernor(newGovernor);
     }
 

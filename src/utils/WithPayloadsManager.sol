@@ -25,7 +25,7 @@ contract WithPayloadsManager is OwnableWithGuardian, IWithPayloadsManager {
         return _payloadsManager;
     }
 
-    function updatePayloadsManager(address newPayloadsManager) external override onlyOwnerOrGuardian {
+    function updatePayloadsManager(address newPayloadsManager) external override onlyOwner {
         _updatePayloadsManager(newPayloadsManager);
     }
 

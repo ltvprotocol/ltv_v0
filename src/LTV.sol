@@ -100,8 +100,12 @@ contract LTV is
         maxTotalAssetsInUnderlying = _maxTotalAssetsInUnderlying;
     }
 
+    function setSlippageProvider(ISlippageProvider _slippageProvider) external onlyOwnerOrGovernor {
+        slippageProvider = _slippageProvider;
+    }
+
     // batch can be removed to save ~250 bytes of contract size
-    function allowDisableFunctions(bytes4[] memory signatures, bool isDisabled) external onlyGuardian {
+    function allowDisableFunctions(bytes4[] memory signatures, bool isDisabled) external onlyOwnerOrGuardian {
         for (uint256 i = 0; i < signatures.length; i++) {
             _isFunctionDisabled[signatures[i]] = isDisabled;
         }
@@ -109,10 +113,6 @@ contract LTV is
 
     function setLendingConnector(ILendingConnector __lendingConnector) external onlyOwner {
         _lendingConnector = __lendingConnector;
-    }
-
-    function setSlippageProvider(ISlippageProvider _slippageProvider) external onlyOwner {
-        slippageProvider = _slippageProvider;
     }
 
     function setFeeCollector(address _feeCollector) external onlyOwner {
@@ -134,7 +134,7 @@ contract LTV is
         maxDeleverageFee = value;
     }
 
-    function deleverageAndWithdraw(uint256 closeAmountBorrow, uint256 deleverageFee) external onlyOwner {
+    function deleverageAndWithdraw(uint256 closeAmountBorrow, uint256 deleverageFee) external onlyOwnerOrEmergencyDeleverager {
         require(deleverageFee <= maxDeleverageFee, ExceedsMaxDeleverageFee(deleverageFee, maxDeleverageFee));
         futureBorrowAssets = 0;
         futureCollateralAssets = 0;

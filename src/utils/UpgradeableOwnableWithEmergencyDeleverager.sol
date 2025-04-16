@@ -42,7 +42,7 @@ abstract contract UpgradeableOwnableWithEmergencyDeleverager is OwnableUpgradeab
         return emergencyDeleveragerStorage._emergencyDeleverager;
     }
 
-    function updateEmergencyDeleverager(address newEmergencyDeleverager) external override onlyOwnerOrEmergencyDeleverager {
+    function updateEmergencyDeleverager(address newEmergencyDeleverager) external override onlyOwner {
         _updateEmergencyDeleverager(newEmergencyDeleverager);
     }
 

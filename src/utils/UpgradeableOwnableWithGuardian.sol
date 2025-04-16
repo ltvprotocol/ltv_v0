@@ -42,7 +42,7 @@ abstract contract UpgradeableOwnableWithGuardian is OwnableUpgradeable, IWithGua
         return guardianStorage._guardian;
     }
 
-    function updateGuardian(address newGuardian) external override onlyOwnerOrGuardian {
+    function updateGuardian(address newGuardian) external override onlyOwner {
         _updateGuardian(newGuardian);
     }
 

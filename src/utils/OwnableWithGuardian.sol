@@ -25,7 +25,7 @@ abstract contract OwnableWithGuardian is Ownable, IWithGuardian {
         return _guardian;
     }
 
-    function updateGuardian(address newGuardian) external override onlyOwnerOrGuardian {
+    function updateGuardian(address newGuardian) external override onlyOwner {
         _updateGuardian(newGuardian);
     }
 
