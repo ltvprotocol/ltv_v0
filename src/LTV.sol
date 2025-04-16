@@ -105,23 +105,33 @@ contract LTV is
         slippageProvider = _slippageProvider;
     }
 
-    function setOracleConnector(IOracleConnector _oracleConnector) external onlyOwner {
-        oracleConnector = _oracleConnector;
-    }
-
-    function setLendingConnector(ILendingConnector _lendingConnector) external onlyOwner {
-        lendingConnector = _lendingConnector;
-    }
-
     // batch can be removed to save ~250 bytes of contract size
     function allowDisableFunctions(bytes4[] memory signatures, bool isDisabled) external onlyOwnerOrGuardian {
         for (uint256 i = 0; i < signatures.length; i++) {
             _isFunctionDisabled[signatures[i]] = isDisabled;
         }
     }
-    
-    function setFeeCollector(address _feeCollector) external onlyOwner {
+
+    function setFeeCollector(address _feeCollector) external onlyOwnerOrGovernor {
         feeCollector = _feeCollector;
+    }
+
+    // TODO: GIVE THIS PERMISSION ALSO TO GOVERNOR
+    function setIsDepositDisabled(bool value) external onlyOwnerOrGuardian {
+        isDepositDisabled = value;
+    }
+    
+    // TODO: GIVE THIS PERMISSION ALSO TO GOVERNOR
+    function setIsWithdrawDisabled(bool value) external onlyOwnerOrGuardian {
+        isWithdrawDisabled = value;
+    }
+
+    function setOracleConnector(IOracleConnector _oracleConnector) external onlyOwner {
+        oracleConnector = _oracleConnector;
+    }
+
+    function setLendingConnector(ILendingConnector _lendingConnector) external onlyOwner {
+        lendingConnector = _lendingConnector;
     }
 
     function setIsWhitelistActivated(bool activate) external onlyOwner {
@@ -132,16 +142,6 @@ contract LTV is
         address oldAddress = address(whitelistRegistry);
         whitelistRegistry = value;
         emit WhitelistRegistryUpdated(oldAddress, address(value));
-    }
-
-    // TODO: GIVE THIS PERMISSION ALSO TO GOVERNOR
-    function setIsDepositDisabled(bool value) external onlyOwner {
-        isDepositDisabled = value;
-    }
-    
-    // TODO: GIVE THIS PERMISSION ALSO TO GOVERNOR
-    function setIsWithdrawDisabled(bool value) external onlyOwner {
-        isWithdrawDisabled = value;
     }
 
     function setMaxDeleverageFee(uint256 value) external onlyOwner {
