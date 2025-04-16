@@ -69,6 +69,7 @@ contract LTV is
     error ImpossibleToCoverDeleverage(uint256 realBorrowAssets, uint256 providedAssets);
     error InvalidMaxDeleverageFee(uint256 deleverageFee);
     error ExceedsMaxDeleverageFee(uint256 deleverageFee, uint256 maxDeleverageFee);
+    error VaultAlreadyDeleveraged();
 
     function setTargetLTV(uint128 value) external onlyOwner {
         require(value <= maxSafeLTV && value >= minProfitLTV, InvalidLTVSet(value, maxSafeLTV, minProfitLTV));
@@ -91,8 +92,8 @@ contract LTV is
         emit MinProfitLTVChanged(oldValue, value);
     }
 
-    function setLendingConnector(ILendingConnector __lendingConnector) external onlyOwner {
-        _lendingConnector = __lendingConnector;
+    function setLendingConnector(ILendingConnector _lendingConnector) external onlyOwner {
+        lendingConnector = _lendingConnector;
     }
 
     function setMaxTotalAssetsInUnderlying(uint256 _maxTotalAssetsInUnderlying) external onlyOwner {
@@ -119,8 +120,11 @@ contract LTV is
         maxDeleverageFee = value;
     }
 
-    function deleverageAndWithdraw(uint256 closeAmountBorrow, uint256 deleverageFee) external onlyOwner {
+    function deleverageAndWithdraw(uint256 closeAmountBorrow, uint256 deleverageFee) external onlyOwner nonReentrant {
         require(deleverageFee <= maxDeleverageFee, ExceedsMaxDeleverageFee(deleverageFee, maxDeleverageFee));
+        require(!isVaultDeleveraged, VaultAlreadyDeleveraged());
+
+        isVaultDeleveraged = true;
         futureBorrowAssets = 0;
         futureCollateralAssets = 0;
         futureRewardBorrowAssets = 0;
@@ -139,27 +143,27 @@ contract LTV is
         borrowToken.transferFrom(msg.sender, address(this), realBorrowAssets);
         repay(realBorrowAssets);
         withdraw(getRealCollateralAssets());
-        collateralToken.transfer(msg.sender, collateralToTransfer);
         isVaultDeleveraged = true;
+        collateralToken.transfer(msg.sender, collateralToTransfer);
     }
 
     function borrow(uint256 assets) internal override {
-        (bool isSuccess, ) = address(lendingConnector()).delegatecall(abi.encodeCall(ILendingConnector.borrow, (assets)));
+        (bool isSuccess, ) = address(currentLendingConnector()).delegatecall(abi.encodeCall(ILendingConnector.borrow, (assets)));
         require(isSuccess);
     }
 
     function repay(uint256 assets) internal override {
-        (bool isSuccess, ) = address(lendingConnector()).delegatecall(abi.encodeCall(ILendingConnector.repay, (assets)));
+        (bool isSuccess, ) = address(currentLendingConnector()).delegatecall(abi.encodeCall(ILendingConnector.repay, (assets)));
         require(isSuccess);
     }
 
     function supply(uint256 assets) internal override {
-        (bool isSuccess, ) = address(lendingConnector()).delegatecall(abi.encodeCall(ILendingConnector.supply, (assets)));
+        (bool isSuccess, ) = address(currentLendingConnector()).delegatecall(abi.encodeCall(ILendingConnector.supply, (assets)));
         require(isSuccess);
     }
 
     function withdraw(uint256 assets) internal override {
-        (bool isSuccess, ) = address(lendingConnector()).delegatecall(abi.encodeCall(ILendingConnector.withdraw, (assets)));
+        (bool isSuccess, ) = address(currentLendingConnector()).delegatecall(abi.encodeCall(ILendingConnector.withdraw, (assets)));
         require(isSuccess);
     }
 }

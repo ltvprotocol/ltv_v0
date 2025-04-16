@@ -44,7 +44,7 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     uint128 public minProfitLTV;
     uint128 public targetLTV;
     
-    ILendingConnector internal _lendingConnector;
+    ILendingConnector internal lendingConnector;
     bool isVaultDeleveraged;
     IOracleConnector public oracleConnector;
 
@@ -89,7 +89,7 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
         maxSafeLTV = initData.maxSafeLTV;
         minProfitLTV = initData.minProfitLTV;
         targetLTV = initData.targetLTV;
-        _lendingConnector = initData.lendingConnector;
+        lendingConnector = initData.lendingConnector;
         oracleConnector = initData.oracleConnector;
         maxGrowthFee = initData.maxGrowthFee;
         maxTotalAssetsInUnderlying = initData.maxTotalAssetsInUnderlying;
@@ -114,15 +114,15 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     }
 
     function getRealBorrowAssets() public view returns (uint256) {
-        return lendingConnector().getRealBorrowAssets();
+        return currentLendingConnector().getRealBorrowAssets();
     }
 
     function getRealCollateralAssets() public view returns (uint256) {
-        return lendingConnector().getRealCollateralAssets();
+        return currentLendingConnector().getRealCollateralAssets();
     }
 
-    function lendingConnector() public view returns (ILendingConnector) {
-        return isVaultDeleveraged ? vaultBalanceAsLendingConnector : _lendingConnector;
+    function currentLendingConnector() public view returns (ILendingConnector) {
+        return isVaultDeleveraged ? vaultBalanceAsLendingConnector : lendingConnector;
     }
     
     function _totalAssets(bool isDeposit) internal view virtual returns (uint256);
