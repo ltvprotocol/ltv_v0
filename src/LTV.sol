@@ -74,6 +74,7 @@ contract LTV is
     error InvalidMaxDeleverageFee(uint256 deleverageFee);
     error ExceedsMaxDeleverageFee(uint256 deleverageFee, uint256 maxDeleverageFee);
     event WhitelistRegistryUpdated(address oldValue, address newValue);
+    error VaultAlreadyDeleveraged();
 
     function setTargetLTV(uint128 value) external onlyOwnerOrGovernor {
         require(value <= maxSafeLTV && value >= minProfitLTV, InvalidLTVSet(value, maxSafeLTV, minProfitLTV));
@@ -123,16 +124,6 @@ contract LTV is
         feeCollector = _feeCollector;
     }
 
-    // TODO: GIVE THIS PERMISSION ALSO TO GOVERNOR
-    function setIsDepositDisabled(bool value) external onlyOwner {
-        isDepositDisabled = value;
-    }
-    
-    // TODO: GIVE THIS PERMISSION ALSO TO GOVERNOR
-    function setIsWithdrawDisabled(bool value) external onlyOwner {
-        isWithdrawDisabled = value;
-    }
-
     function setIsWhitelistActivated(bool activate) external onlyOwner {
         isWhitelistActivated = activate;
     }
@@ -143,13 +134,25 @@ contract LTV is
         emit WhitelistRegistryUpdated(oldAddress, address(value));
     }
 
+    // TODO: GIVE THIS PERMISSION ALSO TO GOVERNOR
+    function setIsDepositDisabled(bool value) external onlyOwner {
+        isDepositDisabled = value;
+    }
+    
+    // TODO: GIVE THIS PERMISSION ALSO TO GOVERNOR
+    function setIsWithdrawDisabled(bool value) external onlyOwner {
+        isWithdrawDisabled = value;
+    }
+
     function setMaxDeleverageFee(uint256 value) external onlyOwner {
         require(value < 10 ** 18, InvalidMaxDeleverageFee(value));
         maxDeleverageFee = value;
     }
 
-    function deleverageAndWithdraw(uint256 closeAmountBorrow, uint256 deleverageFee) external onlyOwnerOrEmergencyDeleverager {
+    function deleverageAndWithdraw(uint256 closeAmountBorrow, uint256 deleverageFee) external onlyOwnerOrEmergencyDeleverager nonReentrant {
         require(deleverageFee <= maxDeleverageFee, ExceedsMaxDeleverageFee(deleverageFee, maxDeleverageFee));
+        require(!isVaultDeleveraged, VaultAlreadyDeleveraged());
+
         futureBorrowAssets = 0;
         futureCollateralAssets = 0;
         futureRewardBorrowAssets = 0;
@@ -173,22 +176,22 @@ contract LTV is
     }
 
     function borrow(uint256 assets) internal override {
-        (bool isSuccess, ) = address(lendingConnector()).delegatecall(abi.encodeCall(ILendingConnector.borrow, (assets)));
+        (bool isSuccess, ) = address(currentLendingConnector()).delegatecall(abi.encodeCall(ILendingConnector.borrow, (assets)));
         require(isSuccess);
     }
 
     function repay(uint256 assets) internal override {
-        (bool isSuccess, ) = address(lendingConnector()).delegatecall(abi.encodeCall(ILendingConnector.repay, (assets)));
+        (bool isSuccess, ) = address(currentLendingConnector()).delegatecall(abi.encodeCall(ILendingConnector.repay, (assets)));
         require(isSuccess);
     }
 
     function supply(uint256 assets) internal override {
-        (bool isSuccess, ) = address(lendingConnector()).delegatecall(abi.encodeCall(ILendingConnector.supply, (assets)));
+        (bool isSuccess, ) = address(currentLendingConnector()).delegatecall(abi.encodeCall(ILendingConnector.supply, (assets)));
         require(isSuccess);
     }
 
     function withdraw(uint256 assets) internal override {
-        (bool isSuccess, ) = address(lendingConnector()).delegatecall(abi.encodeCall(ILendingConnector.withdraw, (assets)));
+        (bool isSuccess, ) = address(currentLendingConnector()).delegatecall(abi.encodeCall(ILendingConnector.withdraw, (assets)));
         require(isSuccess);
     }
 }
