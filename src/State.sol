@@ -22,6 +22,9 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     using uMulDiv for uint256;
     using sMulDiv for int256;
 
+    error DepositIsDisabled();
+    error WithdrawIsDisabled();
+
     address public feeCollector;
 
     int256 public futureBorrowAssets;
@@ -55,6 +58,8 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
 
     mapping(bytes4 => bool) public _isFunctionDisabled;
     ISlippageProvider public slippageProvider;
+    bool public isDepositDisabled;
+    bool public isWithdrawDisabled;
     IWhitelistRegistry public whitelistRegistry;
     bool public isWhitelistActivated;
 
@@ -217,11 +222,19 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
         return availableSpaceInShares;
     }
 
+    function transferBorrowToken(address to, uint256 amount) internal isReceiverWhitelisted(to) {
+        borrowToken.transfer(to, amount);
+    }
+
+    function transferCollateralToken(address to, uint256 amount) internal isReceiverWhitelisted(to) {
+        collateralToken.transfer(to, amount);
+    }
+
     function _checkFunctionAllowed() private view {
         require(!_isFunctionDisabled[msg.sig] || msg.sender == owner(), FunctionStopped(msg.sig));
     }
 
-    function _isReceiverWhitelisted(address receiver) internal view {
+    function _isReceiverWhitelisted(address receiver) private view {
         require(!isWhitelistActivated || whitelistRegistry.isAddressWhitelisted(receiver), ReceiverNotWhitelisted(receiver));
     }
 }

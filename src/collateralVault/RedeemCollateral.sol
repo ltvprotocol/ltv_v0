@@ -57,7 +57,7 @@ abstract contract RedeemCollateral is MaxRedeemCollateral, StateTransition, Lend
 
         withdraw(collateralAssets);
 
-        collateralToken.transfer(receiver, collateralAssets);
+        transferCollateralToken(receiver, collateralAssets);
 
         emit WithdrawCollateral(msg.sender, receiver, owner, collateralAssets, shares);
 

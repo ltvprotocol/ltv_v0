@@ -88,6 +88,10 @@ contract LTV is
         emit MinProfitLTVChanged(oldValue, value);
     }
 
+    function setOracleConnector(IOracleConnector _oracleConnector) external onlyOwner {
+        oracleConnector = _oracleConnector;
+    }
+
     function setLendingConnector(ILendingConnector _lendingConnector) external onlyOwner {
         lendingConnector = _lendingConnector;
     }
@@ -132,6 +136,16 @@ contract LTV is
         address oldAddress = address(whitelistRegistry);
         whitelistRegistry = value;
         emit WhitelistRegistryUpdated(oldAddress, address(value));
+    }
+
+    // TODO: GIVE THIS PERMISSION ALSO TO GOVERNOR
+    function setIsDepositDisabled(bool value) external onlyOwner {
+        isDepositDisabled = value;
+    }
+    
+    // TODO: GIVE THIS PERMISSION ALSO TO GOVERNOR
+    function setIsWithdrawDisabled(bool value) external onlyOwner {
+        isWithdrawDisabled = value;
     }
 
     function borrow(uint256 assets) internal override {

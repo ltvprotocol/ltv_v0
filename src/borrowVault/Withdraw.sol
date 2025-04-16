@@ -53,7 +53,7 @@ abstract contract Withdraw is MaxWithdraw, StateTransition, Lending, ERC4626Even
 
         borrow(assets);
 
-        borrowToken.transfer(receiver, assets);
+        transferBorrowToken(receiver, assets);
 
         emit Withdraw(msg.sender, receiver, owner, assets, shares);
 

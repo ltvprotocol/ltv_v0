@@ -53,7 +53,7 @@ abstract contract WithdrawCollateral is MaxWithdrawCollateral, StateTransition, 
 
         withdraw(collateralAssets);
 
-        collateralToken.transfer(receiver, collateralAssets);
+        transferCollateralToken(receiver, collateralAssets);
 
         emit WithdrawCollateral(msg.sender, receiver, owner, collateralAssets, shares);
 
