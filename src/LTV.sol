@@ -66,6 +66,7 @@ contract LTV is
     event TargetLTVChanged(uint128 oldValue, uint128 newValue);
 
     error InvalidLTVSet(uint128 targetLTV, uint128 maxSafeLTV, uint128 minProfitLTV);
+    event WhitelistRegistryUpdated(address oldValue, address newValue);
     error ImpossibleToCoverDeleverage(uint256 realBorrowAssets, uint256 providedAssets);
     error InvalidMaxDeleverageFee(uint256 deleverageFee);
     error ExceedsMaxDeleverageFee(uint256 deleverageFee, uint256 maxDeleverageFee);
@@ -117,6 +118,16 @@ contract LTV is
 
     function setFeeCollector(address _feeCollector) external onlyOwner {
         feeCollector = _feeCollector;
+    }
+
+    function setIsWhitelistActivated(bool activate) external onlyOwner {
+        isWhitelistActivated = activate;
+    }
+
+    function setWhitelistRegistry(IWhitelistRegistry value) external onlyOwner {
+        address oldAddress = address(whitelistRegistry);
+        whitelistRegistry = value;
+        emit WhitelistRegistryUpdated(oldAddress, address(value));
     }
 
     // TODO: GIVE THIS PERMISSION ALSO TO GOVERNOR

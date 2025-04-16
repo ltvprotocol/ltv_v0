@@ -44,17 +44,17 @@ abstract contract Auction is State, Lending {
             collateralToken.transferFrom(msg.sender, address(this), uint256(-deltaState.deltaUserCollateralAssets));
             supply(uint256(-(deltaState.deltaUserCollateralAssets + deltaState.deltaProtocolFutureRewardCollateralAssets)));
             borrow(uint256(-deltaState.deltaUserBorrowAssets));
-            borrowToken.transfer(msg.sender, uint256(-deltaState.deltaUserBorrowAssets));
+            transferBorrowToken(msg.sender, uint256(-deltaState.deltaUserBorrowAssets));
             if (deltaState.deltaProtocolFutureRewardCollateralAssets != 0) {
-                collateralToken.transfer(feeCollector, uint256(deltaState.deltaProtocolFutureRewardCollateralAssets));
+                transferCollateralToken(feeCollector, uint256(deltaState.deltaProtocolFutureRewardCollateralAssets));
             }
         } else if (deltaState.deltaUserBorrowAssets > 0) {
             borrowToken.transferFrom(msg.sender, address(this), uint256(deltaState.deltaUserBorrowAssets));
             repay(uint256(deltaState.deltaUserBorrowAssets + deltaState.deltaProtocolFutureRewardBorrowAssets));
             withdraw(uint256(deltaState.deltaUserCollateralAssets));
-            collateralToken.transfer(msg.sender, uint256(deltaState.deltaUserCollateralAssets));
+            transferCollateralToken(msg.sender, uint256(deltaState.deltaUserCollateralAssets));
             if (deltaState.deltaProtocolFutureRewardBorrowAssets != 0) {
-              borrowToken.transfer(feeCollector, uint256(-deltaState.deltaProtocolFutureRewardBorrowAssets));
+                transferBorrowToken(feeCollector, uint256(-deltaState.deltaProtocolFutureRewardBorrowAssets));
             }
         }
 

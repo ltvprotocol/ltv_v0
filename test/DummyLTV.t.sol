@@ -10,6 +10,7 @@ import '../src/Constants.sol';
 import '../src/dummy/DummyLendingConnector.sol';
 import '../src/dummy/DummyOracleConnector.sol';
 import '../src/utils/ConstantSlippageProvider.sol';
+import '../src/utils/WhitelistRegistry.sol';
 import '../src/utils/VaultBalanceAsLendingConnector.sol';
 
 contract DummyLTVTest is Test {
@@ -362,5 +363,25 @@ contract DummyLTVTest is Test {
 
         assertEq(dummyLTV.withdrawCollateral(985 * 10 ** 14, address(owner), address(owner)), 2 * 10 ** 19 + 20);
         dummyLTV.redeemCollateral(2 * 10 ** 19, address(owner), address(owner));
+    }
+
+    function test_whitelist(address owner, address user, address randUser) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        vm.stopPrank();
+        vm.startPrank(owner);
+        deal(address(borrowToken), randUser, type(uint112).max);
+
+        WhitelistRegistry whitelistRegistry = new WhitelistRegistry(owner);
+        dummyLTV.setWhitelistRegistry(whitelistRegistry);
+
+        dummyLTV.setIsWhitelistActivated(true);
+        whitelistRegistry.addAddressToWhitelist(randUser);
+        
+        vm.startPrank(user);
+        vm.expectRevert(abi.encodeWithSelector(State.ReceiverNotWhitelisted.selector, user));
+        dummyLTV.deposit(10**17, user);
+        
+        vm.startPrank(randUser);
+        borrowToken.approve(address(dummyLTV), 10**17);
+        dummyLTV.deposit(10**17, randUser);
     }
 }

@@ -15,3 +15,5 @@ deploy-beacon :; $(MAKE) deploy-contract contract=script/DeployLTV.s.sol:DeployB
 deploy-ghost-ltv :; $(MAKE) deploy-contract contract=script/DeployLTV.s.sol:DeployGhostLTV
 test-ghost-upgrade :; forge script script/GhostUpgrade.s.sol:GhostUpgradeTest -vvv --rpc-url ${RPC_SEPOLIA}
 ghost-upgrade :; forge script script/GhostUpgrade.s.sol:GhostUpgradeScript -vvv --rpc-url ${RPC_SEPOLIA}
+
+deploy-whitelist-registry :; $(MAKE) deploy-contract contract=script/DeployWhitelistRegistry.s.sol

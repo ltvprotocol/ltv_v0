@@ -16,7 +16,7 @@ abstract contract ERC20 is State {
         decimals = _decimals;
     }
 
-    function transfer(address recipient, uint256 amount) external isFunctionAllowed nonReentrant returns (bool) {
+    function transfer(address recipient, uint256 amount) external isFunctionAllowed isReceiverWhitelisted(recipient) nonReentrant returns (bool) {
         balanceOf[msg.sender] -= amount;
         balanceOf[recipient] += amount;
         emit Transfer(msg.sender, recipient, amount);
@@ -29,7 +29,7 @@ abstract contract ERC20 is State {
         return true;
     }
 
-    function transferFrom(address sender, address recipient, uint256 amount) external isFunctionAllowed nonReentrant returns (bool) {
+    function transferFrom(address sender, address recipient, uint256 amount) external isFunctionAllowed isReceiverWhitelisted(recipient) nonReentrant returns (bool) {
         allowance[sender][msg.sender] -= amount;
         balanceOf[sender] -= amount;
         balanceOf[recipient] += amount;
@@ -37,7 +37,7 @@ abstract contract ERC20 is State {
         return true;
     }
 
-    function _mint(address to, uint256 amount) internal  {
+    function _mint(address to, uint256 amount) isReceiverWhitelisted(to) internal  {
         require(!isDepositDisabled, DepositIsDisabled());
         balanceOf[to] += amount;
         baseTotalSupply += amount;

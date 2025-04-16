@@ -15,6 +15,7 @@ import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 
 import './interfaces/ILendingConnector.sol';
 import './interfaces/IOracleConnector.sol';
+import './interfaces/IWhitelistRegistry.sol';
 import './interfaces/ISlippageProvider.sol';
 
 abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
@@ -60,6 +61,8 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     ISlippageProvider public slippageProvider;
     bool public isDepositDisabled;
     bool public isWithdrawDisabled;
+    IWhitelistRegistry public whitelistRegistry;
+    bool public isWhitelistActivated;
 
     uint256 public maxDeleverageFee;
     ILendingConnector public vaultBalanceAsLendingConnector;
@@ -80,10 +83,16 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
         ILendingConnector vaultBalanceAsLendingConnector;
     }
 
-    error FunctionNotAllowed();
+    error FunctionStopped(bytes4 functionSignature);
+    error ReceiverNotWhitelisted(address receiver);
 
     modifier isFunctionAllowed() {
         _checkFunctionAllowed();
+        _;
+    }
+
+    modifier isReceiverWhitelisted(address to) {
+        _isReceiverWhitelisted(to);
         _;
     }
 
@@ -225,7 +234,19 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
         return availableSpaceInShares;
     }
 
+    function transferBorrowToken(address to, uint256 amount) internal isReceiverWhitelisted(to) {
+        borrowToken.transfer(to, amount);
+    }
+
+    function transferCollateralToken(address to, uint256 amount) internal isReceiverWhitelisted(to) {
+        collateralToken.transfer(to, amount);
+    }
+
     function _checkFunctionAllowed() private view {
-        require(msg.sender == owner() || !_isFunctionDisabled[msg.sig], FunctionNotAllowed());
+        require(!_isFunctionDisabled[msg.sig] || msg.sender == owner(), FunctionStopped(msg.sig));
+    }
+
+    function _isReceiverWhitelisted(address receiver) private view {
+        require(!isWhitelistActivated || whitelistRegistry.isAddressWhitelisted(receiver), ReceiverNotWhitelisted(receiver));
     }
 }
