@@ -235,11 +235,19 @@ abstract contract State is UpgradeableOwnableWithGuardianAndGovernor, Upgradeabl
         return availableSpaceInShares;
     }
 
+    function transferBorrowToken(address to, uint256 amount) internal isReceiverWhitelisted(to) {
+        borrowToken.transfer(to, amount);
+    }
+
+    function transferCollateralToken(address to, uint256 amount) internal isReceiverWhitelisted(to) {
+        collateralToken.transfer(to, amount);
+    }
+
     function _checkFunctionAllowed() private view {
         require(!_isFunctionDisabled[msg.sig] || _msgSender() == owner() || _msgSender() == governor(), FunctionStopped(msg.sig));
     }
 
-    function _isReceiverWhitelisted(address receiver) internal view {
+    function _isReceiverWhitelisted(address receiver) private view {
         require(!isWhitelistActivated || whitelistRegistry.isAddressWhitelisted(receiver), ReceiverNotWhitelisted(receiver));
     }
 }
