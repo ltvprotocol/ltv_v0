@@ -199,12 +199,12 @@ abstract contract LowLevelRebalance is MaxGrowthFee, Lending {
 
         if (deltaRealCollateralAsset < 0) {
             withdraw(uint256(-deltaRealCollateralAsset));
-            collateralToken.transfer(msg.sender, uint256(-deltaRealCollateralAsset));
+            transferCollateralToken(msg.sender, uint256(-deltaRealCollateralAsset));
         }
 
         if (deltaRealBorrowAssets > 0) {
             borrow(uint256(deltaRealBorrowAssets));
-            borrowToken.transfer(msg.sender, uint256(deltaRealBorrowAssets));
+            transferBorrowToken(msg.sender, uint256(deltaRealBorrowAssets));
         }
 
         if (deltaShares > 0) {
