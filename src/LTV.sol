@@ -138,7 +138,6 @@ contract LTV is
         require(deleverageFee <= maxDeleverageFee, ExceedsMaxDeleverageFee(deleverageFee, maxDeleverageFee));
         require(!isVaultDeleveraged, VaultAlreadyDeleveraged());
 
-        isVaultDeleveraged = true;
         futureBorrowAssets = 0;
         futureCollateralAssets = 0;
         futureRewardBorrowAssets = 0;
@@ -157,8 +156,8 @@ contract LTV is
         borrowToken.transferFrom(msg.sender, address(this), realBorrowAssets);
         repay(realBorrowAssets);
         withdraw(getRealCollateralAssets());
-        isVaultDeleveraged = true;
         collateralToken.transfer(msg.sender, collateralToTransfer);
+        isVaultDeleveraged = true;
     }
 
     function borrow(uint256 assets) internal override {
