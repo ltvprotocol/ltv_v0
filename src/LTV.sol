@@ -76,77 +76,75 @@ contract LTV is
     event WhitelistRegistryUpdated(address oldValue, address newValue);
     error VaultAlreadyDeleveraged();
 
-    function setTargetLTV(uint128 value) external onlyOwnerOrGovernor {
+    function setTargetLTV(uint128 value) external onlyGovernor {
         require(value <= maxSafeLTV && value >= minProfitLTV, InvalidLTVSet(value, maxSafeLTV, minProfitLTV));
         uint128 oldValue = targetLTV;
         targetLTV = value;
         emit TargetLTVChanged(oldValue, targetLTV);
     }
 
-    function setMaxSafeLTV(uint128 value) external onlyOwnerOrGovernor {
+    function setMaxSafeLTV(uint128 value) external onlyGovernor {
         require(value >= targetLTV, InvalidLTVSet(targetLTV, value, minProfitLTV));
         uint128 oldValue = maxSafeLTV;
         maxSafeLTV = value;
         emit MaxSafeLTVChanged(oldValue, value);
     }
 
-    function setMinProfitLTV(uint128 value) external onlyOwnerOrGovernor {
+    function setMinProfitLTV(uint128 value) external onlyGovernor {
         require(value <= targetLTV, InvalidLTVSet(targetLTV, maxSafeLTV, value));
         uint128 oldValue = minProfitLTV;
         minProfitLTV = value;
         emit MinProfitLTVChanged(oldValue, value);
     }
 
-    function setMaxTotalAssetsInUnderlying(uint256 _maxTotalAssetsInUnderlying) external onlyOwnerOrGovernor {
+    function setFeeCollector(address _feeCollector) external onlyGovernor {
+        feeCollector = _feeCollector;
+    }
+
+    function setMaxTotalAssetsInUnderlying(uint256 _maxTotalAssetsInUnderlying) external onlyGovernor {
         maxTotalAssetsInUnderlying = _maxTotalAssetsInUnderlying;
     }
 
-    function setSlippageProvider(ISlippageProvider _slippageProvider) external onlyOwnerOrGovernor {
+    function setMaxDeleverageFee(uint256 value) external onlyGovernor {
+        require(value < 10 ** 18, InvalidMaxDeleverageFee(value));
+        maxDeleverageFee = value;
+    }
+
+    function setIsWhitelistActivated(bool activate) external onlyGovernor {
+        isWhitelistActivated = activate;
+    }
+
+    function setWhitelistRegistry(IWhitelistRegistry value) external onlyGovernor {
+        address oldAddress = address(whitelistRegistry);
+        whitelistRegistry = value;
+        emit WhitelistRegistryUpdated(oldAddress, address(value));
+    }
+
+    function setSlippageProvider(ISlippageProvider _slippageProvider) external onlyGovernor {
         slippageProvider = _slippageProvider;
     }
 
     // batch can be removed to save ~250 bytes of contract size
-    function allowDisableFunctions(bytes4[] memory signatures, bool isDisabled) external onlyOwnerOrGuardian {
+    function allowDisableFunctions(bytes4[] memory signatures, bool isDisabled) external onlyGuardian {
         for (uint256 i = 0; i < signatures.length; i++) {
             _isFunctionDisabled[signatures[i]] = isDisabled;
         }
     }
 
-    function setFeeCollector(address _feeCollector) external onlyOwnerOrGovernor {
-        feeCollector = _feeCollector;
-    }
-
-    // TODO: GIVE THIS PERMISSION ALSO TO GOVERNOR
-    function setIsDepositDisabled(bool value) external onlyOwnerOrGuardian {
+    function setIsDepositDisabled(bool value) external onlyGuardian {
         isDepositDisabled = value;
     }
     
-    // TODO: GIVE THIS PERMISSION ALSO TO GOVERNOR
-    function setIsWithdrawDisabled(bool value) external onlyOwnerOrGuardian {
+    function setIsWithdrawDisabled(bool value) external onlyGuardian {
         isWithdrawDisabled = value;
-    }
-
-    function setOracleConnector(IOracleConnector _oracleConnector) external onlyOwner {
-        oracleConnector = _oracleConnector;
     }
 
     function setLendingConnector(ILendingConnector _lendingConnector) external onlyOwner {
         lendingConnector = _lendingConnector;
     }
 
-    function setIsWhitelistActivated(bool activate) external onlyOwner {
-        isWhitelistActivated = activate;
-    }
-
-    function setWhitelistRegistry(IWhitelistRegistry value) external onlyOwner {
-        address oldAddress = address(whitelistRegistry);
-        whitelistRegistry = value;
-        emit WhitelistRegistryUpdated(oldAddress, address(value));
-    }
-
-    function setMaxDeleverageFee(uint256 value) external onlyOwner {
-        require(value < 10 ** 18, InvalidMaxDeleverageFee(value));
-        maxDeleverageFee = value;
+    function setOracleConnector(IOracleConnector _oracleConnector) external onlyOwner {
+        oracleConnector = _oracleConnector;
     }
 
     function deleverageAndWithdraw(uint256 closeAmountBorrow, uint256 deleverageFee) external onlyOwnerOrEmergencyDeleverager nonReentrant {
