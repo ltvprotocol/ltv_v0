@@ -9,8 +9,8 @@ abstract contract UpgradeableOwnableWithGovernor is OwnableUpgradeable, IWithGov
         address _governor;
     }
 
-    // keccak256("storage.UpgradeableOwnableWithGovernor")
-    bytes32 private constant OwnableWithGovernorStorageLocation = 0xda3ee8bcb5d3050b69493a59eb63b65657bdfb51032a8d53879973fe01319f9c;
+    // bytes32(uint256(keccak256("storage.UpgradeableOwnableWithGovernor")) - 1))
+    bytes32 private constant OwnableWithGovernorStorageLocation = 0xda3ee8bcb5d3050b69493a59eb63b65657bdfb51032a8d53879973fe01319f9b;
 
     function _getOwnableWithGovernorStorage() private pure returns (OwnableWithGovernor storage governorStorage) {
         assembly {

@@ -9,8 +9,8 @@ abstract contract UpgradeableOwnableWithEmergencyDeleverager is OwnableUpgradeab
         address _emergencyDeleverager;
     }
 
-    // keccak256("storage.UpgradeableOwnableWithEmergencyDeleverager")
-    bytes32 private constant OwnableWithEmergencyDeleveragerStorageLocation = 0x46798bb8057efc5a1d6baf4083b6bd07e15b2aa35542d5edffc59f448755677f;
+    // bytes32(uint256(keccak256("storage.UpgradeableOwnableWithEmergencyDeleverager")) - 1)
+    bytes32 private constant OwnableWithEmergencyDeleveragerStorageLocation = 0x46798bb8057efc5a1d6baf4083b6bd07e15b2aa35542d5edffc59f448755677e;
 
     function _getOwnableWithEmergencyDeleveragerStorage() private pure returns (OwnableWithEmergencyDeleverager storage emergencyDeleveragerStorage) {
         assembly {

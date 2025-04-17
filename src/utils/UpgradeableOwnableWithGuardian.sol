@@ -9,8 +9,8 @@ abstract contract UpgradeableOwnableWithGuardian is OwnableUpgradeable, IWithGua
         address _guardian;
     }
 
-    // keccak256("storage.UpgradeableOwnableWithGuardian")
-    bytes32 private constant OwnableWithGuardianStorageLocation = 0xb60e8a6cf2c094d0527dfea44fb0b4bf02c33935fafc6f6e4cbe2a9f9dd8b0b4;
+    // bytes32(uint256(keccak256("storage.UpgradeableOwnableWithGuardian")) - 1)
+    bytes32 private constant OwnableWithGuardianStorageLocation = 0xb60e8a6cf2c094d0527dfea44fb0b4bf02c33935fafc6f6e4cbe2a9f9dd8b0b3;
 
     function _getOwnableWithGuardianStorage() private pure returns (OwnableWithGuardian storage guardianStorage) {
         assembly {
