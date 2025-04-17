@@ -1,25 +1,21 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import './PayloadsControllerCommon.sol';
+import "./TimelockCommon.sol";
 
-contract PayloadsController is PayloadsControllerCommon {
-    uint40 private _delay;
+contract FixedDelayTimelock is TimelockCommon {
+    uint40 private immutable DELAY;
 
     constructor(
         address initialOwner,
         address initialGuardian,
         address initialPayloadsManager,
-        uint40 __delay
+        uint40 _delay
     ) WithPayloadsManager(initialOwner, initialGuardian, initialPayloadsManager) {
-        _delay = __delay;
+        DELAY = _delay;
     }
 
     function delay() public view override returns (uint40) {
-        return _delay;
-    }
-
-    function setDelay(uint40 __delay) external onlyOwner {
-        _delay = __delay;
+        return DELAY;
     }
 }

@@ -21,7 +21,7 @@ struct Payload {
     bytes[] actions;
 }
 
-abstract contract PayloadsControllerCommon is WithPayloadsManager {
+abstract contract TimelockCommon is WithPayloadsManager {
     event PayloadCreated(uint40 indexed payloadId, bytes[] actions);
     event PayloadExecuted(uint40 payloadId);
     event PayloadQueued(uint40 payloadId);

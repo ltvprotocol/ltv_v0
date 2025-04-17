@@ -12,7 +12,7 @@ import '../src/dummy/DummyOracleConnector.sol';
 import '../src/utils/ConstantSlippageProvider.sol';
 import '../src/utils/WhitelistRegistry.sol';
 import '../src/utils/VaultBalanceAsLendingConnector.sol';
-import '../src/utils/PayloadsController.sol';
+import '../src/utils/Timelock.sol';
 
 contract DummyLTVTest is Test {
     DummyLTV public dummyLTV;
@@ -402,7 +402,7 @@ contract DummyLTVTest is Test {
         vm.stopPrank();
         vm.startPrank(ltvOwner);
 
-        PayloadsController controller = new PayloadsController(owner, guardian, payloadsManager, delay);
+        Timelock controller = new Timelock(owner, guardian, payloadsManager, delay);
 
         dummyLTV.updateGovernor(address(controller));
 
@@ -418,7 +418,7 @@ contract DummyLTVTest is Test {
         uint40 payloadId = controller.createPayload(address(dummyLTV), actions);
 
         vm.startPrank(user);
-        vm.expectPartialRevert(PayloadsControllerCommon.DelayNotPassed.selector);
+        vm.expectPartialRevert(TimelockCommon.DelayNotPassed.selector);
         controller.executePayload(payloadId);
 
         vm.expectPartialRevert(IWithGuardian.OnlyGuardianOrOwnerInvalidCaller.selector);
