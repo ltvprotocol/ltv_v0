@@ -39,7 +39,7 @@ abstract contract LTVState {
     
     // TODO: why it's internal?
     ILendingConnector internal lendingConnector;
-    bool isVaultDeleveraged;
+    bool public isVaultDeleveraged;
     IOracleConnector public oracleConnector;
 
     // TODO: why it's internal?
