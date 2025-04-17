@@ -6,19 +6,20 @@ import './Constants.sol';
 import './Structs.sol';
 
 import './utils/MulDiv.sol';
+import './utils/UpgradeableOwnableWithGuardianAndGovernor.sol';
+import './utils/UpgradeableOwnableWithEmergencyDeleverager.sol';
 
 import 'forge-std/interfaces/IERC20.sol';
 
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol';
-import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 
 import './interfaces/ILendingConnector.sol';
 import './interfaces/IOracleConnector.sol';
 import './interfaces/IWhitelistRegistry.sol';
 import './interfaces/ISlippageProvider.sol';
 
-abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
+abstract contract State is UpgradeableOwnableWithGuardianAndGovernor, UpgradeableOwnableWithEmergencyDeleverager, ReentrancyGuardUpgradeable {
     using uMulDiv for uint256;
     using sMulDiv for int256;
 
@@ -138,9 +139,9 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     function currentLendingConnector() public view returns (ILendingConnector) {
         return isVaultDeleveraged ? vaultBalanceAsLendingConnector : lendingConnector;
     }
-    
+
     function _totalAssets(bool isDeposit) internal view virtual returns (uint256);
-    
+
     function getAuctionStep() internal view returns (uint256) {
         uint256 auctionStep = block.number - startAuction;
 
@@ -243,7 +244,7 @@ abstract contract State is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     }
 
     function _checkFunctionAllowed() private view {
-        require(!_isFunctionDisabled[msg.sig] || msg.sender == owner(), FunctionStopped(msg.sig));
+        require(!_isFunctionDisabled[msg.sig] || _msgSender() == owner() || _msgSender() == governor(), FunctionStopped(msg.sig));
     }
 
     function _isReceiverWhitelisted(address receiver) private view {
