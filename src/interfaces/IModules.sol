@@ -5,6 +5,8 @@ import "./reads/IERC20Read.sol";
 import "./reads/IAuctionRead.sol";
 import "./reads/ILowLevelRebalanceRead.sol";
 import "./reads/IBorrowVaultRead.sol";
+import "./reads/ICollateralVaultRead.sol";
+
 interface IModules {
     function auctionRead() external view returns (IAuctionRead);
 
@@ -14,7 +16,7 @@ interface IModules {
 
     function borrowVaultsWrite() external view returns (address);
 
-    function collateralVaultsRead() external view returns (address);
+    function collateralVaultsRead() external view returns (ICollateralVaultRead);
 
     function collateralVaultsWrite() external view returns (address);
 
