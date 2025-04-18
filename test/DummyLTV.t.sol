@@ -367,6 +367,7 @@ contract DummyLTVTest is Test {
     }
 
     function test_whitelist(address owner, address user, address randUser) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
+        vm.assume(user != randUser);
         vm.stopPrank();
         vm.startPrank(owner);
         deal(address(borrowToken), randUser, type(uint112).max);
