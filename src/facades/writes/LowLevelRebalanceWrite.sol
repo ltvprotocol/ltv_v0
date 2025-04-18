@@ -6,31 +6,23 @@ import '../../states/readers/ModulesAddressStateReader.sol';
 import '../writes/CommonWrite.sol';
 
 abstract contract LowLevelRebalanceWrite is ModulesAddressStateReader, CommonWrite {
-    /// Input - the change in protocol shares
-    function executeLowLevelRebalanceShares(int256 /*deltaShares*/) external returns (int256, int256) {
-        _delegate(getModules().lowLevelRebalancerWrite());
+    function executeLowLevelRebalanceShares(int256 deltaShares) external returns (int256, int256) {
+        _delegate(getModules().lowLevelRebalancerWrite(), abi.encode(deltaShares));
     }
 
-    /// Input - the change in protocol borrow assets
-    function executeLowLevelRebalanceBorrow(int256 /*deltaBorrowAssets*/) external returns (int256, int256) {
-        _delegate(getModules().lowLevelRebalancerWrite());
+    function executeLowLevelRebalanceBorrow(int256 deltaBorrowAssets) external returns (int256, int256) {
+        _delegate(getModules().lowLevelRebalancerWrite(), abi.encode(deltaBorrowAssets));
     }
 
-    /// Input - the change in protocol collateral assets
-    function executeLowLevelRebalanceCollateral(int256 /*deltaCollateralAssets*/) external returns (int256, int256) {
-        _delegate(getModules().lowLevelRebalancerWrite());
+    function executeLowLevelRebalanceCollateral(int256 deltaCollateralAssets) external returns (int256, int256) {
+        _delegate(getModules().lowLevelRebalancerWrite(), abi.encode(deltaCollateralAssets));
     }
 
-    /// Input - the change in protocol borrow assets, hint about shares direction
-    function executeLowLevelRebalanceBorrowHint(int256 /*deltaBorrowAssets*/, bool /*isSharesPositiveHint*/) external returns (int256, int256) {
-        _delegate(getModules().lowLevelRebalancerWrite());
+    function executeLowLevelRebalanceBorrowHint(int256 deltaBorrowAssets, bool isSharesPositiveHint) external returns (int256, int256) {
+        _delegate(getModules().lowLevelRebalancerWrite(), abi.encode(deltaBorrowAssets, isSharesPositiveHint));
     }
 
-    /// Input - the change in protocol collateral assets, hint about shares direction
-    function executeLowLevelRebalanceCollateralHint(
-        int256 /*deltaCollateralAssets*/,
-        bool /*isSharesPositiveHint*/
-    ) external returns (int256, int256) {
-        _delegate(getModules().lowLevelRebalancerWrite());
+    function executeLowLevelRebalanceCollateralHint(int256 deltaCollateralAssets, bool isSharesPositiveHint) external returns (int256, int256) {
+        _delegate(getModules().lowLevelRebalancerWrite(), abi.encode(deltaCollateralAssets, isSharesPositiveHint));
     }
 }
