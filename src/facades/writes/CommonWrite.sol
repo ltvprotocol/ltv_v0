@@ -2,20 +2,16 @@
 pragma solidity ^0.8.28;
 
 abstract contract CommonWrite {
-    function _delegate(address implementation) internal virtual {
+    function _delegate(address implementation, bytes memory encodedParams) internal {
+        (bool result, bytes memory data) = implementation.delegatecall(bytes.concat(msg.sig, encodedParams));
+
         assembly {
-            calldatacopy(0, 0, calldatasize())
-
-            let result := delegatecall(gas(), implementation, 0, calldatasize(), 0, 0)
-
-            returndatacopy(0, 0, returndatasize())
-
             switch result
             case 0 {
-                revert(0, returndatasize())
+                revert(add(data, 32), mload(data))
             }
             default {
-                return(0, returndatasize())
+                return(add(data, 32), mload(data))
             }
         }
     }
