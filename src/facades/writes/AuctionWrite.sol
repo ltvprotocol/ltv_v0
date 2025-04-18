@@ -6,13 +6,11 @@ import "../../states/readers/ModulesAddressStateReader.sol";
 import "../writes/CommonWrite.sol";
 
 abstract contract AuctionWrite is ModulesAddressStateReader, CommonWrite {
-    /// Input - the change in protocol borrow assets
-    function executeAuctionBorrow(int256 /*deltaFutureBorrowAssets*/) external returns (int256) {
-        _delegate(getModules().auctionWrite());
+    function executeAuctionBorrow(int256 deltaFutureBorrowAssets) external returns (int256) {
+        _delegate(getModules().auctionWrite(), abi.encode(deltaFutureBorrowAssets));
     }
 
-    /// Input - the change in protocol collateral assets
-    function executeAuctionCollateral(int256 /*deltaFutureCollateralAssets*/) external returns (int256) {
-        _delegate(getModules().auctionWrite());
+    function executeAuctionCollateral(int256 deltaFutureCollateralAssets) external returns (int256) {
+        _delegate(getModules().auctionWrite(), abi.encode(deltaFutureCollateralAssets));
     }
 }
