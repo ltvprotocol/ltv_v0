@@ -2,28 +2,11 @@
 pragma solidity ^0.8.28;
 
 import '../../../Constants.sol';
-import '../../../Structs.sol';
+import '../../../Structs2.sol';
 import '../../../utils/MulDiv.sol';
 import '../../../math2/CommonMath.sol';
 
 abstract contract TotalAssets {
-    struct TotalAssetsState {
-        uint256 realCollateralAssets;
-        uint256 realBorrowAssets;
-        uint256 futureBorrowAssets;
-        uint256 futureCollateralAssets;
-        uint256 futureRewardBorrowAssets;
-        uint256 futureRewardCollateralAssets;
-        uint256 borrowPrice;
-        uint256 collateralPrice;
-    }
-
-    struct TotalAssetsData {
-        uint256 collateral;
-        uint256 borrow;
-        uint256 borrowPrice;
-    }
-
     using uMulDiv for uint256;
 
     function totalAssets(TotalAssetsState memory state) public pure returns (uint256) {
