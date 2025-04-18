@@ -10,9 +10,7 @@ import "../../states/readers/ApplicationStateReader.sol";
 abstract contract ERC20Read is ApplicationStateReader, ModulesAddressStateReader {
 
     function totalSupply() external view returns (uint256) {
-        StateRepresentationStruct memory stateRepresentation = getStateRepresentation();
-        address erc20ReadAddr = IModules(getModules()).erc20Read();
-        return IERC20Read(erc20ReadAddr).totalSupply(stateRepresentation);
+        return getModules().erc20Read().totalSupply(getStateRepresentation());
     }
 
 }

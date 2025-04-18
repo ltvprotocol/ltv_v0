@@ -5,15 +5,7 @@ import "../LTVState.sol";
 
 abstract contract ModulesAddressStateReader is LTVState {
 
-    function getModules() internal view returns (address) {
-
-        uint256 value;
-        bytes32 ms = MODULES_SLOT;
-
-        assembly {
-            value := sload(ms)
-        }
-
-        return address(uint160(value));
+    function getModules() internal view returns (IModules) {
+        return modules;
     }
 }

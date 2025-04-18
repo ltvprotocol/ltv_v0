@@ -1,12 +1,15 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
+import "../interfaces/reads/IERC20Read.sol";
+import "../interfaces/reads/IAuctionRead.sol";
+
 abstract contract ModulesState {
     address public borrowVaultsRead;
     address public collateralVaultsRead;
-    address public erc20Read;
+    IERC20Read public erc20Read;
     address public lowLevelRebalancerRead;
-    address public auctionRead;
+    IAuctionRead public auctionRead;
 
     address public borrowVaultsWrite;
     address public collateralVaultsWrite;

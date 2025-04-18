@@ -2,23 +2,21 @@
 pragma solidity ^0.8.28;
 
 abstract contract CommonWrite {
+    function _delegate(address implementation) internal virtual {
+        assembly {
+            calldatacopy(0, 0, calldatasize())
 
-    function makeDelegateUInt256(bytes memory data, address impl) internal returns(uint256) {
-        (bool success, bytes memory returnData) = impl.delegatecall(data);
-        require(success, "Delegate-call failed");
-        return abi.decode(returnData, (uint256));
+            let result := delegatecall(gas(), implementation, 0, calldatasize(), 0, 0)
+
+            returndatacopy(0, 0, returndatasize())
+
+            switch result
+            case 0 {
+                revert(0, returndatasize())
+            }
+            default {
+                return(0, returndatasize())
+            }
+        }
     }
-
-    function makeDelegateInt256(bytes memory data, address impl) internal returns(int256) {
-        (bool success, bytes memory returnData) = impl.delegatecall(data);
-        require(success, "Delegate-call failed");
-        return abi.decode(returnData, (int256));
-    }
-
-    function makeDelegateBool(bytes memory data, address impl) internal returns(bool) {
-        (bool success, bytes memory returnData) = impl.delegatecall(data);
-        require(success, "Delegate-call failed");
-        return abi.decode(returnData, (bool));
-    }
-
 }

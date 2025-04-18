@@ -5,21 +5,19 @@ import "../../interfaces/IModules.sol";
 import "../../states/readers/ModulesAddressStateReader.sol";
 import "../writes/CommonWrite.sol";
 
-abstract contract AuctionWrite is ModulesAddressStateReader, CommonWrite {
-
-    function approve(address spender, uint256 amount) external returns (bool) {
-        address erc20WriteAddr = IModules(getModules()).erc20Write();
-        return makeDelegateBool(abi.encodeWithSignature("approve(address,uint256)", spender, amount), erc20WriteAddr);
+abstract contract ERC20Write is ModulesAddressStateReader, CommonWrite {
+    /// Input - the spender, the amount
+    function approve(address /*spender*/, uint256 /*amount*/) external returns (bool) {
+        _delegate(getModules().erc20Write());
     }
 
-    function transfer(address to, uint256 amount) external returns (bool) {
-        address erc20WriteAddr = IModules(getModules()).erc20Write();
-        return makeDelegateBool(abi.encodeWithSignature("transfer(address,uint256)", to, amount), erc20WriteAddr);
+    /// Input - the receiver, the amount
+    function transfer(address /*to*/, uint256 /*amount*/) external returns (bool) {
+        _delegate(getModules().erc20Write());
     }
 
-    function transferFrom(address from, address to, uint256 amount) external returns (bool) {
-        address erc20WriteAddr = IModules(getModules()).erc20Write();
-        return makeDelegateBool(abi.encodeWithSignature("transferFrom(address,address,uint256)", from, to, amount), erc20WriteAddr);
+    /// Input - the sender, the receiver, the amount
+    function transferFrom(address /*from*/, address /*to*/, uint256 /*amount*/) external returns (bool) {
+        _delegate(getModules().erc20Write());
     }
-
 }

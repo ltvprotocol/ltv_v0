@@ -5,13 +5,10 @@ import '../interfaces/ILendingConnector.sol';
 import '../interfaces/IOracleConnector.sol';
 import '../interfaces/IWhitelistRegistry.sol';
 import '../interfaces/ISlippageProvider.sol';
-
+import '../interfaces/IModules.sol';
 import 'forge-std/interfaces/IERC20.sol';
 
 abstract contract LTVState {
-
-    bytes32 public constant MODULES_SLOT = bytes32(uint256(keccak256("modules.implementation")) - 1);
-
     // ------------------------------------------------
 
     address public feeCollector;
@@ -58,4 +55,6 @@ abstract contract LTVState {
 
     uint256 public maxDeleverageFee;
     ILendingConnector public vaultBalanceAsLendingConnector;
+
+    IModules public modules;
 }
