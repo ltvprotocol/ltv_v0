@@ -3,6 +3,7 @@ pragma solidity ^0.8.28;
 
 import "./reads/IERC20Read.sol";
 import "./reads/IAuctionRead.sol";
+import "./reads/ILowLevelRebalanceRead.sol";
 
 interface IModules {
     function auctionRead() external view returns (IAuctionRead);
@@ -21,7 +22,7 @@ interface IModules {
 
     function erc20Write() external view returns (address);
 
-    function lowLevelRebalancerRead() external view returns (address);
+    function lowLevelRebalancerRead() external view returns (ILowLevelRebalanceRead);
 
     function lowLevelRebalancerWrite() external view returns (address);
 }
