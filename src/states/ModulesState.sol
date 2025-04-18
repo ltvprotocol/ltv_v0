@@ -4,9 +4,10 @@ pragma solidity ^0.8.28;
 import "../interfaces/reads/IERC20Read.sol";
 import "../interfaces/reads/IAuctionRead.sol";
 import "../interfaces/reads/ILowLevelRebalanceRead.sol";
+import "../interfaces/reads/IBorrowVaultRead.sol";
 
 abstract contract ModulesState {
-    address public borrowVaultsRead;
+    IBorrowVaultRead public borrowVaultsRead;
     address public collateralVaultsRead;
     IERC20Read public erc20Read;
     ILowLevelRebalanceRead public lowLevelRebalancerRead;
