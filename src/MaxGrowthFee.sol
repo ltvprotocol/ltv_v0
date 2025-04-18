@@ -7,10 +7,6 @@ import './ERC20.sol';
 abstract contract MaxGrowthFee is TotalAssetsCollateral, ERC20 {
     using uMulDiv for uint256;
 
-    function setMaxGrowthFee(uint256 _maxGrowthFee) external onlyOwner {
-        maxGrowthFee = _maxGrowthFee;
-    }
-
     function previewSupplyAfterFee() internal view returns (uint256) {
         // fee collector has the lowest priority, so need to underestimate reward
         uint256 assets = _totalAssets(false);

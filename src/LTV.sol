@@ -53,12 +53,16 @@ contract LTV is
     function initialize(
         StateInitData memory stateInitData,
         address initialOwner,
+        address initialGuardian,
+        address initialGovernor,
+        address initialEmergencyDeleverager,
         string memory _name,
         string memory _symbol
     ) public initializer isFunctionAllowed {
         __State_init(stateInitData);
         __ERC20_init(_name, _symbol, 18);
-        __Ownable_init(initialOwner);
+        __Ownable_With_Guardian_And_Governor_init(initialGuardian, initialGovernor, initialOwner);
+        __Ownable_With_EmergencyDeleverager_init_unchained(initialEmergencyDeleverager);
     }
 
     event MaxSafeLTVChanged(uint128 oldValue, uint128 newValue);
@@ -66,86 +70,84 @@ contract LTV is
     event TargetLTVChanged(uint128 oldValue, uint128 newValue);
 
     error InvalidLTVSet(uint128 targetLTV, uint128 maxSafeLTV, uint128 minProfitLTV);
-    event WhitelistRegistryUpdated(address oldValue, address newValue);
     error ImpossibleToCoverDeleverage(uint256 realBorrowAssets, uint256 providedAssets);
     error InvalidMaxDeleverageFee(uint256 deleverageFee);
     error ExceedsMaxDeleverageFee(uint256 deleverageFee, uint256 maxDeleverageFee);
+    event WhitelistRegistryUpdated(address oldValue, address newValue);
     error VaultAlreadyDeleveraged();
 
-    function setTargetLTV(uint128 value) external onlyOwner {
+    function setTargetLTV(uint128 value) external onlyGovernor {
         require(value <= maxSafeLTV && value >= minProfitLTV, InvalidLTVSet(value, maxSafeLTV, minProfitLTV));
         uint128 oldValue = targetLTV;
         targetLTV = value;
         emit TargetLTVChanged(oldValue, targetLTV);
     }
 
-    function setMaxSafeLTV(uint128 value) external onlyOwner {
+    function setMaxSafeLTV(uint128 value) external onlyGovernor {
         require(value >= targetLTV, InvalidLTVSet(targetLTV, value, minProfitLTV));
         uint128 oldValue = maxSafeLTV;
         maxSafeLTV = value;
         emit MaxSafeLTVChanged(oldValue, value);
     }
 
-    function setMinProfitLTV(uint128 value) external onlyOwner {
+    function setMinProfitLTV(uint128 value) external onlyGovernor {
         require(value <= targetLTV, InvalidLTVSet(targetLTV, maxSafeLTV, value));
         uint128 oldValue = minProfitLTV;
         minProfitLTV = value;
         emit MinProfitLTVChanged(oldValue, value);
     }
 
-    function setOracleConnector(IOracleConnector _oracleConnector) external onlyOwner {
-        oracleConnector = _oracleConnector;
+    function setFeeCollector(address _feeCollector) external onlyGovernor {
+        feeCollector = _feeCollector;
+    }
+
+    function setMaxTotalAssetsInUnderlying(uint256 _maxTotalAssetsInUnderlying) external onlyGovernor {
+        maxTotalAssetsInUnderlying = _maxTotalAssetsInUnderlying;
+    }
+
+    function setMaxDeleverageFee(uint256 value) external onlyGovernor {
+        require(value < 10 ** 18, InvalidMaxDeleverageFee(value));
+        maxDeleverageFee = value;
+    }
+
+    function setIsWhitelistActivated(bool activate) external onlyGovernor {
+        isWhitelistActivated = activate;
+    }
+
+    function setWhitelistRegistry(IWhitelistRegistry value) external onlyGovernor {
+        address oldAddress = address(whitelistRegistry);
+        whitelistRegistry = value;
+        emit WhitelistRegistryUpdated(oldAddress, address(value));
+    }
+
+    function setSlippageProvider(ISlippageProvider _slippageProvider) external onlyGovernor {
+        slippageProvider = _slippageProvider;
+    }
+
+    // batch can be removed to save ~250 bytes of contract size
+    function allowDisableFunctions(bytes4[] memory signatures, bool isDisabled) external onlyGuardian {
+        for (uint256 i = 0; i < signatures.length; i++) {
+            _isFunctionDisabled[signatures[i]] = isDisabled;
+        }
+    }
+
+    function setIsDepositDisabled(bool value) external onlyGuardian {
+        isDepositDisabled = value;
+    }
+    
+    function setIsWithdrawDisabled(bool value) external onlyGuardian {
+        isWithdrawDisabled = value;
     }
 
     function setLendingConnector(ILendingConnector _lendingConnector) external onlyOwner {
         lendingConnector = _lendingConnector;
     }
 
-    function setMaxTotalAssetsInUnderlying(uint256 _maxTotalAssetsInUnderlying) external onlyOwner {
-        maxTotalAssetsInUnderlying = _maxTotalAssetsInUnderlying;
+    function setOracleConnector(IOracleConnector _oracleConnector) external onlyOwner {
+        oracleConnector = _oracleConnector;
     }
 
-    // batch can be removed to save ~250 bytes of contract size
-    function allowDisableFunctions(bytes4[] memory signatures, bool isDisabled) external onlyOwner {
-        for (uint256 i = 0; i < signatures.length; i++) {
-            _isFunctionDisabled[signatures[i]] = isDisabled;
-        }
-    }
-
-    function setSlippageProvider(ISlippageProvider _slippageProvider) external onlyOwner {
-        slippageProvider = _slippageProvider;
-    }
-
-    function setFeeCollector(address _feeCollector) external onlyOwner {
-        feeCollector = _feeCollector;
-    }
-
-    function setIsWhitelistActivated(bool activate) external onlyOwner {
-        isWhitelistActivated = activate;
-    }
-
-    function setWhitelistRegistry(IWhitelistRegistry value) external onlyOwner {
-        address oldAddress = address(whitelistRegistry);
-        whitelistRegistry = value;
-        emit WhitelistRegistryUpdated(oldAddress, address(value));
-    }
-
-    // TODO: GIVE THIS PERMISSION ALSO TO GOVERNOR
-    function setIsDepositDisabled(bool value) external onlyOwner {
-        isDepositDisabled = value;
-    }
-    
-    // TODO: GIVE THIS PERMISSION ALSO TO GOVERNOR
-    function setIsWithdrawDisabled(bool value) external onlyOwner {
-        isWithdrawDisabled = value;
-    }
-
-    function setMaxDeleverageFee(uint256 value) external onlyOwner {
-        require(value < 10**18, InvalidMaxDeleverageFee(value));
-        maxDeleverageFee = value;
-    }
-
-    function deleverageAndWithdraw(uint256 closeAmountBorrow, uint256 deleverageFee) external onlyOwner nonReentrant {
+    function deleverageAndWithdraw(uint256 closeAmountBorrow, uint256 deleverageFee) external onlyOwnerOrEmergencyDeleverager nonReentrant {
         require(deleverageFee <= maxDeleverageFee, ExceedsMaxDeleverageFee(deleverageFee, maxDeleverageFee));
         require(!isVaultDeleveraged, VaultAlreadyDeleveraged());
 
@@ -158,7 +160,7 @@ contract LTV is
         uint256 realBorrowAssets = getRealBorrowAssets();
 
         require(closeAmountBorrow >= realBorrowAssets, ImpossibleToCoverDeleverage(realBorrowAssets, closeAmountBorrow));
-        
+
         uint256 collateralToTransfer = realBorrowAssets.mulDivUp(10 ** 18 + deleverageFee, 10 ** 18).mulDivDown(
             getPriceBorrowOracle(),
             getPriceCollateralOracle()
