@@ -8,6 +8,12 @@ abstract contract ConvertToAssets is MaxGrowthFee {
 
     function convertToAssets(uint256 shares, MaxGrowthFeeState memory state) external view virtual returns (uint256) {
         // count with withdraw
-        return shares.mulDivDown(totalAssets(false, state.totalAssetsState), previewSupplyAfterFee(state));
+        return _convertToAssets(shares, maxGrowthFeeStateToData(state));
     }
+
+    function _convertToAssets(uint256 shares, MaxGrowthFeeData memory data) internal view virtual returns (uint256) {
+        return shares.mulDivDown(data.withdrawTotalAssets, _previewSupplyAfterFee(data));
+    }
+
+
 }

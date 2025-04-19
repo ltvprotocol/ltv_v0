@@ -8,14 +8,14 @@ abstract contract PreviewDeposit is Vault {
     using uMulDiv for uint256;
 
     function previewDeposit(uint256 assets, VaultState memory state) public pure returns (uint256 shares) {
-        return _previewDeposit(assets, vaultStateToData(state));
+        (shares,) = _previewDeposit(assets, vaultStateToData(state));
     }
 
-    function _previewDeposit(uint256 assets, VaultData memory data) internal pure returns (uint256 shares) {
+    function _previewDeposit(uint256 assets, VaultData memory data) internal pure returns (uint256, DeltaFuture memory) {
         // depositor/withdrawer <=> HODLer conflict, assume user deposits less to mint less shares
         uint256 assetsInUnderlying = assets.mulDivDown(data.borrowPrice, Constants.ORACLE_DIVIDER);
     
-        int256 sharesInUnderlying = DepositWithdraw.previewDepositWithdraw(
+        (int256 sharesInUnderlying, DeltaFuture memory deltaFuture) = DepositWithdraw.calculateDepositWithdraw(
             DepositWithdrawData({
                 collateral: data.collateral,
                 borrow: data.borrow,
@@ -34,10 +34,10 @@ abstract contract PreviewDeposit is Vault {
         );
 
         if (sharesInUnderlying < 0) {
-            return 0;
+            return (0, deltaFuture);
         }
 
         // HODLer <=> depositor conflict, resolve in favor of HODLer, round down to mint less shares
-        return uint256(sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, data.borrowPrice).mulDivDown(data.supplyAfterFee, data.totalAssets);
+        return (uint256(sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, data.borrowPrice).mulDivDown(data.supplyAfterFee, data.totalAssets), deltaFuture);
     }
 } 

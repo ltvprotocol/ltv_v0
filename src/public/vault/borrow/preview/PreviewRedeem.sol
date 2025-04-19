@@ -8,14 +8,14 @@ abstract contract PreviewRedeem is Vault {
     using uMulDiv for uint256;
 
     function previewRedeem(uint256 shares, VaultState memory state) public pure returns (uint256 assets) {
-        return _previewRedeem(shares, vaultStateToData(state));
+        (assets, ) = _previewRedeem(shares, vaultStateToData(state));
     }
 
-    function _previewRedeem(uint256 shares, VaultData memory data) internal pure returns (uint256 assets) {
+    function _previewRedeem(uint256 shares, VaultData memory data) internal pure returns (uint256, DeltaFuture memory) {
         // HODLer <=> withdrawer conflict, round in favor of HODLer, round down to give less assets for provided shares
         uint256 sharesInUnderlying = shares.mulDivDown(data.totalAssets, data.supplyAfterFee).mulDivDown(data.borrowPrice, Constants.ORACLE_DIVIDER);
-        
-        int256 assetsInUnderlying = MintRedeem.previewMintRedeem(
+
+        (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = MintRedeem.calculateMintRedeem(
             MintRedeemData({
                 collateral: data.collateral,
                 borrow: data.borrow,
@@ -34,10 +34,10 @@ abstract contract PreviewRedeem is Vault {
         );
 
         if (assetsInUnderlying < 0) {
-            return 0;
+            return (0, deltaFuture);
         }
 
         // HODLer <=> withdrawer conflict, round in favor of HODLer, give less assets
-        return uint256(assetsInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, data.borrowPrice);
+        return (uint256(assetsInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, data.borrowPrice), deltaFuture);
     }
-} 
+}

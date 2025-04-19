@@ -48,7 +48,7 @@ struct MaxGrowthFeeState {
 }
 
 struct MaxGrowthFeeData {
-    uint256 totalAssets;
+    uint256 withdrawTotalAssets;
     uint256 maxGrowthFee;
     uint256 supply;
     uint256 lastSeenTokenPrice;
@@ -181,4 +181,41 @@ struct DeltaRealBorrowAndDeltaRealCollateralData {
     int256 protocolFutureRewardBorrow;
     int256 protocolFutureRewardCollateral;
     Cases cases;
+}
+
+struct NextState {
+    int256 futureBorrow;
+    int256 futureCollateral;
+    int256 futureRewardBorrow;
+    int256 futureRewardCollateral;
+    uint256 startAuction;
+    bool merge;
+    uint256 borrowPrice;
+    uint256 collateralPrice;
+}
+
+struct MintProtocolRewardsData {
+    int256 deltaProtocolFutureRewardBorrow;
+    int256 deltaProtocolFutureRewardCollateral;
+    uint256 supply;
+    uint256 totalAssets;
+    uint256 borrowPrice;
+}
+
+struct NextStepData {
+    int256 futureBorrow;
+    int256 futureCollateral;
+    int256 futureRewardBorrow;
+    int256 futureRewardCollateral;
+    int256 deltaFutureBorrow;
+    int256 deltaFutureCollateral;
+    int256 deltaFuturePaymentBorrow;
+    int256 deltaUserFutureRewardBorrow;
+    int256 deltaProtocolFutureRewardBorrow;
+    int256 deltaFuturePaymentCollateral;
+    int256 deltaUserFutureRewardCollateral;
+    int256 deltaProtocolFutureRewardCollateral;
+    uint256 blockNumber;
+    uint256 auctionStep;
+    
 }

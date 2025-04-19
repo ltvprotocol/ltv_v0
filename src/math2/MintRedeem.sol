@@ -124,8 +124,4 @@ library MintRedeem {
 
         assets = data.isBorrow ? assets : -assets;
     }
-
-    function previewMintRedeem(MintRedeemData memory data) external pure returns (int256 assets) {
-        (assets, ) = calculateMintRedeem(data);
-    }
 }

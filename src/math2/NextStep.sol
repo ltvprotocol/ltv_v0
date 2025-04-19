@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../Structs.sol';
+import '../Structs2.sol';
 import '../utils/MulDiv.sol';
 
 library NextStep {
     using sMulDiv for int256;
+    using uMulDiv for uint256;
     // futureBorrow i+1 = futureBorrow i + ∆futureBorrow
     // futureCollateral i+1 = futureCollateral i + ∆futureCollateral
     // futureRewardBorrow i+1 = futureRewardBorrow i + ∆futurePaymentBorrow +
@@ -14,6 +15,19 @@ library NextStep {
     // futureRewardCollateral i+1 = futureRewardCollateral i + ∆futurePaymentCollateral +
     //                                                       + ∆userFutureRewardCollateral +
     //                                                       + ∆protocolFutureRewardCollateral
+
+    struct MergeAuctionData {
+        int256 futureBorrow;
+        int256 futureCollateral;
+        int256 futureRewardBorrow;
+        int256 futureRewardCollateral;
+        int256 deltaFutureBorrow;
+        int256 deltaFutureCollateral;
+        uint256 auctionStep;
+        int256 deltaFuturePaymentBorrow;
+        int256 deltaFuturePaymentCollateral;
+        uint256 blockNumber;
+    }
 
     function calculateNextFutureRewardBorrow(
         int256 futureRewardBorrow,
@@ -41,29 +55,23 @@ library NextStep {
         return futureCollateral + deltaFutureCollateral;
     }
 
-    function mergingAuction(
-        ConvertedAssets memory convertedAssets,
-        DeltaFuture memory deltaFuture,
-        uint256 blockNumber
-    ) private pure returns (uint256 startAuction, bool merge) {
-        merge =
-            convertedAssets.futureBorrow * deltaFuture.deltaFutureBorrow > 0 &&
-            convertedAssets.futureCollateral * deltaFuture.deltaFutureCollateral > 0;
+    function mergingAuction(MergeAuctionData memory data) private pure returns (uint256 startAuction, bool merge) {
+        merge = data.futureBorrow * data.deltaFutureBorrow > 0 && data.futureCollateral * data.deltaFutureCollateral > 0;
 
         int auctionWeight = 0;
-        if (convertedAssets.futureRewardBorrow != 0) {
-            auctionWeight = convertedAssets.futureRewardBorrow;
+        if (data.futureRewardBorrow != 0) {
+            auctionWeight = data.futureRewardBorrow;
         }
-        if (convertedAssets.futureRewardCollateral != 0) {
-            auctionWeight = convertedAssets.futureRewardCollateral;
+        if (data.futureRewardCollateral != 0) {
+            auctionWeight = data.futureRewardCollateral;
         }
 
         int deltaAuctionWeight = 0;
-        if (deltaFuture.deltaFuturePaymentBorrow != 0) {
-            deltaAuctionWeight = deltaFuture.deltaFuturePaymentBorrow;
+        if (data.deltaFuturePaymentBorrow != 0) {
+            deltaAuctionWeight = data.deltaFuturePaymentBorrow;
         }
-        if (deltaFuture.deltaFuturePaymentCollateral != 0) {
-            deltaAuctionWeight = deltaFuture.deltaFuturePaymentCollateral;
+        if (data.deltaFuturePaymentCollateral != 0) {
+            deltaAuctionWeight = data.deltaFuturePaymentCollateral;
         }
 
         if (merge) {
@@ -72,31 +80,40 @@ library NextStep {
                 nextAuctionStep = 0;
             } else {
                 // round down to make auction longer
-                nextAuctionStep = uint256(convertedAssets.auctionStep.mulDivDown(auctionWeight, auctionWeight + deltaAuctionWeight));
+                nextAuctionStep = uint256(int256(data.auctionStep).mulDivDown(auctionWeight, auctionWeight + deltaAuctionWeight));
             }
-            startAuction = blockNumber - nextAuctionStep;
+            startAuction = data.blockNumber - nextAuctionStep;
         }
     }
 
-    function calculateNextStep(
-        ConvertedAssets memory convertedAssets,
-        DeltaFuture memory deltaFuture,
-        uint256 blockNumber
-    ) internal pure returns (NextState memory nextState) {
-        nextState.futureBorrow = calculateNextFutureBorrow(convertedAssets.futureBorrow, deltaFuture.deltaFutureBorrow);
-        nextState.futureCollateral = calculateNextFutureCollateral(convertedAssets.futureCollateral, deltaFuture.deltaFutureCollateral);
+    function calculateNextStep(NextStepData memory data) internal pure returns (NextState memory nextState) {
+        nextState.futureBorrow = calculateNextFutureBorrow(data.futureBorrow, data.deltaFutureBorrow);
+        nextState.futureCollateral = calculateNextFutureCollateral(data.futureCollateral, data.deltaFutureCollateral);
         nextState.futureRewardBorrow = calculateNextFutureRewardBorrow(
-            convertedAssets.futureRewardBorrow,
-            deltaFuture.deltaFuturePaymentBorrow,
-            deltaFuture.deltaUserFutureRewardBorrow,
-            deltaFuture.deltaProtocolFutureRewardBorrow
+            data.futureRewardBorrow,
+            data.deltaFuturePaymentBorrow,
+            data.deltaUserFutureRewardBorrow,
+            data.deltaProtocolFutureRewardBorrow
         );
         nextState.futureRewardCollateral = calculateNextFutureRewardCollateral(
-            convertedAssets.futureRewardCollateral,
-            deltaFuture.deltaFuturePaymentCollateral,
-            deltaFuture.deltaUserFutureRewardCollateral,
-            deltaFuture.deltaProtocolFutureRewardCollateral
+            data.futureRewardCollateral,
+            data.deltaFuturePaymentCollateral,
+            data.deltaUserFutureRewardCollateral,
+            data.deltaProtocolFutureRewardCollateral
         );
-        (nextState.startAuction, nextState.merge) = mergingAuction(convertedAssets, deltaFuture, blockNumber);
+        (nextState.startAuction, nextState.merge) = mergingAuction(
+            MergeAuctionData({
+                futureBorrow: data.futureBorrow,
+                futureCollateral: data.futureCollateral,
+                futureRewardBorrow: data.futureRewardBorrow,
+                futureRewardCollateral: data.futureRewardCollateral,
+                deltaFutureBorrow: data.deltaFutureBorrow,
+                deltaFutureCollateral: data.deltaFutureCollateral,
+                auctionStep: data.auctionStep,
+                deltaFuturePaymentBorrow: data.deltaFuturePaymentBorrow,
+                deltaFuturePaymentCollateral: data.deltaFuturePaymentCollateral,
+                blockNumber: data.blockNumber
+            })
+        );
     }
 }

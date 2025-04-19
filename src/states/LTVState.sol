@@ -7,6 +7,7 @@ import '../interfaces/IWhitelistRegistry.sol';
 import '../interfaces/ISlippageProvider.sol';
 import '../interfaces/IModules.sol';
 import 'forge-std/interfaces/IERC20.sol';
+import '../Structs2.sol';
 
 abstract contract LTVState {
     // ------------------------------------------------
@@ -33,7 +34,7 @@ abstract contract LTVState {
     uint128 public maxSafeLTV;
     uint128 public minProfitLTV;
     uint128 public targetLTV;
-    
+
     // TODO: why it's internal?
     ILendingConnector internal lendingConnector;
     bool public isVaultDeleveraged;
@@ -57,4 +58,55 @@ abstract contract LTVState {
     ILendingConnector public vaultBalanceAsLendingConnector;
 
     IModules public modules;
+
+    function getLendingConnector() internal view returns (ILendingConnector) {
+        return isVaultDeleveraged ? vaultBalanceAsLendingConnector : lendingConnector;
+    }
+
+    function totalAssetsState() internal view returns (TotalAssetsState memory) {
+        ILendingConnector _lendingConnector = getLendingConnector();
+        return
+            TotalAssetsState({
+                realCollateralAssets: _lendingConnector.getRealCollateralAssets(),
+                realBorrowAssets: _lendingConnector.getRealBorrowAssets(),
+                futureBorrowAssets: futureBorrowAssets,
+                futureCollateralAssets: futureCollateralAssets,
+                futureRewardBorrowAssets: futureRewardBorrowAssets,
+                futureRewardCollateralAssets: futureRewardCollateralAssets,
+                borrowPrice: oracleConnector.getPriceBorrowOracle(),
+                collateralPrice: oracleConnector.getPriceCollateralOracle()
+            });
+    }
+
+    function maxGrowthFeeState() internal view returns (MaxGrowthFeeState memory) {
+        return
+            MaxGrowthFeeState({
+                totalAssetsState: totalAssetsState(),
+                maxGrowthFee: maxGrowthFee,
+                supply: baseTotalSupply,
+                lastSeenTokenPrice: lastSeenTokenPrice
+            });
+    }
+
+    function vaultState(bool isDeposit) internal view returns (VaultState memory) {
+        return
+            VaultState({
+                maxGrowthFeeState: maxGrowthFeeState(),
+                targetLTV: targetLTV,
+                startAuction: startAuction,
+                blockNumber: block.number,
+                collateralSlippage: slippageProvider.collateralSlippage(),
+                borrowSlippage: slippageProvider.borrowSlippage(),
+                maxTotalAssetsInUnderlying: maxTotalAssetsInUnderlying,
+                isDeposit: isDeposit
+            });
+    }
+
+    function depositMintState() internal view returns (DepositMintState memory) {
+        return DepositMintState({vaultState: vaultState(true), minProfitLTV: minProfitLTV});
+    }
+
+    function withdrawRedeemState(address owner) internal view returns (WithdrawRedeemState memory) {
+        return WithdrawRedeemState({vaultState: vaultState(false), maxSafeLTV: maxSafeLTV, ownerBalance: balanceOf[owner]});
+    }
 }

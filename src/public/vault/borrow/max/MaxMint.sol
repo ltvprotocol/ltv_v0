@@ -29,7 +29,7 @@ abstract contract MaxMint is PreviewDeposit {
         uint256 maxDepositInUnderlying = uint256(data.vaultData.borrow) - minProfitRealBorrow;
         // round down to assume smaller border
         uint256 maxDepositInAssets = maxDepositInUnderlying.mulDivDown(Constants.ORACLE_DIVIDER, data.vaultData.borrowPrice);
-        uint256 maxMintShares = _previewDeposit(maxDepositInAssets, data.vaultData);
+        (uint256 maxMintShares,) = _previewDeposit(maxDepositInAssets, data.vaultData);
 
         return maxMintShares > availableSpaceInShares ? availableSpaceInShares : maxMintShares;
     }

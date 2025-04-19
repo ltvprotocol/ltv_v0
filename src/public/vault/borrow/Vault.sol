@@ -4,8 +4,9 @@ pragma solidity ^0.8.28;
 import '../../../Structs2.sol';
 import './MaxGrowthFee.sol';
 import '../../../math2/CommonMath.sol';
+import '../../erc20/TotalSupply.sol';
 
-abstract contract Vault is MaxGrowthFee {
+abstract contract Vault is MaxGrowthFee, TotalSupply {
     using uMulDiv for uint256;
 
     function vaultStateToData(VaultState memory state) internal pure returns (VaultData memory) {
@@ -57,11 +58,15 @@ abstract contract Vault is MaxGrowthFee {
             TotalAssetsData({collateral: data.collateral, borrow: data.borrow, borrowPrice: data.borrowPrice})
         );
 
+        uint256 withdrawTotalAssets = state.isDeposit
+            ? data.totalAssets
+            : _totalAssets(false, TotalAssetsData({collateral: data.collateral, borrow: data.borrow, borrowPrice: data.borrowPrice}));
+
         data.supplyAfterFee = _previewSupplyAfterFee(
             MaxGrowthFeeData({
-                totalAssets: data.totalAssets,
+                withdrawTotalAssets: withdrawTotalAssets,
                 maxGrowthFee: state.maxGrowthFeeState.maxGrowthFee,
-                supply: state.maxGrowthFeeState.supply,
+                supply: totalSupply(state.maxGrowthFeeState.supply),
                 lastSeenTokenPrice: state.maxGrowthFeeState.lastSeenTokenPrice
             })
         );

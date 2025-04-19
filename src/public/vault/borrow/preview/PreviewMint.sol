@@ -8,16 +8,16 @@ abstract contract PreviewMint is Vault {
     using uMulDiv for uint256;
 
     function previewMint(uint256 shares, VaultState memory state) public pure returns (uint256 assets) {
-        return _previewMint(shares, vaultStateToData(state));
+        (assets,) = _previewMint(shares, vaultStateToData(state));
     }
 
-    function _previewMint(uint256 shares, VaultData memory data) internal pure returns (uint256 assets) {
+    function _previewMint(uint256 shares, VaultData memory data) internal pure returns (uint256, DeltaFuture memory) {
         uint256 sharesInUnderlying = shares.mulDivUp(data.totalAssets, data.supplyAfterFee).mulDivUp(
             data.borrowPrice,
             Constants.ORACLE_DIVIDER
         );
 
-        int256 assetsInUnderlying = MintRedeem.previewMintRedeem(
+        (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = MintRedeem.calculateMintRedeem(
             MintRedeemData({
                 collateral: data.collateral,
                 borrow: data.borrow,
@@ -36,10 +36,10 @@ abstract contract PreviewMint is Vault {
         );
 
         if (assetsInUnderlying > 0) {
-            return 0;
+            return (0, deltaFuture);
         }
 
         // HODLer <=> depositor conflict, resolve in favor of HODLer, round up to receive more assets
-        return uint256(-assetsInUnderlying).mulDivUp(Constants.ORACLE_DIVIDER, data.borrowPrice);
+        return (uint256(-assetsInUnderlying).mulDivUp(Constants.ORACLE_DIVIDER, data.borrowPrice), deltaFuture);
     }
 }

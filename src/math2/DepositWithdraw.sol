@@ -98,10 +98,4 @@ library DepositWithdraw {
             deltaFuture.deltaUserFutureRewardBorrow -
             deltaFuture.deltaFuturePaymentBorrow;
     }
-
-    function previewDepositWithdraw(
-        DepositWithdrawData memory data
-    ) external pure returns (int256 sharesAsAssets) {
-        (sharesAsAssets, ) = calculateDepositWithdraw(data);
-    }
 }
