@@ -52,18 +52,19 @@ abstract contract Vault is MaxGrowthFee {
         data.protocolFutureRewardBorrow = futureRewardBorrow - data.userFutureRewardBorrow;
         data.protocolFutureRewardCollateral = futureRewardCollateral - data.userFutureRewardCollateral;
 
-        data.totalAssets = _totalAssets(state.isDeposit, TotalAssetsData({
-            collateral: data.collateral,
-            borrow: data.borrow,
-            borrowPrice: data.borrowPrice
-        }));
+        data.totalAssets = _totalAssets(
+            state.isDeposit,
+            TotalAssetsData({collateral: data.collateral, borrow: data.borrow, borrowPrice: data.borrowPrice})
+        );
 
-        data.supplyAfterFee = _previewSupplyAfterFee(MaxGrowthFeeData({
-            totalAssets: data.totalAssets,
-            maxGrowthFee: state.maxGrowthFeeState.maxGrowthFee,
-            supply: state.maxGrowthFeeState.supply,
-            lastSeenTokenPrice: state.maxGrowthFeeState.lastSeenTokenPrice
-        }));
+        data.supplyAfterFee = _previewSupplyAfterFee(
+            MaxGrowthFeeData({
+                totalAssets: data.totalAssets,
+                maxGrowthFee: state.maxGrowthFeeState.maxGrowthFee,
+                supply: state.maxGrowthFeeState.supply,
+                lastSeenTokenPrice: state.maxGrowthFeeState.lastSeenTokenPrice
+            })
+        );
 
         data.targetLTV = state.targetLTV;
         data.collateralSlippage = state.collateralSlippage;
@@ -71,5 +72,41 @@ abstract contract Vault is MaxGrowthFee {
         data.maxTotalAssetsInUnderlying = state.maxTotalAssetsInUnderlying;
 
         return data;
+    }
+
+    function depositMintStateToData(DepositMintState memory state) internal pure returns (DepositMintData memory) {
+        DepositMintData memory data;
+        data.vaultData = vaultStateToData(state.vaultState);
+        data.minProfitLTV = state.minProfitLTV;
+        return data;
+    }
+
+    function withdrawRedeemStateToData(WithdrawRedeemState memory state) internal pure returns (WithdrawRedeemData memory) {
+        WithdrawRedeemData memory data;
+        data.vaultData = vaultStateToData(state.vaultState);
+        data.maxSafeLTV = state.maxSafeLTV;
+        return data;
+    }
+
+    function getAvailableSpaceInShares(
+        int256 collateral,
+        int256 borrow,
+        uint256 maxTotalAssetsInUnderlying,
+        uint256 supplyAfterFee,
+        uint256 totalAssets,
+        uint256 borrowPrice
+    ) internal pure returns (uint256) {
+        uint256 totalAssetsInUnderlying = uint256(collateral - borrow);
+
+        if (totalAssetsInUnderlying >= maxTotalAssetsInUnderlying) {
+            return 0;
+        }
+
+        // round down to assume less available space
+        uint256 availableSpaceInShares = (maxTotalAssetsInUnderlying - totalAssetsInUnderlying)
+            .mulDivDown(Constants.ORACLE_DIVIDER, borrowPrice)
+            .mulDivDown(supplyAfterFee, totalAssets);
+
+        return availableSpaceInShares;
     }
 }

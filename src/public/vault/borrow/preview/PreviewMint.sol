@@ -12,7 +12,10 @@ abstract contract PreviewMint is Vault {
     }
 
     function _previewMint(uint256 shares, VaultData memory data) internal pure returns (uint256 assets) {
-        uint256 sharesInUnderlying = shares.mulDivUp(data.totalAssets, data.supplyAfterFee).mulDivUp(data.borrowPrice, Constants.ORACLE_DIVIDER);
+        uint256 sharesInUnderlying = shares.mulDivUp(data.totalAssets, data.supplyAfterFee).mulDivUp(
+            data.borrowPrice,
+            Constants.ORACLE_DIVIDER
+        );
 
         int256 assetsInUnderlying = MintRedeem.previewMintRedeem(
             MintRedeemData({

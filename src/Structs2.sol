@@ -65,6 +65,16 @@ struct VaultState {
     bool isDeposit;
 }
 
+struct DepositMintState {
+    VaultState vaultState;
+    uint256 minProfitLTV;
+}
+
+struct WithdrawRedeemState {
+    VaultState vaultState;
+    uint256 maxSafeLTV;
+}
+
 struct VaultData {
     int256 collateral;
     int256 borrow;
@@ -82,6 +92,16 @@ struct VaultData {
     uint256 collateralSlippage;
     uint256 borrowSlippage;
     uint256 maxTotalAssetsInUnderlying;
+}
+
+struct DepositMintData {
+    VaultData vaultData;
+    uint256 minProfitLTV;
+}
+
+struct WithdrawRedeemData {
+    VaultData vaultData;
+    uint256 maxSafeLTV;
 }
 
 struct MintRedeemData {
