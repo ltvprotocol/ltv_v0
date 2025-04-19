@@ -8,7 +8,11 @@ abstract contract MaxRedeem is MaxWithdraw, PreviewWithdraw {
     using uMulDiv for uint256;
 
     function maxRedeem(WithdrawRedeemState memory state) public pure returns (uint256 max) {
-        uint256 maxWithdrawAmount = maxWithdraw(state);
-        (max,) = _previewWithdraw(maxWithdrawAmount, withdrawRedeemStateToData(state).vaultData);
+        return _maxRedeem(withdrawRedeemStateToData(state));
+    }
+
+    function _maxRedeem(WithdrawRedeemData memory data) internal pure returns (uint256 max) {
+        uint256 maxWithdrawAmount = _maxWithdraw(data);
+        (max, ) = _previewWithdraw(maxWithdrawAmount, data.vaultData);
     }
 }
