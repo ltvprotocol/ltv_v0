@@ -85,6 +85,7 @@ abstract contract Vault is MaxGrowthFee {
         WithdrawRedeemData memory data;
         data.vaultData = vaultStateToData(state.vaultState);
         data.maxSafeLTV = state.maxSafeLTV;
+        data.ownerBalance = state.ownerBalance;
         return data;
     }
 

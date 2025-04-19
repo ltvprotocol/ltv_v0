@@ -73,6 +73,7 @@ struct DepositMintState {
 struct WithdrawRedeemState {
     VaultState vaultState;
     uint256 maxSafeLTV;
+    uint256 ownerBalance;
 }
 
 struct VaultData {
@@ -102,6 +103,7 @@ struct DepositMintData {
 struct WithdrawRedeemData {
     VaultData vaultData;
     uint256 maxSafeLTV;
+    uint256 ownerBalance;
 }
 
 struct MintRedeemData {
