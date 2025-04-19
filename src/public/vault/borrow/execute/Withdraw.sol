@@ -14,10 +14,10 @@ import '../../../../state_transition/TransferFromProtocol.sol';
 
 abstract contract Withdraw is
     MaxWithdraw,
+    PreviewWithdraw,
     ApplyMaxGrowthFee,
     MintProtocolRewards,
     Lending,
-    PreviewWithdraw,
     VaultStateTransition,
     TransferFromProtocol,
     ERC4626Events

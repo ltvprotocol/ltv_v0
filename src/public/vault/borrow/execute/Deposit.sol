@@ -11,7 +11,7 @@ import '../../../../ERC4626Events.sol';
 import '../preview/PreviewDeposit.sol';
 import '../../../../math2/NextStep.sol';
 
-abstract contract Deposit is MaxDeposit, ApplyMaxGrowthFee, MintProtocolRewards, Lending, PreviewDeposit, VaultStateTransition, ERC4626Events {
+abstract contract Deposit is MaxDeposit, ApplyMaxGrowthFee, MintProtocolRewards, Lending, VaultStateTransition, ERC4626Events {
     using uMulDiv for uint256;
 
     error ExceedsMaxDeposit(address receiver, uint256 assets, uint256 max);

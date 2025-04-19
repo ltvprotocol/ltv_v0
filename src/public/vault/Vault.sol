@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../../../Structs2.sol';
+import '../../Structs2.sol';
 import './MaxGrowthFee.sol';
-import '../../../math2/CommonMath.sol';
-import '../../erc20/TotalSupply.sol';
+import '../../math2/CommonMath.sol';
+import '../erc20/TotalSupply.sol';
 
 abstract contract Vault is MaxGrowthFee, TotalSupply {
     using uMulDiv for uint256;

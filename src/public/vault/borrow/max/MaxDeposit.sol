@@ -2,8 +2,8 @@
 pragma solidity ^0.8.28;
 
 import '../preview/PreviewMint.sol';
-
-abstract contract MaxDeposit is PreviewMint {
+import '../preview/PreviewDeposit.sol';
+abstract contract MaxDeposit is PreviewMint, PreviewDeposit {
     using uMulDiv for uint256;
 
     function maxDeposit(DepositMintState memory state) public pure returns (uint256) {

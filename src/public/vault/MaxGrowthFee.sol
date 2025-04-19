@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import './TotalAssets.sol';
+import './borrow/TotalAssets.sol';
 
 abstract contract MaxGrowthFee is TotalAssets {
     using uMulDiv for uint256;

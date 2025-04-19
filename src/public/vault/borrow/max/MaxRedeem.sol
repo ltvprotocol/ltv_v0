@@ -3,6 +3,7 @@ pragma solidity ^0.8.28;
 
 import './MaxWithdraw.sol';
 import '../preview/PreviewWithdraw.sol';
+import '../preview/PreviewRedeem.sol';
 
 abstract contract MaxRedeem is MaxWithdraw, PreviewWithdraw {
     using uMulDiv for uint256;
