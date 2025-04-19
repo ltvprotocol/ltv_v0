@@ -1,10 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../State.sol';
 import '../Constants.sol';
-import '../Structs.sol';
-import '../Cases.sol';
 import './deltaFutureCollateral/DeltaRealBorrowAndDeltaRealCollateral.sol';
 import '../utils/MulDiv.sol';
 import './CommonBorrowCollateral.sol';
@@ -14,27 +11,28 @@ library DepositWithdraw {
     using sMulDiv for int256;
 
     function calculateDepositWithdraw(
-        int256 assets,
-        bool isBorrowAssets,
-        ConvertedAssets memory convertedAssets,
-        Prices memory prices,
-        uint128 targetLTV
+        DepositWithdrawData memory data
     ) public pure returns (int256 sharesAsAssets, DeltaFuture memory deltaFuture) {
-        // depositor/withdrawer <=> HODLer conflict, assume user deposits less to mint less shares or withdraws more to burn more shares
-        int256 deltaRealBorrow = isBorrowAssets ? assets.mulDivUp(int256(prices.borrow), int256(Constants.ORACLE_DIVIDER)) : int256(0);
-        // depositor/withdrawer <=> HODLer conflict, assume user deposits less to mint less shares or withdraws more to burn more shares
-        int256 deltaRealCollateral = isBorrowAssets ? int256(0) : assets.mulDivDown(int256(prices.collateral), int256(Constants.ORACLE_DIVIDER));
-
         Cases memory cases = CasesOperator.generateCase(0);
 
         (deltaFuture.deltaFutureCollateral, cases) = DeltaRealBorrowAndDeltaRealCollateral
             .calculateDeltaFutureCollateralByDeltaRealBorrowAndDeltaRealCollateral(
-                prices,
-                convertedAssets,
-                cases,
-                deltaRealCollateral,
-                deltaRealBorrow,
-                targetLTV
+                DeltaRealBorrowAndDeltaRealCollateralData({
+                    cases: cases,
+                    borrow: data.borrow,
+                    collateral: data.collateral,
+                    protocolFutureRewardBorrow: data.protocolFutureRewardBorrow,
+                    protocolFutureRewardCollateral: data.protocolFutureRewardCollateral,
+                    userFutureRewardBorrow: data.userFutureRewardBorrow,
+                    userFutureRewardCollateral: data.userFutureRewardCollateral,
+                    futureBorrow: data.futureBorrow,
+                    futureCollateral: data.futureCollateral,
+                    borrowSlippage: data.borrowSlippage,
+                    collateralSlippage: data.collateralSlippage,
+                    targetLTV: data.targetLTV,
+                    deltaRealCollateral: data.deltaRealCollateral,
+                    deltaRealBorrow: data.deltaRealBorrow
+                })
             );
 
         // ∆shares = ∆userCollateral − ∆userBorrow
@@ -43,66 +41,67 @@ library DepositWithdraw {
 
         deltaFuture.deltaFutureBorrow = CommonBorrowCollateral.calculateDeltaFutureBorrowFromDeltaFutureCollateral(
             cases,
-            convertedAssets,
+            data.futureCollateral,
+            data.futureBorrow,
             deltaFuture.deltaFutureCollateral
         );
 
         deltaFuture.deltaUserFutureRewardCollateral = CommonBorrowCollateral.calculateDeltaUserFutureRewardCollateral(
             cases,
-            convertedAssets,
+            data.futureCollateral,
+            data.userFutureRewardCollateral,
             deltaFuture.deltaFutureCollateral
         );
 
         deltaFuture.deltaProtocolFutureRewardCollateral = CommonBorrowCollateral.calculateDeltaProtocolFutureRewardCollateral(
             cases,
-            convertedAssets,
+            data.futureCollateral,
+            data.protocolFutureRewardCollateral,
             deltaFuture.deltaFutureCollateral
         );
 
         deltaFuture.deltaFuturePaymentCollateral = CommonBorrowCollateral.calculateDeltaFuturePaymentCollateral(
             cases,
-            convertedAssets,
+            data.futureCollateral,
             deltaFuture.deltaFutureCollateral,
-            prices.collateralSlippage
+            data.collateralSlippage
         );
 
         deltaFuture.deltaUserFutureRewardBorrow = CommonBorrowCollateral.calculateDeltaUserFutureRewardBorrow(
             cases,
-            convertedAssets,
+            data.futureBorrow,
+            data.userFutureRewardBorrow,
             deltaFuture.deltaFutureBorrow
         );
 
         deltaFuture.deltaProtocolFutureRewardBorrow = CommonBorrowCollateral.calculateDeltaProtocolFutureRewardBorrow(
             cases,
-            convertedAssets,
+            data.futureBorrow,
+            data.protocolFutureRewardBorrow,
             deltaFuture.deltaFutureBorrow
         );
 
         deltaFuture.deltaFuturePaymentBorrow = CommonBorrowCollateral.calculateDeltaFuturePaymentBorrow(
             cases,
-            convertedAssets,
+            data.futureBorrow,
             deltaFuture.deltaFutureBorrow,
-            prices.borrowSlippage
+            data.borrowSlippage
         );
 
         sharesAsAssets =
-            deltaRealCollateral +
+            data.deltaRealCollateral +
             deltaFuture.deltaFutureCollateral +
             deltaFuture.deltaUserFutureRewardCollateral +
             deltaFuture.deltaFuturePaymentCollateral -
-            deltaRealBorrow -
+            data.deltaRealBorrow -
             deltaFuture.deltaFutureBorrow -
             deltaFuture.deltaUserFutureRewardBorrow -
             deltaFuture.deltaFuturePaymentBorrow;
     }
 
     function previewDepositWithdraw(
-        int256 assets,
-        bool isBorrowAssets,
-        ConvertedAssets memory convertedAssets,
-        Prices memory prices,
-        uint128 targetLTV
+        DepositWithdrawData memory data
     ) external pure returns (int256 sharesAsAssets) {
-        (sharesAsAssets, ) = calculateDepositWithdraw(assets, isBorrowAssets, convertedAssets, prices, targetLTV);
+        (sharesAsAssets, ) = calculateDepositWithdraw(data);
     }
 }

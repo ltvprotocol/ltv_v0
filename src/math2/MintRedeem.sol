@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../State.sol';
 import '../Constants.sol';
-import '../Structs.sol';
-import '../Cases.sol';
+import '../Structs2.sol';
+import '../Cases2.sol';
 import '../utils/MulDiv.sol';
 import './CommonBorrowCollateral.sol';
 import './deltaFutureCollateral/DeltaSharesAndDeltaRealCollateral.sol';
@@ -13,15 +12,7 @@ import './deltaFutureBorrow/DeltaSharesAndDeltaRealBorrow.sol';
 library MintRedeem {
     using uMulDiv for uint256;
 
-    function calculateMintRedeem(
-        int256 shares,
-        bool isBorrow,
-        ConvertedAssets memory convertedAssets,
-        Prices memory prices,
-        uint128 targetLTV
-    ) public pure returns (int256 assets, DeltaFuture memory deltaFuture) {
-        int256 deltaShares = shares;
-
+    function calculateMintRedeem(MintRedeemData memory data) public pure returns (int256 assets, DeltaFuture memory deltaFuture) {
         Cases memory cases = CasesOperator.generateCase(0);
 
         // ∆shares = ∆userCollateral − ∆userBorrow
@@ -31,87 +22,110 @@ library MintRedeem {
         // ∆userBorrow = ∆realBorrow + ∆futureBorrow + ∆userFutureRewardBorrow + ∆futurePaymentBorrow
 
         // ∆realBorrow = ∆realCollateral + ∆futureCollateral + ∆userFutureRewardCollateral + ∆futurePaymentCollateral - ∆shares - ∆futureBorrow - ∆userFutureRewardBorrow - ∆futurePaymentBorrow
-        if (isBorrow) {
+        if (data.isBorrow) {
             (deltaFuture.deltaFutureCollateral, cases) = DeltaSharesAndDeltaRealCollateral
-                .calculateDeltaFutureCollateralByDeltaSharesAndDeltaRealCollateral(prices, convertedAssets, cases, 0, deltaShares, targetLTV);
+                .calculateDeltaFutureCollateralByDeltaSharesAndDeltaRealCollateral(
+                    DeltaSharesAndDeltaRealCollateralData({
+                        targetLTV: data.targetLTV,
+                        borrow: data.borrow,
+                        collateral: data.collateral,
+                        protocolFutureRewardBorrow: data.protocolFutureRewardBorrow,
+                        protocolFutureRewardCollateral: data.protocolFutureRewardCollateral,
+                        deltaShares: data.deltaShares,
+                        deltaRealCollateral: 0,
+                        userFutureRewardCollateral: data.userFutureRewardCollateral,
+                        futureCollateral: data.futureCollateral,
+                        collateralSlippage: data.collateralSlippage,
+                        cases: cases
+                    })
+                );
+
             deltaFuture.deltaFutureBorrow = CommonBorrowCollateral.calculateDeltaFutureBorrowFromDeltaFutureCollateral(
                 cases,
-                convertedAssets,
+                data.futureCollateral,
+                data.futureBorrow,
                 deltaFuture.deltaFutureCollateral
             );
         } else {
             (deltaFuture.deltaFutureBorrow, cases) = DeltaSharesAndDeltaRealBorrow.calculateDeltaFutureBorrowByDeltaSharesAndDeltaRealBorrow(
-                prices,
-                convertedAssets,
-                cases,
-                0,
-                deltaShares,
-                targetLTV
+                DeltaSharesAndDeltaRealBorrowData({
+                    targetLTV: data.targetLTV,
+                    borrow: data.borrow,
+                    collateral: data.collateral,
+                    protocolFutureRewardBorrow: data.protocolFutureRewardBorrow,
+                    protocolFutureRewardCollateral: data.protocolFutureRewardCollateral,
+                    deltaShares: data.deltaShares,
+                    deltaRealBorrow: 0,
+                    userFutureRewardBorrow: data.userFutureRewardBorrow,
+                    futureBorrow: data.futureBorrow,
+                    borrowSlippage: data.borrowSlippage,
+                    cases: cases
+                })
             );
+
             deltaFuture.deltaFutureCollateral = CommonBorrowCollateral.calculateDeltaFutureCollateralFromDeltaFutureBorrow(
                 cases,
-                convertedAssets,
+                data.futureCollateral,
+                data.futureBorrow,
                 deltaFuture.deltaFutureBorrow
             );
         }
 
         deltaFuture.deltaUserFutureRewardCollateral = CommonBorrowCollateral.calculateDeltaUserFutureRewardCollateral(
             cases,
-            convertedAssets,
+            data.futureCollateral,
+            data.userFutureRewardCollateral,
             deltaFuture.deltaFutureCollateral
         );
 
         deltaFuture.deltaProtocolFutureRewardCollateral = CommonBorrowCollateral.calculateDeltaProtocolFutureRewardCollateral(
             cases,
-            convertedAssets,
+            data.futureCollateral,
+            data.protocolFutureRewardCollateral,
             deltaFuture.deltaFutureCollateral
         );
 
         deltaFuture.deltaFuturePaymentCollateral = CommonBorrowCollateral.calculateDeltaFuturePaymentCollateral(
             cases,
-            convertedAssets,
+            data.futureCollateral,
             deltaFuture.deltaFutureCollateral,
-            prices.collateralSlippage
+            data.collateralSlippage
         );
 
         deltaFuture.deltaUserFutureRewardBorrow = CommonBorrowCollateral.calculateDeltaUserFutureRewardBorrow(
             cases,
-            convertedAssets,
+            data.futureBorrow,
+            data.userFutureRewardBorrow,
             deltaFuture.deltaFutureBorrow
         );
 
         deltaFuture.deltaProtocolFutureRewardBorrow = CommonBorrowCollateral.calculateDeltaProtocolFutureRewardBorrow(
             cases,
-            convertedAssets,
+            data.futureBorrow,
+            data.protocolFutureRewardBorrow,
             deltaFuture.deltaFutureBorrow
         );
 
         deltaFuture.deltaFuturePaymentBorrow = CommonBorrowCollateral.calculateDeltaFuturePaymentBorrow(
             cases,
-            convertedAssets,
+            data.futureBorrow,
             deltaFuture.deltaFutureBorrow,
-            prices.borrowSlippage
+            data.borrowSlippage
         );
 
         assets =
             deltaFuture.deltaFutureCollateral +
             deltaFuture.deltaUserFutureRewardCollateral +
             deltaFuture.deltaFuturePaymentCollateral -
-            deltaShares -
+            data.deltaShares -
             deltaFuture.deltaFutureBorrow -
             deltaFuture.deltaUserFutureRewardBorrow -
             deltaFuture.deltaFuturePaymentBorrow;
 
-        assets = isBorrow ? assets : -assets;
+        assets = data.isBorrow ? assets : -assets;
     }
 
-    function previewMintRedeem(
-        int256 shares,
-        bool isBorrow,
-        ConvertedAssets memory convertedAssets,
-        Prices memory prices,
-        uint128 targetLTV
-    ) external pure returns (int256 assets) {
-        (assets, ) = calculateMintRedeem(shares, isBorrow, convertedAssets, prices, targetLTV);
+    function previewMintRedeem(MintRedeemData memory data) external pure returns (int256 assets) {
+        (assets, ) = calculateMintRedeem(data);
     }
 }
