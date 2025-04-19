@@ -173,7 +173,7 @@ abstract contract State is UpgradeableOwnableWithGuardianAndGovernor, Upgradeabl
         // in case of deposit we need to assume more assets in the protocol, so round borrow down
         int256 futureRewardBorrow = futureRewardBorrowAssets.mulDiv(int256(getPriceBorrowOracle()), int256(Constants.ORACLE_DIVIDER), !isDeposit);
 
-        // in case of deposit we need to assume more assets in the protocol, so round collateral up
+        // in case of deposit we need to assume more assets pin the protocol, so round collateral up
         int256 futureRewardCollateral = futureRewardCollateralAssets.mulDiv(
             int256(getPriceCollateralOracle()),
             int256(Constants.ORACLE_DIVIDER),

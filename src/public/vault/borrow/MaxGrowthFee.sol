@@ -3,24 +3,18 @@ pragma solidity ^0.8.28;
 
 import './TotalAssets.sol';
 
-struct MaxGrowthFeeState {
-    TotalAssetsState totalAssetsState;
-    uint256 maxGrowthFee;
-    uint256 supply;
-    uint256 lastSeenTokenPrice;
-}
-
 abstract contract MaxGrowthFee is TotalAssets {
     using uMulDiv for uint256;
 
     function previewSupplyAfterFee(MaxGrowthFeeState memory state) internal pure returns (uint256) {
-        // fee collector has the lowest priority, so need to underestimate reward
-        uint256 assets = totalAssets(false, state.totalAssetsState);
-        uint256 supply = state.supply;
+        return _previewSupplyAfterFee(maxGrowthFeeStateToData(state));
+    }
+
+    function _previewSupplyAfterFee(MaxGrowthFeeData memory data) internal pure returns (uint256) {
 
         // underestimate current price
-        if (assets.mulDivDown(Constants.LAST_SEEN_PRICE_PRECISION, supply) <= state.lastSeenTokenPrice) {
-            return supply;
+        if (data.totalAssets.mulDivDown(Constants.LAST_SEEN_PRICE_PRECISION, data.supply) <= data.lastSeenTokenPrice) {
+            return data.supply;
         }
 
         // divident: asset * supply
@@ -28,12 +22,22 @@ abstract contract MaxGrowthFee is TotalAssets {
 
         // underestimate new supply to mint less tokens
         return
-            assets.mulDivDown(
-                supply,
-                supply.mulDivUp(
-                    state.maxGrowthFee * state.lastSeenTokenPrice,
+            data.totalAssets.mulDivDown(
+                data.supply,
+                data.supply.mulDivUp(
+                    data.maxGrowthFee * data.lastSeenTokenPrice,
                     Constants.LAST_SEEN_PRICE_PRECISION * Constants.MAX_GROWTH_FEE_DIVIDER
-                ) + assets.mulDivUp(Constants.MAX_GROWTH_FEE_DIVIDER - state.maxGrowthFee, Constants.MAX_GROWTH_FEE_DIVIDER)
+                ) + data.totalAssets.mulDivUp(Constants.MAX_GROWTH_FEE_DIVIDER - data.maxGrowthFee, Constants.MAX_GROWTH_FEE_DIVIDER)
             );
+    }
+
+    function maxGrowthFeeStateToData(MaxGrowthFeeState memory state) internal pure returns (MaxGrowthFeeData memory) {
+        return MaxGrowthFeeData({
+        // fee collector has the lowest priority, so need to underestimate reward
+            totalAssets: totalAssets(false, state.totalAssetsState),
+            maxGrowthFee: state.maxGrowthFee,
+            supply: state.supply,
+            lastSeenTokenPrice: state.lastSeenTokenPrice
+        });
     }
 }
