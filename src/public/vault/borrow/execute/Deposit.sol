@@ -17,11 +17,11 @@ abstract contract Deposit is MaxDeposit, ApplyMaxGrowthFee, MintProtocolRewards,
     error ExceedsMaxDeposit(address receiver, uint256 assets, uint256 max);
 
     function deposit(uint256 assets, address receiver) external isFunctionAllowed nonReentrant returns (uint256) {
-        DepositMintData memory data = depositMintStateToData(depositMintState());
+        MaxDepositMintBorrowVaultData memory data = maxDepositMintBorrowVaultStateToMaxDepositMintBorrowVaultData(maxDepositMintBorrowVaultState());
         uint256 max = _maxDeposit(data);
         require(assets <= max, ExceedsMaxDeposit(receiver, assets, max));
 
-        (uint256 shares, DeltaFuture memory deltaFuture) = _previewDeposit(assets, data.vaultData);
+        (uint256 shares, DeltaFuture memory deltaFuture) = _previewDeposit(assets, data.previewBorrowVaultData);
 
         if (shares == 0) {
             return 0;
@@ -29,15 +29,15 @@ abstract contract Deposit is MaxDeposit, ApplyMaxGrowthFee, MintProtocolRewards,
 
         borrowToken.transferFrom(msg.sender, address(this), assets);
 
-        applyMaxGrowthFee(data.vaultData.supplyAfterFee, data.vaultData.totalAssets);
+        applyMaxGrowthFee(data.previewBorrowVaultData.supplyAfterFee, data.previewBorrowVaultData.totalAssets);
 
         _mintProtocolRewards(
             MintProtocolRewardsData({
                 deltaProtocolFutureRewardBorrow: deltaFuture.deltaProtocolFutureRewardBorrow,
                 deltaProtocolFutureRewardCollateral: deltaFuture.deltaProtocolFutureRewardCollateral,
-                supply: data.vaultData.supplyAfterFee,
-                totalAssets: data.vaultData.totalAssets,
-                borrowPrice: data.vaultData.borrowPrice
+                supply: data.previewBorrowVaultData.supplyAfterFee,
+                totalAssets: data.previewBorrowVaultData.totalAssets,
+                borrowPrice: data.previewBorrowVaultData.borrowPrice
             })
         );
 
@@ -45,10 +45,11 @@ abstract contract Deposit is MaxDeposit, ApplyMaxGrowthFee, MintProtocolRewards,
 
         NextState memory nextState = NextStep.calculateNextStep(
             NextStepData({
-                futureBorrow: data.vaultData.futureBorrow,
-                futureCollateral: data.vaultData.futureCollateral,
-                futureRewardBorrow: data.vaultData.userFutureRewardBorrow + data.vaultData.protocolFutureRewardBorrow,
-                futureRewardCollateral: data.vaultData.userFutureRewardCollateral + data.vaultData.protocolFutureRewardCollateral,
+                futureBorrow: data.previewBorrowVaultData.futureBorrow,
+                futureCollateral: data.previewBorrowVaultData.futureCollateral,
+                futureRewardBorrow: data.previewBorrowVaultData.userFutureRewardBorrow + data.previewBorrowVaultData.protocolFutureRewardBorrow,
+                futureRewardCollateral: data.previewBorrowVaultData.userFutureRewardCollateral +
+                    data.previewBorrowVaultData.protocolFutureRewardCollateral,
                 deltaFutureBorrow: deltaFuture.deltaFutureBorrow,
                 deltaFutureCollateral: deltaFuture.deltaFutureCollateral,
                 deltaFuturePaymentBorrow: deltaFuture.deltaFuturePaymentBorrow,

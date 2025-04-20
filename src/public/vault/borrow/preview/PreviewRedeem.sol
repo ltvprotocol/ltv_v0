@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../../Vault.sol';
+import '../Vault.sol';
 import '../../../../math2/MintRedeem.sol';
 
 abstract contract PreviewRedeem is Vault {
     using uMulDiv for uint256;
 
-    function previewRedeem(uint256 shares, VaultState memory state) public pure returns (uint256 assets) {
-        (assets, ) = _previewRedeem(shares, vaultStateToData(state));
+    function previewRedeem(uint256 shares, PreviewBorrowVaultState memory state) public pure returns (uint256 assets) {
+        (assets, ) = _previewRedeem(shares, previewBorrowVaultStateToPreviewBorrowVaultData(state, false));
     }
 
-    function _previewRedeem(uint256 shares, VaultData memory data) internal pure returns (uint256, DeltaFuture memory) {
+    function _previewRedeem(uint256 shares, PreviewBorrowVaultData memory data) internal pure returns (uint256, DeltaFuture memory) {
         // HODLer <=> withdrawer conflict, round in favor of HODLer, round down to give less assets for provided shares
         uint256 sharesInUnderlying = shares.mulDivDown(data.totalAssets, data.supplyAfterFee).mulDivDown(data.borrowPrice, Constants.ORACLE_DIVIDER);
 

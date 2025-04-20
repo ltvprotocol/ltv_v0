@@ -88,25 +88,33 @@ abstract contract LTVState {
             });
     }
 
-    function vaultState(bool isDeposit) internal view returns (VaultState memory) {
+    function previewBorrowVaultState() internal view returns (PreviewBorrowVaultState memory) {
         return
-            VaultState({
+            PreviewBorrowVaultState({
                 maxGrowthFeeState: maxGrowthFeeState(),
                 targetLTV: targetLTV,
                 startAuction: startAuction,
                 blockNumber: block.number,
                 collateralSlippage: slippageProvider.collateralSlippage(),
-                borrowSlippage: slippageProvider.borrowSlippage(),
-                maxTotalAssetsInUnderlying: maxTotalAssetsInUnderlying,
-                isDeposit: isDeposit
+                borrowSlippage: slippageProvider.borrowSlippage()
             });
     }
 
-    function depositMintState() internal view returns (DepositMintState memory) {
-        return DepositMintState({vaultState: vaultState(true), minProfitLTV: minProfitLTV});
+    function maxDepositMintBorrowVaultState() internal view returns (MaxDepositMintBorrowVaultState memory) {
+        return
+            MaxDepositMintBorrowVaultState({
+                previewBorrowVaultState: previewBorrowVaultState(),
+                minProfitLTV: minProfitLTV,
+                maxTotalAssetsInUnderlying: maxTotalAssetsInUnderlying
+            });
     }
 
-    function withdrawRedeemState(address owner) internal view returns (WithdrawRedeemState memory) {
-        return WithdrawRedeemState({vaultState: vaultState(false), maxSafeLTV: maxSafeLTV, ownerBalance: balanceOf[owner]});
+    function maxWithdrawRedeemBorrowVaultState(address owner) internal view returns (MaxWithdrawRedeemBorrowVaultState memory) {
+        return
+            MaxWithdrawRedeemBorrowVaultState({
+                previewBorrowVaultState: previewBorrowVaultState(),
+                maxSafeLTV: maxSafeLTV,
+                ownerBalance: balanceOf[owner]
+            });
     }
 }

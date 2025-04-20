@@ -17,7 +17,6 @@ abstract contract Redeem is
     ApplyMaxGrowthFee,
     MintProtocolRewards,
     Lending,
-    PreviewRedeem,
     VaultStateTransition,
     TransferFromProtocol,
     ERC4626Events
@@ -27,7 +26,9 @@ abstract contract Redeem is
     error ExceedsMaxRedeem(address owner, uint256 shares, uint256 max);
 
     function redeem(uint256 shares, address receiver, address owner) external isFunctionAllowed nonReentrant returns (uint256 assets) {
-        WithdrawRedeemData memory data = withdrawRedeemStateToData(withdrawRedeemState(owner));
+        MaxWithdrawRedeemBorrowVaultData memory data = maxWithdrawRedeemBorrowVaultStateToMaxWithdrawRedeemBorrowVaultData(
+            maxWithdrawRedeemBorrowVaultState(owner)
+        );
         uint256 max = _maxRedeem(data);
         require(shares <= max, ExceedsMaxRedeem(owner, shares, max));
 
@@ -35,21 +36,21 @@ abstract contract Redeem is
             allowance[owner][receiver] -= shares;
         }
 
-        (uint256 assetsOut, DeltaFuture memory deltaFuture) = _previewRedeem(shares, data.vaultData);
+        (uint256 assetsOut, DeltaFuture memory deltaFuture) = _previewRedeem(shares, data.previewBorrowVaultData);
 
         if (assetsOut == 0) {
             return 0;
         }
 
-        applyMaxGrowthFee(data.vaultData.supplyAfterFee, data.vaultData.totalAssets);
+        applyMaxGrowthFee(data.previewBorrowVaultData.supplyAfterFee, data.previewBorrowVaultData.totalAssets);
 
         _mintProtocolRewards(
             MintProtocolRewardsData({
                 deltaProtocolFutureRewardBorrow: deltaFuture.deltaProtocolFutureRewardBorrow,
                 deltaProtocolFutureRewardCollateral: deltaFuture.deltaProtocolFutureRewardCollateral,
-                supply: data.vaultData.supplyAfterFee,
-                totalAssets: data.vaultData.totalAssets,
-                borrowPrice: data.vaultData.borrowPrice
+                supply: data.previewBorrowVaultData.supplyAfterFee,
+                totalAssets: data.previewBorrowVaultData.totalAssets,
+                borrowPrice: data.previewBorrowVaultData.borrowPrice
             })
         );
 
@@ -57,10 +58,11 @@ abstract contract Redeem is
 
         NextState memory nextState = NextStep.calculateNextStep(
             NextStepData({
-                futureBorrow: data.vaultData.futureBorrow,
-                futureCollateral: data.vaultData.futureCollateral,
-                futureRewardBorrow: data.vaultData.userFutureRewardBorrow + data.vaultData.protocolFutureRewardBorrow,
-                futureRewardCollateral: data.vaultData.userFutureRewardCollateral + data.vaultData.protocolFutureRewardCollateral,
+                futureBorrow: data.previewBorrowVaultData.futureBorrow,
+                futureCollateral: data.previewBorrowVaultData.futureCollateral,
+                futureRewardBorrow: data.previewBorrowVaultData.userFutureRewardBorrow + data.previewBorrowVaultData.protocolFutureRewardBorrow,
+                futureRewardCollateral: data.previewBorrowVaultData.userFutureRewardCollateral +
+                    data.previewBorrowVaultData.protocolFutureRewardCollateral,
                 deltaFutureBorrow: deltaFuture.deltaFutureBorrow,
                 deltaFutureCollateral: deltaFuture.deltaFutureCollateral,
                 deltaFuturePaymentBorrow: deltaFuture.deltaFuturePaymentBorrow,

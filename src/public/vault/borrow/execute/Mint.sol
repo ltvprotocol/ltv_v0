@@ -17,11 +17,11 @@ abstract contract Mint is MaxMint, ApplyMaxGrowthFee, MintProtocolRewards, Lendi
     error ExceedsMaxMint(address receiver, uint256 shares, uint256 max);
 
     function mint(uint256 shares, address receiver) external isFunctionAllowed nonReentrant returns (uint256 assets) {
-        DepositMintData memory data = depositMintStateToData(depositMintState());
+        MaxDepositMintBorrowVaultData memory data = maxDepositMintBorrowVaultStateToMaxDepositMintBorrowVaultData(maxDepositMintBorrowVaultState());
         uint256 max = _maxMint(data);
         require(shares <= max, ExceedsMaxMint(receiver, shares, max));
 
-        (uint256 assetsOut, DeltaFuture memory deltaFuture) = _previewMint(shares, data.vaultData);
+        (uint256 assetsOut, DeltaFuture memory deltaFuture) = _previewMint(shares, data.previewBorrowVaultData);
 
         if (assetsOut == 0) {
             return 0;
@@ -29,15 +29,15 @@ abstract contract Mint is MaxMint, ApplyMaxGrowthFee, MintProtocolRewards, Lendi
 
         borrowToken.transferFrom(msg.sender, address(this), assetsOut);
 
-        applyMaxGrowthFee(data.vaultData.supplyAfterFee, data.vaultData.totalAssets);
+        applyMaxGrowthFee(data.previewBorrowVaultData.supplyAfterFee, data.previewBorrowVaultData.totalAssets);
 
         _mintProtocolRewards(
             MintProtocolRewardsData({
                 deltaProtocolFutureRewardBorrow: deltaFuture.deltaProtocolFutureRewardBorrow,
                 deltaProtocolFutureRewardCollateral: deltaFuture.deltaProtocolFutureRewardCollateral,
-                supply: data.vaultData.supplyAfterFee,
-                totalAssets: data.vaultData.totalAssets,
-                borrowPrice: data.vaultData.borrowPrice
+                supply: data.previewBorrowVaultData.supplyAfterFee,
+                totalAssets: data.previewBorrowVaultData.totalAssets,
+                borrowPrice: data.previewBorrowVaultData.borrowPrice
             })
         );
 
@@ -45,10 +45,12 @@ abstract contract Mint is MaxMint, ApplyMaxGrowthFee, MintProtocolRewards, Lendi
 
         NextState memory nextState = NextStep.calculateNextStep(
             NextStepData({
-                futureBorrow: data.vaultData.futureBorrow,
-                futureCollateral: data.vaultData.futureCollateral,
-                futureRewardBorrow: data.vaultData.userFutureRewardBorrow + data.vaultData.protocolFutureRewardBorrow,
-                futureRewardCollateral: data.vaultData.userFutureRewardCollateral + data.vaultData.protocolFutureRewardCollateral,
+                futureBorrow: data.previewBorrowVaultData.futureBorrow,
+                futureCollateral: data.previewBorrowVaultData.futureCollateral,
+                futureRewardBorrow: data.previewBorrowVaultData.userFutureRewardBorrow +
+                    data.previewBorrowVaultData.protocolFutureRewardBorrow,
+                futureRewardCollateral: data.previewBorrowVaultData.userFutureRewardCollateral +
+                    data.previewBorrowVaultData.protocolFutureRewardCollateral,
                 deltaFutureBorrow: deltaFuture.deltaFutureBorrow,
                 deltaFutureCollateral: deltaFuture.deltaFutureCollateral,
                 deltaFuturePaymentBorrow: deltaFuture.deltaFuturePaymentBorrow,

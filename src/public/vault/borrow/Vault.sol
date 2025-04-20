@@ -1,45 +1,48 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../../Structs2.sol';
-import './MaxGrowthFee.sol';
-import '../../math2/CommonMath.sol';
-import '../erc20/TotalSupply.sol';
+import '../../../Structs2.sol';
+import '../MaxGrowthFee.sol';
+import '../../../math2/CommonMath.sol';
+import '../../erc20/TotalSupply.sol';
 
 abstract contract Vault is MaxGrowthFee, TotalSupply {
     using uMulDiv for uint256;
 
-    function vaultStateToData(VaultState memory state) internal pure returns (VaultData memory) {
-        VaultData memory data;
+    function previewBorrowVaultStateToPreviewBorrowVaultData(
+        PreviewBorrowVaultState memory state,
+        bool isDeposit
+    ) internal pure returns (PreviewBorrowVaultData memory) {
+        PreviewBorrowVaultData memory data;
         uint256 realCollateral = CommonMath.convertRealCollateral(
             state.maxGrowthFeeState.totalAssetsState.realCollateralAssets,
             state.maxGrowthFeeState.totalAssetsState.collateralPrice,
-            state.isDeposit
+            isDeposit
         );
         uint256 realBorrow = CommonMath.convertRealBorrow(
             state.maxGrowthFeeState.totalAssetsState.realBorrowAssets,
             state.maxGrowthFeeState.totalAssetsState.borrowPrice,
-            state.isDeposit
+            isDeposit
         );
         data.futureCollateral = CommonMath.convertFutureCollateral(
             state.maxGrowthFeeState.totalAssetsState.futureCollateralAssets,
             state.maxGrowthFeeState.totalAssetsState.collateralPrice,
-            state.isDeposit
+            isDeposit
         );
         data.futureBorrow = CommonMath.convertFutureBorrow(
             state.maxGrowthFeeState.totalAssetsState.futureBorrowAssets,
             state.maxGrowthFeeState.totalAssetsState.borrowPrice,
-            state.isDeposit
+            isDeposit
         );
         int256 futureRewardCollateral = CommonMath.convertFutureRewardCollateral(
             state.maxGrowthFeeState.totalAssetsState.futureRewardCollateralAssets,
             state.maxGrowthFeeState.totalAssetsState.collateralPrice,
-            state.isDeposit
+            isDeposit
         );
         int256 futureRewardBorrow = CommonMath.convertFutureRewardBorrow(
             state.maxGrowthFeeState.totalAssetsState.futureRewardBorrowAssets,
             state.maxGrowthFeeState.totalAssetsState.borrowPrice,
-            state.isDeposit
+            isDeposit
         );
 
         data.collateral = int256(realCollateral) + data.futureCollateral + futureRewardCollateral;
@@ -53,12 +56,7 @@ abstract contract Vault is MaxGrowthFee, TotalSupply {
         data.protocolFutureRewardBorrow = futureRewardBorrow - data.userFutureRewardBorrow;
         data.protocolFutureRewardCollateral = futureRewardCollateral - data.userFutureRewardCollateral;
 
-        data.totalAssets = _totalAssets(
-            state.isDeposit,
-            TotalAssetsData({collateral: data.collateral, borrow: data.borrow, borrowPrice: data.borrowPrice})
-        );
-
-        uint256 withdrawTotalAssets = state.isDeposit
+        uint256 withdrawTotalAssets = isDeposit
             ? data.totalAssets
             : _totalAssets(false, TotalAssetsData({collateral: data.collateral, borrow: data.borrow, borrowPrice: data.borrowPrice}));
 
@@ -74,21 +72,25 @@ abstract contract Vault is MaxGrowthFee, TotalSupply {
         data.targetLTV = state.targetLTV;
         data.collateralSlippage = state.collateralSlippage;
         data.borrowSlippage = state.borrowSlippage;
-        data.maxTotalAssetsInUnderlying = state.maxTotalAssetsInUnderlying;
 
         return data;
     }
 
-    function depositMintStateToData(DepositMintState memory state) internal pure returns (DepositMintData memory) {
-        DepositMintData memory data;
-        data.vaultData = vaultStateToData(state.vaultState);
+    function maxDepositMintBorrowVaultStateToMaxDepositMintBorrowVaultData(
+        MaxDepositMintBorrowVaultState memory state
+    ) internal pure returns (MaxDepositMintBorrowVaultData memory) {
+        MaxDepositMintBorrowVaultData memory data;
+        data.previewBorrowVaultData = previewBorrowVaultStateToPreviewBorrowVaultData(state.previewBorrowVaultState, true);
+        data.maxTotalAssetsInUnderlying = state.maxTotalAssetsInUnderlying;
         data.minProfitLTV = state.minProfitLTV;
         return data;
     }
 
-    function withdrawRedeemStateToData(WithdrawRedeemState memory state) internal pure returns (WithdrawRedeemData memory) {
-        WithdrawRedeemData memory data;
-        data.vaultData = vaultStateToData(state.vaultState);
+    function maxWithdrawRedeemBorrowVaultStateToMaxWithdrawRedeemBorrowVaultData(
+        MaxWithdrawRedeemBorrowVaultState memory state
+    ) internal pure returns (MaxWithdrawRedeemBorrowVaultData memory) {
+        MaxWithdrawRedeemBorrowVaultData memory data;
+        data.previewBorrowVaultData = previewBorrowVaultStateToPreviewBorrowVaultData(state.previewBorrowVaultState, false);
         data.maxSafeLTV = state.maxSafeLTV;
         data.ownerBalance = state.ownerBalance;
         return data;

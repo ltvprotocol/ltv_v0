@@ -23,121 +23,6 @@ struct DeltaFuture {
     int256 deltaFuturePaymentBorrow;
 }
 
-struct TotalAssetsState {
-    uint256 realCollateralAssets;
-    uint256 realBorrowAssets;
-    int256 futureBorrowAssets;
-    int256 futureCollateralAssets;
-    int256 futureRewardBorrowAssets;
-    int256 futureRewardCollateralAssets;
-    uint256 borrowPrice;
-    uint256 collateralPrice;
-}
-
-struct TotalAssetsData {
-    int256 collateral;
-    int256 borrow;
-    uint256 borrowPrice;
-}
-
-struct MaxGrowthFeeState {
-    TotalAssetsState totalAssetsState;
-    uint256 maxGrowthFee;
-    uint256 supply;
-    uint256 lastSeenTokenPrice;
-}
-
-struct MaxGrowthFeeData {
-    uint256 withdrawTotalAssets;
-    uint256 maxGrowthFee;
-    uint256 supply;
-    uint256 lastSeenTokenPrice;
-}
-
-struct VaultState {
-    MaxGrowthFeeState maxGrowthFeeState;
-    uint128 targetLTV;
-    uint256 startAuction;
-    uint256 blockNumber;
-    uint256 collateralSlippage;
-    uint256 borrowSlippage;
-    uint256 maxTotalAssetsInUnderlying;
-    bool isDeposit;
-}
-
-struct DepositMintState {
-    VaultState vaultState;
-    uint256 minProfitLTV;
-}
-
-struct WithdrawRedeemState {
-    VaultState vaultState;
-    uint256 maxSafeLTV;
-    uint256 ownerBalance;
-}
-
-struct VaultData {
-    int256 collateral;
-    int256 borrow;
-    int256 futureBorrow;
-    int256 futureCollateral;
-    int256 userFutureRewardBorrow;
-    int256 userFutureRewardCollateral;
-    int256 protocolFutureRewardBorrow;
-    int256 protocolFutureRewardCollateral;
-    uint256 totalAssets;
-    uint256 borrowPrice;
-    uint256 collateralPrice;
-    uint256 supplyAfterFee;
-    uint128 targetLTV;
-    uint256 collateralSlippage;
-    uint256 borrowSlippage;
-    uint256 maxTotalAssetsInUnderlying;
-}
-
-struct DepositMintData {
-    VaultData vaultData;
-    uint256 minProfitLTV;
-}
-
-struct WithdrawRedeemData {
-    VaultData vaultData;
-    uint256 maxSafeLTV;
-    uint256 ownerBalance;
-}
-
-struct MintRedeemData {
-    int256 collateral;
-    int256 borrow;
-    int256 futureBorrow;
-    int256 futureCollateral;
-    int256 userFutureRewardBorrow;
-    int256 userFutureRewardCollateral;
-    int256 protocolFutureRewardBorrow;
-    int256 protocolFutureRewardCollateral;
-    uint256 collateralSlippage;
-    uint256 borrowSlippage;
-    uint128 targetLTV;
-    int256 deltaShares;
-    bool isBorrow;
-}
-
-struct DepositWithdrawData {
-    int256 collateral;
-    int256 borrow;
-    int256 futureBorrow;
-    int256 futureCollateral;
-    int256 userFutureRewardBorrow;
-    int256 userFutureRewardCollateral;
-    int256 protocolFutureRewardBorrow;
-    int256 protocolFutureRewardCollateral;
-    uint256 collateralSlippage;
-    uint256 borrowSlippage;
-    uint128 targetLTV;
-    int256 deltaRealCollateral;
-    int256 deltaRealBorrow;
-}
-
 struct DeltaSharesAndDeltaRealCollateralData {
     uint128 targetLTV;
     int256 borrow;
@@ -183,6 +68,127 @@ struct DeltaRealBorrowAndDeltaRealCollateralData {
     Cases cases;
 }
 
+struct MintRedeemData {
+    int256 collateral;
+    int256 borrow;
+    int256 futureBorrow;
+    int256 futureCollateral;
+    int256 userFutureRewardBorrow;
+    int256 userFutureRewardCollateral;
+    int256 protocolFutureRewardBorrow;
+    int256 protocolFutureRewardCollateral;
+    uint256 collateralSlippage;
+    uint256 borrowSlippage;
+    uint128 targetLTV;
+    int256 deltaShares;
+    bool isBorrow;
+}
+
+struct DepositWithdrawData {
+    int256 collateral;
+    int256 borrow;
+    int256 futureBorrow;
+    int256 futureCollateral;
+    int256 userFutureRewardBorrow;
+    int256 userFutureRewardCollateral;
+    int256 protocolFutureRewardBorrow;
+    int256 protocolFutureRewardCollateral;
+    uint256 collateralSlippage;
+    uint256 borrowSlippage;
+    uint128 targetLTV;
+    int256 deltaRealCollateral;
+    int256 deltaRealBorrow;
+}
+
+struct TotalAssetsState {
+    uint256 realCollateralAssets;
+    uint256 realBorrowAssets;
+    int256 futureBorrowAssets;
+    int256 futureCollateralAssets;
+    int256 futureRewardBorrowAssets;
+    int256 futureRewardCollateralAssets;
+    uint256 borrowPrice;
+    uint256 collateralPrice;
+}
+
+struct TotalAssetsData {
+    int256 collateral;
+    int256 borrow;
+    uint256 borrowPrice;
+}
+
+struct MaxGrowthFeeState {
+    TotalAssetsState totalAssetsState;
+    uint256 maxGrowthFee;
+    uint256 supply;
+    uint256 lastSeenTokenPrice;
+}
+
+struct MaxGrowthFeeData {
+    uint256 withdrawTotalAssets;
+    uint256 maxGrowthFee;
+    uint256 supply;
+    uint256 lastSeenTokenPrice;
+}
+
+struct PreviewBorrowVaultState {
+    MaxGrowthFeeState maxGrowthFeeState;
+    uint128 targetLTV;
+    uint256 startAuction;
+    uint256 blockNumber;
+    uint256 collateralSlippage;
+    uint256 borrowSlippage;
+}
+
+struct PreviewBorrowVaultData {
+    int256 collateral;
+    int256 borrow;
+    int256 futureBorrow;
+    int256 futureCollateral;
+    int256 userFutureRewardBorrow;
+    int256 userFutureRewardCollateral;
+    int256 protocolFutureRewardBorrow;
+    int256 protocolFutureRewardCollateral;
+    uint256 collateralSlippage;
+    uint256 borrowSlippage;
+    uint128 targetLTV;
+    uint256 borrowPrice;
+    uint256 supplyAfterFee;
+    uint256 totalAssets;
+}
+
+struct MaxDepositMintBorrowVaultState {
+    PreviewBorrowVaultState previewBorrowVaultState;
+    uint256 maxTotalAssetsInUnderlying;
+    uint256 minProfitLTV;
+}
+
+struct MaxDepositMintBorrowVaultData {
+    PreviewBorrowVaultData previewBorrowVaultData;
+    uint256 maxTotalAssetsInUnderlying;
+    uint256 minProfitLTV;
+}
+
+struct MaxWithdrawRedeemBorrowVaultState {
+    PreviewBorrowVaultState previewBorrowVaultState;
+    uint256 maxSafeLTV;
+    uint256 ownerBalance;
+}
+
+struct MaxWithdrawRedeemBorrowVaultData {
+    PreviewBorrowVaultData previewBorrowVaultData;
+    uint256 maxSafeLTV;
+    uint256 ownerBalance;
+}
+
+struct MintProtocolRewardsData {
+    int256 deltaProtocolFutureRewardBorrow;
+    int256 deltaProtocolFutureRewardCollateral;
+    uint256 supply;
+    uint256 totalAssets;
+    uint256 borrowPrice;
+}
+
 struct NextState {
     int256 futureBorrow;
     int256 futureCollateral;
@@ -192,14 +198,6 @@ struct NextState {
     bool merge;
     uint256 borrowPrice;
     uint256 collateralPrice;
-}
-
-struct MintProtocolRewardsData {
-    int256 deltaProtocolFutureRewardBorrow;
-    int256 deltaProtocolFutureRewardCollateral;
-    uint256 supply;
-    uint256 totalAssets;
-    uint256 borrowPrice;
 }
 
 struct NextStepData {
@@ -217,5 +215,4 @@ struct NextStepData {
     int256 deltaProtocolFutureRewardCollateral;
     uint256 blockNumber;
     uint256 auctionStep;
-    
 }

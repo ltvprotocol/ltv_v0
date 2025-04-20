@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../../Vault.sol';
+import '../Vault.sol';
 import '../../../../math2/MintRedeem.sol';
 
 abstract contract PreviewMint is Vault {
     using uMulDiv for uint256;
 
-    function previewMint(uint256 shares, VaultState memory state) public pure returns (uint256 assets) {
-        (assets,) = _previewMint(shares, vaultStateToData(state));
+    function previewMint(uint256 shares, PreviewBorrowVaultState memory state) public pure returns (uint256 assets) {
+        (assets,) = _previewMint(shares, previewBorrowVaultStateToPreviewBorrowVaultData(state, true));
     }
 
-    function _previewMint(uint256 shares, VaultData memory data) internal pure returns (uint256, DeltaFuture memory) {
+    function _previewMint(uint256 shares, PreviewBorrowVaultData memory data) internal pure returns (uint256, DeltaFuture memory) {
         uint256 sharesInUnderlying = shares.mulDivUp(data.totalAssets, data.supplyAfterFee).mulDivUp(
             data.borrowPrice,
             Constants.ORACLE_DIVIDER

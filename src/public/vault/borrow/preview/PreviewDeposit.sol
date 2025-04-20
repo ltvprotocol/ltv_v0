@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../../Vault.sol';
+import '../Vault.sol';
 import '../../../../math2/DepositWithdraw.sol';
 
 abstract contract PreviewDeposit is Vault {
     using uMulDiv for uint256;
 
-    function previewDeposit(uint256 assets, VaultState memory state) public pure returns (uint256 shares) {
-        (shares,) = _previewDeposit(assets, vaultStateToData(state));
+    function previewDeposit(uint256 assets, PreviewBorrowVaultState memory state) public pure returns (uint256 shares) {
+        (shares,) = _previewDeposit(assets, previewBorrowVaultStateToPreviewBorrowVaultData(state, true));
     }
 
-    function _previewDeposit(uint256 assets, VaultData memory data) internal pure returns (uint256, DeltaFuture memory) {
+    function _previewDeposit(uint256 assets, PreviewBorrowVaultData memory data) internal pure returns (uint256, DeltaFuture memory) {
         // depositor/withdrawer <=> HODLer conflict, assume user deposits less to mint less shares
         uint256 assetsInUnderlying = assets.mulDivDown(data.borrowPrice, Constants.ORACLE_DIVIDER);
     
