@@ -13,12 +13,12 @@ abstract contract MaxRedeem is PreviewWithdraw, PreviewRedeem {
 
     function _maxRedeem(MaxWithdrawRedeemBorrowVaultData memory data) internal pure returns (uint256 max) {
         // round down to assume smaller border
-        uint256 maxSafeRealBorrow = uint256(data.previewBorrowVaultData.collateral).mulDivDown(data.maxSafeLTV, Constants.LTV_DIVIDER);
-        if (maxSafeRealBorrow <= uint256(data.previewBorrowVaultData.borrow)) {
+        uint256 maxSafeRealBorrow = uint256(data.realCollateral).mulDivDown(data.maxSafeLTV, Constants.LTV_DIVIDER);
+        if (maxSafeRealBorrow <= uint256(data.realBorrow)) {
             return 0;
         }
 
-        uint256 maxWithdrawInAssets = (maxSafeRealBorrow - uint256(data.previewBorrowVaultData.borrow)).mulDivDown(
+        uint256 maxWithdrawInAssets = (maxSafeRealBorrow - uint256(data.realBorrow)).mulDivDown(
             Constants.ORACLE_DIVIDER,
             data.previewBorrowVaultData.borrowPrice
         );

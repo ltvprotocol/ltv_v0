@@ -14,7 +14,6 @@ abstract contract VaultCollateral is MaxGrowthFee, TotalSupply, TotalAssetsColla
         PreviewVaultState memory state,
         bool isDeposit
     ) internal pure returns (PreviewCollateralVaultData memory) {
-        PreviewCollateralVaultData memory data;
         uint256 realCollateral = CommonMath.convertRealCollateral(
             state.maxGrowthFeeState.totalAssetsState.realCollateralAssets,
             state.maxGrowthFeeState.totalAssetsState.collateralPrice,
@@ -25,6 +24,17 @@ abstract contract VaultCollateral is MaxGrowthFee, TotalSupply, TotalAssetsColla
             state.maxGrowthFeeState.totalAssetsState.borrowPrice,
             isDeposit
         );
+        return _previewVaultStateToPreviewCollateralVaultData(realCollateral, realBorrow, state, isDeposit);
+    }
+
+    function _previewVaultStateToPreviewCollateralVaultData(
+        uint256 realCollateral,
+        uint256 realBorrow,
+        PreviewVaultState memory state,
+        bool isDeposit
+    ) internal pure returns (PreviewCollateralVaultData memory) {
+        PreviewCollateralVaultData memory data;
+
         data.futureCollateral = CommonMath.convertFutureCollateral(
             state.maxGrowthFeeState.totalAssetsState.futureCollateralAssets,
             state.maxGrowthFeeState.totalAssetsState.collateralPrice,
@@ -97,7 +107,22 @@ abstract contract VaultCollateral is MaxGrowthFee, TotalSupply, TotalAssetsColla
         MaxDepositMintCollateralVaultState memory state
     ) internal pure returns (MaxDepositMintCollateralVaultData memory) {
         MaxDepositMintCollateralVaultData memory data;
-        data.previewCollateralVaultData = previewVaultStateToPreviewCollateralVaultData(state.previewVaultState, true);
+        data.realCollateral = CommonMath.convertRealCollateral(
+            state.previewVaultState.maxGrowthFeeState.totalAssetsState.realCollateralAssets,
+            state.previewVaultState.maxGrowthFeeState.totalAssetsState.collateralPrice,
+            true
+        );
+        data.realBorrow = CommonMath.convertRealBorrow(
+            state.previewVaultState.maxGrowthFeeState.totalAssetsState.realBorrowAssets,
+            state.previewVaultState.maxGrowthFeeState.totalAssetsState.borrowPrice,
+            true
+        );
+        data.previewCollateralVaultData = _previewVaultStateToPreviewCollateralVaultData(
+            data.realCollateral,
+            data.realBorrow,
+            state.previewVaultState,
+            true
+        );
         data.maxTotalAssetsInUnderlying = state.maxTotalAssetsInUnderlying;
         data.minProfitLTV = state.minProfitLTV;
         return data;
@@ -107,7 +132,22 @@ abstract contract VaultCollateral is MaxGrowthFee, TotalSupply, TotalAssetsColla
         MaxWithdrawRedeemCollateralVaultState memory state
     ) internal pure returns (MaxWithdrawRedeemCollateralVaultData memory) {
         MaxWithdrawRedeemCollateralVaultData memory data;
-        data.previewCollateralVaultData = previewVaultStateToPreviewCollateralVaultData(state.previewVaultState, false);
+        data.realCollateral = CommonMath.convertRealCollateral(
+            state.previewVaultState.maxGrowthFeeState.totalAssetsState.realCollateralAssets,
+            state.previewVaultState.maxGrowthFeeState.totalAssetsState.collateralPrice,
+            false
+        );
+        data.realBorrow = CommonMath.convertRealBorrow(
+            state.previewVaultState.maxGrowthFeeState.totalAssetsState.realBorrowAssets,
+            state.previewVaultState.maxGrowthFeeState.totalAssetsState.borrowPrice,
+            false
+        );
+        data.previewCollateralVaultData = _previewVaultStateToPreviewCollateralVaultData(
+            data.realCollateral,
+            data.realBorrow,
+            state.previewVaultState,
+            false
+        );
         data.maxSafeLTV = state.maxSafeLTV;
         data.ownerBalance = state.ownerBalance;
         return data;

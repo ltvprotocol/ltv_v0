@@ -13,14 +13,14 @@ abstract contract MaxRedeemCollateral is PreviewWithdrawCollateral, PreviewRedee
 
     function _maxRedeemCollateral(MaxWithdrawRedeemCollateralVaultData memory data) internal pure returns (uint256) {
         // round down to assume smaller border
-        uint256 maxSafeRealCollateral = uint256(data.previewCollateralVaultData.borrow).mulDivDown(Constants.LTV_DIVIDER, data.maxSafeLTV);
+        uint256 maxSafeRealCollateral = uint256(data.realBorrow).mulDivDown(Constants.LTV_DIVIDER, data.maxSafeLTV);
 
-        if (maxSafeRealCollateral >= uint256(data.previewCollateralVaultData.collateral)) {
+        if (maxSafeRealCollateral >= uint256(data.realCollateral)) {
             return 0;
         }
 
         // round down to assume smaller border
-        uint256 maxWithdrawInAssets = uint256(data.previewCollateralVaultData.collateral) -
+        uint256 maxWithdrawInAssets = uint256(data.realCollateral) -
             maxSafeRealCollateral.mulDivDown(Constants.ORACLE_DIVIDER, data.previewCollateralVaultData.collateralPrice);
 
         (uint256 maxWithdrawInShares, ) = _previewWithdrawCollateral(maxWithdrawInAssets, data.previewCollateralVaultData);

@@ -12,23 +12,14 @@ import '../preview/PreviewRedeem.sol';
 import '../../../../math2/NextStep.sol';
 import '../../../../state_transition/TransferFromProtocol.sol';
 
-abstract contract Redeem is
-    MaxRedeem,
-    ApplyMaxGrowthFee,
-    MintProtocolRewards,
-    Lending,
-    VaultStateTransition,
-    TransferFromProtocol,
-    ERC4626Events
-{
+abstract contract Redeem is MaxRedeem, ApplyMaxGrowthFee, MintProtocolRewards, Lending, VaultStateTransition, TransferFromProtocol, ERC4626Events {
     using uMulDiv for uint256;
 
     error ExceedsMaxRedeem(address owner, uint256 shares, uint256 max);
 
     function redeem(uint256 shares, address receiver, address owner) external isFunctionAllowed nonReentrant returns (uint256 assets) {
-        MaxWithdrawRedeemBorrowVaultData memory data = maxWithdrawRedeemBorrowVaultStateToMaxWithdrawRedeemBorrowVaultData(
-            maxWithdrawRedeemBorrowVaultState(owner)
-        );
+        MaxWithdrawRedeemBorrowVaultState memory state = maxWithdrawRedeemBorrowVaultState(owner);
+        MaxWithdrawRedeemBorrowVaultData memory data = maxWithdrawRedeemBorrowVaultStateToMaxWithdrawRedeemBorrowVaultData(state);
         uint256 max = _maxRedeem(data);
         require(shares <= max, ExceedsMaxRedeem(owner, shares, max));
 
@@ -76,7 +67,13 @@ abstract contract Redeem is
             })
         );
 
-        applyStateTransition(nextState);
+        applyStateTransition(
+            NextStateData({
+                nextState: nextState,
+                borrowPrice: data.previewBorrowVaultData.borrowPrice,
+                collateralPrice: state.previewVaultState.maxGrowthFeeState.totalAssetsState.collateralPrice
+            })
+        );
 
         borrow(assetsOut);
 

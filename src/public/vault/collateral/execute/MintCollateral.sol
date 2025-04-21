@@ -72,7 +72,13 @@ abstract contract MintCollateral is MaxMintCollateral, ApplyMaxGrowthFee, MintPr
             })
         );
 
-        applyStateTransition(nextState);
+        applyStateTransition(
+            NextStateData({
+                nextState: nextState,
+                borrowPrice: state.previewVaultState.maxGrowthFeeState.totalAssetsState.borrowPrice,
+                collateralPrice: data.previewCollateralVaultData.collateralPrice
+            })
+        );
 
         emit Deposit(msg.sender, receiver, assets, shares);
 

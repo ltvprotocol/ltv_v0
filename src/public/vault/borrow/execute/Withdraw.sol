@@ -26,9 +26,8 @@ abstract contract Withdraw is
     error ExceedsMaxWithdraw(address owner, uint256 assets, uint256 max);
 
     function withdraw(uint256 assets, address receiver, address owner) external isFunctionAllowed nonReentrant returns (uint256) {
-        MaxWithdrawRedeemBorrowVaultData memory data = maxWithdrawRedeemBorrowVaultStateToMaxWithdrawRedeemBorrowVaultData(
-            maxWithdrawRedeemBorrowVaultState(owner)
-        );
+        MaxWithdrawRedeemBorrowVaultState memory state = maxWithdrawRedeemBorrowVaultState(owner);
+        MaxWithdrawRedeemBorrowVaultData memory data = maxWithdrawRedeemBorrowVaultStateToMaxWithdrawRedeemBorrowVaultData(state);
         uint256 max = _maxWithdraw(data);
         require(assets <= max, ExceedsMaxWithdraw(owner, assets, max));
 
@@ -76,7 +75,13 @@ abstract contract Withdraw is
             })
         );
 
-        applyStateTransition(nextState);
+        applyStateTransition(
+            NextStateData({
+                nextState: nextState,
+                borrowPrice: data.previewBorrowVaultData.borrowPrice,
+                collateralPrice: state.previewVaultState.maxGrowthFeeState.totalAssetsState.collateralPrice
+            })
+        );
 
         borrow(assets);
 

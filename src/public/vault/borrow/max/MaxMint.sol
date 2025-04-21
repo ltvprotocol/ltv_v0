@@ -22,12 +22,12 @@ abstract contract MaxMint is PreviewMint, PreviewDeposit {
         );
 
         // round up to assume smaller border
-        uint256 minProfitRealBorrow = uint256(data.previewBorrowVaultData.collateral).mulDivUp(data.minProfitLTV, Constants.LTV_DIVIDER);
-        if (uint256(data.previewBorrowVaultData.borrow) <= minProfitRealBorrow) {
+        uint256 minProfitRealBorrow = uint256(data.realCollateral).mulDivUp(data.minProfitLTV, Constants.LTV_DIVIDER);
+        if (uint256(data.realBorrow) <= minProfitRealBorrow) {
             return 0;
         }
 
-        uint256 maxDepositInUnderlying = uint256(data.previewBorrowVaultData.borrow) - minProfitRealBorrow;
+        uint256 maxDepositInUnderlying = uint256(data.realBorrow) - minProfitRealBorrow;
         // round down to assume smaller border
         uint256 maxDepositInAssets = maxDepositInUnderlying.mulDivDown(Constants.ORACLE_DIVIDER, data.previewBorrowVaultData.borrowPrice);
         (uint256 maxMintShares,) = _previewDeposit(maxDepositInAssets, data.previewBorrowVaultData);

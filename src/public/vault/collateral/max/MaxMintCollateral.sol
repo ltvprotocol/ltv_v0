@@ -25,12 +25,12 @@ abstract contract MaxMintCollateral is PreviewMintCollateral, PreviewDepositColl
         );
 
         // round down to assume smaller border
-        uint256 minProfitRealCollateral = uint256(data.previewCollateralVaultData.borrow).mulDivDown(Constants.LTV_DIVIDER, data.minProfitLTV);
-        if (uint256(data.previewCollateralVaultData.collateral) >= minProfitRealCollateral) {
+        uint256 minProfitRealCollateral = uint256(data.realBorrow).mulDivDown(Constants.LTV_DIVIDER, data.minProfitLTV);
+        if (uint256(data.realCollateral) >= minProfitRealCollateral) {
             return 0;
         }
 
-        uint256 maxDepositInUnderlying = minProfitRealCollateral - uint256(data.previewCollateralVaultData.collateral);
+        uint256 maxDepositInUnderlying = minProfitRealCollateral - uint256(data.realCollateral);
         // round down to assume smaller border
         uint256 maxDepositInCollateral = maxDepositInUnderlying.mulDivDown(Constants.ORACLE_DIVIDER, data.previewCollateralVaultData.collateralPrice);
         (uint256 maxMintShares, ) = _previewDepositCollateral(maxDepositInCollateral, data.previewCollateralVaultData);

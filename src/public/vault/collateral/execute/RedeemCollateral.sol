@@ -76,7 +76,13 @@ abstract contract RedeemCollateral is MaxRedeemCollateral, ApplyMaxGrowthFee, Mi
             })
         );
 
-        applyStateTransition(nextState);
+        applyStateTransition(
+            NextStateData({
+                nextState: nextState,
+                borrowPrice: state.previewVaultState.maxGrowthFeeState.totalAssetsState.borrowPrice,
+                collateralPrice: data.previewCollateralVaultData.collateralPrice
+            })
+        );
 
         collateralToken.transfer(receiver, assets);
 

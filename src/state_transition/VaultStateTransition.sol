@@ -22,7 +22,7 @@ abstract contract VaultStateTransition is LTVState {
         uint256 newStartAuction
     );
 
-    function applyStateTransition(NextState memory nextState) internal {
+    function applyStateTransition(NextStateData memory nextStateData) internal {
         int256 oldFutureBorrowAssets = futureBorrowAssets;
         int256 oldFutureCollateralAssets = futureCollateralAssets;
         int256 oldFutureRewardBorrowAssets = futureRewardBorrowAssets;
@@ -31,13 +31,13 @@ abstract contract VaultStateTransition is LTVState {
 
         // Here we have conflict between HODLer and Future auction executor. Round in favor of HODLer
 
-        futureBorrowAssets = nextState.futureBorrow.mulDivDown(int256(Constants.ORACLE_DIVIDER), int256(nextState.borrowPrice));
-        futureCollateralAssets = nextState.futureCollateral.mulDivUp(int256(Constants.ORACLE_DIVIDER), int256(nextState.collateralPrice));
-        futureRewardBorrowAssets = nextState.futureRewardBorrow.mulDivDown(int256(Constants.ORACLE_DIVIDER), int256(nextState.borrowPrice));
-        futureRewardCollateralAssets = nextState.futureRewardCollateral.mulDivUp(int256(Constants.ORACLE_DIVIDER), int256(nextState.collateralPrice));
+        futureBorrowAssets = nextStateData.nextState.futureBorrow.mulDivDown(int256(Constants.ORACLE_DIVIDER), int256(nextStateData.borrowPrice));
+        futureCollateralAssets = nextStateData.nextState.futureCollateral.mulDivUp(int256(Constants.ORACLE_DIVIDER), int256(nextStateData.collateralPrice));
+        futureRewardBorrowAssets = nextStateData.nextState.futureRewardBorrow.mulDivDown(int256(Constants.ORACLE_DIVIDER), int256(nextStateData.borrowPrice));
+        futureRewardCollateralAssets = nextStateData.nextState.futureRewardCollateral.mulDivUp(int256(Constants.ORACLE_DIVIDER), int256(nextStateData.collateralPrice));
 
-        if (nextState.merge) {
-            startAuction = nextState.startAuction;
+        if (nextStateData.nextState.merge) {
+            startAuction = nextStateData.nextState.startAuction;
         }
 
         emit StateUpdated(

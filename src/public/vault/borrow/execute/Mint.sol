@@ -17,7 +17,8 @@ abstract contract Mint is MaxMint, ApplyMaxGrowthFee, MintProtocolRewards, Lendi
     error ExceedsMaxMint(address receiver, uint256 shares, uint256 max);
 
     function mint(uint256 shares, address receiver) external isFunctionAllowed nonReentrant returns (uint256 assets) {
-        MaxDepositMintBorrowVaultData memory data = maxDepositMintBorrowVaultStateToMaxDepositMintBorrowVaultData(maxDepositMintBorrowVaultState());
+        MaxDepositMintBorrowVaultState memory state = maxDepositMintBorrowVaultState();
+        MaxDepositMintBorrowVaultData memory data = maxDepositMintBorrowVaultStateToMaxDepositMintBorrowVaultData(state);
         uint256 max = _maxMint(data);
         require(shares <= max, ExceedsMaxMint(receiver, shares, max));
 
@@ -72,7 +73,13 @@ abstract contract Mint is MaxMint, ApplyMaxGrowthFee, MintProtocolRewards, Lendi
             })
         );
 
-        applyStateTransition(nextState);
+        applyStateTransition(
+            NextStateData({
+                nextState: nextState,
+                borrowPrice: data.previewBorrowVaultData.borrowPrice,
+                collateralPrice: state.previewVaultState.maxGrowthFeeState.totalAssetsState.collateralPrice
+            })
+        );
 
         emit Deposit(msg.sender, receiver, assetsOut, shares);
 

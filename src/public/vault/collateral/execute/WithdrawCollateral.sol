@@ -59,8 +59,10 @@ abstract contract WithdrawCollateral is MaxWithdrawCollateral, ApplyMaxGrowthFee
             NextStepData({
                 futureBorrow: data.previewCollateralVaultData.futureBorrow,
                 futureCollateral: data.previewCollateralVaultData.futureCollateral,
-                futureRewardBorrow: data.previewCollateralVaultData.userFutureRewardBorrow + data.previewCollateralVaultData.protocolFutureRewardBorrow,
-                futureRewardCollateral: data.previewCollateralVaultData.userFutureRewardCollateral + data.previewCollateralVaultData.protocolFutureRewardCollateral,
+                futureRewardBorrow: data.previewCollateralVaultData.userFutureRewardBorrow +
+                    data.previewCollateralVaultData.protocolFutureRewardBorrow,
+                futureRewardCollateral: data.previewCollateralVaultData.userFutureRewardCollateral +
+                    data.previewCollateralVaultData.protocolFutureRewardCollateral,
                 deltaFutureBorrow: deltaFuture.deltaFutureBorrow,
                 deltaFutureCollateral: deltaFuture.deltaFutureCollateral,
                 deltaFuturePaymentBorrow: deltaFuture.deltaFuturePaymentBorrow,
@@ -74,7 +76,13 @@ abstract contract WithdrawCollateral is MaxWithdrawCollateral, ApplyMaxGrowthFee
             })
         );
 
-        applyStateTransition(nextState);
+        applyStateTransition(
+            NextStateData({
+                nextState: nextState,
+                borrowPrice: state.previewVaultState.maxGrowthFeeState.totalAssetsState.borrowPrice,
+                collateralPrice: data.previewCollateralVaultData.collateralPrice
+            })
+        );
 
         collateralToken.transfer(receiver, assets);
 
@@ -82,4 +90,4 @@ abstract contract WithdrawCollateral is MaxWithdrawCollateral, ApplyMaxGrowthFee
 
         return shares;
     }
-} 
+}

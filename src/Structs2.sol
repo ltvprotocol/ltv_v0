@@ -171,6 +171,8 @@ struct MaxDepositMintBorrowVaultState {
 
 struct MaxDepositMintBorrowVaultData {
     PreviewBorrowVaultData previewBorrowVaultData;
+    uint256 realCollateral;
+    uint256 realBorrow;
     uint256 maxTotalAssetsInUnderlying;
     uint256 minProfitLTV;
 }
@@ -183,6 +185,8 @@ struct MaxWithdrawRedeemBorrowVaultState {
 
 struct MaxWithdrawRedeemBorrowVaultData {
     PreviewBorrowVaultData previewBorrowVaultData;
+    uint256 realCollateral;
+    uint256 realBorrow;
     uint256 maxSafeLTV;
     uint256 ownerBalance;
 }
@@ -202,6 +206,12 @@ struct NextState {
     int256 futureRewardCollateral;
     uint256 startAuction;
     bool merge;
+    uint256 borrowPrice;
+    uint256 collateralPrice;
+}
+
+struct NextStateData {
+    NextState nextState;
     uint256 borrowPrice;
     uint256 collateralPrice;
 }
@@ -248,6 +258,8 @@ struct MaxDepositMintCollateralVaultState {
 
 struct MaxDepositMintCollateralVaultData {
     PreviewCollateralVaultData previewCollateralVaultData;
+    uint256 realCollateral;
+    uint256 realBorrow;
     uint256 maxTotalAssetsInUnderlying;
     uint256 minProfitLTV;
 }
@@ -260,6 +272,8 @@ struct MaxWithdrawRedeemCollateralVaultState {
 
 struct MaxWithdrawRedeemCollateralVaultData {
     PreviewCollateralVaultData previewCollateralVaultData;
+    uint256 realCollateral;
+    uint256 realBorrow;
     uint256 maxSafeLTV;
     uint256 ownerBalance;
 }
