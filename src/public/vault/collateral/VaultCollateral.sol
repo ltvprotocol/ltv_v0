@@ -134,4 +134,28 @@ abstract contract VaultCollateral is MaxGrowthFee, TotalSupply, TotalAssetsColla
 
         return availableSpaceInShares;
     }
+
+    function maxGrowthFeeStateToConvertCollateralData(MaxGrowthFeeState memory state) internal pure returns (ConvertCollateralData memory) {
+        ConvertCollateralData memory data;
+        uint256 totalAssets = totalAssets(false, state.totalAssetsState);
+        data.totalAssetsCollateral = _totalAssetsCollateral(
+            false,
+            TotalAssetsCollateralData({
+                totalAssets: totalAssets,
+                collateralPrice: state.totalAssetsState.collateralPrice,
+                borrowPrice: state.totalAssetsState.borrowPrice
+            })
+        );
+
+        data.supplyAfterFee = _previewSupplyAfterFee(
+            MaxGrowthFeeData({
+                withdrawTotalAssets: totalAssets,
+                maxGrowthFee: state.maxGrowthFee,
+                supply: totalSupply(state.supply),
+                lastSeenTokenPrice: state.lastSeenTokenPrice
+            })
+        );
+
+        return data;
+    }
 }

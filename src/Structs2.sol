@@ -274,3 +274,8 @@ struct MaxWithdrawRedeemCollateralVaultData {
     uint256 maxSafeLTV;
     uint256 ownerBalance;
 }
+
+struct ConvertCollateralData {
+    uint256 totalAssetsCollateral;
+    uint256 supplyAfterFee;
+}
