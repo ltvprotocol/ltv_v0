@@ -4,16 +4,17 @@ pragma solidity ^0.8.28;
 import '../VaultCollateral.sol';
 import '../../../../math2/DepositWithdraw.sol';
 
-abstract contract PreviewDepositCollateral is VaultCollateral {
+contract PreviewWithdrawCollateral is VaultCollateral {
     using uMulDiv for uint256;
 
-    function previewDepositCollateral(uint256 assets, PreviewVaultState memory state) public pure returns (uint256 shares) {
-        (shares, ) = _previewDepositCollateral(assets, previewVaultStateToPreviewCollateralVaultData(state, true));
+    function previewWithdrawCollateral(uint256 assets, PreviewVaultState memory state) public pure returns (uint256 shares) {
+        (shares, ) = _previewWithdrawCollateral(assets, previewVaultStateToPreviewCollateralVaultData(state, false));
     }
 
-    function _previewDepositCollateral(uint256 assets, PreviewCollateralVaultData memory data) internal pure returns (uint256, DeltaFuture memory) {
-        // depositor <=> HODLer conflict, assume user deposits less to mint less shares
-        uint256 realCollateralInUnderlying = assets.mulDivDown(data.collateralPrice, Constants.ORACLE_DIVIDER);
+    function _previewWithdrawCollateral(uint256 assets, PreviewCollateralVaultData memory data) internal pure returns (uint256, DeltaFuture memory) {
+        // HODLer <=> withdrawer conflict, assume user withdraws more to burn more shares
+        uint256 assetsInUnderlying = assets.mulDivUp(data.collateralPrice, Constants.ORACLE_DIVIDER);
+
         (int256 sharesInUnderlying, DeltaFuture memory deltaFuture) = DepositWithdraw.calculateDepositWithdraw(
             DepositWithdrawData({
                 collateral: data.collateral,
@@ -27,18 +28,18 @@ abstract contract PreviewDepositCollateral is VaultCollateral {
                 collateralSlippage: data.collateralSlippage,
                 borrowSlippage: data.borrowSlippage,
                 targetLTV: data.targetLTV,
-                deltaRealCollateral: int256(realCollateralInUnderlying),
+                deltaRealCollateral: -int256(assetsInUnderlying),
                 deltaRealBorrow: 0
             })
         );
 
-        if (sharesInUnderlying < 0) {
+        if (sharesInUnderlying > 0) {
             return (0, deltaFuture);
         }
 
-        // HODLer <=> depositor conflict, round in favor of HODLer, round down to mint less shares
+        // HODLer <=> withdrawer conflict, round in favor of HODLer, round up to burn more shares
         return (
-            uint256(sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, data.collateralPrice).mulDivDown(
+            uint256(-sharesInUnderlying).mulDivUp(Constants.ORACLE_DIVIDER, data.collateralPrice).mulDivUp(
                 data.supplyAfterFee,
                 data.totalAssetsCollateral
             ),
