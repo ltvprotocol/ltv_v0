@@ -10,21 +10,21 @@ import '../borrow/TotalAssets.sol';
 abstract contract TotalAssetsCollateral is TotalAssets {
     using uMulDiv for uint256;
 
-    function totalAssetsCollateral(TotalAssetsCollateralState memory state) public pure returns (uint256) {
+    function totalAssetsCollateral(TotalAssetsState memory state) public virtual pure returns (uint256) {
         // default behavior - don't overestimate our assets
         return totalAssetsCollateral(false, state);
     }
 
-    function totalAssetsCollateral(bool isDeposit, TotalAssetsCollateralState memory state) public pure returns (uint256) {
-        return _totalAssetsCollateral(isDeposit, totalAssetsCollateralStateToData(state, isDeposit));
+    function totalAssetsCollateral(bool isDeposit, TotalAssetsState memory state) public virtual pure returns (uint256) {
+        return _totalAssetsCollateral(isDeposit, totalAssetsStateToTotalAssetsCollateralData(state, isDeposit));
     }
 
     function _totalAssetsCollateral(bool isDeposit, TotalAssetsCollateralData memory data) public pure returns (uint256) {
         return data.totalAssets.mulDiv(data.borrowPrice, data.collateralPrice, isDeposit);
     }
 
-    function totalAssetsCollateralStateToData(
-        TotalAssetsCollateralState memory state,
+    function totalAssetsStateToTotalAssetsCollateralData(
+        TotalAssetsState memory state,
         bool isDeposit
     ) internal pure returns (TotalAssetsCollateralData memory) {
         TotalAssetsCollateralData memory data;

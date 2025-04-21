@@ -4,7 +4,7 @@ pragma solidity ^0.8.28;
 import '../VaultCollateral.sol';
 import '../../../../math2/DepositWithdraw.sol';
 
-contract PreviewWithdrawCollateral is VaultCollateral {
+abstract contract PreviewWithdrawCollateral is VaultCollateral {
     using uMulDiv for uint256;
 
     function previewWithdrawCollateral(uint256 assets, PreviewVaultState memory state) public pure returns (uint256 shares) {

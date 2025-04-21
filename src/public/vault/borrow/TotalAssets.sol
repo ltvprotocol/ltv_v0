@@ -5,16 +5,15 @@ import '../../../Constants.sol';
 import '../../../Structs2.sol';
 import '../../../utils/MulDiv.sol';
 import '../../../math2/CommonMath.sol';
-
 abstract contract TotalAssets {
     using uMulDiv for uint256;
 
-    function totalAssets(TotalAssetsState memory state) public pure returns (uint256) {
+    function totalAssets(TotalAssetsState memory state) public virtual pure returns (uint256) {
         // default behavior - don't overestimate our assets
         return totalAssets(false, state);
     }
 
-    function totalAssets(bool isDeposit, TotalAssetsState memory state) public pure returns (uint256) {
+    function totalAssets(bool isDeposit, TotalAssetsState memory state) public virtual pure returns (uint256) {
         return _totalAssets(isDeposit, totalAssetsStateToData(state, isDeposit));
     }
 

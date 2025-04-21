@@ -4,7 +4,7 @@ pragma solidity ^0.8.28;
 import '../VaultCollateral.sol';
 import '../../../../math2/MintRedeem.sol';
 
-contract PreviewMintCollateral is VaultCollateral {
+abstract contract PreviewMintCollateral is VaultCollateral {
     using uMulDiv for uint256;
 
     function previewMintCollateral(uint256 shares, PreviewVaultState memory state) public pure returns (uint256 assets) {

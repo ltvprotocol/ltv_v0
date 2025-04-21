@@ -4,7 +4,7 @@ pragma solidity ^0.8.28;
 import '../../../../utils/MulDiv.sol';
 import '../VaultCollateral.sol';
 
-contract ConvertToAssetsCollateral is VaultCollateral {
+abstract contract ConvertToAssetsCollateral is VaultCollateral {
     using uMulDiv for uint256;
 
     function convertToAssetsCollateral(uint256 shares, MaxGrowthFeeState memory state) external pure returns (uint256) {

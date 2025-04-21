@@ -117,17 +117,6 @@ struct TotalAssetsData {
     uint256 borrowPrice;
 }
 
-struct TotalAssetsCollateralState {
-    uint256 realCollateralAssets;
-    uint256 realBorrowAssets;
-    int256 futureBorrowAssets;
-    int256 futureCollateralAssets;
-    int256 futureRewardBorrowAssets;
-    int256 futureRewardCollateralAssets;
-    uint256 borrowPrice;
-    uint256 collateralPrice;
-}
-
 struct TotalAssetsCollateralData {
     uint256 totalAssets;
     uint256 collateralPrice;
