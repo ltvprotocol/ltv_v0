@@ -11,17 +11,17 @@ contract MintProtocolRewards is ERC20 {
     function _mintProtocolRewards(MintProtocolRewardsData memory data) internal {
         // in both cases rounding conflict between HODLer and fee collector. Resolve it in favor of HODLer
         if (data.deltaProtocolFutureRewardBorrow < 0) {
-            uint256 shares = uint256(-data.deltaProtocolFutureRewardBorrow).mulDivDown(Constants.ORACLE_DIVIDER, data.borrowPrice).mulDivDown(
+            uint256 shares = uint256(-data.deltaProtocolFutureRewardBorrow).mulDivDown(Constants.ORACLE_DIVIDER, data.assetPrice).mulDivDown(
                 data.supply,
-                data.totalAssets
+                data.totalAppropriateAssets
             );
             _mint(feeCollector, shares);
         } else if (data.deltaProtocolFutureRewardCollateral > 0) {
             _mint(
                 feeCollector,
-                uint256(data.deltaProtocolFutureRewardCollateral).mulDivDown(Constants.ORACLE_DIVIDER, data.borrowPrice).mulDivDown(
+                uint256(data.deltaProtocolFutureRewardCollateral).mulDivDown(Constants.ORACLE_DIVIDER, data.assetPrice).mulDivDown(
                     data.supply,
-                    data.totalAssets
+                    data.totalAppropriateAssets
                 )
             );
         }

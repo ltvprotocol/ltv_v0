@@ -49,8 +49,8 @@ abstract contract Redeem is
                 deltaProtocolFutureRewardBorrow: deltaFuture.deltaProtocolFutureRewardBorrow,
                 deltaProtocolFutureRewardCollateral: deltaFuture.deltaProtocolFutureRewardCollateral,
                 supply: data.previewBorrowVaultData.supplyAfterFee,
-                totalAssets: data.previewBorrowVaultData.totalAssets,
-                borrowPrice: data.previewBorrowVaultData.borrowPrice
+                totalAppropriateAssets: data.previewBorrowVaultData.totalAssets,
+                assetPrice: data.previewBorrowVaultData.borrowPrice
             })
         );
 

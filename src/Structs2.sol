@@ -202,8 +202,8 @@ struct MintProtocolRewardsData {
     int256 deltaProtocolFutureRewardBorrow;
     int256 deltaProtocolFutureRewardCollateral;
     uint256 supply;
-    uint256 totalAssets;
-    uint256 borrowPrice;
+    uint256 totalAppropriateAssets;
+    uint256 assetPrice;
 }
 
 struct NextState {

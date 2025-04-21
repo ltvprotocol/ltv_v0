@@ -110,12 +110,7 @@ abstract contract LTVState {
     }
 
     function maxWithdrawRedeemBorrowVaultState(address owner) internal view returns (MaxWithdrawRedeemBorrowVaultState memory) {
-        return
-            MaxWithdrawRedeemBorrowVaultState({
-                previewVaultState: previewVaultState(),
-                maxSafeLTV: maxSafeLTV,
-                ownerBalance: balanceOf[owner]
-            });
+        return MaxWithdrawRedeemBorrowVaultState({previewVaultState: previewVaultState(), maxSafeLTV: maxSafeLTV, ownerBalance: balanceOf[owner]});
     }
 
     function maxDepositMintCollateralVaultState() internal view returns (MaxDepositMintCollateralVaultState memory) {
@@ -127,4 +122,8 @@ abstract contract LTVState {
             });
     }
 
+    function maxWithdrawRedeemCollateralVaultState(address owner) internal view returns (MaxWithdrawRedeemCollateralVaultState memory) {
+        return
+            MaxWithdrawRedeemCollateralVaultState({previewVaultState: previewVaultState(), maxSafeLTV: maxSafeLTV, ownerBalance: balanceOf[owner]});
+    }
 }

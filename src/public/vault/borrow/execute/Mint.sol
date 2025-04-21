@@ -29,15 +29,24 @@ abstract contract Mint is MaxMint, ApplyMaxGrowthFee, MintProtocolRewards, Lendi
 
         borrowToken.transferFrom(msg.sender, address(this), assetsOut);
 
-        applyMaxGrowthFee(data.previewBorrowVaultData.supplyAfterFee, data.previewBorrowVaultData.totalAssets);
+        uint256 withdrawTotalAssets = _totalAssets(
+            false,
+            TotalAssetsData({
+                collateral: data.previewBorrowVaultData.collateral,
+                borrow: data.previewBorrowVaultData.borrow,
+                borrowPrice: data.previewBorrowVaultData.borrowPrice
+            })
+        );
+
+        applyMaxGrowthFee(data.previewBorrowVaultData.supplyAfterFee, withdrawTotalAssets);
 
         _mintProtocolRewards(
             MintProtocolRewardsData({
                 deltaProtocolFutureRewardBorrow: deltaFuture.deltaProtocolFutureRewardBorrow,
                 deltaProtocolFutureRewardCollateral: deltaFuture.deltaProtocolFutureRewardCollateral,
                 supply: data.previewBorrowVaultData.supplyAfterFee,
-                totalAssets: data.previewBorrowVaultData.totalAssets,
-                borrowPrice: data.previewBorrowVaultData.borrowPrice
+                totalAppropriateAssets: data.previewBorrowVaultData.totalAssets,
+                assetPrice: data.previewBorrowVaultData.borrowPrice
             })
         );
 
@@ -47,8 +56,7 @@ abstract contract Mint is MaxMint, ApplyMaxGrowthFee, MintProtocolRewards, Lendi
             NextStepData({
                 futureBorrow: data.previewBorrowVaultData.futureBorrow,
                 futureCollateral: data.previewBorrowVaultData.futureCollateral,
-                futureRewardBorrow: data.previewBorrowVaultData.userFutureRewardBorrow +
-                    data.previewBorrowVaultData.protocolFutureRewardBorrow,
+                futureRewardBorrow: data.previewBorrowVaultData.userFutureRewardBorrow + data.previewBorrowVaultData.protocolFutureRewardBorrow,
                 futureRewardCollateral: data.previewBorrowVaultData.userFutureRewardCollateral +
                     data.previewBorrowVaultData.protocolFutureRewardCollateral,
                 deltaFutureBorrow: deltaFuture.deltaFutureBorrow,
@@ -72,4 +80,4 @@ abstract contract Mint is MaxMint, ApplyMaxGrowthFee, MintProtocolRewards, Lendi
 
         return assetsOut;
     }
-} 
+}

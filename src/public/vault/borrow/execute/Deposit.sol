@@ -29,15 +29,24 @@ abstract contract Deposit is MaxDeposit, ApplyMaxGrowthFee, MintProtocolRewards,
 
         borrowToken.transferFrom(msg.sender, address(this), assets);
 
-        applyMaxGrowthFee(data.previewBorrowVaultData.supplyAfterFee, data.previewBorrowVaultData.totalAssets);
+        uint256 withdrawTotalAssets = _totalAssets(
+            false,
+            TotalAssetsData({
+                collateral: data.previewBorrowVaultData.collateral,
+                borrow: data.previewBorrowVaultData.borrow,
+                borrowPrice: data.previewBorrowVaultData.borrowPrice
+            })
+        );
+
+        applyMaxGrowthFee(data.previewBorrowVaultData.supplyAfterFee, withdrawTotalAssets);
 
         _mintProtocolRewards(
             MintProtocolRewardsData({
                 deltaProtocolFutureRewardBorrow: deltaFuture.deltaProtocolFutureRewardBorrow,
                 deltaProtocolFutureRewardCollateral: deltaFuture.deltaProtocolFutureRewardCollateral,
                 supply: data.previewBorrowVaultData.supplyAfterFee,
-                totalAssets: data.previewBorrowVaultData.totalAssets,
-                borrowPrice: data.previewBorrowVaultData.borrowPrice
+                totalAppropriateAssets: data.previewBorrowVaultData.totalAssets,
+                assetPrice: data.previewBorrowVaultData.borrowPrice
             })
         );
 
