@@ -117,6 +117,23 @@ struct TotalAssetsData {
     uint256 borrowPrice;
 }
 
+struct TotalAssetsCollateralState {
+    uint256 realCollateralAssets;
+    uint256 realBorrowAssets;
+    int256 futureBorrowAssets;
+    int256 futureCollateralAssets;
+    int256 futureRewardBorrowAssets;
+    int256 futureRewardCollateralAssets;
+    uint256 borrowPrice;
+    uint256 collateralPrice;
+}
+
+struct TotalAssetsCollateralData {
+    uint256 totalAssets;
+    uint256 collateralPrice;
+    uint256 borrowPrice;
+}
+
 struct MaxGrowthFeeState {
     TotalAssetsState totalAssetsState;
     uint256 maxGrowthFee;
@@ -215,4 +232,54 @@ struct NextStepData {
     int256 deltaProtocolFutureRewardCollateral;
     uint256 blockNumber;
     uint256 auctionStep;
+}
+
+struct PreviewCollateralVaultState {
+    MaxGrowthFeeState maxGrowthFeeState;
+    uint128 targetLTV;
+    uint256 startAuction;
+    uint256 blockNumber;
+    uint256 collateralSlippage;
+    uint256 borrowSlippage;
+}
+
+struct PreviewCollateralVaultData {
+    int256 collateral;
+    int256 borrow;
+    int256 futureBorrow;
+    int256 futureCollateral;
+    int256 userFutureRewardBorrow;
+    int256 userFutureRewardCollateral;
+    int256 protocolFutureRewardBorrow;
+    int256 protocolFutureRewardCollateral;
+    uint256 collateralSlippage;
+    uint256 borrowSlippage;
+    uint128 targetLTV;
+    uint256 collateralPrice;
+    uint256 supplyAfterFee;
+    uint256 totalAssetsCollateral;
+}
+
+struct MaxDepositMintCollateralVaultState {
+    PreviewCollateralVaultState previewCollateralVaultState;
+    uint256 maxTotalAssetsInUnderlying;
+    uint256 minProfitLTV;
+}
+
+struct MaxDepositMintCollateralVaultData {
+    PreviewCollateralVaultData previewCollateralVaultData;
+    uint256 maxTotalAssetsInUnderlying;
+    uint256 minProfitLTV;
+}
+
+struct MaxWithdrawRedeemCollateralVaultState {
+    PreviewCollateralVaultState previewCollateralVaultState;
+    uint256 maxSafeLTV;
+    uint256 ownerBalance;
+}
+
+struct MaxWithdrawRedeemCollateralVaultData {
+    PreviewCollateralVaultData previewCollateralVaultData;
+    uint256 maxSafeLTV;
+    uint256 ownerBalance;
 }
