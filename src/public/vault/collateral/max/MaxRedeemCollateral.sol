@@ -4,7 +4,7 @@ pragma solidity ^0.8.28;
 import '../preview/PreviewRedeemCollateral.sol';
 import '../preview/PreviewWithdrawCollateral.sol';
 
-abstract contract MaxRedeemCollateral is PreviewRedeemCollateral, PreviewWithdrawCollateral {
+abstract contract MaxRedeemCollateral is PreviewWithdrawCollateral, PreviewRedeemCollateral {
     using uMulDiv for uint256;
 
     function maxRedeemCollateral(MaxWithdrawRedeemCollateralVaultState memory state) public pure returns (uint256) {
