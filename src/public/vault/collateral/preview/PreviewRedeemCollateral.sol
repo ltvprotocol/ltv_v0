@@ -3,7 +3,6 @@ pragma solidity ^0.8.28;
 
 import '../VaultCollateral.sol';
 import '../../../../math2/MintRedeem.sol';
-
 abstract contract PreviewRedeemCollateral is VaultCollateral {
     using uMulDiv for uint256;
 
@@ -17,6 +16,7 @@ abstract contract PreviewRedeemCollateral is VaultCollateral {
             data.collateralPrice,
             Constants.ORACLE_DIVIDER
         );
+
 
         (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = MintRedeem.calculateMintRedeem(
             MintRedeemData({
@@ -36,7 +36,7 @@ abstract contract PreviewRedeemCollateral is VaultCollateral {
             })
         );
 
-        if (assetsInUnderlying < 0) {
+        if (assetsInUnderlying >= 0) {
             return (0, deltaFuture);
         }
 

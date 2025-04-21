@@ -6,7 +6,7 @@ import '../MaxGrowthFee.sol';
 import '../../../math2/CommonMath.sol';
 import '../../erc20/TotalSupply.sol';
 
-abstract contract Vault is MaxGrowthFee, TotalSupply {
+abstract contract Vault is MaxGrowthFee {
     using uMulDiv for uint256;
 
     function previewVaultStateToPreviewBorrowVaultData(

@@ -51,6 +51,8 @@ abstract contract MintCollateral is MaxMintCollateral, ApplyMaxGrowthFee, MintPr
             })
         );
 
+        supply(assets);
+
         NextState memory nextState = NextStep.calculateNextStep(
             NextStepData({
                 futureBorrow: data.previewCollateralVaultData.futureBorrow,

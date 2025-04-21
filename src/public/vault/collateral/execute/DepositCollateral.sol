@@ -51,6 +51,8 @@ abstract contract DepositCollateral is MaxDepositCollateral, ApplyMaxGrowthFee, 
             })
         );
 
+        supply(assets);
+
         NextState memory nextState = NextStep.calculateNextStep(
             NextStepData({
                 futureBorrow: data.previewCollateralVaultData.futureBorrow,

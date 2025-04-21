@@ -8,7 +8,6 @@ import '../interfaces/ISlippageProvider.sol';
 import '../interfaces/IModules.sol';
 import 'forge-std/interfaces/IERC20.sol';
 import '../Structs2.sol';
-
 abstract contract LTVState {
     // ------------------------------------------------
 
@@ -58,6 +57,14 @@ abstract contract LTVState {
     ILendingConnector public vaultBalanceAsLendingConnector;
 
     IModules public modules;
+
+    function getRealCollateralAssets() external view returns (uint256) {
+        return lendingConnector.getRealCollateralAssets();
+    }
+
+    function getRealBorrowAssets() external view returns (uint256) {
+        return lendingConnector.getRealBorrowAssets();
+    }
 
     function getLendingConnector() internal view returns (ILendingConnector) {
         return isVaultDeleveraged ? vaultBalanceAsLendingConnector : lendingConnector;

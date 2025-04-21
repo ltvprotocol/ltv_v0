@@ -55,6 +55,8 @@ abstract contract RedeemCollateral is MaxRedeemCollateral, ApplyMaxGrowthFee, Mi
 
         _burn(owner, shares);
 
+        withdraw(assets);
+
         NextState memory nextState = NextStep.calculateNextStep(
             NextStepData({
                 futureBorrow: data.previewCollateralVaultData.futureBorrow,

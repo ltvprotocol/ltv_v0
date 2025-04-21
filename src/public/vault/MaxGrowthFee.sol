@@ -2,8 +2,9 @@
 pragma solidity ^0.8.28;
 
 import './borrow/TotalAssets.sol';
+import 'src/public/erc20/TotalSupply.sol';
 
-abstract contract MaxGrowthFee is TotalAssets {
+abstract contract MaxGrowthFee is TotalAssets, TotalSupply {
     using uMulDiv for uint256;
 
     function _previewSupplyAfterFee(MaxGrowthFeeData memory data) internal pure returns (uint256) {
@@ -31,7 +32,7 @@ abstract contract MaxGrowthFee is TotalAssets {
             MaxGrowthFeeData({
                 withdrawTotalAssets: totalAssets(false, state.totalAssetsState),
                 maxGrowthFee: state.maxGrowthFee,
-                supply: state.supply,
+                supply: totalSupply(state.supply),
                 lastSeenTokenPrice: state.lastSeenTokenPrice
             });
     }

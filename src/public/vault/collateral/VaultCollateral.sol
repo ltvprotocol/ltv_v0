@@ -7,7 +7,7 @@ import '../../../math2/CommonMath.sol';
 import '../../erc20/TotalSupply.sol';
 import './TotalAssetsCollateral.sol';
 
-abstract contract VaultCollateral is MaxGrowthFee, TotalSupply, TotalAssetsCollateral {
+abstract contract VaultCollateral is MaxGrowthFee, TotalAssetsCollateral {
     using uMulDiv for uint256;
 
     function previewVaultStateToPreviewCollateralVaultData(

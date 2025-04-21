@@ -11,6 +11,6 @@ abstract contract ConvertToShares is MaxGrowthFee {
     }
 
     function _convertToShares(uint256 assets, MaxGrowthFeeData memory data) internal view virtual returns (uint256) {
-        return assets.mulDivDown(data.withdrawTotalAssets, _previewSupplyAfterFee(data));
+        return assets.mulDivDown(_previewSupplyAfterFee(data), data.withdrawTotalAssets);
     }
 }

@@ -5,10 +5,10 @@ import './utils/LTVWithModules.sol';
 import 'src/elements/BorrowVaultModule.sol';
 import 'src/elements/CollateralVaultModule.sol';
 import 'src/states/ModulesProvider.sol';
-import {DummyLTVTest} from './DummyLTV.t.sol';
+import {GeneratedTests} from './Generated.t.sol';
 
-contract NewArchitectureTest is DummyLTVTest {
-    function test_newArchitecture(address owner, address user) external initializeBalancedTest(owner, user, 100000, 9500, 9500, -1000) {
+contract NewArchitectureGeneratedTest is GeneratedTests {
+    function replaceImplementation() internal override {
         LTVWithModules ltv = new LTVWithModules();
         vm.etch(address(dummyLTV), address(ltv).code);
 
@@ -31,9 +31,5 @@ contract NewArchitectureTest is DummyLTVTest {
             })
         );
         ltv.setModules(modules);
-
-        assertEq(ltv.maxDeposit(user), 994750);
-        borrowToken.approve(address(ltv), type(uint112).max);
-        ltv.deposit(ltv.maxDeposit(user), user);
     }
 }

@@ -20,8 +20,10 @@ abstract contract MaxWithdrawCollateral is PreviewWithdrawCollateral, PreviewRed
         }
 
         // round down to assume smaller border
-        uint256 vaultWithdrawInAssets = uint256(data.realCollateral) -
-            maxSafeRealCollateral.mulDivDown(Constants.ORACLE_DIVIDER, data.previewCollateralVaultData.collateralPrice);
+        uint256 vaultWithdrawInAssets = (uint256(data.realCollateral) - maxSafeRealCollateral).mulDivDown(
+            Constants.ORACLE_DIVIDER,
+            data.previewCollateralVaultData.collateralPrice
+        );
 
         (uint256 ownerBalanceAssets, ) = _previewRedeemCollateral(data.ownerBalance, data.previewCollateralVaultData);
 
