@@ -251,26 +251,26 @@ struct PreviewCollateralVaultData {
     uint256 totalAssetsCollateral;
 }
 
-// struct MaxDepositMintCollateralVaultState {
-//     PreviewVaultState previewVaultState;
-//     uint256 maxTotalAssetsInUnderlying;
-//     uint256 minProfitLTV;
-// }
+struct MaxDepositMintCollateralVaultState {
+    PreviewVaultState previewVaultState;
+    uint256 maxTotalAssetsInUnderlying;
+    uint256 minProfitLTV;
+}
 
-// struct MaxDepositMintCollateralVaultData {
-//     PreviewCollateralVaultData previewCollateralVaultData;
-//     uint256 maxTotalAssetsInUnderlying;
-//     uint256 minProfitLTV;
-// }
+struct MaxDepositMintCollateralVaultData {
+    PreviewCollateralVaultData previewCollateralVaultData;
+    uint256 maxTotalAssetsInUnderlying;
+    uint256 minProfitLTV;
+}
 
-// struct MaxWithdrawRedeemCollateralVaultState {
-//     PreviewCollateralVaultState previewCollateralVaultState;
-//     uint256 maxSafeLTV;
-//     uint256 ownerBalance;
-// }
+struct MaxWithdrawRedeemCollateralVaultState {
+    PreviewVaultState previewVaultState;
+    uint256 maxSafeLTV;
+    uint256 ownerBalance;
+}
 
-// struct MaxWithdrawRedeemCollateralVaultData {
-//     PreviewCollateralVaultData previewCollateralVaultData;
-//     uint256 maxSafeLTV;
-//     uint256 ownerBalance;
-// }
+struct MaxWithdrawRedeemCollateralVaultData {
+    PreviewCollateralVaultData previewCollateralVaultData;
+    uint256 maxSafeLTV;
+    uint256 ownerBalance;
+}

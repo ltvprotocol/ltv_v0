@@ -72,7 +72,10 @@ abstract contract VaultCollateral is MaxGrowthFee, TotalSupply, TotalAssetsColla
 
         uint256 withdrawTotalAssets = !isDeposit
             ? totalAssets
-            : _totalAssets(false, TotalAssetsData({collateral: data.collateral, borrow: data.borrow, borrowPrice: state.maxGrowthFeeState.totalAssetsState.borrowPrice}));
+            : _totalAssets(
+                false,
+                TotalAssetsData({collateral: data.collateral, borrow: data.borrow, borrowPrice: state.maxGrowthFeeState.totalAssetsState.borrowPrice})
+            );
 
         data.supplyAfterFee = _previewSupplyAfterFee(
             MaxGrowthFeeData({
@@ -90,33 +93,33 @@ abstract contract VaultCollateral is MaxGrowthFee, TotalSupply, TotalAssetsColla
         return data;
     }
 
-    // function maxDepositMintBorrowVaultStateToMaxDepositMintBorrowVaultData(
-    //     MaxDepositMintBorrowVaultState memory state
-    // ) internal pure returns (MaxDepositMintBorrowVaultData memory) {
-    //     MaxDepositMintBorrowVaultData memory data;
-    //     data.previewBorrowVaultData = previewBorrowVaultStateToPreviewBorrowVaultData(state.previewBorrowVaultState, true);
-    //     data.maxTotalAssetsInUnderlying = state.maxTotalAssetsInUnderlying;
-    //     data.minProfitLTV = state.minProfitLTV;
-    //     return data;
-    // }
+    function maxDepositMintCollateralVaultStateToMaxDepositMintCollateralVaultData(
+        MaxDepositMintCollateralVaultState memory state
+    ) internal pure returns (MaxDepositMintCollateralVaultData memory) {
+        MaxDepositMintCollateralVaultData memory data;
+        data.previewCollateralVaultData = previewVaultStateToPreviewCollateralVaultData(state.previewVaultState, true);
+        data.maxTotalAssetsInUnderlying = state.maxTotalAssetsInUnderlying;
+        data.minProfitLTV = state.minProfitLTV;
+        return data;
+    }
 
-    // function maxWithdrawRedeemBorrowVaultStateToMaxWithdrawRedeemBorrowVaultData(
-    //     MaxWithdrawRedeemBorrowVaultState memory state
-    // ) internal pure returns (MaxWithdrawRedeemBorrowVaultData memory) {
-    //     MaxWithdrawRedeemBorrowVaultData memory data;
-    //     data.previewBorrowVaultData = previewBorrowVaultStateToPreviewBorrowVaultData(state.previewBorrowVaultState, false);
-    //     data.maxSafeLTV = state.maxSafeLTV;
-    //     data.ownerBalance = state.ownerBalance;
-    //     return data;
-    // }
+    function maxWithdrawRedeemCollateralVaultStateToMaxWithdrawRedeemCollateralVaultData(
+        MaxWithdrawRedeemCollateralVaultState memory state
+    ) internal pure returns (MaxWithdrawRedeemCollateralVaultData memory) {
+        MaxWithdrawRedeemCollateralVaultData memory data;
+        data.previewCollateralVaultData = previewVaultStateToPreviewCollateralVaultData(state.previewVaultState, false);
+        data.maxSafeLTV = state.maxSafeLTV;
+        data.ownerBalance = state.ownerBalance;
+        return data;
+    }
 
     function getAvailableSpaceInShares(
         int256 collateral,
         int256 borrow,
         uint256 maxTotalAssetsInUnderlying,
         uint256 supplyAfterFee,
-        uint256 totalAssets,
-        uint256 borrowPrice
+        uint256 totalAssetsCollateral,
+        uint256 collateralPrice
     ) internal pure returns (uint256) {
         uint256 totalAssetsInUnderlying = uint256(collateral - borrow);
 
@@ -126,8 +129,8 @@ abstract contract VaultCollateral is MaxGrowthFee, TotalSupply, TotalAssetsColla
 
         // round down to assume less available space
         uint256 availableSpaceInShares = (maxTotalAssetsInUnderlying - totalAssetsInUnderlying)
-            .mulDivDown(Constants.ORACLE_DIVIDER, borrowPrice)
-            .mulDivDown(supplyAfterFee, totalAssets);
+            .mulDivDown(Constants.ORACLE_DIVIDER, collateralPrice)
+            .mulDivDown(supplyAfterFee, totalAssetsCollateral);
 
         return availableSpaceInShares;
     }

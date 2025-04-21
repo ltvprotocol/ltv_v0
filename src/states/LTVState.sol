@@ -118,4 +118,13 @@ abstract contract LTVState {
             });
     }
 
+    function maxDepositMintCollateralVaultState() internal view returns (MaxDepositMintCollateralVaultState memory) {
+        return
+            MaxDepositMintCollateralVaultState({
+                previewVaultState: previewVaultState(),
+                minProfitLTV: minProfitLTV,
+                maxTotalAssetsInUnderlying: maxTotalAssetsInUnderlying
+            });
+    }
+
 }
