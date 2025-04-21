@@ -88,9 +88,9 @@ abstract contract LTVState {
             });
     }
 
-    function previewBorrowVaultState() internal view returns (PreviewBorrowVaultState memory) {
+    function previewVaultState() internal view returns (PreviewVaultState memory) {
         return
-            PreviewBorrowVaultState({
+            PreviewVaultState({
                 maxGrowthFeeState: maxGrowthFeeState(),
                 targetLTV: targetLTV,
                 startAuction: startAuction,
@@ -103,7 +103,7 @@ abstract contract LTVState {
     function maxDepositMintBorrowVaultState() internal view returns (MaxDepositMintBorrowVaultState memory) {
         return
             MaxDepositMintBorrowVaultState({
-                previewBorrowVaultState: previewBorrowVaultState(),
+                previewVaultState: previewVaultState(),
                 minProfitLTV: minProfitLTV,
                 maxTotalAssetsInUnderlying: maxTotalAssetsInUnderlying
             });
@@ -112,9 +112,10 @@ abstract contract LTVState {
     function maxWithdrawRedeemBorrowVaultState(address owner) internal view returns (MaxWithdrawRedeemBorrowVaultState memory) {
         return
             MaxWithdrawRedeemBorrowVaultState({
-                previewBorrowVaultState: previewBorrowVaultState(),
+                previewVaultState: previewVaultState(),
                 maxSafeLTV: maxSafeLTV,
                 ownerBalance: balanceOf[owner]
             });
     }
+
 }

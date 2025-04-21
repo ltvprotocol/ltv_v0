@@ -10,8 +10,8 @@ import './TotalAssetsCollateral.sol';
 abstract contract VaultCollateral is MaxGrowthFee, TotalSupply, TotalAssetsCollateral {
     using uMulDiv for uint256;
 
-    function previewCollateralVaultStateToPreviewCollateralVaultData(
-        PreviewCollateralVaultState memory state,
+    function previewVaultStateToPreviewCollateralVaultData(
+        PreviewVaultState memory state,
         bool isDeposit
     ) internal pure returns (PreviewCollateralVaultData memory) {
         PreviewCollateralVaultData memory data;

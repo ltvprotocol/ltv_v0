@@ -9,8 +9,8 @@ import '../../erc20/TotalSupply.sol';
 abstract contract Vault is MaxGrowthFee, TotalSupply {
     using uMulDiv for uint256;
 
-    function previewBorrowVaultStateToPreviewBorrowVaultData(
-        PreviewBorrowVaultState memory state,
+    function previewVaultStateToPreviewBorrowVaultData(
+        PreviewVaultState memory state,
         bool isDeposit
     ) internal pure returns (PreviewBorrowVaultData memory) {
         PreviewBorrowVaultData memory data;
@@ -84,7 +84,7 @@ abstract contract Vault is MaxGrowthFee, TotalSupply {
         MaxDepositMintBorrowVaultState memory state
     ) internal pure returns (MaxDepositMintBorrowVaultData memory) {
         MaxDepositMintBorrowVaultData memory data;
-        data.previewBorrowVaultData = previewBorrowVaultStateToPreviewBorrowVaultData(state.previewBorrowVaultState, true);
+        data.previewBorrowVaultData = previewVaultStateToPreviewBorrowVaultData(state.previewVaultState, true);
         data.maxTotalAssetsInUnderlying = state.maxTotalAssetsInUnderlying;
         data.minProfitLTV = state.minProfitLTV;
         return data;
@@ -94,7 +94,7 @@ abstract contract Vault is MaxGrowthFee, TotalSupply {
         MaxWithdrawRedeemBorrowVaultState memory state
     ) internal pure returns (MaxWithdrawRedeemBorrowVaultData memory) {
         MaxWithdrawRedeemBorrowVaultData memory data;
-        data.previewBorrowVaultData = previewBorrowVaultStateToPreviewBorrowVaultData(state.previewBorrowVaultState, false);
+        data.previewBorrowVaultData = previewVaultStateToPreviewBorrowVaultData(state.previewVaultState, false);
         data.maxSafeLTV = state.maxSafeLTV;
         data.ownerBalance = state.ownerBalance;
         return data;

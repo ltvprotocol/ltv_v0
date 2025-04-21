@@ -1,19 +1,20 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../Vault.sol';
+import '../VaultCollateral.sol';
 import '../../../../math2/MintRedeem.sol';
 
-abstract contract PreviewMint is Vault {
+contract PreviewMintCollateral is VaultCollateral {
     using uMulDiv for uint256;
 
-    function previewMint(uint256 shares, PreviewVaultState memory state) public pure returns (uint256 assets) {
-        (assets,) = _previewMint(shares, previewVaultStateToPreviewBorrowVaultData(state, true));
+    function previewMintCollateral(uint256 shares, PreviewVaultState memory state) public pure returns (uint256 assets) {
+        (assets, ) = _previewMintCollateral(shares, previewVaultStateToPreviewCollateralVaultData(state, true));
     }
 
-    function _previewMint(uint256 shares, PreviewBorrowVaultData memory data) internal pure returns (uint256, DeltaFuture memory) {
-        uint256 sharesInUnderlying = shares.mulDivUp(data.totalAssets, data.supplyAfterFee).mulDivUp(
-            data.borrowPrice,
+    function _previewMintCollateral(uint256 shares, PreviewCollateralVaultData memory data) internal pure returns (uint256, DeltaFuture memory) {
+        // HODLer <=> depositor conflict, round in favor of HODLer, round up to receive more assets
+        uint256 sharesInUnderlying = shares.mulDivUp(data.totalAssetsCollateral, data.supplyAfterFee).mulDivUp(
+            data.collateralPrice,
             Constants.ORACLE_DIVIDER
         );
 
@@ -31,15 +32,15 @@ abstract contract PreviewMint is Vault {
                 borrowSlippage: data.borrowSlippage,
                 targetLTV: data.targetLTV,
                 deltaShares: int256(sharesInUnderlying),
-                isBorrow: true
+                isBorrow: false
             })
         );
 
-        if (assetsInUnderlying > 0) {
+        if (assetsInUnderlying < 0) {
             return (0, deltaFuture);
         }
 
-        // HODLer <=> depositor conflict, resolve in favor of HODLer, round up to receive more assets
-        return (uint256(-assetsInUnderlying).mulDivUp(Constants.ORACLE_DIVIDER, data.borrowPrice), deltaFuture);
+        // HODLer <=> depositor conflict, round in favor of HODLer, round up to get more collateral
+        return (uint256(assetsInUnderlying).mulDivUp(Constants.ORACLE_DIVIDER, data.collateralPrice), deltaFuture);
     }
 }

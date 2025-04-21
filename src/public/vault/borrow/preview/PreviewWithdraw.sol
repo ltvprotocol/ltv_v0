@@ -7,8 +7,8 @@ import '../../../../math2/DepositWithdraw.sol';
 abstract contract PreviewWithdraw is Vault {
     using uMulDiv for uint256;
 
-    function previewWithdraw(uint256 assets, PreviewBorrowVaultState memory state) public pure returns (uint256 shares) {
-        (shares, ) = _previewWithdraw(assets, previewBorrowVaultStateToPreviewBorrowVaultData(state, false));
+    function previewWithdraw(uint256 assets, PreviewVaultState memory state) public pure returns (uint256 shares) {
+        (shares, ) = _previewWithdraw(assets, previewVaultStateToPreviewBorrowVaultData(state, false));
     }
 
     function _previewWithdraw(uint256 assets, PreviewBorrowVaultData memory data) internal pure returns (uint256, DeltaFuture memory) {

@@ -1,20 +1,18 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../Vault.sol';
+import '../VaultCollateral.sol';
 import '../../../../math2/DepositWithdraw.sol';
 
-abstract contract PreviewDeposit is Vault {
+abstract contract PreviewDepositCollateral is VaultCollateral {
     using uMulDiv for uint256;
 
-    function previewDeposit(uint256 assets, PreviewVaultState memory state) public pure returns (uint256 shares) {
-        (shares,) = _previewDeposit(assets, previewVaultStateToPreviewBorrowVaultData(state, true));
+    function previewDepositCollateral(uint256 assets, PreviewVaultState memory state) public pure returns (uint256 shares) {
+        (shares, ) = _previewDepositCollateral(assets, previewVaultStateToPreviewCollateralVaultData(state, true));
     }
 
-    function _previewDeposit(uint256 assets, PreviewBorrowVaultData memory data) internal pure returns (uint256, DeltaFuture memory) {
-        // depositor/withdrawer <=> HODLer conflict, assume user deposits less to mint less shares
-        uint256 assetsInUnderlying = assets.mulDivDown(data.borrowPrice, Constants.ORACLE_DIVIDER);
-    
+    function _previewDepositCollateral(uint256 assets, PreviewCollateralVaultData memory data) internal pure returns (uint256, DeltaFuture memory) {
+        uint256 realCollateralInUnderlying = assets.mulDivDown(data.collateralPrice, Constants.ORACLE_DIVIDER);
         (int256 sharesInUnderlying, DeltaFuture memory deltaFuture) = DepositWithdraw.calculateDepositWithdraw(
             DepositWithdrawData({
                 collateral: data.collateral,
@@ -28,8 +26,8 @@ abstract contract PreviewDeposit is Vault {
                 collateralSlippage: data.collateralSlippage,
                 borrowSlippage: data.borrowSlippage,
                 targetLTV: data.targetLTV,
-                deltaRealCollateral: 0,
-                deltaRealBorrow: -1 * int256(assetsInUnderlying)
+                deltaRealCollateral: int256(realCollateralInUnderlying),
+                deltaRealBorrow: 0
             })
         );
 
@@ -37,7 +35,13 @@ abstract contract PreviewDeposit is Vault {
             return (0, deltaFuture);
         }
 
-        // HODLer <=> depositor conflict, resolve in favor of HODLer, round down to mint less shares
-        return (uint256(sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, data.borrowPrice).mulDivDown(data.supplyAfterFee, data.totalAssets), deltaFuture);
+        // HODLer <=> depositor conflict, round in favor of HODLer, round down to mint less shares
+        return (
+            uint256(sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, data.collateralPrice).mulDivDown(
+                data.supplyAfterFee,
+                data.totalAssetsCollateral
+            ),
+            deltaFuture
+        );
     }
-} 
+}

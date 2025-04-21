@@ -7,8 +7,8 @@ import '../../../../math2/MintRedeem.sol';
 abstract contract PreviewRedeem is Vault {
     using uMulDiv for uint256;
 
-    function previewRedeem(uint256 shares, PreviewBorrowVaultState memory state) public pure returns (uint256 assets) {
-        (assets, ) = _previewRedeem(shares, previewBorrowVaultStateToPreviewBorrowVaultData(state, false));
+    function previewRedeem(uint256 shares, PreviewVaultState memory state) public pure returns (uint256 assets) {
+        (assets, ) = _previewRedeem(shares, previewVaultStateToPreviewBorrowVaultData(state, false));
     }
 
     function _previewRedeem(uint256 shares, PreviewBorrowVaultData memory data) internal pure returns (uint256, DeltaFuture memory) {

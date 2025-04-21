@@ -148,7 +148,7 @@ struct MaxGrowthFeeData {
     uint256 lastSeenTokenPrice;
 }
 
-struct PreviewBorrowVaultState {
+struct PreviewVaultState {
     MaxGrowthFeeState maxGrowthFeeState;
     uint128 targetLTV;
     uint256 startAuction;
@@ -175,7 +175,7 @@ struct PreviewBorrowVaultData {
 }
 
 struct MaxDepositMintBorrowVaultState {
-    PreviewBorrowVaultState previewBorrowVaultState;
+    PreviewVaultState previewVaultState;
     uint256 maxTotalAssetsInUnderlying;
     uint256 minProfitLTV;
 }
@@ -187,7 +187,7 @@ struct MaxDepositMintBorrowVaultData {
 }
 
 struct MaxWithdrawRedeemBorrowVaultState {
-    PreviewBorrowVaultState previewBorrowVaultState;
+    PreviewVaultState previewVaultState;
     uint256 maxSafeLTV;
     uint256 ownerBalance;
 }
@@ -234,15 +234,6 @@ struct NextStepData {
     uint256 auctionStep;
 }
 
-struct PreviewCollateralVaultState {
-    MaxGrowthFeeState maxGrowthFeeState;
-    uint128 targetLTV;
-    uint256 startAuction;
-    uint256 blockNumber;
-    uint256 collateralSlippage;
-    uint256 borrowSlippage;
-}
-
 struct PreviewCollateralVaultData {
     int256 collateral;
     int256 borrow;
@@ -260,26 +251,26 @@ struct PreviewCollateralVaultData {
     uint256 totalAssetsCollateral;
 }
 
-struct MaxDepositMintCollateralVaultState {
-    PreviewCollateralVaultState previewCollateralVaultState;
-    uint256 maxTotalAssetsInUnderlying;
-    uint256 minProfitLTV;
-}
+// struct MaxDepositMintCollateralVaultState {
+//     PreviewVaultState previewVaultState;
+//     uint256 maxTotalAssetsInUnderlying;
+//     uint256 minProfitLTV;
+// }
 
-struct MaxDepositMintCollateralVaultData {
-    PreviewCollateralVaultData previewCollateralVaultData;
-    uint256 maxTotalAssetsInUnderlying;
-    uint256 minProfitLTV;
-}
+// struct MaxDepositMintCollateralVaultData {
+//     PreviewCollateralVaultData previewCollateralVaultData;
+//     uint256 maxTotalAssetsInUnderlying;
+//     uint256 minProfitLTV;
+// }
 
-struct MaxWithdrawRedeemCollateralVaultState {
-    PreviewCollateralVaultState previewCollateralVaultState;
-    uint256 maxSafeLTV;
-    uint256 ownerBalance;
-}
+// struct MaxWithdrawRedeemCollateralVaultState {
+//     PreviewCollateralVaultState previewCollateralVaultState;
+//     uint256 maxSafeLTV;
+//     uint256 ownerBalance;
+// }
 
-struct MaxWithdrawRedeemCollateralVaultData {
-    PreviewCollateralVaultData previewCollateralVaultData;
-    uint256 maxSafeLTV;
-    uint256 ownerBalance;
-}
+// struct MaxWithdrawRedeemCollateralVaultData {
+//     PreviewCollateralVaultData previewCollateralVaultData;
+//     uint256 maxSafeLTV;
+//     uint256 ownerBalance;
+// }
