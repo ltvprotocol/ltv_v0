@@ -8,6 +8,7 @@ import '../interfaces/ISlippageProvider.sol';
 import '../interfaces/IModules.sol';
 import 'forge-std/interfaces/IERC20.sol';
 import '../Structs2.sol';
+
 abstract contract LTVState {
     // ------------------------------------------------
 
@@ -132,5 +133,16 @@ abstract contract LTVState {
     function maxWithdrawRedeemCollateralVaultState(address owner) internal view returns (MaxWithdrawRedeemCollateralVaultState memory) {
         return
             MaxWithdrawRedeemCollateralVaultState({previewVaultState: previewVaultState(), maxSafeLTV: maxSafeLTV, ownerBalance: balanceOf[owner]});
+    }
+
+    function getAuctionState() internal view returns (AuctionState memory) {
+        return
+            AuctionState({
+                futureCollateralAssets: futureCollateralAssets,
+                futureBorrowAssets: futureBorrowAssets,
+                futureRewardBorrowAssets: futureRewardBorrowAssets,
+                futureRewardCollateralAssets: futureRewardCollateralAssets,
+                startAuction: startAuction
+            });
     }
 }
