@@ -11,58 +11,55 @@ library LowLevelRebalanceMath {
     // HODLer <=> depositor/withdrawer conflict, round up to leave more collateral in protocol
     function calculateDeltaRealCollateralFromDeltaShares(
         int256 deltaShares,
-        int256 futureCollateral,
-        int256 userFutureRewardCollateral,
-        int256 realCollateral,
-        int256 realBorrow,
-        int256 futureBorrow,
-        int256 userFutureRewardBorrow,
+        ConvertedAssets memory convertedAssets,
         uint128 targetLTV
     ) private pure returns (int256) {
         return
             (deltaShares +
-                futureCollateral +
-                userFutureRewardCollateral +
+                convertedAssets.futureCollateral +
+                convertedAssets.userFutureRewardCollateral +
                 // round up to leave more collateral in protocol
-                realCollateral.mulDivUp(int128(targetLTV), int256(Constants.LTV_DIVIDER)) -
-                realBorrow -
-                futureBorrow -
-                userFutureRewardBorrow).mulDivUp(int256(Constants.LTV_DIVIDER), int256(Constants.LTV_DIVIDER - targetLTV));
+                convertedAssets.realCollateral.mulDivUp(int128(targetLTV), int256(Constants.LTV_DIVIDER)) -
+                convertedAssets.realBorrow -
+                convertedAssets.futureBorrow -
+                convertedAssets.userFutureRewardBorrow).mulDivUp(int256(Constants.LTV_DIVIDER), int256(Constants.LTV_DIVIDER - targetLTV));
     }
 
     // in shares case: HODLer <=> depositor/withdrawer conflict, round down to have lower debt in protocol
     // in collateral case: No conflict, round down to have less borrow in the protocol
     function calculateDeltaRealBorrowFromDeltaRealCollateral(
         int256 deltaCollateral,
-        int256 realCollateral,
-        int256 realBorrow,
+        ConvertedAssets memory convertedAssets,
         uint128 targetLTV
     ) private pure returns (int256) {
         return
-            realCollateral.mulDivDown(int128(targetLTV), int256(Constants.LTV_DIVIDER)) +
+            convertedAssets.realCollateral.mulDivDown(int128(targetLTV), int256(Constants.LTV_DIVIDER)) +
             deltaCollateral.mulDivDown(int128(targetLTV), int256(Constants.LTV_DIVIDER)) -
-            realBorrow;
+            convertedAssets.realBorrow;
     }
 
     // Borrow case, no conflict, rounding up to have more collateral in protocol
     function calculateDeltaRealCollateralFromDeltaRealBorrow(
         int256 deltaBorrow,
-        int256 realBorrow,
-        int256 realCollateral,
+        ConvertedAssets memory convertedAssets,
         uint128 targetLTV
     ) private pure returns (int256) {
-        return (realBorrow + deltaBorrow).mulDivUp(int256(Constants.LTV_DIVIDER), int128(targetLTV)) - realCollateral;
+        return
+            (convertedAssets.realBorrow + deltaBorrow).mulDivUp(int256(Constants.LTV_DIVIDER), int128(targetLTV)) - convertedAssets.realCollateral;
     }
 
     function calculateDeltaSharesFromDeltaRealCollateralAndDeltaRealBorrow(
         int256 deltaCollateral,
         int256 deltaBorrow,
-        int256 futureCollateral,
-        int256 userFutureRewardCollateral,
-        int256 futureBorrow,
-        int256 userFutureRewardBorrow
+        ConvertedAssets memory convertedAssets
     ) private pure returns (int256) {
-        return deltaCollateral - deltaBorrow - futureCollateral - userFutureRewardCollateral + futureBorrow + userFutureRewardBorrow;
+        return
+            deltaCollateral
+            - deltaBorrow
+            - convertedAssets.futureCollateral
+            - convertedAssets.userFutureRewardCollateral
+            + convertedAssets.futureBorrow
+            + convertedAssets.userFutureRewardBorrow;
     }
 
     function calculateLowLevelRebalanceShares(
@@ -107,6 +104,7 @@ library LowLevelRebalanceMath {
         int256 deltaProtocolFutureRewardShares = (-convertedAssets.protocolFutureRewardCollateral + convertedAssets.protocolFutureRewardBorrow)
             .mulDivDown(int256(Constants.ORACLE_DIVIDER), int256(prices.borrow))
             .mulDivDown(totalSupply, totalAssets);
+
 
         int256 deltaRealCollateral;
         int256 deltaSharesInUnderlying;
