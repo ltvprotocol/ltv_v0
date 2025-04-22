@@ -329,11 +329,22 @@ struct MaxLowLevelRebalanceBorrowStateData {
     uint256 maxTotalAssetsInUnderlying;
     uint256 targetLTV;
     uint256 borrowPrice;
-}
-
+} 
 struct MaxLowLevelRebalanceCollateralStateData {
     uint256 realCollateralAssets;
     uint256 maxTotalAssetsInUnderlying;
     uint256 targetLTV;
     uint256 collateralPrice;
+}
+
+struct LowLevelRebalanceSharesData {
+    int256 deltaShares;
+    int256 futureCollateral;
+    int256 futureBorrow;
+    int256 userFutureRewardCollateral;
+    int256 userFutureRewardBorrow;
+    int256 protocolFutureRewardCollateral;
+    int256 protocolFutureRewardBorrow;
+    int256 borrowPrice;
+    int256 collateralPrice;
 }
