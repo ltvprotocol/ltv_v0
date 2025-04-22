@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import './borrow/TotalAssets.sol';
+import 'src/public/vault/borrow/TotalAssets.sol';
 import 'src/public/erc20/TotalSupply.sol';
 
 abstract contract MaxGrowthFee is TotalAssets, TotalSupply {

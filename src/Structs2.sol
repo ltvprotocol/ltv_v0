@@ -309,3 +309,31 @@ struct DeltaAuctionState {
     int256 deltaProtocolFutureRewardCollateralAssets;
     int256 deltaProtocolFutureRewardBorrowAssets;
 }
+
+struct MaxLowLevelRebalanceSharesState {
+    MaxGrowthFeeState maxGrowthFeeState;
+    uint256 maxTotalAssetsInUnderlying;
+}
+
+struct MaxLowLevelRebalanceSharesData {
+    uint256 realCollateral;
+    uint256 realBorrow;
+    uint256 maxTotalAssetsInUnderlying;
+    uint256 supplyAfterFee;
+    uint256 borrowPrice;
+    uint256 depositTotalAssets;
+}
+
+struct MaxLowLevelRebalanceBorrowStateData {
+    uint256 realBorrowAssets;
+    uint256 maxTotalAssetsInUnderlying;
+    uint256 targetLTV;
+    uint256 borrowPrice;
+}
+
+struct MaxLowLevelRebalanceCollateralStateData {
+    uint256 realCollateralAssets;
+    uint256 maxTotalAssetsInUnderlying;
+    uint256 targetLTV;
+    uint256 collateralPrice;
+}
