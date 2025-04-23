@@ -72,7 +72,7 @@ abstract contract Vault is MaxGrowthFee {
 
         uint256 withdrawTotalAssets = !isDeposit
             ? data.totalAssets
-            : _totalAssets(false, TotalAssetsData({collateral: data.collateral, borrow: data.borrow, borrowPrice: data.borrowPrice}));
+            : totalAssets(false, state.maxGrowthFeeState.totalAssetsState);
 
         data.supplyAfterFee = _previewSupplyAfterFee(
             MaxGrowthFeeData({

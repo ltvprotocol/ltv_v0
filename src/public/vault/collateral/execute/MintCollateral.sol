@@ -30,14 +30,7 @@ abstract contract MintCollateral is MaxMintCollateral, ApplyMaxGrowthFee, MintPr
 
         collateralToken.transferFrom(msg.sender, address(this), assets);
 
-        uint256 withdrawTotalAssets = _totalAssets(
-            false,
-            TotalAssetsData({
-                collateral: data.previewCollateralVaultData.collateral,
-                borrow: data.previewCollateralVaultData.borrow,
-                borrowPrice: state.previewVaultState.maxGrowthFeeState.totalAssetsState.borrowPrice
-            })
-        );
+        uint256 withdrawTotalAssets = totalAssets(false, state.previewVaultState.maxGrowthFeeState.totalAssetsState);
 
         applyMaxGrowthFee(data.previewCollateralVaultData.supplyAfterFee, withdrawTotalAssets);
 

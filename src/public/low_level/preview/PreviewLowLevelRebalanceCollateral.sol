@@ -1,22 +1,49 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
+import 'src/math2/PreviewLowLevelRebalanceStateToData.sol';
 
-// import 'src/Structs2.sol';
-// import 'src/Constants.sol';
-// import 'src/utils/MulDiv.sol';
+contract PreviewLowLevelRebalanceCollateral is PreviewLowLevelRebalanceStateToData {
+    using uMulDiv for uint256;
 
-// contract PreviewLowLevelRebalanceCollateral {
-//     using uMulDiv for uint256;
+    function previewLowLevelRebalanceCollateral(
+        int256 deltaCollateral,
+        PreviewLowLevelRebalanceState memory state
+    ) public pure returns (int256, int256) {
+        return previewLowLevelRebalanceCollateralHint(deltaCollateral, true, state);
+    }
 
-//     function previewLowLevelRebalanceCollateral(PreviewLowLevelRebalanceCollateralStateData memory state) public pure returns (int256) {
-//         return _previewLowLevelRebalanceCollateral(state);
-//     }
+    function previewLowLevelRebalanceCollateralHint(
+        int256 deltaCollateral,
+        bool isSharesPositiveHint,
+        PreviewLowLevelRebalanceState memory state
+    ) public pure returns (int256, int256) {
+        (int256 deltaRealBorrow, int256 deltaShares, ) = _previewLowLevelRebalanceCollateralHint(deltaCollateral, isSharesPositiveHint, state);
+        return (deltaRealBorrow, deltaShares);
+    }
 
-//     function _previewLowLevelRebalanceCollateral(PreviewLowLevelRebalanceCollateralStateData memory data) public pure returns (int256) {
-//         // rounding down assuming smaller border
-//         uint256 maxTotalAssetsInCollateral = data.maxTotalAssetsInUnderlying.mulDivDown(Constants.ORACLE_DIVIDER, data.collateralPrice);
-//         // rounding down assuming smaller border
-//         uint256 maxCollateral = maxTotalAssetsInCollateral.mulDivDown(Constants.LTV_DIVIDER, Constants.LTV_DIVIDER - data.targetLTV);
-//         return int256(maxCollateral) - int256(data.realCollateralAssets);
-//     }
-// }
+    function _previewLowLevelRebalanceCollateralHint(
+        int256 deltaCollateral,
+        bool isSharesPositiveHint,
+        PreviewLowLevelRebalanceState memory state
+    ) internal pure returns (int256, int256, int256) {
+        (int256 deltaRealBorrowAssets, int256 deltaShares, int256 deltaProtocolFutureRewardShares) = _previewLowLevelRebalanceCollateral(
+            deltaCollateral,
+            previewLowLevelRebalanceStateToData(state, isSharesPositiveHint)
+        );
+        if (deltaShares >= 0 != isSharesPositiveHint) {
+            (deltaRealBorrowAssets, deltaShares, deltaProtocolFutureRewardShares) = _previewLowLevelRebalanceCollateral(
+                deltaCollateral,
+                previewLowLevelRebalanceStateToData(state, !isSharesPositiveHint)
+            );
+        }
+
+        return (deltaRealBorrowAssets, deltaShares, deltaProtocolFutureRewardShares);
+    }
+
+    function _previewLowLevelRebalanceCollateral(
+        int256 deltaCollateralAssets,
+        LowLevelRebalanceData memory data
+    ) internal pure returns (int256, int256, int256) {
+        return LowLevelRebalanceMath.calculateLowLevelRebalanceCollateral(deltaCollateralAssets, data);
+    }
+}

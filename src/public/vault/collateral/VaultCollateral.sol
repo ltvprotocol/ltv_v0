@@ -67,25 +67,22 @@ abstract contract VaultCollateral is MaxGrowthFee, TotalAssetsCollateral {
         data.protocolFutureRewardBorrow = futureRewardBorrow - data.userFutureRewardBorrow;
         data.protocolFutureRewardCollateral = futureRewardCollateral - data.userFutureRewardCollateral;
 
-        uint256 totalAssets = _totalAssets(
+        uint256 assets = _totalAssets(
             isDeposit,
             TotalAssetsData({collateral: data.collateral, borrow: data.borrow, borrowPrice: state.maxGrowthFeeState.totalAssetsState.borrowPrice})
         );
         data.totalAssetsCollateral = _totalAssetsCollateral(
             isDeposit,
             TotalAssetsCollateralData({
-                totalAssets: totalAssets,
+                totalAssets: assets,
                 collateralPrice: state.maxGrowthFeeState.totalAssetsState.collateralPrice,
                 borrowPrice: state.maxGrowthFeeState.totalAssetsState.borrowPrice
             })
         );
 
         uint256 withdrawTotalAssets = !isDeposit
-            ? totalAssets
-            : _totalAssets(
-                false,
-                TotalAssetsData({collateral: data.collateral, borrow: data.borrow, borrowPrice: state.maxGrowthFeeState.totalAssetsState.borrowPrice})
-            );
+            ? assets
+            : totalAssets(false, state.maxGrowthFeeState.totalAssetsState);
 
         data.supplyAfterFee = _previewSupplyAfterFee(
             MaxGrowthFeeData({

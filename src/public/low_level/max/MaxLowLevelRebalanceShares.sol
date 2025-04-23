@@ -11,7 +11,7 @@ contract MaxLowLevelRebalanceShares is MaxGrowthFee {
     using sMulDiv for int256;
 
     function maxLowLevelRebalanceShares(MaxLowLevelRebalanceSharesState memory state) public pure returns (int256) {
-        return _maxLowLevelRebalanceShares(maxLowLevelRebalanceStateToData(state));
+        return _maxLowLevelRebalanceShares(maxLowLevelRebalanceSharesStateToData(state));
     }
 
     function _maxLowLevelRebalanceShares(MaxLowLevelRebalanceSharesData memory data) public pure returns (int256) {
@@ -25,7 +25,7 @@ contract MaxLowLevelRebalanceShares is MaxGrowthFee {
             );
     }
 
-    function maxLowLevelRebalanceStateToData(
+    function maxLowLevelRebalanceSharesStateToData(
         MaxLowLevelRebalanceSharesState memory state
     ) public pure returns (MaxLowLevelRebalanceSharesData memory data) {
         // true since we calculate top border
@@ -39,35 +39,8 @@ contract MaxLowLevelRebalanceShares is MaxGrowthFee {
             state.maxGrowthFeeState.totalAssetsState.borrowPrice,
             true
         );
-        int256 futureCollateral = CommonMath.convertFutureCollateral(
-            state.maxGrowthFeeState.totalAssetsState.futureCollateralAssets,
-            state.maxGrowthFeeState.totalAssetsState.collateralPrice,
-            true
-        );
-        int256 futureBorrow = CommonMath.convertFutureBorrow(
-            state.maxGrowthFeeState.totalAssetsState.futureBorrowAssets,
-            state.maxGrowthFeeState.totalAssetsState.borrowPrice,
-            true
-        );
-        int256 futureRewardCollateral = CommonMath.convertFutureRewardCollateral(
-            state.maxGrowthFeeState.totalAssetsState.futureRewardCollateralAssets,
-            state.maxGrowthFeeState.totalAssetsState.collateralPrice,
-            true
-        );
-        int256 futureRewardBorrow = CommonMath.convertFutureRewardBorrow(
-            state.maxGrowthFeeState.totalAssetsState.futureRewardBorrowAssets,
-            state.maxGrowthFeeState.totalAssetsState.borrowPrice,
-            true
-        );
 
-        uint256 withdrawTotalAssets = _totalAssets(
-            false,
-            TotalAssetsData({
-                collateral: int256(data.realCollateral) + futureCollateral + futureRewardCollateral,
-                borrow: int256(data.realBorrow) + futureBorrow + futureRewardBorrow,
-                borrowPrice: state.maxGrowthFeeState.totalAssetsState.borrowPrice
-            })
-        );
+        uint256 withdrawTotalAssets = totalAssets(false, state.maxGrowthFeeState.totalAssetsState);
 
         data.supplyAfterFee = _previewSupplyAfterFee(
             MaxGrowthFeeData({
