@@ -41,7 +41,7 @@ abstract contract Withdraw is
             allowance[owner][receiver] -= shares;
         }
 
-        applyMaxGrowthFee(data.previewBorrowVaultData.supplyAfterFee, data.previewBorrowVaultData.totalAssets);
+        applyMaxGrowthFee(data.previewBorrowVaultData.supplyAfterFee, totalAssets(true, state.previewVaultState.maxGrowthFeeState.totalAssetsState));
 
         _mintProtocolRewards(
             MintProtocolRewardsData({
