@@ -7,13 +7,19 @@ import 'src/state_transition/ApplyMaxGrowthFee.sol';
 import 'src/math2/PreviewLowLevelRebalanceStateToData.sol';
 import 'src/state_transition/ExecuteLowLevelRebalance.sol';
 
-contract ExecuteLowLevelRebalanceCollateral is ExecuteLowLevelRebalance, PreviewLowLevelRebalanceCollateral, MaxLowLevelRebalanceCollateral, ApplyMaxGrowthFee {
+contract ExecuteLowLevelRebalanceCollateral is
+    ExecuteLowLevelRebalance,
+    PreviewLowLevelRebalanceCollateral,
+    MaxLowLevelRebalanceCollateral,
+    ApplyMaxGrowthFee
+{
     error ExceedsLowLevelRebalanceMaxDeltaCollateral(int256 deltaCollateral, int256 max);
 
-    function executeLowLevelRebalanceCollateralHint(
-        int256 deltaCollateral,
-        bool isSharesPositive
-    ) public returns (int256, int256) {
+    function executeLowLevelRebalanceCollateralHint(int256 deltaCollateral) public returns (int256, int256) {
+        return executeLowLevelRebalanceCollateral(deltaCollateral, true);
+    }
+
+    function executeLowLevelRebalanceCollateral(int256 deltaCollateral, bool isSharesPositive) public returns (int256, int256) {
         ExecuteLowLevelRebalanceState memory state = executeLowLevelRebalanceState();
         LowLevelRebalanceData memory data = previewLowLevelRebalanceStateToData(state.previewLowLevelRebalanceState, isSharesPositive);
         int256 max = maxLowLevelRebalanceCollateral(
@@ -35,10 +41,7 @@ contract ExecuteLowLevelRebalanceCollateral is ExecuteLowLevelRebalance, Preview
 
         if (deltaShares >= 0 != isSharesPositive) {
             data = previewLowLevelRebalanceStateToData(state.previewLowLevelRebalanceState, !isSharesPositive);
-            (deltaRealBorrowAssets, deltaShares, deltaProtocolFutureRewardShares) = _previewLowLevelRebalanceCollateral(
-                deltaCollateral,
-                data
-            );
+            (deltaRealBorrowAssets, deltaShares, deltaProtocolFutureRewardShares) = _previewLowLevelRebalanceCollateral(deltaCollateral, data);
             if (depositTotalAssets == -1) {
                 depositTotalAssets = int256(data.totalAssets);
             }
@@ -54,4 +57,4 @@ contract ExecuteLowLevelRebalanceCollateral is ExecuteLowLevelRebalance, Preview
 
         return (deltaRealBorrowAssets, deltaShares);
     }
-} 
+}
