@@ -359,3 +359,8 @@ struct LowLevelRebalanceData {
     uint256 totalAssets;
     uint128 targetLTV;
 }
+
+struct ExecuteLowLevelRebalanceState {
+    PreviewLowLevelRebalanceState previewLowLevelRebalanceState;
+    uint256 maxTotalAssetsInUnderlying;
+}

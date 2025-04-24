@@ -145,4 +145,21 @@ abstract contract LTVState {
                 startAuction: startAuction
             });
     }
+
+    function previewLowLevelRebalanceState() internal view returns (PreviewLowLevelRebalanceState memory) {
+        return PreviewLowLevelRebalanceState({
+            maxGrowthFeeState: maxGrowthFeeState(),
+            targetLTV: targetLTV,
+            blockNumber: block.number,
+            startAuction: startAuction
+        });
+    }
+
+    function executeLowLevelRebalanceState() internal view returns(ExecuteLowLevelRebalanceState memory) {
+        return ExecuteLowLevelRebalanceState({
+            previewLowLevelRebalanceState: previewLowLevelRebalanceState(),
+            maxTotalAssetsInUnderlying: maxTotalAssetsInUnderlying
+        });
+    }
+
 }
