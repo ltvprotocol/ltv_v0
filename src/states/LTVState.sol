@@ -14,7 +14,6 @@ import '../structs/state/vault/MaxDepositMintBorrowVaultState.sol';
 import '../structs/state/vault/MaxWithdrawRedeemBorrowVaultState.sol';
 import '../structs/state/vault/MaxDepositMintCollateralVaultState.sol';
 import '../structs/state/vault/MaxWithdrawRedeemCollateralVaultState.sol';
-import '../structs/auction/AuctionState.sol';
 
 abstract contract LTVState {
     // ------------------------------------------------
