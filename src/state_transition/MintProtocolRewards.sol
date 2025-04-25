@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../Structs2.sol';
+import '../structs/data/MintProtocolRewardsData.sol';
 import '../Constants.sol';
 import './ERC20.sol';
 import '../utils/MulDiv.sol';

@@ -1,7 +1,14 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../../../Structs2.sol';
+import '../../../structs/data/vault/PreviewBorrowVaultData.sol';
+import '../../../structs/data/vault/TotalAssetsData.sol';
+import '../../../structs/state/vault/TotalAssetsState.sol';
+import '../../../structs/state/vault/PreviewVaultState.sol';
+import '../../../structs/state/vault/MaxDepositMintBorrowVaultState.sol';
+import '../../../structs/state/vault/MaxWithdrawRedeemBorrowVaultState.sol';
+import '../../../structs/data/vault/MaxDepositMintBorrowVaultData.sol';
+import '../../../structs/data/vault/MaxWithdrawRedeemBorrowVaultData.sol';
 import '../MaxGrowthFee.sol';
 import '../../../math2/CommonMath.sol';
 import '../../erc20/TotalSupply.sol';
@@ -24,7 +31,7 @@ abstract contract Vault is MaxGrowthFee {
             isDeposit
         );
 
-        return _previewVaultStateToPreviewBorrowVaultData(realBorrow, realCollateral, state, isDeposit); 
+        return _previewVaultStateToPreviewBorrowVaultData(realBorrow, realCollateral, state, isDeposit);
     }
 
     function _previewVaultStateToPreviewBorrowVaultData(
@@ -128,7 +135,12 @@ abstract contract Vault is MaxGrowthFee {
             false
         );
 
-        data.previewBorrowVaultData = _previewVaultStateToPreviewBorrowVaultData(data.realBorrow, data.realCollateral, state.previewVaultState, false);
+        data.previewBorrowVaultData = _previewVaultStateToPreviewBorrowVaultData(
+            data.realBorrow,
+            data.realCollateral,
+            state.previewVaultState,
+            false
+        );
         data.maxSafeLTV = state.maxSafeLTV;
         data.ownerBalance = state.ownerBalance;
         return data;

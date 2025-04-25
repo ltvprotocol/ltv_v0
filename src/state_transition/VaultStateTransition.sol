@@ -4,8 +4,7 @@ pragma solidity ^0.8.28;
 import '../states/LTVState.sol';
 import '../Constants.sol';
 import '../utils/MulDiv.sol';
-import '../Structs2.sol';
-
+import '../structs/state_transition/NextStateData.sol';
 abstract contract VaultStateTransition is LTVState {
     using sMulDiv for int256;
 

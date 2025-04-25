@@ -2,7 +2,8 @@
 pragma solidity ^0.8.28;
 
 import '../Constants.sol';
-import '../Structs2.sol';
+import '../structs/data/vault/MintRedeemData.sol';
+import '../structs/state_transition/DeltaFuture.sol';
 import '../Cases2.sol';
 import '../utils/MulDiv.sol';
 import './CommonBorrowCollateral.sol';

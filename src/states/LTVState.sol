@@ -7,7 +7,15 @@ import '../interfaces/IWhitelistRegistry.sol';
 import '../interfaces/ISlippageProvider.sol';
 import '../interfaces/IModules.sol';
 import 'forge-std/interfaces/IERC20.sol';
-import '../Structs2.sol';
+import '../structs/state/vault/TotalAssetsState.sol';
+import '../structs/state/MaxGrowthFeeState.sol';
+import '../structs/state/vault/PreviewVaultState.sol';
+import '../structs/state/vault/MaxDepositMintBorrowVaultState.sol';
+import '../structs/state/vault/MaxWithdrawRedeemBorrowVaultState.sol';
+import '../structs/state/vault/MaxDepositMintCollateralVaultState.sol';
+import '../structs/state/vault/MaxWithdrawRedeemCollateralVaultState.sol';
+import '../structs/auction/AuctionState.sol';
+
 abstract contract LTVState {
     // ------------------------------------------------
 
