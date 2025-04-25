@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../VaultCollateral.sol';
+import 'src/math2/VaultCollateral.sol';
 import '../../../../math2/MintRedeem.sol';
 
 abstract contract PreviewMintCollateral is VaultCollateral {

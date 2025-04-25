@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../Vault.sol';
+import 'src/math2/Vault.sol';
 import '../../../../math2/MintRedeem.sol';
 
 abstract contract PreviewRedeem is Vault {
