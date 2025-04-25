@@ -6,7 +6,6 @@ import 'src/public/low_level/max/MaxLowLevelRebalanceBorrow.sol';
 import 'src/state_transition/ApplyMaxGrowthFee.sol';
 import 'src/math2/PreviewLowLevelRebalanceStateToData.sol';
 import 'src/state_transition/ExecuteLowLevelRebalance.sol';
-
 contract ExecuteLowLevelRebalanceBorrow is ExecuteLowLevelRebalance, PreviewLowLevelRebalanceBorrow, MaxLowLevelRebalanceBorrow, ApplyMaxGrowthFee {
     error ExceedsLowLevelRebalanceMaxDeltaBorrow(int256 deltaBorrow, int256 max);
 
@@ -33,7 +32,7 @@ contract ExecuteLowLevelRebalanceBorrow is ExecuteLowLevelRebalance, PreviewLowL
             deltaBorrow,
             data
         );
-
+        
         if (deltaShares >= 0 != isSharesPositive) {
             data = previewLowLevelRebalanceStateToData(state.previewLowLevelRebalanceState, !isSharesPositive);
             (deltaRealCollateralAssets, deltaShares, deltaProtocolFutureRewardShares) = _previewLowLevelRebalanceBorrow(deltaBorrow, data);

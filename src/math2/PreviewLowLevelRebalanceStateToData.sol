@@ -74,7 +74,7 @@ contract PreviewLowLevelRebalanceStateToData is MaxGrowthFee {
             MaxGrowthFeeData({
                 withdrawTotalAssets: withdrawTotalAssets,
                 maxGrowthFee: state.maxGrowthFeeState.maxGrowthFee,
-                supply: state.maxGrowthFeeState.supply,
+                supply: totalSupply(state.maxGrowthFeeState.supply),
                 lastSeenTokenPrice: state.maxGrowthFeeState.lastSeenTokenPrice
             })
         );

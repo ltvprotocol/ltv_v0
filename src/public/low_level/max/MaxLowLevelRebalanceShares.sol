@@ -40,13 +40,15 @@ contract MaxLowLevelRebalanceShares is MaxGrowthFee {
             true
         );
 
+        data.depositTotalAssets = totalAssets(true, state.maxGrowthFeeState.totalAssetsState);
+
         uint256 withdrawTotalAssets = totalAssets(false, state.maxGrowthFeeState.totalAssetsState);
 
         data.supplyAfterFee = _previewSupplyAfterFee(
             MaxGrowthFeeData({
                 withdrawTotalAssets: withdrawTotalAssets,
                 maxGrowthFee: state.maxGrowthFeeState.maxGrowthFee,
-                supply: state.maxGrowthFeeState.supply,
+                supply: totalSupply(state.maxGrowthFeeState.supply),
                 lastSeenTokenPrice: state.maxGrowthFeeState.lastSeenTokenPrice
             })
         );

@@ -162,4 +162,28 @@ abstract contract LTVState {
         });
     }
 
+    function maxLowLevelRebalanceSharesState() internal view returns (MaxLowLevelRebalanceSharesState memory) {
+        return MaxLowLevelRebalanceSharesState({
+            maxGrowthFeeState: maxGrowthFeeState(),
+            maxTotalAssetsInUnderlying: maxTotalAssetsInUnderlying
+        });
+    }
+
+    function maxLowLevelRebalanceBorrowState() internal view returns (MaxLowLevelRebalanceBorrowStateData memory) {
+        return MaxLowLevelRebalanceBorrowStateData({
+            realBorrowAssets: lendingConnector.getRealBorrowAssets(),
+            maxTotalAssetsInUnderlying: maxTotalAssetsInUnderlying,
+            targetLTV: targetLTV,
+            borrowPrice: oracleConnector.getPriceBorrowOracle()
+        });
+    }
+
+    function maxLowLevelRebalanceCollateralState() internal view returns (MaxLowLevelRebalanceCollateralStateData memory) {
+        return MaxLowLevelRebalanceCollateralStateData({
+            realCollateralAssets: lendingConnector.getRealCollateralAssets(),
+            maxTotalAssetsInUnderlying: maxTotalAssetsInUnderlying,
+            targetLTV: targetLTV,
+            collateralPrice: oracleConnector.getPriceCollateralOracle()
+        });
+    }
 }

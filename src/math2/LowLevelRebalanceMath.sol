@@ -115,7 +115,7 @@ library LowLevelRebalanceMath {
         {
             // Depositor/withdrawer <=> HODLer conflict, round up to assume smaller debt decrease in case of deposit or bigger debt increase in case of withdraw.
             int256 deltaRealBorrow = deltaBorrowAssets.mulDivUp(int256(data.borrowPrice), int256(Constants.ORACLE_DIVIDER));
-            deltaRealCollateral = calculateDeltaRealCollateralFromDeltaRealBorrow(deltaRealBorrow, data.realCollateral, data.realBorrow, data.targetLTV);
+            deltaRealCollateral = calculateDeltaRealCollateralFromDeltaRealBorrow(deltaRealBorrow, data.realBorrow, data.realCollateral, data.targetLTV);
             deltaSharesInUnderlying = calculateDeltaSharesFromDeltaRealCollateralAndDeltaRealBorrow(
                 deltaRealCollateral,
                 deltaRealBorrow,

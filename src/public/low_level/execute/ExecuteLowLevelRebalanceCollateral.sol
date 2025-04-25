@@ -6,7 +6,6 @@ import 'src/public/low_level/max/MaxLowLevelRebalanceCollateral.sol';
 import 'src/state_transition/ApplyMaxGrowthFee.sol';
 import 'src/math2/PreviewLowLevelRebalanceStateToData.sol';
 import 'src/state_transition/ExecuteLowLevelRebalance.sol';
-
 contract ExecuteLowLevelRebalanceCollateral is
     ExecuteLowLevelRebalance,
     PreviewLowLevelRebalanceCollateral,
@@ -15,11 +14,11 @@ contract ExecuteLowLevelRebalanceCollateral is
 {
     error ExceedsLowLevelRebalanceMaxDeltaCollateral(int256 deltaCollateral, int256 max);
 
-    function executeLowLevelRebalanceCollateralHint(int256 deltaCollateral) public returns (int256, int256) {
-        return executeLowLevelRebalanceCollateral(deltaCollateral, true);
+    function executeLowLevelRebalanceCollateral(int256 deltaCollateral) public returns (int256, int256) {
+        return executeLowLevelRebalanceCollateralHint(deltaCollateral, true);
     }
 
-    function executeLowLevelRebalanceCollateral(int256 deltaCollateral, bool isSharesPositive) public returns (int256, int256) {
+    function executeLowLevelRebalanceCollateralHint(int256 deltaCollateral, bool isSharesPositive) public returns (int256, int256) {
         ExecuteLowLevelRebalanceState memory state = executeLowLevelRebalanceState();
         LowLevelRebalanceData memory data = previewLowLevelRebalanceStateToData(state.previewLowLevelRebalanceState, isSharesPositive);
         int256 max = maxLowLevelRebalanceCollateral(
