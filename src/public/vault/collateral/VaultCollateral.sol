@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../MaxGrowthFee.sol';
+import 'src/math2/MaxGrowthFee.sol';
 import '../../../math2/CommonMath.sol';
 import '../../erc20/TotalSupply.sol';
 import './TotalAssetsCollateral.sol';

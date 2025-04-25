@@ -9,7 +9,7 @@ import '../../../structs/state/vault/MaxDepositMintBorrowVaultState.sol';
 import '../../../structs/state/vault/MaxWithdrawRedeemBorrowVaultState.sol';
 import '../../../structs/data/vault/MaxDepositMintBorrowVaultData.sol';
 import '../../../structs/data/vault/MaxWithdrawRedeemBorrowVaultData.sol';
-import '../MaxGrowthFee.sol';
+import 'src/math2/MaxGrowthFee.sol';
 import '../../../math2/CommonMath.sol';
 import '../../erc20/TotalSupply.sol';
 
