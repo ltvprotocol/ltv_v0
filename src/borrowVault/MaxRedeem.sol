@@ -4,7 +4,7 @@ pragma solidity ^0.8.28;
 import './MaxWithdraw.sol';
 import './PreviewWithdraw.sol';
 
-abstract contract MaxRedeem is MaxWithdraw, PreviewWithdraw {
+abstract contract MaxRedeem is PreviewWithdraw,MaxWithdraw {
     using uMulDiv for uint256;
 
     function maxRedeem(address owner) public view returns (uint256) {

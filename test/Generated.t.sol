@@ -20,6 +20,9 @@ contract GeneratedTests is Test {
     MockDummyLending public lendingProtocol;
     IDummyOracle public oracle;
 
+    
+    function replaceImplementation() internal virtual {}
+
     modifier initializeTest(
         uint256 realBorrow,
         uint256 realCollateral,
@@ -105,6 +108,7 @@ contract GeneratedTests is Test {
         deal(address(collateralToken), address(this), type(uint112).max);
         borrowToken.approve(address(dummyLTV), type(uint112).max);
         collateralToken.approve(address(dummyLTV), type(uint112).max);
+        replaceImplementation();
         _;
       }
 
