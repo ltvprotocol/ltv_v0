@@ -418,6 +418,8 @@ contract DummyLTVTest is Test {
         address guardian,
         uint32 delay
     ) public initializeBalancedTest(ltvOwner, user, 10 ** 17, 0, 0, 0) {
+        vm.assume(ltvOwner != address(0));
+        vm.assume(owner != address(0));
         vm.assume(user != payloadsManager);
         vm.assume(delay != 0);
         vm.assume(user != owner);

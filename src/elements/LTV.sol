@@ -7,10 +7,10 @@ import '../facades/reads/ERC20Read.sol';
 import '../facades/writes/ERC20Write.sol';
 import '../facades/reads/LowLevelRebalanceRead.sol';
 import '../facades/writes/LowLevelRebalanceWrite.sol';
-import '../facades/reads/CollateralVaultRead.sol';
 import '../facades/reads/BorrowVaultRead.sol';
-import '../facades/writes/CollateralVaultWrite.sol';
 import '../facades/writes/BorrowVaultWrite.sol';
+import '../facades/reads/CollateralVaultRead.sol';
+import '../facades/writes/CollateralVaultWrite.sol';
 
 contract LTV is
     AuctionRead,
@@ -19,8 +19,8 @@ contract LTV is
     ERC20Write,
     LowLevelRebalanceRead,
     LowLevelRebalanceWrite,
-    CollateralVaultRead,
     BorrowVaultRead,
-    CollateralVaultWrite,
-    BorrowVaultWrite
+    BorrowVaultWrite,
+    CollateralVaultRead,
+    CollateralVaultWrite
 {}
