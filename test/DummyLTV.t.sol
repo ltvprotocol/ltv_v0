@@ -13,16 +13,15 @@ import '../src/utils/ConstantSlippageProvider.sol';
 import '../src/utils/WhitelistRegistry.sol';
 import '../src/utils/VaultBalanceAsLendingConnector.sol';
 import '../src/utils/Timelock.sol';
+import {ArchitectureBase} from './utils/ArchitectureBase.t.sol';
 
-contract DummyLTVTest is Test {
-    DummyLTV public dummyLTV;
+contract DummyLTVTest is ArchitectureBase {
     MockERC20 public collateralToken;
     MockERC20 public borrowToken;
     MockDummyLending public lendingProtocol;
     IDummyOracle public oracle;
     ConstantSlippageProvider public slippageProvider;
 
-    function replaceImplementation() internal virtual {}
 
     modifier initializeBalancedTest(
         address owner,
@@ -239,6 +238,7 @@ contract DummyLTVTest is Test {
     }
 
     function test_executeDepositAuctionBorrow(address owner, address user) public initializeBalancedTest(owner, user, 100000, 10000, 10000, -1000) {
+        replaceImplementation();
         collateralToken.approve(address(dummyLTV), type(uint112).max);
         int256 deltaCollateral = dummyLTV.executeAuctionBorrow(-1000);
 
@@ -249,6 +249,7 @@ contract DummyLTVTest is Test {
         address owner,
         address user
     ) public initializeBalancedTest(owner, user, 100000, 10000, 10000, -1000) {
+        replaceImplementation();
         collateralToken.approve(address(dummyLTV), type(uint112).max);
         int256 deltaBorrow = dummyLTV.executeAuctionCollateral(-475);
 
@@ -256,6 +257,7 @@ contract DummyLTVTest is Test {
     }
 
     function test_executeWithdrawAuctionBorrow(address owner, address user) public initializeBalancedTest(owner, user, 100000, -10000, -10000, 1000) {
+        replaceImplementation();
         borrowToken.approve(address(dummyLTV), type(uint112).max);
         int256 deltaCollateral = dummyLTV.executeAuctionBorrow(950);
 
@@ -266,6 +268,7 @@ contract DummyLTVTest is Test {
         address owner,
         address user
     ) public initializeBalancedTest(owner, user, 100000, -10000, -10000, 1000) {
+        replaceImplementation();
         borrowToken.approve(address(dummyLTV), type(uint112).max);
         int256 deltaBorrow = dummyLTV.executeAuctionCollateral(500);
 
