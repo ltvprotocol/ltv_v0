@@ -2,7 +2,10 @@
 pragma solidity ^0.8.28;
 
 import {StateRepresentationStruct} from '../../structs/StateRepresentationStruct.sol';
-import 'src/Structs2.sol';
+import 'src/structs/state/low_level/PreviewLowLevelRebalanceState.sol';
+import 'src/structs/state/low_level/MaxLowLevelRebalanceSharesState.sol';
+import 'src/structs/state/low_level/MaxLowLevelRebalanceBorrowStateData.sol';
+import 'src/structs/state/low_level/MaxLowLevelRebalanceCollateralStateData.sol';
 
 interface ILowLevelRebalanceRead {
     function previewLowLevelRebalanceShares(

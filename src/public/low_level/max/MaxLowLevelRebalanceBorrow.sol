@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import 'src/Structs2.sol';
 import 'src/Constants.sol';
 import 'src/utils/MulDiv.sol';
 import 'src/math2/MaxGrowthFee.sol';
 import 'src/utils/MulDiv.sol';
+import 'src/structs/state/low_level/MaxLowLevelRebalanceBorrowStateData.sol';
 
 contract MaxLowLevelRebalanceBorrow is MaxGrowthFee {
     using uMulDiv for uint256;

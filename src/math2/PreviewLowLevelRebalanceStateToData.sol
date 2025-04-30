@@ -4,7 +4,7 @@ pragma solidity ^0.8.28;
 import 'src/math2/CommonMath.sol';
 import 'src/math2/MaxGrowthFee.sol';
 import 'src/math2/LowLevelRebalanceMath.sol';
-
+import 'src/structs/state/low_level/PreviewLowLevelRebalanceState.sol';
 contract PreviewLowLevelRebalanceStateToData is MaxGrowthFee {
     using uMulDiv for uint256;
 

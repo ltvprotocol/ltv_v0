@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import '../Structs2.sol';
 import '../Constants.sol';
 import '../utils/MulDiv.sol';
+import 'src/structs/data/low_level/LowLevelRebalanceData.sol';
 
 library LowLevelRebalanceMath {
     using sMulDiv for int256;
