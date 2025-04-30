@@ -3,6 +3,9 @@ pragma solidity ^0.8.28;
 
 import 'src/math2/AuctionMath.sol';
 import 'src/math2/CommonMath.sol';
+import 'src/structs/state/AuctionState.sol';
+import 'src/structs/data/AuctionData.sol';
+import 'src/structs/state_transition/DeltaAuctionState.sol';
 
 contract PreviewAuction {
     function previewExecuteAuctionCollateral(int256 deltaUserCollateralAssets, AuctionState memory auctionState) external view returns (int256) {
