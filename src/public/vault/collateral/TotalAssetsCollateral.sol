@@ -2,10 +2,12 @@
 pragma solidity ^0.8.28;
 
 import '../../../Constants.sol';
-import '../../../Structs2.sol';
 import '../../../utils/MulDiv.sol';
 import '../../../math2/CommonMath.sol';
 import '../borrow/TotalAssets.sol';
+import '../../../structs/data/vault/TotalAssetsData.sol';
+import '../../../structs/state/vault/TotalAssetsState.sol';
+import '../../../structs/data/vault/TotalAssetsCollateralData.sol';
 
 abstract contract TotalAssetsCollateral is TotalAssets {
     using uMulDiv for uint256;

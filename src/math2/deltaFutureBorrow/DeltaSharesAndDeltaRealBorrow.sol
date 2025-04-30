@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../../Structs2.sol';
+import '../../structs/data/vault/DeltaSharesAndDeltaRealBorrowData.sol';
+import '../../structs/data/vault/Cases.sol';
 import '../../Constants.sol';
-import '../../Cases2.sol';
 import '../../utils/MulDiv.sol';
+import 'src/math2/CasesOperator.sol';
 
 library DeltaSharesAndDeltaRealBorrow {
     using uMulDiv for uint256;

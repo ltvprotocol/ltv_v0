@@ -5,7 +5,8 @@ import './utils/LTVWithModules.sol';
 import 'src/elements/BorrowVaultModule.sol';
 import 'src/elements/CollateralVaultModule.sol';
 import 'src/elements/AuctionModule.sol';
-import 'src/states/ModulesProvider.sol';
+import 'src/elements/ModulesProvider.sol';
+
 import {GeneratedTests} from './Generated.t.sol';
 import {DummyLTVTest} from './DummyLTV.t.sol';
 

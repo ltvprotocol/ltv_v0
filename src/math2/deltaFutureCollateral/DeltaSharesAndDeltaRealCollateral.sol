@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../../Structs2.sol';
+import '../../structs/data/vault/DeltaSharesAndDeltaRealCollateralData.sol';
+import '../../structs/data/vault/Cases.sol';
 import '../../Constants.sol';
-import '../../Cases2.sol';
+import 'src/math2/CasesOperator.sol';
 import '../../utils/MulDiv.sol';
 
 library DeltaSharesAndDeltaRealCollateral {

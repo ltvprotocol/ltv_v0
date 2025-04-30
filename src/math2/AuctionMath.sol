@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../Structs2.sol';
 import '../utils/MulDiv.sol';
 import '../Constants.sol';
+import 'src/structs/data/AuctionData.sol';
+import 'src/structs/state_transition/DeltaAuctionState.sol';
 // since auction execution doesn't affect totalAssets we have only two conflicts here,
 // executor <=> future executor,
 // executor <=> fee collector

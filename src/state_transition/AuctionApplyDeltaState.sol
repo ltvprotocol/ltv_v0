@@ -3,6 +3,7 @@ pragma solidity ^0.8.28;
 
 import './Lending.sol';
 import './TransferFromProtocol.sol';
+import 'src/structs/state_transition/DeltaAuctionState.sol';
 
 contract AuctionApplyDeltaState is Lending, TransferFromProtocol {
     event AuctionExecuted(address indexed user, int256 deltaFutureCollateralAssets, int256 deltaFutureBorrowAssets);

@@ -8,7 +8,7 @@ import 'src/elements/BorrowVaultModule.sol';
 import 'src/elements/CollateralVaultModule.sol';
 import 'src/elements/AuctionModule.sol';
 import 'src/elements/LowLevelRebalanceModule.sol';
-import 'src/states/ModulesProvider.sol';
+import 'src/elements/ModulesProvider.sol';
 import './LTVWithModules.sol';
 
 contract ArchitectureBase is Test {

@@ -5,6 +5,10 @@ import '../Constants.sol';
 import './deltaFutureCollateral/DeltaRealBorrowAndDeltaRealCollateral.sol';
 import '../utils/MulDiv.sol';
 import './CommonBorrowCollateral.sol';
+import '../structs/data/vault/DepositWithdrawData.sol';
+import '../structs/state_transition/DeltaFuture.sol';
+import '../structs/data/vault/Cases.sol';
+import 'src/math2/CasesOperator.sol';
 
 library DepositWithdraw {
     using uMulDiv for uint256;

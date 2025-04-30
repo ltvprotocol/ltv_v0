@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
-
 import '../../../Constants.sol';
-import '../../../Structs2.sol';
 import '../../../utils/MulDiv.sol';
 import '../../../math2/CommonMath.sol';
+import '../../../structs/data/vault/TotalAssetsData.sol';
+import '../../../structs/state/vault/TotalAssetsState.sol';
+
 abstract contract TotalAssets {
     using uMulDiv for uint256;
 

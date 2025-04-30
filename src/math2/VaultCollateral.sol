@@ -1,11 +1,18 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../../../Structs2.sol';
 import 'src/math2/MaxGrowthFee.sol';
-import '../../../math2/CommonMath.sol';
-import '../../erc20/TotalSupply.sol';
-import './TotalAssetsCollateral.sol';
+import 'src/math2/CommonMath.sol';
+import 'src/public/erc20/TotalSupply.sol';
+import 'src/public/vault/collateral/TotalAssetsCollateral.sol';
+import 'src/structs/state/vault/MaxDepositMintCollateralVaultState.sol';
+import 'src/structs/state/vault/MaxWithdrawRedeemCollateralVaultState.sol';
+import 'src/structs/state/vault/PreviewVaultState.sol';
+import 'src/structs/data/vault/PreviewCollateralVaultData.sol';
+import 'src/structs/data/vault/PreviewCollateralVaultData.sol';
+import 'src/structs/data/vault/MaxDepositMintCollateralVaultData.sol';
+import 'src/structs/data/vault/MaxWithdrawRedeemCollateralVaultData.sol';
+import 'src/structs/data/vault/ConvertCollateralData.sol';
 
 abstract contract VaultCollateral is MaxGrowthFee, TotalAssetsCollateral {
     using uMulDiv for uint256;

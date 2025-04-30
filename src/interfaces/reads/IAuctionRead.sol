@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import 'src/Structs2.sol';
+import 'src/structs/state/AuctionState.sol';
 
 interface IAuctionRead {
     function previewExecuteAuctionBorrow(int256 deltaUserBorrowAssets, AuctionState memory auctionState) external view returns (int256);

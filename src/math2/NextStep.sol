@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../Structs2.sol';
+import '../structs/state_transition/NextState.sol';
+import '../structs/state_transition/NextStateData.sol';
+import '../structs/state_transition/NextStepData.sol';
 import '../utils/MulDiv.sol';
 
 library NextStep {
