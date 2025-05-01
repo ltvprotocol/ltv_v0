@@ -10,7 +10,7 @@ import 'src/state_transition/ExecuteLowLevelRebalance.sol';
 contract ExecuteLowLevelRebalanceShares is ExecuteLowLevelRebalance, PreviewLowLevelRebalanceShares, MaxLowLevelRebalanceShares, ApplyMaxGrowthFee {
     error ExceedsLowLevelRebalanceMaxDeltaShares(int256 deltaShares, int256 max);
 
-    function executeLowLevelRebalanceShares(int256 deltaShares) public returns (int256, int256) {
+    function executeLowLevelRebalanceShares(int256 deltaShares) external isFunctionAllowed nonReentrant returns (int256, int256) {
         ExecuteLowLevelRebalanceState memory state = executeLowLevelRebalanceState();
         LowLevelRebalanceData memory data = previewLowLevelRebalanceStateToData(state.previewLowLevelRebalanceState, deltaShares >= 0);
         uint256 depositTotalAssets = deltaShares >= 0
@@ -33,7 +33,7 @@ contract ExecuteLowLevelRebalanceShares is ExecuteLowLevelRebalance, PreviewLowL
         applyMaxGrowthFee(data.supplyAfterFee, depositTotalAssets);
 
         executeLowLevelRebalance(deltaCollateral, deltaBorrow, deltaShares, deltaProtocolFutureReward);
-        
+
         return (deltaCollateral, deltaBorrow);
     }
 }
