@@ -65,4 +65,20 @@ abstract contract AdministrationWrite is LTVState, CommonWrite {
     function deleverageAndWithdraw(uint256 closeAmountBorrow, uint256 deleverageFee) external {
         _delegate(modules.administrationWrite(), abi.encode(closeAmountBorrow, deleverageFee));
     }
+
+    function updateEmergencyDeleverager(address newEmergencyDeleverager) external {
+        _delegate(modules.administrationWrite(), abi.encode(newEmergencyDeleverager));
+    }
+
+    function updateOwner(address newOwner) external {
+        _delegate(modules.administrationWrite(), abi.encode(newOwner));
+    }
+
+    function updateGuardian(address newGuardian) external {
+        _delegate(modules.administrationWrite(), abi.encode(newGuardian));
+    }
+
+    function updateGovernor(address newGovernor) external {
+        _delegate(modules.administrationWrite(), abi.encode(newGovernor));
+    }
 }
