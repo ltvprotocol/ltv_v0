@@ -2,55 +2,54 @@
 pragma solidity ^0.8.28;
 
 import "../../interfaces/IModules.sol";
-import "../../states/readers/ModulesAddressStateReader.sol";
-import "../../states/readers/ApplicationStateReader.sol";
+import "../../states/LTVState.sol";    
 
-abstract contract BorrowVaultRead is ApplicationStateReader, ModulesAddressStateReader {
+abstract contract BorrowVaultRead is LTVState {
     function previewDeposit(uint256 assets) external view returns (uint256) {
-        return getModules().borrowVaultsRead().previewDeposit(assets, previewVaultState());
+        return modules.borrowVaultsRead().previewDeposit(assets, previewVaultState());
     }
 
     function previewWithdraw(uint256 assets) external view returns (uint256) {
-        return getModules().borrowVaultsRead().previewWithdraw(assets, previewVaultState());
+        return modules.borrowVaultsRead().previewWithdraw(assets, previewVaultState());
     }
 
     function previewMint(uint256 shares) external view returns (uint256) {
-        return getModules().borrowVaultsRead().previewMint(shares, previewVaultState());
+        return modules.borrowVaultsRead().previewMint(shares, previewVaultState());
     }
 
     function previewRedeem(uint256 shares) external view returns (uint256) {
-        return getModules().borrowVaultsRead().previewRedeem(shares, previewVaultState());
+        return modules.borrowVaultsRead().previewRedeem(shares, previewVaultState());
     }
 
     function maxDeposit(address) external view returns (uint256) {
-        return getModules().borrowVaultsRead().maxDeposit(maxDepositMintBorrowVaultState());
+        return modules.borrowVaultsRead().maxDeposit(maxDepositMintBorrowVaultState());
     }
 
     function maxWithdraw(address owner) external view returns (uint256) {
-        return getModules().borrowVaultsRead().maxWithdraw(maxWithdrawRedeemBorrowVaultState(owner));
+        return modules.borrowVaultsRead().maxWithdraw(maxWithdrawRedeemBorrowVaultState(owner));
     }
 
     function maxMint(address) external view returns (uint256) {
-        return getModules().borrowVaultsRead().maxMint(maxDepositMintBorrowVaultState());
+        return modules.borrowVaultsRead().maxMint(maxDepositMintBorrowVaultState());
     }
 
     function maxRedeem(address owner) external view returns (uint256) {
-        return getModules().borrowVaultsRead().maxRedeem(maxWithdrawRedeemBorrowVaultState(owner));
+        return modules.borrowVaultsRead().maxRedeem(maxWithdrawRedeemBorrowVaultState(owner));
     }
 
     function convertToShares(uint256 assets) external view returns (uint256) {
-        return getModules().borrowVaultsRead().convertToShares(assets, maxGrowthFeeState());
+        return modules.borrowVaultsRead().convertToShares(assets, maxGrowthFeeState());
     }
 
     function convertToAssets(uint256 shares) external view returns (uint256) {
-        return getModules().borrowVaultsRead().convertToAssets(shares, maxGrowthFeeState());
+        return modules.borrowVaultsRead().convertToAssets(shares, maxGrowthFeeState());
     }
     
     function totalAssets() external view returns (uint256) {
-        return getModules().borrowVaultsRead().totalAssets(totalAssetsState());
+        return modules.borrowVaultsRead().totalAssets(totalAssetsState());
     }
     
     function _totalAssets(bool isDeposit) external view returns (uint256) {
-        return getModules().borrowVaultsRead().totalAssets(isDeposit, totalAssetsState());
+        return modules.borrowVaultsRead().totalAssets(isDeposit, totalAssetsState());
     }
 } 
