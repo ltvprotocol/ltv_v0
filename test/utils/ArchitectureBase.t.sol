@@ -9,6 +9,8 @@ import 'src/elements/CollateralVaultModule.sol';
 import 'src/elements/AuctionModule.sol';
 import 'src/elements/LowLevelRebalanceModule.sol';
 import 'src/elements/ModulesProvider.sol';
+import 'src/elements/AdministrationModule.sol';
+
 import './LTVWithModules.sol';
 
 contract ArchitectureBase is Test {
@@ -31,6 +33,7 @@ contract ArchitectureBase is Test {
         CollateralVaultModule collateralVaultModule = new CollateralVaultModule();
         AuctionModule auctionModule = new AuctionModule();
         LowLevelRebalanceModule lowLevelRebalanceModule = new LowLevelRebalanceModule();
+        AdministrationModule administrationModule = new AdministrationModule();
         ModulesProvider modules = new ModulesProvider(
             ModulesState({
                 borrowVaultsRead: IBorrowVaultRead(address(borrowVaultModule)),
@@ -42,7 +45,8 @@ contract ArchitectureBase is Test {
                 lowLevelRebalancerRead: ILowLevelRebalanceRead(address(lowLevelRebalanceModule)),
                 lowLevelRebalancerWrite: address(lowLevelRebalanceModule),
                 auctionRead: IAuctionRead(address(auctionModule)),
-                auctionWrite: address(auctionModule)
+                auctionWrite: address(auctionModule),
+                administrationWrite: address(administrationModule)
             })
         );
         ltv.setModules(modules);
