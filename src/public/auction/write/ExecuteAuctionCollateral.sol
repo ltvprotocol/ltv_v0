@@ -6,13 +6,10 @@ import 'src/states/LTVState.sol';
 import 'src/state_transition/AuctionApplyDeltaState.sol';
 
 contract ExecuteAuctionCollateral is PreviewExecuteAuctionCollateral, LTVState, AuctionApplyDeltaState {
-    function executeAuctionCollateral(int256 deltaUserCollateralAssets) external returns (int256) {
-        DeltaAuctionState memory deltaState = _previewExecuteAuctionCollateral(
-            deltaUserCollateralAssets,
-            auctionStateToData(getAuctionState())
-        );
+    function executeAuctionCollateral(int256 deltaUserCollateralAssets) external isFunctionAllowed nonReentrant returns (int256) {
+        DeltaAuctionState memory deltaState = _previewExecuteAuctionCollateral(deltaUserCollateralAssets, auctionStateToData(getAuctionState()));
         applyDeltaState(deltaState);
 
         return deltaState.deltaUserBorrowAssets;
     }
-} 
+}
