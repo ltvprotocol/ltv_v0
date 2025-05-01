@@ -6,14 +6,22 @@ import 'src/public/low_level/max/MaxLowLevelRebalanceBorrow.sol';
 import 'src/state_transition/ApplyMaxGrowthFee.sol';
 import 'src/math2/PreviewLowLevelRebalanceStateToData.sol';
 import 'src/state_transition/ExecuteLowLevelRebalance.sol';
+
 contract ExecuteLowLevelRebalanceBorrow is ExecuteLowLevelRebalance, PreviewLowLevelRebalanceBorrow, MaxLowLevelRebalanceBorrow, ApplyMaxGrowthFee {
     error ExceedsLowLevelRebalanceMaxDeltaBorrow(int256 deltaBorrow, int256 max);
 
-    function executeLowLevelRebalanceBorrow(int256 deltaBorrow) public returns (int256, int256) {
-        return executeLowLevelRebalanceBorrowHint(deltaBorrow, true);
+    function executeLowLevelRebalanceBorrow(int256 deltaBorrow) external isFunctionAllowed nonReentrant returns (int256, int256) {
+        return _executeLowLevelRebalanceBorrowHint(deltaBorrow, true);
     }
 
-    function executeLowLevelRebalanceBorrowHint(int256 deltaBorrow, bool isSharesPositive) public returns (int256, int256) {
+    function executeLowLevelRebalanceBorrowHint(
+        int256 deltaBorrow,
+        bool isSharesPositive
+    ) external isFunctionAllowed nonReentrant returns (int256, int256) {
+        return _executeLowLevelRebalanceBorrowHint(deltaBorrow, isSharesPositive);
+    }
+
+    function _executeLowLevelRebalanceBorrowHint(int256 deltaBorrow, bool isSharesPositive) internal returns (int256, int256) {
         ExecuteLowLevelRebalanceState memory state = executeLowLevelRebalanceState();
         LowLevelRebalanceData memory data = previewLowLevelRebalanceStateToData(state.previewLowLevelRebalanceState, isSharesPositive);
         int256 max = maxLowLevelRebalanceBorrow(
@@ -32,7 +40,7 @@ contract ExecuteLowLevelRebalanceBorrow is ExecuteLowLevelRebalance, PreviewLowL
             deltaBorrow,
             data
         );
-        
+
         if (deltaShares >= 0 != isSharesPositive) {
             data = previewLowLevelRebalanceStateToData(state.previewLowLevelRebalanceState, !isSharesPositive);
             (deltaRealCollateralAssets, deltaShares, deltaProtocolFutureRewardShares) = _previewLowLevelRebalanceBorrow(deltaBorrow, data);

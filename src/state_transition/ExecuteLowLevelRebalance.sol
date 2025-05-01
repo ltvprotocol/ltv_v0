@@ -4,8 +4,9 @@ pragma solidity ^0.8.28;
 import './ERC20.sol';
 import './TransferFromProtocol.sol';
 import './Lending.sol';
+import './FunctionStopper.sol';
 
-contract ExecuteLowLevelRebalance is ERC20,TransferFromProtocol, Lending {
+abstract contract ExecuteLowLevelRebalance is FunctionStopper,ERC20, TransferFromProtocol, Lending {
     function executeLowLevelRebalance(
         int256 deltaRealCollateralAsset,
         int256 deltaRealBorrowAssets,
