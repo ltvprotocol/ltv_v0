@@ -25,4 +25,6 @@ interface IModules {
     function lowLevelRebalancerRead() external view returns (ILowLevelRebalanceRead);
 
     function lowLevelRebalancerWrite() external view returns (address);
+
+    function administrationWrite() external view returns (address);
 }

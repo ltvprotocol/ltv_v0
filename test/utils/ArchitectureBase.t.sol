@@ -10,6 +10,7 @@ import 'src/elements/AuctionModule.sol';
 import 'src/elements/LowLevelRebalanceModule.sol';
 import 'src/elements/ModulesProvider.sol';
 import 'src/elements/ERC20Module.sol';
+import 'src/elements/AdministrationModule.sol';
 
 import './LTVWithModules.sol';
 
@@ -34,6 +35,7 @@ contract ArchitectureBase is Test {
         AuctionModule auctionModule = new AuctionModule();
         LowLevelRebalanceModule lowLevelRebalanceModule = new LowLevelRebalanceModule();
         ERC20Module erc20Module = new ERC20Module();
+        AdministrationModule administrationModule = new AdministrationModule();
         ModulesProvider modules = new ModulesProvider(
             ModulesState({
                 borrowVaultsRead: IBorrowVaultRead(address(borrowVaultModule)),
@@ -44,7 +46,8 @@ contract ArchitectureBase is Test {
                 lowLevelRebalancerRead: ILowLevelRebalanceRead(address(lowLevelRebalanceModule)),
                 lowLevelRebalancerWrite: address(lowLevelRebalanceModule),
                 auctionRead: IAuctionRead(address(auctionModule)),
-                auctionWrite: address(auctionModule)
+                auctionWrite: address(auctionModule),
+                administrationWrite: address(administrationModule)
             })
         );
         ltv.setModules(modules);
