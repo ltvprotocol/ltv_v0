@@ -47,7 +47,7 @@ contract ArchitectureBase is Test {
                 lowLevelRebalancerWrite: address(lowLevelRebalanceModule),
                 auctionRead: IAuctionRead(address(auctionModule)),
                 auctionWrite: address(auctionModule),
-                administrationWrite: address(administrationModule)
+                administration: IAdministration(address(administrationModule))
             })
         );
         ltv.setModules(modules);

@@ -332,6 +332,22 @@ interface ILTV {
         address owner
     ) external returns (uint256);
 
+    function governor() external view returns (address);
+
+    function guardian() external view returns (address);
+
+    function deleverageWithdrawer() external view returns (address);
+
+    function updateOwner(address newOwner) external;
+
+    function updateGuardian(address newGuardian) external;
+
+    function updateGovernor(address newGovernor) external;
+
+    function updateEmergencyDeleverager(address newEmergencyDeleverager) external;
+
+    function lendingConnector() external view returns (address);
+
     event Approval(
         address indexed owner,
         address indexed spender,
