@@ -14,6 +14,7 @@ import '../structs/state/vault/MaxDepositMintBorrowVaultState.sol';
 import '../structs/state/vault/MaxWithdrawRedeemBorrowVaultState.sol';
 import '../structs/state/vault/MaxDepositMintCollateralVaultState.sol';
 import '../structs/state/vault/MaxWithdrawRedeemCollateralVaultState.sol';
+import '../structs/state/AuctionState.sol';
 
 abstract contract LTVState {
     // ------------------------------------------------
@@ -139,5 +140,16 @@ abstract contract LTVState {
     function maxWithdrawRedeemCollateralVaultState(address owner) internal view returns (MaxWithdrawRedeemCollateralVaultState memory) {
         return
             MaxWithdrawRedeemCollateralVaultState({previewVaultState: previewVaultState(), maxSafeLTV: maxSafeLTV, ownerBalance: balanceOf[owner]});
+    }
+
+    function getAuctionState() internal view returns (AuctionState memory) {
+        return
+            AuctionState({
+                futureCollateralAssets: futureCollateralAssets,
+                futureBorrowAssets: futureBorrowAssets,
+                futureRewardBorrowAssets: futureRewardBorrowAssets,
+                futureRewardCollateralAssets: futureRewardCollateralAssets,
+                startAuction: startAuction
+            });
     }
 }

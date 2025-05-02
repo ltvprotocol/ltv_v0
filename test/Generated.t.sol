@@ -12,17 +12,15 @@ import '../src/Constants.sol';
 import '../src/dummy/DummyLendingConnector.sol';
 import '../src/dummy/DummyOracleConnector.sol';
 import '../src/utils/VaultBalanceAsLendingConnector.sol';
+import {ArchitectureBase} from './utils/ArchitectureBase.t.sol';
 
-contract GeneratedTests is Test {
-    DummyLTV public dummyLTV;
+contract GeneratedTests is ArchitectureBase {
     MockERC20 public collateralToken;
     MockERC20 public borrowToken;
     MockDummyLending public lendingProtocol;
     IDummyOracle public oracle;
 
     
-    function replaceImplementation() internal virtual {}
-
     modifier initializeTest(
         uint256 realBorrow,
         uint256 realCollateral,

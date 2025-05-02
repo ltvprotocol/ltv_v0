@@ -10,11 +10,11 @@ import "../../states/readers/ApplicationStateReader.sol";
 abstract contract AuctionRead is ApplicationStateReader, ModulesAddressStateReader {
 
     function previewExecuteAuctionBorrow(int256 deltaUserBorrowAssets) external view returns (int256) {
-        return getModules().auctionRead().previewExecuteAuctionBorrow(deltaUserBorrowAssets, getStateRepresentation());
+        return getModules().auctionRead().previewExecuteAuctionBorrow(deltaUserBorrowAssets, getAuctionState());
     }
 
     function previewExecuteAuctionCollateral(int256 deltaUserCollateralAssets) external view returns (int256) {
-        return getModules().auctionRead().previewExecuteAuctionCollateral(deltaUserCollateralAssets, getStateRepresentation());
+        return getModules().auctionRead().previewExecuteAuctionCollateral(deltaUserCollateralAssets, getAuctionState());
     }
 
 }

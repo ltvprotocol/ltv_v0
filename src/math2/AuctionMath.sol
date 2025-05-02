@@ -1,27 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../State.sol';
-
-struct AuctionState {
-    int256 futureBorrowAssets;
-    int256 futureCollateralAssets;
-    int256 futureRewardBorrowAssets;
-    int256 futureRewardCollateralAssets;
-    int256 auctionStep;
-}
-
-struct DeltaAuctionState {
-    int256 deltaFutureBorrowAssets;
-    int256 deltaFutureCollateralAssets;
-    int256 deltaUserCollateralAssets;
-    int256 deltaUserBorrowAssets;
-    int256 deltaUserFutureRewardCollateralAssets;
-    int256 deltaUserFutureRewardBorrowAssets;
-    int256 deltaProtocolFutureRewardCollateralAssets;
-    int256 deltaProtocolFutureRewardBorrowAssets;
-}
-
+import '../utils/MulDiv.sol';
+import '../Constants.sol';
+import 'src/structs/data/AuctionData.sol';
+import 'src/structs/state_transition/DeltaAuctionState.sol';
 // since auction execution doesn't affect totalAssets we have only two conflicts here,
 // executor <=> future executor,
 // executor <=> fee collector
@@ -37,91 +20,96 @@ library AuctionMath {
     // delta future borrow needs to be rounded up to make auction more profitable for future executor
     function calculateDeltaFutureBorrowAssetsFromDeltaUserBorrowAssets(
         int256 deltaUserBorrowAssets,
-        AuctionState memory auctionState
+        int256 futureBorrowAssets,
+        int256 futureRewardBorrowAssets,
+        int256 auctionStep
     ) private pure returns (int256) {
         return
             (deltaUserBorrowAssets * int256(Constants.AMOUNT_OF_STEPS)).mulDivUp(
-                auctionState.futureBorrowAssets,
-                int256(Constants.AMOUNT_OF_STEPS) * auctionState.futureBorrowAssets + auctionState.auctionStep * auctionState.futureRewardBorrowAssets
+                futureBorrowAssets,
+                int256(Constants.AMOUNT_OF_STEPS) * futureBorrowAssets + auctionStep * futureRewardBorrowAssets
             );
     }
 
     // delta future collateral needs to be rounded down to make auction more profitable for future executor
     function calculateDeltaFutureCollateralAssetsFromDeltaUserCollateralAssets(
         int256 deltaUserCollateralAssets,
-        AuctionState memory auctionState
+        int256 futureCollateralAssets,
+        int256 futureRewardCollateralAssets,
+        int256 auctionStep
     ) private pure returns (int256) {
         return
             (deltaUserCollateralAssets * int256(Constants.AMOUNT_OF_STEPS)).mulDivDown(
-                auctionState.futureCollateralAssets,
-                int256(Constants.AMOUNT_OF_STEPS) *
-                    auctionState.futureCollateralAssets +
-                    auctionState.auctionStep *
-                    auctionState.futureRewardCollateralAssets
+                futureCollateralAssets,
+                int256(Constants.AMOUNT_OF_STEPS) * futureCollateralAssets + auctionStep * futureRewardCollateralAssets
             );
     }
 
     // delta future borrow needs to be rounded up to make auction more profitable for future executor
     function calculateDeltaFutureBorrowAssetsFromDeltaFutureCollateralAssets(
         int256 deltaFutureCollateralAssets,
-        AuctionState memory auctionState
+        int256 futureBorrowAssets,
+        int256 futureCollateralAssets
     ) private pure returns (int256) {
-        return deltaFutureCollateralAssets.mulDivUp(auctionState.futureBorrowAssets, auctionState.futureCollateralAssets);
+        return deltaFutureCollateralAssets.mulDivUp(futureBorrowAssets, futureCollateralAssets);
     }
 
     // delta future collateral needs to be rounded down to make auction more profitable for future executor
     function calculateDeltaFutureCollateralAssetsFromDeltaFutureBorrowAssets(
         int256 deltaFutureBorrowAssets,
-        AuctionState memory auctionState
+        int256 futureCollateralAssets,
+        int256 futureBorrowAssets
     ) private pure returns (int256) {
-        return deltaFutureBorrowAssets.mulDivDown(auctionState.futureCollateralAssets, auctionState.futureBorrowAssets);
+        return deltaFutureBorrowAssets.mulDivDown(futureCollateralAssets, futureBorrowAssets);
     }
 
     // needs to be rounded up to make auction more profitable for future executor
     function calculateDeltaFutureRewardBorrowAssetsFromDeltaFutureBorrowAssets(
         int256 deltaFutureBorrowAssets,
-        AuctionState memory auctionState
+        int256 futureBorrowAssets,
+        int256 futureRewardBorrowAssets
     ) private pure returns (int256) {
-        return auctionState.futureRewardBorrowAssets.mulDivUp(deltaFutureBorrowAssets, auctionState.futureBorrowAssets);
+        return futureRewardBorrowAssets.mulDivUp(deltaFutureBorrowAssets, futureBorrowAssets);
     }
 
     // needs to be rounded down to make auction more profitable for future executor
     function calculateDeltaFutureRewardCollateralAssetsFromDeltaFutureCollateralAssets(
         int256 deltaFutureCollateralAssets,
-        AuctionState memory auctionState
+        int256 futureCollateralAssets,
+        int256 futureRewardCollateralAssets
     ) private pure returns (int256) {
-        return auctionState.futureRewardCollateralAssets.mulDivDown(deltaFutureCollateralAssets, auctionState.futureCollateralAssets);
+        return futureRewardCollateralAssets.mulDivDown(deltaFutureCollateralAssets, futureCollateralAssets);
     }
 
     // Fee collector and auction executor conflict. Resolve to give more to auction executor
     function calculateDeltaUserFutureRewardBorrowAssetsFromDeltaFutureRewardBorrowAssets(
         int256 deltaFutureRewardBorrowAssets,
-        AuctionState memory auctionState
+        int256 auctionStep
     ) private pure returns (int256) {
-        return deltaFutureRewardBorrowAssets.mulDivUp(auctionState.auctionStep, int256(Constants.AMOUNT_OF_STEPS));
+        return deltaFutureRewardBorrowAssets.mulDivUp(auctionStep, int256(Constants.AMOUNT_OF_STEPS));
     }
 
     // Fee collector and auction executor conflict. Resolve to give more to auction executor
     function calculateDeltaUserFutureRewardCollateralAssetsFromDeltaFutureRewardCollateralAssets(
         int256 deltaFutureRewardCollateralAssets,
-        AuctionState memory auctionState
+        int256 auctionStep
     ) private pure returns (int256) {
-        return deltaFutureRewardCollateralAssets.mulDivDown(auctionState.auctionStep, int256(Constants.AMOUNT_OF_STEPS));
+        return deltaFutureRewardCollateralAssets.mulDivDown(auctionStep, int256(Constants.AMOUNT_OF_STEPS));
     }
 
     function calculateExecuteAuctionCollateral(
         int256 deltaUserCollateralAssets,
-        AuctionState memory auctionState
+        AuctionData memory data
     ) external pure returns (DeltaAuctionState memory) {
-        bool hasOppositeSign = auctionState.futureCollateralAssets * deltaUserCollateralAssets < 0;
-        bool deltaWithinAuctionSize = (auctionState.futureCollateralAssets + auctionState.futureRewardCollateralAssets + deltaUserCollateralAssets) *
-            (auctionState.futureCollateralAssets + auctionState.futureRewardCollateralAssets) >=
+        bool hasOppositeSign = data.futureCollateralAssets * deltaUserCollateralAssets < 0;
+        bool deltaWithinAuctionSize = (data.futureCollateralAssets + data.futureRewardCollateralAssets + deltaUserCollateralAssets) *
+            (data.futureCollateralAssets + data.futureRewardCollateralAssets) >=
             0;
         require(
             hasOppositeSign && deltaWithinAuctionSize,
             NoAuctionForProvidedDeltaFutureCollateral(
-                auctionState.futureCollateralAssets,
-                auctionState.futureRewardCollateralAssets,
+                data.futureCollateralAssets,
+                data.futureRewardCollateralAssets,
                 deltaUserCollateralAssets
             )
         );
@@ -130,26 +118,31 @@ library AuctionMath {
         deltaState.deltaUserCollateralAssets = deltaUserCollateralAssets;
         deltaState.deltaFutureCollateralAssets = calculateDeltaFutureCollateralAssetsFromDeltaUserCollateralAssets(
             deltaState.deltaUserCollateralAssets,
-            auctionState
+            data.futureCollateralAssets,
+            data.futureRewardCollateralAssets,
+            data.auctionStep
         );
 
         deltaState.deltaFutureBorrowAssets = calculateDeltaFutureBorrowAssetsFromDeltaFutureCollateralAssets(
             deltaState.deltaFutureCollateralAssets,
-            auctionState
+            data.futureBorrowAssets,
+            data.futureCollateralAssets
         );
 
         int256 deltaFutureRewardBorrowAssets = calculateDeltaFutureRewardBorrowAssetsFromDeltaFutureBorrowAssets(
             deltaState.deltaFutureBorrowAssets,
-            auctionState
+            data.futureBorrowAssets,
+            data.futureRewardBorrowAssets
         );
         int256 deltaFutureRewardCollateralAssets = calculateDeltaFutureRewardCollateralAssetsFromDeltaFutureCollateralAssets(
             deltaState.deltaFutureCollateralAssets,
-            auctionState
+            data.futureCollateralAssets,
+            data.futureRewardCollateralAssets
         );
 
         deltaState.deltaUserFutureRewardBorrowAssets = calculateDeltaUserFutureRewardBorrowAssetsFromDeltaFutureRewardBorrowAssets(
             deltaFutureRewardBorrowAssets,
-            auctionState
+            data.auctionStep
         );
         deltaState.deltaUserFutureRewardCollateralAssets = deltaState.deltaUserCollateralAssets - deltaState.deltaFutureCollateralAssets;
 
@@ -163,41 +156,46 @@ library AuctionMath {
 
     function calculateExecuteAuctionBorrow(
         int256 deltaUserBorrowAssets,
-        AuctionState memory auctionState
+        AuctionData memory data
     ) external pure returns (DeltaAuctionState memory) {
-        bool hasOppositeSign = auctionState.futureBorrowAssets * deltaUserBorrowAssets < 0;
-        bool deltaWithinAuctionSize = (auctionState.futureBorrowAssets + auctionState.futureRewardBorrowAssets + deltaUserBorrowAssets) *
-            (auctionState.futureBorrowAssets + auctionState.futureRewardBorrowAssets) >=
+        bool hasOppositeSign = data.futureBorrowAssets * deltaUserBorrowAssets < 0;
+        bool deltaWithinAuctionSize = (data.futureBorrowAssets + data.futureRewardBorrowAssets + deltaUserBorrowAssets) *
+            (data.futureBorrowAssets + data.futureRewardBorrowAssets) >=
             0;
         require(
             hasOppositeSign && deltaWithinAuctionSize,
-            NoAuctionForProvidedDeltaFutureBorrow(auctionState.futureBorrowAssets, auctionState.futureRewardBorrowAssets, deltaUserBorrowAssets)
+            NoAuctionForProvidedDeltaFutureBorrow(data.futureBorrowAssets, data.futureRewardBorrowAssets, deltaUserBorrowAssets)
         );
 
         DeltaAuctionState memory deltaState;
         deltaState.deltaUserBorrowAssets = deltaUserBorrowAssets;
         deltaState.deltaFutureBorrowAssets = calculateDeltaFutureBorrowAssetsFromDeltaUserBorrowAssets(
             deltaState.deltaUserBorrowAssets,
-            auctionState
+            data.futureBorrowAssets,
+            data.futureRewardBorrowAssets,
+            data.auctionStep
         );
 
         deltaState.deltaFutureCollateralAssets = calculateDeltaFutureCollateralAssetsFromDeltaFutureBorrowAssets(
             deltaState.deltaFutureBorrowAssets,
-            auctionState
+            data.futureCollateralAssets,
+            data.futureBorrowAssets
         );
 
         int256 deltaFutureRewardBorrowAssets = calculateDeltaFutureRewardBorrowAssetsFromDeltaFutureBorrowAssets(
             deltaState.deltaFutureBorrowAssets,
-            auctionState
+            data.futureBorrowAssets,
+            data.futureRewardBorrowAssets
         );
         int256 deltaFutureRewardCollateralAssets = calculateDeltaFutureRewardCollateralAssetsFromDeltaFutureCollateralAssets(
             deltaState.deltaFutureCollateralAssets,
-            auctionState
+            data.futureCollateralAssets,
+            data.futureRewardCollateralAssets
         );
 
         deltaState.deltaUserFutureRewardCollateralAssets = calculateDeltaUserFutureRewardCollateralAssetsFromDeltaFutureRewardCollateralAssets(
             deltaFutureRewardCollateralAssets,
-            auctionState
+            data.auctionStep
         );
         deltaState.deltaUserFutureRewardBorrowAssets = deltaState.deltaUserBorrowAssets - deltaState.deltaFutureBorrowAssets;
 
