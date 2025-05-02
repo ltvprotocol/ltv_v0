@@ -3,10 +3,10 @@ pragma solidity ^0.8.28;
 
 import 'src/state_transition/Whitelist.sol';
 import 'src/state_transition/FunctionStopper.sol';
-import 'src/events/ERC20Events.sol';
+import 'src/events/IERC20Events.sol';
 import '@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol';
 
-abstract contract ERC20WriteImpl is Whitelist, FunctionStopper, ReentrancyGuardUpgradeable, ERC20Events {
+abstract contract ERC20WriteImpl is Whitelist, FunctionStopper, ReentrancyGuardUpgradeable, IERC20Events {
     function transferFrom(
         address sender,
         address recipient,

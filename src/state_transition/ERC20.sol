@@ -3,10 +3,10 @@ pragma solidity ^0.8.28;
 
 import './Whitelist.sol';
 import './FunctionStopper.sol';
-import '../events/ERC20Events.sol';
+import '../events/IERC20Events.sol';
 import '@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol';
 
-contract ERC20 is Whitelist, FunctionStopper, ReentrancyGuardUpgradeable, ERC20Events {
+contract ERC20 is Whitelist, FunctionStopper, ReentrancyGuardUpgradeable, IERC20Events {
     error DepositIsDisabled();
     error WithdrawIsDisabled();
 

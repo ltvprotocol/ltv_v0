@@ -7,7 +7,7 @@ import '../../../../state_transition/ERC20.sol';
 import '../../../../state_transition/ApplyMaxGrowthFee.sol';
 import '../../../../state_transition/MintProtocolRewards.sol';
 import '../../../../state_transition/Lending.sol';
-import '../../../../ERC4626Events.sol';
+import 'src/events/IERC4626Events.sol';
 import '../preview/PreviewWithdraw.sol';
 import '../../../../math2/NextStep.sol';
 import '../../../../state_transition/TransferFromProtocol.sol';
@@ -19,7 +19,7 @@ abstract contract Withdraw is
     Lending,
     VaultStateTransition,
     TransferFromProtocol,
-    ERC4626Events
+    IERC4626Events
 {
     using uMulDiv for uint256;
 
