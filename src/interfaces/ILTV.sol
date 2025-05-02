@@ -196,7 +196,6 @@ interface ILTV {
         view
         returns (
             int256,
-            int256,
             int256
         );
 
@@ -212,7 +211,6 @@ interface ILTV {
         external
         view
         returns (
-            int256,
             int256,
             int256
         );
