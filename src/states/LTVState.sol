@@ -15,6 +15,11 @@ import '../structs/state/vault/MaxWithdrawRedeemBorrowVaultState.sol';
 import '../structs/state/vault/MaxDepositMintCollateralVaultState.sol';
 import '../structs/state/vault/MaxWithdrawRedeemCollateralVaultState.sol';
 import '../structs/state/AuctionState.sol';
+import '../structs/state/low_level/PreviewLowLevelRebalanceState.sol';
+import '../structs/state/low_level/MaxLowLevelRebalanceSharesState.sol';
+import '../structs/state/low_level/MaxLowLevelRebalanceBorrowStateData.sol';
+import '../structs/state/low_level/MaxLowLevelRebalanceCollateralStateData.sol';
+import '../structs/state/low_level/ExecuteLowLevelRebalanceState.sol';
 
 abstract contract LTVState {
     // ------------------------------------------------
@@ -151,5 +156,46 @@ abstract contract LTVState {
                 futureRewardCollateralAssets: futureRewardCollateralAssets,
                 startAuction: startAuction
             });
+    }
+
+    function previewLowLevelRebalanceState() internal view returns (PreviewLowLevelRebalanceState memory) {
+        return PreviewLowLevelRebalanceState({
+            maxGrowthFeeState: maxGrowthFeeState(),
+            targetLTV: targetLTV,
+            blockNumber: block.number,
+            startAuction: startAuction
+        });
+    }
+
+    function executeLowLevelRebalanceState() internal view returns(ExecuteLowLevelRebalanceState memory) {
+        return ExecuteLowLevelRebalanceState({
+            previewLowLevelRebalanceState: previewLowLevelRebalanceState(),
+            maxTotalAssetsInUnderlying: maxTotalAssetsInUnderlying
+        });
+    }
+
+    function maxLowLevelRebalanceSharesState() internal view returns (MaxLowLevelRebalanceSharesState memory) {
+        return MaxLowLevelRebalanceSharesState({
+            maxGrowthFeeState: maxGrowthFeeState(),
+            maxTotalAssetsInUnderlying: maxTotalAssetsInUnderlying
+        });
+    }
+
+    function maxLowLevelRebalanceBorrowState() internal view returns (MaxLowLevelRebalanceBorrowStateData memory) {
+        return MaxLowLevelRebalanceBorrowStateData({
+            realBorrowAssets: lendingConnector.getRealBorrowAssets(),
+            maxTotalAssetsInUnderlying: maxTotalAssetsInUnderlying,
+            targetLTV: targetLTV,
+            borrowPrice: oracleConnector.getPriceBorrowOracle()
+        });
+    }
+
+    function maxLowLevelRebalanceCollateralState() internal view returns (MaxLowLevelRebalanceCollateralStateData memory) {
+        return MaxLowLevelRebalanceCollateralStateData({
+            realCollateralAssets: lendingConnector.getRealCollateralAssets(),
+            maxTotalAssetsInUnderlying: maxTotalAssetsInUnderlying,
+            targetLTV: targetLTV,
+            collateralPrice: oracleConnector.getPriceCollateralOracle()
+        });
     }
 }

@@ -279,6 +279,7 @@ contract DummyLTVTest is ArchitectureBase {
         address owner,
         address user
     ) public initializeBalancedTest(owner, user, 100000, -10000, -10000, 1000) {
+        replaceImplementation();
         (int256 deltaRealCollateralAssets, int256 deltaRealBorrowAssets) = dummyLTV.executeLowLevelRebalanceShares(0);
 
         assertEq(deltaRealCollateralAssets, -4000);
@@ -289,6 +290,7 @@ contract DummyLTVTest is ArchitectureBase {
         address owner,
         address user
     ) public initializeBalancedTest(owner, user, 100000, -10000, -10000, 1000) {
+        replaceImplementation();
         (int256 deltaRealBorrowAssets, int256 deltaShares) = dummyLTV.executeLowLevelRebalanceCollateral(-4000);
 
         assertEq(deltaShares, 0);
@@ -299,6 +301,7 @@ contract DummyLTVTest is ArchitectureBase {
         address owner,
         address user
     ) public initializeBalancedTest(owner, user, 100000, -10000, -10000, 1000) {
+        replaceImplementation();
         (int256 deltaRealCollateralAssets, int256 deltaShares) = dummyLTV.executeLowLevelRebalanceBorrow(-7500);
 
         assertEq(deltaShares, 0);
@@ -306,6 +309,7 @@ contract DummyLTVTest is ArchitectureBase {
     }
 
     function test_lowLevelPositiveAuctionShares(address owner, address user) public initializeBalancedTest(owner, user, 100000, 10000, 10000, -1000) {
+        replaceImplementation();
         (int256 deltaRealCollateralAssets, int256 deltaRealBorrowAssets) = dummyLTV.executeLowLevelRebalanceShares(1000 * 100);
 
         assertEq(deltaRealCollateralAssets, 7500);
@@ -323,6 +327,7 @@ contract DummyLTVTest is ArchitectureBase {
         address owner,
         address user
     ) public initializeBalancedTest(owner, user, 100000, 10000, 10000, -1000) {
+        replaceImplementation();
         (int256 deltaRealBorrowAssets, int256 deltaShares) = dummyLTV.executeLowLevelRebalanceCollateral(7500);
 
         assertEq(deltaRealBorrowAssets, 14500);
@@ -471,6 +476,7 @@ contract DummyLTVTest is ArchitectureBase {
         vm.stopPrank();
         vm.startPrank(owner);
         dummyLTV.setMaxTotalAssetsInUnderlying(10**18 * 100 + 10**8);
+        replaceImplementation();
         assertEq(dummyLTV.maxLowLevelRebalanceCollateral(), 2 * 10**6);
     }
 
@@ -478,6 +484,7 @@ contract DummyLTVTest is ArchitectureBase {
         vm.stopPrank();
         vm.startPrank(owner);
         dummyLTV.setMaxTotalAssetsInUnderlying(10**18 * 100 + 10**8);
+        replaceImplementation();
         assertEq(dummyLTV.maxLowLevelRebalanceBorrow(), 3 * 10**6);
     }
 
@@ -485,6 +492,7 @@ contract DummyLTVTest is ArchitectureBase {
         vm.stopPrank();
         vm.startPrank(owner);
         dummyLTV.setMaxTotalAssetsInUnderlying(10**18 * 100 + 10**8);
+        replaceImplementation();
         assertEq(dummyLTV.maxLowLevelRebalanceShares(), 10**8);
     }
 }

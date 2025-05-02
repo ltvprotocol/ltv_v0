@@ -33,7 +33,7 @@ abstract contract Redeem is MaxRedeem, ApplyMaxGrowthFee, MintProtocolRewards, L
             return 0;
         }
 
-        applyMaxGrowthFee(data.previewBorrowVaultData.supplyAfterFee, data.previewBorrowVaultData.totalAssets);
+        applyMaxGrowthFee(data.previewBorrowVaultData.supplyAfterFee, totalAssets(true, state.previewVaultState.maxGrowthFeeState.totalAssetsState));
 
         _mintProtocolRewards(
             MintProtocolRewardsData({
