@@ -11,6 +11,7 @@ import '../facades/reads/BorrowVaultRead.sol';
 import '../facades/writes/BorrowVaultWrite.sol';
 import '../facades/reads/CollateralVaultRead.sol';
 import '../facades/writes/CollateralVaultWrite.sol';
+import '../facades/writes/AdministrationWrite.sol';
 
 contract LTV is
     AuctionRead,
@@ -22,5 +23,6 @@ contract LTV is
     BorrowVaultRead,
     BorrowVaultWrite,
     CollateralVaultRead,
-    CollateralVaultWrite
+    CollateralVaultWrite,
+    AdministrationWrite
 {}
