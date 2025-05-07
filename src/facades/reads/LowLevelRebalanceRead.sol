@@ -17,7 +17,7 @@ abstract contract LowLevelRebalanceRead is LTVState {
         return modules.lowLevelRebalancerRead().previewLowLevelRebalanceCollateral(deltaCollateralAssets, previewLowLevelRebalanceState());
     }
 
-    function previewLowLevelRebalanceBorrowHint(int256 deltaBorrowAssets, bool isSharesPositiveHint) external view returns (int256, int256, int256) {
+    function previewLowLevelRebalanceBorrowHint(int256 deltaBorrowAssets, bool isSharesPositiveHint) external view returns (int256, int256) {
         return
             modules.lowLevelRebalancerRead().previewLowLevelRebalanceBorrowHint(
                 deltaBorrowAssets,
@@ -29,7 +29,7 @@ abstract contract LowLevelRebalanceRead is LTVState {
     function previewLowLevelRebalanceCollateralHint(
         int256 deltaCollateralAssets,
         bool isSharesPositiveHint
-    ) external view returns (int256, int256, int256) {
+    ) external view returns (int256, int256) {
         return
             modules.lowLevelRebalancerRead().previewLowLevelRebalanceCollateralHint(
                 deltaCollateralAssets,

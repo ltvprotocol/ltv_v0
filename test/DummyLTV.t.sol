@@ -13,6 +13,7 @@ import '../src/utils/ConstantSlippageProvider.sol';
 import '../src/utils/WhitelistRegistry.sol';
 import '../src/utils/VaultBalanceAsLendingConnector.sol';
 import '../src/utils/Timelock.sol';
+import {ILTV} from '../src/interfaces/ILTV.sol';
 import {ArchitectureBase} from './utils/ArchitectureBase.t.sol';
 
 contract DummyLTVTest is ArchitectureBase {
@@ -224,9 +225,11 @@ contract DummyLTVTest is ArchitectureBase {
 
     function test_executeDepositAuctionBorrow(address owner, address user) public initializeBalancedTest(owner, user, 100000, 10000, 10000, -1000) {
         collateralToken.approve(address(dummyLTV), type(uint112).max);
+        int256 expectedDeltaCollateral = dummyLTV.previewExecuteAuctionBorrow(-1000);
         int256 deltaCollateral = dummyLTV.executeAuctionBorrow(-1000);
 
         assertEq(deltaCollateral, -475);
+        assertEq(expectedDeltaCollateral, deltaCollateral);
     }
 
     function test_executeDepositAuctionCollateral(
@@ -234,9 +237,11 @@ contract DummyLTVTest is ArchitectureBase {
         address user
     ) public initializeBalancedTest(owner, user, 100000, 10000, 10000, -1000) {
         collateralToken.approve(address(dummyLTV), type(uint112).max);
+        int256 expectedDeltaBorrow = dummyLTV.previewExecuteAuctionCollateral(-475);
         int256 deltaBorrow = dummyLTV.executeAuctionCollateral(-475);
 
         assertEq(deltaBorrow, -1000);
+        assertEq(expectedDeltaBorrow, deltaBorrow);
     }
 
     function test_executeWithdrawAuctionBorrow(address owner, address user) public initializeBalancedTest(owner, user, 100000, -10000, -10000, 1000) {
@@ -251,63 +256,134 @@ contract DummyLTVTest is ArchitectureBase {
         address user
     ) public initializeBalancedTest(owner, user, 100000, -10000, -10000, 1000) {
         borrowToken.approve(address(dummyLTV), type(uint112).max);
+        int256 expectedDeltaBorrow = dummyLTV.previewExecuteAuctionCollateral(500);
         int256 deltaBorrow = dummyLTV.executeAuctionCollateral(500);
 
         assertEq(deltaBorrow, 950);
+        assertEq(expectedDeltaBorrow, deltaBorrow);
     }
 
     function test_lowLevelNegativeAuctionShares(
         address owner,
         address user
     ) public initializeBalancedTest(owner, user, 100000, -10000, -10000, 1000) {
+        (int256 expectedDeltaRealCollateralAssets, int256 expectedDeltaRealBorrowAssets) = dummyLTV.previewLowLevelRebalanceShares(0);
         (int256 deltaRealCollateralAssets, int256 deltaRealBorrowAssets) = dummyLTV.executeLowLevelRebalanceShares(0);
 
         assertEq(deltaRealCollateralAssets, -4000);
         assertEq(deltaRealBorrowAssets, -7500);
+        assertEq(expectedDeltaRealCollateralAssets, deltaRealCollateralAssets);
+        assertEq(expectedDeltaRealBorrowAssets, deltaRealBorrowAssets);
     }
 
     function test_lowLevelNegativeAuctionCollateral(
         address owner,
         address user
     ) public initializeBalancedTest(owner, user, 100000, -10000, -10000, 1000) {
+        (int256 expectedDeltaRealBorrowAssets, int256 expectedDeltaShares) = dummyLTV.previewLowLevelRebalanceCollateral(-4000);
         (int256 deltaRealBorrowAssets, int256 deltaShares) = dummyLTV.executeLowLevelRebalanceCollateral(-4000);
 
         assertEq(deltaShares, 0);
         assertEq(deltaRealBorrowAssets, -7500);
+        assertEq(expectedDeltaShares, deltaShares);
+        assertEq(expectedDeltaRealBorrowAssets, deltaRealBorrowAssets);
+    }
+
+    function test_lowLevelNegativeAuctionCollateralHint(
+        address owner,
+        address user
+    ) public initializeBalancedTest(owner, user, 100000, -10000, -10000, 1000) {
+        (int256 expectedDeltaRealBorrowAssets, int256 expectedDeltaShares) = ILTV(address(dummyLTV)).previewLowLevelRebalanceCollateralHint(-4000, true);
+        (int256 deltaRealBorrowAssets, int256 deltaShares) = ILTV(address(dummyLTV)).executeLowLevelRebalanceCollateralHint(-4000, true);
+
+        assertEq(deltaShares, 0);
+        assertEq(deltaRealBorrowAssets, -7500);
+        assertEq(expectedDeltaShares, deltaShares);
+        assertEq(expectedDeltaRealBorrowAssets, deltaRealBorrowAssets);
     }
 
     function test_lowLevelNegativeAuctionBorrow(
         address owner,
         address user
     ) public initializeBalancedTest(owner, user, 100000, -10000, -10000, 1000) {
+        (int256 expectedDeltaRealCollateralAssets, int256 expectedDeltaShares) = dummyLTV.previewLowLevelRebalanceBorrow(-7500);
         (int256 deltaRealCollateralAssets, int256 deltaShares) = dummyLTV.executeLowLevelRebalanceBorrow(-7500);
 
         assertEq(deltaShares, 0);
         assertEq(deltaRealCollateralAssets, -4000);
+        assertEq(expectedDeltaShares, deltaShares);
+        assertEq(expectedDeltaRealCollateralAssets, deltaRealCollateralAssets);
+    }
+
+    function test_lowLevelNegativeAuctionBorrowHint(
+        address owner,
+        address user
+    ) public initializeBalancedTest(owner, user, 100000, -10000, -10000, 1000) {
+        (int256 expectedDeltaRealCollateralAssets, int256 expectedDeltaShares) = ILTV(address(dummyLTV)).previewLowLevelRebalanceBorrowHint(-7500, true);
+        (int256 deltaRealCollateralAssets, int256 deltaShares) = dummyLTV.executeLowLevelRebalanceBorrowHint(-7500, true);
+
+        assertEq(deltaShares, 0);
+        assertEq(deltaRealCollateralAssets, -4000);
+        assertEq(expectedDeltaShares, deltaShares);
+        assertEq(expectedDeltaRealCollateralAssets, deltaRealCollateralAssets);
     }
 
     function test_lowLevelPositiveAuctionShares(address owner, address user) public initializeBalancedTest(owner, user, 100000, 10000, 10000, -1000) {
+        (int256 expectedDeltaRealCollateralAssets, int256 expectedDeltaRealBorrowAssets) = dummyLTV.previewLowLevelRebalanceShares(1000 * 100);
         (int256 deltaRealCollateralAssets, int256 deltaRealBorrowAssets) = dummyLTV.executeLowLevelRebalanceShares(1000 * 100);
 
         assertEq(deltaRealCollateralAssets, 7500);
         assertEq(deltaRealBorrowAssets, 14500);
+        assertEq(expectedDeltaRealCollateralAssets, deltaRealCollateralAssets);
+        assertEq(expectedDeltaRealBorrowAssets, deltaRealBorrowAssets);
     }
 
     function test_lowLevelPositiveAuctionBorrow(address owner, address user) public initializeBalancedTest(owner, user, 100000, 10000, 10000, -1000) {
+        replaceImplementation();
+        (int256 expectedDeltaRealCollateralAssets, int256 expectedDeltaShares) = dummyLTV.previewLowLevelRebalanceBorrow(14500);
         (int256 deltaRealCollateralAssets, int256 deltaShares) = dummyLTV.executeLowLevelRebalanceBorrow(14500);
 
         assertEq(deltaRealCollateralAssets, 7500);
         assertEq(deltaShares, 1000 * 100);
+        assertEq(expectedDeltaRealCollateralAssets, deltaRealCollateralAssets);
+        assertEq(expectedDeltaShares, deltaShares);
+    }
+
+    function test_lowLevelPositiveAuctionBorrowHint(address owner, address user) public initializeBalancedTest(owner, user, 100000, 10000, 10000, -1000) {
+        replaceImplementation();
+        (int256 expectedDeltaRealCollateralAssets, int256 expectedDeltaShares) = ILTV(address(dummyLTV)).previewLowLevelRebalanceBorrowHint(14500, true);
+        (int256 deltaRealCollateralAssets, int256 deltaShares) = dummyLTV.executeLowLevelRebalanceBorrowHint(14500, true);
+
+        assertEq(deltaRealCollateralAssets, 7500);
+        assertEq(deltaShares, 1000 * 100);
+        assertEq(expectedDeltaRealCollateralAssets, deltaRealCollateralAssets);
+        assertEq(expectedDeltaShares, deltaShares);
     }
 
     function test_lowLevelPositiveAuctionCollateral(
         address owner,
         address user
     ) public initializeBalancedTest(owner, user, 100000, 10000, 10000, -1000) {
+        (int256 expectedDeltaRealBorrowAssets, int256 expectedDeltaShares) = dummyLTV.previewLowLevelRebalanceCollateral(7500);
         (int256 deltaRealBorrowAssets, int256 deltaShares) = dummyLTV.executeLowLevelRebalanceCollateral(7500);
 
         assertEq(deltaRealBorrowAssets, 14500);
         assertEq(deltaShares, 1000 * 100);
+        assertEq(expectedDeltaRealBorrowAssets, deltaRealBorrowAssets);
+        assertEq(expectedDeltaShares, deltaShares);
+    }
+
+    function test_lowLevelPositiveAuctionCollateralHint(
+        address owner,
+        address user
+    ) public initializeBalancedTest(owner, user, 100000, 10000, 10000, -1000) {
+        (int256 expectedDeltaRealBorrowAssets, int256 expectedDeltaShares) = ILTV(address(dummyLTV)).previewLowLevelRebalanceCollateralHint(7500, true);
+        (int256 deltaRealBorrowAssets, int256 deltaShares) = dummyLTV.executeLowLevelRebalanceCollateralHint(7500, true);
+
+        assertEq(deltaRealBorrowAssets, 14500);
+        assertEq(deltaShares, 1000 * 100);
+        assertEq(expectedDeltaRealBorrowAssets, deltaRealBorrowAssets);
+        assertEq(expectedDeltaShares, deltaShares);
     }
 
     function test_maxGrowthFee(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 18, 0, 0, 0) {
@@ -462,5 +538,316 @@ contract DummyLTVTest is ArchitectureBase {
         vm.startPrank(owner);
         dummyLTV.setMaxTotalAssetsInUnderlying(10**18 * 100 + 10**8);
         assertEq(dummyLTV.maxLowLevelRebalanceShares(), 10**8);
+    }
+
+    function test_setTargetLTV(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        uint128 newValue = 7 * 10**17;
+        address governor = ILTV(address(dummyLTV)).governor();
+        
+        vm.startPrank(governor);
+        dummyLTV.setTargetLTV(newValue);
+        assertEq(dummyLTV.targetLTV(), newValue);
+        
+        // Should revert if not governor
+        vm.startPrank(user);
+        vm.expectRevert();
+        dummyLTV.setTargetLTV(newValue);
+        
+        // Should revert if outside bounds
+        vm.startPrank(governor);
+        uint128 tooHighValue = dummyLTV.maxSafeLTV() + 1;
+        vm.expectRevert();
+        dummyLTV.setTargetLTV(tooHighValue);
+        
+        uint128 tooLowValue = dummyLTV.minProfitLTV() - 1;
+        vm.expectRevert();
+        dummyLTV.setTargetLTV(tooLowValue);
+    }
+
+    function test_setMaxSafeLTV(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        uint128 newValue = 95 * 10**16;
+        address governor = ILTV(address(dummyLTV)).governor();
+        vm.startPrank(governor);
+        dummyLTV.setMaxSafeLTV(newValue);
+        assertEq(dummyLTV.maxSafeLTV(), newValue);
+        
+        // Should revert if not governor
+        vm.startPrank(user);
+        vm.expectRevert();
+        dummyLTV.setMaxSafeLTV(newValue);
+        
+        // Should revert if below target
+        vm.startPrank(governor);
+        uint128 tooLowValue = dummyLTV.targetLTV() - 1;
+        vm.expectRevert();
+        dummyLTV.setMaxSafeLTV(tooLowValue);
+    }
+
+    function test_setMinProfitLTV(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        uint128 newValue = 6 * 10**17;
+        address governor = ILTV(address(dummyLTV)).governor();
+
+        vm.startPrank(governor);
+        dummyLTV.setMinProfitLTV(newValue);
+        assertEq(dummyLTV.minProfitLTV(), newValue);
+        
+        // Should revert if not governor
+        vm.startPrank(user);
+        vm.expectRevert();
+        dummyLTV.setMinProfitLTV(newValue);
+        
+        // Should revert if above target
+        vm.startPrank(governor);
+        uint128 tooHighValue = dummyLTV.targetLTV() + 1;
+        vm.expectRevert();
+        dummyLTV.setMinProfitLTV(tooHighValue);
+    }
+
+    function test_setFeeCollector(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        address newCollector = address(0x1234);
+        address governor = ILTV(address(dummyLTV)).governor();
+        vm.startPrank(governor);
+        dummyLTV.setFeeCollector(newCollector);
+        assertEq(dummyLTV.feeCollector(), newCollector);
+        
+        // Should revert if not governor
+        vm.startPrank(user);
+        vm.expectRevert();
+        dummyLTV.setFeeCollector(newCollector);
+    }
+    
+    function test_setMaxTotalAssetsInUnderlying(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        uint256 newValue = 1000000 * 10**18;
+        address governor = ILTV(address(dummyLTV)).governor();
+        vm.startPrank(governor);
+        dummyLTV.setMaxTotalAssetsInUnderlying(newValue);
+        assertEq(dummyLTV.maxTotalAssetsInUnderlying(), newValue);
+        
+        // Should revert if not governor
+        vm.startPrank(user);
+        vm.expectRevert();
+        dummyLTV.setMaxTotalAssetsInUnderlying(newValue);
+    }
+    
+    function test_setMaxDeleverageFee(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        uint256 newValue = 1 * 10**17;  // 10%
+        address governor = ILTV(address(dummyLTV)).governor();
+        vm.startPrank(governor);
+        dummyLTV.setMaxDeleverageFee(newValue);
+        assertEq(dummyLTV.maxDeleverageFee(), newValue);
+        
+        // Should revert if not governor
+        vm.startPrank(user);
+        vm.expectRevert();
+        dummyLTV.setMaxDeleverageFee(newValue);
+        
+        // Should revert if too high
+        vm.startPrank(governor);
+        uint256 tooHighValue = 10**18; // 100%
+        vm.expectRevert();
+        dummyLTV.setMaxDeleverageFee(tooHighValue);
+    }
+    
+    function test_setIsWhitelistActivated(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        address governor = ILTV(address(dummyLTV)).governor();
+        vm.startPrank(governor);
+        dummyLTV.setIsWhitelistActivated(true);
+        assertEq(dummyLTV.isWhitelistActivated(), true);
+        
+        dummyLTV.setIsWhitelistActivated(false);
+        assertEq(dummyLTV.isWhitelistActivated(), false);
+        
+        // Should revert if not governor
+        vm.startPrank(user);
+        vm.expectRevert();
+        dummyLTV.setIsWhitelistActivated(true);
+    }
+    
+    function test_setWhitelistRegistry(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        address governor = ILTV(address(dummyLTV)).governor();
+        vm.startPrank(governor);
+        WhitelistRegistry registry = new WhitelistRegistry(owner);
+        
+        dummyLTV.setWhitelistRegistry(registry);
+        assertEq(address(dummyLTV.whitelistRegistry()), address(registry));
+        
+        // Should revert if not governor
+        vm.startPrank(user);
+        vm.expectRevert();
+        dummyLTV.setWhitelistRegistry(IWhitelistRegistry(address(0)));
+    }
+    
+    function test_setSlippageProvider(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        address governor = ILTV(address(dummyLTV)).governor();
+        vm.startPrank(governor);
+        ConstantSlippageProvider provider = new ConstantSlippageProvider(0, 0, owner);
+        
+        dummyLTV.setSlippageProvider(provider);
+        assertEq(address(dummyLTV.slippageProvider()), address(provider));
+        
+        // Should revert if not governor
+        vm.startPrank(user);
+        vm.expectRevert();
+        dummyLTV.setSlippageProvider(ISlippageProvider(address(0)));
+    }
+    
+    function test_allowDisableFunctions(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        address guardian = ILTV(address(dummyLTV)).guardian();
+        vm.startPrank(guardian);
+        
+        bytes4[] memory signatures = new bytes4[](1);
+        signatures[0] = dummyLTV.deposit.selector;
+        
+        dummyLTV.allowDisableFunctions(signatures, true);
+        assertTrue(dummyLTV._isFunctionDisabled(signatures[0]));
+        
+        dummyLTV.allowDisableFunctions(signatures, false);
+        assertFalse(dummyLTV._isFunctionDisabled(signatures[0]));
+        
+        // Should revert if not guardian
+        vm.startPrank(user);
+        vm.expectRevert();
+        dummyLTV.allowDisableFunctions(signatures, true);
+    }
+    
+    function test_setIsDepositDisabled(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        address guardian = ILTV(address(dummyLTV)).guardian();
+        vm.startPrank(guardian);
+        
+        dummyLTV.setIsDepositDisabled(true);
+        assertTrue(dummyLTV.isDepositDisabled());
+        
+        dummyLTV.setIsDepositDisabled(false);
+        assertFalse(dummyLTV.isDepositDisabled());
+        
+        // Should revert if not guardian
+        vm.startPrank(user);
+        vm.expectRevert();
+        dummyLTV.setIsDepositDisabled(true);
+    }
+    
+    function test_setIsWithdrawDisabled(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        address guardian = ILTV(address(dummyLTV)).guardian();
+        vm.startPrank(guardian);
+        
+        dummyLTV.setIsWithdrawDisabled(true);
+        assertTrue(dummyLTV.isWithdrawDisabled());
+        
+        dummyLTV.setIsWithdrawDisabled(false);
+        assertFalse(dummyLTV.isWithdrawDisabled());
+        
+        // Should revert if not guardian
+        vm.startPrank(user);
+        vm.expectRevert();
+        dummyLTV.setIsWithdrawDisabled(true);
+    }
+    
+    function test_setLendingConnector(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        vm.startPrank(owner);
+        address mockConnector = address(0x9876);
+        
+        dummyLTV.setLendingConnector(ILendingConnector(mockConnector));
+        assertEq(address(ILTV(address(dummyLTV)).lendingConnector()), mockConnector);
+        
+        // Should revert if not owner
+        vm.startPrank(user);
+        vm.expectRevert();
+        dummyLTV.setLendingConnector(ILendingConnector(address(0)));
+    }
+    
+    function test_setOracleConnector(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        vm.startPrank(owner);
+        address mockConnector = address(0x9876);
+        
+        dummyLTV.setOracleConnector(IOracleConnector(mockConnector));
+        assertEq(address(dummyLTV.oracleConnector()), mockConnector);
+        
+        // Should revert if not owner
+        vm.startPrank(user);
+        vm.expectRevert();
+        dummyLTV.setOracleConnector(IOracleConnector(address(0)));
+    }
+    
+    function test_updateEmergencyDeleverager(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        vm.startPrank(owner);
+        address newDeleverager = address(0x5678);
+        
+        dummyLTV.updateEmergencyDeleverager(newDeleverager);
+        assertEq(dummyLTV.emergencyDeleverager(), newDeleverager);
+        
+        // Should revert if not owner
+        vm.startPrank(user);
+        vm.expectRevert();
+        dummyLTV.updateEmergencyDeleverager(address(0));
+    }
+    
+    function test_updateOwner(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        vm.startPrank(owner);
+        address newOwner = address(0x5678);
+        
+        ILTV(address(dummyLTV)).updateOwner(newOwner);
+        assertEq(ILTV(address(dummyLTV)).owner(), newOwner);
+        
+        // Should revert if not owner
+        vm.startPrank(user);
+        vm.expectRevert();
+        ILTV(address(dummyLTV)).updateOwner(address(0));
+    }
+    
+    function test_updateGuardian(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        vm.startPrank(owner);
+        address newGuardian = address(0x5678);
+        
+        ILTV(address(dummyLTV)).updateGuardian(newGuardian);
+        assertEq(ILTV(address(dummyLTV)).guardian(), newGuardian);
+        
+        // Should revert if not owner
+        vm.startPrank(user);
+        vm.expectRevert();
+        ILTV(address(dummyLTV)).updateGuardian(address(0));
+    }
+    
+    function test_updateGovernor(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        vm.startPrank(owner);
+        address newGovernor = address(0x5678);
+        
+        ILTV(address(dummyLTV)).updateGovernor(newGovernor);
+        assertEq(ILTV(address(dummyLTV)).governor(), newGovernor);
+        
+        // Should revert if not owner
+        vm.startPrank(user);
+        vm.expectRevert();
+        ILTV(address(dummyLTV)).updateGovernor(address(0));
+    }
+    
+    function test_deleverageAndWithdraw(address owner, address user) public initializeBalancedTest(owner, user, 10**17, 0, 0, 0) {
+        vm.startPrank(owner);
+        uint256 closeAmount = 1000;
+        uint256 deleverageFee = 1 * 10**16;  // 1%
+        
+        vm.mockCall(
+            address(ILTV(address(dummyLTV)).lendingConnector()),
+            abi.encodeWithSelector(ILendingConnector.getRealCollateralAssets.selector),
+            abi.encode(2000)
+        );
+        
+        vm.mockCall(
+            address(ILTV(address(dummyLTV)).lendingConnector()),
+            abi.encodeWithSelector(ILendingConnector.getRealBorrowAssets.selector),
+            abi.encode(1500)
+        );
+        
+        ILTV(address(dummyLTV)).deleverageAndWithdraw(closeAmount, deleverageFee);
+        
+        // Should revert if not owner
+        vm.startPrank(user);
+        vm.expectRevert();
+        ILTV(address(dummyLTV)).deleverageAndWithdraw(closeAmount, deleverageFee);
+        
+        // Should revert if fee too high
+        vm.startPrank(owner);
+        uint256 tooBigFee = ILTV(address(dummyLTV)).maxDeleverageFee() + 1;
+        vm.expectRevert();
+        ILTV(address(dummyLTV)).deleverageAndWithdraw(closeAmount, tooBigFee);
     }
 }

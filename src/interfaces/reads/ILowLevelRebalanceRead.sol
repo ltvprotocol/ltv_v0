@@ -27,13 +27,13 @@ interface ILowLevelRebalanceRead {
         int256 deltaBorrowAssets,
         bool isSharesPositiveHint,
         PreviewLowLevelRebalanceState memory stateRepresentation
-    ) external view returns (int256, int256, int256);
+    ) external view returns (int256, int256);
 
     function previewLowLevelRebalanceCollateralHint(
         int256 deltaCollateralAssets,
         bool isSharesPositiveHint,
         PreviewLowLevelRebalanceState memory stateRepresentation
-    ) external view returns (int256, int256, int256);
+    ) external view returns (int256, int256);
 
     function maxLowLevelRebalanceShares(MaxLowLevelRebalanceSharesState memory stateRepresentation) external view returns (int256);
 

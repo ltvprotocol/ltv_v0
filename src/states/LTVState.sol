@@ -47,8 +47,7 @@ abstract contract LTVState {
     uint128 public minProfitLTV;
     uint128 public targetLTV;
 
-    // TODO: why it's internal?
-    ILendingConnector internal lendingConnector;
+    ILendingConnector public lendingConnector;
     bool public isVaultDeleveraged;
     IOracleConnector public oracleConnector;
 
