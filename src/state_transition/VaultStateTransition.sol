@@ -5,21 +5,10 @@ import '../states/LTVState.sol';
 import '../Constants.sol';
 import '../utils/MulDiv.sol';
 import '../structs/state_transition/NextStateData.sol';
-abstract contract VaultStateTransition is LTVState {
-    using sMulDiv for int256;
+import 'src/events/IStateUpdateEvent.sol';
 
-    event StateUpdated(
-        int256 oldFutureBorrowAssets,
-        int256 oldFutureCollateralAssets,
-        int256 oldFutureRewardBorrowAssets,
-        int256 oldFutureRewardCollateralAssets,
-        uint256 oldStartAuction,
-        int256 newFutureBorrowAssets,
-        int256 newFutureCollateralAssets,
-        int256 newFutureRewardBorrowAssets,
-        int256 newFutureRewardCollateralAssets,
-        uint256 newStartAuction
-    );
+abstract contract VaultStateTransition is LTVState, IStateUpdateEvent {
+    using sMulDiv for int256;
 
     function applyStateTransition(NextStateData memory nextStateData) internal {
         int256 oldFutureBorrowAssets = futureBorrowAssets;

@@ -5,10 +5,10 @@ import './Lending.sol';
 import './TransferFromProtocol.sol';
 import 'src/structs/state_transition/DeltaAuctionState.sol';
 import 'src/state_transition/FunctionStopper.sol';
+import 'src/events/IAuctionEvent.sol';
 import '@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol';
 
-contract AuctionApplyDeltaState is Lending, TransferFromProtocol, ReentrancyGuardUpgradeable, FunctionStopper {
-    event AuctionExecuted(address indexed user, int256 deltaFutureCollateralAssets, int256 deltaFutureBorrowAssets);
+contract AuctionApplyDeltaState is Lending, TransferFromProtocol, ReentrancyGuardUpgradeable, FunctionStopper, IAuctionEvent {
 
     function applyDeltaState(DeltaAuctionState memory deltaState) internal {
         futureBorrowAssets += deltaState.deltaFutureBorrowAssets;

@@ -2,15 +2,15 @@
 pragma solidity ^0.8.28;
 
 import "../../interfaces/IModules.sol";
-import "../../states/readers/ModulesAddressStateReader.sol";
+import "../../states/LTVState.sol";
 import "../writes/CommonWrite.sol";
 
-abstract contract AuctionWrite is ModulesAddressStateReader, CommonWrite {
+abstract contract AuctionWrite is LTVState, CommonWrite {
     function executeAuctionBorrow(int256 deltaFutureBorrowAssets) external returns (int256) {
-        _delegate(getModules().auctionWrite(), abi.encode(deltaFutureBorrowAssets));
+        _delegate(modules.auctionWrite(), abi.encode(deltaFutureBorrowAssets));
     }
 
     function executeAuctionCollateral(int256 deltaFutureCollateralAssets) external returns (int256) {
-        _delegate(getModules().auctionWrite(), abi.encode(deltaFutureCollateralAssets));
+        _delegate(modules.auctionWrite(), abi.encode(deltaFutureCollateralAssets));
     }
 }

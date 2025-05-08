@@ -2,27 +2,27 @@
 pragma solidity ^0.8.28;
 
 import '../../interfaces/IModules.sol';
-import '../../states/readers/ModulesAddressStateReader.sol';
+import '../../states/LTVState.sol';
 import '../writes/CommonWrite.sol';
 
-abstract contract LowLevelRebalanceWrite is ModulesAddressStateReader, CommonWrite {
+abstract contract LowLevelRebalanceWrite is LTVState, CommonWrite {
     function executeLowLevelRebalanceShares(int256 deltaShares) external returns (int256, int256) {
-        _delegate(getModules().lowLevelRebalancerWrite(), abi.encode(deltaShares));
+        _delegate(modules.lowLevelRebalancerWrite(), abi.encode(deltaShares));
     }
 
     function executeLowLevelRebalanceBorrow(int256 deltaBorrowAssets) external returns (int256, int256) {
-        _delegate(getModules().lowLevelRebalancerWrite(), abi.encode(deltaBorrowAssets));
+        _delegate(modules.lowLevelRebalancerWrite(), abi.encode(deltaBorrowAssets));
     }
 
     function executeLowLevelRebalanceCollateral(int256 deltaCollateralAssets) external returns (int256, int256) {
-        _delegate(getModules().lowLevelRebalancerWrite(), abi.encode(deltaCollateralAssets));
+        _delegate(modules.lowLevelRebalancerWrite(), abi.encode(deltaCollateralAssets));
     }
 
     function executeLowLevelRebalanceBorrowHint(int256 deltaBorrowAssets, bool isSharesPositiveHint) external returns (int256, int256) {
-        _delegate(getModules().lowLevelRebalancerWrite(), abi.encode(deltaBorrowAssets, isSharesPositiveHint));
+        _delegate(modules.lowLevelRebalancerWrite(), abi.encode(deltaBorrowAssets, isSharesPositiveHint));
     }
 
     function executeLowLevelRebalanceCollateralHint(int256 deltaCollateralAssets, bool isSharesPositiveHint) external returns (int256, int256) {
-        _delegate(getModules().lowLevelRebalancerWrite(), abi.encode(deltaCollateralAssets, isSharesPositiveHint));
+        _delegate(modules.lowLevelRebalancerWrite(), abi.encode(deltaCollateralAssets, isSharesPositiveHint));
     }
 }

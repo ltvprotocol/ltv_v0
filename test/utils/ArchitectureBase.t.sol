@@ -9,6 +9,7 @@ import 'src/elements/CollateralVaultModule.sol';
 import 'src/elements/AuctionModule.sol';
 import 'src/elements/LowLevelRebalanceModule.sol';
 import 'src/elements/ModulesProvider.sol';
+import 'src/elements/ERC20Module.sol';
 import 'src/elements/AdministrationModule.sol';
 
 import './LTVWithModules.sol';
@@ -33,6 +34,7 @@ contract ArchitectureBase is Test {
         CollateralVaultModule collateralVaultModule = new CollateralVaultModule();
         AuctionModule auctionModule = new AuctionModule();
         LowLevelRebalanceModule lowLevelRebalanceModule = new LowLevelRebalanceModule();
+        ERC20Module erc20Module = new ERC20Module();
         AdministrationModule administrationModule = new AdministrationModule();
         ModulesProvider modules = new ModulesProvider(
             ModulesState({
@@ -40,8 +42,7 @@ contract ArchitectureBase is Test {
                 borrowVaultsWrite: address(borrowVaultModule),
                 collateralVaultsRead: ICollateralVaultRead(address(collateralVaultModule)),
                 collateralVaultsWrite: address(collateralVaultModule),
-                erc20Read: IERC20Read(address(0)),
-                erc20Write: address(0),
+                erc20Write: address(erc20Module),
                 lowLevelRebalancerRead: ILowLevelRebalanceRead(address(lowLevelRebalanceModule)),
                 lowLevelRebalancerWrite: address(lowLevelRebalanceModule),
                 auctionRead: IAuctionRead(address(auctionModule)),
