@@ -8,7 +8,14 @@ import 'src/utils/MulDiv.sol';
 import '@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol';
 import 'src/state_transition/Lending.sol';
 
+import 'src/errors/Administration.sol';
+import 'src/events/Administration.sol';
+
+import 'src/public/administration/governor/SetTargetLTV.sol';
+
 contract AdministrationModule is
+    AdministrationEvents,
+    AdministrationErrors,
     LTVState,
     UpgradeableOwnableWithGuardianAndGovernor,
     UpgradeableOwnableWithEmergencyDeleverager,
@@ -18,17 +25,20 @@ contract AdministrationModule is
     using uMulDiv for uint256;
     using sMulDiv for int256;
 
+    /*
     event MaxSafeLTVChanged(uint128 oldValue, uint128 newValue);
     event MinProfitLTVChanged(uint128 oldValue, uint128 newValue);
     event TargetLTVChanged(uint128 oldValue, uint128 newValue);
+    event WhitelistRegistryUpdated(address oldValue, address newValue);
 
     error InvalidLTVSet(uint128 targetLTV, uint128 maxSafeLTV, uint128 minProfitLTV);
     error ImpossibleToCoverDeleverage(uint256 realBorrowAssets, uint256 providedAssets);
     error InvalidMaxDeleverageFee(uint256 deleverageFee);
     error ExceedsMaxDeleverageFee(uint256 deleverageFee, uint256 maxDeleverageFee);
-    event WhitelistRegistryUpdated(address oldValue, address newValue);
     error VaultAlreadyDeleveraged();
     error InvalidMaxGrowthFee(uint256 maxGrowthFee);
+    */
+    
     function setTargetLTV(uint128 value) external onlyGovernor {
         require(value <= maxSafeLTV && value >= minProfitLTV, InvalidLTVSet(value, maxSafeLTV, minProfitLTV));
         uint128 oldValue = targetLTV;
