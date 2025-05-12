@@ -27,6 +27,7 @@ contract ArchitectureBase is Test {
         }
 
         LTVWithModules ltv = new LTVWithModules();
+        console.log(dummyLTV.owner());
         vm.etch(address(dummyLTV), address(ltv).code);
 
         ltv = LTVWithModules(address(dummyLTV));
@@ -51,5 +52,11 @@ contract ArchitectureBase is Test {
             })
         );
         ltv.setModules(modules);
+
+        vm.startPrank(ltv.owner());
+        ltv.updateGovernor(address(123));
+        ltv.updateGuardian(address(132));
+        ltv.updateEmergencyDeleverager(address(213));
+        vm.stopPrank();
     }
 }

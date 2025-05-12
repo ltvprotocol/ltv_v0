@@ -8,5 +8,5 @@ interface IAdministration {
 
     function governor() external view returns (address);
 
-    function deleverageWithdrawer() external view returns (address);
+    function emergencyDeleverager() external view returns (address);
 }

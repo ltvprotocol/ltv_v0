@@ -70,7 +70,7 @@ abstract contract AdministrationWrite is LTVState, CommonWrite {
         _delegate(address(modules.administration()), abi.encode(newEmergencyDeleverager));
     }
 
-    function updateOwner(address newOwner) external {
+    function transferOwnership(address newOwner) external {
         _delegate(address(modules.administration()), abi.encode(newOwner));
     }
 

@@ -314,8 +314,6 @@ interface ILTV {
         uint256 amount
     ) external returns (bool);
 
-    function transferOwnership(address newOwner) external;
-
     function vaultBalanceAsLendingConnector() external view returns (address);
 
     function whitelistRegistry() external view returns (address);
@@ -336,9 +334,9 @@ interface ILTV {
 
     function guardian() external view returns (address);
 
-    function deleverageWithdrawer() external view returns (address);
+    function emergencyDeleverager() external view returns (address);
 
-    function updateOwner(address newOwner) external;
+    function transferOwnership(address newOwner) external;
 
     function updateGuardian(address newGuardian) external;
 

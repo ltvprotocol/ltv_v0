@@ -100,7 +100,7 @@ contract AdministrationModule is
         oracleConnector = _oracleConnector;
     }
 
-    function deleverageAndWithdraw(uint256 closeAmountBorrow, uint256 deleverageFee) external onlyOwnerOrEmergencyDeleverager nonReentrant {
+    function deleverageAndWithdraw(uint256 closeAmountBorrow, uint256 deleverageFee) external onlyEmergencyDeleverager nonReentrant {
         require(deleverageFee <= maxDeleverageFee, ExceedsMaxDeleverageFee(deleverageFee, maxDeleverageFee));
         require(!isVaultDeleveraged, VaultAlreadyDeleveraged());
 
