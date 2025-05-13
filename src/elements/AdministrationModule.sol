@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
+import 'src/Constants.sol';
 import 'src/states/LTVState.sol';
 import 'src/utils/UpgradeableOwnableWithGuardianAndGovernor.sol';
 import 'src/utils/UpgradeableOwnableWithEmergencyDeleverager.sol';
@@ -23,12 +24,14 @@ contract AdministrationModule is
     event TargetLTVChanged(uint128 oldValue, uint128 newValue);
 
     error InvalidLTVSet(uint128 targetLTV, uint128 maxSafeLTV, uint128 minProfitLTV);
+    error UnexpectedMaxSafeLTV(uint128 maxSafeLTV);
     error ImpossibleToCoverDeleverage(uint256 realBorrowAssets, uint256 providedAssets);
     error InvalidMaxDeleverageFee(uint256 deleverageFee);
     error ExceedsMaxDeleverageFee(uint256 deleverageFee, uint256 maxDeleverageFee);
     event WhitelistRegistryUpdated(address oldValue, address newValue);
     error VaultAlreadyDeleveraged();
     error InvalidMaxGrowthFee(uint256 maxGrowthFee);
+
     function setTargetLTV(uint128 value) external onlyGovernor {
         require(value <= maxSafeLTV && value >= minProfitLTV, InvalidLTVSet(value, maxSafeLTV, minProfitLTV));
         uint128 oldValue = targetLTV;
@@ -38,6 +41,7 @@ contract AdministrationModule is
 
     function setMaxSafeLTV(uint128 value) external onlyGovernor {
         require(value >= targetLTV, InvalidLTVSet(targetLTV, value, minProfitLTV));
+        require(value < Constants.LTV_DIVIDER, UnexpectedMaxSafeLTV(value));
         uint128 oldValue = maxSafeLTV;
         maxSafeLTV = value;
         emit MaxSafeLTVChanged(oldValue, value);
@@ -82,6 +86,11 @@ contract AdministrationModule is
         for (uint256 i = 0; i < signatures.length; i++) {
             _isFunctionDisabled[signatures[i]] = isDisabled;
         }
+    }
+
+    function setMaxGrowthFee(uint256 _maxGrowthFee) external onlyGovernor {
+        require(_maxGrowthFee < 10 ** 18, InvalidMaxGrowthFee(_maxGrowthFee));
+        maxGrowthFee = _maxGrowthFee;
     }
 
     function setIsDepositDisabled(bool value) external onlyGuardian {

@@ -4,19 +4,6 @@ pragma solidity ^0.8.28;
 interface ILTV {
     function _isFunctionDisabled(bytes4) external view returns (bool);
 
-    function _previewLowLevelRebalanceBorrowHint(
-        int256 deltaBorrowAssets,
-        bool isSharesPositiveHint,
-        uint256 supply
-    )
-        external
-        view
-        returns (
-            int256,
-            int256,
-            int256
-        );
-
     function _totalAssetsCollateral(bool isDeposit)
         external
         view
@@ -44,6 +31,8 @@ interface ILTV {
     function currentLendingConnector() external view returns (address);
 
     function decimals() external view returns (uint8);
+
+    function maxGrowthFee() external view returns (uint256);
 
     function deleverageAndWithdraw(
         uint256 closeAmountBorrow,
@@ -97,10 +86,6 @@ interface ILTV {
     function futureRewardBorrowAssets() external view returns (int256);
 
     function futureRewardCollateralAssets() external view returns (int256);
-
-    function getPriceBorrowOracle() external view returns (uint256);
-
-    function getPriceCollateralOracle() external view returns (uint256);
 
     function getRealBorrowAssets() external view returns (uint256);
 

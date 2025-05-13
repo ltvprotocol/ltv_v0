@@ -5,6 +5,6 @@ import { StateRepresentationStruct } from "../../structs/StateRepresentationStru
 
 interface IERC20Read {
 
-    function totalSupply(StateRepresentationStruct memory stateRepresentation) external view returns (uint256);
+    function totalSupply(uint256 baseTotalSupply) external view returns (uint256);
 
 }

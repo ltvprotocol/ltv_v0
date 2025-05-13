@@ -81,4 +81,12 @@ abstract contract AdministrationWrite is LTVState, CommonWrite {
     function updateGovernor(address newGovernor) external {
         _delegate(address(modules.administration()), abi.encode(newGovernor));
     }
+
+    function renounceOwnership() external {
+        _delegate(address(modules.administration()), "");
+    }
+
+    function setMaxGrowthFee(uint256 _maxGrowthFee) external {
+        _delegate(address(modules.administration()), abi.encode(_maxGrowthFee));
+    }
 }

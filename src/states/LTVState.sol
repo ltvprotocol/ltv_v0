@@ -53,8 +53,8 @@ abstract contract LTVState {
 
     // TODO: why it's internal?
     uint256 internal lastSeenTokenPrice;
-    // TODO: why it's internal?
-    uint256 internal maxGrowthFee;
+
+    uint256 public maxGrowthFee;
 
     uint256 public maxTotalAssetsInUnderlying;
 

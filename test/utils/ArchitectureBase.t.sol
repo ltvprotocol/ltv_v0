@@ -43,7 +43,7 @@ contract ArchitectureBase is Test {
                 borrowVaultsWrite: address(borrowVaultModule),
                 collateralVaultsRead: ICollateralVaultRead(address(collateralVaultModule)),
                 collateralVaultsWrite: address(collateralVaultModule),
-                erc20Write: address(erc20Module),
+                erc20: IERC20Read(address(erc20Module)),
                 lowLevelRebalancerRead: ILowLevelRebalanceRead(address(lowLevelRebalanceModule)),
                 lowLevelRebalancerWrite: address(lowLevelRebalanceModule),
                 auctionRead: IAuctionRead(address(auctionModule)),

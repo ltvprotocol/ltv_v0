@@ -20,7 +20,7 @@ interface IModules {
 
     function collateralVaultsWrite() external view returns (address);
 
-    function erc20Write() external view returns (address);
+    function erc20() external view returns (IERC20Read);
 
     function lowLevelRebalancerRead() external view returns (ILowLevelRebalanceRead);
 
