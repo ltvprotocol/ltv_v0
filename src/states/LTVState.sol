@@ -78,7 +78,7 @@ abstract contract LTVState {
         return lendingConnector.getRealBorrowAssets();
     }
 
-    function getLendingConnector() internal view returns (ILendingConnector) {
+    function getLendingConnector() public view returns (ILendingConnector) {
         return isVaultDeleveraged ? vaultBalanceAsLendingConnector : lendingConnector;
     }
 

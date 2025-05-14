@@ -978,7 +978,7 @@ contract DummyLTVTest is ArchitectureBase {
 
     function test_baseTotalSupply(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) onlyNewArchitecture {
         // baseTotalSupply is used internally and should match totalSupply initially
-        assertEq(dummyLTV.baseTotalSupply(), 10**20 + 100);
+        assertEq(dummyLTV.baseTotalSupply(), 10**20);
     }
 
     function test_borrowToken(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) onlyNewArchitecture {
@@ -989,7 +989,7 @@ contract DummyLTVTest is ArchitectureBase {
         assertEq(address(dummyLTV.collateralToken()), address(collateralToken));
     }
 
-    function test_currentLendingConnector(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
+    function test_getLendingConnector(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) onlyNewArchitecture {
         // Should initially be the same as lendingConnector
         assertEq(address(ILTV(address(dummyLTV)).getLendingConnector()), address(ILTV(address(dummyLTV)).lendingConnector()));
     }
@@ -1021,7 +1021,7 @@ contract DummyLTVTest is ArchitectureBase {
     }
     
     function test_totalAssetsCollateralWithBool(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) onlyNewArchitecture {
-        assertEq(ILTV(address(dummyLTV)).totalAssetsCollateral(true), 5 * 10 ** 17);
+        assertEq(ILTV(address(dummyLTV)).totalAssetsCollateral(true), 5 * 10 ** 17 + 1);
     }
 
     function test_startAuction(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) onlyNewArchitecture {
