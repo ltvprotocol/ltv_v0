@@ -70,6 +70,10 @@ abstract contract LTVState {
 
     IModules public modules;
 
+    address public governor;
+    address public guardian;
+    address public emergencyDeleverager;
+
     function getRealCollateralAssets() external view returns (uint256) {
         return lendingConnector.getRealCollateralAssets();
     }

@@ -4,9 +4,10 @@ pragma solidity ^0.8.28;
 import './ERC20.sol';
 import './TransferFromProtocol.sol';
 import './Lending.sol';
-import './FunctionStopper.sol';
+import 'src/modifiers/FunctionStopperModifier.sol';
+import 'src/events/ILowLevelRebalanceEvent.sol';
 
-abstract contract ExecuteLowLevelRebalance is FunctionStopper,ERC20, TransferFromProtocol, Lending {
+abstract contract ExecuteLowLevelRebalance is FunctionStopperModifier, ERC20, TransferFromProtocol, Lending, ILowLevelRebalanceEvent {
     function executeLowLevelRebalance(
         int256 deltaRealCollateralAsset,
         int256 deltaRealBorrowAssets,
@@ -50,5 +51,7 @@ abstract contract ExecuteLowLevelRebalance is FunctionStopper,ERC20, TransferFro
         if (deltaShares > 0) {
             _mint(msg.sender, uint256(deltaShares));
         }
+
+        emit LowLevelRebalanceExecuted(msg.sender, deltaRealCollateralAsset, deltaRealBorrowAssets, deltaShares, deltaProtocolFutureRewardShares);
     }
 }

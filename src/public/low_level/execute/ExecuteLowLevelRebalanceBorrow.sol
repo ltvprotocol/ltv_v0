@@ -6,10 +6,8 @@ import 'src/public/low_level/max/MaxLowLevelRebalanceBorrow.sol';
 import 'src/state_transition/ApplyMaxGrowthFee.sol';
 import 'src/math2/PreviewLowLevelRebalanceStateToData.sol';
 import 'src/state_transition/ExecuteLowLevelRebalance.sol';
-
-contract ExecuteLowLevelRebalanceBorrow is ExecuteLowLevelRebalance, PreviewLowLevelRebalanceBorrow, MaxLowLevelRebalanceBorrow, ApplyMaxGrowthFee {
-    error ExceedsLowLevelRebalanceMaxDeltaBorrow(int256 deltaBorrow, int256 max);
-
+import 'src/errors/ILowLevelRebalanceErrors.sol';
+contract ExecuteLowLevelRebalanceBorrow is ExecuteLowLevelRebalance, PreviewLowLevelRebalanceBorrow, MaxLowLevelRebalanceBorrow, ApplyMaxGrowthFee, ILowLevelRebalanceErrors {
     function executeLowLevelRebalanceBorrow(int256 deltaBorrow) external isFunctionAllowed nonReentrant returns (int256, int256) {
         return _executeLowLevelRebalanceBorrowHint(deltaBorrow, true);
     }

@@ -4,8 +4,9 @@ pragma solidity ^0.8.28;
 import "../../interfaces/IModules.sol";
 import "../../states/LTVState.sol";
 import "../writes/CommonWrite.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
-abstract contract AdministrationWrite is LTVState, CommonWrite {
+abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeable {
     function setTargetLTV(uint128 value) external {
         _delegate(address(modules.administration()), abi.encode(value));
     }
@@ -70,20 +71,12 @@ abstract contract AdministrationWrite is LTVState, CommonWrite {
         _delegate(address(modules.administration()), abi.encode(newEmergencyDeleverager));
     }
 
-    function transferOwnership(address newOwner) external {
-        _delegate(address(modules.administration()), abi.encode(newOwner));
-    }
-
     function updateGuardian(address newGuardian) external {
         _delegate(address(modules.administration()), abi.encode(newGuardian));
     }
 
     function updateGovernor(address newGovernor) external {
         _delegate(address(modules.administration()), abi.encode(newGovernor));
-    }
-
-    function renounceOwnership() external {
-        _delegate(address(modules.administration()), "");
     }
 
     function setMaxGrowthFee(uint256 _maxGrowthFee) external {

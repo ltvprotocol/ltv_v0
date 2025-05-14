@@ -6,14 +6,15 @@ import 'src/public/low_level/max/MaxLowLevelRebalanceCollateral.sol';
 import 'src/state_transition/ApplyMaxGrowthFee.sol';
 import 'src/math2/PreviewLowLevelRebalanceStateToData.sol';
 import 'src/state_transition/ExecuteLowLevelRebalance.sol';
+import 'src/errors/ILowLevelRebalanceErrors.sol';
 
 contract ExecuteLowLevelRebalanceCollateral is
     ExecuteLowLevelRebalance,
     PreviewLowLevelRebalanceCollateral,
     MaxLowLevelRebalanceCollateral,
-    ApplyMaxGrowthFee
+    ApplyMaxGrowthFee,
+    ILowLevelRebalanceErrors
 {
-    error ExceedsLowLevelRebalanceMaxDeltaCollateral(int256 deltaCollateral, int256 max);
 
     function executeLowLevelRebalanceCollateral(int256 deltaCollateral) external isFunctionAllowed nonReentrant returns (int256, int256) {
         return _executeLowLevelRebalanceCollateralHint(deltaCollateral, true);

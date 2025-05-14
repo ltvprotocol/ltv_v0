@@ -10,11 +10,11 @@ import '../../../../state_transition/Lending.sol';
 import 'src/events/IERC4626Events.sol';
 import '../preview/PreviewDepositCollateral.sol';
 import '../../../../math2/NextStep.sol';
+import 'src/errors/IVaultErrors.sol';
 
-abstract contract DepositCollateral is MaxDepositCollateral, ApplyMaxGrowthFee, MintProtocolRewards, Lending, VaultStateTransition, IERC4626Events {
+abstract contract DepositCollateral is MaxDepositCollateral, ApplyMaxGrowthFee, MintProtocolRewards, Lending, VaultStateTransition, IERC4626Events, IVaultErrors {
     using uMulDiv for uint256;
 
-    error ExceedsMaxDepositCollateral(address receiver, uint256 assets, uint256 max);
 
     function depositCollateral(uint256 assets, address receiver) external isFunctionAllowed nonReentrant returns (uint256) {
         MaxDepositMintCollateralVaultState memory state = maxDepositMintCollateralVaultState();

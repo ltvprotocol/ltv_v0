@@ -3,34 +3,17 @@ pragma solidity ^0.8.28;
 
 import 'src/Constants.sol';
 import 'src/states/LTVState.sol';
-import 'src/utils/UpgradeableOwnableWithGuardianAndGovernor.sol';
-import 'src/utils/UpgradeableOwnableWithEmergencyDeleverager.sol';
 import 'src/utils/MulDiv.sol';
 import '@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 import 'src/state_transition/Lending.sol';
+import 'src/errors/IAdministrationErrors.sol';
+import 'src/modifiers/AdministrationModifiers.sol';
+import 'src/events/IAdministrationEvents.sol';
 
-contract AdministrationModule is
-    LTVState,
-    UpgradeableOwnableWithGuardianAndGovernor,
-    UpgradeableOwnableWithEmergencyDeleverager,
-    ReentrancyGuardUpgradeable,
-    Lending
-{
+contract AdministrationModule is LTVState, OwnableUpgradeable, ReentrancyGuardUpgradeable, Lending, AdministrationModifiers, IAdministrationEvents {
     using uMulDiv for uint256;
     using sMulDiv for int256;
-
-    event MaxSafeLTVChanged(uint128 oldValue, uint128 newValue);
-    event MinProfitLTVChanged(uint128 oldValue, uint128 newValue);
-    event TargetLTVChanged(uint128 oldValue, uint128 newValue);
-
-    error InvalidLTVSet(uint128 targetLTV, uint128 maxSafeLTV, uint128 minProfitLTV);
-    error UnexpectedMaxSafeLTV(uint128 maxSafeLTV);
-    error ImpossibleToCoverDeleverage(uint256 realBorrowAssets, uint256 providedAssets);
-    error InvalidMaxDeleverageFee(uint256 deleverageFee);
-    error ExceedsMaxDeleverageFee(uint256 deleverageFee, uint256 maxDeleverageFee);
-    event WhitelistRegistryUpdated(address oldValue, address newValue);
-    error VaultAlreadyDeleveraged();
-    error InvalidMaxGrowthFee(uint256 maxGrowthFee);
 
     function setTargetLTV(uint128 value) external onlyGovernor {
         require(value <= maxSafeLTV && value >= minProfitLTV, InvalidLTVSet(value, maxSafeLTV, minProfitLTV));
@@ -55,20 +38,28 @@ contract AdministrationModule is
     }
 
     function setFeeCollector(address _feeCollector) external onlyGovernor {
+        address oldFeeCollector = feeCollector;
         feeCollector = _feeCollector;
+        emit FeeCollectorUpdated(oldFeeCollector, _feeCollector);
     }
 
     function setMaxTotalAssetsInUnderlying(uint256 _maxTotalAssetsInUnderlying) external onlyGovernor {
+        uint256 oldValue = maxTotalAssetsInUnderlying;
         maxTotalAssetsInUnderlying = _maxTotalAssetsInUnderlying;
+        emit MaxTotalAssetsInUnderlyingChanged(oldValue, _maxTotalAssetsInUnderlying);
     }
 
     function setMaxDeleverageFee(uint256 value) external onlyGovernor {
         require(value < 10 ** 18, InvalidMaxDeleverageFee(value));
+        uint256 oldValue = maxDeleverageFee;
         maxDeleverageFee = value;
+        emit MaxDeleverageFeeChanged(oldValue, value);
     }
 
     function setIsWhitelistActivated(bool activate) external onlyGovernor {
+        bool oldValue = isWhitelistActivated;
         isWhitelistActivated = activate;
+        emit IsWhitelistActivatedChanged(oldValue, activate);
     }
 
     function setWhitelistRegistry(IWhitelistRegistry value) external onlyGovernor {
@@ -78,7 +69,9 @@ contract AdministrationModule is
     }
 
     function setSlippageProvider(ISlippageProvider _slippageProvider) external onlyGovernor {
+        address oldAddress = address(slippageProvider); 
         slippageProvider = _slippageProvider;
+        emit SlippageProviderUpdated(oldAddress, address(_slippageProvider));
     }
 
     // batch can be removed to save ~250 bytes of contract size
@@ -90,23 +83,33 @@ contract AdministrationModule is
 
     function setMaxGrowthFee(uint256 _maxGrowthFee) external onlyGovernor {
         require(_maxGrowthFee < 10 ** 18, InvalidMaxGrowthFee(_maxGrowthFee));
+        uint256 oldValue = maxGrowthFee;
         maxGrowthFee = _maxGrowthFee;
+        emit MaxGrowthFeeChanged(oldValue, _maxGrowthFee);
     }
 
     function setIsDepositDisabled(bool value) external onlyGuardian {
+        bool oldValue = isDepositDisabled;
         isDepositDisabled = value;
+        emit IsDepositDisabledChanged(oldValue, value);
     }
 
     function setIsWithdrawDisabled(bool value) external onlyGuardian {
+        bool oldValue = isWithdrawDisabled;
         isWithdrawDisabled = value;
+        emit IsWithdrawDisabledChanged(oldValue, value);
     }
 
     function setLendingConnector(ILendingConnector _lendingConnector) external onlyOwner {
+        address oldAddress = address(lendingConnector);
         lendingConnector = _lendingConnector;
+        emit LendingConnectorUpdated(oldAddress, address(_lendingConnector));
     }
 
     function setOracleConnector(IOracleConnector _oracleConnector) external onlyOwner {
+        address oldAddress = address(oracleConnector);
         oracleConnector = _oracleConnector;
+        emit OracleConnectorUpdated(oldAddress, address(_oracleConnector));
     }
 
     function deleverageAndWithdraw(uint256 closeAmountBorrow, uint256 deleverageFee) external onlyEmergencyDeleverager nonReentrant {
@@ -139,5 +142,23 @@ contract AdministrationModule is
         }
 
         isVaultDeleveraged = true;
+    }
+
+    function updateEmergencyDeleverager(address newEmergencyDeleverager) external onlyOwner {
+        address oldEmergencyDeleverager = emergencyDeleverager;
+        emergencyDeleverager = newEmergencyDeleverager;
+        emit EmergencyDeleveragerUpdated(oldEmergencyDeleverager, newEmergencyDeleverager);
+    }
+
+    function updateGovernor(address newGovernor) external onlyOwner {
+        address oldGovernor = governor;
+        governor = newGovernor;
+        emit GovernorUpdated(oldGovernor, newGovernor);
+    }
+
+    function updateGuardian(address newGuardian) external onlyOwner {
+        address oldGuardian = guardian;
+        guardian = newGuardian;
+        emit GuardianUpdated(oldGuardian, newGuardian);
     }
 }

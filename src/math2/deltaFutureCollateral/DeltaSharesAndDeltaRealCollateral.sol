@@ -6,6 +6,7 @@ import '../../structs/data/vault/Cases.sol';
 import '../../Constants.sol';
 import 'src/math2/CasesOperator.sol';
 import '../../utils/MulDiv.sol';
+import 'src/errors/IVaultErrors.sol';
 
 library DeltaSharesAndDeltaRealCollateral {
     // TODO: make correct round here
@@ -13,8 +14,6 @@ library DeltaSharesAndDeltaRealCollateral {
 
     using uMulDiv for uint256;
     using sMulDiv for int256;
-
-    error DeltaSharesAndDeltaRealCollateralUnexpectedError(DeltaSharesAndDeltaRealCollateralData data);
 
     struct DividendData {
         Cases cases;
@@ -152,7 +151,7 @@ library DeltaSharesAndDeltaRealCollateral {
 
             if (divider == 0) {
                 if (data.cases.ncase >= 6) {
-                    revert DeltaSharesAndDeltaRealCollateralUnexpectedError(data);
+                    revert IVaultErrors.DeltaSharesAndDeltaRealCollateralUnexpectedError(data);
                 }
                 data.cases = CasesOperator.generateCase(data.cases.ncase + 1);
                 continue;
@@ -167,7 +166,7 @@ library DeltaSharesAndDeltaRealCollateral {
             }
 
             if (data.cases.ncase == 6) {
-                revert DeltaSharesAndDeltaRealCollateralUnexpectedError(data);
+                revert IVaultErrors.DeltaSharesAndDeltaRealCollateralUnexpectedError(data);
             }
             data.cases = CasesOperator.generateCase(data.cases.ncase + 1);
         }

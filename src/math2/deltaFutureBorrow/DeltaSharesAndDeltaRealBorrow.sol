@@ -6,12 +6,13 @@ import '../../structs/data/vault/Cases.sol';
 import '../../Constants.sol';
 import '../../utils/MulDiv.sol';
 import 'src/math2/CasesOperator.sol';
+import 'src/errors/IVaultErrors.sol';
 
 library DeltaSharesAndDeltaRealBorrow {
     using uMulDiv for uint256;
     using sMulDiv for int256;
 
-    error DeltaSharesAndDeltaRealBorrowUnexpectedError(DeltaSharesAndDeltaRealBorrowData data);
+
 
     struct DividendData {
         int256 borrow;
@@ -151,7 +152,7 @@ library DeltaSharesAndDeltaRealBorrow {
 
             if (divider == 0) {
                 if (data.cases.ncase >= 6) {
-                    revert DeltaSharesAndDeltaRealBorrowUnexpectedError(data);
+                    revert IVaultErrors.DeltaSharesAndDeltaRealBorrowUnexpectedError(data);
                 }
                 data.cases = CasesOperator.generateCase(data.cases.ncase + 1);
                 continue;
@@ -165,7 +166,7 @@ library DeltaSharesAndDeltaRealBorrow {
             }
 
             if (data.cases.ncase == 6) {
-                revert DeltaSharesAndDeltaRealBorrowUnexpectedError(data);
+                revert IVaultErrors.    DeltaSharesAndDeltaRealBorrowUnexpectedError(data);
             }
 
             data.cases = CasesOperator.generateCase(data.cases.ncase + 1);
