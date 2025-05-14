@@ -975,4 +975,56 @@ contract DummyLTVTest is ArchitectureBase {
         ILTV(address(dummyLTV)).setMaxGrowthFee(newValue);
         
     }
+
+    function test_baseTotalSupply(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) onlyNewArchitecture {
+        // baseTotalSupply is used internally and should match totalSupply initially
+        assertEq(dummyLTV.baseTotalSupply(), 10**20 + 100);
+    }
+
+    function test_borrowToken(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) onlyNewArchitecture {
+        assertEq(address(dummyLTV.borrowToken()), address(borrowToken));
+    }
+
+    function test_collateralToken(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) onlyNewArchitecture {
+        assertEq(address(dummyLTV.collateralToken()), address(collateralToken));
+    }
+
+    function test_currentLendingConnector(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
+        // Should initially be the same as lendingConnector
+        assertEq(address(ILTV(address(dummyLTV)).getLendingConnector()), address(ILTV(address(dummyLTV)).lendingConnector()));
+    }
+
+    function test_decimals(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) onlyNewArchitecture {
+        assertEq(dummyLTV.decimals(), 18);
+    }
+
+    function test_name(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) onlyNewArchitecture {
+        assertEq(dummyLTV.name(), "Dummy LTV");
+    }
+
+    function test_symbol(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) onlyNewArchitecture {
+        assertEq(dummyLTV.symbol(), "DLTV");
+    }
+
+    function test_approve(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) onlyNewArchitecture {
+        vm.stopPrank();
+        vm.startPrank(owner);
+        
+        bool success = dummyLTV.approve(user, 10 ** 18);
+        
+        assertTrue(success);
+        assertEq(dummyLTV.allowance(owner, user), 10 ** 18);
+    }
+
+    function test_totalAssetsWithBool(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) onlyNewArchitecture {
+        assertEq(ILTV(address(dummyLTV)).totalAssets(true), 10 ** 18 + 1);
+    }
+    
+    function test_totalAssetsCollateralWithBool(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) onlyNewArchitecture {
+        assertEq(ILTV(address(dummyLTV)).totalAssetsCollateral(true), 5 * 10 ** 17);
+    }
+
+    function test_startAuction(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) onlyNewArchitecture {
+        assertEq(ILTV(address(dummyLTV)).startAuction(), Constants.AMOUNT_OF_STEPS / 2);
+    }
 }

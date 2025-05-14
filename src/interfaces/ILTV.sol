@@ -4,11 +4,6 @@ pragma solidity ^0.8.28;
 interface ILTV {
     function _isFunctionDisabled(bytes4) external view returns (bool);
 
-    function _totalAssetsCollateral(bool isDeposit)
-        external
-        view
-        returns (uint256);
-
     function allowDisableFunctions(bytes4[] memory signatures, bool isDisabled)
         external;
 
@@ -28,7 +23,7 @@ interface ILTV {
 
     function convertToShares(uint256 assets) external view returns (uint256);
 
-    function currentLendingConnector() external view returns (address);
+    function getLendingConnector() external view returns (address);
 
     function decimals() external view returns (uint8);
 
@@ -285,7 +280,11 @@ interface ILTV {
 
     function totalAssets() external view returns (uint256);
 
+    function totalAssets(bool isDeposit) external view returns (uint256);
+
     function totalAssetsCollateral() external view returns (uint256);
+
+    function totalAssetsCollateral(bool isDeposit) external view returns (uint256);
 
     function totalSupply() external view returns (uint256);
 
