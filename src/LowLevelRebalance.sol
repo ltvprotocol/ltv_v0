@@ -18,7 +18,8 @@ abstract contract LowLevelRebalance is MaxGrowthFee, Lending {
         uint256 maxTotalAssetsInBorrow = maxTotalAssetsInUnderlying.mulDivDown(Constants.ORACLE_DIVIDER, getPriceBorrowOracle());
         // rounding down assuming smaller border
         uint256 maxBorrow = maxTotalAssetsInBorrow.mulDivDown(Constants.LTV_DIVIDER * targetLTV, (Constants.LTV_DIVIDER - targetLTV) * Constants.LTV_DIVIDER);
-        uint256 currentBorrow = getRealBorrowAssets();
+        // round up to assume smaller border
+        uint256 currentBorrow = getRealBorrowAssets(false);
         return int256(maxBorrow) - int256(currentBorrow);
     }
 
@@ -27,17 +28,18 @@ abstract contract LowLevelRebalance is MaxGrowthFee, Lending {
         uint256 maxTotalAssetsInCollateral = maxTotalAssetsInUnderlying.mulDivDown(Constants.ORACLE_DIVIDER, getPriceCollateralOracle());
         // rounding down assuming smaller border
         uint256 maxCollateral = maxTotalAssetsInCollateral.mulDivDown(Constants.LTV_DIVIDER, Constants.LTV_DIVIDER - targetLTV);
-        uint256 currentCollateral = getRealCollateralAssets();
+        // rounding up assuming smaller border
+        uint256 currentCollateral = getRealCollateralAssets(true);
         return int256(maxCollateral) - int256(currentCollateral);
     }
 
     function maxLowLevelRebalanceShares() public view returns(int256) {
         uint256 supplyAfterFee = previewSupplyAfterFee();
         uint256 borrowPrice = getPriceBorrowOracle();
-        // rounding down assuming smaller border
-        uint256 realCollateralUnderlying = getRealCollateralAssets().mulDivDown(getPriceCollateralOracle(), Constants.ORACLE_DIVIDER);
         // rounding up assuming smaller border
-        uint256 realBorrowUnderlying = getRealBorrowAssets().mulDivUp(borrowPrice, Constants.ORACLE_DIVIDER);
+        uint256 realCollateralUnderlying = getRealCollateralAssets(true).mulDivUp(getPriceCollateralOracle(), Constants.ORACLE_DIVIDER);
+        // rounding down assuming smaller border
+        uint256 realBorrowUnderlying = getRealBorrowAssets(true).mulDivDown(borrowPrice, Constants.ORACLE_DIVIDER);
 
         int256 maxDeltaSharesInUnderlying = int256(maxTotalAssetsInUnderlying + realBorrowUnderlying) - int256(realCollateralUnderlying);
         uint256 totalAssets = maxDeltaSharesInUnderlying > 0 ? _totalAssets(true) : _totalAssets(false);

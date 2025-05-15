@@ -71,12 +71,12 @@ abstract contract LTVState {
 
     IModules public modules;
 
-    function getRealCollateralAssets() external view returns (uint256) {
-        return lendingConnector.getRealCollateralAssets();
+    function getRealCollateralAssets(bool isDeposit) external view returns (uint256) {
+        return lendingConnector.getRealCollateralAssets(isDeposit);
     }
 
-    function getRealBorrowAssets() external view returns (uint256) {
-        return lendingConnector.getRealBorrowAssets();
+    function getRealBorrowAssets(bool isDeposit) external view returns (uint256) {
+        return lendingConnector.getRealBorrowAssets(isDeposit);
     }
 
     function getLendingConnector() internal view returns (ILendingConnector) {
@@ -87,8 +87,9 @@ abstract contract LTVState {
         ILendingConnector _lendingConnector = getLendingConnector();
         return
             TotalAssetsState({
-                realCollateralAssets: _lendingConnector.getRealCollateralAssets(),
-                realBorrowAssets: _lendingConnector.getRealBorrowAssets(),
+                // default behavior - don't overestimate our assets
+                realCollateralAssets: _lendingConnector.getRealCollateralAssets(false),
+                realBorrowAssets: _lendingConnector.getRealBorrowAssets(false),
                 futureBorrowAssets: futureBorrowAssets,
                 futureCollateralAssets: futureCollateralAssets,
                 futureRewardBorrowAssets: futureRewardBorrowAssets,
@@ -183,7 +184,8 @@ abstract contract LTVState {
 
     function maxLowLevelRebalanceBorrowState() internal view returns (MaxLowLevelRebalanceBorrowStateData memory) {
         return MaxLowLevelRebalanceBorrowStateData({
-            realBorrowAssets: lendingConnector.getRealBorrowAssets(),
+            // round up to assume smaller border
+            realBorrowAssets: lendingConnector.getRealBorrowAssets(false),
             maxTotalAssetsInUnderlying: maxTotalAssetsInUnderlying,
             targetLTV: targetLTV,
             borrowPrice: oracleConnector.getPriceBorrowOracle()
@@ -192,7 +194,8 @@ abstract contract LTVState {
 
     function maxLowLevelRebalanceCollateralState() internal view returns (MaxLowLevelRebalanceCollateralStateData memory) {
         return MaxLowLevelRebalanceCollateralStateData({
-            realCollateralAssets: lendingConnector.getRealCollateralAssets(),
+            // round up to assume smaller border
+            realCollateralAssets: lendingConnector.getRealCollateralAssets(true),
             maxTotalAssetsInUnderlying: maxTotalAssetsInUnderlying,
             targetLTV: targetLTV,
             collateralPrice: oracleConnector.getPriceCollateralOracle()

@@ -386,12 +386,12 @@ contract DummyLTVTest is ArchitectureBase {
         vm.startPrank(owner);
         deal(address(borrowToken), address(owner), type(uint112).max);
         borrowToken.approve(address(dummyLTV), type(uint112).max);
-        dummyLTV.deleverageAndWithdraw(dummyLTV.getRealBorrowAssets(), 5 * 10 ** 15);
+        dummyLTV.deleverageAndWithdraw(dummyLTV.getRealBorrowAssets(true), 5 * 10 ** 15);
 
         // total assets were reduced for 6% according to target LTV = 3/4 and 2% fee for deleverage
         assertEq(dummyLTV.totalAssets(), 985 * 10 ** 15 + 1);
         console.log('total assets collateral', dummyLTV.totalAssetsCollateral());
-        console.log('Another metrics:       ', dummyLTV.getRealCollateralAssets());
+        console.log('Another metrics:       ', dummyLTV.getRealCollateralAssets(true));
 
         assertEq(dummyLTV.withdrawCollateral(985 * 10 ** 14, address(owner), address(owner)), 2 * 10 ** 19 + 20);
         dummyLTV.redeemCollateral(2 * 10 ** 19, address(owner), address(owner));

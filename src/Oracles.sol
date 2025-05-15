@@ -10,8 +10,8 @@ abstract contract Oracles {
 
     function getPriceCollateralOracle() public virtual view returns (uint256);
 
-    function getRealBorrowAssets() public virtual view returns (uint256);
+    function getRealBorrowAssets(bool isDeposit) public virtual view returns (uint256);
 
-    function getRealCollateralAssets() public virtual view returns (uint256);
+    function getRealCollateralAssets(bool isDeposit) public virtual view returns (uint256);
 
 }

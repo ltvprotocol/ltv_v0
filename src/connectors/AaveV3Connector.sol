@@ -36,11 +36,11 @@ contract AaveV3Connector is ILendingConnector {
         POOL.repay(address(BORROW_ASSET), amount, 2, address(this));
     }
 
-    function getRealCollateralAssets() external view returns (uint256) {
+    function getRealCollateralAssets(bool) external view returns (uint256) {
         return COLLATERAL_A_TOKEN.balanceOf(msg.sender);
     }
 
-    function getRealBorrowAssets() external view returns (uint256) {
+    function getRealBorrowAssets(bool) external view returns (uint256) {
         return BORROW_V_TOKEN.balanceOf(msg.sender);
     }
 }

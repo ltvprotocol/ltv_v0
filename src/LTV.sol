@@ -157,7 +157,8 @@ contract LTV is
         futureRewardCollateralAssets = 0;
         startAuction = 0;
 
-        uint256 realBorrowAssets = getRealBorrowAssets();
+        // round up to repay all assets
+        uint256 realBorrowAssets = getRealBorrowAssets(false);
 
         require(closeAmountBorrow >= realBorrowAssets, ImpossibleToCoverDeleverage(realBorrowAssets, closeAmountBorrow));
 
@@ -170,7 +171,7 @@ contract LTV is
             borrowToken.transferFrom(msg.sender, address(this), realBorrowAssets);
             repay(realBorrowAssets);
         }
-        withdraw(getRealCollateralAssets());
+        withdraw(getRealCollateralAssets(false));
         
         if (collateralToTransfer != 0) {
             collateralToken.transfer(msg.sender, collateralToTransfer);

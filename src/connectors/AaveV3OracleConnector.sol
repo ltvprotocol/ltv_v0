@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import './interfaces/IOracle.sol';
+import './interfaces/IAaveOracle.sol';
 import '../interfaces/IOracleConnector.sol';
 
 contract AaveV3OracleConnector is IOracleConnector {
-    IOracle public constant ORACLE = IOracle(0x54586bE62E3c3580375aE3723C145253060Ca0C2);
+    IAaveOracle public constant ORACLE = IAaveOracle(0x54586bE62E3c3580375aE3723C145253060Ca0C2);
     address public immutable COLLATERAL_ASSET;
     address public immutable BORROW_ASSET;
 
