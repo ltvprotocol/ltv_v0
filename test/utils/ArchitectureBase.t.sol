@@ -9,6 +9,9 @@ import 'src/elements/CollateralVaultModule.sol';
 import 'src/elements/AuctionModule.sol';
 import 'src/elements/LowLevelRebalanceModule.sol';
 import 'src/elements/ModulesProvider.sol';
+import 'src/elements/ERC20Module.sol';
+import 'src/elements/AdministrationModule.sol';
+
 import './LTVWithModules.sol';
 
 contract ArchitectureBase is Test {
@@ -24,6 +27,7 @@ contract ArchitectureBase is Test {
         }
 
         LTVWithModules ltv = new LTVWithModules();
+        console.log(dummyLTV.owner());
         vm.etch(address(dummyLTV), address(ltv).code);
 
         ltv = LTVWithModules(address(dummyLTV));
@@ -31,20 +35,28 @@ contract ArchitectureBase is Test {
         CollateralVaultModule collateralVaultModule = new CollateralVaultModule();
         AuctionModule auctionModule = new AuctionModule();
         LowLevelRebalanceModule lowLevelRebalanceModule = new LowLevelRebalanceModule();
+        ERC20Module erc20Module = new ERC20Module();
+        AdministrationModule administrationModule = new AdministrationModule();
         ModulesProvider modules = new ModulesProvider(
             ModulesState({
                 borrowVaultsRead: IBorrowVaultRead(address(borrowVaultModule)),
                 borrowVaultsWrite: address(borrowVaultModule),
                 collateralVaultsRead: ICollateralVaultRead(address(collateralVaultModule)),
                 collateralVaultsWrite: address(collateralVaultModule),
-                erc20Read: IERC20Read(address(0)),
-                erc20Write: address(0),
+                erc20: IERC20Read(address(erc20Module)),
                 lowLevelRebalancerRead: ILowLevelRebalanceRead(address(lowLevelRebalanceModule)),
                 lowLevelRebalancerWrite: address(lowLevelRebalanceModule),
                 auctionRead: IAuctionRead(address(auctionModule)),
-                auctionWrite: address(auctionModule)
+                auctionWrite: address(auctionModule),
+                administration: IAdministration(address(administrationModule))
             })
         );
         ltv.setModules(modules);
+
+        vm.startPrank(ltv.owner());
+        ltv.updateGovernor(address(123));
+        ltv.updateGuardian(address(132));
+        ltv.updateEmergencyDeleverager(address(213));
+        vm.stopPrank();
     }
 }

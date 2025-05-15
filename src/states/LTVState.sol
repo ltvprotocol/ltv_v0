@@ -47,15 +47,14 @@ abstract contract LTVState {
     uint128 public minProfitLTV;
     uint128 public targetLTV;
 
-    // TODO: why it's internal?
-    ILendingConnector internal lendingConnector;
+    ILendingConnector public lendingConnector;
     bool public isVaultDeleveraged;
     IOracleConnector public oracleConnector;
 
     // TODO: why it's internal?
     uint256 internal lastSeenTokenPrice;
-    // TODO: why it's internal?
-    uint256 internal maxGrowthFee;
+
+    uint256 public maxGrowthFee;
 
     uint256 public maxTotalAssetsInUnderlying;
 
@@ -79,7 +78,7 @@ abstract contract LTVState {
         return lendingConnector.getRealBorrowAssets(isDeposit);
     }
 
-    function getLendingConnector() internal view returns (ILendingConnector) {
+    function getLendingConnector() public view returns (ILendingConnector) {
         return isVaultDeleveraged ? vaultBalanceAsLendingConnector : lendingConnector;
     }
 
