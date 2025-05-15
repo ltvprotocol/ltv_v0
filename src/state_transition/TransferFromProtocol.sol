@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 import 'src/modifiers/WhitelistModifier.sol';
 
-contract TransferFromProtocol is WhitelistModifier {
+abstract contract TransferFromProtocol is WhitelistModifier {
     function transferBorrowToken(address to, uint256 amount) internal isReceiverWhitelisted(to) {
         borrowToken.transfer(to, amount);
     }

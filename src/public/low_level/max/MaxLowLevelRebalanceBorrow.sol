@@ -7,7 +7,7 @@ import 'src/math2/MaxGrowthFee.sol';
 import 'src/utils/MulDiv.sol';
 import 'src/structs/state/low_level/MaxLowLevelRebalanceBorrowStateData.sol';
 
-contract MaxLowLevelRebalanceBorrow is MaxGrowthFee {
+abstract contract MaxLowLevelRebalanceBorrow is MaxGrowthFee {
     using uMulDiv for uint256;
 
     function maxLowLevelRebalanceBorrow(MaxLowLevelRebalanceBorrowStateData memory state) public pure returns (int256) {
