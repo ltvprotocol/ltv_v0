@@ -6,9 +6,9 @@ import 'src/public/low_level/max/MaxLowLevelRebalanceShares.sol';
 import 'src/state_transition/ApplyMaxGrowthFee.sol';
 import 'src/math2/PreviewLowLevelRebalanceStateToData.sol';
 import 'src/state_transition/ExecuteLowLevelRebalance.sol';
+import 'src/errors/ILowLevelRebalanceErrors.sol';
 
-contract ExecuteLowLevelRebalanceShares is ExecuteLowLevelRebalance, PreviewLowLevelRebalanceShares, MaxLowLevelRebalanceShares, ApplyMaxGrowthFee {
-    error ExceedsLowLevelRebalanceMaxDeltaShares(int256 deltaShares, int256 max);
+contract ExecuteLowLevelRebalanceShares is ExecuteLowLevelRebalance, PreviewLowLevelRebalanceShares, MaxLowLevelRebalanceShares, ApplyMaxGrowthFee, ILowLevelRebalanceErrors {
 
     function executeLowLevelRebalanceShares(int256 deltaShares) external isFunctionAllowed nonReentrant returns (int256, int256) {
         ExecuteLowLevelRebalanceState memory state = executeLowLevelRebalanceState();

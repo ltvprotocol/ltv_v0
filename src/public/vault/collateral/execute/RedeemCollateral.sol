@@ -8,13 +8,12 @@ import '../../../../state_transition/ApplyMaxGrowthFee.sol';
 import '../../../../state_transition/MintProtocolRewards.sol';
 import '../../../../state_transition/Lending.sol';
 import 'src/events/IERC4626Events.sol';
+import 'src/errors/IVaultErrors.sol';
 import '../preview/PreviewRedeemCollateral.sol';
 import '../../../../math2/NextStep.sol';
 
-abstract contract RedeemCollateral is MaxRedeemCollateral, ApplyMaxGrowthFee, MintProtocolRewards, Lending, VaultStateTransition, IERC4626Events {
+abstract contract RedeemCollateral is MaxRedeemCollateral, ApplyMaxGrowthFee, MintProtocolRewards, Lending, VaultStateTransition, IERC4626Events, IVaultErrors {
     using uMulDiv for uint256;
-
-    error ExceedsMaxRedeemCollateral(address owner, uint256 shares, uint256 max);
 
     function redeemCollateral(uint256 shares, address receiver, address owner) external isFunctionAllowed nonReentrant returns (uint256) {
         MaxWithdrawRedeemCollateralVaultState memory state = maxWithdrawRedeemCollateralVaultState(owner);

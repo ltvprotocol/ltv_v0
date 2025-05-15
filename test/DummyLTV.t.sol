@@ -16,7 +16,7 @@ import '../src/utils/Timelock.sol';
 import {ILTV} from '../src/interfaces/ILTV.sol';
 import {ArchitectureBase} from './utils/ArchitectureBase.t.sol';
 import {AdministrationModule} from 'src/elements/AdministrationModule.sol';
-
+import {IAdministrationErrors} from 'src/errors/IAdministrationErrors.sol';
 contract DummyLTVTest is ArchitectureBase {
     MockERC20 public collateralToken;
     MockERC20 public borrowToken;
@@ -625,20 +625,20 @@ contract DummyLTVTest is ArchitectureBase {
 
         // Should revert if not governor
         vm.startPrank(user);
-        vm.expectRevert(abi.encodeWithSelector(IWithGovernor.OnlyGovernorInvalidCaller.selector, user));
+        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
         dummyLTV.setTargetLTV(newValue);
 
         // Should revert if outside bounds
         vm.startPrank(governor);
         uint128 tooHighValue = dummyLTV.maxSafeLTV() + 1;
         vm.expectRevert(
-            abi.encodeWithSelector(AdministrationModule.InvalidLTVSet.selector, tooHighValue, dummyLTV.maxSafeLTV(), dummyLTV.minProfitLTV())
+            abi.encodeWithSelector(IAdministrationErrors.InvalidLTVSet.selector, tooHighValue, dummyLTV.maxSafeLTV(), dummyLTV.minProfitLTV())
         );
         dummyLTV.setTargetLTV(tooHighValue);
 
         uint128 tooLowValue = dummyLTV.minProfitLTV() - 1;
         vm.expectRevert(
-            abi.encodeWithSelector(AdministrationModule.InvalidLTVSet.selector, tooLowValue, dummyLTV.maxSafeLTV(), dummyLTV.minProfitLTV())
+            abi.encodeWithSelector(IAdministrationErrors.InvalidLTVSet.selector, tooLowValue, dummyLTV.maxSafeLTV(), dummyLTV.minProfitLTV())
         );
         dummyLTV.setTargetLTV(tooLowValue);
     }
@@ -652,18 +652,18 @@ contract DummyLTVTest is ArchitectureBase {
 
         // Should revert if not governor
         vm.startPrank(user);
-        vm.expectRevert(abi.encodeWithSelector(IWithGovernor.OnlyGovernorInvalidCaller.selector, user));
+        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
         dummyLTV.setMaxSafeLTV(newValue);
 
         // Should revert if below target
         vm.startPrank(governor);
         uint128 tooLowValue = dummyLTV.targetLTV() - 1;
         vm.expectRevert(
-            abi.encodeWithSelector(AdministrationModule.InvalidLTVSet.selector, dummyLTV.targetLTV(), tooLowValue, dummyLTV.minProfitLTV())
+            abi.encodeWithSelector(IAdministrationErrors.InvalidLTVSet.selector, dummyLTV.targetLTV(), tooLowValue, dummyLTV.minProfitLTV())
         );
         dummyLTV.setMaxSafeLTV(tooLowValue);
 
-        vm.expectRevert(abi.encodeWithSelector(AdministrationModule.UnexpectedMaxSafeLTV.selector, Constants.LTV_DIVIDER));
+        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.UnexpectedMaxSafeLTV.selector, Constants.LTV_DIVIDER));
         dummyLTV.setMaxSafeLTV(uint128(Constants.LTV_DIVIDER));
     }
 
@@ -677,14 +677,14 @@ contract DummyLTVTest is ArchitectureBase {
 
         // Should revert if not governor
         vm.startPrank(user);
-        vm.expectRevert(abi.encodeWithSelector(IWithGovernor.OnlyGovernorInvalidCaller.selector, user));
+        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
         dummyLTV.setMinProfitLTV(newValue);
 
         // Should revert if above target
         vm.startPrank(governor);
         uint128 tooHighValue = dummyLTV.targetLTV() + 1;
         vm.expectRevert(
-            abi.encodeWithSelector(AdministrationModule.InvalidLTVSet.selector, dummyLTV.targetLTV(), dummyLTV.maxSafeLTV(), tooHighValue)
+            abi.encodeWithSelector(IAdministrationErrors.InvalidLTVSet.selector, dummyLTV.targetLTV(), dummyLTV.maxSafeLTV(), tooHighValue)
         );
         dummyLTV.setMinProfitLTV(tooHighValue);
     }
@@ -698,7 +698,7 @@ contract DummyLTVTest is ArchitectureBase {
 
         // Should revert if not governor
         vm.startPrank(user);
-        vm.expectRevert(abi.encodeWithSelector(IWithGovernor.OnlyGovernorInvalidCaller.selector, user));
+        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
         dummyLTV.setFeeCollector(newCollector);
     }
 
@@ -714,7 +714,7 @@ contract DummyLTVTest is ArchitectureBase {
 
         // Should revert if not governor
         vm.startPrank(user);
-        vm.expectRevert(abi.encodeWithSelector(IWithGovernor.OnlyGovernorInvalidCaller.selector, user));
+        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
         dummyLTV.setMaxTotalAssetsInUnderlying(newValue);
     }
 
@@ -727,13 +727,13 @@ contract DummyLTVTest is ArchitectureBase {
 
         // Should revert if not governor
         vm.startPrank(user);
-        vm.expectRevert(abi.encodeWithSelector(IWithGovernor.OnlyGovernorInvalidCaller.selector, user));
+        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
         dummyLTV.setMaxDeleverageFee(newValue);
 
         // Should revert if too high
         vm.startPrank(governor);
         uint256 tooHighValue = 10 ** 18; // 100%
-        vm.expectRevert(abi.encodeWithSelector(AdministrationModule.InvalidMaxDeleverageFee.selector, tooHighValue));
+        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.InvalidMaxDeleverageFee.selector, tooHighValue));
         dummyLTV.setMaxDeleverageFee(tooHighValue);
     }
 
@@ -751,7 +751,7 @@ contract DummyLTVTest is ArchitectureBase {
 
         // Should revert if not governor
         vm.startPrank(user);
-        vm.expectRevert(abi.encodeWithSelector(IWithGovernor.OnlyGovernorInvalidCaller.selector, user));
+        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
         dummyLTV.setIsWhitelistActivated(true);
     }
 
@@ -768,7 +768,7 @@ contract DummyLTVTest is ArchitectureBase {
 
         // Should revert if not governor
         vm.startPrank(user);
-        vm.expectRevert(abi.encodeWithSelector(IWithGovernor.OnlyGovernorInvalidCaller.selector, user));
+        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
         dummyLTV.setWhitelistRegistry(IWhitelistRegistry(address(0)));
     }
 
@@ -782,7 +782,7 @@ contract DummyLTVTest is ArchitectureBase {
 
         // Should revert if not governor
         vm.startPrank(user);
-        vm.expectRevert(abi.encodeWithSelector(IWithGovernor.OnlyGovernorInvalidCaller.selector, user));
+        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
         dummyLTV.setSlippageProvider(ISlippageProvider(address(0)));
     }
 
@@ -804,7 +804,7 @@ contract DummyLTVTest is ArchitectureBase {
 
         // Should revert if not guardian
         vm.startPrank(user);
-        vm.expectRevert(abi.encodeWithSelector(IWithGuardian.OnlyGuardianInvalidCaller.selector, user));
+        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGuardianInvalidCaller.selector, user));
         dummyLTV.allowDisableFunctions(signatures, true);
     }
 
@@ -823,7 +823,7 @@ contract DummyLTVTest is ArchitectureBase {
 
         // Should revert if not guardian
         vm.startPrank(user);
-        vm.expectRevert(abi.encodeWithSelector(IWithGuardian.OnlyGuardianInvalidCaller.selector, user));
+        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGuardianInvalidCaller.selector, user));
         dummyLTV.setIsDepositDisabled(true);
     }
 
@@ -842,7 +842,7 @@ contract DummyLTVTest is ArchitectureBase {
 
         // Should revert if not guardian
         vm.startPrank(user);
-        vm.expectRevert(abi.encodeWithSelector(IWithGuardian.OnlyGuardianInvalidCaller.selector, user));
+        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGuardianInvalidCaller.selector, user));
         dummyLTV.setIsWithdrawDisabled(true);
     }
 
@@ -935,7 +935,7 @@ contract DummyLTVTest is ArchitectureBase {
         uint256 closeAmount = 3 * 10 ** 18;
 
         // Should revert if not deleverager
-        vm.expectRevert(abi.encodeWithSelector(IWithEmergencyDeleverager.OnlyEmergencyDeleveragerInvalidCaller.selector, user));
+        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyEmergencyDeleveragerInvalidCaller.selector, user));
         ILTV(address(dummyLTV)).deleverageAndWithdraw(closeAmount, deleverageFee);
 
         address emergencyDeleverager = ILTV(address(dummyLTV)).emergencyDeleverager();
@@ -943,7 +943,7 @@ contract DummyLTVTest is ArchitectureBase {
         vm.startPrank(emergencyDeleverager);
         uint256 tooBigFee = ILTV(address(dummyLTV)).maxDeleverageFee() + 1;
         vm.expectRevert(
-            abi.encodeWithSelector(AdministrationModule.ExceedsMaxDeleverageFee.selector, tooBigFee, ILTV(address(dummyLTV)).maxDeleverageFee())
+            abi.encodeWithSelector(IAdministrationErrors.ExceedsMaxDeleverageFee.selector, tooBigFee, ILTV(address(dummyLTV)).maxDeleverageFee())
         );
         deal(address(borrowToken), address(emergencyDeleverager), closeAmount);
         borrowToken.approve(address(dummyLTV), closeAmount);
@@ -971,7 +971,7 @@ contract DummyLTVTest is ArchitectureBase {
 
         // Should revert if not governor
         vm.startPrank(user);
-        vm.expectRevert(abi.encodeWithSelector(IWithGovernor.OnlyGovernorInvalidCaller.selector, user));
+        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
         ILTV(address(dummyLTV)).setMaxGrowthFee(newValue);
         
     }

@@ -11,6 +11,7 @@ import 'src/events/IERC4626Events.sol';
 import '../preview/PreviewWithdraw.sol';
 import '../../../../math2/NextStep.sol';
 import '../../../../state_transition/TransferFromProtocol.sol';
+import 'src/errors/IVaultErrors.sol';
 
 abstract contract Withdraw is
     MaxWithdraw,
@@ -19,11 +20,10 @@ abstract contract Withdraw is
     Lending,
     VaultStateTransition,
     TransferFromProtocol,
-    IERC4626Events
+    IERC4626Events,
+    IVaultErrors
 {
     using uMulDiv for uint256;
-
-    error ExceedsMaxWithdraw(address owner, uint256 assets, uint256 max);
 
     function withdraw(uint256 assets, address receiver, address owner) external isFunctionAllowed nonReentrant returns (uint256) {
         MaxWithdrawRedeemBorrowVaultState memory state = maxWithdrawRedeemBorrowVaultState(owner);

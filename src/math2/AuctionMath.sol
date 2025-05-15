@@ -5,16 +5,12 @@ import '../utils/MulDiv.sol';
 import '../Constants.sol';
 import 'src/structs/data/AuctionData.sol';
 import 'src/structs/state_transition/DeltaAuctionState.sol';
+import 'src/errors/IAuctionErrors.sol';
+
 // since auction execution doesn't affect totalAssets we have only two conflicts here,
 // executor <=> future executor,
 // executor <=> fee collector
 library AuctionMath {
-    error NoAuctionForProvidedDeltaFutureCollateral(
-        int256 futureCollateralAssets,
-        int256 futureRewardCollateralAssets,
-        int256 deltaUserCollateralAssets
-    );
-    error NoAuctionForProvidedDeltaFutureBorrow(int256 futureBorrowAssets, int256 futureRewardBorrowAssets, int256 deltaUserBorrowAssets);
     using sMulDiv for int256;
 
     // delta future borrow needs to be rounded up to make auction more profitable for future executor
@@ -100,14 +96,14 @@ library AuctionMath {
     function calculateExecuteAuctionCollateral(
         int256 deltaUserCollateralAssets,
         AuctionData memory data
-    ) external pure returns (DeltaAuctionState memory) {
+    ) internal pure returns (DeltaAuctionState memory) {
         bool hasOppositeSign = data.futureCollateralAssets * deltaUserCollateralAssets < 0;
         bool deltaWithinAuctionSize = (data.futureCollateralAssets + data.futureRewardCollateralAssets + deltaUserCollateralAssets) *
             (data.futureCollateralAssets + data.futureRewardCollateralAssets) >=
             0;
         require(
             hasOppositeSign && deltaWithinAuctionSize,
-            NoAuctionForProvidedDeltaFutureCollateral(
+            IAuctionErrors.NoAuctionForProvidedDeltaFutureCollateral(
                 data.futureCollateralAssets,
                 data.futureRewardCollateralAssets,
                 deltaUserCollateralAssets
@@ -157,14 +153,14 @@ library AuctionMath {
     function calculateExecuteAuctionBorrow(
         int256 deltaUserBorrowAssets,
         AuctionData memory data
-    ) external pure returns (DeltaAuctionState memory) {
+    ) internal pure returns (DeltaAuctionState memory) {
         bool hasOppositeSign = data.futureBorrowAssets * deltaUserBorrowAssets < 0;
         bool deltaWithinAuctionSize = (data.futureBorrowAssets + data.futureRewardBorrowAssets + deltaUserBorrowAssets) *
             (data.futureBorrowAssets + data.futureRewardBorrowAssets) >=
             0;
         require(
             hasOppositeSign && deltaWithinAuctionSize,
-            NoAuctionForProvidedDeltaFutureBorrow(data.futureBorrowAssets, data.futureRewardBorrowAssets, deltaUserBorrowAssets)
+            IAuctionErrors.NoAuctionForProvidedDeltaFutureBorrow(data.futureBorrowAssets, data.futureRewardBorrowAssets, deltaUserBorrowAssets)
         );
 
         DeltaAuctionState memory deltaState;

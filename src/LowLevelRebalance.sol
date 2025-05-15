@@ -4,14 +4,11 @@ pragma solidity ^0.8.27;
 import './MaxGrowthFee.sol';
 import './Lending.sol';
 import './math/LowLevelRebalanceMath.sol';
+import './errors/ILowLevelRebalanceErrors.sol';
 
-abstract contract LowLevelRebalance is MaxGrowthFee, Lending {
+abstract contract LowLevelRebalance is MaxGrowthFee, Lending, ILowLevelRebalanceErrors {
     using sMulDiv for int256;
     using uMulDiv for uint256;
-
-    error ExceedsLowLevelRebalanceMaxDeltaCollareral(int256 deltaCollateral, int256 max);
-    error ExceedsLowLevelRebalanceMaxDeltaBorrow(int256 deltaBorrow, int256 max);
-    error ExceedsLowLevelRebalanceMaxDeltaShares(int256 deltaShares, int256 max);
 
     function maxLowLevelRebalanceBorrow() public view returns (int256) {
         // rounding down assuming smaller border

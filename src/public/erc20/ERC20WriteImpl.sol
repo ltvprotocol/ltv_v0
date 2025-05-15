@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import 'src/state_transition/Whitelist.sol';
-import 'src/state_transition/FunctionStopper.sol';
+import 'src/modifiers/WhitelistModifier.sol';
+import 'src/modifiers/FunctionStopperModifier.sol';
 import 'src/events/IERC20Events.sol';
 import '@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol';
 
-abstract contract ERC20WriteImpl is Whitelist, FunctionStopper, ReentrancyGuardUpgradeable, IERC20Events {
+abstract contract ERC20WriteImpl is WhitelistModifier, FunctionStopperModifier, ReentrancyGuardUpgradeable, IERC20Events {
     function transferFrom(
         address sender,
         address recipient,
