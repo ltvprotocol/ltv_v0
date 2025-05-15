@@ -4,11 +4,11 @@ pragma solidity ^0.8.28;
 import './Lending.sol';
 import './TransferFromProtocol.sol';
 import 'src/structs/state_transition/DeltaAuctionState.sol';
-import 'src/state_transition/FunctionStopper.sol';
+import 'src/modifiers/FunctionStopperModifier.sol';
 import 'src/events/IAuctionEvent.sol';
 import '@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol';
 
-contract AuctionApplyDeltaState is Lending, TransferFromProtocol, ReentrancyGuardUpgradeable, FunctionStopper, IAuctionEvent {
+contract AuctionApplyDeltaState is Lending, TransferFromProtocol, ReentrancyGuardUpgradeable, FunctionStopperModifier, IAuctionEvent {
 
     function applyDeltaState(DeltaAuctionState memory deltaState) internal {
         futureBorrowAssets += deltaState.deltaFutureBorrowAssets;

@@ -11,11 +11,10 @@ import 'src/events/IERC4626Events.sol';
 import '../preview/PreviewRedeem.sol';
 import '../../../../math2/NextStep.sol';
 import '../../../../state_transition/TransferFromProtocol.sol';
+import 'src/errors/IVaultErrors.sol';
 
-abstract contract Redeem is MaxRedeem, ApplyMaxGrowthFee, MintProtocolRewards, Lending, VaultStateTransition, TransferFromProtocol, IERC4626Events {
+abstract contract Redeem is MaxRedeem, ApplyMaxGrowthFee, MintProtocolRewards, Lending, VaultStateTransition, TransferFromProtocol, IERC4626Events, IVaultErrors {
     using uMulDiv for uint256;
-
-    error ExceedsMaxRedeem(address owner, uint256 shares, uint256 max);
 
     function redeem(uint256 shares, address receiver, address owner) external isFunctionAllowed nonReentrant returns (uint256 assets) {
         MaxWithdrawRedeemBorrowVaultState memory state = maxWithdrawRedeemBorrowVaultState(owner);
