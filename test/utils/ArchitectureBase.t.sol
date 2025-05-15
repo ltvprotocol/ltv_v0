@@ -27,6 +27,7 @@ contract ArchitectureBase is Test {
         }
 
         LTVWithModules ltv = new LTVWithModules();
+        console.log(dummyLTV.owner());
         vm.etch(address(dummyLTV), address(ltv).code);
 
         ltv = LTVWithModules(address(dummyLTV));
@@ -42,14 +43,20 @@ contract ArchitectureBase is Test {
                 borrowVaultsWrite: address(borrowVaultModule),
                 collateralVaultsRead: ICollateralVaultRead(address(collateralVaultModule)),
                 collateralVaultsWrite: address(collateralVaultModule),
-                erc20Write: address(erc20Module),
+                erc20: IERC20Read(address(erc20Module)),
                 lowLevelRebalancerRead: ILowLevelRebalanceRead(address(lowLevelRebalanceModule)),
                 lowLevelRebalancerWrite: address(lowLevelRebalanceModule),
                 auctionRead: IAuctionRead(address(auctionModule)),
                 auctionWrite: address(auctionModule),
-                administrationWrite: address(administrationModule)
+                administration: IAdministration(address(administrationModule))
             })
         );
         ltv.setModules(modules);
+
+        vm.startPrank(ltv.owner());
+        ltv.updateGovernor(address(123));
+        ltv.updateGuardian(address(132));
+        ltv.updateEmergencyDeleverager(address(213));
+        vm.stopPrank();
     }
 }

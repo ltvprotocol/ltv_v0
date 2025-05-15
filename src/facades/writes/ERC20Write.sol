@@ -7,14 +7,14 @@ import "../writes/CommonWrite.sol";
 
 abstract contract ERC20Write is LTVState, CommonWrite {
     function approve(address spender, uint256 amount) external returns (bool) {
-        _delegate(modules.erc20Write(), abi.encode(spender, amount));
+        _delegate(address(modules.erc20()), abi.encode(spender, amount));
     }
 
     function transfer(address to, uint256 amount) external returns (bool) {
-        _delegate(modules.erc20Write(), abi.encode(to, amount));
+        _delegate(address(modules.erc20()), abi.encode(to, amount));
     }
 
     function transferFrom(address from, address to, uint256 amount) external returns (bool) {
-        _delegate(modules.erc20Write(), abi.encode(from, to, amount));
+        _delegate(address(modules.erc20()), abi.encode(from, to, amount));
     }
 }

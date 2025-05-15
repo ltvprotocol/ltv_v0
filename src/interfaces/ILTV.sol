@@ -4,24 +4,6 @@ pragma solidity ^0.8.28;
 interface ILTV {
     function _isFunctionDisabled(bytes4) external view returns (bool);
 
-    function _previewLowLevelRebalanceBorrowHint(
-        int256 deltaBorrowAssets,
-        bool isSharesPositiveHint,
-        uint256 supply
-    )
-        external
-        view
-        returns (
-            int256,
-            int256,
-            int256
-        );
-
-    function _totalAssetsCollateral(bool isDeposit)
-        external
-        view
-        returns (uint256);
-
     function allowDisableFunctions(bytes4[] memory signatures, bool isDisabled)
         external;
 
@@ -41,9 +23,11 @@ interface ILTV {
 
     function convertToShares(uint256 assets) external view returns (uint256);
 
-    function currentLendingConnector() external view returns (address);
+    function getLendingConnector() external view returns (address);
 
     function decimals() external view returns (uint8);
+
+    function maxGrowthFee() external view returns (uint256);
 
     function deleverageAndWithdraw(
         uint256 closeAmountBorrow,
@@ -97,10 +81,6 @@ interface ILTV {
     function futureRewardBorrowAssets() external view returns (int256);
 
     function futureRewardCollateralAssets() external view returns (int256);
-
-    function getPriceBorrowOracle() external view returns (uint256);
-
-    function getPriceCollateralOracle() external view returns (uint256);
 
     function getRealBorrowAssets() external view returns (uint256);
 
@@ -196,7 +176,6 @@ interface ILTV {
         view
         returns (
             int256,
-            int256,
             int256
         );
 
@@ -212,7 +191,6 @@ interface ILTV {
         external
         view
         returns (
-            int256,
             int256,
             int256
         );
@@ -302,7 +280,11 @@ interface ILTV {
 
     function totalAssets() external view returns (uint256);
 
+    function totalAssets(bool isDeposit) external view returns (uint256);
+
     function totalAssetsCollateral() external view returns (uint256);
+
+    function totalAssetsCollateral(bool isDeposit) external view returns (uint256);
 
     function totalSupply() external view returns (uint256);
 
@@ -315,8 +297,6 @@ interface ILTV {
         address recipient,
         uint256 amount
     ) external returns (bool);
-
-    function transferOwnership(address newOwner) external;
 
     function vaultBalanceAsLendingConnector() external view returns (address);
 
@@ -333,6 +313,22 @@ interface ILTV {
         address receiver,
         address owner
     ) external returns (uint256);
+
+    function governor() external view returns (address);
+
+    function guardian() external view returns (address);
+
+    function emergencyDeleverager() external view returns (address);
+
+    function transferOwnership(address newOwner) external;
+
+    function updateGuardian(address newGuardian) external;
+
+    function updateGovernor(address newGovernor) external;
+
+    function updateEmergencyDeleverager(address newEmergencyDeleverager) external;
+
+    function lendingConnector() external view returns (address);
 
     event Approval(
         address indexed owner,

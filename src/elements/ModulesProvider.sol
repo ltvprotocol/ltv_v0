@@ -12,12 +12,12 @@ struct ModulesState {
     ICollateralVaultRead collateralVaultsRead;
     ILowLevelRebalanceRead lowLevelRebalancerRead;
     IAuctionRead auctionRead;
+    IAdministration administration;
+    IERC20Read erc20;
     address borrowVaultsWrite;
     address collateralVaultsWrite;
-    address erc20Write;
     address lowLevelRebalancerWrite;
     address auctionWrite;
-    address administrationWrite;
 }
 
 contract ModulesProvider is IModules {
@@ -29,10 +29,10 @@ contract ModulesProvider is IModules {
 
         borrowVaultsWrite = state.borrowVaultsWrite;
         collateralVaultsWrite = state.collateralVaultsWrite;
-        erc20Write = state.erc20Write;
+        erc20 = state.erc20;
         lowLevelRebalancerWrite = state.lowLevelRebalancerWrite;
         auctionWrite = state.auctionWrite;
-        administrationWrite = state.administrationWrite;
+        administration = state.administration;
     }
 
     IBorrowVaultRead public borrowVaultsRead;
@@ -42,8 +42,8 @@ contract ModulesProvider is IModules {
 
     address public borrowVaultsWrite;
     address public collateralVaultsWrite;
-    address public erc20Write;
+    IERC20Read public erc20;
     address public lowLevelRebalancerWrite;
     address public auctionWrite;
-    address public administrationWrite;
+    IAdministration public administration;
 }

@@ -49,7 +49,7 @@ abstract contract BorrowVaultRead is LTVState {
         return modules.borrowVaultsRead().totalAssets(totalAssetsState());
     }
     
-    function _totalAssets(bool isDeposit) external view returns (uint256) {
+    function totalAssets(bool isDeposit) external view returns (uint256) {
         return modules.borrowVaultsRead().totalAssets(isDeposit, totalAssetsState());
     }
 } 
