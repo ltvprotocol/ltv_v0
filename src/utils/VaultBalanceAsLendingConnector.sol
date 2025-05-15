@@ -2,8 +2,9 @@
 pragma solidity ^0.8.27;
 
 import 'forge-std/interfaces/IERC20.sol';
+import 'src/interfaces/ILendingConnector.sol';
 
-contract VaultBalanceAsLendingConnector {
+contract VaultBalanceAsLendingConnector is ILendingConnector {
     IERC20 public immutable COLLATERAL_TOKEN;
     IERC20 public immutable BORROW_TOKEN;
 
@@ -16,11 +17,11 @@ contract VaultBalanceAsLendingConnector {
         BORROW_TOKEN = _borrowToken;
     }
 
-    function getRealCollateralAssets() external view returns (uint256) {
+    function getRealCollateralAssets(bool) external view returns (uint256) {
         return COLLATERAL_TOKEN.balanceOf(msg.sender);
     }
 
-    function getRealBorrowAssets() external view returns (uint256) {
+    function getRealBorrowAssets(bool) external view returns (uint256) {
         return BORROW_TOKEN.balanceOf(msg.sender);
     }
 

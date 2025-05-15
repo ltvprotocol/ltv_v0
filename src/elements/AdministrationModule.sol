@@ -122,7 +122,8 @@ contract AdministrationModule is LTVState, OwnableUpgradeable, ReentrancyGuardUp
         futureRewardCollateralAssets = 0;
         startAuction = 0;
 
-        uint256 realBorrowAssets = lendingConnector.getRealBorrowAssets();
+        // round up to repay all borrow
+        uint256 realBorrowAssets = lendingConnector.getRealBorrowAssets(false);
 
         require(closeAmountBorrow >= realBorrowAssets, ImpossibleToCoverDeleverage(realBorrowAssets, closeAmountBorrow));
 
@@ -135,7 +136,9 @@ contract AdministrationModule is LTVState, OwnableUpgradeable, ReentrancyGuardUp
             borrowToken.transferFrom(msg.sender, address(this), realBorrowAssets);
             repay(realBorrowAssets);
         }
-        withdraw(lendingConnector.getRealCollateralAssets());
+
+        // round down to make successful withdraw
+        withdraw(lendingConnector.getRealCollateralAssets(false));
 
         if (collateralToTransfer != 0) {
             collateralToken.transfer(msg.sender, collateralToTransfer);

@@ -128,12 +128,12 @@ abstract contract State is UpgradeableOwnableWithGuardianAndGovernor, Upgradeabl
         return oracleConnector.getPriceCollateralOracle();
     }
 
-    function getRealBorrowAssets() public view returns (uint256) {
-        return currentLendingConnector().getRealBorrowAssets();
+    function getRealBorrowAssets(bool isDeposit) public view returns (uint256) {
+        return currentLendingConnector().getRealBorrowAssets(isDeposit);
     }
 
-    function getRealCollateralAssets() public view returns (uint256) {
-        return currentLendingConnector().getRealCollateralAssets();
+    function getRealCollateralAssets(bool isDeposit) public view returns (uint256) {
+        return currentLendingConnector().getRealCollateralAssets(isDeposit);
     }
 
     function currentLendingConnector() public view returns (ILendingConnector) {
@@ -159,10 +159,10 @@ abstract contract State is UpgradeableOwnableWithGuardianAndGovernor, Upgradeabl
         // It's applied to every single rounding in this file.
 
         // in case of deposit we need to assume more assets in the protocol, so round borrow down
-        int256 realBorrow = int256(getRealBorrowAssets().mulDiv(getPriceBorrowOracle(), Constants.ORACLE_DIVIDER, !isDeposit));
+        int256 realBorrow = int256(getRealBorrowAssets(isDeposit).mulDiv(getPriceBorrowOracle(), Constants.ORACLE_DIVIDER, !isDeposit));
 
         // in case of deposit we need to assume more assets in the protocol, so round collateral up
-        int256 realCollateral = int256(getRealCollateralAssets().mulDiv(getPriceCollateralOracle(), Constants.ORACLE_DIVIDER, isDeposit));
+        int256 realCollateral = int256(getRealCollateralAssets(isDeposit).mulDiv(getPriceCollateralOracle(), Constants.ORACLE_DIVIDER, isDeposit));
 
         // in case of deposit we need to assume more assets in the protocol, so round borrow down
         int256 futureBorrow = futureBorrowAssets.mulDiv(int256(getPriceBorrowOracle()), int256(Constants.ORACLE_DIVIDER), !isDeposit);

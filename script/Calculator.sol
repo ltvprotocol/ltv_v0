@@ -11,10 +11,10 @@ contract Calculator is Script {
 
         int256 futureBorrowAssets = ltv.futureBorrowAssets();
         int256 futureRewardBorrowAssets = ltv.futureRewardBorrowAssets();
-        int256 realBorrowAssets = int256(ltv.getRealBorrowAssets());
+        int256 realBorrowAssets = int256(ltv.getRealBorrowAssets(true));
         int256 futureCollateralAssets = ltv.futureCollateralAssets();
         int256 futureRewardCollateralAssets = ltv.futureRewardCollateralAssets();
-        int256 realCollateralAssets = int256(ltv.getRealCollateralAssets());
+        int256 realCollateralAssets = int256(ltv.getRealCollateralAssets(true));
 
         int256 borrow = futureBorrowAssets + futureRewardBorrowAssets + realBorrowAssets;
         int256 collateral = futureCollateralAssets + futureRewardCollateralAssets + realCollateralAssets;

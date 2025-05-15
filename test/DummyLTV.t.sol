@@ -496,7 +496,7 @@ contract DummyLTVTest is ArchitectureBase {
         vm.startPrank(emergencyDeleverager);
         deal(address(borrowToken), address(emergencyDeleverager), type(uint112).max);
         borrowToken.approve(address(dummyLTV), type(uint112).max);
-        dummyLTV.deleverageAndWithdraw(dummyLTV.getRealBorrowAssets(), 5 * 10 ** 15);
+        dummyLTV.deleverageAndWithdraw(dummyLTV.getRealBorrowAssets(true), 5 * 10 ** 15);
 
         // total assets were reduced for 6% according to target LTV = 3/4 and 2% fee for deleverage
         assertEq(dummyLTV.totalAssets(), 985 * 10 ** 15 + 1);
