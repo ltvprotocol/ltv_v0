@@ -12,9 +12,18 @@ import '../src/Constants.sol';
 import '../src/dummy/DummyLendingConnector.sol';
 import '../src/dummy/DummyOracleConnector.sol';
 import '../src/utils/VaultBalanceAsLendingConnector.sol';
-import {ArchitectureBase} from './utils/ArchitectureBase.t.sol';
 
-contract GeneratedTests is ArchitectureBase {
+import {AuctionModule} from 'src/elements/AuctionModule.sol';
+import {ERC20Module} from 'src/elements/ERC20Module.sol';
+import {CollateralVaultModule} from 'src/elements/CollateralVaultModule.sol';
+import {BorrowVaultModule} from 'src/elements/BorrowVaultModule.sol';
+import {LowLevelRebalanceModule} from 'src/elements/LowLevelRebalanceModule.sol';
+import {AdministrationModule} from 'src/elements/AdministrationModule.sol';
+
+import 'src/elements/ModulesProvider.sol';
+
+contract GeneratedTests is Test {
+    DummyLTV public dummyLTV;
     MockERC20 public collateralToken;
     MockERC20 public borrowToken;
     MockDummyLending public lendingProtocol;
@@ -39,45 +48,42 @@ contract GeneratedTests is ArchitectureBase {
         lendingProtocol = new MockDummyLending(owner);
         oracle = IDummyOracle(new DummyOracle(owner));
 
-        ILendingConnector lendingConnector = new DummyLendingConnector(
-            collateralToken,
-            borrowToken,
-            lendingProtocol
-        );
 
-        IOracleConnector oracleConnector = new DummyOracleConnector(
-            collateralToken,
-            borrowToken,
-            oracle
-        );
+        ModulesState memory modulesState = ModulesState({
+            administrationModule: IAdministrationModule(address(new AdministrationModule())),
+            auctionModule: IAuctionModule(address(new AuctionModule())),
+            erc20Module: IERC20Module(address(new ERC20Module())),
+            collateralVaultModule: ICollateralVaultModule(address(new CollateralVaultModule())),
+            borrowVaultModule: IBorrowVaultModule(address(new BorrowVaultModule())),
+            lowLevelRebalanceModule: ILowLevelRebalanceModule(address(new LowLevelRebalanceModule()))
+        });
 
-        address vaultBalanceAsLendingConnector = address(
-            new VaultBalanceAsLendingConnector(collateralToken, borrowToken)
-        );
-        
-        ConstantSlippageProvider slippageProvider = new ConstantSlippageProvider(
-            10**16,
-            10**16,
-            owner
-        );
-
-        State.StateInitData memory initData = State.StateInitData({
+        StateInitData memory initData = StateInitData({
+            name: 'Dummy LTV',
+            symbol: 'DLTV',
+            decimals: 18,
             collateralToken: address(collateralToken),
             borrowToken: address(borrowToken),
             feeCollector: address(123),
             maxSafeLTV: 9*10**17,
             minProfitLTV: 5*10**17,
             targetLTV: 75*10**16,
-            lendingConnector: lendingConnector,
-            oracleConnector: oracleConnector,
+            lendingConnector: new DummyLendingConnector(collateralToken, borrowToken, lendingProtocol),
+            oracleConnector: new DummyOracleConnector(collateralToken, borrowToken, oracle),
             maxGrowthFee: 10**18 / 5,
             maxTotalAssetsInUnderlying: type(uint128).max,
-            slippageProvider: slippageProvider,
+            slippageProvider: new ConstantSlippageProvider(10**16, 10**16, owner),
             maxDeleverageFee: 2*10**16,
-            vaultBalanceAsLendingConnector: ILendingConnector(vaultBalanceAsLendingConnector)
+            vaultBalanceAsLendingConnector: new VaultBalanceAsLendingConnector(collateralToken, borrowToken),
+            modules: new ModulesProvider(modulesState),
+            owner: owner,
+            guardian: address(123),
+            governor: address(132),
+            emergencyDeleverager: address(213),
+            callData: ''
         }); 
 
-        dummyLTV = new DummyLTV(initData, owner);
+        dummyLTV = new DummyLTV(initData);
 
         vm.startPrank(owner);
         Ownable(address(lendingProtocol)).transferOwnership(address(dummyLTV));
@@ -106,7 +112,6 @@ contract GeneratedTests is ArchitectureBase {
         deal(address(collateralToken), address(this), type(uint112).max);
         borrowToken.approve(address(dummyLTV), type(uint112).max);
         collateralToken.approve(address(dummyLTV), type(uint112).max);
-        replaceImplementation();
         _;
       }
 

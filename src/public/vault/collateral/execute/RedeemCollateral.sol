@@ -10,7 +10,7 @@ import '../../../../state_transition/Lending.sol';
 import 'src/events/IERC4626Events.sol';
 import 'src/errors/IVaultErrors.sol';
 import '../preview/PreviewRedeemCollateral.sol';
-import '../../../../math2/NextStep.sol';
+import '../../../../math/NextStep.sol';
 
 abstract contract RedeemCollateral is MaxRedeemCollateral, ApplyMaxGrowthFee, MintProtocolRewards, Lending, VaultStateTransition, IERC4626Events, IVaultErrors {
     using uMulDiv for uint256;

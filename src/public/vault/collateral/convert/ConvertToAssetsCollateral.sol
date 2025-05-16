@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import '../../../../utils/MulDiv.sol';
-import 'src/math2/VaultCollateral.sol';
+import 'src/math/VaultCollateral.sol';
 
 abstract contract ConvertToAssetsCollateral is VaultCollateral {
     using uMulDiv for uint256;

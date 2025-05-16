@@ -12,6 +12,7 @@ import 'src/events/IERC4626Events.sol';
 import 'src/events/IERC20Events.sol';
 import 'src/events/ILowLevelRebalanceEvent.sol';
 import 'src/events/IStateUpdateEvent.sol';
+import 'src/interfaces/IModules.sol';
 
 interface ILTV is
     IAdministrationErrors,
@@ -196,6 +197,8 @@ interface ILTV is
     function setTargetLTV(uint128 value) external;
 
     function setWhitelistRegistry(address value) external;
+
+    function setModules(IModules _modules) external;
 
     function slippageProvider() external view returns (address);
 
