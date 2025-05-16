@@ -7,7 +7,7 @@ import 'src/math/MaxGrowthFee.sol';
 import 'src/utils/MulDiv.sol';
 import 'src/structs/state/low_level/MaxLowLevelRebalanceCollateralStateData.sol';
 
-contract MaxLowLevelRebalanceCollateral is MaxGrowthFee {
+abstract contract MaxLowLevelRebalanceCollateral is MaxGrowthFee {
     using uMulDiv for uint256;
 
     function maxLowLevelRebalanceCollateral(MaxLowLevelRebalanceCollateralStateData memory state) public pure returns (int256) {

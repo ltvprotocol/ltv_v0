@@ -8,7 +8,7 @@ import 'src/math/MaxGrowthFee.sol';
 import 'src/structs/state/low_level/MaxLowLevelRebalanceSharesState.sol';
 import 'src/structs/data/low_level/MaxLowLevelRebalanceSharesData.sol';
 
-contract MaxLowLevelRebalanceShares is MaxGrowthFee {
+abstract contract MaxLowLevelRebalanceShares is MaxGrowthFee {
     using sMulDiv for int256;
 
     function maxLowLevelRebalanceShares(MaxLowLevelRebalanceSharesState memory state) public pure returns (int256) {

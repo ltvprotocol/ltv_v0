@@ -8,7 +8,7 @@ import 'src/math/PreviewLowLevelRebalanceStateToData.sol';
 import 'src/state_transition/ExecuteLowLevelRebalance.sol';
 import 'src/errors/ILowLevelRebalanceErrors.sol';
 
-contract ExecuteLowLevelRebalanceCollateral is
+abstract contract ExecuteLowLevelRebalanceCollateral is
     ExecuteLowLevelRebalance,
     PreviewLowLevelRebalanceCollateral,
     MaxLowLevelRebalanceCollateral,

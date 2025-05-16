@@ -5,7 +5,7 @@ import 'src/math/CommonMath.sol';
 import 'src/math/MaxGrowthFee.sol';
 import 'src/math/LowLevelRebalanceMath.sol';
 import 'src/structs/state/low_level/PreviewLowLevelRebalanceState.sol';
-contract PreviewLowLevelRebalanceStateToData is MaxGrowthFee {
+abstract contract PreviewLowLevelRebalanceStateToData is MaxGrowthFee {
     using uMulDiv for uint256;
 
     function previewLowLevelRebalanceStateToData(

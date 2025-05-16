@@ -8,7 +8,7 @@ import 'src/math/PreviewLowLevelRebalanceStateToData.sol';
 import 'src/state_transition/ExecuteLowLevelRebalance.sol';
 import 'src/errors/ILowLevelRebalanceErrors.sol';
 
-contract ExecuteLowLevelRebalanceShares is ExecuteLowLevelRebalance, PreviewLowLevelRebalanceShares, MaxLowLevelRebalanceShares, ApplyMaxGrowthFee, ILowLevelRebalanceErrors {
+abstract contract ExecuteLowLevelRebalanceShares is ExecuteLowLevelRebalance, PreviewLowLevelRebalanceShares, MaxLowLevelRebalanceShares, ApplyMaxGrowthFee, ILowLevelRebalanceErrors {
 
     function executeLowLevelRebalanceShares(int256 deltaShares) external isFunctionAllowed nonReentrant returns (int256, int256) {
         ExecuteLowLevelRebalanceState memory state = executeLowLevelRebalanceState();

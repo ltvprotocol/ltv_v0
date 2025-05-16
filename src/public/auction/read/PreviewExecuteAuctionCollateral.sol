@@ -5,7 +5,7 @@ import 'src/math/AuctionMath.sol';
 import 'src/math/AuctionStateToData.sol';
 import 'src/structs/state_transition/DeltaAuctionState.sol';
 
-contract PreviewExecuteAuctionCollateral is AuctionStateToData {
+abstract contract PreviewExecuteAuctionCollateral is AuctionStateToData {
     function previewExecuteAuctionCollateral(int256 deltaUserCollateralAssets, AuctionState memory auctionState) external view returns (int256) {
         return _previewExecuteAuctionCollateral(deltaUserCollateralAssets, auctionStateToData(auctionState)).deltaUserBorrowAssets;
     }

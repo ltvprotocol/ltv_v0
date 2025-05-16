@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 import 'src/math/PreviewLowLevelRebalanceStateToData.sol';
 
-contract PreviewLowLevelRebalanceShares is PreviewLowLevelRebalanceStateToData {
+abstract contract PreviewLowLevelRebalanceShares is PreviewLowLevelRebalanceStateToData {
     using uMulDiv for uint256;
 
     function previewLowLevelRebalanceShares(int256 deltaShares, PreviewLowLevelRebalanceState memory state) public pure returns (int256, int256) {
