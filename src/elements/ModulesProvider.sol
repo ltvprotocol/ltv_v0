@@ -1,24 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../interfaces/reads/IERC20Read.sol';
-import '../interfaces/reads/IAuctionRead.sol';
-import '../interfaces/reads/ILowLevelRebalanceRead.sol';
-import '../interfaces/reads/IBorrowVaultRead.sol';
-import '../interfaces/reads/ICollateralVaultRead.sol';
-import '../interfaces/IModules.sol';
-struct ModulesState {
-    IBorrowVaultRead borrowVaultsRead;
-    ICollateralVaultRead collateralVaultsRead;
-    ILowLevelRebalanceRead lowLevelRebalancerRead;
-    IAuctionRead auctionRead;
-    IAdministration administration;
-    IERC20Read erc20;
-    address borrowVaultsWrite;
-    address collateralVaultsWrite;
-    address lowLevelRebalancerWrite;
-    address auctionWrite;
-}
+import 'src/structs/state/ModulesState.sol';
+import 'src/interfaces/IModules.sol';
 
 contract ModulesProvider is IModules {
     constructor(ModulesState memory state) {
@@ -33,6 +17,7 @@ contract ModulesProvider is IModules {
         lowLevelRebalancerWrite = state.lowLevelRebalancerWrite;
         auctionWrite = state.auctionWrite;
         administration = state.administration;
+        initializeWrite = state.initializeWrite;
     }
 
     IBorrowVaultRead public borrowVaultsRead;
@@ -46,4 +31,5 @@ contract ModulesProvider is IModules {
     address public lowLevelRebalancerWrite;
     address public auctionWrite;
     IAdministration public administration;
+    address public initializeWrite;
 }
