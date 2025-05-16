@@ -5,7 +5,7 @@ import './ERC20.sol';
 import '../public/erc20/TotalSupply.sol';
 import '../public/vault/borrow/TotalAssets.sol';
 
-contract ApplyMaxGrowthFee is TotalAssets, TotalSupply, ERC20 {
+abstract contract ApplyMaxGrowthFee is TotalAssets, TotalSupply, ERC20 {
     using uMulDiv for uint256;
 
     function applyMaxGrowthFee(uint256 supplyAfterFee, uint256 depositTotalAssets) internal {

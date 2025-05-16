@@ -4,7 +4,7 @@ pragma solidity ^0.8.28;
 import '../states/LTVState.sol';
 import 'src/errors/IAdministrationErrors.sol';
 
-contract WhitelistModifier is LTVState, IAdministrationErrors {
+abstract contract WhitelistModifier is LTVState, IAdministrationErrors {
     modifier isReceiverWhitelisted(address to) {
         _isReceiverWhitelisted(to);
         _;
