@@ -6,12 +6,11 @@ import 'src/interfaces/IModules.sol';
 
 contract ModulesProvider is IModules {
     constructor(ModulesState memory state) {
-        borrowVaultsRead = state.borrowVaultsRead;
+        borrowVault = state.borrowVault;
         collateralVaultsRead = state.collateralVaultsRead;
         lowLevelRebalancerRead = state.lowLevelRebalancerRead;
         auctionRead = state.auctionRead;
 
-        borrowVaultsWrite = state.borrowVaultsWrite;
         collateralVaultsWrite = state.collateralVaultsWrite;
         erc20 = state.erc20;
         lowLevelRebalancerWrite = state.lowLevelRebalancerWrite;
@@ -20,12 +19,11 @@ contract ModulesProvider is IModules {
         initializeWrite = state.initializeWrite;
     }
 
-    IBorrowVaultRead public borrowVaultsRead;
+    IBorrowVault public borrowVault;
     ICollateralVaultRead public collateralVaultsRead;
     ILowLevelRebalanceRead public lowLevelRebalancerRead;
     IAuctionRead public auctionRead;
 
-    address public borrowVaultsWrite;
     address public collateralVaultsWrite;
     IERC20Read public erc20;
     address public lowLevelRebalancerWrite;

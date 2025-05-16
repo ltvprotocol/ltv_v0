@@ -11,6 +11,7 @@ import 'src/elements/LowLevelRebalanceModule.sol';
 import 'src/elements/ModulesProvider.sol';
 import 'src/elements/ERC20Module.sol';
 import 'src/elements/AdministrationModule.sol';
+import 'src/elements/InititializeModule.sol';
 
 import './LTVWithModules.sol';
 
@@ -37,18 +38,19 @@ contract ArchitectureBase is Test {
         LowLevelRebalanceModule lowLevelRebalanceModule = new LowLevelRebalanceModule();
         ERC20Module erc20Module = new ERC20Module();
         AdministrationModule administrationModule = new AdministrationModule();
+        InitializeModule initializeModule = new InitializeModule();
         ModulesProvider modules = new ModulesProvider(
             ModulesState({
-                borrowVaultsRead: IBorrowVaultRead(address(borrowVaultModule)),
-                borrowVaultsWrite: address(borrowVaultModule),
+                borrowVault: IBorrowVault(address(borrowVaultModule)),
                 collateralVaultsRead: ICollateralVaultRead(address(collateralVaultModule)),
-                collateralVaultsWrite: address(collateralVaultModule),
-                erc20: IERC20Read(address(erc20Module)),
                 lowLevelRebalancerRead: ILowLevelRebalanceRead(address(lowLevelRebalanceModule)),
-                lowLevelRebalancerWrite: address(lowLevelRebalanceModule),
                 auctionRead: IAuctionRead(address(auctionModule)),
+                administration: IAdministration(address(administrationModule)),
+                erc20: IERC20Read(address(erc20Module)),
+                collateralVaultsWrite: address(collateralVaultModule),
+                lowLevelRebalancerWrite: address(lowLevelRebalanceModule),
                 auctionWrite: address(auctionModule),
-                administration: IAdministration(address(administrationModule))
+                initializeWrite: address(initializeModule)
             })
         );
         ltv.setModules(modules);
