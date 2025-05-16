@@ -6,50 +6,50 @@ import '../../states/LTVState.sol';
 
 abstract contract CollateralVaultRead is LTVState {
     function previewDepositCollateral(uint256 assets) external view returns (uint256) {
-        return modules.collateralVaultsRead().previewDepositCollateral(assets, previewVaultState());
+        return modules.collateralVault().previewDepositCollateral(assets, previewVaultState());
     }
 
     function previewWithdrawCollateral(uint256 assets) external view returns (uint256) {
-        return modules.collateralVaultsRead().previewWithdrawCollateral(assets, previewVaultState());
+        return modules.collateralVault().previewWithdrawCollateral(assets, previewVaultState());
     }
 
     function previewMintCollateral(uint256 shares) external view returns (uint256) {
-        return modules.collateralVaultsRead().previewMintCollateral(shares, previewVaultState());
+        return modules.collateralVault().previewMintCollateral(shares, previewVaultState());
     }
 
     function previewRedeemCollateral(uint256 shares) external view returns (uint256) {
-        return modules.collateralVaultsRead().previewRedeemCollateral(shares, previewVaultState());
+        return modules.collateralVault().previewRedeemCollateral(shares, previewVaultState());
     }
 
     function maxDepositCollateral(address) external view returns (uint256) {
-        return modules.collateralVaultsRead().maxDepositCollateral(maxDepositMintCollateralVaultState());
+        return modules.collateralVault().maxDepositCollateral(maxDepositMintCollateralVaultState());
     }
 
     function maxWithdrawCollateral(address owner) external view returns (uint256) {
-        return modules.collateralVaultsRead().maxWithdrawCollateral(maxWithdrawRedeemCollateralVaultState(owner));
+        return modules.collateralVault().maxWithdrawCollateral(maxWithdrawRedeemCollateralVaultState(owner));
     }
 
     function maxMintCollateral(address) external view returns (uint256) {
-        return modules.collateralVaultsRead().maxMintCollateral(maxDepositMintCollateralVaultState());
+        return modules.collateralVault().maxMintCollateral(maxDepositMintCollateralVaultState());
     }
 
     function maxRedeemCollateral(address owner) external view returns (uint256) {
-        return modules.collateralVaultsRead().maxRedeemCollateral(maxWithdrawRedeemCollateralVaultState(owner));
+        return modules.collateralVault().maxRedeemCollateral(maxWithdrawRedeemCollateralVaultState(owner));
     }
 
     function convertToSharesCollateral(uint256 assets) external view returns (uint256) {
-        return modules.collateralVaultsRead().convertToSharesCollateral(assets, maxGrowthFeeState());
+        return modules.collateralVault().convertToSharesCollateral(assets, maxGrowthFeeState());
     }
 
     function convertToAssetsCollateral(uint256 shares) external view returns (uint256) {
-        return modules.collateralVaultsRead().convertToAssetsCollateral(shares, maxGrowthFeeState());
+        return modules.collateralVault().convertToAssetsCollateral(shares, maxGrowthFeeState());
     }
     
     function totalAssetsCollateral() external view returns (uint256) {
-        return modules.collateralVaultsRead().totalAssetsCollateral(totalAssetsState());
+        return modules.collateralVault().totalAssetsCollateral(totalAssetsState());
     }
     
     function totalAssetsCollateral(bool isDeposit) external view returns (uint256) {
-        return modules.collateralVaultsRead().totalAssetsCollateral(isDeposit, totalAssetsState());
+        return modules.collateralVault().totalAssetsCollateral(isDeposit, totalAssetsState());
     }
 }

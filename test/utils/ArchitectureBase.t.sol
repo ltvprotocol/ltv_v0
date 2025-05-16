@@ -42,14 +42,11 @@ contract ArchitectureBase is Test {
         ModulesProvider modules = new ModulesProvider(
             ModulesState({
                 borrowVault: IBorrowVault(address(borrowVaultModule)),
-                collateralVaultsRead: ICollateralVaultRead(address(collateralVaultModule)),
-                lowLevelRebalancerRead: ILowLevelRebalanceRead(address(lowLevelRebalanceModule)),
-                auctionRead: IAuctionRead(address(auctionModule)),
+                collateralVault: ICollateralVault(address(collateralVaultModule)),
+                lowLevelRebalance: ILowLevelRebalance(address(lowLevelRebalanceModule)),
+                auction: IAuction(address(auctionModule)),
                 administration: IAdministration(address(administrationModule)),
                 erc20: IERC20Read(address(erc20Module)),
-                collateralVaultsWrite: address(collateralVaultModule),
-                lowLevelRebalancerWrite: address(lowLevelRebalanceModule),
-                auctionWrite: address(auctionModule),
                 initializeWrite: address(initializeModule)
             })
         );

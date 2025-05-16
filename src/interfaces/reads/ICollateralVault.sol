@@ -7,7 +7,7 @@ import '../../structs/state/vault/MaxWithdrawRedeemCollateralVaultState.sol';
 import '../../structs/state/MaxGrowthFeeState.sol';
 import '../../structs/state/vault/TotalAssetsState.sol';
 
-interface ICollateralVaultRead {
+interface ICollateralVault {
     function previewDepositCollateral(uint256 assets, PreviewVaultState memory previewVaultState) external view returns (uint256);
 
     function previewWithdrawCollateral(uint256 assets, PreviewVaultState memory previewVaultState) external view returns (uint256);
