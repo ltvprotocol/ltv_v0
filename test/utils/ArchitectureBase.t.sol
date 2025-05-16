@@ -41,13 +41,13 @@ contract ArchitectureBase is Test {
         InitializeModule initializeModule = new InitializeModule();
         ModulesProvider modules = new ModulesProvider(
             ModulesState({
-                borrowVault: IBorrowVault(address(borrowVaultModule)),
-                collateralVault: ICollateralVault(address(collateralVaultModule)),
-                lowLevelRebalance: ILowLevelRebalance(address(lowLevelRebalanceModule)),
-                auction: IAuction(address(auctionModule)),
-                administration: IAdministration(address(administrationModule)),
-                erc20: IERC20Read(address(erc20Module)),
-                initializeWrite: address(initializeModule)
+                borrowVaultModule: IBorrowVaultModule(address(borrowVaultModule)),
+                collateralVaultModule: ICollateralVault(address(collateralVaultModule)),
+                lowLevelRebalanceModule: ILowLevelRebalance(address(lowLevelRebalanceModule)),
+                auctionModule: IAuction(address(auctionModule)),
+                administrationModule: IAdministration(address(administrationModule)),
+                erc20Module: IERC20Read(address(erc20Module)),
+                initializeModule: address(initializeModule)
             })
         );
         ltv.setModules(modules);

@@ -3,23 +3,24 @@ pragma solidity ^0.8.28;
 
 import 'src/structs/state/ModulesState.sol';
 import 'src/interfaces/IModules.sol';
+import 'src/interfaces/reads/IBorrowVaultModule.sol';
 
 contract ModulesProvider is IModules {
     constructor(ModulesState memory state) {
-        borrowVault = state.borrowVault;
-        collateralVault = state.collateralVault;
-        lowLevelRebalance = state.lowLevelRebalance;
-        auction = state.auction;
-        erc20 = state.erc20;
-        administration = state.administration;
-        initializeWrite = state.initializeWrite;
+        borrowVaultModule = state.borrowVaultModule;
+        collateralVaultModule = state.collateralVaultModule;
+        lowLevelRebalanceModule = state.lowLevelRebalanceModule;
+        auctionModule = state.auctionModule;
+        erc20Module = state.erc20Module;
+        administrationModule = state.administrationModule;
+        initializeModule = state.initializeModule;
     }
 
-    IBorrowVault public borrowVault;
-    ICollateralVault public collateralVault;
-    ILowLevelRebalance public lowLevelRebalance;
-    IAuction public auction;
-    IERC20Read public erc20;
-    IAdministration public administration;
-    address public initializeWrite;
+    IBorrowVaultModule public borrowVaultModule;
+    ICollateralVault public collateralVaultModule;
+    ILowLevelRebalance public lowLevelRebalanceModule;
+    IAuction public auctionModule;
+    IERC20Read public erc20Module;
+    IAdministration public administrationModule;
+    address public initializeModule;
 }

@@ -7,7 +7,7 @@ import '../../structs/state/vault/MaxWithdrawRedeemBorrowVaultState.sol';
 import '../../structs/state/MaxGrowthFeeState.sol';
 import '../../structs/state/vault/TotalAssetsState.sol';
 
-interface IBorrowVault {
+interface IBorrowVaultModule {
     function previewDeposit(uint256 assets, PreviewVaultState memory previewVaultState) external view returns (uint256);
 
     function previewWithdraw(uint256 assets, PreviewVaultState memory previewVaultState) external view returns (uint256);

@@ -7,10 +7,10 @@ import "../writes/CommonWrite.sol";
 
 abstract contract AuctionWrite is LTVState, CommonWrite {
     function executeAuctionBorrow(int256 deltaFutureBorrowAssets) external returns (int256) {
-        _delegate(address(modules.auction()), abi.encode(deltaFutureBorrowAssets));
+        _delegate(address(modules.auctionModule()), abi.encode(deltaFutureBorrowAssets));
     }
 
     function executeAuctionCollateral(int256 deltaFutureCollateralAssets) external returns (int256) {
-        _delegate(address(modules.auction()), abi.encode(deltaFutureCollateralAssets));
+        _delegate(address(modules.auctionModule()), abi.encode(deltaFutureCollateralAssets));
     }
 }

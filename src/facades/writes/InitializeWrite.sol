@@ -7,6 +7,6 @@ import 'src/structs/state/StateInitData.sol';
 
 abstract contract InitializeWrite is LTVState, CommonWrite {
     function initialize(StateInitData memory initData) public {
-        _delegate(modules.initializeWrite(), abi.encode(initData));
+        _delegate(modules.initializeModule(), abi.encode(initData));
     }
 }

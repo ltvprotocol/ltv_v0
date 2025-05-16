@@ -4,16 +4,16 @@ pragma solidity ^0.8.28;
 import "./reads/IERC20Read.sol";
 import "./reads/IAuction.sol";
 import "./reads/ILowLevelRebalance.sol";
-import "./reads/IBorrowVault.sol";
+import "./reads/IBorrowVaultModule.sol";
 import "./reads/ICollateralVault.sol";
 import "./reads/IAdministration.sol";
 
 interface IModules {
-    function auction() external view returns (IAuction);
-    function borrowVault() external view returns (IBorrowVault);
-    function collateralVault() external view returns (ICollateralVault);
-    function erc20() external view returns (IERC20Read);
-    function lowLevelRebalance() external view returns (ILowLevelRebalance);
-    function administration() external view returns (IAdministration);
-    function initializeWrite() external view returns (address);
+    function auctionModule() external view returns (IAuction);
+    function borrowVaultModule() external view returns (IBorrowVaultModule);
+    function collateralVaultModule() external view returns (ICollateralVault);
+    function erc20Module() external view returns (IERC20Read);
+    function lowLevelRebalanceModule() external view returns (ILowLevelRebalance);
+    function administrationModule() external view returns (IAdministration);
+    function initializeModule() external view returns (address);
 }
