@@ -9,7 +9,7 @@ import '../../../../state_transition/MintProtocolRewards.sol';
 import '../../../../state_transition/Lending.sol';
 import 'src/events/IERC4626Events.sol';
 import '../preview/PreviewDeposit.sol';
-import '../../../../math2/NextStep.sol';
+import '../../../../math/NextStep.sol';
 import 'src/errors/IVaultErrors.sol';
 
 abstract contract Deposit is MaxDeposit, ApplyMaxGrowthFee, MintProtocolRewards, Lending, VaultStateTransition, IERC4626Events, IVaultErrors {

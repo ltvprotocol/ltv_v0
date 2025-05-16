@@ -4,7 +4,7 @@ pragma solidity ^0.8.28;
 import '../Constants.sol';
 import '../structs/data/vault/MintRedeemData.sol';
 import '../structs/state_transition/DeltaFuture.sol';
-import 'src/math2/CasesOperator.sol';
+import 'src/math/CasesOperator.sol';
 import '../utils/MulDiv.sol';
 import './CommonBorrowCollateral.sol';
 import './deltaFutureCollateral/DeltaSharesAndDeltaRealCollateral.sol';

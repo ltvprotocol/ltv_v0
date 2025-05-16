@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 import 'src/Constants.sol';
 import 'src/utils/MulDiv.sol';
-import 'src/math2/MaxGrowthFee.sol';
+import 'src/math/MaxGrowthFee.sol';
 import 'src/utils/MulDiv.sol';
 import 'src/structs/state/low_level/MaxLowLevelRebalanceCollateralStateData.sol';
 

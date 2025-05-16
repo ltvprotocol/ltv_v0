@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import 'src/math2/Vault.sol';
-import '../../../../math2/DepositWithdraw.sol';
+import 'src/math/Vault.sol';
+import '../../../../math/DepositWithdraw.sol';
 
 abstract contract PreviewDeposit is Vault {
     using uMulDiv for uint256;

@@ -5,7 +5,7 @@ import '../../structs/data/vault/DeltaSharesAndDeltaRealBorrowData.sol';
 import '../../structs/data/vault/Cases.sol';
 import '../../Constants.sol';
 import '../../utils/MulDiv.sol';
-import 'src/math2/CasesOperator.sol';
+import 'src/math/CasesOperator.sol';
 import 'src/errors/IVaultErrors.sol';
 
 library DeltaSharesAndDeltaRealBorrow {
