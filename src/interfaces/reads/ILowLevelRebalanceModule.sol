@@ -7,7 +7,7 @@ import 'src/structs/state/low_level/MaxLowLevelRebalanceSharesState.sol';
 import 'src/structs/state/low_level/MaxLowLevelRebalanceBorrowStateData.sol';
 import 'src/structs/state/low_level/MaxLowLevelRebalanceCollateralStateData.sol';
 
-interface ILowLevelRebalance {
+interface ILowLevelRebalanceModule {
     function previewLowLevelRebalanceShares(
         int256 deltaShares,
         PreviewLowLevelRebalanceState memory stateRepresentation

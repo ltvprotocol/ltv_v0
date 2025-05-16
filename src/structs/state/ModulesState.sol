@@ -2,18 +2,17 @@
 pragma solidity ^0.8.28;
 
 import 'src/interfaces/reads/IBorrowVaultModule.sol';
-import 'src/interfaces/reads/ICollateralVault.sol';
-import 'src/interfaces/reads/ILowLevelRebalance.sol';
-import 'src/interfaces/reads/IAuction.sol';
-import 'src/interfaces/reads/IAdministration.sol';
-import 'src/interfaces/reads/IERC20Read.sol';
+import 'src/interfaces/reads/ICollateralVaultModule.sol';
+import 'src/interfaces/reads/ILowLevelRebalanceModule.sol';
+import 'src/interfaces/reads/IAuctionModule.sol';
+import 'src/interfaces/reads/IAdministrationModule.sol';
+import 'src/interfaces/reads/IERC20Module.sol';
 
 struct ModulesState {
     IBorrowVaultModule borrowVaultModule;
-    ICollateralVault collateralVaultModule;
-    ILowLevelRebalance lowLevelRebalanceModule;
-    IAuction auctionModule;
-    IAdministration administrationModule;
-    IERC20Read erc20Module;
-    address initializeModule;
+    ICollateralVaultModule collateralVaultModule;
+    ILowLevelRebalanceModule lowLevelRebalanceModule;
+    IAuctionModule auctionModule;
+    IAdministrationModule administrationModule;
+    IERC20Module erc20Module;
 }

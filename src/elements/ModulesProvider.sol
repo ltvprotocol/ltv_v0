@@ -13,14 +13,12 @@ contract ModulesProvider is IModules {
         auctionModule = state.auctionModule;
         erc20Module = state.erc20Module;
         administrationModule = state.administrationModule;
-        initializeModule = state.initializeModule;
     }
 
     IBorrowVaultModule public borrowVaultModule;
-    ICollateralVault public collateralVaultModule;
-    ILowLevelRebalance public lowLevelRebalanceModule;
-    IAuction public auctionModule;
-    IERC20Read public erc20Module;
-    IAdministration public administrationModule;
-    address public initializeModule;
+    ICollateralVaultModule public collateralVaultModule;
+    ILowLevelRebalanceModule public lowLevelRebalanceModule;
+    IAuctionModule public auctionModule;
+    IERC20Module public erc20Module;
+    IAdministrationModule public administrationModule;
 }

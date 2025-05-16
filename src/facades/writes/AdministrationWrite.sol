@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../../interfaces/IModules.sol";
-import "../../states/LTVState.sol";
-import "../writes/CommonWrite.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import '../../interfaces/IModules.sol';
+import '../../states/LTVState.sol';
+import '../writes/CommonWrite.sol';
+import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
+import '../../events/IAdministrationEvents.sol';
 
-abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeable {
+abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeable, IAdministrationEvents {
     function setTargetLTV(uint128 value) external {
         _delegate(address(modules.administrationModule()), abi.encode(value));
     }
@@ -81,5 +82,11 @@ abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeab
 
     function setMaxGrowthFee(uint256 _maxGrowthFee) external {
         _delegate(address(modules.administrationModule()), abi.encode(_maxGrowthFee));
+    }
+
+    function setModules(IModules _modules) external onlyOwner {
+        address oldModules = address(modules);
+        modules = _modules;
+        emit ModulesUpdated(oldModules, address(_modules));
     }
 }

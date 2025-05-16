@@ -69,7 +69,7 @@ contract AdministrationModule is LTVState, OwnableUpgradeable, ReentrancyGuardUp
     }
 
     function setSlippageProvider(ISlippageProvider _slippageProvider) external onlyGovernor {
-        address oldAddress = address(slippageProvider); 
+        address oldAddress = address(slippageProvider);
         slippageProvider = _slippageProvider;
         emit SlippageProviderUpdated(oldAddress, address(_slippageProvider));
     }
