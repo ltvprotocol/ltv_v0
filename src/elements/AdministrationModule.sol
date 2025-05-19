@@ -3,6 +3,4 @@ pragma solidity ^0.8.28;
 
 import 'src/public/AdministrationSetters.sol';
 
-contract AdministrationModule is AdministrationSetters {
-    
-}
+contract AdministrationModule is AdministrationSetters {}

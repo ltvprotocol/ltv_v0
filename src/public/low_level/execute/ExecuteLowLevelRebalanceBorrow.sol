@@ -4,7 +4,7 @@ pragma solidity ^0.8.28;
 import 'src/public/low_level/preview/PreviewLowLevelRebalanceBorrow.sol';
 import 'src/public/low_level/max/MaxLowLevelRebalanceBorrow.sol';
 import 'src/state_transition/ApplyMaxGrowthFee.sol';
-import 'src/math2/PreviewLowLevelRebalanceStateToData.sol';
+import 'src/math/PreviewLowLevelRebalanceStateToData.sol';
 import 'src/state_transition/ExecuteLowLevelRebalance.sol';
 import 'src/errors/ILowLevelRebalanceErrors.sol';
 

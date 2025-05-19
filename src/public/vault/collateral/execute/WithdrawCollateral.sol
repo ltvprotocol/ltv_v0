@@ -10,7 +10,7 @@ import '../../../../state_transition/Lending.sol';
 import 'src/events/IERC4626Events.sol';
 import 'src/errors/IVaultErrors.sol';
 import '../preview/PreviewWithdrawCollateral.sol';
-import '../../../../math2/NextStep.sol';
+import '../../../../math/NextStep.sol';
 
 abstract contract WithdrawCollateral is MaxWithdrawCollateral, ApplyMaxGrowthFee, MintProtocolRewards, Lending, VaultStateTransition, IERC4626Events, IVaultErrors {
     using uMulDiv for uint256;

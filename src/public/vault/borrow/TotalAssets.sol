@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 import '../../../Constants.sol';
 import '../../../utils/MulDiv.sol';
-import '../../../math2/CommonMath.sol';
+import '../../../math/CommonMath.sol';
 import '../../../structs/data/vault/TotalAssetsData.sol';
 import '../../../structs/state/vault/TotalAssetsState.sol';
 

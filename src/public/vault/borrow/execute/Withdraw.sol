@@ -9,7 +9,7 @@ import '../../../../state_transition/MintProtocolRewards.sol';
 import '../../../../state_transition/Lending.sol';
 import 'src/events/IERC4626Events.sol';
 import '../preview/PreviewWithdraw.sol';
-import '../../../../math2/NextStep.sol';
+import '../../../../math/NextStep.sol';
 import '../../../../state_transition/TransferFromProtocol.sol';
 import 'src/errors/IVaultErrors.sol';
 
