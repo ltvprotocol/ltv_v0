@@ -7,8 +7,16 @@ import 'src/state_transition/ApplyMaxGrowthFee.sol';
 import 'src/math/PreviewLowLevelRebalanceStateToData.sol';
 import 'src/state_transition/ExecuteLowLevelRebalance.sol';
 import 'src/errors/ILowLevelRebalanceErrors.sol';
+import 'src/state_reader/ExecuteLowLevelRebalanceStateReader.sol';
 
-abstract contract ExecuteLowLevelRebalanceBorrow is ExecuteLowLevelRebalance, PreviewLowLevelRebalanceBorrow, MaxLowLevelRebalanceBorrow, ApplyMaxGrowthFee, ILowLevelRebalanceErrors {
+abstract contract ExecuteLowLevelRebalanceBorrow is
+    ExecuteLowLevelRebalanceStateReader,
+    ExecuteLowLevelRebalance,
+    PreviewLowLevelRebalanceBorrow,
+    MaxLowLevelRebalanceBorrow,
+    ApplyMaxGrowthFee,
+    ILowLevelRebalanceErrors
+{
     function executeLowLevelRebalanceBorrow(int256 deltaBorrow) external isFunctionAllowed nonReentrant returns (int256, int256) {
         return _executeLowLevelRebalanceBorrowHint(deltaBorrow, true);
     }

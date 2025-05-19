@@ -12,8 +12,9 @@ import '../preview/PreviewWithdraw.sol';
 import '../../../../math/NextStep.sol';
 import '../../../../state_transition/TransferFromProtocol.sol';
 import 'src/errors/IVaultErrors.sol';
-
+import 'src/state_reader/MaxWithdrawRedeemBorrowVaultStateReader.sol';
 abstract contract Withdraw is
+    MaxWithdrawRedeemBorrowVaultStateReader,
     MaxWithdraw,
     ApplyMaxGrowthFee,
     MintProtocolRewards,

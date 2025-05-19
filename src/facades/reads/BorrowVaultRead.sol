@@ -2,9 +2,11 @@
 pragma solidity ^0.8.28;
 
 import '../../interfaces/IModules.sol';
-import '../../states/LTVState.sol';
+import 'src/state_reader/PreviewVaultStateReader.sol';
+import 'src/state_reader/MaxDepositMintBorrowVaultStateReader.sol';
+import 'src/state_reader/MaxWithdrawRedeemBorrowVaultStateReader.sol';
 
-abstract contract BorrowVaultRead is LTVState {
+abstract contract BorrowVaultRead is PreviewVaultStateReader, MaxDepositMintBorrowVaultStateReader, MaxWithdrawRedeemBorrowVaultStateReader {
     function previewDeposit(uint256 assets) external view returns (uint256) {
         return modules.borrowVaultModule().previewDeposit(assets, previewVaultState());
     }

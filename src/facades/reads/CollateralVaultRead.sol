@@ -2,9 +2,15 @@
 pragma solidity ^0.8.28;
 
 import '../../interfaces/IModules.sol';
-import '../../states/LTVState.sol';
+import 'src/state_reader/PreviewVaultStateReader.sol';
+import 'src/state_reader/MaxDepositMintCollateralVaultStateReader.sol';
+import 'src/state_reader/MaxWithdrawRedeemCollateralVaultStateReader.sol';
 
-abstract contract CollateralVaultRead is LTVState {
+abstract contract CollateralVaultRead is
+    PreviewVaultStateReader,
+    MaxDepositMintCollateralVaultStateReader,
+    MaxWithdrawRedeemCollateralVaultStateReader
+{
     function previewDepositCollateral(uint256 assets) external view returns (uint256) {
         return modules.collateralVaultModule().previewDepositCollateral(assets, previewVaultState());
     }
@@ -44,11 +50,11 @@ abstract contract CollateralVaultRead is LTVState {
     function convertToAssetsCollateral(uint256 shares) external view returns (uint256) {
         return modules.collateralVaultModule().convertToAssetsCollateral(shares, maxGrowthFeeState());
     }
-    
+
     function totalAssetsCollateral() external view returns (uint256) {
         return modules.collateralVaultModule().totalAssetsCollateral(totalAssetsState());
     }
-    
+
     function totalAssetsCollateral(bool isDeposit) external view returns (uint256) {
         return modules.collateralVaultModule().totalAssetsCollateral(isDeposit, totalAssetsState());
     }
