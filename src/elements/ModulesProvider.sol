@@ -1,49 +1,24 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../interfaces/reads/IERC20Read.sol';
-import '../interfaces/reads/IAuctionRead.sol';
-import '../interfaces/reads/ILowLevelRebalanceRead.sol';
-import '../interfaces/reads/IBorrowVaultRead.sol';
-import '../interfaces/reads/ICollateralVaultRead.sol';
-import '../interfaces/IModules.sol';
-struct ModulesState {
-    IBorrowVaultRead borrowVaultsRead;
-    ICollateralVaultRead collateralVaultsRead;
-    ILowLevelRebalanceRead lowLevelRebalancerRead;
-    IAuctionRead auctionRead;
-    IAdministration administration;
-    IERC20Read erc20;
-    address borrowVaultsWrite;
-    address collateralVaultsWrite;
-    address lowLevelRebalancerWrite;
-    address auctionWrite;
-}
+import 'src/structs/state/ModulesState.sol';
+import 'src/interfaces/IModules.sol';
+import 'src/interfaces/reads/IBorrowVaultModule.sol';
 
 contract ModulesProvider is IModules {
     constructor(ModulesState memory state) {
-        borrowVaultsRead = state.borrowVaultsRead;
-        collateralVaultsRead = state.collateralVaultsRead;
-        lowLevelRebalancerRead = state.lowLevelRebalancerRead;
-        auctionRead = state.auctionRead;
-
-        borrowVaultsWrite = state.borrowVaultsWrite;
-        collateralVaultsWrite = state.collateralVaultsWrite;
-        erc20 = state.erc20;
-        lowLevelRebalancerWrite = state.lowLevelRebalancerWrite;
-        auctionWrite = state.auctionWrite;
-        administration = state.administration;
+        borrowVaultModule = state.borrowVaultModule;
+        collateralVaultModule = state.collateralVaultModule;
+        lowLevelRebalanceModule = state.lowLevelRebalanceModule;
+        auctionModule = state.auctionModule;
+        erc20Module = state.erc20Module;
+        administrationModule = state.administrationModule;
     }
 
-    IBorrowVaultRead public borrowVaultsRead;
-    ICollateralVaultRead public collateralVaultsRead;
-    ILowLevelRebalanceRead public lowLevelRebalancerRead;
-    IAuctionRead public auctionRead;
-
-    address public borrowVaultsWrite;
-    address public collateralVaultsWrite;
-    IERC20Read public erc20;
-    address public lowLevelRebalancerWrite;
-    address public auctionWrite;
-    IAdministration public administration;
+    IBorrowVaultModule public borrowVaultModule;
+    ICollateralVaultModule public collateralVaultModule;
+    ILowLevelRebalanceModule public lowLevelRebalanceModule;
+    IAuctionModule public auctionModule;
+    IERC20Module public erc20Module;
+    IAdministrationModule public administrationModule;
 }

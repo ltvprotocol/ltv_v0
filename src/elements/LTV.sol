@@ -12,6 +12,10 @@ import '../facades/writes/BorrowVaultWrite.sol';
 import '../facades/reads/CollateralVaultRead.sol';
 import '../facades/writes/CollateralVaultWrite.sol';
 import '../facades/writes/AdministrationWrite.sol';
+import '../facades/writes/InitializeWrite.sol';
+import 'src/state_reader/GetRealBorrowAssetsReader.sol';
+import 'src/state_reader/GetRealCollateralAssetsReader.sol';
+
 contract LTV is
     AuctionRead,
     AuctionWrite,
@@ -23,5 +27,8 @@ contract LTV is
     BorrowVaultWrite,
     CollateralVaultRead,
     CollateralVaultWrite,
-    AdministrationWrite
+    AdministrationWrite,
+    InitializeWrite,
+    GetRealBorrowAssetsReader,
+    GetRealCollateralAssetsReader
 {}

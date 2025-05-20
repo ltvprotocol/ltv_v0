@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../State.sol';
 import '../Constants.sol';
-import '../Structs.sol';
-import '../Cases.sol';
+import '../structs/data/vault/Cases.sol';
+import '../structs/state_transition/DeltaFuture.sol';
+import 'src/math/CasesOperator.sol';
 import '../utils/MulDiv.sol';
 
 library CommonBorrowCollateral {
@@ -14,7 +14,8 @@ library CommonBorrowCollateral {
     // Future executor <=> executor conflict, round up to make auction more profitable
     function calculateDeltaFutureBorrowFromDeltaFutureCollateral(
         Cases memory ncase,
-        ConvertedAssets memory convertedAssets,
+        int256 futureCollateral,
+        int256 futureBorrow,
         int256 deltaFutureCollateral
     ) internal pure returns (int256) {
         // (cna + cmcb + cmbc + ceccb + cecbc) × ∆futureCollateral +
@@ -22,14 +23,14 @@ library CommonBorrowCollateral {
         // + (ceccb + cecbc) × (futureCollateral − futureBorrow)
 
         int256 deltaFutureBorrow = int256(int8(ncase.cna + ncase.cmcb + ncase.cmbc + ncase.ceccb + ncase.cecbc)) * deltaFutureCollateral;
-        if (convertedAssets.futureCollateral == 0) {
+        if (futureCollateral == 0) {
             return deltaFutureBorrow;
         }
 
         deltaFutureBorrow +=
             int256(int8(ncase.cecb + ncase.cebc)) *
-            deltaFutureCollateral.mulDivUp(convertedAssets.futureBorrow, convertedAssets.futureCollateral);
-        deltaFutureBorrow += int256(int8(ncase.ceccb + ncase.cecbc)) * (convertedAssets.futureCollateral - convertedAssets.futureBorrow);
+            deltaFutureCollateral.mulDivUp(futureBorrow, futureCollateral);
+        deltaFutureBorrow += int256(int8(ncase.ceccb + ncase.cecbc)) * (futureCollateral - futureBorrow);
 
         return deltaFutureBorrow;
     }
@@ -37,18 +38,19 @@ library CommonBorrowCollateral {
     // Future executor <=> executor conflict, round down to make auction more profitable
     function calculateDeltaFutureCollateralFromDeltaFutureBorrow(
         Cases memory ncase,
-        ConvertedAssets memory convertedAssets,
+        int256 futureCollateral,
+        int256 futureBorrow,
         int256 deltaFutureBorrow
     ) internal pure returns (int256) {
         int256 deltaFutureCollateral = int256(int8(ncase.cna + ncase.cmcb + ncase.cmbc + ncase.ceccb + ncase.cecbc)) * deltaFutureBorrow;
-        if (convertedAssets.futureCollateral == 0) {
+        if (futureCollateral == 0) {
             return deltaFutureCollateral;
         }
 
         deltaFutureCollateral +=
             int256(int8(ncase.cecb + ncase.cebc)) *
-            deltaFutureBorrow.mulDivDown(convertedAssets.futureCollateral, convertedAssets.futureBorrow);
-        deltaFutureCollateral += int256(int8(ncase.ceccb + ncase.cecbc)) * (convertedAssets.futureBorrow - convertedAssets.futureCollateral);
+            deltaFutureBorrow.mulDivDown(futureCollateral, futureBorrow);
+        deltaFutureCollateral += int256(int8(ncase.ceccb + ncase.cecbc)) * (futureBorrow - futureCollateral);
 
         return deltaFutureCollateral;
     }
@@ -56,45 +58,47 @@ library CommonBorrowCollateral {
     // Future executor <=> executor conflict, round down to make auction more profitable
     function calculateDeltaUserFutureRewardCollateral(
         Cases memory ncase,
-        ConvertedAssets memory convertedAssets,
+        int256 futureCollateral,
+        int256 userFutureRewardCollateral,
         int256 deltaFutureCollateral
     ) internal pure returns (int256) {
         // cecb × userFutureRewardCollateral × ∆futureCollateral / futureCollateral +
         // + ceccb × −userFutureRewardCollateral
 
-        if (convertedAssets.futureCollateral == 0) {
+        if (futureCollateral == 0) {
             return 0;
         }
 
         int256 deltaUserFutureRewardCollateral = int256(int8(ncase.cecb)) *
-            convertedAssets.userFutureRewardCollateral.mulDivDown(deltaFutureCollateral, convertedAssets.futureCollateral);
-        deltaUserFutureRewardCollateral -= int256(int8(ncase.ceccb)) * convertedAssets.userFutureRewardCollateral;
+            userFutureRewardCollateral.mulDivDown(deltaFutureCollateral, futureCollateral);
+        deltaUserFutureRewardCollateral -= int256(int8(ncase.ceccb)) * userFutureRewardCollateral;
         return deltaUserFutureRewardCollateral;
     }
 
     //  Fee collector <=> future executor conflict, round down to leave a bit more future reward collateral in the protocol
     function calculateDeltaProtocolFutureRewardCollateral(
         Cases memory ncase,
-        ConvertedAssets memory convertedAssets,
+        int256 futureCollateral,
+        int256 protocolFutureRewardCollateral,
         int256 deltaFutureCollateral
     ) internal pure returns (int256) {
         // cecb × userFutureRewardCollateral × ∆futureCollateral / futureCollateral +
         // + ceccb × −userFutureRewardCollateral
 
-        if (convertedAssets.futureCollateral == 0) {
+        if (futureCollateral == 0) {
             return 0;
         }
 
         int256 deltaProtocolFutureRewardCollateral = int256(int8(ncase.cecb)) *
-            convertedAssets.protocolFutureRewardCollateral.mulDivUp(deltaFutureCollateral, convertedAssets.futureCollateral);
-        deltaProtocolFutureRewardCollateral -= int256(int8(ncase.ceccb)) * convertedAssets.protocolFutureRewardCollateral;
+            protocolFutureRewardCollateral.mulDivUp(deltaFutureCollateral, futureCollateral);
+        deltaProtocolFutureRewardCollateral -= int256(int8(ncase.ceccb)) * protocolFutureRewardCollateral;
         return deltaProtocolFutureRewardCollateral;
     }
 
     // auction creator <=> future executor conflict, resolve in favor of future executor, round down to leave more rewards in protocol
     function calculateDeltaFuturePaymentCollateral(
         Cases memory ncase,
-        ConvertedAssets memory convertedAssets,
+        int256 futureCollateral,
         int256 deltaFutureCollateral,
         uint256 collateralSlippage
     ) internal pure returns (int256) {
@@ -105,7 +109,7 @@ library CommonBorrowCollateral {
             deltaFutureCollateral.mulDivUp(int256(collateralSlippage), Constants.SLIPPAGE_PRECISION);
         deltaFuturePaymentCollateral -=
             int256(int8(ncase.cecbc)) *
-            (deltaFutureCollateral + convertedAssets.futureCollateral).mulDivUp(int256(collateralSlippage), Constants.SLIPPAGE_PRECISION);
+            (deltaFutureCollateral + futureCollateral).mulDivUp(int256(collateralSlippage), Constants.SLIPPAGE_PRECISION);
 
         return deltaFuturePaymentCollateral;
     }
@@ -113,19 +117,20 @@ library CommonBorrowCollateral {
     // auction executor <=> future auction executor conflict, resolve in favor of future executor, round up to leave more rewards in protocol
     function calculateDeltaUserFutureRewardBorrow(
         Cases memory ncase,
-        ConvertedAssets memory convertedAssets,
+        int256 futureBorrow,
+        int256 userFutureRewardBorrow,
         int256 deltaFutureBorrow
     ) internal pure returns (int256) {
         // cebc × userF utureRewardBorrow × ∆futureBorrow / futureBorrow +
         // + cecbc × −userFutureRewardBorrow
 
-        if (convertedAssets.futureBorrow == 0) {
+        if (futureBorrow == 0) {
             return 0;
         }
 
         int256 deltaUserFutureRewardBorrow = int256(int8(ncase.cebc)) *
-            convertedAssets.userFutureRewardBorrow.mulDivUp(deltaFutureBorrow, convertedAssets.futureBorrow);
-        deltaUserFutureRewardBorrow -= int256(int8(ncase.cecbc)) * convertedAssets.userFutureRewardBorrow;
+            userFutureRewardBorrow.mulDivUp(deltaFutureBorrow, futureBorrow);
+        deltaUserFutureRewardBorrow -= int256(int8(ncase.cecbc)) * userFutureRewardBorrow;
 
         return deltaUserFutureRewardBorrow;
     }
@@ -133,16 +138,17 @@ library CommonBorrowCollateral {
     // Fee collector <=> future executor conflict, round up to leave a bit more future reward borrow in the protocol
     function calculateDeltaProtocolFutureRewardBorrow(
         Cases memory ncase,
-        ConvertedAssets memory convertedAssets,
+        int256 futureBorrow,
+        int256 protocolFutureRewardBorrow,
         int256 deltaFutureBorrow
     ) internal pure returns (int256) {
-        if (convertedAssets.futureBorrow == 0) {
+        if (futureBorrow == 0) {
             return 0;
         }
 
         int256 deltaProtocolFutureRewardBorrow = int256(int8(ncase.cebc)) *
-            convertedAssets.protocolFutureRewardBorrow.mulDivUp(deltaFutureBorrow, convertedAssets.futureBorrow);
-        deltaProtocolFutureRewardBorrow -= int256(int8(ncase.cecbc)) * convertedAssets.protocolFutureRewardBorrow;
+            protocolFutureRewardBorrow.mulDivUp(deltaFutureBorrow, futureBorrow);
+        deltaProtocolFutureRewardBorrow -= int256(int8(ncase.cecbc)) * protocolFutureRewardBorrow;
 
         return deltaProtocolFutureRewardBorrow;
     }
@@ -150,7 +156,7 @@ library CommonBorrowCollateral {
     // auction creator <=> future executor conflict, resolve in favor of future executor, round up to leave more rewards in protocol
     function calculateDeltaFuturePaymentBorrow(
         Cases memory ncase,
-        ConvertedAssets memory convertedAssets,
+        int256 futureBorrow,
         int256 deltaFutureBorrow,
         uint256 borrowSlippage
     ) internal pure returns (int256) {
@@ -161,7 +167,7 @@ library CommonBorrowCollateral {
             deltaFutureBorrow.mulDivDown(int256(borrowSlippage), Constants.SLIPPAGE_PRECISION);
         deltaFuturePaymentBorrow -=
             int256(int8(ncase.ceccb)) *
-            (deltaFutureBorrow + convertedAssets.futureBorrow).mulDivDown(int256(borrowSlippage), Constants.SLIPPAGE_PRECISION);
+            (deltaFutureBorrow + futureBorrow).mulDivDown(int256(borrowSlippage), Constants.SLIPPAGE_PRECISION);
 
         return deltaFuturePaymentBorrow;
     }

@@ -3,8 +3,8 @@ pragma solidity ^0.8.28;
 
 import 'src/states/LTVState.sol';
 
-contract ERC20Read is LTVState {
+abstract contract ERC20Read is LTVState {
     function totalSupply() external view returns (uint256) {
-        return modules.erc20().totalSupply(baseTotalSupply);
+        return modules.erc20Module().totalSupply(baseTotalSupply);
     }
 }

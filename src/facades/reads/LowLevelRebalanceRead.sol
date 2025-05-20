@@ -2,36 +2,41 @@
 pragma solidity ^0.8.28;
 
 import '../../interfaces/IModules.sol';
-import '../../states/LTVState.sol';
+import 'src/state_reader/PreviewLowLevelRebalanceStateReader.sol';
+import 'src/state_reader/MaxLowLevelRebalanceSharesStateReader.sol';
+import 'src/state_reader/MaxLowLevelRebalanceBorrowStateReader.sol';
+import 'src/state_reader/MaxLowLevelRebalanceCollateralStateReader.sol';
 
-abstract contract LowLevelRebalanceRead is LTVState {
+abstract contract LowLevelRebalanceRead is
+    PreviewLowLevelRebalanceStateReader,
+    MaxLowLevelRebalanceSharesStateReader,
+    MaxLowLevelRebalanceBorrowStateReader,
+    MaxLowLevelRebalanceCollateralStateReader
+{
     function previewLowLevelRebalanceShares(int256 deltaShares) public view returns (int256, int256) {
-        return modules.lowLevelRebalancerRead().previewLowLevelRebalanceShares(deltaShares, previewLowLevelRebalanceState());
+        return modules.lowLevelRebalanceModule().previewLowLevelRebalanceShares(deltaShares, previewLowLevelRebalanceState());
     }
 
     function previewLowLevelRebalanceBorrow(int256 deltaBorrowAssets) external view returns (int256, int256) {
-        return modules.lowLevelRebalancerRead().previewLowLevelRebalanceBorrow(deltaBorrowAssets, previewLowLevelRebalanceState());
+        return modules.lowLevelRebalanceModule().previewLowLevelRebalanceBorrow(deltaBorrowAssets, previewLowLevelRebalanceState());
     }
 
     function previewLowLevelRebalanceCollateral(int256 deltaCollateralAssets) external view returns (int256, int256) {
-        return modules.lowLevelRebalancerRead().previewLowLevelRebalanceCollateral(deltaCollateralAssets, previewLowLevelRebalanceState());
+        return modules.lowLevelRebalanceModule().previewLowLevelRebalanceCollateral(deltaCollateralAssets, previewLowLevelRebalanceState());
     }
 
     function previewLowLevelRebalanceBorrowHint(int256 deltaBorrowAssets, bool isSharesPositiveHint) external view returns (int256, int256) {
         return
-            modules.lowLevelRebalancerRead().previewLowLevelRebalanceBorrowHint(
+            modules.lowLevelRebalanceModule().previewLowLevelRebalanceBorrowHint(
                 deltaBorrowAssets,
                 isSharesPositiveHint,
                 previewLowLevelRebalanceState()
             );
     }
 
-    function previewLowLevelRebalanceCollateralHint(
-        int256 deltaCollateralAssets,
-        bool isSharesPositiveHint
-    ) external view returns (int256, int256) {
+    function previewLowLevelRebalanceCollateralHint(int256 deltaCollateralAssets, bool isSharesPositiveHint) external view returns (int256, int256) {
         return
-            modules.lowLevelRebalancerRead().previewLowLevelRebalanceCollateralHint(
+            modules.lowLevelRebalanceModule().previewLowLevelRebalanceCollateralHint(
                 deltaCollateralAssets,
                 isSharesPositiveHint,
                 previewLowLevelRebalanceState()
@@ -39,14 +44,14 @@ abstract contract LowLevelRebalanceRead is LTVState {
     }
 
     function maxLowLevelRebalanceShares() external view returns (int256) {
-        return modules.lowLevelRebalancerRead().maxLowLevelRebalanceShares(maxLowLevelRebalanceSharesState());
+        return modules.lowLevelRebalanceModule().maxLowLevelRebalanceShares(maxLowLevelRebalanceSharesState());
     }
 
     function maxLowLevelRebalanceBorrow() external view returns (int256) {
-        return modules.lowLevelRebalancerRead().maxLowLevelRebalanceBorrow(maxLowLevelRebalanceBorrowState());
+        return modules.lowLevelRebalanceModule().maxLowLevelRebalanceBorrow(maxLowLevelRebalanceBorrowState());
     }
 
     function maxLowLevelRebalanceCollateral() external view returns (int256) {
-        return modules.lowLevelRebalancerRead().maxLowLevelRebalanceCollateral(maxLowLevelRebalanceCollateralState());
+        return modules.lowLevelRebalanceModule().maxLowLevelRebalanceCollateral(maxLowLevelRebalanceCollateralState());
     }
 }
