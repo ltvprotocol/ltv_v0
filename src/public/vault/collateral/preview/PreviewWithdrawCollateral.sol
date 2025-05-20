@@ -3,7 +3,6 @@ pragma solidity ^0.8.28;
 
 import 'src/math/VaultCollateral.sol';
 import '../../../../math/DepositWithdraw.sol';
-import 'forge-std/console.sol';
 
 abstract contract PreviewWithdrawCollateral is VaultCollateral {
     using uMulDiv for uint256;
@@ -34,14 +33,9 @@ abstract contract PreviewWithdrawCollateral is VaultCollateral {
             })
         );
 
-        console.log("sharesInUnderlying", sharesInUnderlying);
-
         if (sharesInUnderlying > 0) {
             return (0, deltaFuture);
         }
-
-        console.log("totalAssetsCollateral", data.totalAssetsCollateral);
-        console.log("supplyAfterFee", data.supplyAfterFee);
 
         // HODLer <=> withdrawer conflict, round in favor of HODLer, round up to burn more shares
         return (
