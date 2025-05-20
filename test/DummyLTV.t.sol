@@ -729,6 +729,7 @@ contract DummyLTVTest is Test {
     ) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
         uint256 newValue = 1000000 * 10 ** 18;
         address governor = ILTV(address(dummyLTV)).governor();
+        vm.assume(user != governor);
         vm.startPrank(governor);
         dummyLTV.setMaxTotalAssetsInUnderlying(newValue);
         assertEq(dummyLTV.maxTotalAssetsInUnderlying(), newValue);
