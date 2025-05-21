@@ -103,7 +103,7 @@ contract GeneratedTests is Test {
         } else {
           dummyLTV.setFutureRewardCollateralAssets(auctionReward);
         }
-        dummyLTV.mintFreeTokens((dummyLTV.totalAssets() - 1) * 100, address(this));
+        dummyLTV.mintFreeTokens(dummyLTV.totalAssets() - 100, address(this));
         vm.stopPrank();
 
         deal(address(borrowToken), address(lendingProtocol), type(uint112).max);
@@ -121,18 +121,18 @@ contract GeneratedTests is Test {
       uint256 deltaShares = dummyLTV.deposit(1000, address(this));
       
       assertEq(deltaShares, preview);
-      assertEq(deltaShares, 1000 * 100);
+      assertEq(deltaShares, 1000);
       assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 75050);
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 55000);
       assertEq(dummyLTV.futureBorrowAssets(), 5000);
       assertEq(dummyLTV.futureCollateralAssets(), 5000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
   function test_borrow_cna_mint() public initializeTest(56000, 75050, 5000, 5000, -50, 600.0) {
-      uint256 preview = dummyLTV.previewMint(1000 * 100);
-      uint256 deltaBorrow = dummyLTV.mint(1000 * 100, address(this));
+      uint256 preview = dummyLTV.previewMint(1000);
+      uint256 deltaBorrow = dummyLTV.mint(1000, address(this));
       
       assertEq(deltaBorrow, preview);
       assertEq(deltaBorrow, 1000);
@@ -140,7 +140,7 @@ contract GeneratedTests is Test {
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 55000);
       assertEq(dummyLTV.futureBorrowAssets(), 5000);
       assertEq(dummyLTV.futureCollateralAssets(), 5000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
@@ -149,18 +149,18 @@ contract GeneratedTests is Test {
       uint256 deltaShares = dummyLTV.withdraw(1000, address(this), address(this));
       
       assertEq(deltaShares, preview);
-      assertEq(deltaShares, 1000 * 100);
+      assertEq(deltaShares, 1000);
       assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 75050);
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 55000);
       assertEq(dummyLTV.futureBorrowAssets(), 5000);
       assertEq(dummyLTV.futureCollateralAssets(), 5000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
   function test_borrow_cna_redeem() public initializeTest(54000, 75050, 5000, 5000, -50, 600.0) {
-      uint256 preview = dummyLTV.previewRedeem(100000);
-      uint256 deltaBorrow = dummyLTV.redeem(100000, address(this), address(this));
+      uint256 preview = dummyLTV.previewRedeem(1000);
+      uint256 deltaBorrow = dummyLTV.redeem(1000, address(this), address(this));
       
       assertEq(deltaBorrow, preview);
       assertEq(deltaBorrow, 1000);
@@ -168,7 +168,7 @@ contract GeneratedTests is Test {
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 55000);
       assertEq(dummyLTV.futureBorrowAssets(), 5000);
       assertEq(dummyLTV.futureCollateralAssets(), 5000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
@@ -177,18 +177,18 @@ contract GeneratedTests is Test {
       uint256 deltaShares = dummyLTV.deposit(2060, address(this));
       
       assertEq(deltaShares, preview);
-      assertEq(deltaShares, 1980 * 100);
+      assertEq(deltaShares, 1980);
       assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 75050);
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 52940);
       assertEq(dummyLTV.futureBorrowAssets(), 13000);
       assertEq(dummyLTV.futureCollateralAssets(), 13000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
   function test_borrow_cmbc_mint() public initializeTest(55000, 75050, 5000, 5000, -50, 600.0) {
-      uint256 preview = dummyLTV.previewMint(1980 * 100);
-      uint256 deltaBorrow = dummyLTV.mint(1980 * 100, address(this));
+      uint256 preview = dummyLTV.previewMint(1980);
+      uint256 deltaBorrow = dummyLTV.mint(1980, address(this));
       
       assertEq(deltaBorrow, preview);
       assertEq(deltaBorrow, 2060);
@@ -196,7 +196,7 @@ contract GeneratedTests is Test {
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 52940);
       assertEq(dummyLTV.futureBorrowAssets(), 13000);
       assertEq(dummyLTV.futureCollateralAssets(), 13000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
@@ -205,18 +205,18 @@ contract GeneratedTests is Test {
       uint256 deltaShares = dummyLTV.withdraw(9700, address(this), address(this));
       
       assertEq(deltaShares, preview);
-      assertEq(deltaShares, 10100 * 100);
+      assertEq(deltaShares, 10100);
       assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 75050);
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 44700);
       assertEq(dummyLTV.futureBorrowAssets(), 45000);
       assertEq(dummyLTV.futureCollateralAssets(), 45000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
   function test_borrow_cmbc_redeem() public initializeTest(35000, 75050, 5000, 5000, -50, 600.0) {
-      uint256 preview = dummyLTV.previewRedeem(1010000);
-      uint256 deltaBorrow = dummyLTV.redeem(1010000, address(this), address(this));
+      uint256 preview = dummyLTV.previewRedeem(10100);
+      uint256 deltaBorrow = dummyLTV.redeem(10100, address(this), address(this));
       
       assertEq(deltaBorrow, preview);
       assertEq(deltaBorrow, 9700);
@@ -224,7 +224,7 @@ contract GeneratedTests is Test {
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 44700);
       assertEq(dummyLTV.futureBorrowAssets(), 45000);
       assertEq(dummyLTV.futureCollateralAssets(), 45000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
@@ -233,18 +233,18 @@ contract GeneratedTests is Test {
       uint256 deltaShares = dummyLTV.deposit(9040, address(this));
       
       assertEq(deltaShares, preview);
-      assertEq(deltaShares, 9000 * 100);
+      assertEq(deltaShares, 9000);
       assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 85000);
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 65910);
       assertEq(dummyLTV.futureBorrowAssets(), -9000);
       assertEq(dummyLTV.futureCollateralAssets(), -9000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
   function test_borrow_cmcb_mint() public initializeTest(74950, 85000, -5000, -5000, 50, 600.0) {
-      uint256 preview = dummyLTV.previewMint(9000 * 100);
-      uint256 deltaBorrow = dummyLTV.mint(9000 * 100, address(this));
+      uint256 preview = dummyLTV.previewMint(9000);
+      uint256 deltaBorrow = dummyLTV.mint(9000, address(this));
       
       assertEq(deltaBorrow, preview);
       assertEq(deltaBorrow, 9040);
@@ -252,7 +252,7 @@ contract GeneratedTests is Test {
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 65910);
       assertEq(dummyLTV.futureBorrowAssets(), -9000);
       assertEq(dummyLTV.futureCollateralAssets(), -9000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
@@ -261,18 +261,18 @@ contract GeneratedTests is Test {
       uint256 deltaShares = dummyLTV.withdraw(960, address(this), address(this));
       
       assertEq(deltaShares, preview);
-      assertEq(deltaShares, 1000 * 100);
+      assertEq(deltaShares, 1000);
       assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 85000);
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 65910);
       assertEq(dummyLTV.futureBorrowAssets(), -9000);
       assertEq(dummyLTV.futureCollateralAssets(), -9000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
   function test_borrow_cmcb_redeem() public initializeTest(64950, 85000, -5000, -5000, 50, 600.0) {
-      uint256 preview = dummyLTV.previewRedeem(100000);
-      uint256 deltaBorrow = dummyLTV.redeem(100000, address(this), address(this));
+      uint256 preview = dummyLTV.previewRedeem(1000);
+      uint256 deltaBorrow = dummyLTV.redeem(1000, address(this), address(this));
       
       assertEq(deltaBorrow, preview);
       assertEq(deltaBorrow, 960);
@@ -280,7 +280,7 @@ contract GeneratedTests is Test {
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 65910);
       assertEq(dummyLTV.futureBorrowAssets(), -9000);
       assertEq(dummyLTV.futureCollateralAssets(), -9000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
@@ -289,18 +289,18 @@ contract GeneratedTests is Test {
       uint256 deltaShares = dummyLTV.deposit(960, address(this));
       
       assertEq(deltaShares, preview);
-      assertEq(deltaShares, 976 * 100);
+      assertEq(deltaShares, 976);
       assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 85000);
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 63990);
       assertEq(dummyLTV.futureBorrowAssets(), -1000);
       assertEq(dummyLTV.futureCollateralAssets(), -1000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
   function test_borrow_cebc_mint() public initializeTest(64950, 85000, -5000, -5000, 50, 600.0) {
-      uint256 preview = dummyLTV.previewMint(976 * 100);
-      uint256 deltaBorrow = dummyLTV.mint(976 * 100, address(this));
+      uint256 preview = dummyLTV.previewMint(976);
+      uint256 deltaBorrow = dummyLTV.mint(976, address(this));
       
       assertEq(deltaBorrow, preview);
       assertEq(deltaBorrow, 960);
@@ -308,7 +308,7 @@ contract GeneratedTests is Test {
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 63990);
       assertEq(dummyLTV.futureBorrowAssets(), -1000);
       assertEq(dummyLTV.futureCollateralAssets(), -1000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
@@ -317,18 +317,18 @@ contract GeneratedTests is Test {
       uint256 deltaShares = dummyLTV.withdraw(9040, address(this), address(this));
       
       assertEq(deltaShares, preview);
-      assertEq(deltaShares, 9024 * 100);
+      assertEq(deltaShares, 9024);
       assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 85000);
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 63990);
       assertEq(dummyLTV.futureBorrowAssets(), -1000);
       assertEq(dummyLTV.futureCollateralAssets(), -1000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
   function test_borrow_cebc_redeem() public initializeTest(54950, 85000, -5000, -5000, 50, 600.0) {
-      uint256 preview = dummyLTV.previewRedeem(902400);
-      uint256 deltaBorrow = dummyLTV.redeem(902400, address(this), address(this));
+      uint256 preview = dummyLTV.previewRedeem(9024);
+      uint256 deltaBorrow = dummyLTV.redeem(9024, address(this), address(this));
       
       assertEq(deltaBorrow, preview);
       assertEq(deltaBorrow, 9040);
@@ -336,7 +336,7 @@ contract GeneratedTests is Test {
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 63990);
       assertEq(dummyLTV.futureBorrowAssets(), -1000);
       assertEq(dummyLTV.futureCollateralAssets(), -1000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
@@ -345,18 +345,18 @@ contract GeneratedTests is Test {
       uint256 deltaShares = dummyLTV.deposit(8970, address(this));
       
       assertEq(deltaShares, preview);
-      assertEq(deltaShares, 8986 * 100);
+      assertEq(deltaShares, 8986);
       assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 75050);
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 56030);
       assertEq(dummyLTV.futureBorrowAssets(), 1000);
       assertEq(dummyLTV.futureCollateralAssets(), 1000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
   function test_borrow_cecb_mint() public initializeTest(65000, 75050, 5000, 5000, -50, 600.0) {
-      uint256 preview = dummyLTV.previewMint(8986 * 100);
-      uint256 deltaBorrow = dummyLTV.mint(8986 * 100, address(this));
+      uint256 preview = dummyLTV.previewMint(8986);
+      uint256 deltaBorrow = dummyLTV.mint(8986, address(this));
       
       assertEq(deltaBorrow, preview);
       assertEq(deltaBorrow, 8970);
@@ -364,7 +364,7 @@ contract GeneratedTests is Test {
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 56030);
       assertEq(dummyLTV.futureBorrowAssets(), 1000);
       assertEq(dummyLTV.futureCollateralAssets(), 1000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
@@ -373,18 +373,18 @@ contract GeneratedTests is Test {
       uint256 deltaShares = dummyLTV.withdraw(1030, address(this), address(this));
       
       assertEq(deltaShares, preview);
-      assertEq(deltaShares, 1014 * 100);
+      assertEq(deltaShares, 1014);
       assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 75050);
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 56030);
       assertEq(dummyLTV.futureBorrowAssets(), 1000);
       assertEq(dummyLTV.futureCollateralAssets(), 1000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
   function test_borrow_cecb_redeem() public initializeTest(55000, 75050, 5000, 5000, -50, 600.0) {
-      uint256 preview = dummyLTV.previewRedeem(101400);
-      uint256 deltaBorrow = dummyLTV.redeem(101400, address(this), address(this));
+      uint256 preview = dummyLTV.previewRedeem(1014);
+      uint256 deltaBorrow = dummyLTV.redeem(1014, address(this), address(this));
       
       assertEq(deltaBorrow, preview);
       assertEq(deltaBorrow, 1030);
@@ -392,7 +392,7 @@ contract GeneratedTests is Test {
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 56030);
       assertEq(dummyLTV.futureBorrowAssets(), 1000);
       assertEq(dummyLTV.futureCollateralAssets(), 1000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
@@ -401,18 +401,18 @@ contract GeneratedTests is Test {
       uint256 deltaShares = dummyLTV.deposit(8010, address(this));
       
       assertEq(deltaShares, preview);
-      assertEq(deltaShares, 7986 * 100);
+      assertEq(deltaShares, 7986);
       assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 76040);
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 57990);
       assertEq(dummyLTV.futureBorrowAssets(), -4000);
       assertEq(dummyLTV.futureCollateralAssets(), -4000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
   function test_borrow_ceccb_mint() public initializeTest(66000, 76040, 4000, 4000, -40, 600.0) {
-      uint256 preview = dummyLTV.previewMint(7986 * 100);
-      uint256 deltaBorrow = dummyLTV.mint(7986 * 100, address(this));
+      uint256 preview = dummyLTV.previewMint(7986);
+      uint256 deltaBorrow = dummyLTV.mint(7986, address(this));
       
       assertEq(deltaBorrow, preview);
       assertEq(deltaBorrow, 8010);
@@ -420,7 +420,7 @@ contract GeneratedTests is Test {
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 57990);
       assertEq(dummyLTV.futureBorrowAssets(), -4000);
       assertEq(dummyLTV.futureCollateralAssets(), -4000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
@@ -429,18 +429,18 @@ contract GeneratedTests is Test {
       uint256 deltaShares = dummyLTV.withdraw(1990, address(this), address(this));
       
       assertEq(deltaShares, preview);
-      assertEq(deltaShares, 2014 * 100);
+      assertEq(deltaShares, 2014);
       assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 76040);
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 57990);
       assertEq(dummyLTV.futureBorrowAssets(), -4000);
       assertEq(dummyLTV.futureCollateralAssets(), -4000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
   function test_borrow_ceccb_redeem() public initializeTest(56000, 76040, 4000, 4000, -40, 600.0) {
-      uint256 preview = dummyLTV.previewRedeem(201400);
-      uint256 deltaBorrow = dummyLTV.redeem(201400, address(this), address(this));
+      uint256 preview = dummyLTV.previewRedeem(2014);
+      uint256 deltaBorrow = dummyLTV.redeem(2014, address(this), address(this));
       
       assertEq(deltaBorrow, preview);
       assertEq(deltaBorrow, 1990);
@@ -448,7 +448,7 @@ contract GeneratedTests is Test {
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 57990);
       assertEq(dummyLTV.futureBorrowAssets(), -4000);
       assertEq(dummyLTV.futureCollateralAssets(), -4000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
@@ -457,18 +457,18 @@ contract GeneratedTests is Test {
       uint256 deltaShares = dummyLTV.deposit(2230, address(this));
       
       assertEq(deltaShares, preview);
-      assertEq(deltaShares, 2210 * 100);
+      assertEq(deltaShares, 2210);
       assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 85000);
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 62720);
       assertEq(dummyLTV.futureBorrowAssets(), 4000);
       assertEq(dummyLTV.futureCollateralAssets(), 4000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
   function test_borrow_cecbc_mint() public initializeTest(64950, 85000, -5000, -5000, 50, 600.0) {
-      uint256 preview = dummyLTV.previewMint(2210 * 100);
-      uint256 deltaBorrow = dummyLTV.mint(2210 * 100, address(this));
+      uint256 preview = dummyLTV.previewMint(2210);
+      uint256 deltaBorrow = dummyLTV.mint(2210, address(this));
       
       assertEq(deltaBorrow, preview);
       assertEq(deltaBorrow, 2230);
@@ -476,7 +476,7 @@ contract GeneratedTests is Test {
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 62720);
       assertEq(dummyLTV.futureBorrowAssets(), 4000);
       assertEq(dummyLTV.futureCollateralAssets(), 4000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
@@ -485,18 +485,18 @@ contract GeneratedTests is Test {
       uint256 deltaShares = dummyLTV.withdraw(7770, address(this), address(this));
       
       assertEq(deltaShares, preview);
-      assertEq(deltaShares, 7790 * 100);
+      assertEq(deltaShares, 7790);
       assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 85000);
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 62720);
       assertEq(dummyLTV.futureBorrowAssets(), 4000);
       assertEq(dummyLTV.futureCollateralAssets(), 4000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
   function test_borrow_cecbc_redeem() public initializeTest(54950, 85000, -5000, -5000, 50, 600.0) {
-      uint256 preview = dummyLTV.previewRedeem(779000);
-      uint256 deltaBorrow = dummyLTV.redeem(779000, address(this), address(this));
+      uint256 preview = dummyLTV.previewRedeem(7790);
+      uint256 deltaBorrow = dummyLTV.redeem(7790, address(this), address(this));
       
       assertEq(deltaBorrow, preview);
       assertEq(deltaBorrow, 7770);
@@ -504,7 +504,7 @@ contract GeneratedTests is Test {
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 62720);
       assertEq(dummyLTV.futureBorrowAssets(), 4000);
       assertEq(dummyLTV.futureCollateralAssets(), 4000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
@@ -513,18 +513,18 @@ contract GeneratedTests is Test {
       uint256 deltaShares = dummyLTV.depositCollateral(1000, address(this));
 
       assertEq(deltaShares, preview);
-      assertEq(deltaShares, 1000 * 100);
+      assertEq(deltaShares, 1000);
       assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 76040);
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 56000);
       assertEq(dummyLTV.futureBorrowAssets(), 4000);
       assertEq(dummyLTV.futureCollateralAssets(), 4000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
   function test_collateral_cna_mint() public initializeTest(56000, 75040, 4000, 4000, -40, 600.0) {
-      uint256 preview = dummyLTV.previewMintCollateral(1000 * 100);
-      uint256 deltaCollateral = dummyLTV.mintCollateral(1000 * 100, address(this));
+      uint256 preview = dummyLTV.previewMintCollateral(1000);
+      uint256 deltaCollateral = dummyLTV.mintCollateral(1000, address(this));
       
       assertEq(deltaCollateral, preview);
       assertEq(deltaCollateral, 1000);
@@ -532,7 +532,7 @@ contract GeneratedTests is Test {
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 56000);
       assertEq(dummyLTV.futureBorrowAssets(), 4000);
       assertEq(dummyLTV.futureCollateralAssets(), 4000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
@@ -541,18 +541,18 @@ contract GeneratedTests is Test {
       uint256 deltaShares = dummyLTV.withdrawCollateral(1000, address(this), address(this));
       
       assertEq(deltaShares, preview);
-      assertEq(deltaShares, 1000 * 100);
+      assertEq(deltaShares, 1000);
       assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 76040);
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 56000);
       assertEq(dummyLTV.futureBorrowAssets(), 4000);
       assertEq(dummyLTV.futureCollateralAssets(), 4000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
   function test_collateral_cna_redeem() public initializeTest(56000, 77040, 4000, 4000, -40, 600.0) {
-      uint256 preview = dummyLTV.previewRedeemCollateral(100000);
-      uint256 deltaCollateral = dummyLTV.redeemCollateral(100000, address(this), address(this));
+      uint256 preview = dummyLTV.previewRedeemCollateral(1000);
+      uint256 deltaCollateral = dummyLTV.redeemCollateral(1000, address(this), address(this));
       
       assertEq(deltaCollateral, preview);
       assertEq(deltaCollateral, 1000);
@@ -560,7 +560,7 @@ contract GeneratedTests is Test {
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 56000);
       assertEq(dummyLTV.futureBorrowAssets(), 4000);
       assertEq(dummyLTV.futureCollateralAssets(), 4000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
@@ -569,18 +569,18 @@ contract GeneratedTests is Test {
       uint256 deltaShares = dummyLTV.depositCollateral(2060, address(this));
 
       assertEq(deltaShares, preview);
-      assertEq(deltaShares, 1980 * 100);
+      assertEq(deltaShares, 1980);
       assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 75050);
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 52940);
       assertEq(dummyLTV.futureBorrowAssets(), 13000);
       assertEq(dummyLTV.futureCollateralAssets(), 13000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
   function test_collateral_cmbc_mint() public initializeTest(52940, 72990, 5000, 5000, -50, 600.0) {
-      uint256 preview = dummyLTV.previewMintCollateral(1980 * 100);
-      uint256 deltaCollateral = dummyLTV.mintCollateral(1980 * 100, address(this));
+      uint256 preview = dummyLTV.previewMintCollateral(1980);
+      uint256 deltaCollateral = dummyLTV.mintCollateral(1980, address(this));
       
       assertEq(deltaCollateral, preview);
       assertEq(deltaCollateral, 2060);
@@ -588,7 +588,7 @@ contract GeneratedTests is Test {
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 52940);
       assertEq(dummyLTV.futureBorrowAssets(), 13000);
       assertEq(dummyLTV.futureCollateralAssets(), 13000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
@@ -597,18 +597,18 @@ contract GeneratedTests is Test {
       uint256 deltaShares = dummyLTV.withdrawCollateral(9700, address(this), address(this));
       
       assertEq(deltaShares, preview);
-      assertEq(deltaShares, 10100 * 100);
+      assertEq(deltaShares, 10100);
       assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 75050);
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 44700);
       assertEq(dummyLTV.futureBorrowAssets(), 45000);
       assertEq(dummyLTV.futureCollateralAssets(), 45000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
   function test_collateral_cmbc_redeem() public initializeTest(44700, 84750, 5000, 5000, -50, 600.0) {
-      uint256 preview = dummyLTV.previewRedeemCollateral(1010000);
-      uint256 deltaCollateral = dummyLTV.redeemCollateral(1010000, address(this), address(this));
+      uint256 preview = dummyLTV.previewRedeemCollateral(10100);
+      uint256 deltaCollateral = dummyLTV.redeemCollateral(10100, address(this), address(this));
       
       assertEq(deltaCollateral, preview);
       assertEq(deltaCollateral, 9700);
@@ -616,7 +616,7 @@ contract GeneratedTests is Test {
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 44700);
       assertEq(dummyLTV.futureBorrowAssets(), 45000);
       assertEq(dummyLTV.futureCollateralAssets(), 45000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
@@ -625,18 +625,18 @@ contract GeneratedTests is Test {
       uint256 deltaShares = dummyLTV.depositCollateral(9040, address(this));
 
       assertEq(deltaShares, preview);
-      assertEq(deltaShares, 9000 * 100);
+      assertEq(deltaShares, 9000);
       assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 85000);
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 65910);
       assertEq(dummyLTV.futureBorrowAssets(), -9000);
       assertEq(dummyLTV.futureCollateralAssets(), -9000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
   function test_collateral_cmcb_mint() public initializeTest(65910, 75960, -5000, -5000, 50, 600.0) {
-      uint256 preview = dummyLTV.previewMintCollateral(9000 * 100);
-      uint256 deltaCollateral = dummyLTV.mintCollateral(9000 * 100, address(this));
+      uint256 preview = dummyLTV.previewMintCollateral(9000);
+      uint256 deltaCollateral = dummyLTV.mintCollateral(9000, address(this));
       
       assertEq(deltaCollateral, preview);
       assertEq(deltaCollateral, 9040);
@@ -644,7 +644,7 @@ contract GeneratedTests is Test {
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 65910);
       assertEq(dummyLTV.futureBorrowAssets(), -9000);
       assertEq(dummyLTV.futureCollateralAssets(), -9000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
@@ -653,18 +653,18 @@ contract GeneratedTests is Test {
       uint256 deltaShares = dummyLTV.withdrawCollateral(960, address(this), address(this));
       
       assertEq(deltaShares, preview);
-      assertEq(deltaShares, 1000 * 100);
+      assertEq(deltaShares, 1000);
       assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 85000);
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 65910);
       assertEq(dummyLTV.futureBorrowAssets(), -9000);
       assertEq(dummyLTV.futureCollateralAssets(), -9000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
   function test_collateral_cmcb_redeem() public initializeTest(65910, 85960, -5000, -5000, 50, 600.0) {
-      uint256 preview = dummyLTV.previewRedeemCollateral(100000);
-      uint256 deltaCollateral = dummyLTV.redeemCollateral(100000, address(this), address(this));
+      uint256 preview = dummyLTV.previewRedeemCollateral(1000);
+      uint256 deltaCollateral = dummyLTV.redeemCollateral(1000, address(this), address(this));
       
       assertEq(deltaCollateral, preview);
       assertEq(deltaCollateral, 960);
@@ -672,7 +672,7 @@ contract GeneratedTests is Test {
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 65910);
       assertEq(dummyLTV.futureBorrowAssets(), -9000);
       assertEq(dummyLTV.futureCollateralAssets(), -9000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
@@ -681,18 +681,18 @@ contract GeneratedTests is Test {
       uint256 deltaShares = dummyLTV.depositCollateral(960, address(this));
 
       assertEq(deltaShares, preview);
-      assertEq(deltaShares, 976 * 100);
+      assertEq(deltaShares, 976);
       assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 85000);
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 63990);
       assertEq(dummyLTV.futureBorrowAssets(), -1000);
       assertEq(dummyLTV.futureCollateralAssets(), -1000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
   function test_collateral_cebc_mint() public initializeTest(63990, 84040, -5000, -5000, 50, 600.0) {
-      uint256 preview = dummyLTV.previewMintCollateral(976 * 100);
-      uint256 deltaCollateral = dummyLTV.mintCollateral(976 * 100, address(this));
+      uint256 preview = dummyLTV.previewMintCollateral(976);
+      uint256 deltaCollateral = dummyLTV.mintCollateral(976, address(this));
       
       assertEq(deltaCollateral, preview);
       assertEq(deltaCollateral, 960);
@@ -700,7 +700,7 @@ contract GeneratedTests is Test {
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 63990);
       assertEq(dummyLTV.futureBorrowAssets(), -1000);
       assertEq(dummyLTV.futureCollateralAssets(), -1000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
@@ -709,18 +709,18 @@ contract GeneratedTests is Test {
       uint256 deltaShares = dummyLTV.withdrawCollateral(9040, address(this), address(this));
       
       assertEq(deltaShares, preview);
-      assertEq(deltaShares, 9024 * 100);
+      assertEq(deltaShares, 9024);
       assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 85000);
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 63990);
       assertEq(dummyLTV.futureBorrowAssets(), -1000);
       assertEq(dummyLTV.futureCollateralAssets(), -1000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
   function test_collateral_cebc_redeem() public initializeTest(63990, 94040, -5000, -5000, 50, 600.0) {
-      uint256 preview = dummyLTV.previewRedeemCollateral(902400);
-      uint256 deltaCollateral = dummyLTV.redeemCollateral(902400, address(this), address(this));
+      uint256 preview = dummyLTV.previewRedeemCollateral(9024);
+      uint256 deltaCollateral = dummyLTV.redeemCollateral(9024, address(this), address(this));
       
       assertEq(deltaCollateral, preview);
       assertEq(deltaCollateral, 9040);
@@ -728,7 +728,7 @@ contract GeneratedTests is Test {
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 63990);
       assertEq(dummyLTV.futureBorrowAssets(), -1000);
       assertEq(dummyLTV.futureCollateralAssets(), -1000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
@@ -737,18 +737,18 @@ contract GeneratedTests is Test {
       uint256 deltaShares = dummyLTV.depositCollateral(8970, address(this));
 
       assertEq(deltaShares, preview);
-      assertEq(deltaShares, 8986 * 100);
+      assertEq(deltaShares, 8986);
       assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 75050);
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 56030);
       assertEq(dummyLTV.futureBorrowAssets(), 1000);
       assertEq(dummyLTV.futureCollateralAssets(), 1000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
   function test_collateral_cecb_mint() public initializeTest(56030, 66080, 5000, 5000, -50, 600.0) {
-      uint256 preview = dummyLTV.previewMintCollateral(8986 * 100);
-      uint256 deltaCollateral = dummyLTV.mintCollateral(8986 * 100, address(this));
+      uint256 preview = dummyLTV.previewMintCollateral(8986);
+      uint256 deltaCollateral = dummyLTV.mintCollateral(8986, address(this));
       
       assertEq(deltaCollateral, preview);
       assertEq(deltaCollateral, 8970);
@@ -756,7 +756,7 @@ contract GeneratedTests is Test {
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 56030);
       assertEq(dummyLTV.futureBorrowAssets(), 1000);
       assertEq(dummyLTV.futureCollateralAssets(), 1000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
@@ -765,18 +765,18 @@ contract GeneratedTests is Test {
       uint256 deltaShares = dummyLTV.withdrawCollateral(1030, address(this), address(this));
       
       assertEq(deltaShares, preview);
-      assertEq(deltaShares, 1014 * 100);
+      assertEq(deltaShares, 1014);
       assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 75050);
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 56030);
       assertEq(dummyLTV.futureBorrowAssets(), 1000);
       assertEq(dummyLTV.futureCollateralAssets(), 1000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
   function test_collateral_cecb_redeem() public initializeTest(56030, 76080, 5000, 5000, -50, 600.0) {
-      uint256 preview = dummyLTV.previewRedeemCollateral(101400);
-      uint256 deltaCollateral = dummyLTV.redeemCollateral(101400, address(this), address(this));
+      uint256 preview = dummyLTV.previewRedeemCollateral(1014);
+      uint256 deltaCollateral = dummyLTV.redeemCollateral(1014, address(this), address(this));
       
       assertEq(deltaCollateral, preview);
       assertEq(deltaCollateral, 1030);
@@ -784,7 +784,7 @@ contract GeneratedTests is Test {
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 56030);
       assertEq(dummyLTV.futureBorrowAssets(), 1000);
       assertEq(dummyLTV.futureCollateralAssets(), 1000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
@@ -793,18 +793,18 @@ contract GeneratedTests is Test {
       uint256 deltaShares = dummyLTV.depositCollateral(8010, address(this));
 
       assertEq(deltaShares, preview);
-      assertEq(deltaShares, 7986 * 100);
+      assertEq(deltaShares, 7986);
       assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 76040);
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 57990);
       assertEq(dummyLTV.futureBorrowAssets(), -4000);
       assertEq(dummyLTV.futureCollateralAssets(), -4000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
   function test_collateral_ceccb_mint() public initializeTest(57990, 68030, 4000, 4000, -40, 600.0) {
-      uint256 preview = dummyLTV.previewMintCollateral(7986 * 100);
-      uint256 deltaCollateral = dummyLTV.mintCollateral(7986 * 100, address(this));
+      uint256 preview = dummyLTV.previewMintCollateral(7986);
+      uint256 deltaCollateral = dummyLTV.mintCollateral(7986, address(this));
       
       assertEq(deltaCollateral, preview);
       assertEq(deltaCollateral, 8010);
@@ -812,7 +812,7 @@ contract GeneratedTests is Test {
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 57990);
       assertEq(dummyLTV.futureBorrowAssets(), -4000);
       assertEq(dummyLTV.futureCollateralAssets(), -4000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
@@ -821,18 +821,18 @@ contract GeneratedTests is Test {
       uint256 deltaShares = dummyLTV.withdrawCollateral(1990, address(this), address(this));
       
       assertEq(deltaShares, preview);
-      assertEq(deltaShares, 2014 * 100);
+      assertEq(deltaShares, 2014);
       assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 76040);
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 57990);
       assertEq(dummyLTV.futureBorrowAssets(), -4000);
       assertEq(dummyLTV.futureCollateralAssets(), -4000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
   function test_collateral_ceccb_redeem() public initializeTest(57990, 78030, 4000, 4000, -40, 600.0) {
-      uint256 preview = dummyLTV.previewRedeemCollateral(201400);
-      uint256 deltaCollateral = dummyLTV.redeemCollateral(201400, address(this), address(this));
+      uint256 preview = dummyLTV.previewRedeemCollateral(2014);
+      uint256 deltaCollateral = dummyLTV.redeemCollateral(2014, address(this), address(this));
       
       assertEq(deltaCollateral, preview);
       assertEq(deltaCollateral, 1990);
@@ -840,7 +840,7 @@ contract GeneratedTests is Test {
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 57990);
       assertEq(dummyLTV.futureBorrowAssets(), -4000);
       assertEq(dummyLTV.futureCollateralAssets(), -4000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
@@ -849,18 +849,18 @@ contract GeneratedTests is Test {
       uint256 deltaShares = dummyLTV.depositCollateral(2230, address(this));
 
       assertEq(deltaShares, preview);
-      assertEq(deltaShares, 2210 * 100);
+      assertEq(deltaShares, 2210);
       assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 85000);
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 62720);
       assertEq(dummyLTV.futureBorrowAssets(), 4000);
       assertEq(dummyLTV.futureCollateralAssets(), 4000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
   function test_collateral_cecbc_mint() public initializeTest(62720, 82770, -5000, -5000, 50, 600.0) {
-      uint256 preview = dummyLTV.previewMintCollateral(2210 * 100);
-      uint256 deltaCollateral = dummyLTV.mintCollateral(2210 * 100, address(this));
+      uint256 preview = dummyLTV.previewMintCollateral(2210);
+      uint256 deltaCollateral = dummyLTV.mintCollateral(2210, address(this));
       
       assertEq(deltaCollateral, preview);
       assertEq(deltaCollateral, 2230);
@@ -868,7 +868,7 @@ contract GeneratedTests is Test {
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 62720);
       assertEq(dummyLTV.futureBorrowAssets(), 4000);
       assertEq(dummyLTV.futureCollateralAssets(), 4000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
@@ -877,18 +877,18 @@ contract GeneratedTests is Test {
       uint256 deltaShares = dummyLTV.withdrawCollateral(7770, address(this), address(this));
       
       assertEq(deltaShares, preview);
-      assertEq(deltaShares, 7790 * 100);
+      assertEq(deltaShares, 7790);
       assertEq(lendingProtocol.supplyBalance(address(collateralToken)), 85000);
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 62720);
       assertEq(dummyLTV.futureBorrowAssets(), 4000);
       assertEq(dummyLTV.futureCollateralAssets(), 4000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
   function test_collateral_cecbc_redeem() public initializeTest(62720, 92770, -5000, -5000, 50, 600.0) {
-      uint256 preview = dummyLTV.previewRedeemCollateral(779000);
-      uint256 deltaCollateral = dummyLTV.redeemCollateral(779000, address(this), address(this));
+      uint256 preview = dummyLTV.previewRedeemCollateral(7790);
+      uint256 deltaCollateral = dummyLTV.redeemCollateral(7790, address(this), address(this));
       
       assertEq(deltaCollateral, preview);
       assertEq(deltaCollateral, 7770);
@@ -896,7 +896,7 @@ contract GeneratedTests is Test {
       assertEq(lendingProtocol.borrowBalance(address(borrowToken)), 62720);
       assertEq(dummyLTV.futureBorrowAssets(), 4000);
       assertEq(dummyLTV.futureCollateralAssets(), 4000);
-      assertEq(dummyLTV.convertToShares(10**18), 10**20);
+      assertEq(dummyLTV.convertToShares(10**18), 10**18);
       assertApproxEqAbs((dummyLTV.futureBorrowAssets() + dummyLTV.futureRewardBorrowAssets() + int256(dummyLTV.getRealBorrowAssets(true))) * 4
         - 3 * (dummyLTV.futureCollateralAssets() + dummyLTV.futureRewardCollateralAssets() + int256(dummyLTV.getRealCollateralAssets(true))), 0, 3);
   }
