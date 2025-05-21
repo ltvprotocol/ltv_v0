@@ -11,8 +11,9 @@ import 'src/events/IERC4626Events.sol';
 import '../preview/PreviewDeposit.sol';
 import '../../../../math/NextStep.sol';
 import 'src/errors/IVaultErrors.sol';
+import 'src/state_reader/MaxDepositMintBorrowVaultStateReader.sol';
 
-abstract contract Deposit is MaxDeposit, ApplyMaxGrowthFee, MintProtocolRewards, Lending, VaultStateTransition, IERC4626Events, IVaultErrors {
+abstract contract Deposit is MaxDepositMintBorrowVaultStateReader, MaxDeposit, ApplyMaxGrowthFee, MintProtocolRewards, Lending, VaultStateTransition, IERC4626Events, IVaultErrors {
     using uMulDiv for uint256;
 
     function deposit(uint256 assets, address receiver) external isFunctionAllowed nonReentrant returns (uint256) {

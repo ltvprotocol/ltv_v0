@@ -11,8 +11,9 @@ import 'src/events/IERC4626Events.sol';
 import 'src/errors/IVaultErrors.sol';
 import '../preview/PreviewWithdrawCollateral.sol';
 import '../../../../math/NextStep.sol';
+import 'src/state_reader/MaxWithdrawRedeemCollateralVaultStateReader.sol';
 
-abstract contract WithdrawCollateral is MaxWithdrawCollateral, ApplyMaxGrowthFee, MintProtocolRewards, Lending, VaultStateTransition, IERC4626Events, IVaultErrors {
+abstract contract WithdrawCollateral is MaxWithdrawRedeemCollateralVaultStateReader, MaxWithdrawCollateral, ApplyMaxGrowthFee, MintProtocolRewards, Lending, VaultStateTransition, IERC4626Events, IVaultErrors {
     using uMulDiv for uint256;
 
     function withdrawCollateral(uint256 assets, address receiver, address owner) external isFunctionAllowed nonReentrant returns (uint256) {

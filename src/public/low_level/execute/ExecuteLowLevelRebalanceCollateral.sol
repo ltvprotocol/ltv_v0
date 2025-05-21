@@ -7,8 +7,10 @@ import 'src/state_transition/ApplyMaxGrowthFee.sol';
 import 'src/math/PreviewLowLevelRebalanceStateToData.sol';
 import 'src/state_transition/ExecuteLowLevelRebalance.sol';
 import 'src/errors/ILowLevelRebalanceErrors.sol';
+import 'src/state_reader/ExecuteLowLevelRebalanceStateReader.sol';
 
 abstract contract ExecuteLowLevelRebalanceCollateral is
+    ExecuteLowLevelRebalanceStateReader,
     ExecuteLowLevelRebalance,
     PreviewLowLevelRebalanceCollateral,
     MaxLowLevelRebalanceCollateral,
