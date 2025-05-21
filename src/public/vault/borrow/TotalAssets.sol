@@ -18,10 +18,10 @@ abstract contract TotalAssets {
         return _totalAssets(isDeposit, totalAssetsStateToData(state, isDeposit));
     }
 
-    function _totalAssets(bool isDeposit, TotalAssetsData memory data) public pure returns (uint256) {
+    function _totalAssets(bool isDeposit, TotalAssetsData memory data) public virtual pure returns (uint256) {
         // Add 100 to avoid vault attack
         // in case of deposit need to overestimate our assets
-        return uint256(data.collateral - data.borrow).mulDiv(Constants.ORACLE_DIVIDER, data.borrowPrice, isDeposit) + 100;
+        return uint256(data.collateral - data.borrow).mulDiv(Constants.ORACLE_DIVIDER, data.borrowPrice, isDeposit) + Constants.VIRTUAL_ASSETS_AMOUNT;
     }
 
     function totalAssetsStateToData(TotalAssetsState memory state, bool isDeposit) internal pure returns (TotalAssetsData memory) {

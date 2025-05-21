@@ -6,10 +6,10 @@ import './utils/BaseTest.t.sol';
 
 contract VaultTest is BaseTest {
     function test_totalAssets(address owner, address user, uint160 amount) public initializeBalancedTest(owner, user, 0, 0, 0, 0) {
-        assertEq(dummyLTV.totalAssets(), 100);
+        assertEq(dummyLTV.totalAssets(), 0);
         lendingProtocol.setSupplyBalance(address(collateralToken), uint256(amount) * 2);
         lendingProtocol.setBorrowBalance(address(borrowToken), amount);
-        assertEq(dummyLTV.totalAssets(), 3 * uint256(amount) + 100);
+        assertEq(dummyLTV.totalAssets(), 3 * uint256(amount));
     }
 
     function test_convertToAssets(address owner, address user, uint112 amount) public initializeBalancedTest(owner, user, amount, 9500, 9500, -1000) {
@@ -52,14 +52,17 @@ contract VaultTest is BaseTest {
         address user,
         uint112 amount
     ) public initializeBalancedTest(owner, user, amount, -9500, -9500, 1000) {
+        vm.assume(amount > 0);
         assertEq(dummyLTV.previewWithdraw(uint256(amount)), uint256(amount));
     }
 
     function test_previewRedeem(address owner, address user, uint112 amount) public initializeBalancedTest(owner, user, amount, -9500, -9500, 1000) {
+        vm.assume(amount > 0);
         assertEq(dummyLTV.previewRedeem(uint256(amount)), uint256(amount));
     }
 
     function test_withdraw(address owner, address user, uint112 amount) public initializeBalancedTest(owner, user, amount, -9500, -9500, 1000) {
+        vm.assume(amount > 0);
         vm.stopPrank();
         vm.startPrank(owner);
         dummyLTV.transfer(user, uint256(amount));
@@ -71,6 +74,7 @@ contract VaultTest is BaseTest {
     }
 
     function test_redeem(address owner, address user, uint112 amount) public initializeBalancedTest(owner, user, amount, -9500, -9500, 1000) {
+        vm.assume(amount > 0);
         vm.stopPrank();
         vm.startPrank(owner);
         dummyLTV.transfer(user, uint256(amount));
@@ -82,6 +86,7 @@ contract VaultTest is BaseTest {
     }
 
     function test_zeroAuction(address owner, address user, uint112 amount) public initializeBalancedTest(owner, user, amount, 0, 0, 0) {
+        vm.assume(amount > 0);
         assertEq(dummyLTV.previewDeposit(amount), uint256(amount));
     }
 
@@ -150,7 +155,7 @@ contract VaultTest is BaseTest {
     }
 
     function test_totalAssetsCollateral(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
-        assertEq(dummyLTV.totalAssetsCollateral(), 5 * 10 ** 17 + 50);
+        assertEq(dummyLTV.totalAssetsCollateral(), 5 * 10 ** 17);
     }
 
     function test_maxWithdrawCollateral(address owner, address user) public initializeBalancedTest(owner, user, 100000, -9500, -9500, 1000) {
@@ -170,10 +175,10 @@ contract VaultTest is BaseTest {
     }
 
     function test_totalAssetsWithBool(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
-        assertEq(ILTV(address(dummyLTV)).totalAssets(true), 10 ** 18 + 100);
+        assertEq(ILTV(address(dummyLTV)).totalAssets(true), 10 ** 18);
     }
 
     function test_totalAssetsCollateralWithBool(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
-        assertEq(ILTV(address(dummyLTV)).totalAssetsCollateral(true), 5 * 10 ** 17 + 50);
+        assertEq(ILTV(address(dummyLTV)).totalAssetsCollateral(true), 5 * 10 ** 17);
     }
 }

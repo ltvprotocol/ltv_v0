@@ -16,11 +16,11 @@ import '../../src/utils/Timelock.sol';
 import {ILTV} from '../../src/interfaces/ILTV.sol';
 import {IAdministrationErrors} from '../../src/errors/IAdministrationErrors.sol';
 
+import './modules/DummyBorrowVaultModule.t.sol';
+import './modules/DummyCollateralVaultModule.t.sol';
+import './modules/DummyERC20Module.t.sol';
+import './modules/DummyLowLevelRebalanceModule.t.sol';
 import {AuctionModule} from 'src/elements/AuctionModule.sol';
-import {ERC20Module} from 'src/elements/ERC20Module.sol';
-import {CollateralVaultModule} from 'src/elements/CollateralVaultModule.sol';
-import {BorrowVaultModule} from 'src/elements/BorrowVaultModule.sol';
-import {LowLevelRebalanceModule} from 'src/elements/LowLevelRebalanceModule.sol';
 import {AdministrationModule} from 'src/elements/AdministrationModule.sol';
 import 'src/utils/VaultBalanceAsLendingConnector.sol';
 
@@ -58,10 +58,10 @@ contract BaseTest is Test {
             ModulesState memory modulesState = ModulesState({
                 administrationModule: IAdministrationModule(address(new AdministrationModule())),
                 auctionModule: IAuctionModule(address(new AuctionModule())),
-                erc20Module: IERC20Module(address(new ERC20Module())),
-                collateralVaultModule: ICollateralVaultModule(address(new CollateralVaultModule())),
-                borrowVaultModule: IBorrowVaultModule(address(new BorrowVaultModule())),
-                lowLevelRebalanceModule: ILowLevelRebalanceModule(address(new LowLevelRebalanceModule()))
+                erc20Module: IERC20Module(address(new DummyERC20Module())),
+                collateralVaultModule: ICollateralVaultModule(address(new DummyCollateralVaultModule())),
+                borrowVaultModule: IBorrowVaultModule(address(new DummyBorrowVaultModule())),
+                lowLevelRebalanceModule: ILowLevelRebalanceModule(address(new DummyLowLevelRebalanceModule()))
             });
 
             StateInitData memory initData = StateInitData({

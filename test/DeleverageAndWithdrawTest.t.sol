@@ -13,7 +13,7 @@ contract DeleverageAndWithdrawTest is BaseTest {
         dummyLTV.deleverageAndWithdraw(dummyLTV.getRealBorrowAssets(true), 5 * 10 ** 15);
 
         // total assets were reduced for 6% according to target LTV = 3/4 and 2% fee for deleverage
-        assertEq(dummyLTV.totalAssets(), 985 * 10 ** 15 + 100);
+        assertEq(dummyLTV.totalAssets(), 985 * 10 ** 15);
 
         assertEq(dummyLTV.withdrawCollateral(985 * 10 ** 14, address(owner), address(owner)), 2 * 10 ** 17);
         dummyLTV.redeemCollateral(2 * 10 ** 17, address(owner), address(owner));

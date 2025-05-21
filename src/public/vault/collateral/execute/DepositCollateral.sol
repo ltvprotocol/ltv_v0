@@ -16,7 +16,6 @@ import 'src/state_reader/MaxDepositMintCollateralVaultStateReader.sol';
 abstract contract DepositCollateral is MaxDepositMintCollateralVaultStateReader, MaxDepositCollateral, ApplyMaxGrowthFee, MintProtocolRewards, Lending, VaultStateTransition, IERC4626Events, IVaultErrors {
     using uMulDiv for uint256;
 
-
     function depositCollateral(uint256 assets, address receiver) external isFunctionAllowed nonReentrant returns (uint256) {
         MaxDepositMintCollateralVaultState memory state = maxDepositMintCollateralVaultState();
         MaxDepositMintCollateralVaultData memory data = maxDepositMintCollateralVaultStateToMaxDepositMintCollateralVaultData(state);
