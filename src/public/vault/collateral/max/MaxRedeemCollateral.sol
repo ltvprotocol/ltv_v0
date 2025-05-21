@@ -3,7 +3,6 @@ pragma solidity ^0.8.28;
 
 import '../preview/PreviewRedeemCollateral.sol';
 import '../preview/PreviewWithdrawCollateral.sol';
-import 'forge-std/console.sol';
 
 abstract contract MaxRedeemCollateral is PreviewWithdrawCollateral, PreviewRedeemCollateral {
     using uMulDiv for uint256;
@@ -25,8 +24,6 @@ abstract contract MaxRedeemCollateral is PreviewWithdrawCollateral, PreviewRedee
             Constants.ORACLE_DIVIDER,
             data.previewCollateralVaultData.collateralPrice
         );
-
-        console.log("maxWithdrawInAssets", maxWithdrawInAssets);
 
         (uint256 maxWithdrawInShares, ) = _previewWithdrawCollateral(maxWithdrawInAssets, data.previewCollateralVaultData);
 

@@ -102,7 +102,7 @@ contract DummyLTVTest is Test {
         deal(address(collateralToken), address(lendingProtocol), type(uint112).max);
         deal(address(collateralToken), user, type(uint112).max);
 
-        dummyLTV.mintFreeTokens(borrowAmount * 1000, owner);
+        dummyLTV.mintFreeTokens(borrowAmount * 10, owner);
 
         vm.roll(Constants.AMOUNT_OF_STEPS);
         dummyLTV.setStartAuction(Constants.AMOUNT_OF_STEPS / 2);
@@ -129,26 +129,26 @@ contract DummyLTVTest is Test {
     }
 
     function test_totalAssets(address owner, address user, uint160 amount) public initializeBalancedTest(owner, user, 0, 0, 0, 0) {
-        assertEq(dummyLTV.totalAssets(), 1);
+        assertEq(dummyLTV.totalAssets(), 100);
         lendingProtocol.setSupplyBalance(address(collateralToken), uint256(amount) * 2);
         lendingProtocol.setBorrowBalance(address(borrowToken), amount);
-        assertEq(dummyLTV.totalAssets(), 3 * uint256(amount) + 1);
+        assertEq(dummyLTV.totalAssets(), 3 * uint256(amount) + 100);
     }
 
     function test_convertToAssets(address owner, address user, uint112 amount) public initializeBalancedTest(owner, user, amount, 9500, 9500, -1000) {
-        assertEq(dummyLTV.convertToAssets(uint256(amount) * 100), amount);
+        assertEq(dummyLTV.convertToAssets(uint256(amount)), amount);
     }
 
     function test_convertToShares(address owner, address user, uint112 amount) public initializeBalancedTest(owner, user, amount, 9500, 9500, -1000) {
-        assertEq(dummyLTV.convertToShares(amount), uint256(amount) * 100);
+        assertEq(dummyLTV.convertToShares(amount), uint256(amount));
     }
 
     function test_previewDeposit(address owner, address user, uint112 amount) public initializeBalancedTest(owner, user, amount, 9500, 9500, -1000) {
-        assertEq(dummyLTV.previewDeposit(amount), uint256(amount) * 100);
+        assertEq(dummyLTV.previewDeposit(amount), uint256(amount));
     }
 
     function test_previewMint(address owner, address user, uint112 amount) public initializeBalancedTest(owner, user, amount, 9500, 9500, -1000) {
-        assertEq(dummyLTV.previewMint(uint256(amount) * 100), amount);
+        assertEq(dummyLTV.previewMint(uint256(amount)), amount);
     }
 
     function test_basicCmbcDeposit(
@@ -160,14 +160,14 @@ contract DummyLTVTest is Test {
         borrowToken.approve(address(dummyLTV), amount);
         dummyLTV.deposit(amount, user);
 
-        assertEq(dummyLTV.balanceOf(user), uint256(amount) * 100);
+        assertEq(dummyLTV.balanceOf(user), uint256(amount));
     }
 
     function test_basicCmbcMint(address owner, address user, uint112 amount) public initializeBalancedTest(owner, user, amount, 9500, 9500, -1000) {
         borrowToken.approve(address(dummyLTV), amount);
-        dummyLTV.mint(uint256(amount) * 100, user);
+        dummyLTV.mint(uint256(amount), user);
 
-        assertEq(dummyLTV.balanceOf(user), uint256(amount) * 100);
+        assertEq(dummyLTV.balanceOf(user), uint256(amount));
     }
 
     function test_previewWithdraw(
@@ -175,20 +175,20 @@ contract DummyLTVTest is Test {
         address user,
         uint112 amount
     ) public initializeBalancedTest(owner, user, amount, -9500, -9500, 1000) {
-        assertEq(dummyLTV.previewWithdraw(uint256(amount)), uint256(amount) * 100);
+        assertEq(dummyLTV.previewWithdraw(uint256(amount)), uint256(amount));
     }
 
     function test_previewRedeem(address owner, address user, uint112 amount) public initializeBalancedTest(owner, user, amount, -9500, -9500, 1000) {
-        assertEq(dummyLTV.previewRedeem(uint256(amount) * 100), uint256(amount));
+        assertEq(dummyLTV.previewRedeem(uint256(amount)), uint256(amount));
     }
 
     function test_withdraw(address owner, address user, uint112 amount) public initializeBalancedTest(owner, user, amount, -9500, -9500, 1000) {
         vm.stopPrank();
         vm.startPrank(owner);
-        dummyLTV.transfer(user, uint256(amount) * 100);
+        dummyLTV.transfer(user, uint256(amount));
 
         vm.startPrank(user);
-        assertEq(dummyLTV.balanceOf(user), uint256(amount) * 100);
+        assertEq(dummyLTV.balanceOf(user), uint256(amount));
         dummyLTV.withdraw(uint256(amount), user, user);
         assertEq(dummyLTV.balanceOf(user), 0);
     }
@@ -196,16 +196,16 @@ contract DummyLTVTest is Test {
     function test_redeem(address owner, address user, uint112 amount) public initializeBalancedTest(owner, user, amount, -9500, -9500, 1000) {
         vm.stopPrank();
         vm.startPrank(owner);
-        dummyLTV.transfer(user, uint256(amount) * 100);
+        dummyLTV.transfer(user, uint256(amount));
 
         vm.startPrank(user);
-        assertEq(dummyLTV.balanceOf(user), uint256(amount) * 100);
-        dummyLTV.redeem(uint256(amount) * 100, user, user);
+        assertEq(dummyLTV.balanceOf(user), uint256(amount));
+        dummyLTV.redeem(uint256(amount), user, user);
         assertEq(dummyLTV.balanceOf(user), 0);
     }
 
     function test_zeroAuction(address owner, address user, uint112 amount) public initializeBalancedTest(owner, user, amount, 0, 0, 0) {
-        assertEq(dummyLTV.previewDeposit(amount), uint256(amount) * 100);
+        assertEq(dummyLTV.previewDeposit(amount), uint256(amount));
     }
 
     function test_maxDeposit(address owner, address user) public initializeBalancedTest(owner, user, 100000, 9500, 9500, -1000) {
@@ -220,7 +220,7 @@ contract DummyLTVTest is Test {
         slippageProvider.setCollateralSlippage(10 ** 16);
 
         vm.startPrank(user);
-        assertEq(dummyLTV.maxMint(user), 956118 * 100);
+        assertEq(dummyLTV.maxMint(user), 956118);
         borrowToken.approve(address(dummyLTV), type(uint112).max);
         dummyLTV.mint(dummyLTV.maxMint(user), user);
     }
@@ -240,7 +240,7 @@ contract DummyLTVTest is Test {
         dummyLTV.transfer(user, dummyLTV.balanceOf(owner));
         slippageProvider.setBorrowSlippage(10 ** 16);
 
-        assertEq(dummyLTV.maxRedeem(user), 625053 * 100);
+        assertEq(dummyLTV.maxRedeem(user), 625053);
         dummyLTV.redeem(dummyLTV.maxRedeem(user), user, user);
     }
 
@@ -356,8 +356,8 @@ contract DummyLTVTest is Test {
     }
 
     function test_lowLevelPositiveAuctionShares(address owner, address user) public initializeBalancedTest(owner, user, 100000, 10000, 10000, -1000) {
-        (int256 expectedDeltaRealCollateralAssets, int256 expectedDeltaRealBorrowAssets) = dummyLTV.previewLowLevelRebalanceShares(1000 * 100);
-        (int256 deltaRealCollateralAssets, int256 deltaRealBorrowAssets) = dummyLTV.executeLowLevelRebalanceShares(1000 * 100);
+        (int256 expectedDeltaRealCollateralAssets, int256 expectedDeltaRealBorrowAssets) = dummyLTV.previewLowLevelRebalanceShares(1000);
+        (int256 deltaRealCollateralAssets, int256 deltaRealBorrowAssets) = dummyLTV.executeLowLevelRebalanceShares(1000);
 
         assertEq(deltaRealCollateralAssets, 7500);
         assertEq(deltaRealBorrowAssets, 14500);
@@ -370,7 +370,7 @@ contract DummyLTVTest is Test {
         (int256 deltaRealCollateralAssets, int256 deltaShares) = dummyLTV.executeLowLevelRebalanceBorrow(14500);
 
         assertEq(deltaRealCollateralAssets, 7500);
-        assertEq(deltaShares, 1000 * 100);
+        assertEq(deltaShares, 1000);
         assertEq(expectedDeltaRealCollateralAssets, deltaRealCollateralAssets);
         assertEq(expectedDeltaShares, deltaShares);
     }
@@ -386,7 +386,7 @@ contract DummyLTVTest is Test {
         (int256 deltaRealCollateralAssets, int256 deltaShares) = dummyLTV.executeLowLevelRebalanceBorrowHint(14500, true);
 
         assertEq(deltaRealCollateralAssets, 7500);
-        assertEq(deltaShares, 1000 * 100);
+        assertEq(deltaShares, 1000);
         assertEq(expectedDeltaRealCollateralAssets, deltaRealCollateralAssets);
         assertEq(expectedDeltaShares, deltaShares);
     }
@@ -399,7 +399,7 @@ contract DummyLTVTest is Test {
         (int256 deltaRealBorrowAssets, int256 deltaShares) = dummyLTV.executeLowLevelRebalanceCollateral(7500);
 
         assertEq(deltaRealBorrowAssets, 14500);
-        assertEq(deltaShares, 1000 * 100);
+        assertEq(deltaShares, 1000);
         assertEq(expectedDeltaRealBorrowAssets, deltaRealBorrowAssets);
         assertEq(expectedDeltaShares, deltaShares);
     }
@@ -415,7 +415,7 @@ contract DummyLTVTest is Test {
         (int256 deltaRealBorrowAssets, int256 deltaShares) = dummyLTV.executeLowLevelRebalanceCollateralHint(7500, true);
 
         assertEq(deltaRealBorrowAssets, 14500);
-        assertEq(deltaShares, 1000 * 100);
+        assertEq(deltaShares, 1000);
         assertEq(expectedDeltaRealBorrowAssets, deltaRealBorrowAssets);
         assertEq(expectedDeltaShares, deltaShares);
     }
@@ -426,12 +426,12 @@ contract DummyLTVTest is Test {
         // multiplied total assets by 2
         oracle.setAssetPrice(address(collateralToken), 250 * 10 ** 18);
 
-        // check that price grown not for 100% but for 80%.
-        assertEq(dummyLTV.convertToAssets(10 ** 20), 18 * 10 ** 17);
+        // check that price grown not for 100% but for 80%. Precision tricks because of virtual assets
+        assertEq(dummyLTV.convertToAssets(10 ** 18), 18 * 10 ** 17 - 8);
         vm.startPrank(user);
         borrowToken.approve(address(dummyLTV), 1000);
         dummyLTV.deposit(1000, user);
-        assertEq(dummyLTV.convertToAssets(10 ** 20), 18 * 10 ** 17);
+        assertEq(dummyLTV.convertToAssets(10 ** 18), 18 * 10 ** 17 - 8);
     }
 
     function test_maxDepositFinalBorder(
@@ -472,11 +472,11 @@ contract DummyLTVTest is Test {
     }
 
     function test_totalAssetsCollateral(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
-        assertEq(dummyLTV.totalAssetsCollateral(), 5 * 10 ** 17);
+        assertEq(dummyLTV.totalAssetsCollateral(), 5 * 10 ** 17 + 50);
     }
 
     function test_totalSupply(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
-        assertEq(dummyLTV.totalSupply(), 10 ** 20 + 100);
+        assertEq(dummyLTV.totalSupply(), 10 ** 18 + 100);
     }
 
     function test_transferFrom(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
@@ -507,8 +507,7 @@ contract DummyLTVTest is Test {
         vm.startPrank(owner);
         dummyLTV.transfer(user, dummyLTV.balanceOf(owner));
 
-        // strange number because totalAssetsCollateral isn't as precise as totalAssets because of inflation attack protection
-        assertEq(dummyLTV.maxRedeemCollateral(user), 66672267);
+        assertEq(dummyLTV.maxRedeemCollateral(user), 333361 * 2);
     }
 
     function test_leave_lending(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
@@ -520,10 +519,10 @@ contract DummyLTVTest is Test {
         dummyLTV.deleverageAndWithdraw(dummyLTV.getRealBorrowAssets(), 5 * 10 ** 15);
 
         // total assets were reduced for 6% according to target LTV = 3/4 and 2% fee for deleverage
-        assertEq(dummyLTV.totalAssets(), 985 * 10 ** 15 + 1);
+        assertEq(dummyLTV.totalAssets(), 985 * 10 ** 15 + 100);
 
-        assertEq(dummyLTV.withdrawCollateral(985 * 10 ** 14, address(owner), address(owner)), 2 * 10 ** 19 + 20);
-        dummyLTV.redeemCollateral(2 * 10 ** 19, address(owner), address(owner));
+        assertEq(dummyLTV.withdrawCollateral(985 * 10 ** 14, address(owner), address(owner)), 2 * 10 ** 17);
+        dummyLTV.redeemCollateral(2 * 10 ** 17, address(owner), address(owner));
     }
 
     function test_whitelist(
@@ -633,12 +632,13 @@ contract DummyLTVTest is Test {
         vm.stopPrank();
         vm.startPrank(ILTV(address(dummyLTV)).governor());
         dummyLTV.setMaxTotalAssetsInUnderlying(10 ** 18 * 100 + 10 ** 8);
-        assertEq(dummyLTV.maxLowLevelRebalanceShares(), 10 ** 8);
+        assertEq(dummyLTV.maxLowLevelRebalanceShares(), 10 ** 6);
     }
 
     function test_setTargetLTV(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
         uint128 newValue = 7 * 10 ** 17;
         address governor = ILTV(address(dummyLTV)).governor();
+        vm.assume(user != governor);
 
         vm.startPrank(governor);
         dummyLTV.setTargetLTV(newValue);
@@ -667,6 +667,7 @@ contract DummyLTVTest is Test {
     function test_setMaxSafeLTV(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
         uint128 newValue = 95 * 10 ** 16;
         address governor = ILTV(address(dummyLTV)).governor();
+        vm.assume(user != governor);
         vm.startPrank(governor);
         dummyLTV.setMaxSafeLTV(newValue);
         assertEq(dummyLTV.maxSafeLTV(), newValue);
@@ -691,7 +692,7 @@ contract DummyLTVTest is Test {
     function test_setMinProfitLTV(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
         uint128 newValue = 6 * 10 ** 17;
         address governor = ILTV(address(dummyLTV)).governor();
-
+        vm.assume(user != governor);
         vm.startPrank(governor);
         dummyLTV.setMinProfitLTV(newValue);
         assertEq(dummyLTV.minProfitLTV(), newValue);
@@ -713,6 +714,7 @@ contract DummyLTVTest is Test {
     function test_setFeeCollector(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
         address newCollector = address(0x1234);
         address governor = ILTV(address(dummyLTV)).governor();
+        vm.assume(user != governor);
         vm.startPrank(governor);
         dummyLTV.setFeeCollector(newCollector);
         assertEq(dummyLTV.feeCollector(), newCollector);
@@ -743,6 +745,7 @@ contract DummyLTVTest is Test {
     function test_setMaxDeleverageFee(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
         uint256 newValue = 1 * 10 ** 17; // 10%
         address governor = ILTV(address(dummyLTV)).governor();
+        vm.assume(user != governor);
         vm.startPrank(governor);
         dummyLTV.setMaxDeleverageFee(newValue);
         assertEq(dummyLTV.maxDeleverageFee(), newValue);
@@ -764,6 +767,7 @@ contract DummyLTVTest is Test {
         address user
     ) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
         address governor = ILTV(address(dummyLTV)).governor();
+        vm.assume(user != governor);
         vm.startPrank(governor);
         dummyLTV.setIsWhitelistActivated(true);
         assertEq(dummyLTV.isWhitelistActivated(), true);
@@ -782,6 +786,7 @@ contract DummyLTVTest is Test {
         address user
     ) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
         address governor = ILTV(address(dummyLTV)).governor();
+        vm.assume(user != governor);
         vm.startPrank(governor);
         WhitelistRegistry registry = new WhitelistRegistry(owner);
 
@@ -796,6 +801,7 @@ contract DummyLTVTest is Test {
 
     function test_setSlippageProvider(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
         address governor = ILTV(address(dummyLTV)).governor();
+        vm.assume(user != governor);
         vm.startPrank(governor);
         ConstantSlippageProvider provider = new ConstantSlippageProvider(0, 0, owner);
 
@@ -990,6 +996,7 @@ contract DummyLTVTest is Test {
     function test_setMaxGrowthFee(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
         uint256 newValue = 1 * 10 ** 16; // 1%
         address governor = ILTV(address(dummyLTV)).governor();
+        vm.assume(user != governor);
         vm.startPrank(governor);
         ILTV(address(dummyLTV)).setMaxGrowthFee(newValue);
         assertEq(ILTV(address(dummyLTV)).maxGrowthFee(), newValue);
@@ -1002,7 +1009,7 @@ contract DummyLTVTest is Test {
 
     function test_baseTotalSupply(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
         // baseTotalSupply is used internally and should match totalSupply initially
-        assertEq(dummyLTV.baseTotalSupply(), 10 ** 20);
+        assertEq(dummyLTV.baseTotalSupply(), 10 ** 18);
     }
 
     function test_borrowToken(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
@@ -1041,14 +1048,14 @@ contract DummyLTVTest is Test {
     }
 
     function test_totalAssetsWithBool(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
-        assertEq(ILTV(address(dummyLTV)).totalAssets(true), 10 ** 18 + 1);
+        assertEq(ILTV(address(dummyLTV)).totalAssets(true), 10 ** 18 + 100);
     }
 
     function test_totalAssetsCollateralWithBool(
         address owner,
         address user
     ) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
-        assertEq(ILTV(address(dummyLTV)).totalAssetsCollateral(true), 5 * 10 ** 17 + 1);
+        assertEq(ILTV(address(dummyLTV)).totalAssetsCollateral(true), 5 * 10 ** 17 + 50);
     }
 
     function test_startAuction(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
