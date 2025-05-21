@@ -121,8 +121,9 @@ abstract contract AdministrationSetters is LTVState, OwnableUpgradeable, Reentra
         futureRewardBorrowAssets = 0;
         futureRewardCollateralAssets = 0;
         startAuction = 0;
-
-        uint256 realBorrowAssets = lendingConnector.getRealBorrowAssets();
+        
+        // round up to repay all assets
+        uint256 realBorrowAssets = lendingConnector.getRealBorrowAssets(false);      
 
         require(closeAmountBorrow >= realBorrowAssets, ImpossibleToCoverDeleverage(realBorrowAssets, closeAmountBorrow));
 
@@ -135,8 +136,9 @@ abstract contract AdministrationSetters is LTVState, OwnableUpgradeable, Reentra
             borrowToken.transferFrom(msg.sender, address(this), realBorrowAssets);
             repay(realBorrowAssets);
         }
-        withdraw(lendingConnector.getRealCollateralAssets());
 
+        withdraw(lendingConnector.getRealCollateralAssets(false));
+        
         if (collateralToTransfer != 0) {
             collateralToken.transfer(msg.sender, collateralToTransfer);
         }

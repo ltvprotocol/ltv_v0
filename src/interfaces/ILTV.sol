@@ -82,9 +82,9 @@ interface ILTV is
 
     function futureRewardCollateralAssets() external view returns (int256);
 
-    function getRealBorrowAssets() external view returns (uint256);
+    function getRealBorrowAssets(bool isDeposit) external view returns (uint256);
 
-    function getRealCollateralAssets() external view returns (uint256);
+    function getRealCollateralAssets(bool isDeposit) external view returns (uint256);
 
     function initialize(State.StateInitData memory stateInitData, address initialOwner, string memory _name, string memory _symbol) external;
 

@@ -5,7 +5,7 @@ import 'src/states/LTVState.sol';
 import './GetLendingConnectorReader.sol';
 
 contract GetRealBorrowAssetsReader is GetLendingConnectorReader {
-    function getRealBorrowAssets() external view returns (uint256) {
-        return getLendingConnector().getRealBorrowAssets();
+    function getRealBorrowAssets(bool isDeposit) external view returns (uint256) {
+        return getLendingConnector().getRealBorrowAssets(isDeposit);
     }
 } 

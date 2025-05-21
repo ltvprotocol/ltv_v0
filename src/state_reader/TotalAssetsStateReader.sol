@@ -10,8 +10,9 @@ contract TotalAssetsStateReader is GetLendingConnectorReader {
         ILendingConnector _lendingConnector = getLendingConnector();
         return
             TotalAssetsState({
-                realCollateralAssets: _lendingConnector.getRealCollateralAssets(),
-                realBorrowAssets: _lendingConnector.getRealBorrowAssets(),
+                // default behavior - don't overestimate our assets
+                realCollateralAssets: _lendingConnector.getRealCollateralAssets(false),
+                realBorrowAssets: _lendingConnector.getRealBorrowAssets(false),
                 futureBorrowAssets: futureBorrowAssets,
                 futureCollateralAssets: futureCollateralAssets,
                 futureRewardBorrowAssets: futureRewardBorrowAssets,
