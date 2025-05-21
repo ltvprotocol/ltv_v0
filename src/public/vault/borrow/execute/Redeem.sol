@@ -7,15 +7,15 @@ import '../../../../state_transition/ERC20.sol';
 import '../../../../state_transition/ApplyMaxGrowthFee.sol';
 import '../../../../state_transition/MintProtocolRewards.sol';
 import '../../../../state_transition/Lending.sol';
-import '../../../../ERC4626Events.sol';
+import 'src/events/IERC4626Events.sol';
 import '../preview/PreviewRedeem.sol';
-import '../../../../math2/NextStep.sol';
+import '../../../../math/NextStep.sol';
 import '../../../../state_transition/TransferFromProtocol.sol';
+import 'src/errors/IVaultErrors.sol';
+import 'src/state_reader/MaxWithdrawRedeemBorrowVaultStateReader.sol';
 
-abstract contract Redeem is MaxRedeem, ApplyMaxGrowthFee, MintProtocolRewards, Lending, VaultStateTransition, TransferFromProtocol, ERC4626Events {
+abstract contract Redeem is MaxWithdrawRedeemBorrowVaultStateReader, MaxRedeem, ApplyMaxGrowthFee, MintProtocolRewards, Lending, VaultStateTransition, TransferFromProtocol, IERC4626Events, IVaultErrors {
     using uMulDiv for uint256;
-
-    error ExceedsMaxRedeem(address owner, uint256 shares, uint256 max);
 
     function redeem(uint256 shares, address receiver, address owner) external isFunctionAllowed nonReentrant returns (uint256 assets) {
         MaxWithdrawRedeemBorrowVaultState memory state = maxWithdrawRedeemBorrowVaultState(owner);

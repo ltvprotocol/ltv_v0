@@ -5,7 +5,7 @@ import '../structs/data/MintProtocolRewardsData.sol';
 import '../Constants.sol';
 import './ERC20.sol';
 import '../utils/MulDiv.sol';
-contract MintProtocolRewards is ERC20 {
+abstract contract MintProtocolRewards is ERC20 {
     using uMulDiv for uint256;
 
     function _mintProtocolRewards(MintProtocolRewardsData memory data) internal {

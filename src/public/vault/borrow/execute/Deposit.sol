@@ -7,14 +7,14 @@ import '../../../../state_transition/ERC20.sol';
 import '../../../../state_transition/ApplyMaxGrowthFee.sol';
 import '../../../../state_transition/MintProtocolRewards.sol';
 import '../../../../state_transition/Lending.sol';
-import '../../../../ERC4626Events.sol';
+import 'src/events/IERC4626Events.sol';
 import '../preview/PreviewDeposit.sol';
-import '../../../../math2/NextStep.sol';
+import '../../../../math/NextStep.sol';
+import 'src/errors/IVaultErrors.sol';
+import 'src/state_reader/MaxDepositMintBorrowVaultStateReader.sol';
 
-abstract contract Deposit is MaxDeposit, ApplyMaxGrowthFee, MintProtocolRewards, Lending, VaultStateTransition, ERC4626Events {
+abstract contract Deposit is MaxDepositMintBorrowVaultStateReader, MaxDeposit, ApplyMaxGrowthFee, MintProtocolRewards, Lending, VaultStateTransition, IERC4626Events, IVaultErrors {
     using uMulDiv for uint256;
-
-    error ExceedsMaxDeposit(address receiver, uint256 assets, uint256 max);
 
     function deposit(uint256 assets, address receiver) external isFunctionAllowed nonReentrant returns (uint256) {
         MaxDepositMintBorrowVaultState memory state = maxDepositMintBorrowVaultState();

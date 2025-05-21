@@ -3,12 +3,12 @@ pragma solidity 0.8.28;
 
 import 'src/Constants.sol';
 import 'src/utils/MulDiv.sol';
-import 'src/math2/CommonMath.sol';
-import 'src/math2/MaxGrowthFee.sol';
+import 'src/math/CommonMath.sol';
+import 'src/math/MaxGrowthFee.sol';
 import 'src/structs/state/low_level/MaxLowLevelRebalanceSharesState.sol';
 import 'src/structs/data/low_level/MaxLowLevelRebalanceSharesData.sol';
 
-contract MaxLowLevelRebalanceShares is MaxGrowthFee {
+abstract contract MaxLowLevelRebalanceShares is MaxGrowthFee {
     using sMulDiv for int256;
 
     function maxLowLevelRebalanceShares(MaxLowLevelRebalanceSharesState memory state) public pure returns (int256) {

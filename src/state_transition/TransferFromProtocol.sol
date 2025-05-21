@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import './Whitelist.sol';
+import 'src/modifiers/WhitelistModifier.sol';
 
-contract TransferFromProtocol is Whitelist {
+abstract contract TransferFromProtocol is WhitelistModifier {
     function transferBorrowToken(address to, uint256 amount) internal isReceiverWhitelisted(to) {
         borrowToken.transfer(to, amount);
     }

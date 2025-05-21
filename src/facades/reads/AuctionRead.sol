@@ -1,20 +1,15 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../../interfaces/reads/IAuctionRead.sol";
 import "../../interfaces/IModules.sol";
+import "src/state_reader/GetAuctionStateReader.sol";
 
-import "../../states/readers/ModulesAddressStateReader.sol";
-import "../../states/readers/ApplicationStateReader.sol";
-
-abstract contract AuctionRead is ApplicationStateReader, ModulesAddressStateReader {
-
+abstract contract AuctionRead is GetAuctionStateReader {
     function previewExecuteAuctionBorrow(int256 deltaUserBorrowAssets) external view returns (int256) {
-        return getModules().auctionRead().previewExecuteAuctionBorrow(deltaUserBorrowAssets, getAuctionState());
+        return modules.auctionModule().previewExecuteAuctionBorrow(deltaUserBorrowAssets, getAuctionState());
     }
 
     function previewExecuteAuctionCollateral(int256 deltaUserCollateralAssets) external view returns (int256) {
-        return getModules().auctionRead().previewExecuteAuctionCollateral(deltaUserCollateralAssets, getAuctionState());
+        return modules.auctionModule().previewExecuteAuctionCollateral(deltaUserCollateralAssets, getAuctionState());
     }
-
 }

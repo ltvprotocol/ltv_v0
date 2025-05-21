@@ -1,30 +1,18 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "./reads/IERC20Read.sol";
-import "./reads/IAuctionRead.sol";
-import "./reads/ILowLevelRebalanceRead.sol";
-import "./reads/IBorrowVaultRead.sol";
-import "./reads/ICollateralVaultRead.sol";
+import "./reads/IERC20Module.sol";
+import "./reads/IAuctionModule.sol";
+import "./reads/ILowLevelRebalanceModule.sol";
+import "./reads/IBorrowVaultModule.sol";
+import "./reads/ICollateralVaultModule.sol";
+import "./reads/IAdministrationModule.sol";
 
 interface IModules {
-    function auctionRead() external view returns (IAuctionRead);
-
-    function auctionWrite() external view returns (address);
-
-    function borrowVaultsRead() external view returns (IBorrowVaultRead);
-
-    function borrowVaultsWrite() external view returns (address);
-
-    function collateralVaultsRead() external view returns (ICollateralVaultRead);
-
-    function collateralVaultsWrite() external view returns (address);
-
-    function erc20Read() external view returns (IERC20Read);
-
-    function erc20Write() external view returns (address);
-
-    function lowLevelRebalancerRead() external view returns (ILowLevelRebalanceRead);
-
-    function lowLevelRebalancerWrite() external view returns (address);
+    function auctionModule() external view returns (IAuctionModule);
+    function borrowVaultModule() external view returns (IBorrowVaultModule);
+    function collateralVaultModule() external view returns (ICollateralVaultModule);
+    function erc20Module() external view returns (IERC20Module);
+    function lowLevelRebalanceModule() external view returns (ILowLevelRebalanceModule);
+    function administrationModule() external view returns (IAdministrationModule);
 }

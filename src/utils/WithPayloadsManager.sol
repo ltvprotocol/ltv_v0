@@ -4,7 +4,7 @@ pragma solidity ^0.8.27;
 import {OwnableWithGuardian} from './OwnableWithGuardian.sol';
 import {IWithPayloadsManager} from './interfaces/IWithPayloadsManager.sol';
 
-contract WithPayloadsManager is OwnableWithGuardian, IWithPayloadsManager {
+abstract  contract WithPayloadsManager is OwnableWithGuardian, IWithPayloadsManager {
     address private _payloadsManager;
 
     constructor(address initialOwner, address initialGuardian, address initialPayloadsManager) OwnableWithGuardian(initialOwner, initialGuardian) {

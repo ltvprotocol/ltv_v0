@@ -7,23 +7,24 @@ import '../../../../state_transition/ERC20.sol';
 import '../../../../state_transition/ApplyMaxGrowthFee.sol';
 import '../../../../state_transition/MintProtocolRewards.sol';
 import '../../../../state_transition/Lending.sol';
-import '../../../../ERC4626Events.sol';
+import 'src/events/IERC4626Events.sol';
 import '../preview/PreviewWithdraw.sol';
-import '../../../../math2/NextStep.sol';
+import '../../../../math/NextStep.sol';
 import '../../../../state_transition/TransferFromProtocol.sol';
-
+import 'src/errors/IVaultErrors.sol';
+import 'src/state_reader/MaxWithdrawRedeemBorrowVaultStateReader.sol';
 abstract contract Withdraw is
+    MaxWithdrawRedeemBorrowVaultStateReader,
     MaxWithdraw,
     ApplyMaxGrowthFee,
     MintProtocolRewards,
     Lending,
     VaultStateTransition,
     TransferFromProtocol,
-    ERC4626Events
+    IERC4626Events,
+    IVaultErrors
 {
     using uMulDiv for uint256;
-
-    error ExceedsMaxWithdraw(address owner, uint256 assets, uint256 max);
 
     function withdraw(uint256 assets, address receiver, address owner) external isFunctionAllowed nonReentrant returns (uint256) {
         MaxWithdrawRedeemBorrowVaultState memory state = maxWithdrawRedeemBorrowVaultState(owner);
