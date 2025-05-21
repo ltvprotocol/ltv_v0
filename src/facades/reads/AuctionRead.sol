@@ -2,9 +2,9 @@
 pragma solidity ^0.8.28;
 
 import "../../interfaces/IModules.sol";
-import "../../states/LTVState.sol";
+import "src/state_reader/GetAuctionStateReader.sol";
 
-abstract contract AuctionRead is LTVState {
+abstract contract AuctionRead is GetAuctionStateReader {
     function previewExecuteAuctionBorrow(int256 deltaUserBorrowAssets) external view returns (int256) {
         return modules.auctionModule().previewExecuteAuctionBorrow(deltaUserBorrowAssets, getAuctionState());
     }
