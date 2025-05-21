@@ -2,9 +2,9 @@
 pragma solidity ^0.8.28;
 
 import 'forge-std/Test.sol';
-import './utils/BaseTest.t.sol';
+import './utils/BalancedTest.t.sol';
 
-contract AuctionTest is BaseTest {
+contract AuctionTest is BalancedTest {
     function test_executeDepositAuctionBorrow(address owner, address user) public initializeBalancedTest(owner, user, 100000, 10000, 10000, -1000) {
         collateralToken.approve(address(dummyLTV), type(uint112).max);
         int256 expectedDeltaCollateral = dummyLTV.previewExecuteAuctionBorrow(-1000);
