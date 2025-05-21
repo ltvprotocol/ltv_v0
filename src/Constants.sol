@@ -8,4 +8,5 @@ library Constants {
     uint256 public constant LTV_DIVIDER = 10**18;
     uint256 public constant LAST_SEEN_PRICE_PRECISION = 10**18;
     uint256 public constant MAX_GROWTH_FEE_DIVIDER = 10**18;
+    uint256 public constant VIRTUAL_ASSETS_AMOUNT = 10**4;
 }

@@ -6,7 +6,7 @@ import './utils/BaseTest.t.sol';
 
 contract ERC20Test is BaseTest {
     function test_totalSupply(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
-        assertEq(dummyLTV.totalSupply(), 10 ** 18 + 100);
+        assertEq(dummyLTV.totalSupply(), 10 ** 18);
     }
 
     function test_transferFrom(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
