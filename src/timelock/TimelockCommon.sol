@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import './UpgradeableOwnableWithGuardian.sol';
-import './WithPayloadsManager.sol';
+import './utils/WithPayloadsManager.sol';
 
 enum PayloadState {
     None,

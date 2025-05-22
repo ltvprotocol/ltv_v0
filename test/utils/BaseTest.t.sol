@@ -9,10 +9,10 @@ import '../utils/DummyLTV.t.sol';
 import '../../src/Constants.sol';
 import '../../src/dummy/DummyLendingConnector.sol';
 import '../../src/dummy/DummyOracleConnector.sol';
-import '../../src/utils/ConstantSlippageProvider.sol';
-import '../../src/utils/WhitelistRegistry.sol';
-import '../../src/utils/VaultBalanceAsLendingConnector.sol';
-import '../../src/utils/Timelock.sol';
+import '../../src/connectors/slippage_providers/ConstantSlippageProvider.sol';
+import '../../src/elements/WhitelistRegistry.sol';
+import '../../src/connectors/lending_connectors/VaultBalanceAsLendingConnector.sol';
+import '../../src/timelock/Timelock.sol';
 import {ILTV} from '../../src/interfaces/ILTV.sol';
 import {IAdministrationErrors} from '../../src/errors/IAdministrationErrors.sol';
 
@@ -22,7 +22,6 @@ import './modules/DummyERC20Module.t.sol';
 import './modules/DummyLowLevelRebalanceModule.t.sol';
 import {AuctionModule} from 'src/elements/AuctionModule.sol';
 import {AdministrationModule} from 'src/elements/AdministrationModule.sol';
-import 'src/utils/VaultBalanceAsLendingConnector.sol';
 
 import 'src/elements/ModulesProvider.sol';
 

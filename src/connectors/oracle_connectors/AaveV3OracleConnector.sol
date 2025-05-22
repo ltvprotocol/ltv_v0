@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import './interfaces/IAaveOracle.sol';
-import '../interfaces/IOracleConnector.sol';
+import '../../interfaces/IOracleConnector.sol';
 
 contract AaveV3OracleConnector is IOracleConnector {
     IAaveOracle public constant ORACLE = IAaveOracle(0x54586bE62E3c3580375aE3723C145253060Ca0C2);
