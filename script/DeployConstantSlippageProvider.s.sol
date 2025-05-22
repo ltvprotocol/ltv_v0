@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import '../src/utils/ConstantSlippageProvider.sol';
+import '../src/connectors/slippage_providers/ConstantSlippageProvider.sol';
 import 'forge-std/Script.sol';
 
 contract DeployConstantSlippageProvider is Script {

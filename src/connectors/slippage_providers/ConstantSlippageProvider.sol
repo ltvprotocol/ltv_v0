@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import '../interfaces/ISlippageProvider.sol';
+import '../../interfaces/ISlippageProvider.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 
 contract ConstantSlippageProvider is ISlippageProvider, Ownable {
