@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import '@openzeppelin/contracts/interfaces/IERC20.sol';
-import '../interfaces/ILendingConnector.sol';
+import '../../interfaces/ILendingConnector.sol';
 import './interfaces/IAaveV3Pool.sol';
 
 contract AaveV3Connector is ILendingConnector {

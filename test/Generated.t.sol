@@ -3,7 +3,7 @@
 pragma solidity ^0.8.28;
 
 import '../src/dummy/DummyOracle.sol';
-import '../src/utils/ConstantSlippageProvider.sol';
+import '../src/connectors/slippage_providers/ConstantSlippageProvider.sol';
 import 'forge-std/Test.sol';
 import {MockERC20} from 'forge-std/mocks/MockERC20.sol';
 import {MockDummyLending} from './utils/MockDummyLending.t.sol';
@@ -11,7 +11,7 @@ import './utils/DummyLTV.t.sol';
 import '../src/Constants.sol';
 import '../src/dummy/DummyLendingConnector.sol';
 import '../src/dummy/DummyOracleConnector.sol';
-import '../src/utils/VaultBalanceAsLendingConnector.sol';
+import '../src/connectors/lending_connectors/VaultBalanceAsLendingConnector.sol';
 
 
 import {DummyERC20Module} from './utils/modules/DummyERC20Module.t.sol';

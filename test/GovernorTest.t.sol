@@ -2,6 +2,7 @@
 pragma solidity ^0.8.28;
 
 import './utils/BaseTest.t.sol';
+import '../src/timelock/utils/interfaces/IWithGuardian.sol';
 
 contract GovernorTest is BaseTest {
     function test_governor(
