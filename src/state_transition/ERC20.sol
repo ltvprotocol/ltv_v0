@@ -7,7 +7,7 @@ import '../events/IERC20Events.sol';
 import '@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol';
 import 'src/errors/IAdministrationErrors.sol';
 
-contract ERC20 is WhitelistModifier, FunctionStopperModifier, ReentrancyGuardUpgradeable, IERC20Events {
+abstract contract ERC20 is WhitelistModifier, FunctionStopperModifier, ReentrancyGuardUpgradeable, IERC20Events {
 
     function _mint(address to, uint256 amount) internal isReceiverWhitelisted(to) {
         require(!isDepositDisabled, DepositIsDisabled());

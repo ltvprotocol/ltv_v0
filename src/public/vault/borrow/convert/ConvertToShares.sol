@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import 'src/math2/MaxGrowthFee.sol';
+import 'src/math/MaxGrowthFee.sol';
 
 abstract contract ConvertToShares is MaxGrowthFee {
     using uMulDiv for uint256;

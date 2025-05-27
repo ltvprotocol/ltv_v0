@@ -12,6 +12,7 @@ import 'src/events/IERC4626Events.sol';
 import 'src/events/IERC20Events.sol';
 import 'src/events/ILowLevelRebalanceEvent.sol';
 import 'src/events/IStateUpdateEvent.sol';
+import 'src/interfaces/IModules.sol';
 
 interface ILTV is
     IAdministrationErrors,
@@ -81,9 +82,9 @@ interface ILTV is
 
     function futureRewardCollateralAssets() external view returns (int256);
 
-    function getRealBorrowAssets() external view returns (uint256);
+    function getRealBorrowAssets(bool isDeposit) external view returns (uint256);
 
-    function getRealCollateralAssets() external view returns (uint256);
+    function getRealCollateralAssets(bool isDeposit) external view returns (uint256);
 
     function initialize(State.StateInitData memory stateInitData, address initialOwner, string memory _name, string memory _symbol) external;
 
@@ -196,6 +197,8 @@ interface ILTV is
     function setTargetLTV(uint128 value) external;
 
     function setWhitelistRegistry(address value) external;
+
+    function setModules(IModules _modules) external;
 
     function slippageProvider() external view returns (address);
 

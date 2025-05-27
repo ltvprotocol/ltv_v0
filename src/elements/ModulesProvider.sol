@@ -14,7 +14,6 @@ contract ModulesProvider is IModules, Ownable {
     bytes32 public constant AUCTION_MODULE_SLOT = keccak256('AUCTION_MODULE');
     bytes32 public constant ERC20_MODULE_SLOT = keccak256('ERC20_MODULE');
     bytes32 public constant ADMINISTRATION_MODULE_SLOT = keccak256('ADMINISTRATION_MODULE');
-    bytes32 public constant INITIALIZE_MODULE_SLOT = keccak256('INITIALIZE_MODULE');
 
     constructor(ModulesState memory state) Ownable(msg.sender) {
         _setModule(BORROW_VAULT_MODULE_SLOT, address(state.borrowVaultModule));
@@ -23,7 +22,6 @@ contract ModulesProvider is IModules, Ownable {
         _setModule(AUCTION_MODULE_SLOT, address(state.auctionModule));
         _setModule(ERC20_MODULE_SLOT, address(state.erc20Module));
         _setModule(ADMINISTRATION_MODULE_SLOT, address(state.administrationModule));
-        _setModule(INITIALIZE_MODULE_SLOT, state.initializeModule);
     }
 
     // Storage for modules
@@ -46,27 +44,23 @@ contract ModulesProvider is IModules, Ownable {
         return IBorrowVaultModule(getModule(BORROW_VAULT_MODULE_SLOT));
     }
 
-    function collateralVaultModule() external view override returns (ICollateralVault) {
-        return ICollateralVault(getModule(COLLATERAL_VAULT_MODULE_SLOT));
+    function collateralVaultModule() external view override returns (ICollateralVaultModule) {
+        return ICollateralVaultModule(getModule(COLLATERAL_VAULT_MODULE_SLOT));
     }
 
-    function lowLevelRebalanceModule() external view override returns (ILowLevelRebalance) {
-        return ILowLevelRebalance(getModule(LOW_LEVEL_REBALANCE_MODULE_SLOT));
+    function lowLevelRebalanceModule() external view override returns (ILowLevelRebalanceModule) {
+        return ILowLevelRebalanceModule(getModule(LOW_LEVEL_REBALANCE_MODULE_SLOT));
     }
 
-    function auctionModule() external view override returns (IAuction) {
-        return IAuction(getModule(AUCTION_MODULE_SLOT));
+    function auctionModule() external view override returns (IAuctionModule) {
+        return IAuctionModule(getModule(AUCTION_MODULE_SLOT));
     }
 
-    function erc20Module() external view override returns (IERC20Read) {
-        return IERC20Read(getModule(ERC20_MODULE_SLOT));
+    function erc20Module() external view override returns (IERC20Module) {
+        return IERC20Module(getModule(ERC20_MODULE_SLOT));
     }
 
-    function administrationModule() external view override returns (IAdministration) {
-        return IAdministration(getModule(ADMINISTRATION_MODULE_SLOT));
-    }
-
-    function initializeModule() external view override returns (address) {
-        return getModule(INITIALIZE_MODULE_SLOT);
+    function administrationModule() external view override returns (IAdministrationModule) {
+        return IAdministrationModule(getModule(ADMINISTRATION_MODULE_SLOT));
     }
 }
