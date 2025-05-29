@@ -11,11 +11,19 @@ import 'src/errors/IAdministrationErrors.sol';
 import 'src/modifiers/AdministrationModifiers.sol';
 import 'src/events/IAdministrationEvents.sol';
 
-abstract contract AdministrationSetters is LTVState, OwnableUpgradeable, ReentrancyGuardUpgradeable, Lending, AdministrationModifiers, IAdministrationEvents {
+abstract contract AdministrationSetters is
+    LTVState,
+    OwnableUpgradeable,
+    ReentrancyGuardUpgradeable,
+    Lending,
+    AdministrationModifiers,
+    IAdministrationEvents
+{
     using uMulDiv for uint256;
     using sMulDiv for int256;
 
     function setTargetLTV(uint128 value) external onlyGovernor {
+        require(value > 0 && value < Constants.LTV_DIVIDER, UnexpectedTargetLTV(value));
         require(value <= maxSafeLTV && value >= minProfitLTV, InvalidLTVSet(value, maxSafeLTV, minProfitLTV));
         uint128 oldValue = targetLTV;
         targetLTV = value;
@@ -23,14 +31,15 @@ abstract contract AdministrationSetters is LTVState, OwnableUpgradeable, Reentra
     }
 
     function setMaxSafeLTV(uint128 value) external onlyGovernor {
+        require(value > 0 && value < Constants.LTV_DIVIDER, UnexpectedMaxSafeLTV(value));
         require(value >= targetLTV, InvalidLTVSet(targetLTV, value, minProfitLTV));
-        require(value < Constants.LTV_DIVIDER, UnexpectedMaxSafeLTV(value));
         uint128 oldValue = maxSafeLTV;
         maxSafeLTV = value;
         emit MaxSafeLTVChanged(oldValue, value);
     }
 
     function setMinProfitLTV(uint128 value) external onlyGovernor {
+        require(value > 0 && value < Constants.LTV_DIVIDER, UnexpectedMinProfitLTV(value));
         require(value <= targetLTV, InvalidLTVSet(targetLTV, maxSafeLTV, value));
         uint128 oldValue = minProfitLTV;
         minProfitLTV = value;
@@ -38,6 +47,7 @@ abstract contract AdministrationSetters is LTVState, OwnableUpgradeable, Reentra
     }
 
     function setFeeCollector(address _feeCollector) external onlyGovernor {
+        require(_feeCollector != address(0), ZeroFeeCollector());
         address oldFeeCollector = feeCollector;
         feeCollector = _feeCollector;
         emit FeeCollectorUpdated(oldFeeCollector, _feeCollector);
@@ -57,6 +67,7 @@ abstract contract AdministrationSetters is LTVState, OwnableUpgradeable, Reentra
     }
 
     function setIsWhitelistActivated(bool activate) external onlyGovernor {
+        require(address(whitelistRegistry) != address(0), WhitelistRegistryNotSet());
         bool oldValue = isWhitelistActivated;
         isWhitelistActivated = activate;
         emit IsWhitelistActivatedChanged(oldValue, activate);
@@ -69,7 +80,7 @@ abstract contract AdministrationSetters is LTVState, OwnableUpgradeable, Reentra
     }
 
     function setSlippageProvider(ISlippageProvider _slippageProvider) external onlyGovernor {
-        address oldAddress = address(slippageProvider); 
+        address oldAddress = address(slippageProvider);
         slippageProvider = _slippageProvider;
         emit SlippageProviderUpdated(oldAddress, address(_slippageProvider));
     }
@@ -121,9 +132,9 @@ abstract contract AdministrationSetters is LTVState, OwnableUpgradeable, Reentra
         futureRewardBorrowAssets = 0;
         futureRewardCollateralAssets = 0;
         startAuction = 0;
-        
+
         // round up to repay all assets
-        uint256 realBorrowAssets = lendingConnector.getRealBorrowAssets(false);      
+        uint256 realBorrowAssets = lendingConnector.getRealBorrowAssets(false);
 
         require(closeAmountBorrow >= realBorrowAssets, ImpossibleToCoverDeleverage(realBorrowAssets, closeAmountBorrow));
 
@@ -138,7 +149,7 @@ abstract contract AdministrationSetters is LTVState, OwnableUpgradeable, Reentra
         }
 
         withdraw(lendingConnector.getRealCollateralAssets(false));
-        
+
         if (collateralToTransfer != 0) {
             collateralToken.transfer(msg.sender, collateralToTransfer);
         }
