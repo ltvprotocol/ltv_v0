@@ -130,11 +130,7 @@ library AuctionMath {
             data.futureBorrowAssets,
             data.futureRewardBorrowAssets
         );
-        int256 deltaFutureRewardCollateralAssets = calculateDeltaFutureRewardCollateralAssetsFromDeltaFutureCollateralAssets(
-            deltaState.deltaFutureCollateralAssets,
-            data.futureCollateralAssets,
-            data.futureRewardCollateralAssets
-        );
+        int256 deltaFutureRewardCollateralAssets = deltaState.deltaUserCollateralAssets - deltaState.deltaFutureCollateralAssets;
 
         deltaState.deltaUserFutureRewardBorrowAssets = calculateDeltaUserFutureRewardBorrowAssetsFromDeltaFutureRewardBorrowAssets(
             deltaFutureRewardBorrowAssets,
@@ -178,11 +174,7 @@ library AuctionMath {
             data.futureBorrowAssets
         );
 
-        int256 deltaFutureRewardBorrowAssets = calculateDeltaFutureRewardBorrowAssetsFromDeltaFutureBorrowAssets(
-            deltaState.deltaFutureBorrowAssets,
-            data.futureBorrowAssets,
-            data.futureRewardBorrowAssets
-        );
+        int256 deltaFutureRewardBorrowAssets = deltaState.deltaUserBorrowAssets - deltaState.deltaFutureBorrowAssets;
         int256 deltaFutureRewardCollateralAssets = calculateDeltaFutureRewardCollateralAssetsFromDeltaFutureCollateralAssets(
             deltaState.deltaFutureCollateralAssets,
             data.futureCollateralAssets,

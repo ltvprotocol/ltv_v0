@@ -144,6 +144,7 @@ contract BaseTest is Test {
         lendingProtocol.setSupplyBalance(address(collateralToken), init.collateralAssets);
         lendingProtocol.setBorrowBalance(address(borrowToken), init.borrowAssets);
         ltv.mintFreeTokens(init.zeroAddressTokens, address(0));
+        vm.stopPrank();
     }
 
     modifier testWithPredefinedDefaultValues(DefaultTestData memory defaultData) {

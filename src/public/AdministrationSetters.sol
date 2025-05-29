@@ -67,6 +67,7 @@ abstract contract AdministrationSetters is
     }
 
     function setIsWhitelistActivated(bool activate) external onlyGovernor {
+        require(address(whitelistRegistry) != address(0), WhitelistRegistryNotSet());
         bool oldValue = isWhitelistActivated;
         isWhitelistActivated = activate;
         emit IsWhitelistActivatedChanged(oldValue, activate);
