@@ -188,6 +188,8 @@ contract GovernorTest is BalancedTest {
         address governor = ILTV(address(dummyLTV)).governor();
         vm.assume(user != governor);
         vm.startPrank(governor);
+        dummyLTV.setWhitelistRegistry(address(new WhitelistRegistry(owner)));
+        
         dummyLTV.setIsWhitelistActivated(true);
         assertEq(dummyLTV.isWhitelistActivated(), true);
 
