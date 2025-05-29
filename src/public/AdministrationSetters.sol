@@ -74,6 +74,7 @@ abstract contract AdministrationSetters is
     }
 
     function setWhitelistRegistry(IWhitelistRegistry value) external onlyGovernor {
+        require(address(value) != address(0) || !isWhitelistActivated, WhitelistIsActivated());
         address oldAddress = address(whitelistRegistry);
         whitelistRegistry = value;
         emit WhitelistRegistryUpdated(oldAddress, address(value));
