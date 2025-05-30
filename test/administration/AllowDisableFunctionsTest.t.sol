@@ -45,39 +45,39 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         }
     }
 
-    // function test_batchEnableFunctions(DefaultTestData memory defaultData, address user) public testWithPredefinedDefaultValues(defaultData) {
-    //     (bytes[] memory calls, bytes4[] memory selectors, address[] memory callers) = functionsCanBeDisabled(defaultData, user);
-    //     vm.prank(defaultData.guardian);
-    //     ltv.allowDisableFunctions(selectors, true);
+    function test_batchEnableFunctions(DefaultTestData memory defaultData, address user) public testWithPredefinedDefaultValues(defaultData) {
+        (bytes[] memory calls, bytes4[] memory selectors, address[] memory callers) = functionsCanBeDisabled(defaultData, user);
+        vm.prank(defaultData.guardian);
+        ltv.allowDisableFunctions(selectors, true);
 
-    //     for (uint256 i = 0; i < calls.length; i++) {
-    //         bytes4[] memory selector = new bytes4[](1);
-    //         selector[0] = selectors[i];
-    //         passDisableEnableFunction(defaultData, callers[i], calls[i], selector);
-    //     }
-    // }
+        for (uint256 i = 0; i < calls.length; i++) {
+            bytes4[] memory selector = new bytes4[](1);
+            selector[0] = selectors[i];
+            passDisableEnableFunction(defaultData, callers[i], calls[i], selector);
+        }
+    }
 
-    // function passDisableEnableFunction(
-    //     DefaultTestData memory defaultData,
-    //     address caller,
-    //     bytes memory call,
-    //     bytes4[] memory selector
-    // ) public testWithPredefinedDefaultValues(defaultData) {
-    //     prepareEachFunctionSuccessfulExecution(caller);
+    function passDisableEnableFunction(
+        DefaultTestData memory defaultData,
+        address caller,
+        bytes memory call,
+        bytes4[] memory selector
+    ) public testWithPredefinedDefaultValues(defaultData) {
+        prepareEachFunctionSuccessfulExecution(caller);
 
-    //     vm.prank(defaultData.guardian);
-    //     ltv.allowDisableFunctions(selector, true);
-    //     vm.prank(caller);
-    //     (bool success, bytes memory data) = address(ltv).call(call);
-    //     assertFalse(success);
-    //     assertEq(data, abi.encodeWithSelector(IAdministrationErrors.FunctionStopped.selector, selector[0]));
+        vm.prank(defaultData.guardian);
+        ltv.allowDisableFunctions(selector, true);
+        vm.prank(caller);
+        (bool success, bytes memory data) = address(ltv).call(call);
+        assertFalse(success);
+        assertEq(data, abi.encodeWithSelector(IAdministrationErrors.FunctionStopped.selector, selector[0]));
 
-    //     vm.prank(defaultData.guardian);
-    //     ltv.allowDisableFunctions(selector, false);
-    //     vm.prank(caller);
-    //     (success, ) = address(ltv).call(call);
-    //     assertTrue(success);
-    // }
+        vm.prank(defaultData.guardian);
+        ltv.allowDisableFunctions(selector, false);
+        vm.prank(caller);
+        (success, ) = address(ltv).call(call);
+        assertTrue(success);
+    }
 
     // function test_cannotDisableAllowDisableFunctions(
     //     DefaultTestData memory defaultData,
