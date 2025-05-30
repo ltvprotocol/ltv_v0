@@ -40,7 +40,6 @@ jobs:
         run: forge --version
 
       - name: Run tests
-        timeout-minutes: 10
         run: forge test -vvv
 
   # TODO: uncomment in the future
