@@ -13,4 +13,6 @@ docs/
 # Dotenv file
 .env
 
+.cursor
+
 .DS_Store
