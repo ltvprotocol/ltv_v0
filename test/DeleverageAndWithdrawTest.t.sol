@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import './utils/BaseTest.t.sol';
+import './utils/BalancedTest.t.sol';
 
-contract DeleverageAndWithdrawTest is BaseTest {
+contract DeleverageAndWithdrawTest is BalancedTest {
     function test_leave_lending(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
         vm.stopPrank();
         address emergencyDeleverager = ILTV(address(dummyLTV)).emergencyDeleverager();
@@ -12,7 +12,7 @@ contract DeleverageAndWithdrawTest is BaseTest {
         borrowToken.approve(address(dummyLTV), type(uint112).max);
         dummyLTV.deleverageAndWithdraw(dummyLTV.getRealBorrowAssets(true), 5 * 10 ** 15);
 
-        // total assets were reduced for 6% according to target LTV = 3/4 and 2% fee for deleverage
+        // total assets were reduced for 1.5% according to target LTV = 3/4 and 0.5% fee for deleverage
         assertEq(dummyLTV.totalAssets(), 985 * 10 ** 15);
 
         assertEq(dummyLTV.withdrawCollateral(985 * 10 ** 14, address(owner), address(owner)), 2 * 10 ** 17);

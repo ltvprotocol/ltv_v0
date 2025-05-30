@@ -5,63 +5,92 @@ import '../../src/dummy/DummyOracle.sol';
 import 'forge-std/Test.sol';
 import {MockERC20} from 'forge-std/mocks/MockERC20.sol';
 import {MockDummyLending} from './MockDummyLending.t.sol';
-import '../utils/DummyLTV.t.sol';
+import './DummyLTV.t.sol';
 import '../../src/Constants.sol';
 import '../../src/dummy/DummyLendingConnector.sol';
 import '../../src/dummy/DummyOracleConnector.sol';
 import '../../src/connectors/slippage_providers/ConstantSlippageProvider.sol';
-import '../../src/elements/WhitelistRegistry.sol';
 import '../../src/connectors/lending_connectors/VaultBalanceAsLendingConnector.sol';
 import '../../src/timelock/Timelock.sol';
 import {ILTV} from '../../src/interfaces/ILTV.sol';
 import {IAdministrationErrors} from '../../src/errors/IAdministrationErrors.sol';
 
-import './modules/DummyBorrowVaultModule.t.sol';
-import './modules/DummyCollateralVaultModule.t.sol';
-import './modules/DummyERC20Module.t.sol';
-import './modules/DummyLowLevelRebalanceModule.t.sol';
-import {AuctionModule} from 'src/elements/AuctionModule.sol';
-import {AdministrationModule} from 'src/elements/AdministrationModule.sol';
+import {AuctionModule} from '../../src/elements/AuctionModule.sol';
+import {ERC20Module} from '../../src/elements/ERC20Module.sol';
+import {CollateralVaultModule} from '../../src/elements/CollateralVaultModule.sol';
+import {BorrowVaultModule} from '../../src/elements/BorrowVaultModule.sol';
+import {LowLevelRebalanceModule} from '../../src/elements/LowLevelRebalanceModule.sol';
+import {AdministrationModule} from '../../src/elements/AdministrationModule.sol';
 
-import 'src/elements/ModulesProvider.sol';
+import '../../src/elements/ModulesProvider.sol';
+
+struct BaseTestInit {
+    address owner;
+    address guardian;
+    address governor;
+    address emergencyDeleverager;
+    address feeCollector;
+    int256 futureBorrow;
+    int256 futureCollateral;
+    int256 auctionReward;
+    uint256 startAuction;
+    uint256 collateralSlippage;
+    uint256 borrowSlippage;
+    uint256 maxTotalAssetsInUnderlying;
+    uint256 collateralAssets;
+    uint256 borrowAssets;
+    uint128 maxSafeLTV;
+    uint128 minProfitLTV;
+    uint128 targetLTV;
+    uint256 maxGrowthFee;
+    uint256 collateralPrice;
+    uint256 borrowPrice;
+    uint256 maxDeleverageFee;
+    uint256 zeroAddressTokens;
+}
+
+struct DefaultTestData {
+    address owner;
+    address guardian;
+    address governor;
+    address emergencyDeleverager;
+    address feeCollector;
+}
 
 contract BaseTest is Test {
-    DummyLTV public dummyLTV;
+    DummyLTV public ltv;
     MockERC20 public collateralToken;
     MockERC20 public borrowToken;
     MockDummyLending public lendingProtocol;
     IDummyOracle public oracle;
+    ModulesProvider public modulesProvider;
     ConstantSlippageProvider public slippageProvider;
 
-    modifier initializeBalancedTest(
-        address owner,
-        address user,
-        uint256 borrowAmount,
-        int256 futureBorrow,
-        int256 futureCollateral,
-        int256 auctionReward
-    ) {
-        vm.assume(owner != address(0));
-        vm.assume(user != address(0));
-        vm.assume(user != owner);
-        vm.assume(int256(borrowAmount) >= futureBorrow);
+    function initializeTest(BaseTestInit memory init) internal {
+        vm.assume(init.owner != address(0));
+        vm.assume(init.guardian != address(0));
+        vm.assume(init.governor != address(0));
+        vm.assume(init.emergencyDeleverager != address(0));
+        vm.assume(init.feeCollector != address(0));
+
         collateralToken = new MockERC20();
         collateralToken.initialize('Collateral', 'COL', 18);
         borrowToken = new MockERC20();
         borrowToken.initialize('Borrow', 'BOR', 18);
 
-        lendingProtocol = new MockDummyLending(owner);
-        oracle = IDummyOracle(new DummyOracle(owner));
-        slippageProvider = new ConstantSlippageProvider(0, 0, owner);
+        lendingProtocol = new MockDummyLending(init.owner);
+        oracle = IDummyOracle(new DummyOracle(init.owner));
+        slippageProvider = new ConstantSlippageProvider(init.collateralSlippage, init.borrowSlippage, init.owner);
         {
             ModulesState memory modulesState = ModulesState({
                 administrationModule: IAdministrationModule(address(new AdministrationModule())),
                 auctionModule: IAuctionModule(address(new AuctionModule())),
-                erc20Module: IERC20Module(address(new DummyERC20Module())),
-                collateralVaultModule: ICollateralVaultModule(address(new DummyCollateralVaultModule())),
-                borrowVaultModule: IBorrowVaultModule(address(new DummyBorrowVaultModule())),
-                lowLevelRebalanceModule: ILowLevelRebalanceModule(address(new DummyLowLevelRebalanceModule()))
+                erc20Module: IERC20Module(address(new ERC20Module())),
+                collateralVaultModule: ICollateralVaultModule(address(new CollateralVaultModule())),
+                borrowVaultModule: IBorrowVaultModule(address(new BorrowVaultModule())),
+                lowLevelRebalanceModule: ILowLevelRebalanceModule(address(new LowLevelRebalanceModule()))
             });
+            modulesProvider = new ModulesProvider(modulesState);
 
             StateInitData memory initData = StateInitData({
                 name: 'Dummy LTV',
@@ -69,61 +98,80 @@ contract BaseTest is Test {
                 decimals: 18,
                 collateralToken: address(collateralToken),
                 borrowToken: address(borrowToken),
-                feeCollector: owner,
-                maxSafeLTV: 9 * 10 ** 17,
-                minProfitLTV: 5 * 10 ** 17,
-                targetLTV: 75 * 10 ** 16,
+                feeCollector: init.feeCollector,
+                maxSafeLTV: init.maxSafeLTV,
+                minProfitLTV: init.minProfitLTV,
+                targetLTV: init.targetLTV,
                 lendingConnector: new DummyLendingConnector(collateralToken, borrowToken, lendingProtocol),
                 oracleConnector: new DummyOracleConnector(collateralToken, borrowToken, oracle),
-                maxGrowthFee: 10 ** 18 / 5,
-                maxTotalAssetsInUnderlying: type(uint128).max,
+                maxGrowthFee: init.maxGrowthFee,
+                maxTotalAssetsInUnderlying: init.maxTotalAssetsInUnderlying,
                 slippageProvider: slippageProvider,
-                maxDeleverageFee: 2 * 10 ** 16,
+                maxDeleverageFee: init.maxDeleverageFee,
                 vaultBalanceAsLendingConnector: new VaultBalanceAsLendingConnector(collateralToken, borrowToken),
-                modules: new ModulesProvider(modulesState),
-                owner: owner,
-                guardian: address(123),
-                governor: address(132),
-                emergencyDeleverager: address(213),
+                modules: modulesProvider,
+                owner: init.owner,
+                guardian: init.guardian,
+                governor: init.governor,
+                emergencyDeleverager: init.emergencyDeleverager,
                 callData: ''
             });
 
-            dummyLTV = new DummyLTV(initData);
+            ltv = new DummyLTV(initData);
         }
 
-        vm.startPrank(owner);
-        Ownable(address(lendingProtocol)).transferOwnership(address(dummyLTV));
-        oracle.setAssetPrice(address(borrowToken), 100 * 10 ** 18);
-        oracle.setAssetPrice(address(collateralToken), 200 * 10 ** 18);
+        vm.startPrank(init.owner);
+        Ownable(address(lendingProtocol)).transferOwnership(address(ltv));
+        oracle.setAssetPrice(address(borrowToken), init.borrowPrice);
+        oracle.setAssetPrice(address(collateralToken), init.collateralPrice);
 
         deal(address(borrowToken), address(lendingProtocol), type(uint112).max);
-        deal(address(borrowToken), user, type(uint112).max);
         deal(address(collateralToken), address(lendingProtocol), type(uint112).max);
-        deal(address(collateralToken), user, type(uint112).max);
-
-        dummyLTV.mintFreeTokens(borrowAmount * 10, owner);
 
         vm.roll(Constants.AMOUNT_OF_STEPS);
-        dummyLTV.setStartAuction(Constants.AMOUNT_OF_STEPS / 2);
-        dummyLTV.setFutureBorrowAssets(futureBorrow);
-        dummyLTV.setFutureCollateralAssets(futureCollateral / 2);
+        ltv.setStartAuction(init.startAuction);
+        ltv.setFutureBorrowAssets(init.futureBorrow);
+        ltv.setFutureCollateralAssets(init.futureCollateral);
 
-        if (futureBorrow < 0) {
-            lendingProtocol.setSupplyBalance(address(collateralToken), uint256(int256(borrowAmount) * 5 * 4 - futureCollateral / 2));
-            lendingProtocol.setBorrowBalance(address(borrowToken), uint256(int256(borrowAmount) * 10 * 3 - futureBorrow - auctionReward));
-            dummyLTV.setFutureRewardBorrowAssets(auctionReward);
+        if (init.futureBorrow < 0) {
+            require(init.auctionReward >= 0);
+            ltv.setFutureRewardBorrowAssets(init.auctionReward);
         } else {
-            lendingProtocol.setSupplyBalance(
-                address(collateralToken),
-                uint256(int256(borrowAmount) * 5 * 4 - futureCollateral / 2 - auctionReward / 2)
-            );
-            lendingProtocol.setBorrowBalance(address(borrowToken), uint256(int256(borrowAmount) * 10 * 3 - futureBorrow));
-            dummyLTV.setFutureRewardCollateralAssets(auctionReward / 2);
+            require(init.auctionReward <= 0);
+            ltv.setFutureRewardCollateralAssets(init.auctionReward);
         }
 
-        vm.startPrank(user);
-        collateralToken.approve(address(dummyLTV), type(uint112).max);
-        borrowToken.approve(address(dummyLTV), type(uint112).max);
+        lendingProtocol.setSupplyBalance(address(collateralToken), init.collateralAssets);
+        lendingProtocol.setBorrowBalance(address(borrowToken), init.borrowAssets);
+        ltv.mintFreeTokens(init.zeroAddressTokens, address(0));
+    }
+
+    modifier testWithPredefinedDefaultValues(DefaultTestData memory defaultData) {
+        BaseTestInit memory initData = BaseTestInit({
+            owner: defaultData.owner,
+            guardian: defaultData.guardian,
+            governor: defaultData.governor,
+            emergencyDeleverager: defaultData.emergencyDeleverager,
+            feeCollector: defaultData.feeCollector,
+            futureBorrow: 0,
+            futureCollateral: 0,
+            auctionReward: 0,
+            startAuction: 0,
+            collateralSlippage: 10 ** 16,
+            borrowSlippage: 10 ** 16,
+            maxTotalAssetsInUnderlying: type(uint128).max,
+            collateralAssets: 2 * 10 ** 18,
+            borrowAssets: 3 * 10 ** 18,
+            maxSafeLTV: 9 * 10 ** 17,
+            minProfitLTV: 5 * 10 ** 17,
+            targetLTV: 75 * 10 ** 16,
+            maxGrowthFee: 2 * 10 ** 17,
+            collateralPrice: 2 * 10 ** 18,
+            borrowPrice: 10 ** 18,
+            maxDeleverageFee: 2 * 10 ** 16,
+            zeroAddressTokens: 10 ** 18
+        });
+        initializeTest(initData);
         _;
     }
 }
