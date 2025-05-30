@@ -37,4 +37,10 @@ contract SetSlippageProviderTest is BaseTest {
         assertEq(ISlippageProvider(ltv.slippageProvider()).collateralSlippage(), newCollateralSlippage);
         assertEq(ISlippageProvider(ltv.slippageProvider()).borrowSlippage(), newBorrowSlippage);
     }
+
+    function test_failIfZeroSlippageProvider(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
+        vm.startPrank(defaultData.governor);
+        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.ZeroSlippageProvider.selector));
+        ltv.setSlippageProvider(address(0));
+    }
 }

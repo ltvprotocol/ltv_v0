@@ -83,6 +83,7 @@ abstract contract AdministrationSetters is
     }
 
     function setSlippageProvider(ISlippageProvider _slippageProvider) external isFunctionAllowed onlyGovernor {
+        require(address(_slippageProvider) != address(0), ZeroSlippageProvider());
         address oldAddress = address(slippageProvider);
         slippageProvider = _slippageProvider;
         emit SlippageProviderUpdated(oldAddress, address(_slippageProvider));

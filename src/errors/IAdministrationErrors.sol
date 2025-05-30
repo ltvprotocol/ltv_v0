@@ -21,4 +21,5 @@ interface IAdministrationErrors {
     error ReceiverNotWhitelisted(address receiver);
     error WhitelistRegistryNotSet();
     error WhitelistIsActivated();
+    error ZeroSlippageProvider();
 }
