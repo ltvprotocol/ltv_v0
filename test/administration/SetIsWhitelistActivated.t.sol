@@ -68,6 +68,8 @@ contract SetIsWhitelistActivatedTest is PrepareEachFunctionSuccessfulExecution {
     }
 
     function test_failIfWhitelistIsActivatedBatch(DefaultTestData memory data, address user) public {
+        vm.assume(user != data.feeCollector);
+
         bytes[] memory calls = whitelistCalls(user);
 
         for (uint256 i = 0; i < calls.length; i++) {

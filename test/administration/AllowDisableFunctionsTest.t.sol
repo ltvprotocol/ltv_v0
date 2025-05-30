@@ -45,10 +45,8 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         }
     }
 
-    function test_batchEnableFunctions(DefaultTestData memory defaultData, address user) public testWithPredefinedDefaultValues(defaultData) {
+    function test_batchEnableFunctions(DefaultTestData memory defaultData, address user) public {
         (bytes[] memory calls, bytes4[] memory selectors, address[] memory callers) = functionsCanBeDisabled(defaultData, user);
-        vm.prank(defaultData.guardian);
-        ltv.allowDisableFunctions(selectors, true);
 
         for (uint256 i = 0; i < calls.length; i++) {
             bytes4[] memory selector = new bytes4[](1);
@@ -79,63 +77,48 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         assertTrue(success);
     }
 
-    // function test_cannotDisableAllowDisableFunctions(
-    //     DefaultTestData memory defaultData,
-    //     bytes4 randomSelector
-    // ) public testWithPredefinedDefaultValues(defaultData) {
-    //     bytes4[] memory signatures = new bytes4[](1);
-    //     signatures[0] = ltv.allowDisableFunctions.selector;
+    function test_ownerCannotExecuteDisabledFunction(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
+        bytes4[] memory signatures = new bytes4[](1);
+        signatures[0] = ltv.deposit.selector;
 
-    //     vm.startPrank(defaultData.guardian);
-    //     ltv.allowDisableFunctions(signatures, true);
+        vm.startPrank(defaultData.guardian);
+        ltv.allowDisableFunctions(signatures, true);
 
-    //     signatures[0] = randomSelector;
-    //     // should not revert
-    //     ltv.allowDisableFunctions(signatures, false);
-    // }
+        vm.startPrank(defaultData.owner);
+        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.FunctionStopped.selector, ltv.deposit.selector));
+        ltv.deposit(100, defaultData.owner);
+    }
 
-    // function test_ownerCannotExecuteDisabledFunction(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
-    //     bytes4[] memory signatures = new bytes4[](1);
-    //     signatures[0] = ltv.deposit.selector;
+    function test_governorCannotExecuteDisabledFunction(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
+        bytes4[] memory signatures = new bytes4[](1);
+        signatures[0] = ltv.deposit.selector;
 
-    //     vm.startPrank(defaultData.guardian);
-    //     ltv.allowDisableFunctions(signatures, true);
+        vm.startPrank(defaultData.guardian);
+        ltv.allowDisableFunctions(signatures, true);
 
-    //     vm.startPrank(defaultData.owner);
-    //     vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.FunctionStopped.selector, ltv.deposit.selector));
-    //     ltv.deposit(100, defaultData.owner);
-    // }
+        vm.startPrank(defaultData.governor);
+        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.FunctionStopped.selector, ltv.deposit.selector));
+        ltv.deposit(100, defaultData.governor);
+    }
 
-    // function test_governorCannotExecuteDisabledFunction(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
-    //     bytes4[] memory signatures = new bytes4[](1);
-    //     signatures[0] = ltv.deposit.selector;
+    function test_functionsCannotBeDisabled(DefaultTestData memory defaultData) public {
+        (bytes[] memory calls, bytes4[] memory selectors, address[] memory callers) = functionsCannotBeDisabled(defaultData);
+        for (uint256 i = 0; i < calls.length; i++) {
+            passDisabledFunction(defaultData, callers[i], calls[i], selectors);
+        }
+    }
 
-    //     vm.startPrank(defaultData.guardian);
-    //     ltv.allowDisableFunctions(signatures, true);
+    function passDisabledFunction(DefaultTestData memory defaultData, address caller, bytes memory call, bytes4[] memory allSelectors) public testWithPredefinedDefaultValues(defaultData) {
+        prepareEachFunctionSuccessfulExecution(caller);
 
-    //     vm.startPrank(defaultData.governor);
-    //     vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.FunctionStopped.selector, ltv.deposit.selector));
-    //     ltv.deposit(100, defaultData.governor);
-    // }
+        vm.prank(defaultData.guardian);
+        ltv.allowDisableFunctions(allSelectors, true);
+        vm.prank(caller);
+        (bool success,) = address(ltv).call(call);
+        assertTrue(success);
+    }
 
-    // function test_functionsCannotBeDisabled(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
-    //     (bytes[] memory calls, bytes4[] memory selectors, address[] memory callers) = functionsCannotBeDisabled(defaultData);
-    //     for (uint256 i = 0; i < calls.length; i++) {
-    //         passDisabledFunction(defaultData, callers[i], calls[i], selectors);
-    //     }
-    // }
-
-    // function passDisabledFunction(DefaultTestData memory defaultData, address caller, bytes memory call, bytes4[] memory allSelectors) public testWithPredefinedDefaultValues(defaultData) {
-    //     prepareEachFunctionSuccessfulExecution(caller);
-
-    //     vm.prank(defaultData.guardian);
-    //     ltv.allowDisableFunctions(allSelectors, true);
-    //     vm.prank(caller);
-    //     (bool success,) = address(ltv).call(call);
-    //     assertTrue(success);
-    // }
-
-    function functionsCannotBeDisabled(DefaultTestData memory defaultData) public view returns (bytes[] memory, bytes4[] memory, address[] memory) {
+    function functionsCannotBeDisabled(DefaultTestData memory defaultData) public pure returns (bytes[] memory, bytes4[] memory, address[] memory) {
         bytes[] memory calls = new bytes[](12);
         bytes4[] memory selectors = new bytes4[](12);
         address[] memory callers = new address[](12);
@@ -145,7 +128,7 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         selectors[0] = ILTV.allowDisableFunctions.selector;
         callers[0] = defaultData.guardian;
 
-        calls[1] = abi.encodeCall(ILTV.deleverageAndWithdraw, (ltv.getLendingConnector().getRealBorrowAssets(true), ltv.maxDeleverageFee()));
+        calls[1] = abi.encodeCall(ILTV.deleverageAndWithdraw, (type(uint112).max, 2 * 10**16));
         selectors[1] = ILTV.deleverageAndWithdraw.selector;
         callers[1] = defaultData.emergencyDeleverager;
 
@@ -154,20 +137,20 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         selectors[2] = ILTV.renounceOwnership.selector;
         callers[2] = defaultData.owner;
 
-        calls[3] = abi.encodeCall(ILTV.setModules, ltv.modules());
+        calls[3] = abi.encodeCall(ILTV.setModules, (IModules(address(1))));
         selectors[3] = ILTV.setModules.selector;
         callers[3] = defaultData.owner;
 
         // Update functions
-        calls[4] = abi.encodeCall(ILTV.updateGuardian, ltv.guardian());
+        calls[4] = abi.encodeCall(ILTV.updateGuardian, defaultData.guardian);
         selectors[4] = ILTV.updateGuardian.selector;
         callers[4] = defaultData.owner;
 
-        calls[5] = abi.encodeCall(ILTV.updateGovernor, ltv.governor());
+        calls[5] = abi.encodeCall(ILTV.updateGovernor, defaultData.governor);
         selectors[5] = ILTV.updateGovernor.selector;
         callers[5] = defaultData.owner;
 
-        calls[6] = abi.encodeCall(ILTV.updateEmergencyDeleverager, ltv.emergencyDeleverager());
+        calls[6] = abi.encodeCall(ILTV.updateEmergencyDeleverager, defaultData.emergencyDeleverager);
         selectors[6] = ILTV.updateEmergencyDeleverager.selector;
         callers[6] = defaultData.owner;
 
@@ -179,11 +162,11 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         selectors[8] = ILTV.setIsWithdrawDisabled.selector;
         callers[8] = defaultData.guardian;
 
-        calls[9] = abi.encodeCall(ILTV.setLendingConnector, address(ltv.getLendingConnector()));
+        calls[9] = abi.encodeCall(ILTV.setLendingConnector, address(1));
         selectors[9] = ILTV.setLendingConnector.selector;
         callers[9] = defaultData.owner;
 
-        calls[10] = abi.encodeCall(ILTV.setOracleConnector, address(ltv.oracleConnector()));
+        calls[10] = abi.encodeCall(ILTV.setOracleConnector, address(1));
         selectors[10] = ILTV.setOracleConnector.selector;
         callers[10] = defaultData.owner;
         
@@ -199,7 +182,7 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
     function functionsCanBeDisabled(
         DefaultTestData memory defaultData,
         address user
-    ) public view returns (bytes[] memory, bytes4[] memory, address[] memory) {
+    ) public pure returns (bytes[] memory, bytes4[] memory, address[] memory) {
         bytes[] memory calls = new bytes[](28);
         bytes4[] memory selectors = new bytes4[](28);
         address[] memory callers = new address[](28);
@@ -282,7 +265,7 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         callers[17] = user;
 
         // Setting functions
-        calls[18] = abi.encodeCall(ILTV.setFeeCollector, ltv.feeCollector());
+        calls[18] = abi.encodeCall(ILTV.setFeeCollector, address(1));
         selectors[18] = ILTV.setFeeCollector.selector;
         callers[18] = defaultData.governor;
 
@@ -290,35 +273,35 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         selectors[19] = ILTV.setIsWhitelistActivated.selector;
         callers[19] = defaultData.governor;
 
-        calls[20] = abi.encodeCall(ILTV.setMaxDeleverageFee, ltv.maxDeleverageFee());
+        calls[20] = abi.encodeCall(ILTV.setMaxDeleverageFee, 2 * 10**16);
         selectors[20] = ILTV.setMaxDeleverageFee.selector;
         callers[20] = defaultData.governor;
 
-        calls[21] = abi.encodeCall(ILTV.setMaxGrowthFee, ltv.maxGrowthFee());
+        calls[21] = abi.encodeCall(ILTV.setMaxGrowthFee, 2 * 10**16);
         selectors[21] = ILTV.setMaxGrowthFee.selector;
         callers[21] = defaultData.governor;
 
-        calls[22] = abi.encodeCall(ILTV.setMaxSafeLTV, ltv.maxSafeLTV());
+        calls[22] = abi.encodeCall(ILTV.setMaxSafeLTV, 9 * 10**17);
         selectors[22] = ILTV.setMaxSafeLTV.selector;
         callers[22] = defaultData.governor;
 
-        calls[23] = abi.encodeCall(ILTV.setMaxTotalAssetsInUnderlying, ltv.maxTotalAssetsInUnderlying());
+        calls[23] = abi.encodeCall(ILTV.setMaxTotalAssetsInUnderlying, type(uint112).max);
         selectors[23] = ILTV.setMaxTotalAssetsInUnderlying.selector;
         callers[23] = defaultData.governor;
 
-        calls[24] = abi.encodeCall(ILTV.setMinProfitLTV, ltv.minProfitLTV());
+        calls[24] = abi.encodeCall(ILTV.setMinProfitLTV, 5 * 10**17);
         selectors[24] = ILTV.setMinProfitLTV.selector;
         callers[24] = defaultData.governor;
 
-        calls[25] = abi.encodeCall(ILTV.setSlippageProvider, address(ltv.slippageProvider()));
+        calls[25] = abi.encodeCall(ILTV.setSlippageProvider, address(1));
         selectors[25] = ILTV.setSlippageProvider.selector;
         callers[25] = defaultData.governor;
 
-        calls[26] = abi.encodeCall(ILTV.setTargetLTV, ltv.targetLTV());
+        calls[26] = abi.encodeCall(ILTV.setTargetLTV, 75 * 10**16);
         selectors[26] = ILTV.setTargetLTV.selector;
         callers[26] = defaultData.governor;
 
-        calls[27] = abi.encodeCall(ILTV.setWhitelistRegistry, address(ltv.whitelistRegistry()));
+        calls[27] = abi.encodeCall(ILTV.setWhitelistRegistry, address(1));
         selectors[27] = ILTV.setWhitelistRegistry.selector;
         callers[27] = defaultData.governor;
 

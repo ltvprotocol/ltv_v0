@@ -15,6 +15,7 @@ contract SetWhitelistRegistryTest is BaseTest {
     }
 
     function test_whitelistedUserChanges(DefaultTestData memory defaultData, address user) public testWithPredefinedDefaultValues(defaultData) {
+        vm.assume(user != defaultData.feeCollector);
         deal(address(borrowToken), user, type(uint112).max);
         vm.prank(user);
         borrowToken.approve(address(ltv), type(uint112).max);
