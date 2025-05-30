@@ -12,8 +12,19 @@ import 'src/errors/IVaultErrors.sol';
 import '../preview/PreviewWithdrawCollateral.sol';
 import '../../../../math/NextStep.sol';
 import 'src/state_reader/MaxWithdrawRedeemCollateralVaultStateReader.sol';
+import '../../../../state_transition/TransferFromProtocol.sol';
 
-abstract contract WithdrawCollateral is MaxWithdrawRedeemCollateralVaultStateReader, MaxWithdrawCollateral, ApplyMaxGrowthFee, MintProtocolRewards, Lending, VaultStateTransition, IERC4626Events, IVaultErrors {
+abstract contract WithdrawCollateral is
+    MaxWithdrawRedeemCollateralVaultStateReader,
+    MaxWithdrawCollateral,
+    ApplyMaxGrowthFee,
+    MintProtocolRewards,
+    Lending,
+    VaultStateTransition,
+    TransferFromProtocol,
+    IERC4626Events,
+    IVaultErrors
+{
     using uMulDiv for uint256;
 
     function withdrawCollateral(uint256 assets, address receiver, address owner) external isFunctionAllowed nonReentrant returns (uint256) {
@@ -86,7 +97,7 @@ abstract contract WithdrawCollateral is MaxWithdrawRedeemCollateralVaultStateRea
             })
         );
 
-        collateralToken.transfer(receiver, assets);
+        transferCollateralToken(receiver, assets);
 
         emit Withdraw(msg.sender, receiver, owner, assets, shares);
 

@@ -12,6 +12,6 @@ abstract contract FunctionStopperModifier is LTVState, OwnableUpgradeable, IAdmi
     }
 
     function _checkFunctionAllowed() private view {
-        require(!_isFunctionDisabled[msg.sig] || msg.sender == owner() || msg.sender == governor, FunctionStopped(msg.sig));
+        require(!_isFunctionDisabled[msg.sig], FunctionStopped(msg.sig));
     }
 }

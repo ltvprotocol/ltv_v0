@@ -2,9 +2,9 @@
 pragma solidity ^0.8.28;
 
 import 'forge-std/Test.sol';
-import './utils/BaseTest.t.sol';
+import './utils/BalancedTest.t.sol';
 
-contract ERC20Test is BaseTest {
+contract ERC20Test is BalancedTest {
     function test_totalSupply(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
         assertEq(dummyLTV.totalSupply(), 10 ** 18);
     }

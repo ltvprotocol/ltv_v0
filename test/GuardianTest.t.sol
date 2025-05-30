@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import './utils/BaseTest.t.sol';
+import './utils/BalancedTest.t.sol';
 
-contract GuardianTest is BaseTest {
+contract GuardianTest is BalancedTest {
     function test_allowDisableFunctions(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
         address guardian = ILTV(address(dummyLTV)).guardian();
         vm.assume(user != guardian);

@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import './utils/BaseTest.t.sol';
+import '../src/elements/WhitelistRegistry.sol';
+import './utils/BalancedTest.t.sol';
 import '../src/timelock/utils/interfaces/IWithGuardian.sol';
 
-contract GovernorTest is BaseTest {
+contract GovernorTest is BalancedTest {
     function test_governor(
         address ltvOwner,
         address user,
@@ -187,6 +188,8 @@ contract GovernorTest is BaseTest {
         address governor = ILTV(address(dummyLTV)).governor();
         vm.assume(user != governor);
         vm.startPrank(governor);
+        dummyLTV.setWhitelistRegistry(address(new WhitelistRegistry(owner)));
+        
         dummyLTV.setIsWhitelistActivated(true);
         assertEq(dummyLTV.isWhitelistActivated(), true);
 

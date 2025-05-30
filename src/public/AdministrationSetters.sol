@@ -10,66 +10,80 @@ import 'src/state_transition/Lending.sol';
 import 'src/errors/IAdministrationErrors.sol';
 import 'src/modifiers/AdministrationModifiers.sol';
 import 'src/events/IAdministrationEvents.sol';
+import 'src/modifiers/FunctionStopperModifier.sol';
 
-abstract contract AdministrationSetters is LTVState, OwnableUpgradeable, ReentrancyGuardUpgradeable, Lending, AdministrationModifiers, IAdministrationEvents {
+abstract contract AdministrationSetters is
+    LTVState,
+    OwnableUpgradeable,
+    ReentrancyGuardUpgradeable,
+    Lending,
+    AdministrationModifiers,
+    FunctionStopperModifier,
+    IAdministrationEvents
+{
     using uMulDiv for uint256;
     using sMulDiv for int256;
 
-    function setTargetLTV(uint128 value) external onlyGovernor {
+    function setTargetLTV(uint128 value) external isFunctionAllowed onlyGovernor {
+        require(value > 0 && value < Constants.LTV_DIVIDER, UnexpectedTargetLTV(value));
         require(value <= maxSafeLTV && value >= minProfitLTV, InvalidLTVSet(value, maxSafeLTV, minProfitLTV));
         uint128 oldValue = targetLTV;
         targetLTV = value;
         emit TargetLTVChanged(oldValue, targetLTV);
     }
 
-    function setMaxSafeLTV(uint128 value) external onlyGovernor {
+    function setMaxSafeLTV(uint128 value) external isFunctionAllowed onlyGovernor {
+        require(value > 0 && value < Constants.LTV_DIVIDER, UnexpectedMaxSafeLTV(value));
         require(value >= targetLTV, InvalidLTVSet(targetLTV, value, minProfitLTV));
-        require(value < Constants.LTV_DIVIDER, UnexpectedMaxSafeLTV(value));
         uint128 oldValue = maxSafeLTV;
         maxSafeLTV = value;
         emit MaxSafeLTVChanged(oldValue, value);
     }
 
-    function setMinProfitLTV(uint128 value) external onlyGovernor {
+    function setMinProfitLTV(uint128 value) external isFunctionAllowed onlyGovernor {
+        require(value > 0 && value < Constants.LTV_DIVIDER, UnexpectedMinProfitLTV(value));
         require(value <= targetLTV, InvalidLTVSet(targetLTV, maxSafeLTV, value));
         uint128 oldValue = minProfitLTV;
         minProfitLTV = value;
         emit MinProfitLTVChanged(oldValue, value);
     }
 
-    function setFeeCollector(address _feeCollector) external onlyGovernor {
+    function setFeeCollector(address _feeCollector) external isFunctionAllowed onlyGovernor {
+        require(_feeCollector != address(0), ZeroFeeCollector());
         address oldFeeCollector = feeCollector;
         feeCollector = _feeCollector;
         emit FeeCollectorUpdated(oldFeeCollector, _feeCollector);
     }
 
-    function setMaxTotalAssetsInUnderlying(uint256 _maxTotalAssetsInUnderlying) external onlyGovernor {
+    function setMaxTotalAssetsInUnderlying(uint256 _maxTotalAssetsInUnderlying) external isFunctionAllowed onlyGovernor {
         uint256 oldValue = maxTotalAssetsInUnderlying;
         maxTotalAssetsInUnderlying = _maxTotalAssetsInUnderlying;
         emit MaxTotalAssetsInUnderlyingChanged(oldValue, _maxTotalAssetsInUnderlying);
     }
 
-    function setMaxDeleverageFee(uint256 value) external onlyGovernor {
+    function setMaxDeleverageFee(uint256 value) external isFunctionAllowed onlyGovernor {
         require(value < 10 ** 18, InvalidMaxDeleverageFee(value));
         uint256 oldValue = maxDeleverageFee;
         maxDeleverageFee = value;
         emit MaxDeleverageFeeChanged(oldValue, value);
     }
 
-    function setIsWhitelistActivated(bool activate) external onlyGovernor {
+    function setIsWhitelistActivated(bool activate) external isFunctionAllowed onlyGovernor {
+        require(!activate || address(whitelistRegistry) != address(0), WhitelistRegistryNotSet());
         bool oldValue = isWhitelistActivated;
         isWhitelistActivated = activate;
         emit IsWhitelistActivatedChanged(oldValue, activate);
     }
 
-    function setWhitelistRegistry(IWhitelistRegistry value) external onlyGovernor {
+    function setWhitelistRegistry(IWhitelistRegistry value) external isFunctionAllowed onlyGovernor {
+        require(address(value) != address(0) || !isWhitelistActivated, WhitelistIsActivated());
         address oldAddress = address(whitelistRegistry);
         whitelistRegistry = value;
         emit WhitelistRegistryUpdated(oldAddress, address(value));
     }
 
-    function setSlippageProvider(ISlippageProvider _slippageProvider) external onlyGovernor {
-        address oldAddress = address(slippageProvider); 
+    function setSlippageProvider(ISlippageProvider _slippageProvider) external isFunctionAllowed onlyGovernor {
+        address oldAddress = address(slippageProvider);
         slippageProvider = _slippageProvider;
         emit SlippageProviderUpdated(oldAddress, address(_slippageProvider));
     }
@@ -81,8 +95,8 @@ abstract contract AdministrationSetters is LTVState, OwnableUpgradeable, Reentra
         }
     }
 
-    function setMaxGrowthFee(uint256 _maxGrowthFee) external onlyGovernor {
-        require(_maxGrowthFee < 10 ** 18, InvalidMaxGrowthFee(_maxGrowthFee));
+    function setMaxGrowthFee(uint256 _maxGrowthFee) external isFunctionAllowed onlyGovernor {
+        require(_maxGrowthFee <= 10 ** 18, InvalidMaxGrowthFee(_maxGrowthFee));
         uint256 oldValue = maxGrowthFee;
         maxGrowthFee = _maxGrowthFee;
         emit MaxGrowthFeeChanged(oldValue, _maxGrowthFee);
@@ -121,9 +135,9 @@ abstract contract AdministrationSetters is LTVState, OwnableUpgradeable, Reentra
         futureRewardBorrowAssets = 0;
         futureRewardCollateralAssets = 0;
         startAuction = 0;
-        
+
         // round up to repay all assets
-        uint256 realBorrowAssets = lendingConnector.getRealBorrowAssets(false);      
+        uint256 realBorrowAssets = lendingConnector.getRealBorrowAssets(false);
 
         require(closeAmountBorrow >= realBorrowAssets, ImpossibleToCoverDeleverage(realBorrowAssets, closeAmountBorrow));
 
@@ -138,7 +152,7 @@ abstract contract AdministrationSetters is LTVState, OwnableUpgradeable, Reentra
         }
 
         withdraw(lendingConnector.getRealCollateralAssets(false));
-        
+
         if (collateralToTransfer != 0) {
             collateralToken.transfer(msg.sender, collateralToTransfer);
         }
