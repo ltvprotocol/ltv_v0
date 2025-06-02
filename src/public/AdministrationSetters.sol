@@ -97,7 +97,7 @@ abstract contract AdministrationSetters is
     }
 
     function setMaxGrowthFee(uint256 _maxGrowthFee) external isFunctionAllowed onlyGovernor {
-        require(_maxGrowthFee < 10 ** 18, InvalidMaxGrowthFee(_maxGrowthFee));
+        require(_maxGrowthFee <= 10 ** 18, InvalidMaxGrowthFee(_maxGrowthFee));
         uint256 oldValue = maxGrowthFee;
         maxGrowthFee = _maxGrowthFee;
         emit MaxGrowthFeeChanged(oldValue, _maxGrowthFee);
