@@ -1,21 +1,28 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import 'src/math/VaultCollateral.sol';
-import '../../../../math/MintRedeem.sol';
+import "src/math/VaultCollateral.sol";
+import "../../../../math/MintRedeem.sol";
 
 abstract contract PreviewMintCollateral is VaultCollateral {
     using uMulDiv for uint256;
 
-    function previewMintCollateral(uint256 shares, PreviewVaultState memory state) public pure returns (uint256 assets) {
-        (assets, ) = _previewMintCollateral(shares, previewVaultStateToPreviewCollateralVaultData(state, true));
+    function previewMintCollateral(uint256 shares, PreviewVaultState memory state)
+        public
+        pure
+        returns (uint256 assets)
+    {
+        (assets,) = _previewMintCollateral(shares, previewVaultStateToPreviewCollateralVaultData(state, true));
     }
 
-    function _previewMintCollateral(uint256 shares, PreviewCollateralVaultData memory data) internal pure returns (uint256, DeltaFuture memory) {
+    function _previewMintCollateral(uint256 shares, PreviewCollateralVaultData memory data)
+        internal
+        pure
+        returns (uint256, DeltaFuture memory)
+    {
         // HODLer <=> depositor conflict, round in favor of HODLer, round up to receive more assets
         uint256 sharesInUnderlying = shares.mulDivUp(data.totalAssetsCollateral, data.supplyAfterFee).mulDivUp(
-            data.collateralPrice,
-            Constants.ORACLE_DIVIDER
+            data.collateralPrice, Constants.ORACLE_DIVIDER
         );
 
         (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = MintRedeem.calculateMintRedeem(

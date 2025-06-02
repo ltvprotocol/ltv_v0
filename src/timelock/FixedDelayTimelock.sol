@@ -6,12 +6,9 @@ import "./TimelockCommon.sol";
 contract FixedDelayTimelock is TimelockCommon {
     uint40 private immutable DELAY;
 
-    constructor(
-        address initialOwner,
-        address initialGuardian,
-        address initialPayloadsManager,
-        uint40 _delay
-    ) WithPayloadsManager(initialOwner, initialGuardian, initialPayloadsManager) {
+    constructor(address initialOwner, address initialGuardian, address initialPayloadsManager, uint40 _delay)
+        WithPayloadsManager(initialOwner, initialGuardian, initialPayloadsManager)
+    {
         DELAY = _delay;
     }
 

@@ -7,4 +7,4 @@ struct MaxDepositMintBorrowVaultState {
     PreviewVaultState previewVaultState;
     uint256 maxTotalAssetsInUnderlying;
     uint256 minProfitLTV;
-} 
+}

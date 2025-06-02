@@ -1,12 +1,15 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../utils/BaseTest.t.sol';
-import '../../src/elements/WhitelistRegistry.sol';
-import '../../src/interfaces/IWhitelistRegistry.sol';
+import "../utils/BaseTest.t.sol";
+import "../../src/elements/WhitelistRegistry.sol";
+import "../../src/interfaces/IWhitelistRegistry.sol";
 
 contract SetWhitelistRegistryTest is BaseTest {
-    function test_failIfZeroDuringActivatedWhitelist(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
+    function test_failIfZeroDuringActivatedWhitelist(DefaultTestData memory defaultData)
+        public
+        testWithPredefinedDefaultValues(defaultData)
+    {
         vm.startPrank(defaultData.governor);
         ltv.setWhitelistRegistry(address(new WhitelistRegistry(defaultData.owner)));
         ltv.setIsWhitelistActivated(true);
@@ -14,7 +17,10 @@ contract SetWhitelistRegistryTest is BaseTest {
         ltv.setWhitelistRegistry(address(0));
     }
 
-    function test_whitelistedUserChanges(DefaultTestData memory defaultData, address user) public testWithPredefinedDefaultValues(defaultData) {
+    function test_whitelistedUserChanges(DefaultTestData memory defaultData, address user)
+        public
+        testWithPredefinedDefaultValues(defaultData)
+    {
         vm.assume(user != defaultData.feeCollector);
         deal(address(borrowToken), user, type(uint112).max);
         vm.prank(user);
@@ -54,7 +60,10 @@ contract SetWhitelistRegistryTest is BaseTest {
         assertEq(address(ltv.whitelistRegistry()), address(registry));
     }
 
-    function test_failIfNotGovernor(DefaultTestData memory defaultData, address user) public testWithPredefinedDefaultValues(defaultData) {
+    function test_failIfNotGovernor(DefaultTestData memory defaultData, address user)
+        public
+        testWithPredefinedDefaultValues(defaultData)
+    {
         vm.assume(user != defaultData.governor);
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));

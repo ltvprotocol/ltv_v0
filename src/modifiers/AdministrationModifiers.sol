@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import 'src/errors/IAdministrationErrors.sol';
-import 'src/states/LTVState.sol';
+import "src/errors/IAdministrationErrors.sol";
+import "src/states/LTVState.sol";
 
 abstract contract AdministrationModifiers is LTVState, IAdministrationErrors {
     modifier onlyGovernor() {
@@ -23,7 +23,7 @@ abstract contract AdministrationModifiers is LTVState, IAdministrationErrors {
     function _checkGovernor() internal view {
         if (msg.sender != governor) revert OnlyGovernorInvalidCaller(msg.sender);
     }
-    
+
     function _checkGuardian() internal view {
         if (msg.sender != guardian) revert OnlyGuardianInvalidCaller(msg.sender);
     }
@@ -31,5 +31,4 @@ abstract contract AdministrationModifiers is LTVState, IAdministrationErrors {
     function _checkEmergencyDeleverager() internal view {
         if (msg.sender != emergencyDeleverager) revert OnlyEmergencyDeleveragerInvalidCaller(msg.sender);
     }
-    
-} 
+}

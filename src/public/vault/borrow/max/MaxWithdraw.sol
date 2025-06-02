@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../preview/PreviewWithdraw.sol';
-import '../preview/PreviewRedeem.sol';
+import "../preview/PreviewWithdraw.sol";
+import "../preview/PreviewRedeem.sol";
 
 abstract contract MaxWithdraw is PreviewWithdraw, PreviewRedeem {
     using uMulDiv for uint256;
@@ -19,9 +19,10 @@ abstract contract MaxWithdraw is PreviewWithdraw, PreviewRedeem {
         }
         uint256 maxWithdrawInUnderlying = maxSafeRealBorrow - uint256(data.realBorrow);
         // round down to assume smaller border
-        uint256 vaultMaxWithdraw = maxWithdrawInUnderlying.mulDivDown(Constants.ORACLE_DIVIDER, data.previewBorrowVaultData.borrowPrice);
+        uint256 vaultMaxWithdraw =
+            maxWithdrawInUnderlying.mulDivDown(Constants.ORACLE_DIVIDER, data.previewBorrowVaultData.borrowPrice);
         // round down to assume smaller border
-        (uint256 userBalanceInAssets, ) = _previewRedeem(data.ownerBalance, data.previewBorrowVaultData);
+        (uint256 userBalanceInAssets,) = _previewRedeem(data.ownerBalance, data.previewBorrowVaultData);
 
         return userBalanceInAssets < vaultMaxWithdraw ? userBalanceInAssets : vaultMaxWithdraw;
     }

@@ -1,17 +1,25 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import 'src/math/VaultCollateral.sol';
-import '../../../../math/DepositWithdraw.sol';
+import "src/math/VaultCollateral.sol";
+import "../../../../math/DepositWithdraw.sol";
 
 abstract contract PreviewWithdrawCollateral is VaultCollateral {
     using uMulDiv for uint256;
 
-    function previewWithdrawCollateral(uint256 assets, PreviewVaultState memory state) public pure returns (uint256 shares) {
-        (shares, ) = _previewWithdrawCollateral(assets, previewVaultStateToPreviewCollateralVaultData(state, false));
+    function previewWithdrawCollateral(uint256 assets, PreviewVaultState memory state)
+        public
+        pure
+        returns (uint256 shares)
+    {
+        (shares,) = _previewWithdrawCollateral(assets, previewVaultStateToPreviewCollateralVaultData(state, false));
     }
 
-    function _previewWithdrawCollateral(uint256 assets, PreviewCollateralVaultData memory data) internal pure returns (uint256, DeltaFuture memory) {
+    function _previewWithdrawCollateral(uint256 assets, PreviewCollateralVaultData memory data)
+        internal
+        pure
+        returns (uint256, DeltaFuture memory)
+    {
         // HODLer <=> withdrawer conflict, assume user withdraws more to burn more shares
         uint256 assetsInUnderlying = assets.mulDivUp(data.collateralPrice, Constants.ORACLE_DIVIDER);
 
@@ -40,8 +48,7 @@ abstract contract PreviewWithdrawCollateral is VaultCollateral {
         // HODLer <=> withdrawer conflict, round in favor of HODLer, round up to burn more shares
         return (
             uint256(-sharesInUnderlying).mulDivUp(Constants.ORACLE_DIVIDER, data.collateralPrice).mulDivUp(
-                data.supplyAfterFee,
-                data.totalAssetsCollateral
+                data.supplyAfterFee, data.totalAssetsCollateral
             ),
             deltaFuture
         );

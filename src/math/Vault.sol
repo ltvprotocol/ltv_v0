@@ -1,25 +1,26 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import 'src/structs/data/vault/PreviewBorrowVaultData.sol';
-import 'src/structs/data/vault/TotalAssetsData.sol';
-import 'src/structs/state/vault/TotalAssetsState.sol';
-import 'src/structs/state/vault/PreviewVaultState.sol';
-import 'src/structs/state/vault/MaxDepositMintBorrowVaultState.sol';
-import 'src/structs/state/vault/MaxWithdrawRedeemBorrowVaultState.sol';
-import 'src/structs/data/vault/MaxDepositMintBorrowVaultData.sol';
-import 'src/structs/data/vault/MaxWithdrawRedeemBorrowVaultData.sol';
-import 'src/math/MaxGrowthFee.sol';
-import 'src/math/CommonMath.sol';
-import 'src/public/erc20/TotalSupply.sol';
+import "src/structs/data/vault/PreviewBorrowVaultData.sol";
+import "src/structs/data/vault/TotalAssetsData.sol";
+import "src/structs/state/vault/TotalAssetsState.sol";
+import "src/structs/state/vault/PreviewVaultState.sol";
+import "src/structs/state/vault/MaxDepositMintBorrowVaultState.sol";
+import "src/structs/state/vault/MaxWithdrawRedeemBorrowVaultState.sol";
+import "src/structs/data/vault/MaxDepositMintBorrowVaultData.sol";
+import "src/structs/data/vault/MaxWithdrawRedeemBorrowVaultData.sol";
+import "src/math/MaxGrowthFee.sol";
+import "src/math/CommonMath.sol";
+import "src/public/erc20/TotalSupply.sol";
 
 abstract contract Vault is MaxGrowthFee {
     using uMulDiv for uint256;
 
-    function previewVaultStateToPreviewBorrowVaultData(
-        PreviewVaultState memory state,
-        bool isDeposit
-    ) internal pure returns (PreviewBorrowVaultData memory) {
+    function previewVaultStateToPreviewBorrowVaultData(PreviewVaultState memory state, bool isDeposit)
+        internal
+        pure
+        returns (PreviewBorrowVaultData memory)
+    {
         uint256 realCollateral = CommonMath.convertRealCollateral(
             state.maxGrowthFeeState.totalAssetsState.realCollateralAssets,
             state.maxGrowthFeeState.totalAssetsState.collateralPrice,
@@ -68,8 +69,10 @@ abstract contract Vault is MaxGrowthFee {
 
         uint256 auctionStep = CommonMath.calculateAuctionStep(state.startAuction, state.blockNumber);
 
-        data.userFutureRewardBorrow = CommonMath.calculateUserFutureRewardBorrow(int256(futureRewardBorrow), auctionStep);
-        data.userFutureRewardCollateral = CommonMath.calculateUserFutureRewardCollateral(int256(futureRewardCollateral), auctionStep);
+        data.userFutureRewardBorrow =
+            CommonMath.calculateUserFutureRewardBorrow(int256(futureRewardBorrow), auctionStep);
+        data.userFutureRewardCollateral =
+            CommonMath.calculateUserFutureRewardCollateral(int256(futureRewardCollateral), auctionStep);
         data.protocolFutureRewardBorrow = futureRewardBorrow - data.userFutureRewardBorrow;
         data.protocolFutureRewardCollateral = futureRewardCollateral - data.userFutureRewardCollateral;
         data.totalAssets = _totalAssets(
@@ -77,9 +80,8 @@ abstract contract Vault is MaxGrowthFee {
             TotalAssetsData({collateral: data.collateral, borrow: data.borrow, borrowPrice: data.borrowPrice})
         );
 
-        uint256 withdrawTotalAssets = !isDeposit
-            ? data.totalAssets
-            : totalAssets(false, state.maxGrowthFeeState.totalAssetsState);
+        uint256 withdrawTotalAssets =
+            !isDeposit ? data.totalAssets : totalAssets(false, state.maxGrowthFeeState.totalAssetsState);
 
         data.supplyAfterFee = _previewSupplyAfterFee(
             MaxGrowthFeeData({
@@ -97,9 +99,11 @@ abstract contract Vault is MaxGrowthFee {
         return data;
     }
 
-    function maxDepositMintBorrowVaultStateToMaxDepositMintBorrowVaultData(
-        MaxDepositMintBorrowVaultState memory state
-    ) internal pure returns (MaxDepositMintBorrowVaultData memory) {
+    function maxDepositMintBorrowVaultStateToMaxDepositMintBorrowVaultData(MaxDepositMintBorrowVaultState memory state)
+        internal
+        pure
+        returns (MaxDepositMintBorrowVaultData memory)
+    {
         MaxDepositMintBorrowVaultData memory data;
 
         data.realCollateral = CommonMath.convertRealCollateral(
@@ -113,7 +117,9 @@ abstract contract Vault is MaxGrowthFee {
             true
         );
 
-        data.previewBorrowVaultData = _previewVaultStateToPreviewBorrowVaultData(data.realBorrow, data.realCollateral, state.previewVaultState, true);
+        data.previewBorrowVaultData = _previewVaultStateToPreviewBorrowVaultData(
+            data.realBorrow, data.realCollateral, state.previewVaultState, true
+        );
         data.minProfitLTV = state.minProfitLTV;
         data.maxTotalAssetsInUnderlying = state.maxTotalAssetsInUnderlying;
         return data;
@@ -136,10 +142,7 @@ abstract contract Vault is MaxGrowthFee {
         );
 
         data.previewBorrowVaultData = _previewVaultStateToPreviewBorrowVaultData(
-            data.realBorrow,
-            data.realCollateral,
-            state.previewVaultState,
-            false
+            data.realBorrow, data.realCollateral, state.previewVaultState, false
         );
         data.maxSafeLTV = state.maxSafeLTV;
         data.ownerBalance = state.ownerBalance;
@@ -161,9 +164,9 @@ abstract contract Vault is MaxGrowthFee {
         }
 
         // round down to assume less available space
-        uint256 availableSpaceInShares = (maxTotalAssetsInUnderlying - totalAssetsInUnderlying)
-            .mulDivDown(Constants.ORACLE_DIVIDER, borrowPrice)
-            .mulDivDown(supplyAfterFee, totalAssets);
+        uint256 availableSpaceInShares = (maxTotalAssetsInUnderlying - totalAssetsInUnderlying).mulDivDown(
+            Constants.ORACLE_DIVIDER, borrowPrice
+        ).mulDivDown(supplyAfterFee, totalAssets);
 
         return availableSpaceInShares;
     }

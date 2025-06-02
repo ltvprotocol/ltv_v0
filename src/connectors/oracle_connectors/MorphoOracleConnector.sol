@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import './interfaces/IMorphoOracle.sol';
-import '../../interfaces/IOracleConnector.sol';
+import "./interfaces/IMorphoOracle.sol";
+import "../../interfaces/IOracleConnector.sol";
 
 contract MorphoOracleConnector is IOracleConnector {
     IMorphoOracle public immutable ORACLE;

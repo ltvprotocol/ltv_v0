@@ -1,13 +1,20 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../utils/BaseTest.t.sol';
+import "../utils/BaseTest.t.sol";
 
 contract SetMaxSafeLTVTest is BaseTest {
-    function test_failIfLessThanTargetLTV(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
+    function test_failIfLessThanTargetLTV(DefaultTestData memory defaultData)
+        public
+        testWithPredefinedDefaultValues(defaultData)
+    {
         uint128 newMaxSafeLTV = ltv.targetLTV() - 1;
         vm.startPrank(defaultData.governor);
-        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.InvalidLTVSet.selector, ltv.targetLTV(), newMaxSafeLTV, ltv.minProfitLTV()));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAdministrationErrors.InvalidLTVSet.selector, ltv.targetLTV(), newMaxSafeLTV, ltv.minProfitLTV()
+            )
+        );
         ltv.setMaxSafeLTV(newMaxSafeLTV);
     }
 
@@ -32,7 +39,10 @@ contract SetMaxSafeLTVTest is BaseTest {
         ltv.setMaxSafeLTV(newMaxSafeLTV);
     }
 
-    function test_setAndCheckStorageSlot(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
+    function test_setAndCheckStorageSlot(DefaultTestData memory defaultData)
+        public
+        testWithPredefinedDefaultValues(defaultData)
+    {
         uint128 newMaxSafeLTV = 85 * 10 ** 16; // 0.85
         vm.startPrank(defaultData.governor);
         vm.expectEmit(true, true, true, true, address(ltv));
@@ -42,7 +52,10 @@ contract SetMaxSafeLTVTest is BaseTest {
         assertEq(ltv.maxSafeLTV(), newMaxSafeLTV);
     }
 
-    function test_failIfNotGovernor(DefaultTestData memory defaultData, address user) public testWithPredefinedDefaultValues(defaultData) {
+    function test_failIfNotGovernor(DefaultTestData memory defaultData, address user)
+        public
+        testWithPredefinedDefaultValues(defaultData)
+    {
         vm.assume(user != defaultData.governor);
         uint128 newMaxSafeLTV = ltv.maxSafeLTV();
         vm.startPrank(user);

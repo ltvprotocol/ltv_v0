@@ -8,4 +8,4 @@ struct MaxLowLevelRebalanceSharesData {
     uint256 supplyAfterFee;
     uint256 borrowPrice;
     uint256 depositTotalAssets;
-} 
+}

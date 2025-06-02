@@ -6,4 +6,4 @@ struct MaxGrowthFeeData {
     uint256 maxGrowthFee;
     uint256 supply;
     uint256 lastSeenTokenPrice;
-} 
+}

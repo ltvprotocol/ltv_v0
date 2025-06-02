@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../structs/state_transition/NextState.sol';
-import '../structs/state_transition/NextStateData.sol';
-import '../structs/state_transition/NextStepData.sol';
-import '../utils/MulDiv.sol';
+import "../structs/state_transition/NextState.sol";
+import "../structs/state_transition/NextStateData.sol";
+import "../structs/state_transition/NextStepData.sol";
+import "../utils/MulDiv.sol";
 
 library NextStep {
     using sMulDiv for int256;
@@ -37,7 +37,8 @@ library NextStep {
         int256 deltaUserFutureRewardBorrow,
         int256 deltaProtocolFutureRewardBorrow
     ) private pure returns (int256 nextFutureRewardBorrow) {
-        return futureRewardBorrow + deltaFuturePaymentBorrow + deltaUserFutureRewardBorrow + deltaProtocolFutureRewardBorrow;
+        return futureRewardBorrow + deltaFuturePaymentBorrow + deltaUserFutureRewardBorrow
+            + deltaProtocolFutureRewardBorrow;
     }
 
     function calculateNextFutureRewardCollateral(
@@ -46,21 +47,30 @@ library NextStep {
         int256 deltaUserFutureRewardCollateral,
         int256 deltaProtocolFutureRewardCollateral
     ) private pure returns (int256 nextFutureRewardCollateral) {
-        return futureRewardCollateral + deltaFuturePaymentCollateral + deltaUserFutureRewardCollateral + deltaProtocolFutureRewardCollateral;
+        return futureRewardCollateral + deltaFuturePaymentCollateral + deltaUserFutureRewardCollateral
+            + deltaProtocolFutureRewardCollateral;
     }
 
-    function calculateNextFutureBorrow(int256 futureBorrow, int256 deltaFutureBorrow) private pure returns (int256 nextFutureBorrow) {
+    function calculateNextFutureBorrow(int256 futureBorrow, int256 deltaFutureBorrow)
+        private
+        pure
+        returns (int256 nextFutureBorrow)
+    {
         return futureBorrow + deltaFutureBorrow;
     }
 
-    function calculateNextFutureCollateral(int256 futureCollateral, int256 deltaFutureCollateral) private pure returns (int256 nextFutureCollateral) {
+    function calculateNextFutureCollateral(int256 futureCollateral, int256 deltaFutureCollateral)
+        private
+        pure
+        returns (int256 nextFutureCollateral)
+    {
         return futureCollateral + deltaFutureCollateral;
     }
 
     function mergingAuction(MergeAuctionData memory data) private pure returns (uint256 startAuction, bool merge) {
         merge = data.futureBorrow * data.deltaFutureBorrow > 0 && data.futureCollateral * data.deltaFutureCollateral > 0;
 
-        int auctionWeight = 0;
+        int256 auctionWeight = 0;
         if (data.futureRewardBorrow != 0) {
             auctionWeight = data.futureRewardBorrow;
         }
@@ -68,7 +78,7 @@ library NextStep {
             auctionWeight = data.futureRewardCollateral;
         }
 
-        int deltaAuctionWeight = 0;
+        int256 deltaAuctionWeight = 0;
         if (data.deltaFuturePaymentBorrow != 0) {
             deltaAuctionWeight = data.deltaFuturePaymentBorrow;
         }
@@ -82,7 +92,8 @@ library NextStep {
                 nextAuctionStep = 0;
             } else {
                 // round down to make auction longer
-                nextAuctionStep = uint256(int256(data.auctionStep).mulDivDown(auctionWeight, auctionWeight + deltaAuctionWeight));
+                nextAuctionStep =
+                    uint256(int256(data.auctionStep).mulDivDown(auctionWeight, auctionWeight + deltaAuctionWeight));
             }
             startAuction = data.blockNumber - nextAuctionStep;
         }

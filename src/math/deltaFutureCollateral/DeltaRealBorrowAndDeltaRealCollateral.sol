@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../../structs/data/vault/DeltaRealBorrowAndDeltaRealCollateralData.sol';
-import '../../structs/data/vault/Cases.sol';
-import '../../Constants.sol';
-import 'src/math/CasesOperator.sol';
-import '../../utils/MulDiv.sol';
-import 'src/errors/IVaultErrors.sol';
+import "../../structs/data/vault/DeltaRealBorrowAndDeltaRealCollateralData.sol";
+import "../../structs/data/vault/Cases.sol";
+import "../../Constants.sol";
+import "src/math/CasesOperator.sol";
+import "../../utils/MulDiv.sol";
+import "src/errors/IVaultErrors.sol";
+
 library DeltaRealBorrowAndDeltaRealCollateral {
     using uMulDiv for uint256;
     using sMulDiv for int256;
@@ -43,9 +44,7 @@ library DeltaRealBorrowAndDeltaRealCollateral {
     }
 
     // needs to be rounded down in any case
-    function calculateDividendByDeltaRealBorrowAndDeltaRealCollateral(
-        DividendData memory data
-    )
+    function calculateDividendByDeltaRealBorrowAndDeltaRealCollateral(DividendData memory data)
         private
         pure
         returns (
@@ -69,11 +68,13 @@ library DeltaRealBorrowAndDeltaRealCollateral {
 
         int256 dividend = -int256(data.borrow);
         dividend -= data.deltaRealBorrow;
-        dividend -= int256(int8(data.cases.ceccb + data.cases.cecbc)) * (int256(data.futureCollateral) - int256(data.futureBorrow));
+        dividend -= int256(int8(data.cases.ceccb + data.cases.cecbc))
+            * (int256(data.futureCollateral) - int256(data.futureBorrow));
         dividend += int256(int8(data.cases.cecbc)) * int256(data.userFutureRewardBorrow);
 
         // goes to dividend with plus sign, so need to round down
-        dividend += int256(int8(data.cases.ceccb)) * data.futureCollateral.mulDivDown(int256(data.borrowSlippage), 10 ** 18);
+        dividend +=
+            int256(int8(data.cases.ceccb)) * data.futureCollateral.mulDivDown(int256(data.borrowSlippage), 10 ** 18);
 
         dividend += int256(int8(data.cases.cecbc)) * int256(data.protocolFutureRewardBorrow);
 
@@ -82,7 +83,8 @@ library DeltaRealBorrowAndDeltaRealCollateral {
         dividendWithTargetLTV -= int256(int8(data.cases.ceccb)) * int256(data.userFutureRewardCollateral);
 
         // goes to dividend with minus sign, so needs to be rounded up
-        dividendWithTargetLTV -= int256(int8(data.cases.cecbc)) * data.futureCollateral.mulDivUp(int256(data.collateralSlippage), 10 ** 18);
+        dividendWithTargetLTV -=
+            int256(int8(data.cases.cecbc)) * data.futureCollateral.mulDivUp(int256(data.collateralSlippage), 10 ** 18);
 
         dividendWithTargetLTV -= int256(int8(data.cases.ceccb)) * int256(data.protocolFutureRewardCollateral);
 
@@ -93,7 +95,11 @@ library DeltaRealBorrowAndDeltaRealCollateral {
     }
 
     // divider always positive
-    function calculateDividerByDeltaRealBorrowAndDeltaRealCollateral(DividerData memory data) private pure returns (int256) {
+    function calculateDividerByDeltaRealBorrowAndDeltaRealCollateral(DividerData memory data)
+        private
+        pure
+        returns (int256)
+    {
         // divider
         //
         // (cna + cmcb + cmbc + ceccb + cecbc) x 1
@@ -130,11 +136,13 @@ library DeltaRealBorrowAndDeltaRealCollateral {
         // part 1
         int256 DIVIDER = 10 ** 18;
 
-        int256 divider = DIVIDER * int256(int8(data.cases.cna + data.cases.cmcb + data.cases.cmbc + data.cases.ceccb + data.cases.cecbc));
+        int256 divider = DIVIDER
+            * int256(int8(data.cases.cna + data.cases.cmcb + data.cases.cmbc + data.cases.ceccb + data.cases.cecbc));
 
         // part 2
         if (data.futureCollateral != 0) {
-            int256 dividerDivFutureCollateral = int256(int8(data.cases.cecb + data.cases.cebc)) * int256(data.futureBorrow);
+            int256 dividerDivFutureCollateral =
+                int256(int8(data.cases.cecb + data.cases.cebc)) * int256(data.futureBorrow);
             dividerDivFutureCollateral += int256(int8(data.cases.cebc)) * int256(data.userFutureRewardBorrow);
             dividerDivFutureCollateral += int256(int8(data.cases.cebc)) * int256(data.protocolFutureRewardBorrow);
 
@@ -165,10 +173,13 @@ library DeltaRealBorrowAndDeltaRealCollateral {
         // part 5
 
         if (data.futureCollateral != 0) {
-            int256 dividerTargetLTVDivFutureCollateral = -int256(int8(data.cases.cecb)) * int256(data.userFutureRewardCollateral);
-            dividerTargetLTVDivFutureCollateral -= int256(int8(data.cases.cecb)) * int256(data.protocolFutureRewardCollateral);
+            int256 dividerTargetLTVDivFutureCollateral =
+                -int256(int8(data.cases.cecb)) * int256(data.userFutureRewardCollateral);
+            dividerTargetLTVDivFutureCollateral -=
+                int256(int8(data.cases.cecb)) * int256(data.protocolFutureRewardCollateral);
             // takes effect only in cecb case. Since it goes to divider with plus sign, needs to be rounded down
-            dividerTargetLTVDivFutureCollateral = dividerTargetLTVDivFutureCollateral.mulDivDown(DIVIDER, int256(data.futureCollateral));
+            dividerTargetLTVDivFutureCollateral =
+                dividerTargetLTVDivFutureCollateral.mulDivDown(DIVIDER, int256(data.futureCollateral));
             dividerTargetLTV += dividerTargetLTVDivFutureCollateral;
         }
 
@@ -221,19 +232,21 @@ library DeltaRealBorrowAndDeltaRealCollateral {
                 })
             );
 
-            int256 divider = calculateDividerByDeltaRealBorrowAndDeltaRealCollateral(DividerData({
-                cases: data.cases,
-                futureCollateral: data.futureCollateral,
-                futureBorrow: data.futureBorrow,
-                collateralSlippage: data.collateralSlippage,
-                borrowSlippage: data.borrowSlippage,
-                collateral: data.collateral,
-                protocolFutureRewardBorrow: data.protocolFutureRewardBorrow,
-                protocolFutureRewardCollateral: data.protocolFutureRewardCollateral,
-                targetLTV: data.targetLTV,
-                userFutureRewardBorrow: data.userFutureRewardBorrow,
-                userFutureRewardCollateral: data.userFutureRewardCollateral
-            }));
+            int256 divider = calculateDividerByDeltaRealBorrowAndDeltaRealCollateral(
+                DividerData({
+                    cases: data.cases,
+                    futureCollateral: data.futureCollateral,
+                    futureBorrow: data.futureBorrow,
+                    collateralSlippage: data.collateralSlippage,
+                    borrowSlippage: data.borrowSlippage,
+                    collateral: data.collateral,
+                    protocolFutureRewardBorrow: data.protocolFutureRewardBorrow,
+                    protocolFutureRewardCollateral: data.protocolFutureRewardCollateral,
+                    targetLTV: data.targetLTV,
+                    userFutureRewardBorrow: data.userFutureRewardBorrow,
+                    userFutureRewardCollateral: data.userFutureRewardCollateral
+                })
+            );
 
             int256 DIVIDER = 10 ** 18;
 
@@ -248,7 +261,8 @@ library DeltaRealBorrowAndDeltaRealCollateral {
             // round down since we need deltaFutureCollateral to be rounded down
             deltaFutureCollateral = dividend.mulDivDown(DIVIDER, divider);
 
-            bool validity = CasesOperator.checkCaseDeltaFutureCollateral(data.cases, data.futureCollateral, deltaFutureCollateral);
+            bool validity =
+                CasesOperator.checkCaseDeltaFutureCollateral(data.cases, data.futureCollateral, deltaFutureCollateral);
 
             if (validity) {
                 break;

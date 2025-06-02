@@ -1,5 +1,3 @@
-
-
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
@@ -15,7 +13,6 @@ contract DeployWETH is Script {
     function setUp() public {}
 
     function run() public {
-
         address proxyOwner = vm.envAddress("PROXY_OWNER");
         address wethOwner = vm.envAddress("WETH_OWNER");
 
@@ -23,11 +20,8 @@ contract DeployWETH is Script {
 
         //WETH weth = new WETH();
 
-        address proxyWETH = Upgrades.deployTransparentProxy(
-            "WETH.sol",
-            proxyOwner,
-            abi.encodeCall(WETH.initialize, wethOwner)
-        );
+        address proxyWETH =
+            Upgrades.deployTransparentProxy("WETH.sol", proxyOwner, abi.encodeCall(WETH.initialize, wethOwner));
 
         console.log("Proxy WETH at: ", proxyWETH);
 

@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import './utils/BalancedTest.t.sol';
-import '../src/elements/WhitelistRegistry.sol';
+import "./utils/BalancedTest.t.sol";
+import "../src/elements/WhitelistRegistry.sol";
 
 contract WhitelistTest is BalancedTest {
-    function test_whitelist(address owner, address user, address randUser) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
+    function test_whitelist(address owner, address user, address randUser)
+        public
+        initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
+    {
         vm.assume(user != randUser);
         vm.stopPrank();
         address governor = ILTV(address(dummyLTV)).governor();

@@ -18,4 +18,4 @@ struct DeltaRealBorrowAndDeltaRealCollateralData {
     int256 protocolFutureRewardBorrow;
     int256 protocolFutureRewardCollateral;
     Cases cases;
-} 
+}

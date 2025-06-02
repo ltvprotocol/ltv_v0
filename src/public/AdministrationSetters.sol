@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import 'src/Constants.sol';
-import 'src/states/LTVState.sol';
-import 'src/utils/MulDiv.sol';
-import '@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol';
-import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
-import 'src/state_transition/Lending.sol';
-import 'src/errors/IAdministrationErrors.sol';
-import 'src/modifiers/AdministrationModifiers.sol';
-import 'src/events/IAdministrationEvents.sol';
-import 'src/modifiers/FunctionStopperModifier.sol';
+import "src/Constants.sol";
+import "src/states/LTVState.sol";
+import "src/utils/MulDiv.sol";
+import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "src/state_transition/Lending.sol";
+import "src/errors/IAdministrationErrors.sol";
+import "src/modifiers/AdministrationModifiers.sol";
+import "src/events/IAdministrationEvents.sol";
+import "src/modifiers/FunctionStopperModifier.sol";
 
 abstract contract AdministrationSetters is
     LTVState,
@@ -55,7 +55,11 @@ abstract contract AdministrationSetters is
         emit FeeCollectorUpdated(oldFeeCollector, _feeCollector);
     }
 
-    function setMaxTotalAssetsInUnderlying(uint256 _maxTotalAssetsInUnderlying) external isFunctionAllowed onlyGovernor {
+    function setMaxTotalAssetsInUnderlying(uint256 _maxTotalAssetsInUnderlying)
+        external
+        isFunctionAllowed
+        onlyGovernor
+    {
         uint256 oldValue = maxTotalAssetsInUnderlying;
         maxTotalAssetsInUnderlying = _maxTotalAssetsInUnderlying;
         emit MaxTotalAssetsInUnderlyingChanged(oldValue, _maxTotalAssetsInUnderlying);
@@ -127,7 +131,11 @@ abstract contract AdministrationSetters is
         emit OracleConnectorUpdated(oldAddress, address(_oracleConnector));
     }
 
-    function deleverageAndWithdraw(uint256 closeAmountBorrow, uint256 deleverageFee) external onlyEmergencyDeleverager nonReentrant {
+    function deleverageAndWithdraw(uint256 closeAmountBorrow, uint256 deleverageFee)
+        external
+        onlyEmergencyDeleverager
+        nonReentrant
+    {
         require(deleverageFee <= maxDeleverageFee, ExceedsMaxDeleverageFee(deleverageFee, maxDeleverageFee));
         require(!isVaultDeleveraged, VaultAlreadyDeleveraged());
 
@@ -143,8 +151,7 @@ abstract contract AdministrationSetters is
         require(closeAmountBorrow >= realBorrowAssets, ImpossibleToCoverDeleverage(realBorrowAssets, closeAmountBorrow));
 
         uint256 collateralToTransfer = realBorrowAssets.mulDivUp(10 ** 18 + deleverageFee, 10 ** 18).mulDivDown(
-            oracleConnector.getPriceBorrowOracle(),
-            oracleConnector.getPriceCollateralOracle()
+            oracleConnector.getPriceBorrowOracle(), oracleConnector.getPriceCollateralOracle()
         );
 
         if (realBorrowAssets != 0) {

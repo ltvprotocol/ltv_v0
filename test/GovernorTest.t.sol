@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../src/elements/WhitelistRegistry.sol';
-import './utils/BalancedTest.t.sol';
-import '../src/timelock/utils/interfaces/IWithGuardian.sol';
+import "../src/elements/WhitelistRegistry.sol";
+import "./utils/BalancedTest.t.sol";
+import "../src/timelock/utils/interfaces/IWithGuardian.sol";
 
 contract GovernorTest is BalancedTest {
     function test_governor(
@@ -33,7 +33,9 @@ contract GovernorTest is BalancedTest {
         bytes[] memory actions = new bytes[](1);
         actions[0] = abi.encodeCall(dummyLTV.setTargetLTV, (6 * 10 ** 17));
 
-        vm.expectRevert(abi.encodeWithSelector(IWithPayloadsManager.OnlyPayloadsManagerOrOwnerInvalidCaller.selector, user));
+        vm.expectRevert(
+            abi.encodeWithSelector(IWithPayloadsManager.OnlyPayloadsManagerOrOwnerInvalidCaller.selector, user)
+        );
         controller.createPayload(address(dummyLTV), new bytes[](0));
 
         vm.startPrank(payloadsManager);
@@ -60,7 +62,10 @@ contract GovernorTest is BalancedTest {
         require(dummyLTV.targetLTV() == 6 * 10 ** 17);
     }
 
-    function test_setTargetLTV(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
+    function test_setTargetLTV(address owner, address user)
+        public
+        initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
+    {
         uint128 newValue = 7 * 10 ** 17;
         address governor = ILTV(address(dummyLTV)).governor();
         vm.assume(user != governor);
@@ -78,18 +83,31 @@ contract GovernorTest is BalancedTest {
         vm.startPrank(governor);
         uint128 tooHighValue = dummyLTV.maxSafeLTV() + 1;
         vm.expectRevert(
-            abi.encodeWithSelector(IAdministrationErrors.InvalidLTVSet.selector, tooHighValue, dummyLTV.maxSafeLTV(), dummyLTV.minProfitLTV())
+            abi.encodeWithSelector(
+                IAdministrationErrors.InvalidLTVSet.selector,
+                tooHighValue,
+                dummyLTV.maxSafeLTV(),
+                dummyLTV.minProfitLTV()
+            )
         );
         dummyLTV.setTargetLTV(tooHighValue);
 
         uint128 tooLowValue = dummyLTV.minProfitLTV() - 1;
         vm.expectRevert(
-            abi.encodeWithSelector(IAdministrationErrors.InvalidLTVSet.selector, tooLowValue, dummyLTV.maxSafeLTV(), dummyLTV.minProfitLTV())
+            abi.encodeWithSelector(
+                IAdministrationErrors.InvalidLTVSet.selector,
+                tooLowValue,
+                dummyLTV.maxSafeLTV(),
+                dummyLTV.minProfitLTV()
+            )
         );
         dummyLTV.setTargetLTV(tooLowValue);
     }
 
-    function test_setMaxSafeLTV(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
+    function test_setMaxSafeLTV(address owner, address user)
+        public
+        initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
+    {
         uint128 newValue = 95 * 10 ** 16;
         address governor = ILTV(address(dummyLTV)).governor();
         vm.assume(user != governor);
@@ -106,15 +124,22 @@ contract GovernorTest is BalancedTest {
         vm.startPrank(governor);
         uint128 tooLowValue = dummyLTV.targetLTV() - 1;
         vm.expectRevert(
-            abi.encodeWithSelector(IAdministrationErrors.InvalidLTVSet.selector, dummyLTV.targetLTV(), tooLowValue, dummyLTV.minProfitLTV())
+            abi.encodeWithSelector(
+                IAdministrationErrors.InvalidLTVSet.selector, dummyLTV.targetLTV(), tooLowValue, dummyLTV.minProfitLTV()
+            )
         );
         dummyLTV.setMaxSafeLTV(tooLowValue);
 
-        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.UnexpectedMaxSafeLTV.selector, Constants.LTV_DIVIDER));
+        vm.expectRevert(
+            abi.encodeWithSelector(IAdministrationErrors.UnexpectedMaxSafeLTV.selector, Constants.LTV_DIVIDER)
+        );
         dummyLTV.setMaxSafeLTV(uint128(Constants.LTV_DIVIDER));
     }
 
-    function test_setMinProfitLTV(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
+    function test_setMinProfitLTV(address owner, address user)
+        public
+        initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
+    {
         uint128 newValue = 6 * 10 ** 17;
         address governor = ILTV(address(dummyLTV)).governor();
         vm.assume(user != governor);
@@ -131,12 +156,17 @@ contract GovernorTest is BalancedTest {
         vm.startPrank(governor);
         uint128 tooHighValue = dummyLTV.targetLTV() + 1;
         vm.expectRevert(
-            abi.encodeWithSelector(IAdministrationErrors.InvalidLTVSet.selector, dummyLTV.targetLTV(), dummyLTV.maxSafeLTV(), tooHighValue)
+            abi.encodeWithSelector(
+                IAdministrationErrors.InvalidLTVSet.selector, dummyLTV.targetLTV(), dummyLTV.maxSafeLTV(), tooHighValue
+            )
         );
         dummyLTV.setMinProfitLTV(tooHighValue);
     }
 
-    function test_setFeeCollector(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
+    function test_setFeeCollector(address owner, address user)
+        public
+        initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
+    {
         address newCollector = address(0x1234);
         address governor = ILTV(address(dummyLTV)).governor();
         vm.assume(user != governor);
@@ -150,7 +180,10 @@ contract GovernorTest is BalancedTest {
         dummyLTV.setFeeCollector(newCollector);
     }
 
-    function test_setMaxTotalAssetsInUnderlying(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
+    function test_setMaxTotalAssetsInUnderlying(address owner, address user)
+        public
+        initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
+    {
         uint256 newValue = 1000000 * 10 ** 18;
         address governor = ILTV(address(dummyLTV)).governor();
         vm.assume(user != governor);
@@ -164,7 +197,10 @@ contract GovernorTest is BalancedTest {
         dummyLTV.setMaxTotalAssetsInUnderlying(newValue);
     }
 
-    function test_setMaxDeleverageFee(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
+    function test_setMaxDeleverageFee(address owner, address user)
+        public
+        initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
+    {
         uint256 newValue = 1 * 10 ** 17; // 10%
         address governor = ILTV(address(dummyLTV)).governor();
         vm.assume(user != governor);
@@ -184,12 +220,15 @@ contract GovernorTest is BalancedTest {
         dummyLTV.setMaxDeleverageFee(tooHighValue);
     }
 
-    function test_setIsWhitelistActivated(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
+    function test_setIsWhitelistActivated(address owner, address user)
+        public
+        initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
+    {
         address governor = ILTV(address(dummyLTV)).governor();
         vm.assume(user != governor);
         vm.startPrank(governor);
         dummyLTV.setWhitelistRegistry(address(new WhitelistRegistry(owner)));
-        
+
         dummyLTV.setIsWhitelistActivated(true);
         assertEq(dummyLTV.isWhitelistActivated(), true);
 
@@ -202,7 +241,10 @@ contract GovernorTest is BalancedTest {
         dummyLTV.setIsWhitelistActivated(true);
     }
 
-    function test_setWhitelistRegistry(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
+    function test_setWhitelistRegistry(address owner, address user)
+        public
+        initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
+    {
         address governor = ILTV(address(dummyLTV)).governor();
         vm.assume(user != governor);
         vm.startPrank(governor);
@@ -217,7 +259,10 @@ contract GovernorTest is BalancedTest {
         dummyLTV.setWhitelistRegistry(address(0));
     }
 
-    function test_setSlippageProvider(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
+    function test_setSlippageProvider(address owner, address user)
+        public
+        initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
+    {
         address governor = ILTV(address(dummyLTV)).governor();
         vm.assume(user != governor);
         vm.startPrank(governor);
@@ -232,7 +277,10 @@ contract GovernorTest is BalancedTest {
         dummyLTV.setSlippageProvider(address(0));
     }
 
-    function test_setMaxGrowthFee(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
+    function test_setMaxGrowthFee(address owner, address user)
+        public
+        initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
+    {
         uint256 newValue = 1 * 10 ** 16; // 1%
         address governor = ILTV(address(dummyLTV)).governor();
         vm.assume(user != governor);

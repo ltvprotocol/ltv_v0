@@ -1,14 +1,16 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
-import 'src/math/PreviewLowLevelRebalanceStateToData.sol';
+
+import "src/math/PreviewLowLevelRebalanceStateToData.sol";
 
 abstract contract PreviewLowLevelRebalanceBorrow is PreviewLowLevelRebalanceStateToData {
     using uMulDiv for uint256;
 
-    function previewLowLevelRebalanceBorrow(
-        int256 deltaBorrow,
-        PreviewLowLevelRebalanceState memory state
-    ) public pure returns (int256, int256) {
+    function previewLowLevelRebalanceBorrow(int256 deltaBorrow, PreviewLowLevelRebalanceState memory state)
+        public
+        pure
+        returns (int256, int256)
+    {
         return previewLowLevelRebalanceBorrowHint(deltaBorrow, true, state);
     }
 
@@ -17,7 +19,8 @@ abstract contract PreviewLowLevelRebalanceBorrow is PreviewLowLevelRebalanceStat
         bool isSharesPositiveHint,
         PreviewLowLevelRebalanceState memory state
     ) public pure returns (int256, int256) {
-        (int256 deltaRealCollateral, int256 deltaShares, ) = _previewLowLevelRebalanceBorrowHint(deltaBorrow, isSharesPositiveHint, state);
+        (int256 deltaRealCollateral, int256 deltaShares,) =
+            _previewLowLevelRebalanceBorrowHint(deltaBorrow, isSharesPositiveHint, state);
         return (deltaRealCollateral, deltaShares);
     }
 
@@ -26,24 +29,22 @@ abstract contract PreviewLowLevelRebalanceBorrow is PreviewLowLevelRebalanceStat
         bool isSharesPositiveHint,
         PreviewLowLevelRebalanceState memory state
     ) internal pure returns (int256, int256, int256) {
-        (int256 deltaRealCollateralAssets, int256 deltaShares, int256 deltaProtocolFutureRewardShares) = _previewLowLevelRebalanceBorrow(
-            deltaBorrow,
-            previewLowLevelRebalanceStateToData(state, isSharesPositiveHint)
-        );
+        (int256 deltaRealCollateralAssets, int256 deltaShares, int256 deltaProtocolFutureRewardShares) =
+        _previewLowLevelRebalanceBorrow(deltaBorrow, previewLowLevelRebalanceStateToData(state, isSharesPositiveHint));
         if (deltaShares >= 0 != isSharesPositiveHint) {
             (deltaRealCollateralAssets, deltaShares, deltaProtocolFutureRewardShares) = _previewLowLevelRebalanceBorrow(
-                deltaBorrow,
-                previewLowLevelRebalanceStateToData(state, !isSharesPositiveHint)
+                deltaBorrow, previewLowLevelRebalanceStateToData(state, !isSharesPositiveHint)
             );
         }
 
         return (deltaRealCollateralAssets, deltaShares, deltaProtocolFutureRewardShares);
     }
 
-    function _previewLowLevelRebalanceBorrow(
-        int256 deltaBorrowAssets,
-        LowLevelRebalanceData memory data
-    ) internal pure returns (int256, int256, int256) {
+    function _previewLowLevelRebalanceBorrow(int256 deltaBorrowAssets, LowLevelRebalanceData memory data)
+        internal
+        pure
+        returns (int256, int256, int256)
+    {
         return LowLevelRebalanceMath.calculateLowLevelRebalanceBorrow(deltaBorrowAssets, data);
     }
 }

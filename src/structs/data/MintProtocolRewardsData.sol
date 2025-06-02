@@ -7,4 +7,4 @@ struct MintProtocolRewardsData {
     uint256 supply;
     uint256 totalAppropriateAssets;
     uint256 assetPrice;
-} 
+}

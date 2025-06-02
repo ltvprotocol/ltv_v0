@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../utils/BaseTest.t.sol';
-import './PrepareEachFunctionSuccessfulExecution.sol';
-import 'src/interfaces/ILTV.sol';
-import 'src/interfaces/IModules.sol';
+import "../utils/BaseTest.t.sol";
+import "./PrepareEachFunctionSuccessfulExecution.sol";
+import "src/interfaces/ILTV.sol";
+import "src/interfaces/IModules.sol";
 
 contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
-    function test_disableRandomSelector(
-        DefaultTestData memory defaultData,
-        bytes4 randomSelector
-    ) public testWithPredefinedDefaultValues(defaultData) {
+    function test_disableRandomSelector(DefaultTestData memory defaultData, bytes4 randomSelector)
+        public
+        testWithPredefinedDefaultValues(defaultData)
+    {
         bytes4[] memory signatures = new bytes4[](1);
         signatures[0] = randomSelector;
 
@@ -19,7 +19,10 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         assertTrue(ltv._isFunctionDisabled(randomSelector));
     }
 
-    function test_disableSpecificFunction(DefaultTestData memory defaultData, address user) public testWithPredefinedDefaultValues(defaultData) {
+    function test_disableSpecificFunction(DefaultTestData memory defaultData, address user)
+        public
+        testWithPredefinedDefaultValues(defaultData)
+    {
         bytes4[] memory signatures = new bytes4[](1);
         signatures[0] = ltv.deposit.selector;
 
@@ -33,8 +36,12 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
     }
 
     /// forge-config: default.fuzz.runs = 10
-    function test_batchDisableAllFunctions(DefaultTestData memory defaultData, address user) public testWithPredefinedDefaultValues(defaultData) {
-        (bytes[] memory calls, bytes4[] memory selectors, address[] memory callers) = functionsCanBeDisabled(defaultData, user);
+    function test_batchDisableAllFunctions(DefaultTestData memory defaultData, address user)
+        public
+        testWithPredefinedDefaultValues(defaultData)
+    {
+        (bytes[] memory calls, bytes4[] memory selectors, address[] memory callers) =
+            functionsCanBeDisabled(defaultData, user);
         vm.prank(defaultData.guardian);
         ltv.allowDisableFunctions(selectors, true);
 
@@ -48,7 +55,8 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
 
     /// forge-config: default.fuzz.runs = 10
     function test_batchEnableFunctions(DefaultTestData memory defaultData, address user) public {
-        (bytes[] memory calls, bytes4[] memory selectors, address[] memory callers) = functionsCanBeDisabled(defaultData, user);
+        (bytes[] memory calls, bytes4[] memory selectors, address[] memory callers) =
+            functionsCanBeDisabled(defaultData, user);
 
         for (uint256 i = 0; i < calls.length; i++) {
             bytes4[] memory selector = new bytes4[](1);
@@ -75,11 +83,14 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         vm.prank(defaultData.guardian);
         ltv.allowDisableFunctions(selector, false);
         vm.prank(caller);
-        (success, ) = address(ltv).call(call);
+        (success,) = address(ltv).call(call);
         assertTrue(success);
     }
 
-    function test_ownerCannotExecuteDisabledFunction(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
+    function test_ownerCannotExecuteDisabledFunction(DefaultTestData memory defaultData)
+        public
+        testWithPredefinedDefaultValues(defaultData)
+    {
         bytes4[] memory signatures = new bytes4[](1);
         signatures[0] = ltv.deposit.selector;
 
@@ -91,7 +102,10 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         ltv.deposit(100, defaultData.owner);
     }
 
-    function test_governorCannotExecuteDisabledFunction(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
+    function test_governorCannotExecuteDisabledFunction(DefaultTestData memory defaultData)
+        public
+        testWithPredefinedDefaultValues(defaultData)
+    {
         bytes4[] memory signatures = new bytes4[](1);
         signatures[0] = ltv.deposit.selector;
 
@@ -105,13 +119,19 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
 
     /// forge-config: default.fuzz.runs = 10
     function test_functionsCannotBeDisabled(DefaultTestData memory defaultData) public {
-        (bytes[] memory calls, bytes4[] memory selectors, address[] memory callers) = functionsCannotBeDisabled(defaultData);
+        (bytes[] memory calls, bytes4[] memory selectors, address[] memory callers) =
+            functionsCannotBeDisabled(defaultData);
         for (uint256 i = 0; i < calls.length; i++) {
             passDisabledFunction(defaultData, callers[i], calls[i], selectors);
         }
     }
 
-    function passDisabledFunction(DefaultTestData memory defaultData, address caller, bytes memory call, bytes4[] memory allSelectors) public testWithPredefinedDefaultValues(defaultData) {
+    function passDisabledFunction(
+        DefaultTestData memory defaultData,
+        address caller,
+        bytes memory call,
+        bytes4[] memory allSelectors
+    ) public testWithPredefinedDefaultValues(defaultData) {
         prepareEachFunctionSuccessfulExecution(caller);
 
         vm.prank(defaultData.guardian);
@@ -121,7 +141,11 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         assertTrue(success);
     }
 
-    function functionsCannotBeDisabled(DefaultTestData memory defaultData) public pure returns (bytes[] memory, bytes4[] memory, address[] memory) {
+    function functionsCannotBeDisabled(DefaultTestData memory defaultData)
+        public
+        pure
+        returns (bytes[] memory, bytes4[] memory, address[] memory)
+    {
         bytes[] memory calls = new bytes[](12);
         bytes4[] memory selectors = new bytes4[](12);
         address[] memory callers = new address[](12);
@@ -131,7 +155,7 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         selectors[0] = ILTV.allowDisableFunctions.selector;
         callers[0] = defaultData.guardian;
 
-        calls[1] = abi.encodeCall(ILTV.deleverageAndWithdraw, (type(uint112).max, 2 * 10**16));
+        calls[1] = abi.encodeCall(ILTV.deleverageAndWithdraw, (type(uint112).max, 2 * 10 ** 16));
         selectors[1] = ILTV.deleverageAndWithdraw.selector;
         callers[1] = defaultData.emergencyDeleverager;
 
@@ -172,20 +196,19 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         calls[10] = abi.encodeCall(ILTV.setOracleConnector, address(1));
         selectors[10] = ILTV.setOracleConnector.selector;
         callers[10] = defaultData.owner;
-        
+
         calls[11] = abi.encodeCall(ILTV.transferOwnership, (defaultData.owner));
         selectors[11] = ILTV.transferOwnership.selector;
         callers[11] = defaultData.owner;
-        
-        
 
         return (calls, selectors, callers);
     }
 
-    function functionsCanBeDisabled(
-        DefaultTestData memory defaultData,
-        address user
-    ) public pure returns (bytes[] memory, bytes4[] memory, address[] memory) {
+    function functionsCanBeDisabled(DefaultTestData memory defaultData, address user)
+        public
+        pure
+        returns (bytes[] memory, bytes4[] memory, address[] memory)
+    {
         bytes[] memory calls = new bytes[](28);
         bytes4[] memory selectors = new bytes4[](28);
         address[] memory callers = new address[](28);
@@ -276,15 +299,15 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         selectors[19] = ILTV.setIsWhitelistActivated.selector;
         callers[19] = defaultData.governor;
 
-        calls[20] = abi.encodeCall(ILTV.setMaxDeleverageFee, 2 * 10**16);
+        calls[20] = abi.encodeCall(ILTV.setMaxDeleverageFee, 2 * 10 ** 16);
         selectors[20] = ILTV.setMaxDeleverageFee.selector;
         callers[20] = defaultData.governor;
 
-        calls[21] = abi.encodeCall(ILTV.setMaxGrowthFee, 2 * 10**16);
+        calls[21] = abi.encodeCall(ILTV.setMaxGrowthFee, 2 * 10 ** 16);
         selectors[21] = ILTV.setMaxGrowthFee.selector;
         callers[21] = defaultData.governor;
 
-        calls[22] = abi.encodeCall(ILTV.setMaxSafeLTV, 9 * 10**17);
+        calls[22] = abi.encodeCall(ILTV.setMaxSafeLTV, 9 * 10 ** 17);
         selectors[22] = ILTV.setMaxSafeLTV.selector;
         callers[22] = defaultData.governor;
 
@@ -292,7 +315,7 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         selectors[23] = ILTV.setMaxTotalAssetsInUnderlying.selector;
         callers[23] = defaultData.governor;
 
-        calls[24] = abi.encodeCall(ILTV.setMinProfitLTV, 5 * 10**17);
+        calls[24] = abi.encodeCall(ILTV.setMinProfitLTV, 5 * 10 ** 17);
         selectors[24] = ILTV.setMinProfitLTV.selector;
         callers[24] = defaultData.governor;
 
@@ -300,7 +323,7 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         selectors[25] = ILTV.setSlippageProvider.selector;
         callers[25] = defaultData.governor;
 
-        calls[26] = abi.encodeCall(ILTV.setTargetLTV, 75 * 10**16);
+        calls[26] = abi.encodeCall(ILTV.setTargetLTV, 75 * 10 ** 16);
         selectors[26] = ILTV.setTargetLTV.selector;
         callers[26] = defaultData.governor;
 

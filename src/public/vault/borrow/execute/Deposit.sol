@@ -1,19 +1,28 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../max/MaxDeposit.sol';
-import '../../../../state_transition/VaultStateTransition.sol';
-import '../../../../state_transition/ERC20.sol';
-import '../../../../state_transition/ApplyMaxGrowthFee.sol';
-import '../../../../state_transition/MintProtocolRewards.sol';
-import '../../../../state_transition/Lending.sol';
-import 'src/events/IERC4626Events.sol';
-import '../preview/PreviewDeposit.sol';
-import '../../../../math/NextStep.sol';
-import 'src/errors/IVaultErrors.sol';
-import 'src/state_reader/MaxDepositMintBorrowVaultStateReader.sol';
+import "../max/MaxDeposit.sol";
+import "../../../../state_transition/VaultStateTransition.sol";
+import "../../../../state_transition/ERC20.sol";
+import "../../../../state_transition/ApplyMaxGrowthFee.sol";
+import "../../../../state_transition/MintProtocolRewards.sol";
+import "../../../../state_transition/Lending.sol";
+import "src/events/IERC4626Events.sol";
+import "../preview/PreviewDeposit.sol";
+import "../../../../math/NextStep.sol";
+import "src/errors/IVaultErrors.sol";
+import "src/state_reader/MaxDepositMintBorrowVaultStateReader.sol";
 
-abstract contract Deposit is MaxDepositMintBorrowVaultStateReader, MaxDeposit, ApplyMaxGrowthFee, MintProtocolRewards, Lending, VaultStateTransition, IERC4626Events, IVaultErrors {
+abstract contract Deposit is
+    MaxDepositMintBorrowVaultStateReader,
+    MaxDeposit,
+    ApplyMaxGrowthFee,
+    MintProtocolRewards,
+    Lending,
+    VaultStateTransition,
+    IERC4626Events,
+    IVaultErrors
+{
     using uMulDiv for uint256;
 
     function deposit(uint256 assets, address receiver) external isFunctionAllowed nonReentrant returns (uint256) {
@@ -57,9 +66,10 @@ abstract contract Deposit is MaxDepositMintBorrowVaultStateReader, MaxDeposit, A
             NextStepData({
                 futureBorrow: data.previewBorrowVaultData.futureBorrow,
                 futureCollateral: data.previewBorrowVaultData.futureCollateral,
-                futureRewardBorrow: data.previewBorrowVaultData.userFutureRewardBorrow + data.previewBorrowVaultData.protocolFutureRewardBorrow,
-                futureRewardCollateral: data.previewBorrowVaultData.userFutureRewardCollateral +
-                    data.previewBorrowVaultData.protocolFutureRewardCollateral,
+                futureRewardBorrow: data.previewBorrowVaultData.userFutureRewardBorrow
+                    + data.previewBorrowVaultData.protocolFutureRewardBorrow,
+                futureRewardCollateral: data.previewBorrowVaultData.userFutureRewardCollateral
+                    + data.previewBorrowVaultData.protocolFutureRewardCollateral,
                 deltaFutureBorrow: deltaFuture.deltaFutureBorrow,
                 deltaFutureCollateral: deltaFuture.deltaFutureCollateral,
                 deltaFuturePaymentBorrow: deltaFuture.deltaFuturePaymentBorrow,

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import {Ownable} from 'openzeppelin-contracts/contracts/access/Ownable.sol';
-import {IWithGuardian} from './interfaces/IWithGuardian.sol';
+import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
+import {IWithGuardian} from "./interfaces/IWithGuardian.sol";
 
 abstract contract OwnableWithGuardian is Ownable, IWithGuardian {
     address private _guardian;
@@ -40,6 +40,8 @@ abstract contract OwnableWithGuardian is Ownable, IWithGuardian {
     }
 
     function _checkOwnerOrGuardian() internal view {
-        if (_msgSender() != owner() && _msgSender() != guardian()) revert OnlyGuardianOrOwnerInvalidCaller(_msgSender());
+        if (_msgSender() != owner() && _msgSender() != guardian()) {
+            revert OnlyGuardianOrOwnerInvalidCaller(_msgSender());
+        }
     }
 }

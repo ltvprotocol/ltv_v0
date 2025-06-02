@@ -1,20 +1,34 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../utils/BaseTest.t.sol';
+import "../utils/BaseTest.t.sol";
 
 contract SetTargetLTVTest is BaseTest {
-    function test_failIfLessThanMinProfit(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
+    function test_failIfLessThanMinProfit(DefaultTestData memory defaultData)
+        public
+        testWithPredefinedDefaultValues(defaultData)
+    {
         uint128 targetLTV = ltv.minProfitLTV() - 1;
         vm.startPrank(defaultData.governor);
-        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.InvalidLTVSet.selector, targetLTV, ltv.maxSafeLTV(), ltv.minProfitLTV()));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAdministrationErrors.InvalidLTVSet.selector, targetLTV, ltv.maxSafeLTV(), ltv.minProfitLTV()
+            )
+        );
         ltv.setTargetLTV(targetLTV);
     }
 
-    function test_failIfGreaterThanMaxSafe(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
+    function test_failIfGreaterThanMaxSafe(DefaultTestData memory defaultData)
+        public
+        testWithPredefinedDefaultValues(defaultData)
+    {
         uint128 targetLTV = ltv.maxSafeLTV() + 1;
         vm.startPrank(defaultData.governor);
-        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.InvalidLTVSet.selector, targetLTV, ltv.maxSafeLTV(), ltv.minProfitLTV()));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAdministrationErrors.InvalidLTVSet.selector, targetLTV, ltv.maxSafeLTV(), ltv.minProfitLTV()
+            )
+        );
         ltv.setTargetLTV(targetLTV);
     }
 
@@ -32,14 +46,20 @@ contract SetTargetLTVTest is BaseTest {
         ltv.setTargetLTV(targetLTV);
     }
 
-    function test_failIfFortyTwo(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
+    function test_failIfFortyTwo(DefaultTestData memory defaultData)
+        public
+        testWithPredefinedDefaultValues(defaultData)
+    {
         uint128 targetLTV = 42 * 10 ** 18;
         vm.startPrank(defaultData.governor);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.UnexpectedTargetLTV.selector, targetLTV));
         ltv.setTargetLTV(targetLTV);
     }
 
-    function test_setAndCheckStorageSlot(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
+    function test_setAndCheckStorageSlot(DefaultTestData memory defaultData)
+        public
+        testWithPredefinedDefaultValues(defaultData)
+    {
         uint128 targetLTV = 74 * 10 ** 16;
         vm.startPrank(defaultData.governor);
         vm.expectEmit(true, true, true, true, address(ltv));
@@ -49,7 +69,10 @@ contract SetTargetLTVTest is BaseTest {
         assertEq(ltv.targetLTV(), targetLTV);
     }
 
-    function test_failIfNotGovernor(DefaultTestData memory defaultData, address user) public testWithPredefinedDefaultValues(defaultData) {
+    function test_failIfNotGovernor(DefaultTestData memory defaultData, address user)
+        public
+        testWithPredefinedDefaultValues(defaultData)
+    {
         vm.assume(user != defaultData.governor);
         uint128 newTargetLTV = ltv.targetLTV();
         vm.startPrank(user);

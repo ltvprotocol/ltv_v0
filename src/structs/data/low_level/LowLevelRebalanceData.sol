@@ -15,4 +15,4 @@ struct LowLevelRebalanceData {
     uint256 supplyAfterFee;
     uint256 totalAssets;
     uint128 targetLTV;
-} 
+}

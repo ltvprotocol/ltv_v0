@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../../interfaces/IModules.sol';
-import 'src/state_reader/PreviewVaultStateReader.sol';
-import 'src/state_reader/MaxDepositMintCollateralVaultStateReader.sol';
-import 'src/state_reader/MaxWithdrawRedeemCollateralVaultStateReader.sol';
+import "../../interfaces/IModules.sol";
+import "src/state_reader/PreviewVaultStateReader.sol";
+import "src/state_reader/MaxDepositMintCollateralVaultStateReader.sol";
+import "src/state_reader/MaxWithdrawRedeemCollateralVaultStateReader.sol";
 
 abstract contract CollateralVaultRead is
     PreviewVaultStateReader,

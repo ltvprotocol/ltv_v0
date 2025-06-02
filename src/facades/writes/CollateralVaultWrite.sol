@@ -21,4 +21,4 @@ abstract contract CollateralVaultWrite is LTVState, CommonWrite {
     function redeemCollateral(uint256 shares, address receiver, address owner) external returns (uint256) {
         _delegate(address(modules.collateralVaultModule()), abi.encode(shares, receiver, owner));
     }
-} 
+}

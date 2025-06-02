@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import './interfaces/IDummyLending.sol';
-import '@openzeppelin/contracts/access/Ownable.sol';
-import 'forge-std/interfaces/IERC20.sol';
+import "./interfaces/IDummyLending.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "forge-std/interfaces/IERC20.sol";
 
 contract DummyLending is IDummyLending, Ownable {
     mapping(address => uint256) public supplyBalance;
@@ -22,12 +22,12 @@ contract DummyLending is IDummyLending, Ownable {
         borrowBalance[asset] -= amount;
     }
 
-    function supply(address asset, uint256 amount) external onlyOwner{
+    function supply(address asset, uint256 amount) external onlyOwner {
         IERC20(asset).transferFrom(msg.sender, address(this), amount);
         supplyBalance[asset] += amount;
     }
 
-    function withdraw(address asset, uint256 amount) external onlyOwner{
+    function withdraw(address asset, uint256 amount) external onlyOwner {
         require(supplyBalance[asset] >= amount, "Withdraw amount exceeds supply balance");
         IERC20(asset).transfer(msg.sender, amount);
         supplyBalance[asset] -= amount;

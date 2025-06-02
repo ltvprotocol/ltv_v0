@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.28;
 
-import 'src/Constants.sol';
-import 'src/utils/MulDiv.sol';
-import 'src/math/CommonMath.sol';
-import 'src/math/MaxGrowthFee.sol';
-import 'src/structs/state/low_level/MaxLowLevelRebalanceSharesState.sol';
-import 'src/structs/data/low_level/MaxLowLevelRebalanceSharesData.sol';
+import "src/Constants.sol";
+import "src/utils/MulDiv.sol";
+import "src/math/CommonMath.sol";
+import "src/math/MaxGrowthFee.sol";
+import "src/structs/state/low_level/MaxLowLevelRebalanceSharesState.sol";
+import "src/structs/data/low_level/MaxLowLevelRebalanceSharesData.sol";
 
 abstract contract MaxLowLevelRebalanceShares is MaxGrowthFee {
     using sMulDiv for int256;
@@ -16,19 +16,19 @@ abstract contract MaxLowLevelRebalanceShares is MaxGrowthFee {
     }
 
     function _maxLowLevelRebalanceShares(MaxLowLevelRebalanceSharesData memory data) public pure returns (int256) {
-        int256 maxDeltaSharesInUnderlying = int256(data.maxTotalAssetsInUnderlying + data.realBorrow) - int256(data.realCollateral);
+        int256 maxDeltaSharesInUnderlying =
+            int256(data.maxTotalAssetsInUnderlying + data.realBorrow) - int256(data.realCollateral);
 
         // rounding down assuming smaller border
-        return
-            maxDeltaSharesInUnderlying.mulDivDown(int256(Constants.ORACLE_DIVIDER), int256(data.borrowPrice)).mulDivDown(
-                int256(data.supplyAfterFee),
-                int256(data.depositTotalAssets)
-            );
+        return maxDeltaSharesInUnderlying.mulDivDown(int256(Constants.ORACLE_DIVIDER), int256(data.borrowPrice))
+            .mulDivDown(int256(data.supplyAfterFee), int256(data.depositTotalAssets));
     }
 
-    function maxLowLevelRebalanceSharesStateToData(
-        MaxLowLevelRebalanceSharesState memory state
-    ) public pure returns (MaxLowLevelRebalanceSharesData memory data) {
+    function maxLowLevelRebalanceSharesStateToData(MaxLowLevelRebalanceSharesState memory state)
+        public
+        pure
+        returns (MaxLowLevelRebalanceSharesData memory data)
+    {
         // true since we calculate top border
         data.realCollateral = CommonMath.convertRealCollateral(
             state.maxGrowthFeeState.totalAssetsState.realCollateralAssets,

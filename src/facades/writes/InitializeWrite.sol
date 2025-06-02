@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../../states/LTVState.sol';
-import '../writes/CommonWrite.sol';
-import 'src/structs/state/StateInitData.sol';
-import 'src/errors/IInitError.sol';
+import "../../states/LTVState.sol";
+import "../writes/CommonWrite.sol";
+import "src/structs/state/StateInitData.sol";
+import "src/errors/IInitError.sol";
 
-import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+
 abstract contract InitializeWrite is LTVState, OwnableUpgradeable {
     function initialize(StateInitData memory initData) public initializer {
         __Ownable_init(initData.owner);
@@ -42,7 +43,7 @@ abstract contract InitializeWrite is LTVState, OwnableUpgradeable {
         lastSeenTokenPrice = 10 ** 18;
 
         if (initData.callData.length > 0) {
-            (bool success, ) = address(this).call(initData.callData);
+            (bool success,) = address(this).call(initData.callData);
             require(success, IInitError.FaildedToInitializeWithCallData(initData.callData));
         }
     }

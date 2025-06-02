@@ -10,4 +10,4 @@ struct DeltaFuture {
     int256 deltaProtocolFutureRewardBorrow;
     int256 deltaUserFutureRewardBorrow;
     int256 deltaFuturePaymentBorrow;
-} 
+}

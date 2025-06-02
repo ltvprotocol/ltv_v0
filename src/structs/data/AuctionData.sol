@@ -7,4 +7,4 @@ struct AuctionData {
     int256 futureRewardBorrowAssets;
     int256 futureRewardCollateralAssets;
     int256 auctionStep;
-} 
+}

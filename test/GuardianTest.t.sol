@@ -1,10 +1,13 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import './utils/BalancedTest.t.sol';
+import "./utils/BalancedTest.t.sol";
 
 contract GuardianTest is BalancedTest {
-    function test_allowDisableFunctions(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
+    function test_allowDisableFunctions(address owner, address user)
+        public
+        initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
+    {
         address guardian = ILTV(address(dummyLTV)).guardian();
         vm.assume(user != guardian);
         vm.startPrank(guardian);
@@ -24,7 +27,10 @@ contract GuardianTest is BalancedTest {
         dummyLTV.allowDisableFunctions(signatures, true);
     }
 
-    function test_setIsDepositDisabled(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
+    function test_setIsDepositDisabled(address owner, address user)
+        public
+        initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
+    {
         address guardian = ILTV(address(dummyLTV)).guardian();
         vm.assume(user != guardian);
         vm.startPrank(guardian);
@@ -41,7 +47,10 @@ contract GuardianTest is BalancedTest {
         dummyLTV.setIsDepositDisabled(true);
     }
 
-    function test_setIsWithdrawDisabled(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
+    function test_setIsWithdrawDisabled(address owner, address user)
+        public
+        initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
+    {
         address guardian = ILTV(address(dummyLTV)).guardian();
         vm.assume(user != guardian);
         vm.startPrank(guardian);

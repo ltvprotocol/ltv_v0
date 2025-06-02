@@ -10,4 +10,4 @@ struct PreviewVaultState {
     uint256 blockNumber;
     uint256 collateralSlippage;
     uint256 borrowSlippage;
-} 
+}

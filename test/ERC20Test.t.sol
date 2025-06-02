@@ -1,15 +1,21 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import 'forge-std/Test.sol';
-import './utils/BalancedTest.t.sol';
+import "forge-std/Test.sol";
+import "./utils/BalancedTest.t.sol";
 
 contract ERC20Test is BalancedTest {
-    function test_totalSupply(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
+    function test_totalSupply(address owner, address user)
+        public
+        initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
+    {
         assertEq(dummyLTV.totalSupply(), 10 ** 18);
     }
 
-    function test_transferFrom(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
+    function test_transferFrom(address owner, address user)
+        public
+        initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
+    {
         vm.stopPrank();
         vm.startPrank(owner);
         dummyLTV.approve(user, 10 ** 17);
@@ -23,11 +29,11 @@ contract ERC20Test is BalancedTest {
     }
 
     function test_name(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
-        assertEq(dummyLTV.name(), 'Dummy LTV');
+        assertEq(dummyLTV.name(), "Dummy LTV");
     }
 
     function test_symbol(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
-        assertEq(dummyLTV.symbol(), 'DLTV');
+        assertEq(dummyLTV.symbol(), "DLTV");
     }
 
     function test_approve(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {

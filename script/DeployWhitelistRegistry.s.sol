@@ -7,7 +7,7 @@ import "../src/elements/WhitelistRegistry.sol";
 contract DeployWhitelistRegistry is Script {
     function run() external {
         vm.startBroadcast();
-        address owner = vm.envAddress('WHITELIST_OWNER');
+        address owner = vm.envAddress("WHITELIST_OWNER");
 
         // Deploy the WhitelistRegistry contract
         WhitelistRegistry whitelistRegistry = new WhitelistRegistry(owner);
@@ -16,4 +16,4 @@ contract DeployWhitelistRegistry is Script {
 
         console.log("WhitelistRegistry deployed at: ", address(whitelistRegistry));
     }
-} 
+}

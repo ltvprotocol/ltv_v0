@@ -16,4 +16,4 @@ struct PreviewBorrowVaultData {
     uint256 borrowPrice;
     uint256 supplyAfterFee;
     uint256 totalAssets;
-} 
+}

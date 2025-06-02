@@ -1,17 +1,19 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import 'src/math/CommonMath.sol';
-import 'src/math/MaxGrowthFee.sol';
-import 'src/math/LowLevelRebalanceMath.sol';
-import 'src/structs/state/low_level/PreviewLowLevelRebalanceState.sol';
+import "src/math/CommonMath.sol";
+import "src/math/MaxGrowthFee.sol";
+import "src/math/LowLevelRebalanceMath.sol";
+import "src/structs/state/low_level/PreviewLowLevelRebalanceState.sol";
+
 abstract contract PreviewLowLevelRebalanceStateToData is MaxGrowthFee {
     using uMulDiv for uint256;
 
-    function previewLowLevelRebalanceStateToData(
-        PreviewLowLevelRebalanceState memory state,
-        bool isDeposit
-    ) public pure returns (LowLevelRebalanceData memory data) {
+    function previewLowLevelRebalanceStateToData(PreviewLowLevelRebalanceState memory state, bool isDeposit)
+        public
+        pure
+        returns (LowLevelRebalanceData memory data)
+    {
         // true since we calculate top border
         data.realCollateral = int256(
             CommonMath.convertRealCollateral(
@@ -51,7 +53,8 @@ abstract contract PreviewLowLevelRebalanceStateToData is MaxGrowthFee {
         uint256 auctionStep = CommonMath.calculateAuctionStep(state.startAuction, state.blockNumber);
 
         data.userFutureRewardBorrow = CommonMath.calculateUserFutureRewardBorrow(futureRewardBorrow, auctionStep);
-        data.userFutureRewardCollateral = CommonMath.calculateUserFutureRewardCollateral(futureRewardCollateral, auctionStep);
+        data.userFutureRewardCollateral =
+            CommonMath.calculateUserFutureRewardCollateral(futureRewardCollateral, auctionStep);
         data.protocolFutureRewardBorrow = futureRewardBorrow - data.userFutureRewardBorrow;
         data.protocolFutureRewardCollateral = futureRewardCollateral - data.userFutureRewardCollateral;
 
@@ -68,7 +71,8 @@ abstract contract PreviewLowLevelRebalanceStateToData is MaxGrowthFee {
         );
 
         // need to recalculate everything with another rounding
-        uint256 withdrawTotalAssets = !isDeposit ? data.totalAssets : totalAssets(false, state.maxGrowthFeeState.totalAssetsState);
+        uint256 withdrawTotalAssets =
+            !isDeposit ? data.totalAssets : totalAssets(false, state.maxGrowthFeeState.totalAssetsState);
 
         data.supplyAfterFee = _previewSupplyAfterFee(
             MaxGrowthFeeData({

@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../Constants.sol';
-import '../structs/data/vault/Cases.sol';
-import '../structs/state_transition/DeltaFuture.sol';
-import 'src/math/CasesOperator.sol';
-import '../utils/MulDiv.sol';
+import "../Constants.sol";
+import "../structs/data/vault/Cases.sol";
+import "../structs/state_transition/DeltaFuture.sol";
+import "src/math/CasesOperator.sol";
+import "../utils/MulDiv.sol";
 
 library CommonBorrowCollateral {
     using uMulDiv for uint256;
@@ -22,14 +22,14 @@ library CommonBorrowCollateral {
         // + (cecb + cebc) × ∆futureCollateral × futureBorrow / futureCollateral +
         // + (ceccb + cecbc) × (futureCollateral − futureBorrow)
 
-        int256 deltaFutureBorrow = int256(int8(ncase.cna + ncase.cmcb + ncase.cmbc + ncase.ceccb + ncase.cecbc)) * deltaFutureCollateral;
+        int256 deltaFutureBorrow =
+            int256(int8(ncase.cna + ncase.cmcb + ncase.cmbc + ncase.ceccb + ncase.cecbc)) * deltaFutureCollateral;
         if (futureCollateral == 0) {
             return deltaFutureBorrow;
         }
 
         deltaFutureBorrow +=
-            int256(int8(ncase.cecb + ncase.cebc)) *
-            deltaFutureCollateral.mulDivUp(futureBorrow, futureCollateral);
+            int256(int8(ncase.cecb + ncase.cebc)) * deltaFutureCollateral.mulDivUp(futureBorrow, futureCollateral);
         deltaFutureBorrow += int256(int8(ncase.ceccb + ncase.cecbc)) * (futureCollateral - futureBorrow);
 
         return deltaFutureBorrow;
@@ -42,14 +42,14 @@ library CommonBorrowCollateral {
         int256 futureBorrow,
         int256 deltaFutureBorrow
     ) internal pure returns (int256) {
-        int256 deltaFutureCollateral = int256(int8(ncase.cna + ncase.cmcb + ncase.cmbc + ncase.ceccb + ncase.cecbc)) * deltaFutureBorrow;
+        int256 deltaFutureCollateral =
+            int256(int8(ncase.cna + ncase.cmcb + ncase.cmbc + ncase.ceccb + ncase.cecbc)) * deltaFutureBorrow;
         if (futureCollateral == 0) {
             return deltaFutureCollateral;
         }
 
         deltaFutureCollateral +=
-            int256(int8(ncase.cecb + ncase.cebc)) *
-            deltaFutureBorrow.mulDivDown(futureCollateral, futureBorrow);
+            int256(int8(ncase.cecb + ncase.cebc)) * deltaFutureBorrow.mulDivDown(futureCollateral, futureBorrow);
         deltaFutureCollateral += int256(int8(ncase.ceccb + ncase.cecbc)) * (futureBorrow - futureCollateral);
 
         return deltaFutureCollateral;
@@ -69,8 +69,8 @@ library CommonBorrowCollateral {
             return 0;
         }
 
-        int256 deltaUserFutureRewardCollateral = int256(int8(ncase.cecb)) *
-            userFutureRewardCollateral.mulDivDown(deltaFutureCollateral, futureCollateral);
+        int256 deltaUserFutureRewardCollateral =
+            int256(int8(ncase.cecb)) * userFutureRewardCollateral.mulDivDown(deltaFutureCollateral, futureCollateral);
         deltaUserFutureRewardCollateral -= int256(int8(ncase.ceccb)) * userFutureRewardCollateral;
         return deltaUserFutureRewardCollateral;
     }
@@ -89,8 +89,8 @@ library CommonBorrowCollateral {
             return 0;
         }
 
-        int256 deltaProtocolFutureRewardCollateral = int256(int8(ncase.cecb)) *
-            protocolFutureRewardCollateral.mulDivUp(deltaFutureCollateral, futureCollateral);
+        int256 deltaProtocolFutureRewardCollateral =
+            int256(int8(ncase.cecb)) * protocolFutureRewardCollateral.mulDivUp(deltaFutureCollateral, futureCollateral);
         deltaProtocolFutureRewardCollateral -= int256(int8(ncase.ceccb)) * protocolFutureRewardCollateral;
         return deltaProtocolFutureRewardCollateral;
     }
@@ -105,11 +105,10 @@ library CommonBorrowCollateral {
         // cmbc × −∆futureCollateral × collateralSlippage +
         // + cecbc × −(∆futureCollateral + futureCollateral) × collateralSlippage
 
-        int256 deltaFuturePaymentCollateral = -int256(int8(ncase.cmbc)) *
-            deltaFutureCollateral.mulDivUp(int256(collateralSlippage), Constants.SLIPPAGE_PRECISION);
-        deltaFuturePaymentCollateral -=
-            int256(int8(ncase.cecbc)) *
-            (deltaFutureCollateral + futureCollateral).mulDivUp(int256(collateralSlippage), Constants.SLIPPAGE_PRECISION);
+        int256 deltaFuturePaymentCollateral = -int256(int8(ncase.cmbc))
+            * deltaFutureCollateral.mulDivUp(int256(collateralSlippage), Constants.SLIPPAGE_PRECISION);
+        deltaFuturePaymentCollateral -= int256(int8(ncase.cecbc))
+            * (deltaFutureCollateral + futureCollateral).mulDivUp(int256(collateralSlippage), Constants.SLIPPAGE_PRECISION);
 
         return deltaFuturePaymentCollateral;
     }
@@ -128,8 +127,8 @@ library CommonBorrowCollateral {
             return 0;
         }
 
-        int256 deltaUserFutureRewardBorrow = int256(int8(ncase.cebc)) *
-            userFutureRewardBorrow.mulDivUp(deltaFutureBorrow, futureBorrow);
+        int256 deltaUserFutureRewardBorrow =
+            int256(int8(ncase.cebc)) * userFutureRewardBorrow.mulDivUp(deltaFutureBorrow, futureBorrow);
         deltaUserFutureRewardBorrow -= int256(int8(ncase.cecbc)) * userFutureRewardBorrow;
 
         return deltaUserFutureRewardBorrow;
@@ -146,8 +145,8 @@ library CommonBorrowCollateral {
             return 0;
         }
 
-        int256 deltaProtocolFutureRewardBorrow = int256(int8(ncase.cebc)) *
-            protocolFutureRewardBorrow.mulDivUp(deltaFutureBorrow, futureBorrow);
+        int256 deltaProtocolFutureRewardBorrow =
+            int256(int8(ncase.cebc)) * protocolFutureRewardBorrow.mulDivUp(deltaFutureBorrow, futureBorrow);
         deltaProtocolFutureRewardBorrow -= int256(int8(ncase.cecbc)) * protocolFutureRewardBorrow;
 
         return deltaProtocolFutureRewardBorrow;
@@ -163,11 +162,10 @@ library CommonBorrowCollateral {
         // cmcb × −∆futureBorrow × borrowSlippage +
         // + ceccb × −(∆futureBorrow + futureBorrow) × borrowSlippage
 
-        int256 deltaFuturePaymentBorrow = -int256(int8(ncase.cmcb)) *
-            deltaFutureBorrow.mulDivDown(int256(borrowSlippage), Constants.SLIPPAGE_PRECISION);
-        deltaFuturePaymentBorrow -=
-            int256(int8(ncase.ceccb)) *
-            (deltaFutureBorrow + futureBorrow).mulDivDown(int256(borrowSlippage), Constants.SLIPPAGE_PRECISION);
+        int256 deltaFuturePaymentBorrow = -int256(int8(ncase.cmcb))
+            * deltaFutureBorrow.mulDivDown(int256(borrowSlippage), Constants.SLIPPAGE_PRECISION);
+        deltaFuturePaymentBorrow -= int256(int8(ncase.ceccb))
+            * (deltaFutureBorrow + futureBorrow).mulDivDown(int256(borrowSlippage), Constants.SLIPPAGE_PRECISION);
 
         return deltaFuturePaymentBorrow;
     }

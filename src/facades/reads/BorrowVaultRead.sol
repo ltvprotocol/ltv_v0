@@ -1,12 +1,16 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../../interfaces/IModules.sol';
-import 'src/state_reader/PreviewVaultStateReader.sol';
-import 'src/state_reader/MaxDepositMintBorrowVaultStateReader.sol';
-import 'src/state_reader/MaxWithdrawRedeemBorrowVaultStateReader.sol';
+import "../../interfaces/IModules.sol";
+import "src/state_reader/PreviewVaultStateReader.sol";
+import "src/state_reader/MaxDepositMintBorrowVaultStateReader.sol";
+import "src/state_reader/MaxWithdrawRedeemBorrowVaultStateReader.sol";
 
-abstract contract BorrowVaultRead is PreviewVaultStateReader, MaxDepositMintBorrowVaultStateReader, MaxWithdrawRedeemBorrowVaultStateReader {
+abstract contract BorrowVaultRead is
+    PreviewVaultStateReader,
+    MaxDepositMintBorrowVaultStateReader,
+    MaxWithdrawRedeemBorrowVaultStateReader
+{
     function previewDeposit(uint256 assets) external view returns (uint256) {
         return modules.borrowVaultModule().previewDeposit(assets, previewVaultState());
     }

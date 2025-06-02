@@ -1,28 +1,28 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../../src/dummy/DummyOracle.sol';
-import 'forge-std/Test.sol';
-import {MockERC20} from 'forge-std/mocks/MockERC20.sol';
-import {MockDummyLending} from './MockDummyLending.t.sol';
-import './DummyLTV.t.sol';
-import '../../src/Constants.sol';
-import '../../src/dummy/DummyLendingConnector.sol';
-import '../../src/dummy/DummyOracleConnector.sol';
-import '../../src/connectors/slippage_providers/ConstantSlippageProvider.sol';
-import '../../src/connectors/lending_connectors/VaultBalanceAsLendingConnector.sol';
-import '../../src/timelock/Timelock.sol';
-import {ILTV} from '../../src/interfaces/ILTV.sol';
-import {IAdministrationErrors} from '../../src/errors/IAdministrationErrors.sol';
+import "../../src/dummy/DummyOracle.sol";
+import "forge-std/Test.sol";
+import {MockERC20} from "forge-std/mocks/MockERC20.sol";
+import {MockDummyLending} from "./MockDummyLending.t.sol";
+import "./DummyLTV.t.sol";
+import "../../src/Constants.sol";
+import "../../src/dummy/DummyLendingConnector.sol";
+import "../../src/dummy/DummyOracleConnector.sol";
+import "../../src/connectors/slippage_providers/ConstantSlippageProvider.sol";
+import "../../src/connectors/lending_connectors/VaultBalanceAsLendingConnector.sol";
+import "../../src/timelock/Timelock.sol";
+import {ILTV} from "../../src/interfaces/ILTV.sol";
+import {IAdministrationErrors} from "../../src/errors/IAdministrationErrors.sol";
 
-import {AuctionModule} from '../../src/elements/AuctionModule.sol';
-import {ERC20Module} from '../../src/elements/ERC20Module.sol';
-import {CollateralVaultModule} from '../../src/elements/CollateralVaultModule.sol';
-import {BorrowVaultModule} from '../../src/elements/BorrowVaultModule.sol';
-import {LowLevelRebalanceModule} from '../../src/elements/LowLevelRebalanceModule.sol';
-import {AdministrationModule} from '../../src/elements/AdministrationModule.sol';
+import {AuctionModule} from "../../src/elements/AuctionModule.sol";
+import {ERC20Module} from "../../src/elements/ERC20Module.sol";
+import {CollateralVaultModule} from "../../src/elements/CollateralVaultModule.sol";
+import {BorrowVaultModule} from "../../src/elements/BorrowVaultModule.sol";
+import {LowLevelRebalanceModule} from "../../src/elements/LowLevelRebalanceModule.sol";
+import {AdministrationModule} from "../../src/elements/AdministrationModule.sol";
 
-import '../../src/elements/ModulesProvider.sol';
+import "../../src/elements/ModulesProvider.sol";
 
 struct BaseTestInit {
     address owner;
@@ -74,9 +74,9 @@ contract BaseTest is Test {
         vm.assume(init.feeCollector != address(0));
 
         collateralToken = new MockERC20();
-        collateralToken.initialize('Collateral', 'COL', 18);
+        collateralToken.initialize("Collateral", "COL", 18);
         borrowToken = new MockERC20();
-        borrowToken.initialize('Borrow', 'BOR', 18);
+        borrowToken.initialize("Borrow", "BOR", 18);
 
         lendingProtocol = new MockDummyLending(init.owner);
         oracle = IDummyOracle(new DummyOracle(init.owner));
@@ -93,8 +93,8 @@ contract BaseTest is Test {
             modulesProvider = new ModulesProvider(modulesState);
 
             StateInitData memory initData = StateInitData({
-                name: 'Dummy LTV',
-                symbol: 'DLTV',
+                name: "Dummy LTV",
+                symbol: "DLTV",
                 decimals: 18,
                 collateralToken: address(collateralToken),
                 borrowToken: address(borrowToken),
@@ -114,7 +114,7 @@ contract BaseTest is Test {
                 guardian: init.guardian,
                 governor: init.governor,
                 emergencyDeleverager: init.emergencyDeleverager,
-                callData: ''
+                callData: ""
             });
 
             ltv = new DummyLTV(initData);

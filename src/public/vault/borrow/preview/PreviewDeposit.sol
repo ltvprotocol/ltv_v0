@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import 'src/math/Vault.sol';
-import '../../../../math/DepositWithdraw.sol';
+import "src/math/Vault.sol";
+import "../../../../math/DepositWithdraw.sol";
 
 abstract contract PreviewDeposit is Vault {
     using uMulDiv for uint256;
@@ -11,10 +11,14 @@ abstract contract PreviewDeposit is Vault {
         (shares,) = _previewDeposit(assets, previewVaultStateToPreviewBorrowVaultData(state, true));
     }
 
-    function _previewDeposit(uint256 assets, PreviewBorrowVaultData memory data) internal pure returns (uint256, DeltaFuture memory) {
+    function _previewDeposit(uint256 assets, PreviewBorrowVaultData memory data)
+        internal
+        pure
+        returns (uint256, DeltaFuture memory)
+    {
         // depositor/withdrawer <=> HODLer conflict, assume user deposits less to mint less shares
         uint256 assetsInUnderlying = assets.mulDivDown(data.borrowPrice, Constants.ORACLE_DIVIDER);
-    
+
         (int256 sharesInUnderlying, DeltaFuture memory deltaFuture) = DepositWithdraw.calculateDepositWithdraw(
             DepositWithdrawData({
                 collateral: data.collateral,
@@ -38,6 +42,11 @@ abstract contract PreviewDeposit is Vault {
         }
 
         // HODLer <=> depositor conflict, resolve in favor of HODLer, round down to mint less shares
-        return (uint256(sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, data.borrowPrice).mulDivDown(data.supplyAfterFee, data.totalAssets), deltaFuture);
+        return (
+            uint256(sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, data.borrowPrice).mulDivDown(
+                data.supplyAfterFee, data.totalAssets
+            ),
+            deltaFuture
+        );
     }
-} 
+}

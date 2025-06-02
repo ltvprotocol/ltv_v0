@@ -1,13 +1,19 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import './ERC20.sol';
-import './TransferFromProtocol.sol';
-import './Lending.sol';
-import 'src/modifiers/FunctionStopperModifier.sol';
-import 'src/events/ILowLevelRebalanceEvent.sol';
+import "./ERC20.sol";
+import "./TransferFromProtocol.sol";
+import "./Lending.sol";
+import "src/modifiers/FunctionStopperModifier.sol";
+import "src/events/ILowLevelRebalanceEvent.sol";
 
-abstract contract ExecuteLowLevelRebalance is FunctionStopperModifier, ERC20, TransferFromProtocol, Lending, ILowLevelRebalanceEvent {
+abstract contract ExecuteLowLevelRebalance is
+    FunctionStopperModifier,
+    ERC20,
+    TransferFromProtocol,
+    Lending,
+    ILowLevelRebalanceEvent
+{
     function executeLowLevelRebalance(
         int256 deltaRealCollateralAsset,
         int256 deltaRealBorrowAssets,
@@ -52,6 +58,8 @@ abstract contract ExecuteLowLevelRebalance is FunctionStopperModifier, ERC20, Tr
             _mint(msg.sender, uint256(deltaShares));
         }
 
-        emit LowLevelRebalanceExecuted(msg.sender, deltaRealCollateralAsset, deltaRealBorrowAssets, deltaShares, deltaProtocolFutureRewardShares);
+        emit LowLevelRebalanceExecuted(
+            msg.sender, deltaRealCollateralAsset, deltaRealBorrowAssets, deltaShares, deltaProtocolFutureRewardShares
+        );
     }
 }

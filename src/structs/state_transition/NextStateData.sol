@@ -7,4 +7,4 @@ struct NextStateData {
     NextState nextState;
     uint256 borrowPrice;
     uint256 collateralPrice;
-} 
+}

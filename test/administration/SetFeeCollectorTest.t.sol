@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../utils/BaseTest.t.sol';
+import "../utils/BaseTest.t.sol";
 
 contract SetFeeCollectorTest is BaseTest {
     function test_failIfZero(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
@@ -11,7 +11,10 @@ contract SetFeeCollectorTest is BaseTest {
         ltv.setFeeCollector(newFeeCollector);
     }
 
-    function test_failIfNotGovernor(DefaultTestData memory defaultData, address user) public testWithPredefinedDefaultValues(defaultData) {
+    function test_failIfNotGovernor(DefaultTestData memory defaultData, address user)
+        public
+        testWithPredefinedDefaultValues(defaultData)
+    {
         vm.assume(user != defaultData.governor);
         address newFeeCollector = ltv.feeCollector();
         vm.startPrank(user);
@@ -19,7 +22,10 @@ contract SetFeeCollectorTest is BaseTest {
         ltv.setFeeCollector(newFeeCollector);
     }
 
-    function test_setAndCheckStorageSlot(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
+    function test_setAndCheckStorageSlot(DefaultTestData memory defaultData)
+        public
+        testWithPredefinedDefaultValues(defaultData)
+    {
         address newFeeCollector = address(1);
         vm.startPrank(defaultData.governor);
         vm.expectEmit(true, true, true, true, address(ltv));

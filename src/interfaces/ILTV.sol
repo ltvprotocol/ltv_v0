@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import 'src/errors/IAdministrationErrors.sol';
-import 'src/errors/IVaultErrors.sol';
-import 'src/errors/ILowLevelRebalanceErrors.sol';
-import 'src/errors/IAuctionErrors.sol';
+import "src/errors/IAdministrationErrors.sol";
+import "src/errors/IVaultErrors.sol";
+import "src/errors/ILowLevelRebalanceErrors.sol";
+import "src/errors/IAuctionErrors.sol";
 
-import 'src/events/IAdministrationEvents.sol';
-import 'src/events/IAuctionEvent.sol';
-import 'src/events/IERC4626Events.sol';
-import 'src/events/IERC20Events.sol';
-import 'src/events/ILowLevelRebalanceEvent.sol';
-import 'src/events/IStateUpdateEvent.sol';
-import 'src/interfaces/IModules.sol';
+import "src/events/IAdministrationEvents.sol";
+import "src/events/IAuctionEvent.sol";
+import "src/events/IERC4626Events.sol";
+import "src/events/IERC20Events.sol";
+import "src/events/ILowLevelRebalanceEvent.sol";
+import "src/events/IStateUpdateEvent.sol";
+import "src/interfaces/IModules.sol";
 
 interface ILTV is
     IAdministrationErrors,
@@ -64,11 +64,15 @@ interface ILTV is
 
     function executeLowLevelRebalanceBorrow(int256 deltaBorrowAssets) external returns (int256, int256);
 
-    function executeLowLevelRebalanceBorrowHint(int256 deltaBorrowAssets, bool isSharesPositiveHint) external returns (int256, int256);
+    function executeLowLevelRebalanceBorrowHint(int256 deltaBorrowAssets, bool isSharesPositiveHint)
+        external
+        returns (int256, int256);
 
     function executeLowLevelRebalanceCollateral(int256 deltaCollateralAssets) external returns (int256, int256);
 
-    function executeLowLevelRebalanceCollateralHint(int256 deltaCollateralAssets, bool isSharesPositiveHint) external returns (int256, int256);
+    function executeLowLevelRebalanceCollateralHint(int256 deltaCollateralAssets, bool isSharesPositiveHint)
+        external
+        returns (int256, int256);
 
     function executeLowLevelRebalanceShares(int256 deltaShares) external returns (int256, int256);
 
@@ -86,7 +90,12 @@ interface ILTV is
 
     function getRealCollateralAssets(bool isDeposit) external view returns (uint256);
 
-    function initialize(State.StateInitData memory stateInitData, address initialOwner, string memory _name, string memory _symbol) external;
+    function initialize(
+        State.StateInitData memory stateInitData,
+        address initialOwner,
+        string memory _name,
+        string memory _symbol
+    ) external;
 
     function isDepositDisabled() external view returns (bool);
 
@@ -144,11 +153,17 @@ interface ILTV is
 
     function previewLowLevelRebalanceBorrow(int256 deltaBorrowAssets) external view returns (int256, int256);
 
-    function previewLowLevelRebalanceBorrowHint(int256 deltaBorrowAssets, bool isSharesPositiveHint) external view returns (int256, int256);
+    function previewLowLevelRebalanceBorrowHint(int256 deltaBorrowAssets, bool isSharesPositiveHint)
+        external
+        view
+        returns (int256, int256);
 
     function previewLowLevelRebalanceCollateral(int256 deltaCollateralAssets) external view returns (int256, int256);
 
-    function previewLowLevelRebalanceCollateralHint(int256 deltaCollateralAssets, bool isSharesPositiveHint) external view returns (int256, int256);
+    function previewLowLevelRebalanceCollateralHint(int256 deltaCollateralAssets, bool isSharesPositiveHint)
+        external
+        view
+        returns (int256, int256);
 
     function previewLowLevelRebalanceShares(int256 deltaShares) external view returns (int256, int256);
 
@@ -166,7 +181,9 @@ interface ILTV is
 
     function redeem(uint256 shares, address receiver, address owner) external returns (uint256 assets);
 
-    function redeemCollateral(uint256 shares, address receiver, address owner) external returns (uint256 collateralAssets);
+    function redeemCollateral(uint256 shares, address receiver, address owner)
+        external
+        returns (uint256 collateralAssets);
 
     function renounceOwnership() external;
 

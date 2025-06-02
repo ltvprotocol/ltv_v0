@@ -10,17 +10,39 @@ interface IMorphoBlue {
         uint256 lltv;
     }
 
-    function borrow(MarketParams memory marketParams, uint256 assets, uint256 shares, address onBehalfOf, address receiver) external;
+    function borrow(
+        MarketParams memory marketParams,
+        uint256 assets,
+        uint256 shares,
+        address onBehalfOf,
+        address receiver
+    ) external;
 
-    function repay(MarketParams memory marketParams, uint256 assets, uint256 shares, address onBehalfOf, bytes memory data) external;
+    function repay(
+        MarketParams memory marketParams,
+        uint256 assets,
+        uint256 shares,
+        address onBehalfOf,
+        bytes memory data
+    ) external;
 
-    function supply(MarketParams memory marketParams, uint256 assets, uint256 shares, address onBehalfOf, bytes memory data) external;
+    function supply(
+        MarketParams memory marketParams,
+        uint256 assets,
+        uint256 shares,
+        address onBehalfOf,
+        bytes memory data
+    ) external;
 
-    function withdraw(MarketParams memory marketParams, uint256 assets, uint256 shares, address onBehalfOf, address receiver) external;
+    function withdraw(
+        MarketParams memory marketParams,
+        uint256 assets,
+        uint256 shares,
+        address onBehalfOf,
+        address receiver
+    ) external;
 
-    function market(
-        bytes32 marketId
-    )
+    function market(bytes32 marketId)
         external
         view
         returns (
@@ -32,5 +54,8 @@ interface IMorphoBlue {
             uint128 fee
         );
 
-    function position(bytes32 marketId, address user) external view returns (uint128 supplyShares, uint128 borrowShares, uint128 collateral);
+    function position(bytes32 marketId, address user)
+        external
+        view
+        returns (uint128 supplyShares, uint128 borrowShares, uint128 collateral);
 }
