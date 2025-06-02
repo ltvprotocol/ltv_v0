@@ -2,9 +2,9 @@
 pragma solidity ^0.8.28;
 
 import 'forge-std/Test.sol';
-import './utils/BaseTest.t.sol';
+import './utils/BalancedTest.t.sol';
 
-contract LowLevelRebalanceTest is BaseTest {
+contract LowLevelRebalanceTest is BalancedTest {
     function test_lowLevelNegativeAuctionShares(
         address owner,
         address user

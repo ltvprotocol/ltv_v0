@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import './utils/BaseTest.t.sol';
+import './utils/BalancedTest.t.sol';
 
-contract StateTest is BaseTest {
+contract StateTest is BalancedTest {
     function test_baseTotalSupply(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
         // baseTotalSupply is used internally and should match totalSupply initially
         assertEq(dummyLTV.baseTotalSupply(), 10 ** 18);

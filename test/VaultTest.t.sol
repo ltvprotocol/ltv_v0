@@ -2,9 +2,9 @@
 pragma solidity ^0.8.28;
 
 import 'forge-std/Test.sol';
-import './utils/BaseTest.t.sol';
+import './utils/BalancedTest.t.sol';
 
-contract VaultTest is BaseTest {
+contract VaultTest is BalancedTest {
     function test_totalAssets(address owner, address user, uint160 amount) public initializeBalancedTest(owner, user, 0, 0, 0, 0) {
         assertEq(dummyLTV.totalAssets(), 0);
         lendingProtocol.setSupplyBalance(address(collateralToken), uint256(amount) * 2);

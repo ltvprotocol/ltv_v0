@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import './utils/BaseTest.t.sol';
+import './utils/BalancedTest.t.sol';
 
-contract OwnerTest is BaseTest {
+contract OwnerTest is BalancedTest {
     function test_setLendingConnector(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
         vm.startPrank(owner);
         address mockConnector = address(0x9876);
@@ -44,6 +44,7 @@ contract OwnerTest is BaseTest {
     }
 
     function test_transferOwnership(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
+        vm.assume(owner != user);
         vm.startPrank(owner);
         address newOwner = address(0x5678);
 
