@@ -27,11 +27,7 @@ interface IHodlMyBeerLending {
     /// @param _borrowToken The address of the token that can be borrowed
     /// @param _collateralToken The address of the token that can be used as collateral
     /// @param _oracle The address of the price oracle
-    function initialize(
-        address _borrowToken,
-        address _collateralToken,
-        address _oracle
-    ) external;
+    function initialize(address _borrowToken, address _collateralToken, address _oracle) external;
 
     /// @notice Borrow tokens against supplied collateral
     /// @param amount The amount of tokens to borrow
@@ -52,5 +48,4 @@ interface IHodlMyBeerLending {
     function supply(uint256 amount) external;
 
     function withdraw(uint256 amount) external;
-
 }

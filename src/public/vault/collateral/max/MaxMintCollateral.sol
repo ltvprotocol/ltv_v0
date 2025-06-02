@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../../../../Constants.sol';
-import '../../../../utils/MulDiv.sol';
-import '../preview/PreviewMintCollateral.sol';
-import '../preview/PreviewDepositCollateral.sol';
+import "../../../../Constants.sol";
+import "../../../../utils/MulDiv.sol";
+import "../preview/PreviewMintCollateral.sol";
+import "../preview/PreviewDepositCollateral.sol";
 
 abstract contract MaxMintCollateral is PreviewMintCollateral, PreviewDepositCollateral {
     using uMulDiv for uint256;
@@ -31,9 +31,10 @@ abstract contract MaxMintCollateral is PreviewMintCollateral, PreviewDepositColl
 
         uint256 maxDepositInUnderlying = minProfitRealCollateral - uint256(data.realCollateral);
         // round down to assume smaller border
-        uint256 maxDepositInCollateral = maxDepositInUnderlying.mulDivDown(Constants.ORACLE_DIVIDER, data.previewCollateralVaultData.collateralPrice);
-        (uint256 maxMintShares, ) = _previewDepositCollateral(maxDepositInCollateral, data.previewCollateralVaultData);
+        uint256 maxDepositInCollateral =
+            maxDepositInUnderlying.mulDivDown(Constants.ORACLE_DIVIDER, data.previewCollateralVaultData.collateralPrice);
+        (uint256 maxMintShares,) = _previewDepositCollateral(maxDepositInCollateral, data.previewCollateralVaultData);
 
         return maxMintShares > availableSpaceInShares ? availableSpaceInShares : maxMintShares;
     }
-} 
+}

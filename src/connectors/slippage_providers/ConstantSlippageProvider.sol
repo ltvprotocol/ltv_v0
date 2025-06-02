@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import '../../interfaces/ISlippageProvider.sol';
-import '@openzeppelin/contracts/access/Ownable.sol';
+import "../../interfaces/ISlippageProvider.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract ConstantSlippageProvider is ISlippageProvider, Ownable {
     uint256 public override collateralSlippage;
@@ -10,7 +10,7 @@ contract ConstantSlippageProvider is ISlippageProvider, Ownable {
 
     constructor(uint256 _collateralSlippage, uint256 _borrowSlippage, address initialOwner) Ownable(initialOwner) {
         collateralSlippage = _collateralSlippage;
-        borrowSlippage = _borrowSlippage;     
+        borrowSlippage = _borrowSlippage;
     }
 
     function setCollateralSlippage(uint256 _collateralSlippage) external onlyOwner {

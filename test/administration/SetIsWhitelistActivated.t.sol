@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../utils/BaseTest.t.sol';
-import '../../src/elements/WhitelistRegistry.sol';
-import './PrepareEachFunctionSuccessfulExecution.sol';
+import "../utils/BaseTest.t.sol";
+import "../../src/elements/WhitelistRegistry.sol";
+import "./PrepareEachFunctionSuccessfulExecution.sol";
 
 contract SetIsWhitelistActivatedTest is PrepareEachFunctionSuccessfulExecution {
     WhitelistRegistry registry;
@@ -15,14 +15,17 @@ contract SetIsWhitelistActivatedTest is PrepareEachFunctionSuccessfulExecution {
     }
 
     function getUserBalance(address user) public view returns (UserBalance memory) {
-        return UserBalance({collateral: collateralToken.balanceOf(user), borrow: borrowToken.balanceOf(user), shares: ltv.balanceOf(user)});
+        return UserBalance({
+            collateral: collateralToken.balanceOf(user),
+            borrow: borrowToken.balanceOf(user),
+            shares: ltv.balanceOf(user)
+        });
     }
 
     function checkTokensReceived(UserBalance memory initialBalance, UserBalance memory currentBalance) internal pure {
         require(
-            initialBalance.collateral < currentBalance.collateral ||
-                initialBalance.borrow < currentBalance.borrow ||
-                initialBalance.shares < currentBalance.shares,
+            initialBalance.collateral < currentBalance.collateral || initialBalance.borrow < currentBalance.borrow
+                || initialBalance.shares < currentBalance.shares,
             "Didn't receive any token"
         );
     }
@@ -78,7 +81,10 @@ contract SetIsWhitelistActivatedTest is PrepareEachFunctionSuccessfulExecution {
         }
     }
 
-    function failIfWhitelistIsActivated(DefaultTestData memory data, address user, bytes memory call) internal testWithPredefinedDefaultValues(data) {
+    function failIfWhitelistIsActivated(DefaultTestData memory data, address user, bytes memory call)
+        internal
+        testWithPredefinedDefaultValues(data)
+    {
         prepareWhitelistDepositWithdrawTest(user, data.governor, data.owner);
 
         vm.prank(data.governor);
@@ -100,7 +106,10 @@ contract SetIsWhitelistActivatedTest is PrepareEachFunctionSuccessfulExecution {
         }
     }
 
-    function passIfWhitelistIsSatisfied(DefaultTestData memory data, address user, bytes memory call) internal testWithPredefinedDefaultValues(data) {
+    function passIfWhitelistIsSatisfied(DefaultTestData memory data, address user, bytes memory call)
+        internal
+        testWithPredefinedDefaultValues(data)
+    {
         prepareWhitelistDepositWithdrawTest(user, data.governor, data.owner);
 
         vm.prank(data.governor);
@@ -111,7 +120,7 @@ contract SetIsWhitelistActivatedTest is PrepareEachFunctionSuccessfulExecution {
 
         UserBalance memory initialBalance = getUserBalance(user);
         vm.prank(user);
-        (bool success, ) = address(ltv).call(call);
+        (bool success,) = address(ltv).call(call);
 
         assertEq(success, true);
         checkTokensReceived(initialBalance, getUserBalance(user));
@@ -126,11 +135,10 @@ contract SetIsWhitelistActivatedTest is PrepareEachFunctionSuccessfulExecution {
         }
     }
 
-    function passIfWhitelistIsNotActivated(
-        DefaultTestData memory data,
-        address user,
-        bytes memory call
-    ) internal testWithPredefinedDefaultValues(data) {
+    function passIfWhitelistIsNotActivated(DefaultTestData memory data, address user, bytes memory call)
+        internal
+        testWithPredefinedDefaultValues(data)
+    {
         prepareWhitelistDepositWithdrawTest(user, data.governor, data.owner);
 
         vm.prank(data.governor);
@@ -138,19 +146,25 @@ contract SetIsWhitelistActivatedTest is PrepareEachFunctionSuccessfulExecution {
 
         UserBalance memory initialBalance = getUserBalance(user);
         vm.prank(user);
-        (bool success, ) = address(ltv).call(call);
+        (bool success,) = address(ltv).call(call);
 
         assertEq(success, true);
         checkTokensReceived(initialBalance, getUserBalance(user));
     }
 
-    function test_failIfWhitelistRegistryIsNotSet(DefaultTestData memory data) public testWithPredefinedDefaultValues(data) {
+    function test_failIfWhitelistRegistryIsNotSet(DefaultTestData memory data)
+        public
+        testWithPredefinedDefaultValues(data)
+    {
         vm.startPrank(data.governor);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.WhitelistRegistryNotSet.selector));
         ltv.setIsWhitelistActivated(true);
     }
 
-    function test_failIfNotGovernor(DefaultTestData memory data, address user) public testWithPredefinedDefaultValues(data) {
+    function test_failIfNotGovernor(DefaultTestData memory data, address user)
+        public
+        testWithPredefinedDefaultValues(data)
+    {
         vm.assume(user != data.governor);
 
         vm.startPrank(data.governor);

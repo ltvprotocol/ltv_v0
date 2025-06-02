@@ -10,4 +10,4 @@ struct Cases {
     uint8 ceccb;
     uint8 cecbc;
     uint8 ncase;
-} 
+}

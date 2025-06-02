@@ -1,10 +1,13 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../utils/BaseTest.t.sol';
+import "../utils/BaseTest.t.sol";
 
 contract SetMaxTotalAssetsInUnderlyingTest is BaseTest {
-    function test_maxMintChanged(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
+    function test_maxMintChanged(DefaultTestData memory defaultData)
+        public
+        testWithPredefinedDefaultValues(defaultData)
+    {
         uint256 expectedMaxMint = 5 * 10 ** 17;
 
         assertGt(ltv.maxMint(address(0)), expectedMaxMint);
@@ -26,13 +29,18 @@ contract SetMaxTotalAssetsInUnderlyingTest is BaseTest {
         uint256 newMaxTotalAssetsInUnderlying = 10 ** 18 + 5 * 10 ** 17;
         vm.startPrank(defaultData.governor);
         vm.expectEmit(true, true, true, true, address(ltv));
-        emit IAdministrationEvents.MaxTotalAssetsInUnderlyingChanged(ltv.maxTotalAssetsInUnderlying(), newMaxTotalAssetsInUnderlying);
+        emit IAdministrationEvents.MaxTotalAssetsInUnderlyingChanged(
+            ltv.maxTotalAssetsInUnderlying(), newMaxTotalAssetsInUnderlying
+        );
         ltv.setMaxTotalAssetsInUnderlying(newMaxTotalAssetsInUnderlying);
 
         assertEq(ltv.maxTotalAssetsInUnderlying(), newMaxTotalAssetsInUnderlying);
     }
 
-    function test_failIfNotGovernor(DefaultTestData memory defaultData, address user) public testWithPredefinedDefaultValues(defaultData) {
+    function test_failIfNotGovernor(DefaultTestData memory defaultData, address user)
+        public
+        testWithPredefinedDefaultValues(defaultData)
+    {
         vm.assume(user != defaultData.governor);
         uint256 newMaxTotalAssetsInUnderlying = ltv.maxTotalAssetsInUnderlying();
         vm.startPrank(user);

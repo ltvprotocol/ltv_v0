@@ -7,4 +7,4 @@ struct MaxWithdrawRedeemCollateralVaultState {
     PreviewVaultState previewVaultState;
     uint256 maxSafeLTV;
     uint256 ownerBalance;
-} 
+}

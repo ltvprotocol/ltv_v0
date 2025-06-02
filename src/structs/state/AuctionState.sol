@@ -7,4 +7,4 @@ struct AuctionState {
     int256 futureRewardBorrowAssets;
     int256 futureRewardCollateralAssets;
     uint256 startAuction;
-} 
+}

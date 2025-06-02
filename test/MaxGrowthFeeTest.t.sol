@@ -1,10 +1,13 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import './utils/BalancedTest.t.sol';
+import "./utils/BalancedTest.t.sol";
 
 contract MaxGrowthFeeTest is BalancedTest {
-    function test_maxGrowthFee(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 18, 0, 0, 0) {
+    function test_maxGrowthFee(address owner, address user)
+        public
+        initializeBalancedTest(owner, user, 10 ** 18, 0, 0, 0)
+    {
         vm.stopPrank();
         vm.startPrank(owner);
         // multiplied total assets by 2

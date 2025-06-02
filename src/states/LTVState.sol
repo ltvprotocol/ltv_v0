@@ -1,25 +1,25 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../interfaces/ILendingConnector.sol';
-import '../interfaces/IOracleConnector.sol';
-import '../interfaces/IWhitelistRegistry.sol';
-import '../interfaces/ISlippageProvider.sol';
-import '../interfaces/IModules.sol';
-import 'forge-std/interfaces/IERC20.sol';
-import '../structs/state/vault/TotalAssetsState.sol';
-import '../structs/state/MaxGrowthFeeState.sol';
-import '../structs/state/vault/PreviewVaultState.sol';
-import '../structs/state/vault/MaxDepositMintBorrowVaultState.sol';
-import '../structs/state/vault/MaxWithdrawRedeemBorrowVaultState.sol';
-import '../structs/state/vault/MaxDepositMintCollateralVaultState.sol';
-import '../structs/state/vault/MaxWithdrawRedeemCollateralVaultState.sol';
-import '../structs/state/AuctionState.sol';
-import '../structs/state/low_level/PreviewLowLevelRebalanceState.sol';
-import '../structs/state/low_level/MaxLowLevelRebalanceSharesState.sol';
-import '../structs/state/low_level/MaxLowLevelRebalanceBorrowStateData.sol';
-import '../structs/state/low_level/MaxLowLevelRebalanceCollateralStateData.sol';
-import '../structs/state/low_level/ExecuteLowLevelRebalanceState.sol';
+import "../interfaces/ILendingConnector.sol";
+import "../interfaces/IOracleConnector.sol";
+import "../interfaces/IWhitelistRegistry.sol";
+import "../interfaces/ISlippageProvider.sol";
+import "../interfaces/IModules.sol";
+import "forge-std/interfaces/IERC20.sol";
+import "../structs/state/vault/TotalAssetsState.sol";
+import "../structs/state/MaxGrowthFeeState.sol";
+import "../structs/state/vault/PreviewVaultState.sol";
+import "../structs/state/vault/MaxDepositMintBorrowVaultState.sol";
+import "../structs/state/vault/MaxWithdrawRedeemBorrowVaultState.sol";
+import "../structs/state/vault/MaxDepositMintCollateralVaultState.sol";
+import "../structs/state/vault/MaxWithdrawRedeemCollateralVaultState.sol";
+import "../structs/state/AuctionState.sol";
+import "../structs/state/low_level/PreviewLowLevelRebalanceState.sol";
+import "../structs/state/low_level/MaxLowLevelRebalanceSharesState.sol";
+import "../structs/state/low_level/MaxLowLevelRebalanceBorrowStateData.sol";
+import "../structs/state/low_level/MaxLowLevelRebalanceCollateralStateData.sol";
+import "../structs/state/low_level/ExecuteLowLevelRebalanceState.sol";
 
 abstract contract LTVState {
     // ------------------------------------------------
@@ -72,5 +72,4 @@ abstract contract LTVState {
     address public governor;
     address public guardian;
     address public emergencyDeleverager;
-
 }

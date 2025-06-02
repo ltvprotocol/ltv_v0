@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import './utils/WithPayloadsManager.sol';
+import "./utils/WithPayloadsManager.sol";
 
 enum PayloadState {
     None,
@@ -34,13 +34,17 @@ abstract contract TimelockCommon is WithPayloadsManager {
     uint40 public payloadsCount;
     mapping(uint40 => Payload) private _payloads;
 
-    function delay() public virtual view returns (uint40);
+    function delay() public view virtual returns (uint40);
 
     function getPayload(uint40 payloadId) external view returns (Payload memory) {
         return _payloads[payloadId];
     }
 
-    function createPayload(address target, bytes[] calldata actions) external onlyPayloadsManagerOrGuardian returns (uint40) {
+    function createPayload(address target, bytes[] calldata actions)
+        external
+        onlyPayloadsManagerOrGuardian
+        returns (uint40)
+    {
         Payload storage payload = _payloads[payloadsCount];
         payload.target = target;
         payload.state = PayloadState.Created;
@@ -73,7 +77,7 @@ abstract contract TimelockCommon is WithPayloadsManager {
         payload.state = PayloadState.Executed;
         payload.executedAt = uint40(block.timestamp);
         for (uint256 i = 0; i < payload.actions.length; i++) {
-            (bool success, ) = payload.target.call(payload.actions[i]);
+            (bool success,) = payload.target.call(payload.actions[i]);
             require(success, PayloadExecutionFailed(payloadId));
         }
         emit PayloadExecuted(payloadId);

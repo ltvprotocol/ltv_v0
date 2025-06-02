@@ -15,4 +15,4 @@ struct MintRedeemData {
     uint128 targetLTV;
     int256 deltaShares;
     bool isBorrow;
-} 
+}

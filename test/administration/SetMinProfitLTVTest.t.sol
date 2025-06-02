@@ -1,13 +1,20 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../utils/BaseTest.t.sol';
+import "../utils/BaseTest.t.sol";
 
 contract SetMinProfitLTVTest is BaseTest {
-    function test_failIfGreaterThanTargetLTV(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
+    function test_failIfGreaterThanTargetLTV(DefaultTestData memory defaultData)
+        public
+        testWithPredefinedDefaultValues(defaultData)
+    {
         uint128 newMinProfitLTV = ltv.targetLTV() + 1;
         vm.startPrank(defaultData.governor);
-        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.InvalidLTVSet.selector, ltv.targetLTV(), ltv.maxSafeLTV(), newMinProfitLTV));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAdministrationErrors.InvalidLTVSet.selector, ltv.targetLTV(), ltv.maxSafeLTV(), newMinProfitLTV
+            )
+        );
         ltv.setMinProfitLTV(newMinProfitLTV);
     }
 
@@ -32,7 +39,10 @@ contract SetMinProfitLTVTest is BaseTest {
         ltv.setMinProfitLTV(newMinProfitLTV);
     }
 
-    function test_setAndCheckStorageSlot(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
+    function test_setAndCheckStorageSlot(DefaultTestData memory defaultData)
+        public
+        testWithPredefinedDefaultValues(defaultData)
+    {
         uint128 newMinProfitLTV = 45 * 10 ** 16; // 0.45
         vm.startPrank(defaultData.governor);
         vm.expectEmit(true, true, true, true, address(ltv));
@@ -42,7 +52,10 @@ contract SetMinProfitLTVTest is BaseTest {
         assertEq(ltv.minProfitLTV(), newMinProfitLTV);
     }
 
-    function test_failIfNotGovernor(DefaultTestData memory defaultData, address user) public testWithPredefinedDefaultValues(defaultData) {
+    function test_failIfNotGovernor(DefaultTestData memory defaultData, address user)
+        public
+        testWithPredefinedDefaultValues(defaultData)
+    {
         vm.assume(user != defaultData.governor);
         uint128 newMinProfitLTV = ltv.minProfitLTV();
         vm.startPrank(user);

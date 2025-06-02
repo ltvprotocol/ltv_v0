@@ -2,13 +2,13 @@
 pragma solidity ^0.8.27;
 
 interface IWithGuardian {
-  event GuardianUpdated(address oldGuardian, address newGuardian);
+    event GuardianUpdated(address oldGuardian, address newGuardian);
 
-  error OnlyGuardianInvalidCaller(address account);
+    error OnlyGuardianInvalidCaller(address account);
 
-  error OnlyGuardianOrOwnerInvalidCaller(address account);
+    error OnlyGuardianOrOwnerInvalidCaller(address account);
 
-  function guardian() external view returns (address);
+    function guardian() external view returns (address);
 
-  function updateGuardian(address newGuardian) external;
+    function updateGuardian(address newGuardian) external;
 }

@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import 'src/interfaces/ILendingConnector.sol';
-import 'src/interfaces/IOracleConnector.sol';
-import 'src/interfaces/ISlippageProvider.sol';
-import 'src/interfaces/IModules.sol';
+import "src/interfaces/ILendingConnector.sol";
+import "src/interfaces/IOracleConnector.sol";
+import "src/interfaces/ISlippageProvider.sol";
+import "src/interfaces/IModules.sol";
 
 struct StateInitData {
     string name;

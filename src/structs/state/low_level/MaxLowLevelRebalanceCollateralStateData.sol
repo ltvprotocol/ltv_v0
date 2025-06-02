@@ -6,4 +6,4 @@ struct MaxLowLevelRebalanceCollateralStateData {
     uint256 maxTotalAssetsInUnderlying;
     uint256 targetLTV;
     uint256 collateralPrice;
-} 
+}

@@ -15,4 +15,4 @@ struct DepositWithdrawData {
     uint128 targetLTV;
     int256 deltaRealCollateral;
     int256 deltaRealBorrow;
-} 
+}

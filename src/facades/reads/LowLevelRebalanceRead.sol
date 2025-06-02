@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../../interfaces/IModules.sol';
-import 'src/state_reader/PreviewLowLevelRebalanceStateReader.sol';
-import 'src/state_reader/MaxLowLevelRebalanceSharesStateReader.sol';
-import 'src/state_reader/MaxLowLevelRebalanceBorrowStateReader.sol';
-import 'src/state_reader/MaxLowLevelRebalanceCollateralStateReader.sol';
+import "../../interfaces/IModules.sol";
+import "src/state_reader/PreviewLowLevelRebalanceStateReader.sol";
+import "src/state_reader/MaxLowLevelRebalanceSharesStateReader.sol";
+import "src/state_reader/MaxLowLevelRebalanceBorrowStateReader.sol";
+import "src/state_reader/MaxLowLevelRebalanceCollateralStateReader.sol";
 
 abstract contract LowLevelRebalanceRead is
     PreviewLowLevelRebalanceStateReader,
@@ -14,33 +14,41 @@ abstract contract LowLevelRebalanceRead is
     MaxLowLevelRebalanceCollateralStateReader
 {
     function previewLowLevelRebalanceShares(int256 deltaShares) public view returns (int256, int256) {
-        return modules.lowLevelRebalanceModule().previewLowLevelRebalanceShares(deltaShares, previewLowLevelRebalanceState());
+        return modules.lowLevelRebalanceModule().previewLowLevelRebalanceShares(
+            deltaShares, previewLowLevelRebalanceState()
+        );
     }
 
     function previewLowLevelRebalanceBorrow(int256 deltaBorrowAssets) external view returns (int256, int256) {
-        return modules.lowLevelRebalanceModule().previewLowLevelRebalanceBorrow(deltaBorrowAssets, previewLowLevelRebalanceState());
+        return modules.lowLevelRebalanceModule().previewLowLevelRebalanceBorrow(
+            deltaBorrowAssets, previewLowLevelRebalanceState()
+        );
     }
 
     function previewLowLevelRebalanceCollateral(int256 deltaCollateralAssets) external view returns (int256, int256) {
-        return modules.lowLevelRebalanceModule().previewLowLevelRebalanceCollateral(deltaCollateralAssets, previewLowLevelRebalanceState());
+        return modules.lowLevelRebalanceModule().previewLowLevelRebalanceCollateral(
+            deltaCollateralAssets, previewLowLevelRebalanceState()
+        );
     }
 
-    function previewLowLevelRebalanceBorrowHint(int256 deltaBorrowAssets, bool isSharesPositiveHint) external view returns (int256, int256) {
-        return
-            modules.lowLevelRebalanceModule().previewLowLevelRebalanceBorrowHint(
-                deltaBorrowAssets,
-                isSharesPositiveHint,
-                previewLowLevelRebalanceState()
-            );
+    function previewLowLevelRebalanceBorrowHint(int256 deltaBorrowAssets, bool isSharesPositiveHint)
+        external
+        view
+        returns (int256, int256)
+    {
+        return modules.lowLevelRebalanceModule().previewLowLevelRebalanceBorrowHint(
+            deltaBorrowAssets, isSharesPositiveHint, previewLowLevelRebalanceState()
+        );
     }
 
-    function previewLowLevelRebalanceCollateralHint(int256 deltaCollateralAssets, bool isSharesPositiveHint) external view returns (int256, int256) {
-        return
-            modules.lowLevelRebalanceModule().previewLowLevelRebalanceCollateralHint(
-                deltaCollateralAssets,
-                isSharesPositiveHint,
-                previewLowLevelRebalanceState()
-            );
+    function previewLowLevelRebalanceCollateralHint(int256 deltaCollateralAssets, bool isSharesPositiveHint)
+        external
+        view
+        returns (int256, int256)
+    {
+        return modules.lowLevelRebalanceModule().previewLowLevelRebalanceCollateralHint(
+            deltaCollateralAssets, isSharesPositiveHint, previewLowLevelRebalanceState()
+        );
     }
 
     function maxLowLevelRebalanceShares() external view returns (int256) {

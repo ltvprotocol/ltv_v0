@@ -1,18 +1,19 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../max/MaxWithdraw.sol';
-import '../../../../state_transition/VaultStateTransition.sol';
-import '../../../../state_transition/ERC20.sol';
-import '../../../../state_transition/ApplyMaxGrowthFee.sol';
-import '../../../../state_transition/MintProtocolRewards.sol';
-import '../../../../state_transition/Lending.sol';
-import 'src/events/IERC4626Events.sol';
-import '../preview/PreviewWithdraw.sol';
-import '../../../../math/NextStep.sol';
-import '../../../../state_transition/TransferFromProtocol.sol';
-import 'src/errors/IVaultErrors.sol';
-import 'src/state_reader/MaxWithdrawRedeemBorrowVaultStateReader.sol';
+import "../max/MaxWithdraw.sol";
+import "../../../../state_transition/VaultStateTransition.sol";
+import "../../../../state_transition/ERC20.sol";
+import "../../../../state_transition/ApplyMaxGrowthFee.sol";
+import "../../../../state_transition/MintProtocolRewards.sol";
+import "../../../../state_transition/Lending.sol";
+import "src/events/IERC4626Events.sol";
+import "../preview/PreviewWithdraw.sol";
+import "../../../../math/NextStep.sol";
+import "../../../../state_transition/TransferFromProtocol.sol";
+import "src/errors/IVaultErrors.sol";
+import "src/state_reader/MaxWithdrawRedeemBorrowVaultStateReader.sol";
+
 abstract contract Withdraw is
     MaxWithdrawRedeemBorrowVaultStateReader,
     MaxWithdraw,
@@ -26,9 +27,15 @@ abstract contract Withdraw is
 {
     using uMulDiv for uint256;
 
-    function withdraw(uint256 assets, address receiver, address owner) external isFunctionAllowed nonReentrant returns (uint256) {
+    function withdraw(uint256 assets, address receiver, address owner)
+        external
+        isFunctionAllowed
+        nonReentrant
+        returns (uint256)
+    {
         MaxWithdrawRedeemBorrowVaultState memory state = maxWithdrawRedeemBorrowVaultState(owner);
-        MaxWithdrawRedeemBorrowVaultData memory data = maxWithdrawRedeemBorrowVaultStateToMaxWithdrawRedeemBorrowVaultData(state);
+        MaxWithdrawRedeemBorrowVaultData memory data =
+            maxWithdrawRedeemBorrowVaultStateToMaxWithdrawRedeemBorrowVaultData(state);
         uint256 max = _maxWithdraw(data);
         require(assets <= max, ExceedsMaxWithdraw(owner, assets, max));
 
@@ -42,7 +49,10 @@ abstract contract Withdraw is
             allowance[owner][receiver] -= shares;
         }
 
-        applyMaxGrowthFee(data.previewBorrowVaultData.supplyAfterFee, totalAssets(true, state.previewVaultState.maxGrowthFeeState.totalAssetsState));
+        applyMaxGrowthFee(
+            data.previewBorrowVaultData.supplyAfterFee,
+            totalAssets(true, state.previewVaultState.maxGrowthFeeState.totalAssetsState)
+        );
 
         _mintProtocolRewards(
             MintProtocolRewardsData({
@@ -60,9 +70,10 @@ abstract contract Withdraw is
             NextStepData({
                 futureBorrow: data.previewBorrowVaultData.futureBorrow,
                 futureCollateral: data.previewBorrowVaultData.futureCollateral,
-                futureRewardBorrow: data.previewBorrowVaultData.userFutureRewardBorrow + data.previewBorrowVaultData.protocolFutureRewardBorrow,
-                futureRewardCollateral: data.previewBorrowVaultData.userFutureRewardCollateral +
-                    data.previewBorrowVaultData.protocolFutureRewardCollateral,
+                futureRewardBorrow: data.previewBorrowVaultData.userFutureRewardBorrow
+                    + data.previewBorrowVaultData.protocolFutureRewardBorrow,
+                futureRewardCollateral: data.previewBorrowVaultData.userFutureRewardCollateral
+                    + data.previewBorrowVaultData.protocolFutureRewardCollateral,
                 deltaFutureBorrow: deltaFuture.deltaFutureBorrow,
                 deltaFutureCollateral: deltaFuture.deltaFutureCollateral,
                 deltaFuturePaymentBorrow: deltaFuture.deltaFuturePaymentBorrow,

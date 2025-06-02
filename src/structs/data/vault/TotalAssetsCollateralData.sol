@@ -5,4 +5,4 @@ struct TotalAssetsCollateralData {
     uint256 totalAssets;
     uint256 collateralPrice;
     uint256 borrowPrice;
-} 
+}

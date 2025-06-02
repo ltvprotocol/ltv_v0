@@ -21,4 +21,4 @@ abstract contract BorrowVaultWrite is LTVState, CommonWrite {
     function redeem(uint256 shares, address receiver, address owner) external returns (uint256) {
         _delegate(address(modules.borrowVaultModule()), abi.encode(shares, receiver, owner));
     }
-} 
+}

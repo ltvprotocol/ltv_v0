@@ -10,4 +10,4 @@ struct DeltaAuctionState {
     int256 deltaUserFutureRewardBorrowAssets;
     int256 deltaProtocolFutureRewardCollateralAssets;
     int256 deltaProtocolFutureRewardBorrowAssets;
-} 
+}

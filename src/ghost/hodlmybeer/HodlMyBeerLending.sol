@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import 'forge-std/interfaces/IERC20.sol';
+import "forge-std/interfaces/IERC20.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "../spooky/ISpookyOracle.sol";
 
@@ -23,13 +23,15 @@ contract HodlMyBeerLending is Initializable {
     }
 
     function borrow(uint256 amount) external {
-
         // LTV = 95/100
 
         uint256 borrowPrice = ISpookyOracle(oracle).getAssetPrice(borrowToken);
         uint256 collateralPrice = ISpookyOracle(oracle).getAssetPrice(collateralToken);
 
-        if((supplyCollateralBalance[msg.sender] * collateralPrice) * 95 < (borrowPrice * (borrowBalance[msg.sender] + amount)) * 100) {
+        if (
+            (supplyCollateralBalance[msg.sender] * collateralPrice) * 95
+                < (borrowPrice * (borrowBalance[msg.sender] + amount)) * 100
+        ) {
             require(false, "Collateral ratio is too low");
         }
 
@@ -40,7 +42,6 @@ contract HodlMyBeerLending is Initializable {
     }
 
     function repay(uint256 amount) external {
-
         // TODO: add reentrancy guard
 
         require(borrowBalance[msg.sender] >= amount, "Repay amount exceeds borrow balance");
@@ -49,7 +50,6 @@ contract HodlMyBeerLending is Initializable {
     }
 
     function supplyCollateral(uint256 amount) external {
-
         // TODO: add reentrancy guard
 
         IERC20(collateralToken).transferFrom(msg.sender, address(this), amount);
@@ -57,13 +57,15 @@ contract HodlMyBeerLending is Initializable {
     }
 
     function withdrawCollateral(uint256 amount) external {
-
         // TODO: add reentrancy guard
 
         uint256 borrowPrice = ISpookyOracle(oracle).getAssetPrice(borrowToken);
         uint256 collateralPrice = ISpookyOracle(oracle).getAssetPrice(collateralToken);
 
-        if(((supplyCollateralBalance[msg.sender] - amount) * collateralPrice) * 95 < (borrowPrice * borrowBalance[msg.sender]) * 100) {
+        if (
+            ((supplyCollateralBalance[msg.sender] - amount) * collateralPrice) * 95
+                < (borrowPrice * borrowBalance[msg.sender]) * 100
+        ) {
             require(false, "Collateral ratio is too low");
         }
 
@@ -73,7 +75,6 @@ contract HodlMyBeerLending is Initializable {
     }
 
     function supply(uint256 amount) external {
-
         // TODO: add reentrancy guard
 
         IERC20(borrowToken).transferFrom(msg.sender, address(this), amount);
@@ -81,7 +82,6 @@ contract HodlMyBeerLending is Initializable {
     }
 
     function withdraw(uint256 amount) external {
-
         // TODO: add reentrancy guard
 
         require(supplyBalance[msg.sender] >= amount, "Withdraw amount exceeds supply balance");

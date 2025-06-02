@@ -6,4 +6,4 @@ import "../MaxGrowthFeeState.sol";
 struct MaxLowLevelRebalanceSharesState {
     MaxGrowthFeeState maxGrowthFeeState;
     uint256 maxTotalAssetsInUnderlying;
-} 
+}

@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../states/LTVState.sol';
-import '../Constants.sol';
-import '../utils/MulDiv.sol';
-import '../structs/state_transition/NextStateData.sol';
-import 'src/events/IStateUpdateEvent.sol';
+import "../states/LTVState.sol";
+import "../Constants.sol";
+import "../utils/MulDiv.sol";
+import "../structs/state_transition/NextStateData.sol";
+import "src/events/IStateUpdateEvent.sol";
 
 abstract contract VaultStateTransition is LTVState, IStateUpdateEvent {
     using sMulDiv for int256;
@@ -19,10 +19,18 @@ abstract contract VaultStateTransition is LTVState, IStateUpdateEvent {
 
         // Here we have conflict between HODLer and Future auction executor. Round in favor of HODLer
 
-        futureBorrowAssets = nextStateData.nextState.futureBorrow.mulDivDown(int256(Constants.ORACLE_DIVIDER), int256(nextStateData.borrowPrice));
-        futureCollateralAssets = nextStateData.nextState.futureCollateral.mulDivUp(int256(Constants.ORACLE_DIVIDER), int256(nextStateData.collateralPrice));
-        futureRewardBorrowAssets = nextStateData.nextState.futureRewardBorrow.mulDivDown(int256(Constants.ORACLE_DIVIDER), int256(nextStateData.borrowPrice));
-        futureRewardCollateralAssets = nextStateData.nextState.futureRewardCollateral.mulDivUp(int256(Constants.ORACLE_DIVIDER), int256(nextStateData.collateralPrice));
+        futureBorrowAssets = nextStateData.nextState.futureBorrow.mulDivDown(
+            int256(Constants.ORACLE_DIVIDER), int256(nextStateData.borrowPrice)
+        );
+        futureCollateralAssets = nextStateData.nextState.futureCollateral.mulDivUp(
+            int256(Constants.ORACLE_DIVIDER), int256(nextStateData.collateralPrice)
+        );
+        futureRewardBorrowAssets = nextStateData.nextState.futureRewardBorrow.mulDivDown(
+            int256(Constants.ORACLE_DIVIDER), int256(nextStateData.borrowPrice)
+        );
+        futureRewardCollateralAssets = nextStateData.nextState.futureRewardCollateral.mulDivUp(
+            int256(Constants.ORACLE_DIVIDER), int256(nextStateData.collateralPrice)
+        );
 
         if (nextStateData.nextState.merge) {
             startAuction = nextStateData.nextState.startAuction;

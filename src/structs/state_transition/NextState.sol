@@ -10,4 +10,4 @@ struct NextState {
     bool merge;
     uint256 borrowPrice;
     uint256 collateralPrice;
-} 
+}

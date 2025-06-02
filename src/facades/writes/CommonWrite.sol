@@ -7,12 +7,8 @@ abstract contract CommonWrite {
 
         assembly {
             switch result
-            case 0 {
-                revert(add(data, 32), mload(data))
-            }
-            default {
-                return(add(data, 32), mload(data))
-            }
+            case 0 { revert(add(data, 32), mload(data)) }
+            default { return(add(data, 32), mload(data)) }
         }
     }
 }

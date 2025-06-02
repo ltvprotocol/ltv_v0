@@ -1,18 +1,16 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../../structs/data/vault/DeltaSharesAndDeltaRealBorrowData.sol';
-import '../../structs/data/vault/Cases.sol';
-import '../../Constants.sol';
-import '../../utils/MulDiv.sol';
-import 'src/math/CasesOperator.sol';
-import 'src/errors/IVaultErrors.sol';
+import "../../structs/data/vault/DeltaSharesAndDeltaRealBorrowData.sol";
+import "../../structs/data/vault/Cases.sol";
+import "../../Constants.sol";
+import "../../utils/MulDiv.sol";
+import "src/math/CasesOperator.sol";
+import "src/errors/IVaultErrors.sol";
 
 library DeltaSharesAndDeltaRealBorrow {
     using uMulDiv for uint256;
     using sMulDiv for int256;
-
-
 
     struct DividendData {
         int256 borrow;
@@ -54,16 +52,17 @@ library DeltaSharesAndDeltaRealBorrow {
         int256 dividendWithOneMinusTargetLTV = data.deltaRealBorrow;
         dividendWithOneMinusTargetLTV -= int256(int8(data.cases.cecbc)) * int256(data.userFutureRewardBorrow);
         // goes to dividend with sign minus, so needs to be rounded up
-        dividendWithOneMinusTargetLTV -=
-            int256(int8(data.cases.ceccb)) *
-            int256(data.futureBorrow).mulDivUp(int256(data.borrowSlippage), Constants.SLIPPAGE_PRECISION);
+        dividendWithOneMinusTargetLTV -= int256(int8(data.cases.ceccb))
+            * int256(data.futureBorrow).mulDivUp(int256(data.borrowSlippage), Constants.SLIPPAGE_PRECISION);
 
         int256 dividendWithTargetLTV = -int256(data.collateral);
         dividendWithTargetLTV -= data.deltaShares;
         dividendWithTargetLTV += int256(int8(data.cases.ceccb)) * data.protocolFutureRewardCollateral;
 
         //goes to dividend with sign plus, so needs to be rounded down
-        dividend += dividendWithOneMinusTargetLTV.mulDivDown(int256(Constants.LTV_DIVIDER - data.targetLTV), int256(Constants.LTV_DIVIDER));
+        dividend += dividendWithOneMinusTargetLTV.mulDivDown(
+            int256(Constants.LTV_DIVIDER - data.targetLTV), int256(Constants.LTV_DIVIDER)
+        );
         //goes to dividend with sign plus, so needs to be rounded down
         dividend += dividendWithTargetLTV.mulDivDown(int128(data.targetLTV), int256(Constants.LTV_DIVIDER));
 
@@ -87,24 +86,26 @@ library DeltaSharesAndDeltaRealBorrow {
         if (data.futureBorrow != 0) {
             // in cebc case divider need to be rounded up, it goes to divider with sign minus, so needs to be rounded down. Same for next
             dividerWithOneMinusTargetLTV -=
-                int256(int8(data.cases.cebc)) *
-                data.userFutureRewardBorrow.mulDivDown(DIVIDER, data.futureBorrow);
-            divider -= int256(int8(data.cases.cebc)) * data.protocolFutureRewardBorrow.mulDivDown(DIVIDER, data.futureBorrow);
+                int256(int8(data.cases.cebc)) * data.userFutureRewardBorrow.mulDivDown(DIVIDER, data.futureBorrow);
+            divider -=
+                int256(int8(data.cases.cebc)) * data.protocolFutureRewardBorrow.mulDivDown(DIVIDER, data.futureBorrow);
             // in cecb case divider needs to be rounded down, since it goes to divider with sign plus, needs to be rounded down
-            divider +=
-                int256(int8(data.cases.cecb)) *
-                data.protocolFutureRewardCollateral.mulDivDown(
-                    (DIVIDER * int128(data.targetLTV)),
-                    (data.futureBorrow * int256(Constants.LTV_DIVIDER))
+            divider += int256(int8(data.cases.cecb))
+                * data.protocolFutureRewardCollateral.mulDivDown(
+                    (DIVIDER * int128(data.targetLTV)), (data.futureBorrow * int256(Constants.LTV_DIVIDER))
                 );
         }
 
         dividerWithOneMinusTargetLTV += int256(int8(data.cases.ceccb)) * int256(data.borrowSlippage);
         dividerWithOneMinusTargetLTV += int256(int8(data.cases.cmcb)) * int256(data.borrowSlippage);
         if (data.cases.cmcb + data.cases.cebc + data.cases.ceccb != 0) {
-            divider += dividerWithOneMinusTargetLTV.mulDivUp(int256(Constants.LTV_DIVIDER - data.targetLTV), int256(Constants.LTV_DIVIDER));
+            divider += dividerWithOneMinusTargetLTV.mulDivUp(
+                int256(Constants.LTV_DIVIDER - data.targetLTV), int256(Constants.LTV_DIVIDER)
+            );
         } else {
-            divider += dividerWithOneMinusTargetLTV.mulDivDown(int256(Constants.LTV_DIVIDER - data.targetLTV), int256(Constants.LTV_DIVIDER));
+            divider += dividerWithOneMinusTargetLTV.mulDivDown(
+                int256(Constants.LTV_DIVIDER - data.targetLTV), int256(Constants.LTV_DIVIDER)
+            );
         }
 
         return divider;
@@ -117,7 +118,11 @@ library DeltaSharesAndDeltaRealBorrow {
     // cna - dividend is 0
     // cmcb, cebc, ceccb - deltaFutureBorrow is positive, so dividend is negative, dividend needs to be rounded down, divider needs to be rounded up
     // cmbc, cecb, cecbc - deltaFutureBorrow is negative, so dividend is positive, dividend needs to be rounded down, divider needs to be rounded down
-    function calculateDeltaFutureBorrowByDeltaSharesAndDeltaRealBorrow(DeltaSharesAndDeltaRealBorrowData memory data) external pure returns (int256, Cases memory) {
+    function calculateDeltaFutureBorrowByDeltaSharesAndDeltaRealBorrow(DeltaSharesAndDeltaRealBorrowData memory data)
+        external
+        pure
+        returns (int256, Cases memory)
+    {
         int256 deltaFutureBorrow = 0;
 
         while (true) {
@@ -134,7 +139,8 @@ library DeltaSharesAndDeltaRealBorrow {
                     deltaShares: data.deltaShares,
                     targetLTV: data.targetLTV,
                     cases: data.cases
-                }));
+                })
+            );
 
             int256 divider = calculateDividerByDeltaSharesAndDeltaRealBorrow(
                 DividerData({
@@ -166,7 +172,7 @@ library DeltaSharesAndDeltaRealBorrow {
             }
 
             if (data.cases.ncase == 6) {
-                revert IVaultErrors.    DeltaSharesAndDeltaRealBorrowUnexpectedError(data);
+                revert IVaultErrors.DeltaSharesAndDeltaRealBorrowUnexpectedError(data);
             }
 
             data.cases = CasesOperator.generateCase(data.cases.ncase + 1);

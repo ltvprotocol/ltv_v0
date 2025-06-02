@@ -1,14 +1,15 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import './BaseTest.t.sol';
-import './modules/DummyBorrowVaultModule.t.sol';
-import './modules/DummyCollateralVaultModule.t.sol';
-import './modules/DummyERC20Module.t.sol';
-import './modules/DummyLowLevelRebalanceModule.t.sol';
+import "./BaseTest.t.sol";
+import "./modules/DummyBorrowVaultModule.t.sol";
+import "./modules/DummyCollateralVaultModule.t.sol";
+import "./modules/DummyERC20Module.t.sol";
+import "./modules/DummyLowLevelRebalanceModule.t.sol";
 
 contract DummyModulesBaseTest is BaseTest {
     DummyLTV public dummyLTV;
+
     function replaceWithDummyModules() internal {
         DummyBorrowVaultModule borrowVaultModule = new DummyBorrowVaultModule();
         DummyCollateralVaultModule collateralVaultModule = new DummyCollateralVaultModule();

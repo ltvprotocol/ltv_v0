@@ -1,10 +1,13 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import './utils/BalancedTest.t.sol';
+import "./utils/BalancedTest.t.sol";
 
 contract OwnerTest is BalancedTest {
-    function test_setLendingConnector(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
+    function test_setLendingConnector(address owner, address user)
+        public
+        initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
+    {
         vm.startPrank(owner);
         address mockConnector = address(0x9876);
 
@@ -17,7 +20,10 @@ contract OwnerTest is BalancedTest {
         dummyLTV.setLendingConnector(address(0));
     }
 
-    function test_setOracleConnector(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
+    function test_setOracleConnector(address owner, address user)
+        public
+        initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
+    {
         vm.startPrank(owner);
         address mockConnector = address(0x9876);
 
@@ -30,7 +36,10 @@ contract OwnerTest is BalancedTest {
         dummyLTV.setOracleConnector(address(0));
     }
 
-    function test_updateEmergencyDeleverager(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
+    function test_updateEmergencyDeleverager(address owner, address user)
+        public
+        initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
+    {
         vm.startPrank(owner);
         address newDeleverager = address(0x5678);
 
@@ -43,7 +52,10 @@ contract OwnerTest is BalancedTest {
         dummyLTV.updateEmergencyDeleverager(address(0));
     }
 
-    function test_transferOwnership(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
+    function test_transferOwnership(address owner, address user)
+        public
+        initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
+    {
         vm.assume(owner != user);
         vm.startPrank(owner);
         address newOwner = address(0x5678);
@@ -57,7 +69,10 @@ contract OwnerTest is BalancedTest {
         ILTV(address(dummyLTV)).transferOwnership(address(0));
     }
 
-    function test_updateGuardian(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
+    function test_updateGuardian(address owner, address user)
+        public
+        initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
+    {
         vm.startPrank(owner);
         address newGuardian = address(0x5678);
 
@@ -70,7 +85,10 @@ contract OwnerTest is BalancedTest {
         ILTV(address(dummyLTV)).updateGuardian(address(0));
     }
 
-    function test_updateGovernor(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
+    function test_updateGovernor(address owner, address user)
+        public
+        initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
+    {
         vm.startPrank(owner);
         address newGovernor = address(0x5678);
 
@@ -83,7 +101,10 @@ contract OwnerTest is BalancedTest {
         ILTV(address(dummyLTV)).updateGovernor(address(0));
     }
 
-    function test_renounceOwnership(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
+    function test_renounceOwnership(address owner, address user)
+        public
+        initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
+    {
         vm.expectRevert(abi.encodeWithSelector(OwnableUpgradeable.OwnableUnauthorizedAccount.selector, user));
         dummyLTV.renounceOwnership();
 

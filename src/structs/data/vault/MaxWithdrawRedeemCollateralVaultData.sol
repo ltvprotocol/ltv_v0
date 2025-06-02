@@ -9,4 +9,4 @@ struct MaxWithdrawRedeemCollateralVaultData {
     uint256 realBorrow;
     uint256 maxSafeLTV;
     uint256 ownerBalance;
-} 
+}

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import '../preview/PreviewMint.sol';
-import '../preview/PreviewDeposit.sol';
+import "../preview/PreviewMint.sol";
+import "../preview/PreviewDeposit.sol";
 
 abstract contract MaxDeposit is PreviewMint, PreviewDeposit {
     using uMulDiv for uint256;
@@ -20,7 +20,7 @@ abstract contract MaxDeposit is PreviewMint, PreviewDeposit {
             data.previewBorrowVaultData.totalAssets,
             data.previewBorrowVaultData.borrowPrice
         );
-        (uint256 availableSpaceInAssets, ) = _previewMint(availableSpaceInShares, data.previewBorrowVaultData);
+        (uint256 availableSpaceInAssets,) = _previewMint(availableSpaceInShares, data.previewBorrowVaultData);
 
         // round up to assume smaller border
         uint256 minProfitRealBorrow = uint256(data.realCollateral).mulDivUp(data.minProfitLTV, Constants.LTV_DIVIDER);
@@ -30,10 +30,9 @@ abstract contract MaxDeposit is PreviewMint, PreviewDeposit {
 
         // round down to assume smaller border
         uint256 maxDepositInAssets = (uint256(data.realBorrow) - minProfitRealBorrow).mulDivDown(
-            Constants.ORACLE_DIVIDER,
-            data.previewBorrowVaultData.borrowPrice
+            Constants.ORACLE_DIVIDER, data.previewBorrowVaultData.borrowPrice
         );
-        
+
         return maxDepositInAssets > availableSpaceInAssets ? availableSpaceInAssets : maxDepositInAssets;
     }
 }

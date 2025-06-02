@@ -1,19 +1,19 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import 'src/structs/state/ModulesState.sol';
-import 'src/interfaces/IModules.sol';
-import 'src/interfaces/reads/IBorrowVaultModule.sol';
-import '@openzeppelin/contracts/access/Ownable.sol';
+import "src/structs/state/ModulesState.sol";
+import "src/interfaces/IModules.sol";
+import "src/interfaces/reads/IBorrowVaultModule.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract ModulesProvider is IModules, Ownable {
     // Module slot constants
-    bytes32 public constant BORROW_VAULT_MODULE_SLOT = keccak256('BORROW_VAULT_MODULE');
-    bytes32 public constant COLLATERAL_VAULT_MODULE_SLOT = keccak256('COLLATERAL_VAULT_MODULE');
-    bytes32 public constant LOW_LEVEL_REBALANCE_MODULE_SLOT = keccak256('LOW_LEVEL_REBALANCE_MODULE');
-    bytes32 public constant AUCTION_MODULE_SLOT = keccak256('AUCTION_MODULE');
-    bytes32 public constant ERC20_MODULE_SLOT = keccak256('ERC20_MODULE');
-    bytes32 public constant ADMINISTRATION_MODULE_SLOT = keccak256('ADMINISTRATION_MODULE');
+    bytes32 public constant BORROW_VAULT_MODULE_SLOT = keccak256("BORROW_VAULT_MODULE");
+    bytes32 public constant COLLATERAL_VAULT_MODULE_SLOT = keccak256("COLLATERAL_VAULT_MODULE");
+    bytes32 public constant LOW_LEVEL_REBALANCE_MODULE_SLOT = keccak256("LOW_LEVEL_REBALANCE_MODULE");
+    bytes32 public constant AUCTION_MODULE_SLOT = keccak256("AUCTION_MODULE");
+    bytes32 public constant ERC20_MODULE_SLOT = keccak256("ERC20_MODULE");
+    bytes32 public constant ADMINISTRATION_MODULE_SLOT = keccak256("ADMINISTRATION_MODULE");
 
     constructor(ModulesState memory state) Ownable(msg.sender) {
         _setModule(BORROW_VAULT_MODULE_SLOT, address(state.borrowVaultModule));

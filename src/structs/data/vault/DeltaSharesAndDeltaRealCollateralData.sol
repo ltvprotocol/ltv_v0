@@ -15,4 +15,4 @@ struct DeltaSharesAndDeltaRealCollateralData {
     int256 futureCollateral;
     uint256 collateralSlippage;
     Cases cases;
-} 
+}

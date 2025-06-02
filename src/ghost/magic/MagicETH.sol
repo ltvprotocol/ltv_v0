@@ -5,7 +5,6 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 
 contract MagicETH is OwnableUpgradeable, ERC20Upgradeable {
-
     function initialize(address _owner) public initializer {
         __Ownable_init(_owner);
         //__Context_init();

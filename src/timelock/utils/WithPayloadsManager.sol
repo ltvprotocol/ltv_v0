@@ -1,13 +1,15 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import {OwnableWithGuardian} from './OwnableWithGuardian.sol';
-import {IWithPayloadsManager} from './interfaces/IWithPayloadsManager.sol';
+import {OwnableWithGuardian} from "./OwnableWithGuardian.sol";
+import {IWithPayloadsManager} from "./interfaces/IWithPayloadsManager.sol";
 
-abstract  contract WithPayloadsManager is OwnableWithGuardian, IWithPayloadsManager {
+abstract contract WithPayloadsManager is OwnableWithGuardian, IWithPayloadsManager {
     address private _payloadsManager;
 
-    constructor(address initialOwner, address initialGuardian, address initialPayloadsManager) OwnableWithGuardian(initialOwner, initialGuardian) {
+    constructor(address initialOwner, address initialGuardian, address initialPayloadsManager)
+        OwnableWithGuardian(initialOwner, initialGuardian)
+    {
         _updatePayloadsManager(initialPayloadsManager);
     }
 
@@ -17,7 +19,10 @@ abstract  contract WithPayloadsManager is OwnableWithGuardian, IWithPayloadsMana
     }
 
     modifier onlyPayloadsManagerOrGuardian() {
-        require(_msgSender() == payloadsManager() || _msgSender() == guardian(), OnlyPayloadsManagerOrOwnerInvalidCaller(_msgSender()));
+        require(
+            _msgSender() == payloadsManager() || _msgSender() == guardian(),
+            OnlyPayloadsManagerOrOwnerInvalidCaller(_msgSender())
+        );
         _;
     }
 
