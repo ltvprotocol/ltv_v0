@@ -18,10 +18,14 @@ contract DummyLTV is LTV, ERC20 {
     }
 
     function setFutureRewardBorrowAssets(int256 value) public {
+        require(futureBorrowAssets <= 0);
+        require(value >= 0);
         futureRewardBorrowAssets = value;
     }
 
     function setFutureRewardCollateralAssets(int256 value) public {
+        require(futureBorrowAssets >= 0);
+        require(value <= 0);
         futureRewardCollateralAssets = value;
     }
 
