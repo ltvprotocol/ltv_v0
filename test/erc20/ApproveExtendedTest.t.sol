@@ -4,12 +4,14 @@ pragma solidity ^0.8.28;
 import "../utils/BaseTest.t.sol";
 
 contract ApproveTest is BaseTest {
-    function test_approveAllowance(DefaultTestData memory defaultData)
+    function test_approveAllowance(DefaultTestData memory defaultData, address user)
         public
         testWithPredefinedDefaultValues(defaultData)
     {
+        vm.assume(user != address(0));
+        vm.assume(user != defaultData.owner);
+
         address owner = defaultData.owner;
-        address user = address(1);
 
         vm.startPrank(owner);
 
@@ -21,9 +23,14 @@ contract ApproveTest is BaseTest {
         assertEq(ltv.allowance(owner, user), approveAmount);
     }
 
-    function test_bigNumbers(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
+    function test_bigNumbers(DefaultTestData memory defaultData, address user)
+        public
+        testWithPredefinedDefaultValues(defaultData)
+    {
+        vm.assume(user != address(0));
+        vm.assume(user != defaultData.owner);
+
         address owner = defaultData.owner;
-        address user = address(1);
 
         vm.startPrank(owner);
 
@@ -39,12 +46,14 @@ contract ApproveTest is BaseTest {
         assertEq(ltv.allowance(owner, user), bigNumber);
     }
 
-    function test_smallNumbers(DefaultTestData memory defaultData)
+    function test_smallNumbers(DefaultTestData memory defaultData, address user)
         public
         testWithPredefinedDefaultValues(defaultData)
     {
+        vm.assume(user != address(0));
+        vm.assume(user != defaultData.owner);
+
         address owner = defaultData.owner;
-        address user = address(1);
 
         vm.startPrank(owner);
 
@@ -64,9 +73,14 @@ contract ApproveTest is BaseTest {
         assertEq(ltv.allowance(owner, user), oneGwei);
     }
 
-    function test_zero(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
+    function test_zero(DefaultTestData memory defaultData, address user)
+        public
+        testWithPredefinedDefaultValues(defaultData)
+    {
+        vm.assume(user != address(0));
+        vm.assume(user != defaultData.owner);
+
         address owner = defaultData.owner;
-        address user = address(1);
 
         vm.startPrank(owner);
 
@@ -79,12 +93,14 @@ contract ApproveTest is BaseTest {
         assertEq(ltv.allowance(owner, user), 0);
     }
 
-    function test_approveOverwrite(DefaultTestData memory defaultData)
+    function test_approveOverwrite(DefaultTestData memory defaultData, address user)
         public
         testWithPredefinedDefaultValues(defaultData)
     {
+        vm.assume(user != address(0));
+        vm.assume(user != defaultData.owner);
+
         address owner = defaultData.owner;
-        address user = address(1);
 
         vm.startPrank(owner);
 
