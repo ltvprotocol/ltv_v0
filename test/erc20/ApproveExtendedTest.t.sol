@@ -4,12 +4,13 @@ pragma solidity ^0.8.28;
 import "../utils/BaseTest.t.sol";
 
 contract ApproveTest is BaseTest {
-    function test_approveAllowance(DefaultTestData memory defaultData, address user)
+    function test_approveAllowance(DefaultTestData memory defaultData, address user, uint256 approveAmount)
         public
         testWithPredefinedDefaultValues(defaultData)
     {
         vm.assume(user != address(0));
         vm.assume(user != defaultData.owner);
+        vm.assume(approveAmount > 0);
 
         address owner = defaultData.owner;
 
@@ -17,7 +18,6 @@ contract ApproveTest is BaseTest {
 
         assertEq(ltv.allowance(owner, user), 0);
 
-        uint256 approveAmount = 5 * 10 ** 17;
         bool success = ltv.approve(user, approveAmount);
         assertTrue(success);
         assertEq(ltv.allowance(owner, user), approveAmount);
@@ -46,26 +46,26 @@ contract ApproveTest is BaseTest {
         assertEq(ltv.allowance(owner, user), bigNumber);
     }
 
-    function test_smallNumbers(DefaultTestData memory defaultData, address user)
+    function test_smallNumbers(DefaultTestData memory defaultData, address user, uint256 smallAmount)
         public
         testWithPredefinedDefaultValues(defaultData)
     {
         vm.assume(user != address(0));
         vm.assume(user != defaultData.owner);
+        vm.assume(smallAmount > 0 && smallAmount <= 10 ** 12);
 
         address owner = defaultData.owner;
 
         vm.startPrank(owner);
 
+        bool success = ltv.approve(user, smallAmount);
+        assertTrue(success);
+        assertEq(ltv.allowance(owner, user), smallAmount);
+
         uint256 oneWei = 1;
-        bool success = ltv.approve(user, oneWei);
+        success = ltv.approve(user, oneWei);
         assertTrue(success);
         assertEq(ltv.allowance(owner, user), oneWei);
-
-        uint256 fewWei = 42;
-        success = ltv.approve(user, fewWei);
-        assertTrue(success);
-        assertEq(ltv.allowance(owner, user), fewWei);
 
         uint256 oneGwei = 10 ** 9;
         success = ltv.approve(user, oneGwei);
@@ -73,18 +73,18 @@ contract ApproveTest is BaseTest {
         assertEq(ltv.allowance(owner, user), oneGwei);
     }
 
-    function test_zero(DefaultTestData memory defaultData, address user)
+    function test_zero(DefaultTestData memory defaultData, address user, uint256 initialAmount)
         public
         testWithPredefinedDefaultValues(defaultData)
     {
         vm.assume(user != address(0));
         vm.assume(user != defaultData.owner);
+        vm.assume(initialAmount > 0);
 
         address owner = defaultData.owner;
 
         vm.startPrank(owner);
 
-        uint256 initialAmount = 10 ** 18;
         ltv.approve(user, initialAmount);
         assertEq(ltv.allowance(owner, user), initialAmount);
 
@@ -93,25 +93,28 @@ contract ApproveTest is BaseTest {
         assertEq(ltv.allowance(owner, user), 0);
     }
 
-    function test_approveOverwrite(DefaultTestData memory defaultData, address user)
-        public
-        testWithPredefinedDefaultValues(defaultData)
-    {
+    function test_approveOverwrite(
+        DefaultTestData memory defaultData,
+        address user,
+        uint256 firstAmount,
+        uint256 secondAmount
+    ) public testWithPredefinedDefaultValues(defaultData) {
         vm.assume(user != address(0));
         vm.assume(user != defaultData.owner);
+        vm.assume(firstAmount > 0);
+        vm.assume(secondAmount > 0);
+        vm.assume(firstAmount != secondAmount);
 
         address owner = defaultData.owner;
 
         vm.startPrank(owner);
 
-        uint256 firstAmount = 10 ** 17;
         ltv.approve(user, firstAmount);
         assertEq(ltv.allowance(owner, user), firstAmount);
 
-        uint256 secondAmount = 5 * 10 ** 17;
         ltv.approve(user, secondAmount);
         assertEq(ltv.allowance(owner, user), secondAmount);
 
-        assertTrue(ltv.allowance(owner, user) != firstAmount);
+        assertNotEq(ltv.allowance(owner, user), firstAmount);
     }
 }
