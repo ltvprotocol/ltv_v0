@@ -8,6 +8,7 @@ contract SetMaxDeleverageFeeTest is BaseTest {
         DefaultTestData memory defaultData,
         address user
     ) public testWithPredefinedDefaultValues(defaultData) {
+        vm.assume(user != defaultData.emergencyDeleverager);
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyEmergencyDeleveragerInvalidCaller.selector, user));
         ltv.deleverageAndWithdraw(0, 0);

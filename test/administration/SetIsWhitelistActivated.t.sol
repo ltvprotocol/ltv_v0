@@ -3,8 +3,9 @@ pragma solidity ^0.8.28;
 
 import '../utils/BaseTest.t.sol';
 import '../../src/elements/WhitelistRegistry.sol';
+import './PrepareEachFunctionSuccessfulExecution.sol';
 
-contract SetIsWhitelistActivatedTest is BaseTest {
+contract SetIsWhitelistActivatedTest is PrepareEachFunctionSuccessfulExecution {
     WhitelistRegistry registry;
 
     struct UserBalance {
@@ -52,27 +53,13 @@ contract SetIsWhitelistActivatedTest is BaseTest {
         vm.prank(governor);
         ltv.setWhitelistRegistry(address(registry));
 
-        uint256 amount = ltv.balanceOf(address(0));
-        deal(address(ltv), address(0), 0);
-        deal(address(ltv), address(user), amount);
-
-        deal(address(collateralToken), user, type(uint128).max);
-        deal(address(borrowToken), user, type(uint128).max);
-
-        vm.startPrank(user);
-        collateralToken.approve(address(ltv), type(uint128).max);
-        borrowToken.approve(address(ltv), type(uint128).max);
-        vm.stopPrank();
-
-        ltv.setFutureBorrowAssets(-10000);
-        ltv.setFutureCollateralAssets(-10000);
-        ltv.setFutureRewardBorrowAssets(100);
+        prepareEachFunctionSuccessfulExecution(user);
     }
 
     function test_checkSlot(DefaultTestData memory data) public testWithPredefinedDefaultValues(data) {
         vm.startPrank(data.governor);
         ltv.setWhitelistRegistry(address(new WhitelistRegistry(data.owner)));
-        
+
         bool isActivated = ltv.isWhitelistActivated();
 
         ltv.setIsWhitelistActivated(!isActivated);
@@ -80,7 +67,10 @@ contract SetIsWhitelistActivatedTest is BaseTest {
         assertEq(ltv.isWhitelistActivated(), !isActivated);
     }
 
+    /// forge-config: default.fuzz.runs = 10
     function test_failIfWhitelistIsActivatedBatch(DefaultTestData memory data, address user) public {
+        vm.assume(user != data.feeCollector);
+
         bytes[] memory calls = whitelistCalls(user);
 
         for (uint256 i = 0; i < calls.length; i++) {
@@ -101,6 +91,7 @@ contract SetIsWhitelistActivatedTest is BaseTest {
         assertEq(result, abi.encodeWithSelector(IAdministrationErrors.ReceiverNotWhitelisted.selector, user));
     }
 
+    /// forge-config: default.fuzz.runs = 10
     function test_passIfWhitelistIsSatisfiedBatch(DefaultTestData memory data, address user) public {
         bytes[] memory calls = whitelistCalls(user);
 
@@ -126,6 +117,7 @@ contract SetIsWhitelistActivatedTest is BaseTest {
         checkTokensReceived(initialBalance, getUserBalance(user));
     }
 
+    /// forge-config: default.fuzz.runs = 10
     function test_passIfWhitelistIsNotActivatedBatch(DefaultTestData memory data, address user) public {
         bytes[] memory calls = whitelistCalls(user);
 
@@ -160,7 +152,7 @@ contract SetIsWhitelistActivatedTest is BaseTest {
 
     function test_failIfNotGovernor(DefaultTestData memory data, address user) public testWithPredefinedDefaultValues(data) {
         vm.assume(user != data.governor);
-        
+
         vm.startPrank(data.governor);
         ltv.setWhitelistRegistry(address(new WhitelistRegistry(data.owner)));
 

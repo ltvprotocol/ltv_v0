@@ -20,4 +20,6 @@ interface IAdministrationErrors {
     error FunctionStopped(bytes4 functionSignature);
     error ReceiverNotWhitelisted(address receiver);
     error WhitelistRegistryNotSet();
+    error WhitelistIsActivated();
+    error ZeroSlippageProvider();
 }
