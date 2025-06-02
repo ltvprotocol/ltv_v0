@@ -26,6 +26,10 @@ jobs:
 
       - name: Check contract sizes
         run: forge build --skip test --sizes
+
+      - name: Run forge fmt
+        run: forge fmt --check
+
   test:
     runs-on: ubuntu-latest
     steps:
