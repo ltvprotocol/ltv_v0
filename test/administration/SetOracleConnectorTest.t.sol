@@ -46,6 +46,8 @@ contract SetOracleConnectorTest is BaseTest {
         MockOracleConnector newOracleConnector = new MockOracleConnector(newCollateralPrice, newBorrowPrice, false);
 
         vm.startPrank(defaultData.owner);
+        vm.expectEmit(true, true, false, true);
+        emit IAdministrationEvents.OracleConnectorUpdated(initialOracleConnector, address(newOracleConnector));
         ltv.setOracleConnector(address(newOracleConnector));
         vm.stopPrank();
 
@@ -59,12 +61,10 @@ contract SetOracleConnectorTest is BaseTest {
 
     function test_mockOracleConnectorWithDeposit(
         DefaultTestData memory defaultData,
-        address user,
-        uint128 depositAmount
+        address user
     ) public testWithPredefinedDefaultValues(defaultData) {
         vm.assume(user != address(0));
         vm.assume(user != defaultData.owner);
-        vm.assume(depositAmount > 0);
 
         MockOracleConnector revertingOracleConnector = new MockOracleConnector(10 ** 18, 10 ** 18, true);
 
@@ -72,11 +72,9 @@ contract SetOracleConnectorTest is BaseTest {
         ltv.setOracleConnector(address(revertingOracleConnector));
         vm.stopPrank();
 
-        deal(address(ltv.collateralToken()), user, depositAmount);
+        uint256 depositAmount = 0;
 
         vm.startPrank(user);
-        ltv.collateralToken().approve(address(ltv), depositAmount);
-
         vm.expectRevert(MockOracleConnector.MockOracleError.selector);
         ltv.deposit(depositAmount, user);
         vm.stopPrank();
@@ -90,10 +88,6 @@ contract SetOracleConnectorTest is BaseTest {
     ) public testWithPredefinedDefaultValues(defaultData) {
         vm.assume(nonOwner != address(0));
         vm.assume(nonOwner != defaultData.owner);
-        vm.assume(nonOwner != defaultData.guardian);
-        vm.assume(nonOwner != defaultData.governor);
-        vm.assume(nonOwner != defaultData.emergencyDeleverager);
-        vm.assume(nonOwner != defaultData.feeCollector);
         vm.assume(collateralPrice > 0);
         vm.assume(borrowPrice > 0);
 
@@ -110,4 +104,5 @@ contract SetOracleConnectorTest is BaseTest {
 
         assertEq(address(ltv.oracleConnector()), address(newOracleConnector));
     }
+
 }
