@@ -59,10 +59,10 @@ contract SetOracleConnectorTest is BaseTest {
         assertEq(ltv.oracleConnector().getPriceBorrowOracle(), newBorrowPrice);
     }
 
-    function test_mockOracleConnectorWithDeposit(
-        DefaultTestData memory defaultData,
-        address user
-    ) public testWithPredefinedDefaultValues(defaultData) {
+    function test_mockOracleConnectorWithDeposit(DefaultTestData memory defaultData, address user)
+        public
+        testWithPredefinedDefaultValues(defaultData)
+    {
         vm.assume(user != address(0));
         vm.assume(user != defaultData.owner);
 
@@ -104,5 +104,4 @@ contract SetOracleConnectorTest is BaseTest {
 
         assertEq(address(ltv.oracleConnector()), address(newOracleConnector));
     }
-
 }
