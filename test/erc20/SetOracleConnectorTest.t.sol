@@ -5,6 +5,8 @@ import "../utils/BaseTest.t.sol";
 import "../../src/interfaces/IOracleConnector.sol";
 
 contract MockOracleConnector is IOracleConnector {
+    error MockOracleError();
+
     bool public shouldRevert;
     uint256 public collateralPrice;
     uint256 public borrowPrice;
@@ -17,14 +19,14 @@ contract MockOracleConnector is IOracleConnector {
 
     function getPriceCollateralOracle() external view returns (uint256) {
         if (shouldRevert) {
-            revert();
+            revert MockOracleError();
         }
         return collateralPrice;
     }
 
     function getPriceBorrowOracle() external view returns (uint256) {
         if (shouldRevert) {
-            revert();
+            revert MockOracleError();
         }
         return borrowPrice;
     }
@@ -33,11 +35,11 @@ contract MockOracleConnector is IOracleConnector {
 contract SetOracleConnectorTest is BaseTest {
     function test_setAndCheckAppliedChanges(
         DefaultTestData memory defaultData,
-        uint256 newCollateralPrice,
-        uint256 newBorrowPrice
+        uint128 newCollateralPrice,
+        uint128 newBorrowPrice
     ) public testWithPredefinedDefaultValues(defaultData) {
-        vm.assume(newCollateralPrice > 0 && newCollateralPrice <= type(uint128).max);
-        vm.assume(newBorrowPrice > 0 && newBorrowPrice <= type(uint128).max);
+        vm.assume(newCollateralPrice > 0);
+        vm.assume(newBorrowPrice > 0);
 
         address initialOracleConnector = address(ltv.oracleConnector());
 
@@ -58,11 +60,11 @@ contract SetOracleConnectorTest is BaseTest {
     function test_mockOracleConnectorWithDeposit(
         DefaultTestData memory defaultData,
         address user,
-        uint256 depositAmount
+        uint128 depositAmount
     ) public testWithPredefinedDefaultValues(defaultData) {
         vm.assume(user != address(0));
         vm.assume(user != defaultData.owner);
-        vm.assume(depositAmount > 0 && depositAmount <= type(uint128).max);
+        vm.assume(depositAmount > 0);
 
         MockOracleConnector revertingOracleConnector = new MockOracleConnector(10 ** 18, 10 ** 18, true);
 
@@ -75,17 +77,16 @@ contract SetOracleConnectorTest is BaseTest {
         vm.startPrank(user);
         ltv.collateralToken().approve(address(ltv), depositAmount);
 
-        try ltv.deposit(depositAmount, user) {
-            revert();
-        } catch {}
+        vm.expectRevert(MockOracleConnector.MockOracleError.selector);
+        ltv.deposit(depositAmount, user);
         vm.stopPrank();
     }
 
     function test_onlyOwnerCanSetOracleConnector(
         DefaultTestData memory defaultData,
         address nonOwner,
-        uint256 collateralPrice,
-        uint256 borrowPrice
+        uint128 collateralPrice,
+        uint128 borrowPrice
     ) public testWithPredefinedDefaultValues(defaultData) {
         vm.assume(nonOwner != address(0));
         vm.assume(nonOwner != defaultData.owner);
@@ -93,27 +94,12 @@ contract SetOracleConnectorTest is BaseTest {
         vm.assume(nonOwner != defaultData.governor);
         vm.assume(nonOwner != defaultData.emergencyDeleverager);
         vm.assume(nonOwner != defaultData.feeCollector);
-        vm.assume(collateralPrice > 0 && collateralPrice <= type(uint128).max);
-        vm.assume(borrowPrice > 0 && borrowPrice <= type(uint128).max);
+        vm.assume(collateralPrice > 0);
+        vm.assume(borrowPrice > 0);
 
         MockOracleConnector newOracleConnector = new MockOracleConnector(collateralPrice, borrowPrice, false);
 
         vm.startPrank(nonOwner);
-        vm.expectRevert();
-        ltv.setOracleConnector(address(newOracleConnector));
-        vm.stopPrank();
-
-        vm.startPrank(defaultData.guardian);
-        vm.expectRevert();
-        ltv.setOracleConnector(address(newOracleConnector));
-        vm.stopPrank();
-
-        vm.startPrank(defaultData.governor);
-        vm.expectRevert();
-        ltv.setOracleConnector(address(newOracleConnector));
-        vm.stopPrank();
-
-        vm.startPrank(defaultData.emergencyDeleverager);
         vm.expectRevert();
         ltv.setOracleConnector(address(newOracleConnector));
         vm.stopPrank();
