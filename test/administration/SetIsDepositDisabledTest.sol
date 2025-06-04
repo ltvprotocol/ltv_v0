@@ -57,11 +57,6 @@ contract SetIsDepositDisabledTest is PrepareEachFunctionSuccessfulExecution {
 
     function test_failIfDepositIsDisabledBatch(DefaultTestData memory data, address user) public {
         vm.assume(user != address(0));
-        vm.assume(user != data.owner);
-        vm.assume(user != data.guardian);
-        vm.assume(user != data.governor);
-        vm.assume(user != data.emergencyDeleverager);
-        vm.assume(user != data.feeCollector);
 
         bytes[] memory calls = depositDisabledCalls(user);
 
@@ -90,11 +85,6 @@ contract SetIsDepositDisabledTest is PrepareEachFunctionSuccessfulExecution {
 
     function test_passIfDepositIsEnabledBatch(DefaultTestData memory data, address user) public {
         vm.assume(user != address(0));
-        vm.assume(user != data.owner);
-        vm.assume(user != data.guardian);
-        vm.assume(user != data.governor);
-        vm.assume(user != data.emergencyDeleverager);
-        vm.assume(user != data.feeCollector);
 
         bytes[] memory calls = depositDisabledCalls(user);
 
