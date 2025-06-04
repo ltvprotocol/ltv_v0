@@ -80,28 +80,24 @@ contract SetOracleConnectorTest is BaseTest {
         vm.stopPrank();
     }
 
-    function test_onlyOwnerCanSetOracleConnector(
-        DefaultTestData memory defaultData,
-        address nonOwner,
-        uint128 collateralPrice,
-        uint128 borrowPrice
-    ) public testWithPredefinedDefaultValues(defaultData) {
+    function test_onlyOwnerCanSetOracleConnector(DefaultTestData memory defaultData, address nonOwner)
+        public
+        testWithPredefinedDefaultValues(defaultData)
+    {
         vm.assume(nonOwner != address(0));
         vm.assume(nonOwner != defaultData.owner);
-        vm.assume(collateralPrice > 0);
-        vm.assume(borrowPrice > 0);
 
-        MockOracleConnector newOracleConnector = new MockOracleConnector(collateralPrice, borrowPrice, false);
+        address newConnector = address(new MockOracleConnector(10 ** 18, 10 ** 18, false));
 
         vm.startPrank(nonOwner);
         vm.expectRevert();
-        ltv.setOracleConnector(address(newOracleConnector));
+        ltv.setOracleConnector(newConnector);
         vm.stopPrank();
 
         vm.startPrank(defaultData.owner);
-        ltv.setOracleConnector(address(newOracleConnector));
+        ltv.setOracleConnector(newConnector);
         vm.stopPrank();
 
-        assertEq(address(ltv.oracleConnector()), address(newOracleConnector));
+        assertEq(address(ltv.oracleConnector()), newConnector);
     }
 }
