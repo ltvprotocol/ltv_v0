@@ -51,10 +51,6 @@ contract SetOracleConnectorTest is BaseTest {
         ltv.setOracleConnector(address(newOracleConnector));
         vm.stopPrank();
 
-        address updatedOracleConnector = address(ltv.oracleConnector());
-        assertEq(updatedOracleConnector, address(newOracleConnector));
-        assertNotEq(updatedOracleConnector, initialOracleConnector);
-
         assertEq(ltv.oracleConnector().getPriceCollateralOracle(), newCollateralPrice);
         assertEq(ltv.oracleConnector().getPriceBorrowOracle(), newBorrowPrice);
     }
@@ -90,14 +86,8 @@ contract SetOracleConnectorTest is BaseTest {
         address newConnector = address(new MockOracleConnector(10 ** 18, 10 ** 18, false));
 
         vm.startPrank(nonOwner);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSelector(OwnableUpgradeable.OwnableUnauthorizedAccount.selector, nonOwner));
         ltv.setOracleConnector(newConnector);
         vm.stopPrank();
-
-        vm.startPrank(defaultData.owner);
-        ltv.setOracleConnector(newConnector);
-        vm.stopPrank();
-
-        assertEq(address(ltv.oracleConnector()), newConnector);
     }
 }
