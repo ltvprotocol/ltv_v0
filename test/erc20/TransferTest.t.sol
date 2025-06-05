@@ -4,24 +4,30 @@ pragma solidity ^0.8.28;
 import "../utils/BaseTest.t.sol";
 
 contract TransferTest is BaseTest {
-    function test_mintTransfer(DefaultTestData memory defaultData, address userA, address userB)
-        public
-        testWithPredefinedDefaultValues(defaultData)
-    {
+    function testFuzz_mintTransferRedeem(
+        DefaultTestData memory defaultData,
+        address userA,
+        address userB,
+        uint128 mintAmount,
+        uint256 transferAmount
+    ) public testWithPredefinedDefaultValues(defaultData) {
         vm.assume(userA != address(0));
         vm.assume(userB != address(0));
         vm.assume(userA != userB);
-        vm.assume(userA != defaultData.owner);
-        vm.assume(userB != defaultData.owner);
-        vm.assume(userA != defaultData.feeCollector);
-        vm.assume(userB != defaultData.feeCollector);
+        vm.assume(mintAmount > 0 && mintAmount <= 10 ** 15);
+        vm.assume(transferAmount > 0);
 
-        uint256 mintAmount = 10 ** 17;
-        uint256 transferAmount = 5 * 10 ** 16;
+        deal(address(borrowToken), userA, mintAmount);
 
-        ltv.mintFreeTokens(mintAmount, userA);
+        vm.startPrank(userA);
+        borrowToken.approve(address(ltv), mintAmount);
+        uint256 sharesReceived = ltv.deposit(mintAmount, userA);
+        vm.stopPrank();
+
+        vm.assume(transferAmount <= sharesReceived);
+
         uint256 userABalance = ltv.balanceOf(userA);
-        assertEq(userABalance, mintAmount);
+        assertEq(userABalance, sharesReceived);
 
         vm.expectEmit(true, true, false, true);
         emit IERC20Events.Transfer(userA, userB, transferAmount);
@@ -32,22 +38,35 @@ contract TransferTest is BaseTest {
 
         assertTrue(transferSuccess);
         assertEq(ltv.balanceOf(userB), transferAmount);
-        assertEq(ltv.balanceOf(userA), mintAmount - transferAmount);
+        assertEq(ltv.balanceOf(userA), sharesReceived - transferAmount);
+
+        uint256 sharesToRedeem = transferAmount;
+        uint256 maxRedeemable = ltv.maxRedeem(userB);
+
+        if (maxRedeemable >= sharesToRedeem) {
+            uint256 expectedAssets = ltv.previewRedeem(sharesToRedeem);
+
+            if (expectedAssets > 0) {
+                vm.startPrank(userB);
+                uint256 redeemedAssets = ltv.redeem(sharesToRedeem, userB, userB);
+                vm.stopPrank();
+
+                assertTrue(redeemedAssets > 0);
+                assertEq(ltv.balanceOf(userB), 0);
+            }
+        }
     }
 
-    function test_failedTransferInsufficientBalance(DefaultTestData memory defaultData, address userA, address userB)
-        public
-        testWithPredefinedDefaultValues(defaultData)
-    {
+    function testFuzz_failedTransferInsufficientBalance(
+        DefaultTestData memory defaultData,
+        address userA,
+        address userB,
+        uint256 transferAmount
+    ) public testWithPredefinedDefaultValues(defaultData) {
         vm.assume(userA != address(0));
         vm.assume(userB != address(0));
         vm.assume(userA != userB);
-        vm.assume(userA != defaultData.owner);
-        vm.assume(userB != defaultData.owner);
-        vm.assume(userA != defaultData.feeCollector);
-        vm.assume(userB != defaultData.feeCollector);
-
-        uint256 transferAmount = 100;
+        vm.assume(transferAmount > 0);
 
         vm.startPrank(userB);
         vm.expectRevert(stdError.arithmeticError);
@@ -58,19 +77,16 @@ contract TransferTest is BaseTest {
         assertEq(ltv.balanceOf(userB), 0);
     }
 
-    function test_zeroTransferWithEvents(DefaultTestData memory defaultData, address userA, address userB)
-        public
-        testWithPredefinedDefaultValues(defaultData)
-    {
+    function testFuzz_zeroTransferWithEvents(
+        DefaultTestData memory defaultData,
+        address userA,
+        address userB,
+        uint128 mintAmount
+    ) public testWithPredefinedDefaultValues(defaultData) {
         vm.assume(userA != address(0));
         vm.assume(userB != address(0));
         vm.assume(userA != userB);
-        vm.assume(userA != defaultData.owner);
-        vm.assume(userB != defaultData.owner);
-        vm.assume(userA != defaultData.feeCollector);
-        vm.assume(userB != defaultData.feeCollector);
-
-        uint256 mintAmount = 10 ** 17;
+        vm.assume(mintAmount > 0);
 
         ltv.mintFreeTokens(mintAmount, userA);
 
@@ -89,16 +105,15 @@ contract TransferTest is BaseTest {
         assertEq(ltv.balanceOf(userB), initialBalanceB);
     }
 
-    function test_selfTransferWithEvents(DefaultTestData memory defaultData, address userA)
-        public
-        testWithPredefinedDefaultValues(defaultData)
-    {
+    function testFuzz_selfTransferWithEvents(
+        DefaultTestData memory defaultData,
+        address userA,
+        uint128 mintAmount,
+        uint256 transferAmount
+    ) public testWithPredefinedDefaultValues(defaultData) {
         vm.assume(userA != address(0));
-        vm.assume(userA != defaultData.owner);
-        vm.assume(userA != defaultData.feeCollector);
-
-        uint256 mintAmount = 10 ** 17;
-        uint256 transferAmount = 5 * 10 ** 16;
+        vm.assume(mintAmount > 0);
+        vm.assume(transferAmount > 0 && transferAmount <= mintAmount);
 
         ltv.mintFreeTokens(mintAmount, userA);
         uint256 initialBalance = ltv.balanceOf(userA);
@@ -114,16 +129,15 @@ contract TransferTest is BaseTest {
         assertEq(ltv.balanceOf(userA), initialBalance);
     }
 
-    function test_transferToZeroAddressFails(DefaultTestData memory defaultData, address userA)
-        public
-        testWithPredefinedDefaultValues(defaultData)
-    {
+    function testFuzz_transferToZeroAddressFails(
+        DefaultTestData memory defaultData,
+        address userA,
+        uint128 mintAmount,
+        uint256 transferAmount
+    ) public testWithPredefinedDefaultValues(defaultData) {
         vm.assume(userA != address(0));
-        vm.assume(userA != defaultData.owner);
-        vm.assume(userA != defaultData.feeCollector);
-
-        uint256 mintAmount = 10 ** 17;
-        uint256 transferAmount = 5 * 10 ** 16;
+        vm.assume(mintAmount > 0);
+        vm.assume(transferAmount > 0 && transferAmount <= mintAmount);
 
         ltv.mintFreeTokens(mintAmount, userA);
         uint256 initialBalanceUserA = ltv.balanceOf(userA);
@@ -138,64 +152,7 @@ contract TransferTest is BaseTest {
         assertEq(ltv.balanceOf(address(0)), initialBalanceZero);
     }
 
-    function testFuzz_transferWithEvents(
-        DefaultTestData memory defaultData,
-        address user,
-        address recipient,
-        uint128 mintAmount,
-        uint256 transferAmount
-    ) public testWithPredefinedDefaultValues(defaultData) {
-        vm.assume(user != address(0));
-        vm.assume(recipient != address(0));
-        vm.assume(user != recipient);
-        vm.assume(user != defaultData.owner);
-        vm.assume(recipient != defaultData.owner);
-        vm.assume(user != defaultData.feeCollector);
-        vm.assume(recipient != defaultData.feeCollector);
-        vm.assume(mintAmount > 0);
-        vm.assume(transferAmount > 0 && transferAmount <= mintAmount);
-
-        ltv.mintFreeTokens(mintAmount, user);
-
-        vm.expectEmit(true, true, false, true);
-        emit IERC20Events.Transfer(user, recipient, transferAmount);
-
-        vm.startPrank(user);
-        bool success = ltv.transfer(recipient, transferAmount);
-        vm.stopPrank();
-
-        assertTrue(success);
-        assertEq(ltv.balanceOf(user), mintAmount - transferAmount);
-        assertEq(ltv.balanceOf(recipient), transferAmount);
-    }
-
-    function testFuzz_approveAmount(
-        DefaultTestData memory defaultData,
-        address user,
-        address spender,
-        uint128 mintAmount,
-        uint256 approveAmount
-    ) public testWithPredefinedDefaultValues(defaultData) {
-        vm.assume(user != address(0));
-        vm.assume(spender != address(0));
-        vm.assume(user != spender);
-        vm.assume(user != defaultData.owner);
-        vm.assume(spender != defaultData.owner);
-        vm.assume(user != defaultData.feeCollector);
-        vm.assume(spender != defaultData.feeCollector);
-        vm.assume(mintAmount > 0);
-
-        ltv.mintFreeTokens(mintAmount, user);
-
-        vm.startPrank(user);
-        bool success = ltv.approve(spender, approveAmount);
-        vm.stopPrank();
-
-        assertTrue(success);
-        assertEq(ltv.allowance(user, spender), approveAmount);
-    }
-
-    function testFuzz_transferFrom(
+    function testFuzz_comprehensiveERC20(
         DefaultTestData memory defaultData,
         address owner,
         address spender,
@@ -208,30 +165,36 @@ contract TransferTest is BaseTest {
         vm.assume(spender != address(0));
         vm.assume(recipient != address(0));
         vm.assume(owner != spender && spender != recipient && owner != recipient);
-        vm.assume(owner != defaultData.owner);
-        vm.assume(spender != defaultData.owner);
-        vm.assume(recipient != defaultData.owner);
-        vm.assume(owner != defaultData.feeCollector);
-        vm.assume(spender != defaultData.feeCollector);
-        vm.assume(recipient != defaultData.feeCollector);
-        vm.assume(mintAmount > 0);
-        vm.assume(approveAmount > 0 && approveAmount < type(uint256).max);
-        vm.assume(transferAmount > 0 && transferAmount <= mintAmount && transferAmount <= approveAmount);
+        vm.assume(mintAmount > 0 && mintAmount <= type(uint128).max);
+        vm.assume(transferAmount > 0 && transferAmount <= mintAmount);
+        vm.assume(approveAmount >= transferAmount && approveAmount < type(uint256).max);
 
         ltv.mintFreeTokens(mintAmount, owner);
 
         vm.startPrank(owner);
-        ltv.approve(spender, approveAmount);
+        uint256 directTransferAmount = transferAmount / 2;
+        bool transferSuccess = ltv.transfer(recipient, directTransferAmount);
+        assertTrue(transferSuccess);
         vm.stopPrank();
 
+        assertEq(ltv.balanceOf(owner), mintAmount - directTransferAmount);
+        assertEq(ltv.balanceOf(recipient), directTransferAmount);
+
+        vm.startPrank(owner);
+        bool approveSuccess = ltv.approve(spender, approveAmount);
+        assertTrue(approveSuccess);
+        vm.stopPrank();
+
+        assertEq(ltv.allowance(owner, spender), approveAmount);
+
+        uint256 remainingTransfer = transferAmount - directTransferAmount;
         vm.startPrank(spender);
-        bool success = ltv.transferFrom(owner, recipient, transferAmount);
+        bool transferFromSuccess = ltv.transferFrom(owner, recipient, remainingTransfer);
+        assertTrue(transferFromSuccess);
         vm.stopPrank();
 
-        assertTrue(success);
         assertEq(ltv.balanceOf(owner), mintAmount - transferAmount);
         assertEq(ltv.balanceOf(recipient), transferAmount);
-
-        assertEq(ltv.allowance(owner, spender), approveAmount - transferAmount);
+        assertEq(ltv.allowance(owner, spender), approveAmount - remainingTransfer);
     }
 }

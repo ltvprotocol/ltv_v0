@@ -13,7 +13,6 @@ abstract contract ERC20WriteImpl is
     IERC20Events
 {
     error TransferToZeroAddress();
-    error TransferAmountTooLarge();
 
     function transferFrom(address sender, address recipient, uint256 amount)
         external
