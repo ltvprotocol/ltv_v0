@@ -2,11 +2,11 @@
 pragma solidity ^0.8.28;
 
 import "./MaxGrowthFeeStateReader.sol";
-import "src/structs/state/vault/PreviewVaultState.sol";
+import "../structs/state/vault/PreviewWithdrawVaultState.sol";
 
-contract PreviewVaultStateReader is MaxGrowthFeeStateReader {
-    function previewVaultState() internal view returns (PreviewVaultState memory) {
-        return PreviewVaultState({
+contract PreviewWithdrawVaultStateReader is MaxGrowthFeeStateReader {
+    function previewWithdrawVaultState() internal view returns (PreviewWithdrawVaultState memory) {
+        return PreviewWithdrawVaultState({
             maxGrowthFeeState: maxGrowthFeeState(),
             targetLTV: targetLTV,
             startAuction: startAuction,

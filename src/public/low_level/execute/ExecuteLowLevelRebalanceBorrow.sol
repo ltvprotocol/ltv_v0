@@ -39,22 +39,22 @@ abstract contract ExecuteLowLevelRebalanceBorrow is
         internal
         returns (int256, int256)
     {
-        ExecuteLowLevelRebalanceState memory state = executeLowLevelRebalanceState();
+        ExecuteLowLevelRebalanceState memory state = executeLowLevelRebalanceState(isSharesPositive);
 
         LowLevelRebalanceData memory data =
             previewLowLevelRebalanceStateToData(state.previewLowLevelRebalanceState, isSharesPositive);
         int256 max = maxLowLevelRebalanceBorrow(
             MaxLowLevelRebalanceBorrowStateData({
-                realBorrowAssets: state.previewLowLevelRebalanceState.maxGrowthFeeState.totalAssetsState.realBorrowAssets,
+                // using withdraw real borrow assets since it overestimates assets, so max value will be smaller
+                realBorrowAssets: state.previewLowLevelRebalanceState.maxGrowthFeeState.withdrawRealBorrowAssets,
                 targetLTV: state.previewLowLevelRebalanceState.targetLTV,
-                borrowPrice: state.previewLowLevelRebalanceState.maxGrowthFeeState.totalAssetsState.borrowPrice,
+                borrowPrice: state.previewLowLevelRebalanceState.maxGrowthFeeState.commonTotalAssetsState.borrowPrice,
                 maxTotalAssetsInUnderlying: state.maxTotalAssetsInUnderlying
             })
         );
 
         require(deltaBorrow <= max, ExceedsLowLevelRebalanceMaxDeltaBorrow(deltaBorrow, max));
 
-        int256 depositTotalAssets = isSharesPositive ? int256(data.totalAssets) : -1;
         (int256 deltaRealCollateralAssets, int256 deltaShares, int256 deltaProtocolFutureRewardShares) =
             _previewLowLevelRebalanceBorrow(deltaBorrow, data);
 
@@ -62,17 +62,9 @@ abstract contract ExecuteLowLevelRebalanceBorrow is
             data = previewLowLevelRebalanceStateToData(state.previewLowLevelRebalanceState, !isSharesPositive);
             (deltaRealCollateralAssets, deltaShares, deltaProtocolFutureRewardShares) =
                 _previewLowLevelRebalanceBorrow(deltaBorrow, data);
-            if (depositTotalAssets == -1) {
-                depositTotalAssets = int256(data.totalAssets);
-            }
         }
 
-        if (depositTotalAssets == -1) {
-            depositTotalAssets =
-                int256(totalAssets(true, state.previewLowLevelRebalanceState.maxGrowthFeeState.totalAssetsState));
-        }
-
-        applyMaxGrowthFee(data.supplyAfterFee, uint256(depositTotalAssets));
+        applyMaxGrowthFee(data.supplyAfterFee, data.withdrawTotalAssets);
 
         executeLowLevelRebalance(deltaRealCollateralAssets, deltaBorrow, deltaShares, deltaProtocolFutureRewardShares);
 

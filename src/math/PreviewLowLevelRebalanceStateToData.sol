@@ -17,36 +17,36 @@ abstract contract PreviewLowLevelRebalanceStateToData is MaxGrowthFee {
         // true since we calculate top border
         data.realCollateral = int256(
             CommonMath.convertRealCollateral(
-                state.maxGrowthFeeState.totalAssetsState.realCollateralAssets,
-                state.maxGrowthFeeState.totalAssetsState.collateralPrice,
+                isDeposit ? state.depositRealCollateralAssets : state.maxGrowthFeeState.withdrawRealCollateralAssets,
+                state.maxGrowthFeeState.commonTotalAssetsState.collateralPrice,
                 isDeposit
             )
         );
         data.realBorrow = int256(
             CommonMath.convertRealBorrow(
-                state.maxGrowthFeeState.totalAssetsState.realBorrowAssets,
-                state.maxGrowthFeeState.totalAssetsState.borrowPrice,
+                isDeposit ? state.depositRealBorrowAssets : state.maxGrowthFeeState.withdrawRealBorrowAssets,
+                state.maxGrowthFeeState.commonTotalAssetsState.borrowPrice,
                 isDeposit
             )
         );
         data.futureCollateral = CommonMath.convertFutureCollateral(
-            state.maxGrowthFeeState.totalAssetsState.futureCollateralAssets,
-            state.maxGrowthFeeState.totalAssetsState.collateralPrice,
+            state.maxGrowthFeeState.commonTotalAssetsState.futureCollateralAssets,
+            state.maxGrowthFeeState.commonTotalAssetsState.collateralPrice,
             isDeposit
         );
         data.futureBorrow = CommonMath.convertFutureBorrow(
-            state.maxGrowthFeeState.totalAssetsState.futureBorrowAssets,
-            state.maxGrowthFeeState.totalAssetsState.borrowPrice,
+            state.maxGrowthFeeState.commonTotalAssetsState.futureBorrowAssets,
+            state.maxGrowthFeeState.commonTotalAssetsState.borrowPrice,
             isDeposit
         );
         int256 futureRewardCollateral = CommonMath.convertFutureRewardCollateral(
-            state.maxGrowthFeeState.totalAssetsState.futureRewardCollateralAssets,
-            state.maxGrowthFeeState.totalAssetsState.collateralPrice,
+            state.maxGrowthFeeState.commonTotalAssetsState.futureRewardCollateralAssets,
+            state.maxGrowthFeeState.commonTotalAssetsState.collateralPrice,
             isDeposit
         );
         int256 futureRewardBorrow = CommonMath.convertFutureRewardBorrow(
-            state.maxGrowthFeeState.totalAssetsState.futureRewardBorrowAssets,
-            state.maxGrowthFeeState.totalAssetsState.borrowPrice,
+            state.maxGrowthFeeState.commonTotalAssetsState.futureRewardBorrowAssets,
+            state.maxGrowthFeeState.commonTotalAssetsState.borrowPrice,
             isDeposit
         );
 
@@ -58,8 +58,8 @@ abstract contract PreviewLowLevelRebalanceStateToData is MaxGrowthFee {
         data.protocolFutureRewardBorrow = futureRewardBorrow - data.userFutureRewardBorrow;
         data.protocolFutureRewardCollateral = futureRewardCollateral - data.userFutureRewardCollateral;
 
-        data.collateralPrice = state.maxGrowthFeeState.totalAssetsState.collateralPrice;
-        data.borrowPrice = state.maxGrowthFeeState.totalAssetsState.borrowPrice;
+        data.collateralPrice = state.maxGrowthFeeState.commonTotalAssetsState.collateralPrice;
+        data.borrowPrice = state.maxGrowthFeeState.commonTotalAssetsState.borrowPrice;
 
         data.totalAssets = _totalAssets(
             isDeposit,
@@ -71,12 +71,20 @@ abstract contract PreviewLowLevelRebalanceStateToData is MaxGrowthFee {
         );
 
         // need to recalculate everything with another rounding
-        uint256 withdrawTotalAssets =
-            !isDeposit ? data.totalAssets : totalAssets(false, state.maxGrowthFeeState.totalAssetsState);
+        data.withdrawTotalAssets = !isDeposit
+            ? data.totalAssets
+            : totalAssets(
+                false,
+                TotalAssetsState({
+                    realBorrowAssets: state.maxGrowthFeeState.withdrawRealBorrowAssets,
+                    realCollateralAssets: state.maxGrowthFeeState.withdrawRealCollateralAssets,
+                    commonTotalAssetsState: state.maxGrowthFeeState.commonTotalAssetsState
+                })
+            );
 
         data.supplyAfterFee = _previewSupplyAfterFee(
             MaxGrowthFeeData({
-                withdrawTotalAssets: withdrawTotalAssets,
+                withdrawTotalAssets: data.withdrawTotalAssets,
                 maxGrowthFee: state.maxGrowthFeeState.maxGrowthFee,
                 supply: totalSupply(state.maxGrowthFeeState.supply),
                 lastSeenTokenPrice: state.maxGrowthFeeState.lastSeenTokenPrice

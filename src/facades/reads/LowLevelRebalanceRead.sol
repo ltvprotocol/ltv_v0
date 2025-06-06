@@ -15,19 +15,19 @@ abstract contract LowLevelRebalanceRead is
 {
     function previewLowLevelRebalanceShares(int256 deltaShares) public view returns (int256, int256) {
         return modules.lowLevelRebalanceModule().previewLowLevelRebalanceShares(
-            deltaShares, previewLowLevelRebalanceState()
+            deltaShares, previewLowLevelRebalanceState(deltaShares >= 0)
         );
     }
 
     function previewLowLevelRebalanceBorrow(int256 deltaBorrowAssets) external view returns (int256, int256) {
-        return modules.lowLevelRebalanceModule().previewLowLevelRebalanceBorrow(
-            deltaBorrowAssets, previewLowLevelRebalanceState()
+        return modules.lowLevelRebalanceModule().previewLowLevelRebalanceBorrowHint(
+            deltaBorrowAssets, true, previewLowLevelRebalanceState(true)
         );
     }
 
     function previewLowLevelRebalanceCollateral(int256 deltaCollateralAssets) external view returns (int256, int256) {
-        return modules.lowLevelRebalanceModule().previewLowLevelRebalanceCollateral(
-            deltaCollateralAssets, previewLowLevelRebalanceState()
+        return modules.lowLevelRebalanceModule().previewLowLevelRebalanceCollateralHint(
+            deltaCollateralAssets, true, previewLowLevelRebalanceState(true)
         );
     }
 
@@ -37,7 +37,7 @@ abstract contract LowLevelRebalanceRead is
         returns (int256, int256)
     {
         return modules.lowLevelRebalanceModule().previewLowLevelRebalanceBorrowHint(
-            deltaBorrowAssets, isSharesPositiveHint, previewLowLevelRebalanceState()
+            deltaBorrowAssets, isSharesPositiveHint, previewLowLevelRebalanceState(isSharesPositiveHint)
         );
     }
 
@@ -47,7 +47,7 @@ abstract contract LowLevelRebalanceRead is
         returns (int256, int256)
     {
         return modules.lowLevelRebalanceModule().previewLowLevelRebalanceCollateralHint(
-            deltaCollateralAssets, isSharesPositiveHint, previewLowLevelRebalanceState()
+            deltaCollateralAssets, isSharesPositiveHint, previewLowLevelRebalanceState(isSharesPositiveHint)
         );
     }
 

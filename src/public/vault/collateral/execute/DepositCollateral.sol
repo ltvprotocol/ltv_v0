@@ -46,9 +46,9 @@ abstract contract DepositCollateral is
 
         collateralToken.transferFrom(msg.sender, address(this), assets);
 
-        uint256 withdrawTotalAssets = totalAssets(false, state.previewVaultState.maxGrowthFeeState.totalAssetsState);
-
-        applyMaxGrowthFee(data.previewCollateralVaultData.supplyAfterFee, withdrawTotalAssets);
+        applyMaxGrowthFee(
+            data.previewCollateralVaultData.supplyAfterFee, data.previewCollateralVaultData.withdrawTotalAssets
+        );
 
         _mintProtocolRewards(
             MintProtocolRewardsData({
@@ -86,7 +86,7 @@ abstract contract DepositCollateral is
         applyStateTransition(
             NextStateData({
                 nextState: nextState,
-                borrowPrice: state.previewVaultState.maxGrowthFeeState.totalAssetsState.borrowPrice,
+                borrowPrice: state.previewDepositVaultState.maxGrowthFeeState.commonTotalAssetsState.borrowPrice,
                 collateralPrice: data.previewCollateralVaultData.collateralPrice
             })
         );

@@ -6,14 +6,6 @@ import "src/math/PreviewLowLevelRebalanceStateToData.sol";
 abstract contract PreviewLowLevelRebalanceBorrow is PreviewLowLevelRebalanceStateToData {
     using uMulDiv for uint256;
 
-    function previewLowLevelRebalanceBorrow(int256 deltaBorrow, PreviewLowLevelRebalanceState memory state)
-        public
-        pure
-        returns (int256, int256)
-    {
-        return previewLowLevelRebalanceBorrowHint(deltaBorrow, true, state);
-    }
-
     function previewLowLevelRebalanceBorrowHint(
         int256 deltaBorrow,
         bool isSharesPositiveHint,

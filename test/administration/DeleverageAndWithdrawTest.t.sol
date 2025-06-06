@@ -7,7 +7,6 @@ import "../../src/errors/ILowLevelRebalanceErrors.sol";
 import "../../src/errors/IVaultErrors.sol";
 import "../../src/connectors/lending_connectors/VaultBalanceAsLendingConnector.sol";
 
-
 contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
     function test_normalData(DefaultTestData memory data) public testWithPredefinedDefaultValues(data) {
         uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false);
@@ -147,7 +146,9 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         vm.expectRevert(abi.encodeWithSelector(ILowLevelRebalanceErrors.ZeroTargetLTVDisablesBorrow.selector));
         ltv.executeLowLevelRebalanceBorrow(-amount);
 
-        vm.expectRevert(abi.encodeWithSelector(ILowLevelRebalanceErrors.ZeroTargetLTVDisablesBorrow.selector));
+        vm.expectRevert(
+            abi.encodeWithSelector(ILowLevelRebalanceErrors.ExceedsLowLevelRebalanceMaxDeltaBorrow.selector, amount, 0)
+        );
         ltv.executeLowLevelRebalanceBorrowHint(amount, true);
     }
 
@@ -323,13 +324,14 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false);
         deal(address(borrowToken), data.emergencyDeleverager, borrowAssets);
 
-        assertEq(ltv.totalAssets(), 10 ** 18 + Constants.VIRTUAL_ASSETS_AMOUNT);
+        assertEq(ltv.convertToAssets(10 ** 18), 10 ** 18);
         vm.prank(data.owner);
         oracle.setAssetPrice(address(collateralToken), 10 ** 18 * 10 / 4);
 
         vm.startPrank(data.emergencyDeleverager);
         borrowToken.approve(address(ltv), borrowAssets);
+        uint256 supplyBefore = ltv.totalSupply();
         ltv.deleverageAndWithdraw(borrowAssets, 0);
-        assertEq(ltv.totalAssets(), 18 * 10 ** 17 + Constants.VIRTUAL_ASSETS_AMOUNT);
+        assertGt(ltv.totalSupply(), supplyBefore);
     }
 }

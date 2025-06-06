@@ -50,16 +50,9 @@ abstract contract RedeemCollateral is
             return 0;
         }
 
-        uint256 withdrawTotalAssets = _totalAssets(
-            false,
-            TotalAssetsData({
-                collateral: data.previewCollateralVaultData.collateral,
-                borrow: data.previewCollateralVaultData.borrow,
-                borrowPrice: state.previewVaultState.maxGrowthFeeState.totalAssetsState.borrowPrice
-            })
+        applyMaxGrowthFee(
+            data.previewCollateralVaultData.supplyAfterFee, data.previewCollateralVaultData.withdrawTotalAssets
         );
-
-        applyMaxGrowthFee(data.previewCollateralVaultData.supplyAfterFee, withdrawTotalAssets);
 
         _mintProtocolRewards(
             MintProtocolRewardsData({
@@ -99,7 +92,7 @@ abstract contract RedeemCollateral is
         applyStateTransition(
             NextStateData({
                 nextState: nextState,
-                borrowPrice: state.previewVaultState.maxGrowthFeeState.totalAssetsState.borrowPrice,
+                borrowPrice: state.previewWithdrawVaultState.maxGrowthFeeState.commonTotalAssetsState.borrowPrice,
                 collateralPrice: data.previewCollateralVaultData.collateralPrice
             })
         );

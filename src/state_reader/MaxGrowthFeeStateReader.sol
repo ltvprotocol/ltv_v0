@@ -6,8 +6,11 @@ import "src/structs/state/MaxGrowthFeeState.sol";
 
 contract MaxGrowthFeeStateReader is TotalAssetsStateReader {
     function maxGrowthFeeState() internal view returns (MaxGrowthFeeState memory) {
+        TotalAssetsState memory withdrawTotalAssetsState = totalAssetsState(false);
         return MaxGrowthFeeState({
-            totalAssetsState: totalAssetsState(),
+            commonTotalAssetsState: withdrawTotalAssetsState.commonTotalAssetsState,
+            withdrawRealCollateralAssets: withdrawTotalAssetsState.realCollateralAssets,
+            withdrawRealBorrowAssets: withdrawTotalAssetsState.realBorrowAssets,
             maxGrowthFee: maxGrowthFee,
             supply: baseTotalSupply,
             lastSeenTokenPrice: lastSeenTokenPrice

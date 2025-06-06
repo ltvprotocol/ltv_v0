@@ -2,29 +2,31 @@
 pragma solidity ^0.8.28;
 
 import "../../interfaces/IModules.sol";
-import "src/state_reader/PreviewVaultStateReader.sol";
+import "src/state_reader/PreviewDepositVaultStateReader.sol";
 import "src/state_reader/MaxDepositMintBorrowVaultStateReader.sol";
 import "src/state_reader/MaxWithdrawRedeemBorrowVaultStateReader.sol";
+import "src/state_reader/PreviewWithdrawVaultStateReader.sol";
 
 abstract contract BorrowVaultRead is
-    PreviewVaultStateReader,
+    PreviewDepositVaultStateReader,
+    PreviewWithdrawVaultStateReader,
     MaxDepositMintBorrowVaultStateReader,
     MaxWithdrawRedeemBorrowVaultStateReader
 {
     function previewDeposit(uint256 assets) external view returns (uint256) {
-        return modules.borrowVaultModule().previewDeposit(assets, previewVaultState());
+        return modules.borrowVaultModule().previewDeposit(assets, previewDepositVaultState());
     }
 
     function previewWithdraw(uint256 assets) external view returns (uint256) {
-        return modules.borrowVaultModule().previewWithdraw(assets, previewVaultState());
+        return modules.borrowVaultModule().previewWithdraw(assets, previewWithdrawVaultState());
     }
 
     function previewMint(uint256 shares) external view returns (uint256) {
-        return modules.borrowVaultModule().previewMint(shares, previewVaultState());
+        return modules.borrowVaultModule().previewMint(shares, previewDepositVaultState());
     }
 
     function previewRedeem(uint256 shares) external view returns (uint256) {
-        return modules.borrowVaultModule().previewRedeem(shares, previewVaultState());
+        return modules.borrowVaultModule().previewRedeem(shares, previewWithdrawVaultState());
     }
 
     function maxDeposit(address) external view returns (uint256) {
@@ -51,11 +53,12 @@ abstract contract BorrowVaultRead is
         return modules.borrowVaultModule().convertToAssets(shares, maxGrowthFeeState());
     }
 
+    // default behavior - don't overestimate our assets
     function totalAssets() external view returns (uint256) {
-        return modules.borrowVaultModule().totalAssets(totalAssetsState());
+        return modules.borrowVaultModule().totalAssets(totalAssetsState(false));
     }
 
     function totalAssets(bool isDeposit) external view returns (uint256) {
-        return modules.borrowVaultModule().totalAssets(isDeposit, totalAssetsState());
+        return modules.borrowVaultModule().totalAssets(isDeposit, totalAssetsState(isDeposit));
     }
 }

@@ -12,15 +12,15 @@ import "src/modifiers/AdministrationModifiers.sol";
 import "src/events/IAdministrationEvents.sol";
 import "src/modifiers/FunctionStopperModifier.sol";
 import "../math/MaxGrowthFee.sol";
-import "forge-std/console.sol";
+import "../state_reader/MaxGrowthFeeStateReader.sol";
+import "../state_transition/ApplyMaxGrowthFee.sol";
 
 abstract contract AdministrationSetters is
+    ApplyMaxGrowthFee,
     MaxGrowthFee,
-    OwnableUpgradeable,
-    ReentrancyGuardUpgradeable,
+    MaxGrowthFeeStateReader,
     Lending,
     AdministrationModifiers,
-    FunctionStopperModifier,
     IAdministrationEvents
 {
     using uMulDiv for uint256;
@@ -148,6 +148,11 @@ abstract contract AdministrationSetters is
         require(!isVaultDeleveraged, VaultAlreadyDeleveraged());
         require(address(vaultBalanceAsLendingConnector) != address(0), VaultBalanceAsLendingConnectorNotSet());
 
+        MaxGrowthFeeState memory state = maxGrowthFeeState();
+        MaxGrowthFeeData memory data = maxGrowthFeeStateToData(state);
+
+        applyMaxGrowthFee(_previewSupplyAfterFee(data), data.withdrawTotalAssets);
+
         futureBorrowAssets = 0;
         futureCollateralAssets = 0;
         futureRewardBorrowAssets = 0;
@@ -163,27 +168,20 @@ abstract contract AdministrationSetters is
         require(closeAmountBorrow >= realBorrowAssets, ImpossibleToCoverDeleverage(realBorrowAssets, closeAmountBorrow));
 
         uint256 collateralAssets = lendingConnector.getRealCollateralAssets(false);
-        console.log("zero");
 
         uint256 collateralToTransfer = realBorrowAssets.mulDivDown(
             oracleConnector.getPriceBorrowOracle(), oracleConnector.getPriceCollateralOracle()
         );
 
-        console.log(collateralAssets);
-        console.log(collateralToTransfer);
-
         collateralToTransfer +=
             (collateralAssets - collateralToTransfer).mulDivDown(deleverageFee, Constants.MAX_GROWTH_FEE_DIVIDER);
 
-        console.log("one");
         if (realBorrowAssets != 0) {
             borrowToken.transferFrom(msg.sender, address(this), realBorrowAssets);
             repay(realBorrowAssets);
         }
-        console.log("two");
 
         withdraw(collateralAssets);
-        console.log("three");
 
         if (collateralToTransfer != 0) {
             collateralToken.transfer(msg.sender, collateralToTransfer);
