@@ -12,6 +12,9 @@ abstract contract ERC20WriteImpl is
     ReentrancyGuardUpgradeable,
     IERC20Events
 {
+    error TransferToZeroAddress();
+    error TransferAmountTooLarge();
+
     function transferFrom(address sender, address recipient, uint256 amount)
         external
         isFunctionAllowed
@@ -19,7 +22,15 @@ abstract contract ERC20WriteImpl is
         nonReentrant
         returns (bool)
     {
-        allowance[sender][msg.sender] -= amount;
+        if (recipient == address(0)) {
+            revert TransferToZeroAddress();
+        }
+
+        uint256 currentAllowance = allowance[sender][msg.sender];
+        if (currentAllowance != type(uint256).max) {
+            allowance[sender][msg.sender] = currentAllowance - amount;
+        }
+
         balanceOf[sender] -= amount;
         balanceOf[recipient] += amount;
         emit Transfer(sender, recipient, amount);
@@ -33,6 +44,9 @@ abstract contract ERC20WriteImpl is
         nonReentrant
         returns (bool)
     {
+        if (recipient == address(0)) {
+            revert TransferToZeroAddress();
+        }
         balanceOf[msg.sender] -= amount;
         balanceOf[recipient] += amount;
         emit Transfer(msg.sender, recipient, amount);
