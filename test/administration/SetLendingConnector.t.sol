@@ -5,49 +5,44 @@ import "../utils/BaseTest.t.sol";
 import "../../src/interfaces/ILendingConnector.sol";
 
 contract MockLendingConnector is ILendingConnector {
-    address public collateralToken;
-    address public borrowToken;
     bool public supplyCalled;
     bool public withdrawCalled;
+    bool public borrowCalled;
+    bool public repayCalled;
     uint256 public lastSupplyAmount;
     uint256 public lastWithdrawAmount;
-
-    constructor(address _collateralToken, address _borrowToken) {
-        collateralToken = _collateralToken;
-        borrowToken = _borrowToken;
-    }
 
     function supply(uint256 assets) external override {
         supplyCalled = true;
         lastSupplyAmount = assets;
-        MockERC20(collateralToken).transferFrom(msg.sender, address(this), assets);
     }
 
     function withdraw(uint256 assets) external override {
         withdrawCalled = true;
         lastWithdrawAmount = assets;
-        MockERC20(collateralToken).transfer(msg.sender, assets);
     }
 
-    function borrow(uint256 assets) external override {
-        MockERC20(borrowToken).transfer(msg.sender, assets);
+    function borrow(uint256 /* assets */ ) external override {
+        borrowCalled = true;
     }
 
-    function repay(uint256 assets) external override {
-        MockERC20(borrowToken).transferFrom(msg.sender, address(this), assets);
+    function repay(uint256 /* assets */ ) external override {
+        repayCalled = true;
     }
 
-    function getRealCollateralAssets(bool) external view override returns (uint256) {
-        return MockERC20(collateralToken).balanceOf(address(this));
+    function getRealCollateralAssets(bool) external pure override returns (uint256) {
+        return 0;
     }
 
-    function getRealBorrowAssets(bool) external view override returns (uint256) {
-        return MockERC20(borrowToken).balanceOf(address(this));
+    function getRealBorrowAssets(bool) external pure override returns (uint256) {
+        return 0;
     }
 
     function reset() external {
         supplyCalled = false;
         withdrawCalled = false;
+        borrowCalled = false;
+        repayCalled = false;
         lastSupplyAmount = 0;
         lastWithdrawAmount = 0;
     }
@@ -56,44 +51,38 @@ contract MockLendingConnector is ILendingConnector {
 contract SetLendingConnectorTest is BaseTest {
     MockLendingConnector public mockLendingConnector;
 
-    function testSetAndCheckStorage(DefaultTestData memory defaultData)
+    function test_setAndCheckStorageSlot(DefaultTestData memory defaultData)
         public
         testWithPredefinedDefaultValues(defaultData)
     {
-        mockLendingConnector = new MockLendingConnector(address(collateralToken), address(borrowToken));
+        mockLendingConnector = new MockLendingConnector();
+        address oldLendingConnector = address(ltv.getLendingConnector());
 
-        address initialLendingConnector = address(ltv.getLendingConnector());
-
-        vm.startPrank(defaultData.owner);
+        vm.prank(defaultData.owner);
+        vm.expectEmit(true, true, true, true, address(ltv));
+        emit IAdministrationEvents.LendingConnectorUpdated(oldLendingConnector, address(mockLendingConnector));
         ltv.setLendingConnector(address(mockLendingConnector));
-        vm.stopPrank();
 
         assertEq(address(ltv.getLendingConnector()), address(mockLendingConnector));
-        assertNotEq(address(ltv.getLendingConnector()), initialLendingConnector);
     }
 
-    function testMockExecution(DefaultTestData memory defaultData)
+    function test_mockExecution(DefaultTestData memory defaultData)
         public
         testWithPredefinedDefaultValues(defaultData)
     {
-        mockLendingConnector = new MockLendingConnector(address(collateralToken), address(borrowToken));
+        mockLendingConnector = new MockLendingConnector();
 
         vm.prank(defaultData.owner);
         ltv.setLendingConnector(address(mockLendingConnector));
 
         assertEq(address(ltv.getLendingConnector()), address(mockLendingConnector));
 
+        mockLendingConnector.reset();
+        assertEq(mockLendingConnector.supplyCalled(), false);
+
         vm.startPrank(address(ltv));
 
-        mockLendingConnector.reset();
-
-        assertEq(mockLendingConnector.supplyCalled(), false);
-        assertEq(mockLendingConnector.lastSupplyAmount(), 0);
-
         uint256 testAmount = 100;
-        deal(address(collateralToken), address(ltv), testAmount);
-        collateralToken.approve(address(mockLendingConnector), testAmount);
-
         mockLendingConnector.supply(testAmount);
 
         vm.stopPrank();
@@ -102,18 +91,18 @@ contract SetLendingConnectorTest is BaseTest {
         assertEq(mockLendingConnector.lastSupplyAmount(), testAmount);
     }
 
-    function test_RevertIf_NotOwner(DefaultTestData memory defaultData, address user)
+    function test_failIfNotOwner(DefaultTestData memory defaultData, address user)
         public
         testWithPredefinedDefaultValues(defaultData)
     {
         vm.assume(user != defaultData.owner);
         vm.assume(user != defaultData.governor);
+        vm.assume(user != address(0));
 
-        mockLendingConnector = new MockLendingConnector(address(collateralToken), address(borrowToken));
+        mockLendingConnector = new MockLendingConnector();
 
-        vm.startPrank(user);
+        vm.prank(user);
         vm.expectRevert();
         ltv.setLendingConnector(address(mockLendingConnector));
-        vm.stopPrank();
     }
 }
