@@ -19,6 +19,14 @@ contract SetIsWithdrawDisabledTest is PrepareEachFunctionSuccessfulExecution {
         });
     }
 
+    function checkTokensReceived(UserBalance memory initialBalance, UserBalance memory currentBalance) internal pure {
+        require(
+            initialBalance.collateral < currentBalance.collateral || initialBalance.borrow < currentBalance.borrow
+                || initialBalance.shares < currentBalance.shares,
+            "Didn't receive any token"
+        );
+    }
+
     function withdrawDisabledCalls(address user) public pure returns (bytes[] memory) {
         bytes[] memory selectors = new bytes[](9);
         uint256 amount = 1000;
@@ -98,17 +106,20 @@ contract SetIsWithdrawDisabledTest is PrepareEachFunctionSuccessfulExecution {
         internal
         testWithPredefinedDefaultValues(data)
     {
-        prepareEachFunctionSuccessfulExecution(user);
+        prepareWithdrawDisabledTest(user);
 
         vm.startPrank(data.guardian);
         ltv.setIsWithdrawDisabled(false);
         vm.stopPrank();
+
+        UserBalance memory initialBalance = getUserBalance(user);
 
         vm.startPrank(user);
         (bool success,) = address(ltv).call(call);
         vm.stopPrank();
 
         assertEq(success, true);
+        checkTokensReceived(initialBalance, getUserBalance(user));
     }
 
     function test_failIfNotGuardian(DefaultTestData memory data, address user)
