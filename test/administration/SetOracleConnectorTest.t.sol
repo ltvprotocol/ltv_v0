@@ -4,24 +4,26 @@ pragma solidity ^0.8.28;
 import "../utils/BaseTest.t.sol";
 import "../../src/interfaces/IOracleConnector.sol";
 
-contract MockOracleConnector is IOracleConnector {
+contract SimpleMockOracleConnector is IOracleConnector {
+    error MockOracleError();
+
     function getPriceCollateralOracle() external pure override returns (uint256) {
-        revert();
+        revert MockOracleError();
     }
 
     function getPriceBorrowOracle() external pure override returns (uint256) {
-        revert();
+        revert MockOracleError();
     }
 }
 
 contract SetOracleConnectorTest is BaseTest {
-    MockOracleConnector public mockOracleConnector;
+    SimpleMockOracleConnector public mockOracleConnector;
 
-    function test_setAndCheckStorageSlot(DefaultTestData memory defaultData)
+    function test_setAndCheckAppliedChanges(DefaultTestData memory defaultData)
         public
         testWithPredefinedDefaultValues(defaultData)
     {
-        mockOracleConnector = new MockOracleConnector();
+        mockOracleConnector = new SimpleMockOracleConnector();
         address oldOracleConnector = address(ltv.oracleConnector());
 
         vm.prank(defaultData.owner);
@@ -32,11 +34,11 @@ contract SetOracleConnectorTest is BaseTest {
         assertEq(address(ltv.oracleConnector()), address(mockOracleConnector));
     }
 
-    function test_mockExecution(DefaultTestData memory defaultData)
+    function test_mockOracleConnectorWithDeposit(DefaultTestData memory defaultData)
         public
         testWithPredefinedDefaultValues(defaultData)
     {
-        mockOracleConnector = new MockOracleConnector();
+        mockOracleConnector = new SimpleMockOracleConnector();
 
         vm.prank(defaultData.owner);
         ltv.setOracleConnector(address(mockOracleConnector));
@@ -50,13 +52,13 @@ contract SetOracleConnectorTest is BaseTest {
         vm.startPrank(user);
         borrowToken.approve(address(ltv), amount);
 
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSelector(SimpleMockOracleConnector.MockOracleError.selector));
         ltv.deposit(amount, user);
 
         vm.stopPrank();
     }
 
-    function test_failIfNotOwner(DefaultTestData memory defaultData, address user)
+    function test_onlyOwnerCanSetOracleConnector(DefaultTestData memory defaultData, address user)
         public
         testWithPredefinedDefaultValues(defaultData)
     {
@@ -64,7 +66,7 @@ contract SetOracleConnectorTest is BaseTest {
         vm.assume(user != defaultData.governor);
         vm.assume(user != address(0));
 
-        mockOracleConnector = new MockOracleConnector();
+        mockOracleConnector = new SimpleMockOracleConnector();
 
         vm.prank(user);
         vm.expectRevert();
