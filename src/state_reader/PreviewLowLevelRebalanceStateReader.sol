@@ -5,11 +5,7 @@ import "./MaxGrowthFeeStateReader.sol";
 import "src/structs/state/low_level/PreviewLowLevelRebalanceState.sol";
 
 contract PreviewLowLevelRebalanceStateReader is MaxGrowthFeeStateReader {
-    function previewLowLevelRebalanceState()
-        internal
-        view
-        returns (PreviewLowLevelRebalanceState memory)
-    {
+    function previewLowLevelRebalanceState() internal view returns (PreviewLowLevelRebalanceState memory) {
         MaxGrowthFeeState memory maxGrowthFeeState = maxGrowthFeeState();
         ILendingConnector _lendingConnector = getLendingConnector();
 
