@@ -63,13 +63,12 @@ contract SetOracleConnectorTest is BaseTest {
         testWithPredefinedDefaultValues(defaultData)
     {
         vm.assume(user != defaultData.owner);
-        vm.assume(user != defaultData.governor);
         vm.assume(user != address(0));
 
         mockOracleConnector = new SimpleMockOracleConnector();
 
         vm.prank(user);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSelector(OwnableUpgradeable.OwnableUnauthorizedAccount.selector, user));
         ltv.setOracleConnector(address(mockOracleConnector));
     }
 }
