@@ -39,7 +39,7 @@ abstract contract ExecuteLowLevelRebalanceCollateral is
         internal
         returns (int256, int256)
     {
-        ExecuteLowLevelRebalanceState memory state = executeLowLevelRebalanceState(isSharesPositive);
+        ExecuteLowLevelRebalanceState memory state = executeLowLevelRebalanceState();
         LowLevelRebalanceData memory data =
             previewLowLevelRebalanceStateToData(state.previewLowLevelRebalanceState, isSharesPositive);
         int256 max = maxLowLevelRebalanceCollateral(

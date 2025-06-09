@@ -23,7 +23,7 @@ abstract contract ExecuteLowLevelRebalanceShares is
         nonReentrant
         returns (int256, int256)
     {
-        ExecuteLowLevelRebalanceState memory state = executeLowLevelRebalanceState(deltaShares >= 0);
+        ExecuteLowLevelRebalanceState memory state = executeLowLevelRebalanceState();
         LowLevelRebalanceData memory data =
             previewLowLevelRebalanceStateToData(state.previewLowLevelRebalanceState, deltaShares >= 0);
 

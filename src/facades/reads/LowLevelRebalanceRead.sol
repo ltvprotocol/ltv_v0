@@ -15,19 +15,19 @@ abstract contract LowLevelRebalanceRead is
 {
     function previewLowLevelRebalanceShares(int256 deltaShares) public view returns (int256, int256) {
         return modules.lowLevelRebalanceModule().previewLowLevelRebalanceShares(
-            deltaShares, previewLowLevelRebalanceState(deltaShares >= 0)
+            deltaShares, previewLowLevelRebalanceState()
         );
     }
 
     function previewLowLevelRebalanceBorrow(int256 deltaBorrowAssets) external view returns (int256, int256) {
         return modules.lowLevelRebalanceModule().previewLowLevelRebalanceBorrowHint(
-            deltaBorrowAssets, true, previewLowLevelRebalanceState(true)
+            deltaBorrowAssets, true, previewLowLevelRebalanceState()
         );
     }
 
     function previewLowLevelRebalanceCollateral(int256 deltaCollateralAssets) external view returns (int256, int256) {
         return modules.lowLevelRebalanceModule().previewLowLevelRebalanceCollateralHint(
-            deltaCollateralAssets, true, previewLowLevelRebalanceState(true)
+            deltaCollateralAssets, true, previewLowLevelRebalanceState()
         );
     }
 
@@ -37,7 +37,7 @@ abstract contract LowLevelRebalanceRead is
         returns (int256, int256)
     {
         return modules.lowLevelRebalanceModule().previewLowLevelRebalanceBorrowHint(
-            deltaBorrowAssets, isSharesPositiveHint, previewLowLevelRebalanceState(isSharesPositiveHint)
+            deltaBorrowAssets, isSharesPositiveHint, previewLowLevelRebalanceState()
         );
     }
 
@@ -47,7 +47,7 @@ abstract contract LowLevelRebalanceRead is
         returns (int256, int256)
     {
         return modules.lowLevelRebalanceModule().previewLowLevelRebalanceCollateralHint(
-            deltaCollateralAssets, isSharesPositiveHint, previewLowLevelRebalanceState(isSharesPositiveHint)
+            deltaCollateralAssets, isSharesPositiveHint, previewLowLevelRebalanceState()
         );
     }
 

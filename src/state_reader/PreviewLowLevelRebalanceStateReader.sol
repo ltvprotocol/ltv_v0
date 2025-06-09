@@ -5,7 +5,7 @@ import "./MaxGrowthFeeStateReader.sol";
 import "src/structs/state/low_level/PreviewLowLevelRebalanceState.sol";
 
 contract PreviewLowLevelRebalanceStateReader is MaxGrowthFeeStateReader {
-    function previewLowLevelRebalanceState(bool isDeposit)
+    function previewLowLevelRebalanceState()
         internal
         view
         returns (PreviewLowLevelRebalanceState memory)

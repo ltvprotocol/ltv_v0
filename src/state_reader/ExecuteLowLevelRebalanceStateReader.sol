@@ -5,13 +5,13 @@ import "./PreviewLowLevelRebalanceStateReader.sol";
 import "src/structs/state/low_level/ExecuteLowLevelRebalanceState.sol";
 
 contract ExecuteLowLevelRebalanceStateReader is PreviewLowLevelRebalanceStateReader {
-    function executeLowLevelRebalanceState(bool isDeposit)
+    function executeLowLevelRebalanceState()
         internal
         view
         returns (ExecuteLowLevelRebalanceState memory)
     {
         return ExecuteLowLevelRebalanceState({
-            previewLowLevelRebalanceState: previewLowLevelRebalanceState(isDeposit),
+            previewLowLevelRebalanceState: previewLowLevelRebalanceState(),
             maxTotalAssetsInUnderlying: maxTotalAssetsInUnderlying
         });
     }
