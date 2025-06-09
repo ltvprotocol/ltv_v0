@@ -2,6 +2,7 @@
 pragma solidity ^0.8.28;
 
 import "../utils/BaseTest.t.sol";
+import "../../src/errors/IERC20Errors.sol";
 
 contract TransferTest is BaseTest {
     function testFuzz_mintTransferRedeem(
@@ -65,13 +66,16 @@ contract TransferTest is BaseTest {
         assertEq(ltv.balanceOf(userB), 0);
     }
 
-    function testFuzz_zeroTransferWithEvents(DefaultTestData memory defaultData, address userA, address userB)
+    function testFuzz_zeroTransferWithEvents(DefaultTestData memory defaultData, address userA, address userB, uint128 mintAmount)
         public
         testWithPredefinedDefaultValues(defaultData)
     {
         vm.assume(userA != address(0));
         vm.assume(userB != address(0));
         vm.assume(userA != userB);
+        vm.assume(mintAmount > 0);
+
+        ltv.mintFreeTokens(mintAmount, userA);
 
         uint256 initialBalanceA = ltv.balanceOf(userA);
         uint256 initialBalanceB = ltv.balanceOf(userB);
@@ -127,7 +131,7 @@ contract TransferTest is BaseTest {
         uint256 initialBalanceZero = ltv.balanceOf(address(0));
 
         vm.startPrank(userA);
-        vm.expectRevert(abi.encodeWithSignature("TransferToZeroAddress()"));
+        vm.expectRevert(abi.encodeWithSelector(IERC20Errors.TransferToZeroAddress.selector));
         ltv.transfer(address(0), transferAmount);
         vm.stopPrank();
 
