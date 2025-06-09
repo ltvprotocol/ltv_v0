@@ -66,10 +66,12 @@ contract TransferTest is BaseTest {
         assertEq(ltv.balanceOf(userB), 0);
     }
 
-    function testFuzz_zeroTransferWithEvents(DefaultTestData memory defaultData, address userA, address userB, uint128 mintAmount)
-        public
-        testWithPredefinedDefaultValues(defaultData)
-    {
+    function testFuzz_zeroTransferWithEvents(
+        DefaultTestData memory defaultData,
+        address userA,
+        address userB,
+        uint128 mintAmount
+    ) public testWithPredefinedDefaultValues(defaultData) {
         vm.assume(userA != address(0));
         vm.assume(userB != address(0));
         vm.assume(userA != userB);
