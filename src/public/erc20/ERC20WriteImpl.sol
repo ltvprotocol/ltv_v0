@@ -4,13 +4,15 @@ pragma solidity ^0.8.28;
 import "src/modifiers/WhitelistModifier.sol";
 import "src/modifiers/FunctionStopperModifier.sol";
 import "src/events/IERC20Events.sol";
+import "src/errors/IERC20Errors.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 
 abstract contract ERC20WriteImpl is
     WhitelistModifier,
     FunctionStopperModifier,
     ReentrancyGuardUpgradeable,
-    IERC20Events
+    IERC20Events,
+    IERC20Errors
 {
     function transferFrom(address sender, address recipient, uint256 amount)
         external
@@ -19,6 +21,9 @@ abstract contract ERC20WriteImpl is
         nonReentrant
         returns (bool)
     {
+        if (recipient == address(0)) {
+            revert TransferToZeroAddress();
+        }
         allowance[sender][msg.sender] -= amount;
         balanceOf[sender] -= amount;
         balanceOf[recipient] += amount;
@@ -33,6 +38,9 @@ abstract contract ERC20WriteImpl is
         nonReentrant
         returns (bool)
     {
+        if (recipient == address(0)) {
+            revert TransferToZeroAddress(); 
+        }
         balanceOf[msg.sender] -= amount;
         balanceOf[recipient] += amount;
         emit Transfer(msg.sender, recipient, amount);
