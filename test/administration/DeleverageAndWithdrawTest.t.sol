@@ -7,7 +7,6 @@ import "../../src/errors/ILowLevelRebalanceErrors.sol";
 import "../../src/errors/IVaultErrors.sol";
 import "../../src/connectors/lending_connectors/VaultBalanceAsLendingConnector.sol";
 
-
 contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
     function test_normalData(DefaultTestData memory data) public testWithPredefinedDefaultValues(data) {
         uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false);
