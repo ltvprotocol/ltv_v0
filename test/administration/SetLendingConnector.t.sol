@@ -4,29 +4,37 @@ pragma solidity ^0.8.28;
 import "../utils/BaseTest.t.sol";
 import "../../src/interfaces/ILendingConnector.sol";
 
+error UnexpectedMockSupply();
+error UnexpectedMockWithdraw();
+error UnexpectedMockBorrow();
+error UnexpectedMockRepay();
+
 contract MockLendingConnector is ILendingConnector {
+    uint256 public constant collateralAssets = 2 * 10 ** 18;
+    uint256 public constant borrowAssets = 3 * 10 ** 18;
+
     function supply(uint256) external pure override {
-        revert();
+        revert UnexpectedMockSupply();
     }
 
     function withdraw(uint256) external pure override {
-        revert();
+        revert UnexpectedMockWithdraw();
     }
 
     function borrow(uint256) external pure override {
-        revert();
+        revert UnexpectedMockBorrow();
     }
 
     function repay(uint256) external pure override {
-        revert();
+        revert UnexpectedMockRepay();
     }
 
     function getRealCollateralAssets(bool) external pure override returns (uint256) {
-        return 0;
+        return collateralAssets;
     }
 
     function getRealBorrowAssets(bool) external pure override returns (uint256) {
-        return 0;
+        return borrowAssets;
     }
 }
 
