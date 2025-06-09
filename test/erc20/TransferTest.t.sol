@@ -50,34 +50,33 @@ contract TransferTest is BaseTest {
         DefaultTestData memory defaultData,
         address userA,
         address userB,
+        uint128 mintAmount,
         uint256 transferAmount
     ) public testWithPredefinedDefaultValues(defaultData) {
         vm.assume(userA != address(0));
         vm.assume(userB != address(0));
         vm.assume(userA != userB);
+        vm.assume(mintAmount > 0);
         vm.assume(transferAmount > 0);
+
+        ltv.mintFreeTokens(mintAmount, userA);
 
         vm.startPrank(userB);
         vm.expectRevert(stdError.arithmeticError);
         ltv.transfer(userA, transferAmount);
         vm.stopPrank();
 
-        assertEq(ltv.balanceOf(userA), 0);
+        assertEq(ltv.balanceOf(userA), mintAmount);
         assertEq(ltv.balanceOf(userB), 0);
     }
 
-    function testFuzz_zeroTransferWithEvents(
-        DefaultTestData memory defaultData,
-        address userA,
-        address userB,
-        uint128 mintAmount
-    ) public testWithPredefinedDefaultValues(defaultData) {
+    function testFuzz_zeroTransferWithEvents(DefaultTestData memory defaultData, address userA, address userB)
+        public
+        testWithPredefinedDefaultValues(defaultData)
+    {
         vm.assume(userA != address(0));
         vm.assume(userB != address(0));
         vm.assume(userA != userB);
-        vm.assume(mintAmount > 0);
-
-        ltv.mintFreeTokens(mintAmount, userA);
 
         uint256 initialBalanceA = ltv.balanceOf(userA);
         uint256 initialBalanceB = ltv.balanceOf(userB);
