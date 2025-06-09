@@ -39,7 +39,7 @@ abstract contract ERC20WriteImpl is
         returns (bool)
     {
         if (recipient == address(0)) {
-            revert TransferToZeroAddress(); 
+            revert TransferToZeroAddress();
         }
         balanceOf[msg.sender] -= amount;
         balanceOf[recipient] += amount;

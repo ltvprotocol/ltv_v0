@@ -20,7 +20,7 @@ contract TransferTest is BaseTest {
         deal(address(borrowToken), userA, type(uint256).max);
 
         vm.startPrank(defaultData.governor);
-        ltv.setMaxSafeLTV(10**18 - 1);
+        ltv.setMaxSafeLTV(10 ** 18 - 1);
         ltv.mintFreeTokens(mintAmount, userA);
         vm.stopPrank();
 
@@ -65,11 +65,10 @@ contract TransferTest is BaseTest {
         assertEq(ltv.balanceOf(userB), 0);
     }
 
-    function testFuzz_zeroTransferWithEvents(
-        DefaultTestData memory defaultData,
-        address userA,
-        address userB
-    ) public testWithPredefinedDefaultValues(defaultData) {
+    function testFuzz_zeroTransferWithEvents(DefaultTestData memory defaultData, address userA, address userB)
+        public
+        testWithPredefinedDefaultValues(defaultData)
+    {
         vm.assume(userA != address(0));
         vm.assume(userB != address(0));
         vm.assume(userA != userB);
