@@ -10,6 +10,7 @@ contract WhitelistTest is BalancedTest {
         initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
     {
         vm.assume(user != randUser);
+        vm.assume(user != ltv.feeCollector());
         vm.stopPrank();
         address governor = ILTV(address(dummyLTV)).governor();
         vm.startPrank(governor);
@@ -28,7 +29,5 @@ contract WhitelistTest is BalancedTest {
         vm.startPrank(randUser);
         borrowToken.approve(address(dummyLTV), 10 ** 17);
         dummyLTV.deposit(10 ** 17, randUser);
-
-        vm.assume(user != ltv.feeCollector());
     }
 }
