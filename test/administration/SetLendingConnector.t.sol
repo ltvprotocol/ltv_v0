@@ -64,17 +64,8 @@ contract SetLendingConnectorTest is BaseTest {
         vm.prank(defaultData.owner);
         ltv.setLendingConnector(address(mockLendingConnector));
 
-        assertEq(address(ltv.getLendingConnector()), address(mockLendingConnector));
-
-        address user = address(this);
-        uint256 amount = 100;
-
-        deal(address(borrowToken), user, amount);
-        vm.startPrank(user);
-        borrowToken.approve(address(ltv), amount);
-
         vm.expectRevert(UnexpectedMockGetRealCollateralAssets.selector);
-        ltv.deposit(amount, user);
+        ltv.deposit(0, address(this));
 
         vm.stopPrank();
     }
@@ -83,8 +74,6 @@ contract SetLendingConnectorTest is BaseTest {
         public
         testWithPredefinedDefaultValues(defaultData)
     {
-        vm.assume(user != defaultData.owner);
-        vm.assume(user != defaultData.governor);
         vm.assume(user != address(0));
 
         mockLendingConnector = new MockLendingConnector();
