@@ -93,7 +93,6 @@ library DeltaSharesAndDeltaRealCollateral {
             // in cecb case divider needs to be rounded up, since it goes to divider with sign minus, needs to be rounded down
             dividerWithOneMinusTargetLTV -= int256(int8(data.cases.cecb))
                 * data.userFutureRewardCollateral.mulDivDown(DIVIDER, data.futureCollateral);
-            dividerWithOneMinusTargetLTV += int256(int8(data.cases.cecbc)) * int256(data.collateralSlippage);
             // in cebc case divider nneds to be rounded down, since it goes to divider with sign minus, needs to be rounded up
             divider -=
                 int256(int8(data.cases.cebc)) * data.protocolFutureRewardBorrow.mulDivUp(DIVIDER, data.futureCollateral);
@@ -103,6 +102,8 @@ library DeltaSharesAndDeltaRealCollateral {
                     (DIVIDER * int128(data.targetLTV)), (data.futureCollateral * int256(Constants.LTV_DIVIDER))
                 );
         }
+
+        dividerWithOneMinusTargetLTV += int256(int8(data.cases.cecbc)) * int256(data.collateralSlippage);
         dividerWithOneMinusTargetLTV += int256(int8(data.cases.cmbc)) * int256(data.collateralSlippage);
 
         if (data.cases.cmcb + data.cases.cecbc + data.cases.ceccb != 0) {
