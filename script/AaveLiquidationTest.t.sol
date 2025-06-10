@@ -43,12 +43,12 @@ contract AaveLiquidationTest is Test {
         (totalCollateralBase, totalDebtBase, availableBorrowsBase, currentLiquidationThreshold, ltv, healthFactor) =
             AAVE_POOL.getUserAccountData(user);
 
-        assertLt(healthFactor, 95 * 10**16); // less than CLOSE_FACTOR_HF_THRESHOLD to be able to liquidate full debt
+        assertLt(healthFactor, 95 * 10 ** 16); // less than CLOSE_FACTOR_HF_THRESHOLD to be able to liquidate full debt
 
         uint256 totalAssetsBeforeLiquidation = totalCollateralBase - totalDebtBase;
 
         liquidator = makeAddr("liquidator");
-        
+
         uint256 expectedLiquidatorWeth = totalDebtBase * (100 + PENALTY_PERCENT) / 100;
         uint256 expectedTotalAssetsChange = expectedLiquidatorWeth - totalDebtBase;
 
@@ -64,7 +64,7 @@ contract AaveLiquidationTest is Test {
         uint256 totalAssetsAfterLiquidation = totalCollateralBase - totalDebtBase;
 
         assertEq(totalAssetsAfterLiquidation, totalAssetsBeforeLiquidation - expectedTotalAssetsChange - 1);
-        
+
         vm.stopPrank();
     }
 }
