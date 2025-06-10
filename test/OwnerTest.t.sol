@@ -52,13 +52,12 @@ contract OwnerTest is BalancedTest {
         dummyLTV.updateEmergencyDeleverager(address(0));
     }
 
-    function test_transferOwnership(address owner, address user)
+    function test_transferOwnership(address owner, address user, address newOwner)
         public
         initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
     {
-        vm.assume(owner != user);
+        vm.assume(newOwner != user);
         vm.startPrank(owner);
-        address newOwner = address(0x5678);
 
         ILTV(address(dummyLTV)).transferOwnership(newOwner);
         assertEq(ILTV(address(dummyLTV)).owner(), newOwner);
