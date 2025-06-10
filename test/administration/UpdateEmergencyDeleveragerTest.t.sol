@@ -9,13 +9,6 @@ contract UpdateEmergencyDeleveragerTest is BaseTest {
         public
         testWithPredefinedDefaultValues(data)
     {
-        vm.assume(newAddress != address(0));
-        vm.assume(newAddress != data.owner);
-        vm.assume(newAddress != data.guardian);
-        vm.assume(newAddress != data.governor);
-        vm.assume(newAddress != data.emergencyDeleverager);
-        vm.assume(newAddress != data.feeCollector);
-
         address oldEmergencyDeleverager = ltv.emergencyDeleverager();
         vm.startPrank(data.owner);
         vm.expectEmit(true, true, true, true, address(ltv));
@@ -39,13 +32,6 @@ contract UpdateEmergencyDeleveragerTest is BaseTest {
         public
         testWithPredefinedDefaultValues(data)
     {
-        vm.assume(newAddress != address(0));
-        vm.assume(newAddress != data.owner);
-        vm.assume(newAddress != data.guardian);
-        vm.assume(newAddress != data.governor);
-        vm.assume(newAddress != data.emergencyDeleverager);
-        vm.assume(newAddress != data.feeCollector);
-
         vm.prank(data.owner);
         ltv.updateEmergencyDeleverager(newAddress);
 
