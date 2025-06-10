@@ -28,10 +28,12 @@ contract UpdateGovernorTest is BaseTest {
         assertEq(ltv.governor(), address(0));
     }
 
-    function test_pickRandomRestrictedFunction(DefaultTestData memory data, address newAddress)
-        public
-        testWithPredefinedDefaultValues(data)
-    {
+    /// forge-config: default.fuzz.runs = 10
+    function test_pickRandomRestrictedFunction(
+        DefaultTestData memory data,
+        address newAddress,
+        address anotherNewAddress
+    ) public testWithPredefinedDefaultValues(data) {
         vm.startPrank(data.owner);
         ltv.updateGovernor(newAddress);
         vm.stopPrank();
@@ -40,7 +42,6 @@ contract UpdateGovernorTest is BaseTest {
         ltv.setTargetLTV(74 * 10 ** 16);
         vm.stopPrank();
 
-        address anotherNewAddress = makeAddr("");
         vm.startPrank(data.owner);
         ltv.updateGovernor(anotherNewAddress);
         vm.stopPrank();

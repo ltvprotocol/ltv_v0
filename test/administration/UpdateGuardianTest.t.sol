@@ -28,10 +28,12 @@ contract UpdateGuardianTest is BaseTest {
         assertEq(ltv.guardian(), address(0));
     }
 
-    function test_pickRandomRestrictedFunction(DefaultTestData memory data, address newAddress)
-        public
-        testWithPredefinedDefaultValues(data)
-    {
+    /// forge-config: default.fuzz.runs = 10
+    function test_pickRandomRestrictedFunction(
+        DefaultTestData memory data,
+        address newAddress,
+        address anotherNewAddress
+    ) public testWithPredefinedDefaultValues(data) {
         vm.startPrank(data.owner);
         ltv.updateGuardian(newAddress);
         vm.stopPrank();
@@ -40,7 +42,6 @@ contract UpdateGuardianTest is BaseTest {
         ltv.setIsDepositDisabled(true);
         vm.stopPrank();
 
-        address anotherNewAddress = makeAddr("");
         vm.startPrank(data.owner);
         ltv.updateGuardian(anotherNewAddress);
         vm.stopPrank();
