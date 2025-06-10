@@ -8,11 +8,10 @@ error UnexpectedMockSupply();
 error UnexpectedMockWithdraw();
 error UnexpectedMockBorrow();
 error UnexpectedMockRepay();
+error UnexpectedMockGetRealCollateralAssets();
+error UnexpectedMockGetRealBorrowAssets();
 
 contract MockLendingConnector is ILendingConnector {
-    uint256 public constant collateralAssets = 2 * 10 ** 18;
-    uint256 public constant borrowAssets = 3 * 10 ** 18;
-
     function supply(uint256) external pure override {
         revert UnexpectedMockSupply();
     }
@@ -30,11 +29,11 @@ contract MockLendingConnector is ILendingConnector {
     }
 
     function getRealCollateralAssets(bool) external pure override returns (uint256) {
-        return collateralAssets;
+        revert UnexpectedMockGetRealCollateralAssets();
     }
 
     function getRealBorrowAssets(bool) external pure override returns (uint256) {
-        return borrowAssets;
+        revert UnexpectedMockGetRealBorrowAssets();
     }
 }
 
@@ -74,7 +73,7 @@ contract SetLendingConnectorTest is BaseTest {
         vm.startPrank(user);
         borrowToken.approve(address(ltv), amount);
 
-        vm.expectRevert();
+        vm.expectRevert(UnexpectedMockGetRealCollateralAssets.selector);
         ltv.deposit(amount, user);
 
         vm.stopPrank();
@@ -91,7 +90,7 @@ contract SetLendingConnectorTest is BaseTest {
         mockLendingConnector = new MockLendingConnector();
 
         vm.prank(user);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSelector(OwnableUpgradeable.OwnableUnauthorizedAccount.selector, user));
         ltv.setLendingConnector(address(mockLendingConnector));
     }
 }
