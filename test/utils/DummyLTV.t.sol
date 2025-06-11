@@ -3,12 +3,9 @@ pragma solidity ^0.8.28;
 
 import "src/elements/LTV.sol";
 import "src/state_transition/ERC20.sol";
+import "src/interfaces/IModules.sol";
 
 contract DummyLTV is LTV, ERC20 {
-    constructor(StateInitData memory initData) {
-        initialize(initData);
-    }
-
     function setFutureBorrowAssets(int256 value) public {
         futureBorrowAssets = value;
     }
