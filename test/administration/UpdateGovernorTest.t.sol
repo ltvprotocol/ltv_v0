@@ -28,7 +28,6 @@ contract UpdateGovernorTest is BaseTest {
         assertEq(ltv.governor(), address(0));
     }
 
-    /// forge-config: default.fuzz.runs = 10
     function test_pickRandomRestrictedFunction(
         DefaultTestData memory data,
         address newAddress,

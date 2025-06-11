@@ -28,7 +28,6 @@ contract UpdateGuardianTest is BaseTest {
         assertEq(ltv.guardian(), address(0));
     }
 
-    /// forge-config: default.fuzz.runs = 10
     function test_pickRandomRestrictedFunction(
         DefaultTestData memory data,
         address newAddress,
