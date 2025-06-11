@@ -34,6 +34,7 @@ contract UpdateGuardianTest is BaseTest {
         address newAddress,
         address anotherNewAddress
     ) public testWithPredefinedDefaultValues(data) {
+        vm.assume(newAddress != anotherNewAddress);
         vm.startPrank(data.owner);
         ltv.updateGuardian(newAddress);
         vm.stopPrank();

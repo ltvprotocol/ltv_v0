@@ -27,13 +27,12 @@ contract UpdateEmergencyDeleveragerTest is BaseTest {
         vm.stopPrank();
         assertEq(ltv.emergencyDeleverager(), address(0));
     }
-
-    /// forge-config: default.fuzz.runs = 10
     function test_pickRandomRestrictedFunction(
         DefaultTestData memory data,
         address newAddress,
         address anotherNewAddress
     ) public testWithPredefinedDefaultValues(data) {
+        vm.assume(newAddress != anotherNewAddress);
         vm.prank(data.owner);
         ltv.updateEmergencyDeleverager(newAddress);
 
