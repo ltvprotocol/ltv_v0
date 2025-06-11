@@ -27,6 +27,7 @@ contract UpdateEmergencyDeleveragerTest is BaseTest {
         vm.stopPrank();
         assertEq(ltv.emergencyDeleverager(), address(0));
     }
+
     function test_pickRandomRestrictedFunction(
         DefaultTestData memory data,
         address newAddress,
