@@ -97,6 +97,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         assertEq(ltv.lendingConnector().getRealCollateralAssets(false), 0);
     }
 
+    /// forge-config: default.fuzz.runs = 8
     function test_auctionNotAvailable(DefaultTestData memory data, address user)
         public
         testWithPredefinedDefaultValues(data)
@@ -134,6 +135,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         ltv.executeAuctionCollateral(-amount);
     }
 
+    /// forge-config: default.fuzz.runs = 8
     function test_lowLevelBorrowNotAvailable(DefaultTestData memory data, address user)
         public
         testWithPredefinedDefaultValues(data)
@@ -161,6 +163,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         ltv.executeLowLevelRebalanceBorrowHint(amount, true);
     }
 
+    /// forge-config: default.fuzz.runs = 8
     function test_lowLevelRebalanceCollateral(DefaultTestData memory data, address user)
         public
         testWithPredefinedDefaultValues(data)
@@ -196,6 +199,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         assertEq(deltaShares, -amount * 2);
     }
 
+    /// forge-config: default.fuzz.runs = 8
     function test_lowLevelRebalanceShares(DefaultTestData memory data, address user)
         public
         testWithPredefinedDefaultValues(data)
@@ -224,6 +228,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         assertEq(deltaRealBorrow, 0);
     }
 
+    /// forge-config: default.fuzz.runs = 8
     function test_vaultFunctions(DefaultTestData memory data, address user)
         public
         testWithPredefinedDefaultValues(data)
