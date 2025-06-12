@@ -13,6 +13,16 @@ interface ILowLevelRebalanceModule {
         PreviewLowLevelRebalanceState memory stateRepresentation
     ) external view returns (int256, int256);
 
+    function previewLowLevelRebalanceBorrow(
+        int256 deltaBorrowAssets,
+        PreviewLowLevelRebalanceState memory stateRepresentation
+    ) external view returns (int256, int256);
+
+    function previewLowLevelRebalanceCollateral(
+        int256 deltaCollateralAssets,
+        PreviewLowLevelRebalanceState memory stateRepresentation
+    ) external view returns (int256, int256);
+
     function previewLowLevelRebalanceBorrowHint(
         int256 deltaBorrowAssets,
         bool isSharesPositiveHint,

@@ -14,7 +14,7 @@ abstract contract MaxGrowthFeeStateToConvertCollateralData is TotalAssetsCollate
         returns (ConvertCollateralData memory)
     {
         ConvertCollateralData memory data;
-        uint256 totalAssets = totalAssets(
+        uint256 withdrawTotalAssets = totalAssets(
             false,
             TotalAssetsState({
                 realBorrowAssets: state.withdrawRealBorrowAssets,
@@ -26,7 +26,7 @@ abstract contract MaxGrowthFeeStateToConvertCollateralData is TotalAssetsCollate
         data.totalAssetsCollateral = _totalAssetsCollateral(
             false,
             TotalAssetsCollateralData({
-                totalAssets: totalAssets,
+                totalAssets: withdrawTotalAssets,
                 collateralPrice: state.commonTotalAssetsState.collateralPrice,
                 borrowPrice: state.commonTotalAssetsState.borrowPrice
             })
@@ -34,7 +34,7 @@ abstract contract MaxGrowthFeeStateToConvertCollateralData is TotalAssetsCollate
 
         data.supplyAfterFee = _previewSupplyAfterFee(
             MaxGrowthFeeData({
-                withdrawTotalAssets: totalAssets,
+                withdrawTotalAssets: withdrawTotalAssets,
                 maxGrowthFee: state.maxGrowthFee,
                 supply: totalSupply(state.supply),
                 lastSeenTokenPrice: state.lastSeenTokenPrice

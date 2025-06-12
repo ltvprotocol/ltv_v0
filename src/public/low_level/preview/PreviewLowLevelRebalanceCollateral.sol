@@ -6,6 +6,14 @@ import "src/math/PreviewLowLevelRebalanceStateToData.sol";
 abstract contract PreviewLowLevelRebalanceCollateral is PreviewLowLevelRebalanceStateToData {
     using uMulDiv for uint256;
 
+    function previewLowLevelRebalanceCollateral(int256 deltaCollateral, PreviewLowLevelRebalanceState memory state)
+        public
+        pure
+        returns (int256, int256)
+    {
+        return previewLowLevelRebalanceCollateralHint(deltaCollateral, true, state);
+    }
+
     function previewLowLevelRebalanceCollateralHint(
         int256 deltaCollateral,
         bool isSharesPositiveHint,

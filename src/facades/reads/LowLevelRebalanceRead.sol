@@ -20,14 +20,14 @@ abstract contract LowLevelRebalanceRead is
     }
 
     function previewLowLevelRebalanceBorrow(int256 deltaBorrowAssets) external view returns (int256, int256) {
-        return modules.lowLevelRebalanceModule().previewLowLevelRebalanceBorrowHint(
-            deltaBorrowAssets, true, previewLowLevelRebalanceState()
+        return modules.lowLevelRebalanceModule().previewLowLevelRebalanceBorrow(
+            deltaBorrowAssets, previewLowLevelRebalanceState()
         );
     }
 
     function previewLowLevelRebalanceCollateral(int256 deltaCollateralAssets) external view returns (int256, int256) {
-        return modules.lowLevelRebalanceModule().previewLowLevelRebalanceCollateralHint(
-            deltaCollateralAssets, true, previewLowLevelRebalanceState()
+        return modules.lowLevelRebalanceModule().previewLowLevelRebalanceCollateral(
+            deltaCollateralAssets, previewLowLevelRebalanceState()
         );
     }
 
