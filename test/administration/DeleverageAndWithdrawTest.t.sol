@@ -21,7 +21,16 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         // equivalent to 30 * 10**17 borrow assets + 1% fee
         uint256 expectedBalance = 15 * 10 ** 17 + 5 * 10 ** 15;
         assertEq(collateralToken.balanceOf(data.emergencyDeleverager), expectedBalance);
-        // TODO
+        assertEq(ltv.futureBorrowAssets(), 0);
+        assertEq(ltv.futureCollateralAssets(), 0);
+        assertEq(ltv.futureRewardBorrowAssets(), 0);
+        assertEq(ltv.futureRewardCollateralAssets(), 0);
+        assertEq(ltv.getLendingConnector().getRealBorrowAssets(false), 0);
+        assertEq(ltv.lendingConnector().getRealCollateralAssets(false), 0);
+        assertEq(ltv.lendingConnector().getRealBorrowAssets(false), 0);
+
+        assertEq(ltv.isVaultDeleveraged(), true);
+        assertEq(address(ltv.getLendingConnector()), address(ltv.vaultBalanceAsLendingConnector()));
     }
 
     function test_getEverythingAsFee(DefaultTestData memory data) public testWithPredefinedDefaultValues(data) {
