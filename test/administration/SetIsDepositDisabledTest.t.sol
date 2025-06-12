@@ -84,7 +84,7 @@ contract SetIsDepositDisabledTest is PrepareEachFunctionSuccessfulExecution {
         assertEq(result, abi.encodeWithSelector(IAdministrationErrors.DepositIsDisabled.selector));
     }
 
-    /// forge-config: default.fuzz.runs = 10
+    /// forge-config: default.fuzz.runs = 16
     function test_passIfDepositIsEnabledBatch(DefaultTestData memory data, address user) public {
         vm.assume(user != address(0));
 
