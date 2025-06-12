@@ -1,59 +1,55 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "src/math/CommonMath.sol";
-import "src/structs/state/vault/PreviewWithdrawVaultState.sol";
+import "src/structs/state/vault/PreviewDepositVaultState.sol";
 import "src/structs/data/vault/PreviewCollateralVaultData.sol";
-import "../public/vault/collateral/TotalAssetsCollateral.sol";
-import "./MaxGrowthFee.sol";
+import "src/public/vault/collateral/TotalAssetsCollateral.sol";
+import "../../CommonMath.sol";
+import "../../MaxGrowthFee.sol";
 
-abstract contract PreviewWithdrawVaultStateToCollateralData is TotalAssetsCollateral, MaxGrowthFee {
+abstract contract PreviewDepositVaultStateToCollateralData is TotalAssetsCollateral, MaxGrowthFee {
     using uMulDiv for uint256;
 
-    function previewWithdrawVaultStateToPreviewCollateralVaultData(PreviewWithdrawVaultState memory state)
+    function previewDepositVaultStateToPreviewCollateralVaultData(PreviewDepositVaultState memory state)
         internal
         pure
         returns (PreviewCollateralVaultData memory)
     {
         uint256 realCollateral = CommonMath.convertRealCollateral(
-            state.maxGrowthFeeState.withdrawRealCollateralAssets,
-            state.maxGrowthFeeState.commonTotalAssetsState.collateralPrice,
-            false
+            state.depositRealCollateralAssets, state.maxGrowthFeeState.commonTotalAssetsState.collateralPrice, true
         );
         uint256 realBorrow = CommonMath.convertRealBorrow(
-            state.maxGrowthFeeState.withdrawRealBorrowAssets,
-            state.maxGrowthFeeState.commonTotalAssetsState.borrowPrice,
-            false
+            state.depositRealBorrowAssets, state.maxGrowthFeeState.commonTotalAssetsState.borrowPrice, true
         );
-        return _previewWithdrawVaultStateToPreviewCollateralVaultData(realCollateral, realBorrow, state);
+        return _previewDepositVaultStateToPreviewCollateralVaultData(realCollateral, realBorrow, state);
     }
 
-    function _previewWithdrawVaultStateToPreviewCollateralVaultData(
+    function _previewDepositVaultStateToPreviewCollateralVaultData(
         uint256 realCollateral,
         uint256 realBorrow,
-        PreviewWithdrawVaultState memory state
+        PreviewDepositVaultState memory state
     ) internal pure returns (PreviewCollateralVaultData memory) {
         PreviewCollateralVaultData memory data;
 
         data.futureCollateral = CommonMath.convertFutureCollateral(
             state.maxGrowthFeeState.commonTotalAssetsState.futureCollateralAssets,
             state.maxGrowthFeeState.commonTotalAssetsState.collateralPrice,
-            false
+            true
         );
         data.futureBorrow = CommonMath.convertFutureBorrow(
             state.maxGrowthFeeState.commonTotalAssetsState.futureBorrowAssets,
             state.maxGrowthFeeState.commonTotalAssetsState.borrowPrice,
-            false
+            true
         );
         int256 futureRewardCollateral = CommonMath.convertFutureRewardCollateral(
             state.maxGrowthFeeState.commonTotalAssetsState.futureRewardCollateralAssets,
             state.maxGrowthFeeState.commonTotalAssetsState.collateralPrice,
-            false
+            true
         );
         int256 futureRewardBorrow = CommonMath.convertFutureRewardBorrow(
             state.maxGrowthFeeState.commonTotalAssetsState.futureRewardBorrowAssets,
             state.maxGrowthFeeState.commonTotalAssetsState.borrowPrice,
-            false
+            true
         );
 
         data.collateral = int256(realCollateral) + data.futureCollateral + futureRewardCollateral;
@@ -69,8 +65,8 @@ abstract contract PreviewWithdrawVaultStateToCollateralData is TotalAssetsCollat
         data.protocolFutureRewardBorrow = futureRewardBorrow - data.userFutureRewardBorrow;
         data.protocolFutureRewardCollateral = futureRewardCollateral - data.userFutureRewardCollateral;
 
-        data.withdrawTotalAssets = _totalAssets(
-            false,
+        uint256 assets = _totalAssets(
+            true,
             TotalAssetsData({
                 collateral: data.collateral,
                 borrow: data.borrow,
@@ -78,11 +74,20 @@ abstract contract PreviewWithdrawVaultStateToCollateralData is TotalAssetsCollat
             })
         );
         data.totalAssetsCollateral = _totalAssetsCollateral(
-            false,
+            true,
             TotalAssetsCollateralData({
-                totalAssets: data.withdrawTotalAssets,
+                totalAssets: assets,
                 collateralPrice: state.maxGrowthFeeState.commonTotalAssetsState.collateralPrice,
                 borrowPrice: state.maxGrowthFeeState.commonTotalAssetsState.borrowPrice
+            })
+        );
+
+        data.withdrawTotalAssets = totalAssets(
+            false,
+            TotalAssetsState({
+                realCollateralAssets: state.maxGrowthFeeState.withdrawRealCollateralAssets,
+                realBorrowAssets: state.maxGrowthFeeState.withdrawRealBorrowAssets,
+                commonTotalAssetsState: state.maxGrowthFeeState.commonTotalAssetsState
             })
         );
 

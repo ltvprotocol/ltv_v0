@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "./MaxGrowthFee.sol";
+import "../MaxGrowthFee.sol";
 import "src/structs/data/vault/ConvertCollateralData.sol";
 import "src/public/vault/collateral/TotalAssetsCollateral.sol";
 

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "./MaxDepositMintStateToData.sol";
-import "./MaxWithdrawRedeemStateToData.sol";
+import "./state_to_data/max/MaxDepositMintStateToData.sol";
+import "./state_to_data/max/MaxWithdrawRedeemStateToData.sol";
 
 abstract contract Vault is MaxDepositMintStateToData, MaxWithdrawRedeemStateToData {
     using uMulDiv for uint256;

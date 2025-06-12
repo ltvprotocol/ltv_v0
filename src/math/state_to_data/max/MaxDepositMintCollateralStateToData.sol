@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "./PreviewDepositVaultStateToCollateralData.sol";
+import "../preview/PreviewDepositVaultStateToCollateralData.sol";
 import "src/structs/state/vault/MaxDepositMintCollateralVaultState.sol";
 import "src/structs/data/vault/MaxDepositMintCollateralVaultData.sol";
 
