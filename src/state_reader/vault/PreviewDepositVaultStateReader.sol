@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "./MaxGrowthFeeStateReader.sol";
-import "../structs/state/vault/PreviewDepositVaultState.sol";
+import "../MaxGrowthFeeStateReader.sol";
+import "../../structs/state/vault/PreviewDepositVaultState.sol";
 
 contract PreviewDepositVaultStateReader is MaxGrowthFeeStateReader {
     function previewDepositVaultState() internal view returns (PreviewDepositVaultState memory) {

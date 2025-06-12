@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "./MaxGrowthFeeStateReader.sol";
+import "../MaxGrowthFeeStateReader.sol";
 import "src/structs/state/low_level/PreviewLowLevelRebalanceState.sol";
 
 contract PreviewLowLevelRebalanceStateReader is MaxGrowthFeeStateReader {

@@ -7,7 +7,7 @@ import "src/state_transition/ApplyMaxGrowthFee.sol";
 import "src/math/state_to_data/preview/PreviewLowLevelRebalanceStateToData.sol";
 import "src/state_transition/ExecuteLowLevelRebalance.sol";
 import "src/errors/ILowLevelRebalanceErrors.sol";
-import "src/state_reader/ExecuteLowLevelRebalanceStateReader.sol";
+import "src/state_reader/low_level/ExecuteLowLevelRebalanceStateReader.sol";
 
 abstract contract ExecuteLowLevelRebalanceBorrow is
     ExecuteLowLevelRebalanceStateReader,

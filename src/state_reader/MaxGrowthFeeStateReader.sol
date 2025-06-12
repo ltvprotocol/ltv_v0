@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "./TotalAssetsStateReader.sol";
+import "./vault/TotalAssetsStateReader.sol";
 import "src/structs/state/MaxGrowthFeeState.sol";
 
 contract MaxGrowthFeeStateReader is TotalAssetsStateReader {

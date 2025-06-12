@@ -11,7 +11,7 @@ import "src/events/IERC4626Events.sol";
 import "../preview/PreviewDepositCollateral.sol";
 import "../../../../math/NextStep.sol";
 import "src/errors/IVaultErrors.sol";
-import "src/state_reader/MaxDepositMintCollateralVaultStateReader.sol";
+import "src/state_reader/vault/MaxDepositMintCollateralVaultStateReader.sol";
 
 abstract contract DepositCollateral is
     MaxDepositMintCollateralVaultStateReader,

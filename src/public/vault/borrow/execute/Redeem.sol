@@ -12,7 +12,7 @@ import "../preview/PreviewRedeem.sol";
 import "../../../../math/NextStep.sol";
 import "../../../../state_transition/TransferFromProtocol.sol";
 import "src/errors/IVaultErrors.sol";
-import "src/state_reader/MaxWithdrawRedeemBorrowVaultStateReader.sol";
+import "src/state_reader/vault/MaxWithdrawRedeemBorrowVaultStateReader.sol";
 
 abstract contract Redeem is
     MaxWithdrawRedeemBorrowVaultStateReader,

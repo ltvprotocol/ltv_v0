@@ -2,8 +2,8 @@
 pragma solidity ^0.8.28;
 
 import "../../interfaces/IModules.sol";
-import "src/state_reader/MaxDepositMintCollateralVaultStateReader.sol";
-import "src/state_reader/MaxWithdrawRedeemCollateralVaultStateReader.sol";
+import "src/state_reader/vault/MaxDepositMintCollateralVaultStateReader.sol";
+import "src/state_reader/vault/MaxWithdrawRedeemCollateralVaultStateReader.sol";
 
 abstract contract CollateralVaultRead is
     MaxDepositMintCollateralVaultStateReader,

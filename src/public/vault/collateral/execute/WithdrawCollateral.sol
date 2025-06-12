@@ -11,7 +11,7 @@ import "src/events/IERC4626Events.sol";
 import "src/errors/IVaultErrors.sol";
 import "../preview/PreviewWithdrawCollateral.sol";
 import "../../../../math/NextStep.sol";
-import "src/state_reader/MaxWithdrawRedeemCollateralVaultStateReader.sol";
+import "src/state_reader/vault/MaxWithdrawRedeemCollateralVaultStateReader.sol";
 import "../../../../state_transition/TransferFromProtocol.sol";
 
 abstract contract WithdrawCollateral is

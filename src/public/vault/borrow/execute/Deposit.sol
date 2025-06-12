@@ -11,7 +11,7 @@ import "src/events/IERC4626Events.sol";
 import "../preview/PreviewDeposit.sol";
 import "../../../../math/NextStep.sol";
 import "src/errors/IVaultErrors.sol";
-import "src/state_reader/MaxDepositMintBorrowVaultStateReader.sol";
+import "src/state_reader/vault/MaxDepositMintBorrowVaultStateReader.sol";
 
 abstract contract Deposit is
     MaxDepositMintBorrowVaultStateReader,
