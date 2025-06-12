@@ -56,9 +56,7 @@ contract OwnerTest is BalancedTest {
         public
         initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
     {
-        vm.assume(newOwner != owner);
         vm.assume(newOwner != user);
-        vm.assume(newOwner != address(0));
         vm.startPrank(owner);
 
         ILTV(address(dummyLTV)).transferOwnership(newOwner);
