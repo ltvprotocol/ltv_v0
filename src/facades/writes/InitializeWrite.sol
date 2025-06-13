@@ -11,8 +11,8 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 abstract contract InitializeWrite is LTVState, OwnableUpgradeable, IInitError {
     function initialize(StateInitData memory initData) public initializer {
         require(
-            initData.vaultBalanceAsLendingConnector != address(0),
-            InvalidVaultBalanceAsLendingConnector(initData.vaultBalanceAsLendingConnector)
+            address(initData.vaultBalanceAsLendingConnector) != address(0),
+            InvalidVaultBalanceAsLendingConnector(address(initData.vaultBalanceAsLendingConnector))
         );
         __Ownable_init(initData.owner);
 
