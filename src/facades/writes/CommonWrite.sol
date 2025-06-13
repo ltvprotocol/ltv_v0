@@ -3,6 +3,7 @@ pragma solidity ^0.8.28;
 
 abstract contract CommonWrite {
     function _delegate(address implementation, bytes memory encodedParams) internal {
+        require(implementation != address(0));
         (bool result, bytes memory data) = implementation.delegatecall(bytes.concat(msg.sig, encodedParams));
 
         assembly {
