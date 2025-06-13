@@ -84,10 +84,6 @@ abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeab
         _delegate(address(modules.administrationModule()), abi.encode(_maxGrowthFee));
     }
 
-    function setVaultBalanceAsLendingConnector(address _vaultBalanceAsLendingConnector) external {
-        _delegate(address(modules.administrationModule()), abi.encode(_vaultBalanceAsLendingConnector));
-    }
-
     function setModules(IModules _modules) external onlyOwner {
         address oldModules = address(modules);
         modules = _modules;

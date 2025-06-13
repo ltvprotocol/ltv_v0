@@ -8,8 +8,12 @@ import "src/errors/IInitError.sol";
 
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
-abstract contract InitializeWrite is LTVState, OwnableUpgradeable {
+abstract contract InitializeWrite is LTVState, OwnableUpgradeable, IInitError {
     function initialize(StateInitData memory initData) public initializer {
+        require(
+            initData.vaultBalanceAsLendingConnector != address(0),
+            InvalidVaultBalanceAsLendingConnector(initData.vaultBalanceAsLendingConnector)
+        );
         __Ownable_init(initData.owner);
 
         name = initData.name;
@@ -44,7 +48,7 @@ abstract contract InitializeWrite is LTVState, OwnableUpgradeable {
 
         if (initData.callData.length > 0) {
             (bool success,) = address(this).call(initData.callData);
-            require(success, IInitError.FaildedToInitializeWithCallData(initData.callData));
+            require(success, FaildedToInitializeWithCallData(initData.callData));
         }
     }
 }
