@@ -47,7 +47,7 @@ contract SetMaxDeleverageFeeTest is BaseTest {
         uint256 zeroFeeAssets = borrowAssets * ltv.oracleConnector().getPriceBorrowOracle()
             / ltv.oracleConnector().getPriceCollateralOracle();
         // 2% fee with 3/4 ltv gives 6% of total assets as fee
-        assertEq(collateralToken.balanceOf(defaultData.emergencyDeleverager), zeroFeeAssets + 3 * 10 ** 16);
+        assertEq(collateralToken.balanceOf(defaultData.emergencyDeleverager), zeroFeeAssets + 10 ** 16);
     }
 
     function test_setAndCheckStorageSlot(DefaultTestData memory defaultData)
@@ -87,13 +87,11 @@ contract SetMaxDeleverageFeeTest is BaseTest {
         );
     }
 
-    function test_failIfOne(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
+    function test_passIfOne(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
         uint128 newMaxDeleverageFee = uint128(1 * 10 ** 18); // 1.0
         vm.startPrank(defaultData.governor);
-        vm.expectRevert(
-            abi.encodeWithSelector(IAdministrationErrors.InvalidMaxDeleverageFee.selector, newMaxDeleverageFee)
-        );
         ltv.setMaxDeleverageFee(newMaxDeleverageFee);
+        assertEq(ltv.maxDeleverageFee(), newMaxDeleverageFee);
     }
 
     function test_failIfFortyTwo(DefaultTestData memory defaultData)

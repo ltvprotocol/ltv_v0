@@ -40,6 +40,7 @@ abstract contract ExecuteLowLevelRebalanceBorrow is
         returns (int256, int256)
     {
         ExecuteLowLevelRebalanceState memory state = executeLowLevelRebalanceState();
+
         LowLevelRebalanceData memory data =
             previewLowLevelRebalanceStateToData(state.previewLowLevelRebalanceState, isSharesPositive);
         int256 max = maxLowLevelRebalanceBorrow(
