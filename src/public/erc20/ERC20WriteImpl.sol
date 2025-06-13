@@ -6,13 +6,15 @@ import "src/modifiers/FunctionStopperModifier.sol";
 import "src/events/IERC20Events.sol";
 import "src/errors/IERC20Errors.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
+import "src/state_transition/ERC20.sol";
 
 abstract contract ERC20WriteImpl is
     WhitelistModifier,
     FunctionStopperModifier,
     ReentrancyGuardUpgradeable,
     IERC20Events,
-    IERC20Errors
+    IERC20Errors,
+    ERC20
 {
     function transferFrom(address sender, address recipient, uint256 amount)
         external
@@ -24,7 +26,7 @@ abstract contract ERC20WriteImpl is
         if (recipient == address(0)) {
             revert TransferToZeroAddress();
         }
-        allowance[sender][msg.sender] -= amount;
+        _spendAllowance(sender, msg.sender, amount);
         balanceOf[sender] -= amount;
         balanceOf[recipient] += amount;
         emit Transfer(sender, recipient, amount);

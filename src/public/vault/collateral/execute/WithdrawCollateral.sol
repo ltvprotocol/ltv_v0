@@ -47,7 +47,7 @@ abstract contract WithdrawCollateral is
         }
 
         if (owner != receiver) {
-            allowance[owner][receiver] -= shares;
+            _spendAllowance(owner, receiver, shares);
         }
 
         uint256 withdrawTotalAssets = _totalAssets(
