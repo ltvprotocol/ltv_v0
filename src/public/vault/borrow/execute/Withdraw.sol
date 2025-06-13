@@ -46,7 +46,13 @@ abstract contract Withdraw is
         }
 
         if (owner != receiver) {
-            allowance[owner][receiver] -= shares;
+            uint256 currentAllowance = allowance[owner][receiver];
+            if (currentAllowance < shares) {
+                revert VaultInsufficientAllowance(receiver, currentAllowance, shares);
+            }
+            unchecked {
+                allowance[owner][receiver] = currentAllowance - shares;
+            }
         }
 
         applyMaxGrowthFee(

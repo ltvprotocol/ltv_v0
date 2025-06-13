@@ -40,7 +40,13 @@ abstract contract Redeem is
         require(shares <= max, ExceedsMaxRedeem(owner, shares, max));
 
         if (owner != receiver) {
-            allowance[owner][receiver] -= shares;
+            uint256 currentAllowance = allowance[owner][receiver];
+            if (currentAllowance < shares) {
+                revert VaultInsufficientAllowance(receiver, currentAllowance, shares);
+            }
+            unchecked {
+                allowance[owner][receiver] = currentAllowance - shares;
+            }
         }
 
         (uint256 assetsOut, DeltaFuture memory deltaFuture) = _previewRedeem(shares, data.previewBorrowVaultData);
