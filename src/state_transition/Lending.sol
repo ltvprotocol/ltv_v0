@@ -2,29 +2,30 @@
 pragma solidity ^0.8.28;
 
 import "src/state_reader/GetLendingConnectorReader.sol";
+import "src/errors/ILendingErrors.sol";
 
-abstract contract Lending is GetLendingConnectorReader {
+abstract contract Lending is GetLendingConnectorReader, ILendingErrors {
     function borrow(uint256 assets) internal {
         (bool isSuccess,) =
             address(getLendingConnector()).delegatecall(abi.encodeCall(ILendingConnector.borrow, (assets)));
-        require(isSuccess);
+        if (!isSuccess) revert BorrowFailed(address(this), address(getLendingConnector()), assets);
     }
 
     function repay(uint256 assets) internal {
         (bool isSuccess,) =
             address(getLendingConnector()).delegatecall(abi.encodeCall(ILendingConnector.repay, (assets)));
-        require(isSuccess);
+        if (!isSuccess) revert RepayFailed(address(this), address(getLendingConnector()), assets);
     }
 
     function supply(uint256 assets) internal {
         (bool isSuccess,) =
             address(getLendingConnector()).delegatecall(abi.encodeCall(ILendingConnector.supply, (assets)));
-        require(isSuccess);
+        if (!isSuccess) revert SupplyFailed(address(this), address(getLendingConnector()), assets);
     }
 
     function withdraw(uint256 assets) internal {
         (bool isSuccess,) =
             address(getLendingConnector()).delegatecall(abi.encodeCall(ILendingConnector.withdraw, (assets)));
-        require(isSuccess);
+        if (!isSuccess) revert WithdrawFailed(address(this), address(getLendingConnector()), assets);
     }
 }
