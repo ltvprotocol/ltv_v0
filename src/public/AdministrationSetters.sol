@@ -109,6 +109,12 @@ abstract contract AdministrationSetters is
         emit MaxGrowthFeeChanged(oldValue, _maxGrowthFee);
     }
 
+    function setVaultBalanceAsLendingConnector(address _vaultBalanceAsLendingConnector) external onlyOwner {
+        address oldAddress = address(vaultBalanceAsLendingConnector);
+        vaultBalanceAsLendingConnector = ILendingConnector(_vaultBalanceAsLendingConnector);
+        emit VaultBalanceAsLendingConnectorUpdated(oldAddress, _vaultBalanceAsLendingConnector);
+    }
+
     function setIsDepositDisabled(bool value) external onlyGuardian {
         bool oldValue = isDepositDisabled;
         isDepositDisabled = value;
