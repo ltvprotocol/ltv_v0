@@ -16,4 +16,5 @@ struct PreviewCollateralVaultData {
     uint256 collateralPrice;
     uint256 supplyAfterFee;
     uint256 totalAssetsCollateral;
+    uint256 withdrawTotalAssets;
 }

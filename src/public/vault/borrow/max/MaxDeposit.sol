@@ -8,19 +8,19 @@ abstract contract MaxDeposit is PreviewMint, PreviewDeposit {
     using uMulDiv for uint256;
 
     function maxDeposit(MaxDepositMintBorrowVaultState memory state) public pure returns (uint256) {
-        return _maxDeposit(maxDepositMintBorrowVaultStateToMaxDepositMintBorrowVaultData(state));
+        return _maxDeposit(maxDepositMintStateToData(state));
     }
 
     function _maxDeposit(MaxDepositMintBorrowVaultData memory data) internal pure returns (uint256) {
         uint256 availableSpaceInShares = getAvailableSpaceInShares(
-            data.previewBorrowVaultData.collateral,
-            data.previewBorrowVaultData.borrow,
+            data.previewDepositBorrowVaultData.collateral,
+            data.previewDepositBorrowVaultData.borrow,
             data.maxTotalAssetsInUnderlying,
-            data.previewBorrowVaultData.supplyAfterFee,
-            data.previewBorrowVaultData.totalAssets,
-            data.previewBorrowVaultData.borrowPrice
+            data.previewDepositBorrowVaultData.supplyAfterFee,
+            data.previewDepositBorrowVaultData.depositTotalAssets,
+            data.previewDepositBorrowVaultData.borrowPrice
         );
-        (uint256 availableSpaceInAssets,) = _previewMint(availableSpaceInShares, data.previewBorrowVaultData);
+        (uint256 availableSpaceInAssets,) = _previewMint(availableSpaceInShares, data.previewDepositBorrowVaultData);
 
         // round up to assume smaller border
         uint256 minProfitRealBorrow = uint256(data.realCollateral).mulDivUp(data.minProfitLTV, Constants.LTV_DIVIDER);
@@ -30,7 +30,7 @@ abstract contract MaxDeposit is PreviewMint, PreviewDeposit {
 
         // round down to assume smaller border
         uint256 maxDepositInAssets = (uint256(data.realBorrow) - minProfitRealBorrow).mulDivDown(
-            Constants.ORACLE_DIVIDER, data.previewBorrowVaultData.borrowPrice
+            Constants.ORACLE_DIVIDER, data.previewDepositBorrowVaultData.borrowPrice
         );
 
         return maxDepositInAssets > availableSpaceInAssets ? availableSpaceInAssets : maxDepositInAssets;

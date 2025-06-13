@@ -22,4 +22,5 @@ interface IAdministrationErrors {
     error WhitelistRegistryNotSet();
     error WhitelistIsActivated();
     error ZeroSlippageProvider();
+    error VaultBalanceAsLendingConnectorNotSet();
 }

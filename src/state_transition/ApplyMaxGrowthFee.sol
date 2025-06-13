@@ -8,12 +8,12 @@ import "../public/vault/borrow/TotalAssets.sol";
 abstract contract ApplyMaxGrowthFee is TotalAssets, TotalSupply, ERC20 {
     using uMulDiv for uint256;
 
-    function applyMaxGrowthFee(uint256 supplyAfterFee, uint256 depositTotalAssets) internal {
+    function applyMaxGrowthFee(uint256 supplyAfterFee, uint256 withdrawTotalAssets) internal {
         uint256 supply = totalSupply(baseTotalSupply);
         if (supplyAfterFee > supply) {
             _mint(feeCollector, supplyAfterFee - supply);
             // round new token price to the top to underestimate next fee
-            lastSeenTokenPrice = depositTotalAssets.mulDivUp(Constants.LAST_SEEN_PRICE_PRECISION, supplyAfterFee);
+            lastSeenTokenPrice = withdrawTotalAssets.mulDivUp(Constants.LAST_SEEN_PRICE_PRECISION, supplyAfterFee);
         }
     }
 }
