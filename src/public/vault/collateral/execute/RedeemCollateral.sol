@@ -40,13 +40,7 @@ abstract contract RedeemCollateral is
         require(shares <= max, ExceedsMaxRedeemCollateral(owner, shares, max));
 
         if (owner != receiver) {
-            uint256 currentAllowance = allowance[owner][receiver];
-            if (currentAllowance < shares) {
-                revert VaultInsufficientAllowance(receiver, currentAllowance, shares);
-            }
-            unchecked {
-                allowance[owner][receiver] = currentAllowance - shares;
-            }
+            _spendAllowance(owner, receiver, shares);
         }
 
         (uint256 assets, DeltaFuture memory deltaFuture) =

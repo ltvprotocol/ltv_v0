@@ -47,13 +47,7 @@ abstract contract WithdrawCollateral is
         }
 
         if (owner != receiver) {
-            uint256 currentAllowance = allowance[owner][receiver];
-            if (currentAllowance < shares) {
-                revert VaultInsufficientAllowance(receiver, currentAllowance, shares);
-            }
-            unchecked {
-                allowance[owner][receiver] = currentAllowance - shares;
-            }
+            _spendAllowance(owner, receiver, shares);
         }
 
         uint256 withdrawTotalAssets = _totalAssets(
