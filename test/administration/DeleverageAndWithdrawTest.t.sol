@@ -21,7 +21,16 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         // equivalent to 30 * 10**17 borrow assets + 1% fee
         uint256 expectedBalance = 15 * 10 ** 17 + 5 * 10 ** 15;
         assertEq(collateralToken.balanceOf(data.emergencyDeleverager), expectedBalance);
-        // TODO
+        assertEq(ltv.futureBorrowAssets(), 0);
+        assertEq(ltv.futureCollateralAssets(), 0);
+        assertEq(ltv.futureRewardBorrowAssets(), 0);
+        assertEq(ltv.futureRewardCollateralAssets(), 0);
+        assertEq(ltv.getLendingConnector().getRealBorrowAssets(false), 0);
+        assertEq(ltv.lendingConnector().getRealCollateralAssets(false), 0);
+        assertEq(ltv.lendingConnector().getRealBorrowAssets(false), 0);
+
+        assertEq(ltv.isVaultDeleveraged(), true);
+        assertEq(address(ltv.getLendingConnector()), address(ltv.vaultBalanceAsLendingConnector()));
     }
 
     function test_getEverythingAsFee(DefaultTestData memory data) public testWithPredefinedDefaultValues(data) {
@@ -88,6 +97,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         assertEq(ltv.lendingConnector().getRealCollateralAssets(false), 0);
     }
 
+    /// forge-config: default.fuzz.runs = 8
     function test_auctionNotAvailable(DefaultTestData memory data, address user)
         public
         testWithPredefinedDefaultValues(data)
@@ -125,6 +135,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         ltv.executeAuctionCollateral(-amount);
     }
 
+    /// forge-config: default.fuzz.runs = 8
     function test_lowLevelBorrowNotAvailable(DefaultTestData memory data, address user)
         public
         testWithPredefinedDefaultValues(data)
@@ -152,6 +163,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         ltv.executeLowLevelRebalanceBorrowHint(amount, true);
     }
 
+    /// forge-config: default.fuzz.runs = 8
     function test_lowLevelRebalanceCollateral(DefaultTestData memory data, address user)
         public
         testWithPredefinedDefaultValues(data)
@@ -187,6 +199,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         assertEq(deltaShares, -amount * 2);
     }
 
+    /// forge-config: default.fuzz.runs = 8
     function test_lowLevelRebalanceShares(DefaultTestData memory data, address user)
         public
         testWithPredefinedDefaultValues(data)
@@ -215,6 +228,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         assertEq(deltaRealBorrow, 0);
     }
 
+    /// forge-config: default.fuzz.runs = 8
     function test_vaultFunctions(DefaultTestData memory data, address user)
         public
         testWithPredefinedDefaultValues(data)
@@ -321,16 +335,17 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
     }
 
     function test_maxDeleverageFeeApplied(DefaultTestData memory data) public testWithPredefinedDefaultValues(data) {
-        // uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false);
-        // deal(address(borrowToken), data.emergencyDeleverager, borrowAssets);
+        uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false);
+        deal(address(borrowToken), data.emergencyDeleverager, borrowAssets);
 
-        // assertEq(ltv.totalAssets(), 10 ** 18 + Constants.VIRTUAL_ASSETS_AMOUNT);
-        // vm.prank(data.owner);
-        // oracle.setAssetPrice(address(collateralToken), 10 ** 18 * 10 / 4);
+        assertEq(ltv.convertToAssets(10 ** 18), 10 ** 18);
+        vm.prank(data.owner);
+        oracle.setAssetPrice(address(collateralToken), 10 ** 18 * 10 / 4);
 
-        // vm.startPrank(data.emergencyDeleverager);
-        // borrowToken.approve(address(ltv), borrowAssets);
-        // ltv.deleverageAndWithdraw(borrowAssets, 0);
-        // assertEq(ltv.totalAssets(), 18 * 10 ** 17 + Constants.VIRTUAL_ASSETS_AMOUNT);
+        vm.startPrank(data.emergencyDeleverager);
+        borrowToken.approve(address(ltv), borrowAssets);
+        uint256 supplyBefore = ltv.totalSupply();
+        ltv.deleverageAndWithdraw(borrowAssets, 0);
+        assertGt(ltv.totalSupply(), supplyBefore);
     }
 }

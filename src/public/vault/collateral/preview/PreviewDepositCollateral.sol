@@ -7,12 +7,12 @@ import "../../../../math/DepositWithdraw.sol";
 abstract contract PreviewDepositCollateral is VaultCollateral {
     using uMulDiv for uint256;
 
-    function previewDepositCollateral(uint256 assets, PreviewVaultState memory state)
+    function previewDepositCollateral(uint256 assets, PreviewDepositVaultState memory state)
         public
         pure
         returns (uint256 shares)
     {
-        (shares,) = _previewDepositCollateral(assets, previewVaultStateToPreviewCollateralVaultData(state, true));
+        (shares,) = _previewDepositCollateral(assets, previewDepositVaultStateToPreviewCollateralVaultData(state));
     }
 
     function _previewDepositCollateral(uint256 assets, PreviewCollateralVaultData memory data)

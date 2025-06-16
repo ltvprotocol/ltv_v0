@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "./PreviewVaultStateReader.sol";
+import "./PreviewDepositVaultStateReader.sol";
 import "src/structs/state/vault/MaxDepositMintBorrowVaultState.sol";
 
-contract MaxDepositMintBorrowVaultStateReader is PreviewVaultStateReader {
+contract MaxDepositMintBorrowVaultStateReader is PreviewDepositVaultStateReader {
     function maxDepositMintBorrowVaultState() internal view returns (MaxDepositMintBorrowVaultState memory) {
         return MaxDepositMintBorrowVaultState({
-            previewVaultState: previewVaultState(),
+            previewDepositVaultState: previewDepositVaultState(),
             minProfitLTV: minProfitLTV,
             maxTotalAssetsInUnderlying: maxTotalAssetsInUnderlying
         });

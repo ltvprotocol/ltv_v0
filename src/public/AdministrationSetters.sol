@@ -12,14 +12,15 @@ import "src/modifiers/AdministrationModifiers.sol";
 import "src/events/IAdministrationEvents.sol";
 import "src/modifiers/FunctionStopperModifier.sol";
 import "../math/MaxGrowthFee.sol";
+import "../state_reader/MaxGrowthFeeStateReader.sol";
+import "../state_transition/ApplyMaxGrowthFee.sol";
 
 abstract contract AdministrationSetters is
+    ApplyMaxGrowthFee,
     MaxGrowthFee,
-    OwnableUpgradeable,
-    ReentrancyGuardUpgradeable,
+    MaxGrowthFeeStateReader,
     Lending,
     AdministrationModifiers,
-    FunctionStopperModifier,
     IAdministrationEvents
 {
     using uMulDiv for uint256;
@@ -146,6 +147,11 @@ abstract contract AdministrationSetters is
         require(deleverageFee <= maxDeleverageFee, ExceedsMaxDeleverageFee(deleverageFee, maxDeleverageFee));
         require(!isVaultDeleveraged, VaultAlreadyDeleveraged());
         require(address(vaultBalanceAsLendingConnector) != address(0), VaultBalanceAsLendingConnectorNotSet());
+
+        MaxGrowthFeeState memory state = maxGrowthFeeState();
+        MaxGrowthFeeData memory data = maxGrowthFeeStateToData(state);
+
+        applyMaxGrowthFee(_previewSupplyAfterFee(data), data.withdrawTotalAssets);
 
         futureBorrowAssets = 0;
         futureCollateralAssets = 0;

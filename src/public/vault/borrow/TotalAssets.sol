@@ -32,21 +32,29 @@ abstract contract TotalAssets {
         returns (TotalAssetsData memory)
     {
         TotalAssetsData memory data;
-        uint256 realCollateral =
-            CommonMath.convertRealCollateral(state.realCollateralAssets, state.collateralPrice, isDeposit);
-        uint256 realBorrow = CommonMath.convertRealBorrow(state.realBorrowAssets, state.borrowPrice, isDeposit);
-        int256 futureCollateral =
-            CommonMath.convertFutureCollateral(state.futureCollateralAssets, state.collateralPrice, isDeposit);
-        int256 futureBorrow = CommonMath.convertFutureBorrow(state.futureBorrowAssets, state.borrowPrice, isDeposit);
-        int256 futureRewardCollateral = CommonMath.convertFutureRewardCollateral(
-            state.futureRewardCollateralAssets, state.collateralPrice, isDeposit
+        uint256 realCollateral = CommonMath.convertRealCollateral(
+            state.realCollateralAssets, state.commonTotalAssetsState.collateralPrice, isDeposit
         );
-        int256 futureRewardBorrow =
-            CommonMath.convertFutureRewardBorrow(state.futureRewardBorrowAssets, state.borrowPrice, isDeposit);
+        uint256 realBorrow =
+            CommonMath.convertRealBorrow(state.realBorrowAssets, state.commonTotalAssetsState.borrowPrice, isDeposit);
+        int256 futureCollateral = CommonMath.convertFutureCollateral(
+            state.commonTotalAssetsState.futureCollateralAssets, state.commonTotalAssetsState.collateralPrice, isDeposit
+        );
+        int256 futureBorrow = CommonMath.convertFutureBorrow(
+            state.commonTotalAssetsState.futureBorrowAssets, state.commonTotalAssetsState.borrowPrice, isDeposit
+        );
+        int256 futureRewardCollateral = CommonMath.convertFutureRewardCollateral(
+            state.commonTotalAssetsState.futureRewardCollateralAssets,
+            state.commonTotalAssetsState.collateralPrice,
+            isDeposit
+        );
+        int256 futureRewardBorrow = CommonMath.convertFutureRewardBorrow(
+            state.commonTotalAssetsState.futureRewardBorrowAssets, state.commonTotalAssetsState.borrowPrice, isDeposit
+        );
 
         data.collateral = int256(realCollateral) + futureCollateral + futureRewardCollateral;
         data.borrow = int256(realBorrow) + futureBorrow + futureRewardBorrow;
-        data.borrowPrice = state.borrowPrice;
+        data.borrowPrice = state.commonTotalAssetsState.borrowPrice;
 
         return data;
     }

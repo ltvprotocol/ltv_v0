@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "./PreviewVaultState.sol";
+import "./PreviewWithdrawVaultState.sol";
 
 struct MaxWithdrawRedeemBorrowVaultState {
-    PreviewVaultState previewVaultState;
+    PreviewWithdrawVaultState previewWithdrawVaultState;
     uint256 maxSafeLTV;
     uint256 ownerBalance;
 }
