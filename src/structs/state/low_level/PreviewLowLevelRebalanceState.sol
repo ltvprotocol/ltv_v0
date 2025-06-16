@@ -5,6 +5,8 @@ import "src/structs/state/MaxGrowthFeeState.sol";
 
 struct PreviewLowLevelRebalanceState {
     MaxGrowthFeeState maxGrowthFeeState;
+    uint256 depositRealBorrowAssets;
+    uint256 depositRealCollateralAssets;
     uint128 targetLTV;
     uint256 blockNumber;
     uint256 startAuction;

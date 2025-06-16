@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-struct PreviewBorrowVaultData {
+struct PreviewDepositBorrowVaultData {
     int256 collateral;
     int256 borrow;
     int256 futureBorrow;
@@ -15,5 +15,6 @@ struct PreviewBorrowVaultData {
     uint128 targetLTV;
     uint256 borrowPrice;
     uint256 supplyAfterFee;
-    uint256 totalAssets;
+    uint256 withdrawTotalAssets;
+    uint256 depositTotalAssets;
 }

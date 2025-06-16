@@ -11,7 +11,7 @@ import "src/events/IERC4626Events.sol";
 import "../preview/PreviewDeposit.sol";
 import "../../../../math/NextStep.sol";
 import "src/errors/IVaultErrors.sol";
-import "src/state_reader/MaxDepositMintBorrowVaultStateReader.sol";
+import "src/state_reader/vault/MaxDepositMintBorrowVaultStateReader.sol";
 
 abstract contract Deposit is
     MaxDepositMintBorrowVaultStateReader,
@@ -27,11 +27,11 @@ abstract contract Deposit is
 
     function deposit(uint256 assets, address receiver) external isFunctionAllowed nonReentrant returns (uint256) {
         MaxDepositMintBorrowVaultState memory state = maxDepositMintBorrowVaultState();
-        MaxDepositMintBorrowVaultData memory data = maxDepositMintBorrowVaultStateToMaxDepositMintBorrowVaultData(state);
+        MaxDepositMintBorrowVaultData memory data = maxDepositMintStateToData(state);
         uint256 max = _maxDeposit(data);
         require(assets <= max, ExceedsMaxDeposit(receiver, assets, max));
 
-        (uint256 shares, DeltaFuture memory deltaFuture) = _previewDeposit(assets, data.previewBorrowVaultData);
+        (uint256 shares, DeltaFuture memory deltaFuture) = _previewDeposit(assets, data.previewDepositBorrowVaultData);
 
         if (shares == 0) {
             return 0;
@@ -39,24 +39,17 @@ abstract contract Deposit is
 
         borrowToken.transferFrom(msg.sender, address(this), assets);
 
-        uint256 withdrawTotalAssets = _totalAssets(
-            false,
-            TotalAssetsData({
-                collateral: data.previewBorrowVaultData.collateral,
-                borrow: data.previewBorrowVaultData.borrow,
-                borrowPrice: data.previewBorrowVaultData.borrowPrice
-            })
+        applyMaxGrowthFee(
+            data.previewDepositBorrowVaultData.supplyAfterFee, data.previewDepositBorrowVaultData.withdrawTotalAssets
         );
-
-        applyMaxGrowthFee(data.previewBorrowVaultData.supplyAfterFee, withdrawTotalAssets);
 
         _mintProtocolRewards(
             MintProtocolRewardsData({
                 deltaProtocolFutureRewardBorrow: deltaFuture.deltaProtocolFutureRewardBorrow,
                 deltaProtocolFutureRewardCollateral: deltaFuture.deltaProtocolFutureRewardCollateral,
-                supply: data.previewBorrowVaultData.supplyAfterFee,
-                totalAppropriateAssets: data.previewBorrowVaultData.totalAssets,
-                assetPrice: data.previewBorrowVaultData.borrowPrice
+                supply: data.previewDepositBorrowVaultData.supplyAfterFee,
+                totalAppropriateAssets: data.previewDepositBorrowVaultData.depositTotalAssets,
+                assetPrice: data.previewDepositBorrowVaultData.borrowPrice
             })
         );
 
@@ -64,12 +57,12 @@ abstract contract Deposit is
 
         NextState memory nextState = NextStep.calculateNextStep(
             NextStepData({
-                futureBorrow: data.previewBorrowVaultData.futureBorrow,
-                futureCollateral: data.previewBorrowVaultData.futureCollateral,
-                futureRewardBorrow: data.previewBorrowVaultData.userFutureRewardBorrow
-                    + data.previewBorrowVaultData.protocolFutureRewardBorrow,
-                futureRewardCollateral: data.previewBorrowVaultData.userFutureRewardCollateral
-                    + data.previewBorrowVaultData.protocolFutureRewardCollateral,
+                futureBorrow: data.previewDepositBorrowVaultData.futureBorrow,
+                futureCollateral: data.previewDepositBorrowVaultData.futureCollateral,
+                futureRewardBorrow: data.previewDepositBorrowVaultData.userFutureRewardBorrow
+                    + data.previewDepositBorrowVaultData.protocolFutureRewardBorrow,
+                futureRewardCollateral: data.previewDepositBorrowVaultData.userFutureRewardCollateral
+                    + data.previewDepositBorrowVaultData.protocolFutureRewardCollateral,
                 deltaFutureBorrow: deltaFuture.deltaFutureBorrow,
                 deltaFutureCollateral: deltaFuture.deltaFutureCollateral,
                 deltaFuturePaymentBorrow: deltaFuture.deltaFuturePaymentBorrow,
@@ -86,8 +79,8 @@ abstract contract Deposit is
         applyStateTransition(
             NextStateData({
                 nextState: nextState,
-                borrowPrice: data.previewBorrowVaultData.borrowPrice,
-                collateralPrice: state.previewVaultState.maxGrowthFeeState.totalAssetsState.collateralPrice
+                borrowPrice: data.previewDepositBorrowVaultData.borrowPrice,
+                collateralPrice: state.previewDepositVaultState.maxGrowthFeeState.commonTotalAssetsState.collateralPrice
             })
         );
 

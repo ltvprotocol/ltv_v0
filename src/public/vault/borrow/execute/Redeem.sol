@@ -12,7 +12,7 @@ import "../preview/PreviewRedeem.sol";
 import "../../../../math/NextStep.sol";
 import "../../../../state_transition/TransferFromProtocol.sol";
 import "src/errors/IVaultErrors.sol";
-import "src/state_reader/MaxWithdrawRedeemBorrowVaultStateReader.sol";
+import "src/state_reader/vault/MaxWithdrawRedeemBorrowVaultStateReader.sol";
 
 abstract contract Redeem is
     MaxWithdrawRedeemBorrowVaultStateReader,
@@ -34,8 +34,7 @@ abstract contract Redeem is
         returns (uint256 assets)
     {
         MaxWithdrawRedeemBorrowVaultState memory state = maxWithdrawRedeemBorrowVaultState(owner);
-        MaxWithdrawRedeemBorrowVaultData memory data =
-            maxWithdrawRedeemBorrowVaultStateToMaxWithdrawRedeemBorrowVaultData(state);
+        MaxWithdrawRedeemBorrowVaultData memory data = maxWithdrawRedeemStateToData(state);
         uint256 max = _maxRedeem(data);
         require(shares <= max, ExceedsMaxRedeem(owner, shares, max));
 
@@ -43,24 +42,24 @@ abstract contract Redeem is
             _spendAllowance(owner, receiver, shares);
         }
 
-        (uint256 assetsOut, DeltaFuture memory deltaFuture) = _previewRedeem(shares, data.previewBorrowVaultData);
+        (uint256 assetsOut, DeltaFuture memory deltaFuture) =
+            _previewRedeem(shares, data.previewWithdrawBorrowVaultData);
 
         if (assetsOut == 0) {
             return 0;
         }
 
         applyMaxGrowthFee(
-            data.previewBorrowVaultData.supplyAfterFee,
-            totalAssets(true, state.previewVaultState.maxGrowthFeeState.totalAssetsState)
+            data.previewWithdrawBorrowVaultData.supplyAfterFee, data.previewWithdrawBorrowVaultData.withdrawTotalAssets
         );
 
         _mintProtocolRewards(
             MintProtocolRewardsData({
                 deltaProtocolFutureRewardBorrow: deltaFuture.deltaProtocolFutureRewardBorrow,
                 deltaProtocolFutureRewardCollateral: deltaFuture.deltaProtocolFutureRewardCollateral,
-                supply: data.previewBorrowVaultData.supplyAfterFee,
-                totalAppropriateAssets: data.previewBorrowVaultData.totalAssets,
-                assetPrice: data.previewBorrowVaultData.borrowPrice
+                supply: data.previewWithdrawBorrowVaultData.supplyAfterFee,
+                totalAppropriateAssets: data.previewWithdrawBorrowVaultData.withdrawTotalAssets,
+                assetPrice: data.previewWithdrawBorrowVaultData.borrowPrice
             })
         );
 
@@ -68,12 +67,12 @@ abstract contract Redeem is
 
         NextState memory nextState = NextStep.calculateNextStep(
             NextStepData({
-                futureBorrow: data.previewBorrowVaultData.futureBorrow,
-                futureCollateral: data.previewBorrowVaultData.futureCollateral,
-                futureRewardBorrow: data.previewBorrowVaultData.userFutureRewardBorrow
-                    + data.previewBorrowVaultData.protocolFutureRewardBorrow,
-                futureRewardCollateral: data.previewBorrowVaultData.userFutureRewardCollateral
-                    + data.previewBorrowVaultData.protocolFutureRewardCollateral,
+                futureBorrow: data.previewWithdrawBorrowVaultData.futureBorrow,
+                futureCollateral: data.previewWithdrawBorrowVaultData.futureCollateral,
+                futureRewardBorrow: data.previewWithdrawBorrowVaultData.userFutureRewardBorrow
+                    + data.previewWithdrawBorrowVaultData.protocolFutureRewardBorrow,
+                futureRewardCollateral: data.previewWithdrawBorrowVaultData.userFutureRewardCollateral
+                    + data.previewWithdrawBorrowVaultData.protocolFutureRewardCollateral,
                 deltaFutureBorrow: deltaFuture.deltaFutureBorrow,
                 deltaFutureCollateral: deltaFuture.deltaFutureCollateral,
                 deltaFuturePaymentBorrow: deltaFuture.deltaFuturePaymentBorrow,
@@ -90,8 +89,8 @@ abstract contract Redeem is
         applyStateTransition(
             NextStateData({
                 nextState: nextState,
-                borrowPrice: data.previewBorrowVaultData.borrowPrice,
-                collateralPrice: state.previewVaultState.maxGrowthFeeState.totalAssetsState.collateralPrice
+                borrowPrice: data.previewWithdrawBorrowVaultData.borrowPrice,
+                collateralPrice: state.previewWithdrawVaultState.maxGrowthFeeState.commonTotalAssetsState.collateralPrice
             })
         );
 

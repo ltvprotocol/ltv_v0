@@ -74,7 +74,7 @@ contract SetLendingConnectorTest is BaseTest {
         public
         testWithPredefinedDefaultValues(defaultData)
     {
-        vm.assume(user != address(0));
+        vm.assume(user != defaultData.owner);
 
         mockLendingConnector = new MockLendingConnector();
 
