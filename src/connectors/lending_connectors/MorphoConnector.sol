@@ -37,6 +37,12 @@ contract MorphoConnector is ILendingConnector {
         MORPHO.borrow(marketParams, amount, 0, address(this), msg.sender);
     }
 
+    function repay(uint256 amount) external {
+        loanToken.transferFrom(msg.sender, address(this), amount);
+        loanToken.approve(address(MORPHO), amount);
+        MORPHO.repay(marketParams, amount, 0, address(this), "");
+    }
+
     function supplyCollateral(uint256 amount) external {
         collateralToken.transferFrom(msg.sender, address(this), amount);
         collateralToken.approve(address(MORPHO), amount);
@@ -47,29 +53,28 @@ contract MorphoConnector is ILendingConnector {
         MORPHO.withdrawCollateral(marketParams, amount, address(this), msg.sender);
     }
 
-    function repay(uint256 amount) external {
-        loanToken.transferFrom(msg.sender, address(this), amount);
-        loanToken.approve(address(MORPHO), amount);
-        MORPHO.repay(marketParams, amount, 0, address(this), "");
-    }
-
     function getRealCollateralAssets(bool isDeposit) external view returns (uint256) {
         (uint128 supplyShares,,) = MORPHO.position(marketId, address(this));
         if (supplyShares == 0) return 0;
-        
+
         (uint128 totalSupplyAssets, uint128 totalSupplyShares,,,,) = MORPHO.market(marketId);
         if (totalSupplyShares == 0) return 0;
-        
+
         return supplyShares.mulDiv(totalSupplyAssets, totalSupplyShares, isDeposit);
     }
 
     function getRealBorrowAssets(bool isDeposit) external view returns (uint256) {
-        (,uint128 borrowShares,) = MORPHO.position(marketId, address(this));
+        (, uint128 borrowShares,) = MORPHO.position(marketId, address(this));
         if (borrowShares == 0) return 0;
-        
-        (,,uint128 totalBorrowAssets, uint128 totalBorrowShares,,) = MORPHO.market(marketId);
+
+        (,, uint128 totalBorrowAssets, uint128 totalBorrowShares,,) = MORPHO.market(marketId);
         if (totalBorrowShares == 0) return 0;
-        
+
         return borrowShares.mulDiv(totalBorrowAssets, totalBorrowShares, isDeposit);
+    }
+
+    function getRealCollateralTokenAmount() external view returns (uint256) {
+        (,, uint256 collateral) = MORPHO.position(marketId, address(this));
+        return collateral;
     }
 }
