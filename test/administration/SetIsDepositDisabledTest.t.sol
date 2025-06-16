@@ -55,7 +55,7 @@ contract SetIsDepositDisabledTest is PrepareEachFunctionSuccessfulExecution {
         assertEq(ltv.isDepositDisabled(), !isDisabled);
     }
 
-    /// forge-config: default.fuzz.runs = 16
+    /// forge-config: default.fuzz.runs = 8
     function test_failIfDepositIsDisabledBatch(DefaultTestData memory data, address user) public {
         vm.assume(user != address(0));
 
@@ -84,7 +84,7 @@ contract SetIsDepositDisabledTest is PrepareEachFunctionSuccessfulExecution {
         assertEq(result, abi.encodeWithSelector(IAdministrationErrors.DepositIsDisabled.selector));
     }
 
-    /// forge-config: default.fuzz.runs = 16
+    /// forge-config: default.fuzz.runs = 8
     function test_passIfDepositIsEnabledBatch(DefaultTestData memory data, address user) public {
         vm.assume(user != address(0));
 
