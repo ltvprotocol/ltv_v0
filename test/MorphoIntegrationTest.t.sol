@@ -68,8 +68,8 @@ contract MorphoIntegrationTest is Test {
         modulesProvider = new ModulesProvider(modulesState);
 
         StateInitData memory stateInitData = StateInitData({
-            name: "LTV Vault Test",
-            symbol: "LTVT",
+            name: "123",
+            symbol: "123",
             decimals: 18,
             collateralToken: WETH,
             borrowToken: WSTETH,
@@ -129,38 +129,26 @@ contract MorphoIntegrationTest is Test {
 
     function testUserCanWithVault() public {
         uint256 realCollateral = ltvVault.getRealCollateralAssets(true);
-        assertTrue(realCollateral > 0);
+        assertGt(realCollateral, 0);
+        vm.expectRevert();
+        ltvVault.maxDeposit(user);
 
-        uint256 maxDeposit;
-        uint256 maxMint;
-
-        try ltvVault.maxDeposit(user) returns (uint256 md) {
-            maxDeposit = md;
-        } catch {
-            maxDeposit = 0;
-        }
-
-        try ltvVault.maxMint(user) returns (uint256 mm) {
-            maxMint = mm;
-        } catch {
-            maxMint = 0;
-        }
+        vm.expectRevert();
+        ltvVault.maxMint(user);
 
         vm.startPrank(user);
+        wsteth.approve(address(ltvVault), 1 ether);
 
-        if (maxDeposit > 0) {
-            uint256 depositAmount = maxDeposit > 1 ether ? 1 ether : maxDeposit;
-            wsteth.approve(address(ltvVault), depositAmount);
-            uint256 shares = ltvVault.deposit(depositAmount, user);
-            assertGt(shares, 0);
+        vm.expectRevert();
+        ltvVault.deposit(1 ether, user);
 
-            uint256 userBalance = ltvVault.balanceOf(user);
-            assertGt(userBalance, 0);
-        } else {
-            assertTrue(true);
-        }
+        vm.expectRevert();
+        ltvVault.mint(1 ether, user);
 
         vm.stopPrank();
+
+        uint256 realBorrow = ltvVault.getRealBorrowAssets(true);
+        assertEq(realBorrow, 0);
     }
 
     function testVaultState() public view {
