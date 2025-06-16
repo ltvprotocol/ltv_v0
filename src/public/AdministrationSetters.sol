@@ -11,9 +11,10 @@ import "src/errors/IAdministrationErrors.sol";
 import "src/modifiers/AdministrationModifiers.sol";
 import "src/events/IAdministrationEvents.sol";
 import "src/modifiers/FunctionStopperModifier.sol";
+import "../math/MaxGrowthFee.sol";
 
 abstract contract AdministrationSetters is
-    LTVState,
+    MaxGrowthFee,
     OwnableUpgradeable,
     ReentrancyGuardUpgradeable,
     Lending,
@@ -66,7 +67,7 @@ abstract contract AdministrationSetters is
     }
 
     function setMaxDeleverageFee(uint256 value) external isFunctionAllowed onlyGovernor {
-        require(value < 10 ** 18, InvalidMaxDeleverageFee(value));
+        require(value <= 10 ** 18, InvalidMaxDeleverageFee(value));
         uint256 oldValue = maxDeleverageFee;
         maxDeleverageFee = value;
         emit MaxDeleverageFeeChanged(oldValue, value);
@@ -107,6 +108,12 @@ abstract contract AdministrationSetters is
         emit MaxGrowthFeeChanged(oldValue, _maxGrowthFee);
     }
 
+    function setVaultBalanceAsLendingConnector(address _vaultBalanceAsLendingConnector) external onlyOwner {
+        address oldAddress = address(vaultBalanceAsLendingConnector);
+        vaultBalanceAsLendingConnector = ILendingConnector(_vaultBalanceAsLendingConnector);
+        emit VaultBalanceAsLendingConnectorUpdated(oldAddress, _vaultBalanceAsLendingConnector);
+    }
+
     function setIsDepositDisabled(bool value) external onlyGuardian {
         bool oldValue = isDepositDisabled;
         isDepositDisabled = value;
@@ -138,33 +145,41 @@ abstract contract AdministrationSetters is
     {
         require(deleverageFee <= maxDeleverageFee, ExceedsMaxDeleverageFee(deleverageFee, maxDeleverageFee));
         require(!isVaultDeleveraged, VaultAlreadyDeleveraged());
+        require(address(vaultBalanceAsLendingConnector) != address(0), VaultBalanceAsLendingConnectorNotSet());
 
         futureBorrowAssets = 0;
         futureCollateralAssets = 0;
         futureRewardBorrowAssets = 0;
         futureRewardCollateralAssets = 0;
         startAuction = 0;
+        minProfitLTV = 0;
+        targetLTV = 0;
+        maxSafeLTV = uint128(Constants.LTV_DIVIDER);
 
         // round up to repay all assets
         uint256 realBorrowAssets = lendingConnector.getRealBorrowAssets(false);
 
         require(closeAmountBorrow >= realBorrowAssets, ImpossibleToCoverDeleverage(realBorrowAssets, closeAmountBorrow));
 
-        uint256 collateralToTransfer = realBorrowAssets.mulDivUp(10 ** 18 + deleverageFee, 10 ** 18).mulDivDown(
+        uint256 collateralAssets = lendingConnector.getRealCollateralAssets(false);
+
+        uint256 collateralToTransfer = realBorrowAssets.mulDivDown(
             oracleConnector.getPriceBorrowOracle(), oracleConnector.getPriceCollateralOracle()
         );
+
+        collateralToTransfer +=
+            (collateralAssets - collateralToTransfer).mulDivDown(deleverageFee, Constants.MAX_GROWTH_FEE_DIVIDER);
 
         if (realBorrowAssets != 0) {
             borrowToken.transferFrom(msg.sender, address(this), realBorrowAssets);
             repay(realBorrowAssets);
         }
 
-        withdraw(lendingConnector.getRealCollateralAssets(false));
+        withdraw(collateralAssets);
 
         if (collateralToTransfer != 0) {
             collateralToken.transfer(msg.sender, collateralToTransfer);
         }
-
         isVaultDeleveraged = true;
     }
 
