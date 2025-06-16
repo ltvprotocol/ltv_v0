@@ -42,19 +42,11 @@ interface IMorphoBlue {
         address receiver
     ) external;
 
-    function supplyCollateral(
-        MarketParams memory marketParams,
-        uint256 assets,
-        address onBehalfOf,
-        bytes memory data
-    ) external;
+    function supplyCollateral(MarketParams memory marketParams, uint256 assets, address onBehalfOf, bytes memory data)
+        external;
 
-    function withdrawCollateral(
-        MarketParams memory marketParams,
-        uint256 assets,
-        address onBehalfOf,
-        address receiver
-    ) external;
+    function withdrawCollateral(MarketParams memory marketParams, uint256 assets, address onBehalfOf, address receiver)
+        external;
 
     function market(bytes32 marketId)
         external
