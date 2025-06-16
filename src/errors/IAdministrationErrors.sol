@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
+
 interface IAdministrationErrors {
     error InvalidLTVSet(uint128 targetLTV, uint128 maxSafeLTV, uint128 minProfitLTV);
     error UnexpectedMaxSafeLTV(uint128 maxSafeLTV);
