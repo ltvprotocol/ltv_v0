@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
+import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "../../interfaces/ILendingConnector.sol";
 import "./interfaces/IMorphoBlue.sol";
-import "src/utils/MulDiv.sol";
+import "../../utils/MulDiv.sol";
 
 contract MorphoConnector is ILendingConnector {
     using uMulDiv for uint128;
@@ -22,15 +23,26 @@ contract MorphoConnector is ILendingConnector {
     }
 
     function repay(uint256 amount) external {
+        IERC20(marketParams.loanToken).approve(address(MORPHO), amount);
         MORPHO.repay(marketParams, amount, 0, address(this), "");
     }
 
     function supply(uint256 amount) external {
+        IERC20(marketParams.loanToken).approve(address(MORPHO), amount);
         MORPHO.supply(marketParams, amount, 0, address(this), "");
     }
 
     function withdraw(uint256 amount) external {
         MORPHO.withdraw(marketParams, amount, 0, address(this), address(this));
+    }
+
+    function supplyCollateral(uint256 amount) external {
+        IERC20(marketParams.collateralToken).approve(address(MORPHO), amount);
+        MORPHO.supplyCollateral(marketParams, amount, address(this), "");
+    }
+
+    function withdrawCollateral(uint256 amount) external {
+        MORPHO.withdrawCollateral(marketParams, amount, address(this), address(this));
     }
 
     function getRealCollateralAssets(bool isDeposit) external view returns (uint256) {
@@ -49,5 +61,10 @@ contract MorphoConnector is ILendingConnector {
         if (totalBorrowShares == 0) return 0;
 
         return totalBorrowAssets.mulDiv(borrowShares, totalBorrowShares, isDeposit);
+    }
+
+    function getRealCollateralTokenAmount() external view returns (uint256) {
+        (,, uint256 collateral) = MORPHO.position(marketId, address(this));
+        return collateral;
     }
 }
