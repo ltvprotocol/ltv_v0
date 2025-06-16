@@ -3,6 +3,7 @@ pragma solidity ^0.8.27;
 
 import "../Constants.sol";
 import "../utils/MulDiv.sol";
+import "../errors/ILowLevelRebalanceErrors.sol";
 import "src/structs/data/low_level/LowLevelRebalanceData.sol";
 
 library LowLevelRebalanceMath {
@@ -53,6 +54,13 @@ library LowLevelRebalanceMath {
         int256 realCollateral,
         uint128 targetLTV
     ) private pure returns (int256) {
+        if (realBorrow + deltaBorrow == 0) {
+            return -realCollateral;
+        }
+
+        if (targetLTV == 0) {
+            revert ILowLevelRebalanceErrors.ZeroTargetLTVDisablesBorrow();
+        }
         return (realBorrow + deltaBorrow).mulDivUp(int256(Constants.LTV_DIVIDER), int128(targetLTV)) - realCollateral;
     }
 

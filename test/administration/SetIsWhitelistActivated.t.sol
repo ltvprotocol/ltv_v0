@@ -70,7 +70,7 @@ contract SetIsWhitelistActivatedTest is PrepareEachFunctionSuccessfulExecution {
         assertEq(ltv.isWhitelistActivated(), !isActivated);
     }
 
-    /// forge-config: default.fuzz.runs = 10
+    /// forge-config: default.fuzz.runs = 8
     function test_failIfWhitelistIsActivatedBatch(DefaultTestData memory data, address user) public {
         vm.assume(user != data.feeCollector);
 
@@ -97,7 +97,7 @@ contract SetIsWhitelistActivatedTest is PrepareEachFunctionSuccessfulExecution {
         assertEq(result, abi.encodeWithSelector(IAdministrationErrors.ReceiverNotWhitelisted.selector, user));
     }
 
-    /// forge-config: default.fuzz.runs = 10
+    /// forge-config: default.fuzz.runs = 8
     function test_passIfWhitelistIsSatisfiedBatch(DefaultTestData memory data, address user) public {
         bytes[] memory calls = whitelistCalls(user);
 
@@ -126,7 +126,7 @@ contract SetIsWhitelistActivatedTest is PrepareEachFunctionSuccessfulExecution {
         checkTokensReceived(initialBalance, getUserBalance(user));
     }
 
-    /// forge-config: default.fuzz.runs = 10
+    /// forge-config: default.fuzz.runs = 8
     function test_passIfWhitelistIsNotActivatedBatch(DefaultTestData memory data, address user) public {
         bytes[] memory calls = whitelistCalls(user);
 

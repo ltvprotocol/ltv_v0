@@ -36,7 +36,14 @@ abstract contract MaxGrowthFee is TotalAssets, TotalSupply {
 
     function maxGrowthFeeStateToData(MaxGrowthFeeState memory state) internal pure returns (MaxGrowthFeeData memory) {
         return MaxGrowthFeeData({
-            withdrawTotalAssets: totalAssets(false, state.totalAssetsState),
+            withdrawTotalAssets: totalAssets(
+                false,
+                TotalAssetsState({
+                    realCollateralAssets: state.withdrawRealCollateralAssets,
+                    realBorrowAssets: state.withdrawRealBorrowAssets,
+                    commonTotalAssetsState: state.commonTotalAssetsState
+                })
+            ),
             maxGrowthFee: state.maxGrowthFee,
             supply: totalSupply(state.supply),
             lastSeenTokenPrice: state.lastSeenTokenPrice

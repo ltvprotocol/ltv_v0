@@ -17,7 +17,7 @@ abstract contract MaxLowLevelRebalanceShares is MaxGrowthFee {
 
     function _maxLowLevelRebalanceShares(MaxLowLevelRebalanceSharesData memory data) public pure returns (int256) {
         int256 maxDeltaSharesInUnderlying =
-            int256(data.maxTotalAssetsInUnderlying + data.realBorrow) - int256(data.realCollateral);
+            int256(data.maxTotalAssetsInUnderlying + data.depositRealBorrow) - int256(data.depositRealCollateral);
 
         // rounding down assuming smaller border
         return maxDeltaSharesInUnderlying.mulDivDown(int256(Constants.ORACLE_DIVIDER), int256(data.borrowPrice))
@@ -30,31 +30,67 @@ abstract contract MaxLowLevelRebalanceShares is MaxGrowthFee {
         returns (MaxLowLevelRebalanceSharesData memory data)
     {
         // true since we calculate top border
-        data.realCollateral = CommonMath.convertRealCollateral(
-            state.maxGrowthFeeState.totalAssetsState.realCollateralAssets,
-            state.maxGrowthFeeState.totalAssetsState.collateralPrice,
+        data.depositRealCollateral = CommonMath.convertRealCollateral(
+            state.depositRealCollateralAssets, state.maxGrowthFeeState.commonTotalAssetsState.collateralPrice, true
+        );
+        data.depositRealBorrow = CommonMath.convertRealBorrow(
+            state.depositRealBorrowAssets, state.maxGrowthFeeState.commonTotalAssetsState.borrowPrice, true
+        );
+
+        int256 futureCollateral = CommonMath.convertFutureCollateral(
+            state.maxGrowthFeeState.commonTotalAssetsState.futureCollateralAssets,
+            state.maxGrowthFeeState.commonTotalAssetsState.collateralPrice,
             true
         );
-        data.realBorrow = CommonMath.convertRealBorrow(
-            state.maxGrowthFeeState.totalAssetsState.realBorrowAssets,
-            state.maxGrowthFeeState.totalAssetsState.borrowPrice,
+        int256 futureBorrow = CommonMath.convertFutureBorrow(
+            state.maxGrowthFeeState.commonTotalAssetsState.futureBorrowAssets,
+            state.maxGrowthFeeState.commonTotalAssetsState.borrowPrice,
+            true
+        );
+        int256 futureRewardCollateral = CommonMath.convertFutureRewardCollateral(
+            state.maxGrowthFeeState.commonTotalAssetsState.futureRewardCollateralAssets,
+            state.maxGrowthFeeState.commonTotalAssetsState.collateralPrice,
+            true
+        );
+        int256 futureRewardBorrow = CommonMath.convertFutureRewardBorrow(
+            state.maxGrowthFeeState.commonTotalAssetsState.futureRewardBorrowAssets,
+            state.maxGrowthFeeState.commonTotalAssetsState.borrowPrice,
             true
         );
 
-        data.depositTotalAssets = totalAssets(true, state.maxGrowthFeeState.totalAssetsState);
+        {
+            int256 depositCollateral = int256(data.depositRealCollateral) + futureCollateral + futureRewardCollateral;
+            int256 depositBorrow = int256(data.depositRealBorrow) + futureBorrow + futureRewardBorrow;
 
-        uint256 withdrawTotalAssets = totalAssets(false, state.maxGrowthFeeState.totalAssetsState);
-
-        data.supplyAfterFee = _previewSupplyAfterFee(
-            MaxGrowthFeeData({
-                withdrawTotalAssets: withdrawTotalAssets,
-                maxGrowthFee: state.maxGrowthFeeState.maxGrowthFee,
-                supply: totalSupply(state.maxGrowthFeeState.supply),
-                lastSeenTokenPrice: state.maxGrowthFeeState.lastSeenTokenPrice
-            })
-        );
+            data.depositTotalAssets = _totalAssets(
+                true,
+                TotalAssetsData({
+                    collateral: depositCollateral,
+                    borrow: depositBorrow,
+                    borrowPrice: state.maxGrowthFeeState.commonTotalAssetsState.borrowPrice
+                })
+            );
+        }
+        {
+            uint256 withdrawTotalAssets = totalAssets(
+                false,
+                TotalAssetsState({
+                    commonTotalAssetsState: state.maxGrowthFeeState.commonTotalAssetsState,
+                    realCollateralAssets: state.maxGrowthFeeState.withdrawRealCollateralAssets,
+                    realBorrowAssets: state.maxGrowthFeeState.withdrawRealBorrowAssets
+                })
+            );
+            data.supplyAfterFee = _previewSupplyAfterFee(
+                MaxGrowthFeeData({
+                    withdrawTotalAssets: withdrawTotalAssets,
+                    maxGrowthFee: state.maxGrowthFeeState.maxGrowthFee,
+                    supply: totalSupply(state.maxGrowthFeeState.supply),
+                    lastSeenTokenPrice: state.maxGrowthFeeState.lastSeenTokenPrice
+                })
+            );
+        }
 
         data.maxTotalAssetsInUnderlying = state.maxTotalAssetsInUnderlying;
-        data.borrowPrice = state.maxGrowthFeeState.totalAssetsState.borrowPrice;
+        data.borrowPrice = state.maxGrowthFeeState.commonTotalAssetsState.borrowPrice;
     }
 }

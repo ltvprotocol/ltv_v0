@@ -23,4 +23,5 @@ interface IAdministrationErrors {
     error WhitelistIsActivated();
     error ZeroSlippageProvider();
     error ZeroDataRevert();
+    error VaultBalanceAsLendingConnectorNotSet();
 }

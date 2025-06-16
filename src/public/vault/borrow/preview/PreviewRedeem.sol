@@ -7,17 +7,21 @@ import "../../../../math/MintRedeem.sol";
 abstract contract PreviewRedeem is Vault {
     using uMulDiv for uint256;
 
-    function previewRedeem(uint256 shares, PreviewVaultState memory state) public pure returns (uint256 assets) {
-        (assets,) = _previewRedeem(shares, previewVaultStateToPreviewBorrowVaultData(state, false));
+    function previewRedeem(uint256 shares, PreviewWithdrawVaultState memory state)
+        public
+        pure
+        returns (uint256 assets)
+    {
+        (assets,) = _previewRedeem(shares, previewWithdrawStateToPreviewWithdrawData(state));
     }
 
-    function _previewRedeem(uint256 shares, PreviewBorrowVaultData memory data)
+    function _previewRedeem(uint256 shares, PreviewWithdrawBorrowVaultData memory data)
         internal
         pure
         returns (uint256, DeltaFuture memory)
     {
         // HODLer <=> withdrawer conflict, round in favor of HODLer, round down to give less assets for provided shares
-        uint256 sharesInUnderlying = shares.mulDivDown(data.totalAssets, data.supplyAfterFee).mulDivDown(
+        uint256 sharesInUnderlying = shares.mulDivDown(data.withdrawTotalAssets, data.supplyAfterFee).mulDivDown(
             data.borrowPrice, Constants.ORACLE_DIVIDER
         );
 

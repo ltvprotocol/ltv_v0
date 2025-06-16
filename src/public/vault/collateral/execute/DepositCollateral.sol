@@ -11,7 +11,7 @@ import "src/events/IERC4626Events.sol";
 import "../preview/PreviewDepositCollateral.sol";
 import "../../../../math/NextStep.sol";
 import "src/errors/IVaultErrors.sol";
-import "src/state_reader/MaxDepositMintCollateralVaultStateReader.sol";
+import "src/state_reader/vault/MaxDepositMintCollateralVaultStateReader.sol";
 
 abstract contract DepositCollateral is
     MaxDepositMintCollateralVaultStateReader,
@@ -46,9 +46,9 @@ abstract contract DepositCollateral is
 
         collateralToken.transferFrom(msg.sender, address(this), assets);
 
-        uint256 withdrawTotalAssets = totalAssets(false, state.previewVaultState.maxGrowthFeeState.totalAssetsState);
-
-        applyMaxGrowthFee(data.previewCollateralVaultData.supplyAfterFee, withdrawTotalAssets);
+        applyMaxGrowthFee(
+            data.previewCollateralVaultData.supplyAfterFee, data.previewCollateralVaultData.withdrawTotalAssets
+        );
 
         _mintProtocolRewards(
             MintProtocolRewardsData({
@@ -86,7 +86,7 @@ abstract contract DepositCollateral is
         applyStateTransition(
             NextStateData({
                 nextState: nextState,
-                borrowPrice: state.previewVaultState.maxGrowthFeeState.totalAssetsState.borrowPrice,
+                borrowPrice: state.previewDepositVaultState.maxGrowthFeeState.commonTotalAssetsState.borrowPrice,
                 collateralPrice: data.previewCollateralVaultData.collateralPrice
             })
         );

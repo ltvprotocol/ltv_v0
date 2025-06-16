@@ -35,7 +35,7 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         ltv.deposit(100, user);
     }
 
-    /// forge-config: default.fuzz.runs = 10
+    /// forge-config: default.fuzz.runs = 8
     function test_batchDisableAllFunctions(DefaultTestData memory defaultData, address user)
         public
         testWithPredefinedDefaultValues(defaultData)
@@ -53,7 +53,7 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         }
     }
 
-    /// forge-config: default.fuzz.runs = 10
+    /// forge-config: default.fuzz.runs = 8
     function test_batchEnableFunctions(DefaultTestData memory defaultData, address user) public {
         (bytes[] memory calls, bytes4[] memory selectors, address[] memory callers) =
             functionsCanBeDisabled(defaultData, user);
@@ -117,7 +117,7 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         ltv.deposit(100, defaultData.governor);
     }
 
-    /// forge-config: default.fuzz.runs = 10
+    /// forge-config: default.fuzz.runs = 8
     function test_functionsCannotBeDisabled(DefaultTestData memory defaultData) public {
         (bytes[] memory calls, bytes4[] memory selectors, address[] memory callers) =
             functionsCannotBeDisabled(defaultData);

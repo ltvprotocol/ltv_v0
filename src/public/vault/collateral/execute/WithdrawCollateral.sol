@@ -11,7 +11,7 @@ import "src/events/IERC4626Events.sol";
 import "src/errors/IVaultErrors.sol";
 import "../preview/PreviewWithdrawCollateral.sol";
 import "../../../../math/NextStep.sol";
-import "src/state_reader/MaxWithdrawRedeemCollateralVaultStateReader.sol";
+import "src/state_reader/vault/MaxWithdrawRedeemCollateralVaultStateReader.sol";
 import "../../../../state_transition/TransferFromProtocol.sol";
 
 abstract contract WithdrawCollateral is
@@ -50,16 +50,9 @@ abstract contract WithdrawCollateral is
             allowance[owner][receiver] -= shares;
         }
 
-        uint256 withdrawTotalAssets = _totalAssets(
-            false,
-            TotalAssetsData({
-                collateral: data.previewCollateralVaultData.collateral,
-                borrow: data.previewCollateralVaultData.borrow,
-                borrowPrice: state.previewVaultState.maxGrowthFeeState.totalAssetsState.borrowPrice
-            })
+        applyMaxGrowthFee(
+            data.previewCollateralVaultData.supplyAfterFee, data.previewCollateralVaultData.withdrawTotalAssets
         );
-
-        applyMaxGrowthFee(data.previewCollateralVaultData.supplyAfterFee, withdrawTotalAssets);
 
         _mintProtocolRewards(
             MintProtocolRewardsData({
@@ -99,7 +92,7 @@ abstract contract WithdrawCollateral is
         applyStateTransition(
             NextStateData({
                 nextState: nextState,
-                borrowPrice: state.previewVaultState.maxGrowthFeeState.totalAssetsState.borrowPrice,
+                borrowPrice: state.previewWithdrawVaultState.maxGrowthFeeState.commonTotalAssetsState.borrowPrice,
                 collateralPrice: data.previewCollateralVaultData.collateralPrice
             })
         );

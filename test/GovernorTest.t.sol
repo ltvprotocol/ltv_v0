@@ -215,7 +215,7 @@ contract GovernorTest is BalancedTest {
 
         // Should revert if too high
         vm.startPrank(governor);
-        uint256 tooHighValue = 10 ** 18; // 100%
+        uint256 tooHighValue = 42 * 10 ** 18; // 100%
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.InvalidMaxDeleverageFee.selector, tooHighValue));
         dummyLTV.setMaxDeleverageFee(tooHighValue);
     }

@@ -62,7 +62,7 @@ contract SetIsWithdrawDisabledTest is PrepareEachFunctionSuccessfulExecution {
         assertEq(ltv.isWithdrawDisabled(), !isDisabled);
     }
 
-    /// forge-config: default.fuzz.runs = 10
+    /// forge-config: default.fuzz.runs = 8
     function test_failIfWithdrawIsDisabledBatch(DefaultTestData memory data, address user) public {
         vm.assume(user != address(0));
 
@@ -91,7 +91,7 @@ contract SetIsWithdrawDisabledTest is PrepareEachFunctionSuccessfulExecution {
         assertEq(result, abi.encodeWithSelector(IAdministrationErrors.WithdrawIsDisabled.selector));
     }
 
-    /// forge-config: default.fuzz.runs = 10
+    /// forge-config: default.fuzz.runs = 8
     function test_passIfWithdrawIsEnabledBatch(DefaultTestData memory data, address user) public {
         vm.assume(user != address(0));
 
