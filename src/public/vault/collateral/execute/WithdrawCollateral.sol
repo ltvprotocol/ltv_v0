@@ -66,8 +66,6 @@ abstract contract WithdrawCollateral is
 
         _burn(owner, shares);
 
-        withdraw(assets);
-
         NextState memory nextState = NextStep.calculateNextStep(
             NextStepData({
                 futureBorrow: data.previewCollateralVaultData.futureBorrow,
@@ -96,6 +94,8 @@ abstract contract WithdrawCollateral is
                 collateralPrice: data.previewCollateralVaultData.collateralPrice
             })
         );
+
+        withdraw(assets);
 
         transferCollateralToken(receiver, assets);
 
