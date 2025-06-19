@@ -8,17 +8,17 @@ abstract contract MaxMint is PreviewMint, PreviewDeposit {
     using uMulDiv for uint256;
 
     function maxMint(MaxDepositMintBorrowVaultState memory state) public pure returns (uint256) {
-        return _maxMint(maxDepositMintBorrowVaultStateToMaxDepositMintBorrowVaultData(state));
+        return _maxMint(maxDepositMintStateToData(state));
     }
 
     function _maxMint(MaxDepositMintBorrowVaultData memory data) internal pure returns (uint256) {
         uint256 availableSpaceInShares = getAvailableSpaceInShares(
-            data.previewBorrowVaultData.collateral,
-            data.previewBorrowVaultData.borrow,
+            data.previewDepositBorrowVaultData.collateral,
+            data.previewDepositBorrowVaultData.borrow,
             data.maxTotalAssetsInUnderlying,
-            data.previewBorrowVaultData.supplyAfterFee,
-            data.previewBorrowVaultData.totalAssets,
-            data.previewBorrowVaultData.borrowPrice
+            data.previewDepositBorrowVaultData.supplyAfterFee,
+            data.previewDepositBorrowVaultData.depositTotalAssets,
+            data.previewDepositBorrowVaultData.borrowPrice
         );
 
         // round up to assume smaller border
@@ -30,8 +30,8 @@ abstract contract MaxMint is PreviewMint, PreviewDeposit {
         uint256 maxDepositInUnderlying = uint256(data.realBorrow) - minProfitRealBorrow;
         // round down to assume smaller border
         uint256 maxDepositInAssets =
-            maxDepositInUnderlying.mulDivDown(Constants.ORACLE_DIVIDER, data.previewBorrowVaultData.borrowPrice);
-        (uint256 maxMintShares,) = _previewDeposit(maxDepositInAssets, data.previewBorrowVaultData);
+            maxDepositInUnderlying.mulDivDown(Constants.ORACLE_DIVIDER, data.previewDepositBorrowVaultData.borrowPrice);
+        (uint256 maxMintShares,) = _previewDeposit(maxDepositInAssets, data.previewDepositBorrowVaultData);
 
         return maxMintShares > availableSpaceInShares ? availableSpaceInShares : maxMintShares;
     }

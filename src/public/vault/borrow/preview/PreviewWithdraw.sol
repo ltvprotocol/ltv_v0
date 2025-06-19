@@ -7,11 +7,15 @@ import "../../../../math/DepositWithdraw.sol";
 abstract contract PreviewWithdraw is Vault {
     using uMulDiv for uint256;
 
-    function previewWithdraw(uint256 assets, PreviewVaultState memory state) public pure returns (uint256 shares) {
-        (shares,) = _previewWithdraw(assets, previewVaultStateToPreviewBorrowVaultData(state, false));
+    function previewWithdraw(uint256 assets, PreviewWithdrawVaultState memory state)
+        public
+        pure
+        returns (uint256 shares)
+    {
+        (shares,) = _previewWithdraw(assets, previewWithdrawStateToPreviewWithdrawData(state));
     }
 
-    function _previewWithdraw(uint256 assets, PreviewBorrowVaultData memory data)
+    function _previewWithdraw(uint256 assets, PreviewWithdrawBorrowVaultData memory data)
         internal
         pure
         returns (uint256, DeltaFuture memory)
@@ -43,7 +47,7 @@ abstract contract PreviewWithdraw is Vault {
         // HODLer <=> withdrawer conflict, round in favor of HODLer, round up to burn more shares
         return (
             uint256(-sharesInUnderlying).mulDivUp(Constants.ORACLE_DIVIDER, data.borrowPrice).mulDivUp(
-                data.supplyAfterFee, data.totalAssets
+                data.supplyAfterFee, data.withdrawTotalAssets
             ),
             deltaFuture
         );

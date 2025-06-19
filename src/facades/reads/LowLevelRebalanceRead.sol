@@ -2,10 +2,10 @@
 pragma solidity ^0.8.28;
 
 import "../../interfaces/IModules.sol";
-import "src/state_reader/PreviewLowLevelRebalanceStateReader.sol";
-import "src/state_reader/MaxLowLevelRebalanceSharesStateReader.sol";
-import "src/state_reader/MaxLowLevelRebalanceBorrowStateReader.sol";
-import "src/state_reader/MaxLowLevelRebalanceCollateralStateReader.sol";
+import "src/state_reader/low_level/PreviewLowLevelRebalanceStateReader.sol";
+import "src/state_reader/low_level/MaxLowLevelRebalanceSharesStateReader.sol";
+import "src/state_reader/low_level/MaxLowLevelRebalanceBorrowStateReader.sol";
+import "src/state_reader/low_level/MaxLowLevelRebalanceCollateralStateReader.sol";
 
 abstract contract LowLevelRebalanceRead is
     PreviewLowLevelRebalanceStateReader,

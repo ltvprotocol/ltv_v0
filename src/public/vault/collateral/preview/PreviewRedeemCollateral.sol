@@ -7,12 +7,12 @@ import "../../../../math/MintRedeem.sol";
 abstract contract PreviewRedeemCollateral is VaultCollateral {
     using uMulDiv for uint256;
 
-    function previewRedeemCollateral(uint256 shares, PreviewVaultState memory state)
+    function previewRedeemCollateral(uint256 shares, PreviewWithdrawVaultState memory state)
         public
         pure
         returns (uint256 assets)
     {
-        (assets,) = _previewRedeemCollateral(shares, previewVaultStateToPreviewCollateralVaultData(state, false));
+        (assets,) = _previewRedeemCollateral(shares, previewWithdrawVaultStateToPreviewCollateralVaultData(state));
     }
 
     function _previewRedeemCollateral(uint256 shares, PreviewCollateralVaultData memory data)
