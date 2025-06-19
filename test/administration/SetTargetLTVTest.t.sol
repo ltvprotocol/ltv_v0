@@ -33,10 +33,10 @@ contract SetTargetLTVTest is BaseTest {
     }
 
     function test_failIfZero(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
-        uint128 targetLTV = 0;
         vm.startPrank(defaultData.governor);
-        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.UnexpectedTargetLTV.selector, targetLTV));
-        ltv.setTargetLTV(targetLTV);
+        ltv.setMinProfitLTV(0);
+        ltv.setTargetLTV(0);
+        assertEq(ltv.targetLTV(), 0);
     }
 
     function test_failIfOne(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {

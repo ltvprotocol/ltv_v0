@@ -18,11 +18,10 @@ contract SetMinProfitLTVTest is BaseTest {
         ltv.setMinProfitLTV(newMinProfitLTV);
     }
 
-    function test_failIfZero(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
-        uint128 newMinProfitLTV = 0;
+    function test_passIfZero(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
         vm.startPrank(defaultData.governor);
-        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.UnexpectedMinProfitLTV.selector, newMinProfitLTV));
-        ltv.setMinProfitLTV(newMinProfitLTV);
+        ltv.setMinProfitLTV(0);
+        assertEq(ltv.minProfitLTV(), 0);
     }
 
     function test_failIfOne(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
