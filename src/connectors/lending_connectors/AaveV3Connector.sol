@@ -21,11 +21,13 @@ contract AaveV3Connector is ILendingConnector {
     }
 
     function supply(uint256 amount) external {
-        POOL.supply(address(BORROW_ASSET), amount, address(this), 0);
+        COLLATERAL_ASSET.transferFrom(msg.sender, address(this), amount);
+        COLLATERAL_ASSET.approve(address(POOL), amount);
+        POOL.supply(address(COLLATERAL_ASSET), amount, address(this), 0);
     }
 
     function withdraw(uint256 amount) external {
-        POOL.withdraw(address(BORROW_ASSET), amount, address(this));
+        POOL.withdraw(address(COLLATERAL_ASSET), amount, address(this));
     }
 
     function borrow(uint256 amount) external {
@@ -33,6 +35,7 @@ contract AaveV3Connector is ILendingConnector {
     }
 
     function repay(uint256 amount) external {
+        BORROW_ASSET.approve(address(POOL), amount);
         POOL.repay(address(BORROW_ASSET), amount, 2, address(this));
     }
 
