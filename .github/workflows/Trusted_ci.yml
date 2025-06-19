@@ -7,10 +7,18 @@ on:
       - main
 
 jobs:
-    test:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Print secret length
-          run: echo "Length of TEST_SECRET is ${#TEST_SECRET}"
-          env:
-            TEST_SECRET: ${{ secrets.TEST_SECRET }} 
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - name: Print forge version
+        run: forge --version
+
+      - name: Run tests
+        run: forge build && forge test -vvv --match-path test/integration
