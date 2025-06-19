@@ -27,7 +27,7 @@ abstract contract AdministrationSetters is
     using sMulDiv for int256;
 
     function setTargetLTV(uint128 value) external isFunctionAllowed onlyGovernor {
-        require(value > 0 && value < Constants.LTV_DIVIDER, UnexpectedTargetLTV(value));
+        require(value >= 0 && value < Constants.LTV_DIVIDER, UnexpectedTargetLTV(value));
         require(value <= maxSafeLTV && value >= minProfitLTV, InvalidLTVSet(value, maxSafeLTV, minProfitLTV));
         uint128 oldValue = targetLTV;
         targetLTV = value;
@@ -35,7 +35,7 @@ abstract contract AdministrationSetters is
     }
 
     function setMaxSafeLTV(uint128 value) external isFunctionAllowed onlyGovernor {
-        require(value > 0 && value < Constants.LTV_DIVIDER, UnexpectedMaxSafeLTV(value));
+        require(value > 0 && value <= Constants.LTV_DIVIDER, UnexpectedMaxSafeLTV(value));
         require(value >= targetLTV, InvalidLTVSet(targetLTV, value, minProfitLTV));
         uint128 oldValue = maxSafeLTV;
         maxSafeLTV = value;
@@ -43,7 +43,7 @@ abstract contract AdministrationSetters is
     }
 
     function setMinProfitLTV(uint128 value) external isFunctionAllowed onlyGovernor {
-        require(value > 0 && value < Constants.LTV_DIVIDER, UnexpectedMinProfitLTV(value));
+        require(value >= 0 && value < Constants.LTV_DIVIDER, UnexpectedMinProfitLTV(value));
         require(value <= targetLTV, InvalidLTVSet(targetLTV, maxSafeLTV, value));
         uint128 oldValue = minProfitLTV;
         minProfitLTV = value;
