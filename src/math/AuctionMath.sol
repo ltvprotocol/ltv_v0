@@ -101,8 +101,9 @@ library AuctionMath {
         bool deltaWithinAuctionSize;
         {
             int256 availableCollateralAssets = data.futureCollateralAssets + data.futureRewardCollateralAssets;
-            deltaWithinAuctionSize = (availableCollateralAssets > 0 && availableCollateralAssets >= -deltaUserCollateralAssets)
-                || (availableCollateralAssets < 0 && availableCollateralAssets <= -deltaUserCollateralAssets);
+            deltaWithinAuctionSize = (
+                availableCollateralAssets > 0 && availableCollateralAssets >= -deltaUserCollateralAssets
+            ) || (availableCollateralAssets < 0 && availableCollateralAssets <= -deltaUserCollateralAssets);
         }
         require(
             hasOppositeSign && deltaWithinAuctionSize,
