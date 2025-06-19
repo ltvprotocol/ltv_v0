@@ -21,6 +21,6 @@ jobs:
         run: forge --version
 
       - name: Run tests
-        run: forge build && forge test -vvv --match-path test/integration
+        run: forge build && forge test -vvv --match-path "test/integration/**"
         env:
           RPC_MAINNET: ${{ secrets.RPC_MAINNET }}
