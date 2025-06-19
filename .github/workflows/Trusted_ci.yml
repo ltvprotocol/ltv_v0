@@ -13,4 +13,4 @@ jobs:
         - name: Print secret length
           run: echo "Length of TEST_SECRET is ${#TEST_SECRET}"
           env:
-            TEST_SECRET: ${{ secrets.TEST_SECRET }}
+            TEST_SECRET: ${{ secrets.TEST_SECRET }} 
