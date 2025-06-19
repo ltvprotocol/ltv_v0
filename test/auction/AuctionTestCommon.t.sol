@@ -30,7 +30,6 @@ contract AuctionTestCommon is BaseTest {
         int256 oldReward = (initialAuctionState.futureBorrowAssets + initialAuctionState.futureRewardBorrowAssets)
             - (initialAuctionState.futureCollateralAssets + initialAuctionState.futureRewardCollateralAssets) * 2;
 
-
         int256 newReward = (auctionState.futureBorrowAssets + auctionState.futureRewardBorrowAssets)
             - (auctionState.futureCollateralAssets + auctionState.futureRewardCollateralAssets) * 2;
 
@@ -72,7 +71,7 @@ contract AuctionTestCommon is BaseTest {
 
     function prepareDepositAuction(uint128 amount) public {
         ltv.setFutureBorrowAssets(int256(uint256(amount)));
-        ltv.setFutureCollateralAssets(int256(uint256(amount)) / 2 );
+        ltv.setFutureCollateralAssets(int256(uint256(amount)) / 2);
         ltv.setFutureRewardCollateralAssets(-int256(uint256(amount / 100)));
     }
 }

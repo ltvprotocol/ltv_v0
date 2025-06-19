@@ -27,8 +27,8 @@ contract SetMaxSafeLTVTest is BaseTest {
 
     function test_passIfOne(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
         vm.startPrank(defaultData.governor);
-        ltv.setMaxSafeLTV(10**18);
-        assertEq(ltv.maxSafeLTV(), 10**18);
+        ltv.setMaxSafeLTV(10 ** 18);
+        assertEq(ltv.maxSafeLTV(), 10 ** 18);
     }
 
     function test_failIf42(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
