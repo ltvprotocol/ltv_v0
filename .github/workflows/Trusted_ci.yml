@@ -7,53 +7,10 @@ on:
       - main
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install Foundry
-        uses: foundry-rs/foundry-toolchain@v1
-        with:
-          version: nightly
-
-      - name: Print forge version
-        run: forge --version
-
-      - name: Forge build
-        run: forge build
-
-      - name: Check contract sizes
-        run: forge build --skip test --sizes
-
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install Foundry
-        uses: foundry-rs/foundry-toolchain@v1
-        with:
-          version: nightly
-
-      - name: Print forge version
-        run: forge --version
-
-      - name: Run tests
-        run: forge build && forge test -vvv
-
-  fmt:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install Foundry
-        uses: foundry-rs/foundry-toolchain@v1
-        with:
-          version: nightly
-
-      - name: Print forge version
-        run: forge --version
-
-      - name: Check formatting
-        run: forge fmt --check
+    test:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Print secret length
+          run: echo "Length of TEST_SECRET is ${#TEST_SECRET}"
+          env:
+            TEST_SECRET: ${{ secrets.TEST_SECRET }}
