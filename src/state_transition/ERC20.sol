@@ -6,8 +6,15 @@ import "src/modifiers/FunctionStopperModifier.sol";
 import "../events/IERC20Events.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 import "src/errors/IAdministrationErrors.sol";
+import "src/errors/IERC20Errors.sol";
 
-abstract contract ERC20 is WhitelistModifier, FunctionStopperModifier, ReentrancyGuardUpgradeable, IERC20Events {
+abstract contract ERC20 is
+    WhitelistModifier,
+    FunctionStopperModifier,
+    ReentrancyGuardUpgradeable,
+    IERC20Events,
+    IERC20Errors
+{
     function _mint(address to, uint256 amount) internal isReceiverWhitelisted(to) {
         require(!isDepositDisabled, DepositIsDisabled());
         balanceOf[to] += amount;
@@ -20,5 +27,17 @@ abstract contract ERC20 is WhitelistModifier, FunctionStopperModifier, Reentranc
         balanceOf[from] -= amount;
         baseTotalSupply -= amount;
         emit Transfer(from, address(0), amount);
+    }
+
+    function _spendAllowance(address owner, address spender, uint256 value) internal virtual {
+        uint256 currentAllowance = allowance[owner][spender];
+        if (currentAllowance < type(uint256).max) {
+            if (currentAllowance < value) {
+                revert ERC20InsufficientAllowance(spender, currentAllowance, value);
+            }
+            unchecked {
+                allowance[owner][spender] = currentAllowance - value;
+            }
+        }
     }
 }
