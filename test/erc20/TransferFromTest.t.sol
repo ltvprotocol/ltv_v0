@@ -3,8 +3,9 @@ pragma solidity ^0.8.28;
 
 import "../utils/BaseTest.t.sol";
 import "src/errors/IERC20Errors.sol";
+import "src/events/IERC20Events.sol";
 
-contract TransferFromTest is BaseTest, IERC20Errors {
+contract TransferFromTest is BaseTest, IERC20Errors, IERC20Events {
     function test_notTransferWithoutApprove(DefaultTestData memory defaultData, address user, uint256 transferAmount)
         public
         testWithPredefinedDefaultValues(defaultData)
@@ -44,27 +45,30 @@ contract TransferFromTest is BaseTest, IERC20Errors {
         ltv.approve(user, transferAmount);
 
         vm.prank(user);
+        vm.expectEmit(true, true, false, true);
+        emit Transfer(owner, user, transferAmount);
         bool success = ltv.transferFrom(owner, user, transferAmount);
         assertTrue(success);
 
         assertEq(ltv.allowance(owner, user), 0);
     }
 
-    function test_smallApproveBigTransfer(DefaultTestData memory defaultData, address user, uint256 transferAmount)
-        public
-        testWithPredefinedDefaultValues(defaultData)
-    {
+    function test_smallApproveBigTransfer(
+        DefaultTestData memory defaultData,
+        address user,
+        uint256 approveAmount,
+        uint256 transferAmount
+    ) public testWithPredefinedDefaultValues(defaultData) {
         vm.assume(user != address(0));
         vm.assume(user != defaultData.owner);
         vm.assume(transferAmount > 0);
-        vm.assume(transferAmount % 10 == 0);
 
         address owner = defaultData.owner;
 
         deal(address(ltv), owner, transferAmount);
 
         vm.prank(owner);
-        uint256 approveAmount = transferAmount / 10;
+        approveAmount = approveAmount % transferAmount;
         ltv.approve(user, approveAmount);
 
         vm.prank(user);
@@ -93,6 +97,9 @@ contract TransferFromTest is BaseTest, IERC20Errors {
         ltv.transferFrom(user, user, transferAmount);
 
         ltv.approve(user, transferAmount);
+
+        vm.expectEmit(true, true, false, true);
+        emit Transfer(user, user, transferAmount);
         ltv.transferFrom(user, user, transferAmount);
 
         vm.stopPrank();
@@ -108,9 +115,8 @@ contract TransferFromTest is BaseTest, IERC20Errors {
     ) public testWithPredefinedDefaultValues(defaultData) {
         vm.assume(user != address(0));
         vm.assume(user != defaultData.owner);
-        vm.assume(transferAmount > 0);
-        vm.assume(approveAmount > transferAmount);
         vm.assume(approveAmount < type(uint256).max);
+        vm.assume(approveAmount > 0);
 
         address owner = defaultData.owner;
         deal(address(ltv), owner, approveAmount);
@@ -119,6 +125,7 @@ contract TransferFromTest is BaseTest, IERC20Errors {
         ltv.approve(user, approveAmount);
 
         vm.prank(user);
+        transferAmount = transferAmount % approveAmount;
         bool success = ltv.transferFrom(owner, user, transferAmount);
         assertTrue(success);
 
@@ -132,7 +139,6 @@ contract TransferFromTest is BaseTest, IERC20Errors {
     {
         vm.assume(user != address(0));
         vm.assume(user != defaultData.owner);
-        vm.assume(approveAmount > 0);
 
         address owner = defaultData.owner;
 
@@ -142,6 +148,8 @@ contract TransferFromTest is BaseTest, IERC20Errors {
         ltv.approve(user, approveAmount);
 
         vm.prank(user);
+        vm.expectEmit(true, true, false, true);
+        emit Transfer(owner, user, 0);
         bool success = ltv.transferFrom(owner, user, 0);
         assertTrue(success);
 
@@ -151,23 +159,11 @@ contract TransferFromTest is BaseTest, IERC20Errors {
         assertEq(ltv.balanceOf(user), 0);
     }
 
-    function test_notTransferToZeroAddress(DefaultTestData memory defaultData, address user, uint256 approveAmount)
+    function test_notTransferToZeroAddress(DefaultTestData memory defaultData, uint256 transferAmount)
         public
         testWithPredefinedDefaultValues(defaultData)
     {
-        vm.assume(user != address(0));
-        vm.assume(user != defaultData.owner);
-        vm.assume(approveAmount > 0);
-
-        address owner = defaultData.owner;
-
-        deal(address(ltv), owner, approveAmount);
-
-        vm.prank(owner);
-        ltv.approve(user, approveAmount);
-
-        vm.prank(user);
         vm.expectRevert(abi.encodeWithSelector(TransferToZeroAddress.selector));
-        ltv.transferFrom(owner, address(0), approveAmount);
+        ltv.transferFrom(defaultData.owner, address(0), transferAmount);
     }
 }
