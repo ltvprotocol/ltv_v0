@@ -1,4 +1,4 @@
-name: Trusted CI
+name: Integration CI
 
 on:
   workflow_dispatch:
@@ -7,7 +7,7 @@ on:
       - main
 
 jobs:
-  test:
+  integration_test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -22,3 +22,5 @@ jobs:
 
       - name: Run tests
         run: forge build && forge test -vvv --match-path test/integration
+        env:
+          RPC_MAINNET: ${{ secrets.RPC_MAINNET }}
