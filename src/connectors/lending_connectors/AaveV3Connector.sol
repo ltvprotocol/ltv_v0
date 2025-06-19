@@ -21,7 +21,6 @@ contract AaveV3Connector is ILendingConnector {
     }
 
     function supply(uint256 amount) external {
-        COLLATERAL_ASSET.transferFrom(msg.sender, address(this), amount);
         COLLATERAL_ASSET.approve(address(POOL), amount);
         POOL.supply(address(COLLATERAL_ASSET), amount, address(this), 0);
     }
