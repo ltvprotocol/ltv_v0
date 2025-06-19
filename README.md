@@ -22,7 +22,7 @@ forge build
 
 - [x] Basic and Complex Math
 - [x] More or Less Correct Rounding
-- [ ] Correct Rounding
+- [x] Correct Rounding
 - [x] Debug
 - [ ] Test
 - [ ] Documentation

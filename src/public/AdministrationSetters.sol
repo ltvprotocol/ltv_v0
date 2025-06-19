@@ -27,7 +27,7 @@ abstract contract AdministrationSetters is
     using sMulDiv for int256;
 
     function setTargetLTV(uint128 value) external isFunctionAllowed onlyGovernor {
-        require(value > 0 && value < Constants.LTV_DIVIDER, UnexpectedTargetLTV(value));
+        require(value >= 0 && value < Constants.LTV_DIVIDER, UnexpectedTargetLTV(value));
         require(value <= maxSafeLTV && value >= minProfitLTV, InvalidLTVSet(value, maxSafeLTV, minProfitLTV));
         uint128 oldValue = targetLTV;
         targetLTV = value;
@@ -107,6 +107,12 @@ abstract contract AdministrationSetters is
         uint256 oldValue = maxGrowthFee;
         maxGrowthFee = _maxGrowthFee;
         emit MaxGrowthFeeChanged(oldValue, _maxGrowthFee);
+    }
+
+    function setVaultBalanceAsLendingConnector(address _vaultBalanceAsLendingConnector) external onlyOwner {
+        address oldAddress = address(vaultBalanceAsLendingConnector);
+        vaultBalanceAsLendingConnector = ILendingConnector(_vaultBalanceAsLendingConnector);
+        emit VaultBalanceAsLendingConnectorUpdated(oldAddress, _vaultBalanceAsLendingConnector);
     }
 
     function setIsDepositDisabled(bool value) external onlyGuardian {

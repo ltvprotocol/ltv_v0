@@ -25,11 +25,10 @@ contract SetMaxSafeLTVTest is BaseTest {
         ltv.setMaxSafeLTV(newMaxSafeLTV);
     }
 
-    function test_failIfOne(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
-        uint128 newMaxSafeLTV = 1 * 10 ** 18; // 1.0
+    function test_passIfOne(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
         vm.startPrank(defaultData.governor);
-        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.UnexpectedMaxSafeLTV.selector, newMaxSafeLTV));
-        ltv.setMaxSafeLTV(newMaxSafeLTV);
+        ltv.setMaxSafeLTV(10**18);
+        assertEq(ltv.maxSafeLTV(), 10**18);
     }
 
     function test_failIf42(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {

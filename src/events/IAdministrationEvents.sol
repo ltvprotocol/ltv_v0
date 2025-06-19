@@ -22,4 +22,5 @@ interface IAdministrationEvents {
     event SlippageProviderUpdated(address oldValue, address newValue);
     event FeeCollectorUpdated(address oldValue, address newValue);
     event ModulesUpdated(address oldValue, address newValue);
+    event VaultBalanceAsLendingConnectorUpdated(address oldValue, address newValue);
 }

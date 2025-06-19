@@ -40,7 +40,7 @@ abstract contract RedeemCollateral is
         require(shares <= max, ExceedsMaxRedeemCollateral(owner, shares, max));
 
         if (owner != receiver) {
-            allowance[owner][receiver] -= shares;
+            _spendAllowance(owner, receiver, shares);
         }
 
         (uint256 assets, DeltaFuture memory deltaFuture) =
@@ -65,8 +65,6 @@ abstract contract RedeemCollateral is
         );
 
         _burn(owner, shares);
-
-        withdraw(assets);
 
         NextState memory nextState = NextStep.calculateNextStep(
             NextStepData({
@@ -96,6 +94,8 @@ abstract contract RedeemCollateral is
                 collateralPrice: data.previewCollateralVaultData.collateralPrice
             })
         );
+
+        withdraw(assets);
 
         transferCollateralToken(receiver, assets);
 

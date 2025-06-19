@@ -40,8 +40,4 @@ contract DummyLTV is LTV, ERC20 {
     function burnTokens(uint256 amount, address owner) public {
         _burn(owner, amount);
     }
-
-    function setVaultBalanceAsLendingConnector(address _vaultBalanceAsLendingConnector) external {
-        vaultBalanceAsLendingConnector = ILendingConnector(_vaultBalanceAsLendingConnector);
-    }
 }
