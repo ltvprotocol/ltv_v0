@@ -5,7 +5,6 @@ import {Test} from "forge-std/Test.sol";
 import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "./interfaces/IAaveV3Pool.sol";
 
-// forge script script/AaveLiquidationTest.t.sol -vv
 contract AaveLiquidationTest is Test {
     IAaveV3Pool public AAVE_POOL = IAaveV3Pool(0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2);
     IERC20 public WETH = IERC20(0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2);
@@ -16,7 +15,7 @@ contract AaveLiquidationTest is Test {
 
     address public liquidator;
 
-    function run() public {
+    function test_aaveLiquidation() public {
         vm.createSelectFork(vm.envString("RPC_MAINNET"), 22675172);
 
         address user = makeAddr("user");
