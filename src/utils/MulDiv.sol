@@ -48,8 +48,8 @@ library sMulDiv {
 
         if (y != 0 && x != 0) {
             require(
-                (y > 0 && x <= MAX_INT256 / y && x >= MIN_INT256 / y)
-                    || (y < 0 && x >= MAX_INT256 / y && x <= MIN_INT256 / y),
+                (y > 0 && x <= (MAX_INT256 - 1) / y && x >= (MIN_INT256 + 1) / y)
+                    || (y < 0 && x >= (MAX_INT256 - 1) / y && x <= (MIN_INT256 + 1) / y),
                 "Multiplication overflow detected"
             );
         }
@@ -58,7 +58,8 @@ library sMulDiv {
         int256 product = x * y;
 
         int256 division = product / denominator;
-        if (division >= 0) {
+
+        if ((product > 0 && denominator > 0) || (product < 0 && denominator < 0)) {
             return division;
         }
 
@@ -74,8 +75,8 @@ library sMulDiv {
 
         if (y != 0 && x != 0) {
             require(
-                (y > 0 && x <= MAX_INT256 / y && x >= MIN_INT256 / y)
-                    || (y < 0 && x >= MAX_INT256 / y && x <= MIN_INT256 / y),
+                (y > 0 && x <= (MAX_INT256 - 1) / y && x >= (MIN_INT256 + 1) / y)
+                    || (y < 0 && x >= (MAX_INT256 - 1) / y && x <= (MIN_INT256 + 1) / y),
                 "Multiplication overflow detected"
             );
         }
@@ -85,7 +86,7 @@ library sMulDiv {
 
         int256 division = product / denominator;
 
-        if (division <= 0) {
+        if ((product < 0 && denominator > 0) || (product > 0 && denominator < 0)) {
             return division;
         }
 
