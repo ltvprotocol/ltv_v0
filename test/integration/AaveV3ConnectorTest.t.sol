@@ -94,14 +94,11 @@ contract AaveV3ConnectorTest is Test {
 
         deal(WETH, user, 100 ether);
         deal(WSTETH, user, 100 ether);
-        vm.startPrank(user);
-        weth.approve(address(ltv), 100 ether);
-        wsteth.approve(address(ltv), 100 ether);
-        vm.stopPrank();
     }
 
-    function getRandomNumberInRange(uint256 x, uint256 min, uint256 max) public pure returns (uint256 random) {
-        random = bound(x, min, max);
+    function getRandomNumberInRange(uint256 min, uint256 max) public view returns (uint256 random) {
+        uint256 pseudoRandom = uint256(keccak256(abi.encode(block.timestamp, block.number)));
+        random = bound(pseudoRandom, min, max);
     }
 
     function test_AaveV3ConnectorSet() public view {
@@ -118,21 +115,35 @@ contract AaveV3ConnectorTest is Test {
 
     function test_AaveV3ConnectorDeposit() public {
         uint256 maxDeposit = ltv.maxDeposit(user);
-        vm.prank(user);
+
+        vm.startPrank(user);
+
+        weth.approve(address(ltv), maxDeposit);
         ltv.deposit(maxDeposit, user);
+
+        vm.stopPrank();
     }
 
     function test_AaveV3ConnectorMint() public {
         uint256 maxMint = ltv.maxMint(user);
-        vm.prank(user);
+        uint256 neededToMint = ltv.previewMint(maxMint);
+
+        vm.startPrank(user);
+
+        weth.approve(address(ltv), neededToMint);
         ltv.mint(maxMint, user);
+
+        vm.stopPrank();
     }
 
     function test_AaveV3ConnectorWithdraw() public {
+        uint256 maxDeposit = ltv.maxDeposit(user);
+
         vm.startPrank(user);
 
-        uint256 maxDeposit = ltv.maxDeposit(user);
+        weth.approve(address(ltv), maxDeposit);
         ltv.deposit(maxDeposit, user);
+
         uint256 maxWithdraw = ltv.maxWithdraw(user);
         ltv.withdraw(maxWithdraw, user, user);
 
@@ -140,10 +151,13 @@ contract AaveV3ConnectorTest is Test {
     }
 
     function test_AaveV3ConnectorRedeem() public {
+        uint256 maxDeposit = ltv.maxDeposit(user);
+
         vm.startPrank(user);
 
-        uint256 maxDeposit = ltv.maxDeposit(user);
+        weth.approve(address(ltv), maxDeposit);
         ltv.deposit(maxDeposit, user);
+
         uint256 maxRedeem = ltv.maxRedeem(user);
         ltv.redeem(maxRedeem, user, user);
 
@@ -152,21 +166,35 @@ contract AaveV3ConnectorTest is Test {
 
     function test_AaveV3ConnectorDepositCollateral() public {
         uint256 maxDepositCollateral = ltv.maxDepositCollateral(user);
-        vm.prank(user);
+
+        vm.startPrank(user);
+
+        wsteth.approve(address(ltv), maxDepositCollateral);
         ltv.depositCollateral(maxDepositCollateral, user);
+
+        vm.stopPrank();
     }
 
     function test_AaveV3ConnectorMintCollateral() public {
         uint256 maxMintCollateral = ltv.maxMintCollateral(user);
-        vm.prank(user);
+        uint256 neededToMint = ltv.previewMintCollateral(maxMintCollateral);
+
+        vm.startPrank(user);
+
+        wsteth.approve(address(ltv), neededToMint);
         ltv.mintCollateral(maxMintCollateral, user);
+
+        vm.stopPrank();
     }
 
     function test_AaveV3ConnectorWithdrawCollateral() public {
+        uint256 maxDepositCollateral = ltv.maxDepositCollateral(user);
+
         vm.startPrank(user);
 
-        uint256 maxDepositCollateral = ltv.maxDepositCollateral(user);
+        wsteth.approve(address(ltv), maxDepositCollateral);
         ltv.depositCollateral(maxDepositCollateral, user);
+
         uint256 maxWithdrawCollateral = ltv.maxWithdrawCollateral(user);
         ltv.withdrawCollateral(maxWithdrawCollateral, user, user);
 
@@ -174,87 +202,124 @@ contract AaveV3ConnectorTest is Test {
     }
 
     function test_AaveV3ConnectorRedeemCollateral() public {
+        uint256 maxDepositCollateral = ltv.maxDepositCollateral(user);
+
         vm.startPrank(user);
 
-        uint256 maxDepositCollateral = ltv.maxDepositCollateral(user);
+        wsteth.approve(address(ltv), maxDepositCollateral);
         ltv.depositCollateral(maxDepositCollateral, user);
+
         uint256 maxRedeemCollateral = ltv.maxRedeemCollateral(user);
         ltv.redeemCollateral(maxRedeemCollateral, user, user);
 
         vm.stopPrank();
     }
 
-    function test_AaveV3ConnectorPartiallyDeposit(uint256 x) public {
+    function test_AaveV3ConnectorPartiallyDeposit() public {
         uint256 maxDeposit = ltv.maxDeposit(user);
-        uint256 amountToDeposit = maxDeposit / getRandomNumberInRange(x, 2, 10);
-        vm.prank(user);
-        ltv.deposit(amountToDeposit, user);
-    }
+        uint256 amountToDeposit = maxDeposit / getRandomNumberInRange(2, 10);
 
-    function test_AaveV3ConnectorPartiallyMint(uint256 x) public {
-        uint256 maxMint = ltv.maxMint(user);
-        uint256 amountToMint = maxMint / getRandomNumberInRange(x, 2, 10);
-        vm.prank(user);
-        ltv.mint(amountToMint, user);
-    }
-
-    function test_AaveV3ConnectorPartiallyWithdraw(uint256 x) public {
         vm.startPrank(user);
 
+        weth.approve(address(ltv), amountToDeposit);
+        ltv.deposit(amountToDeposit, user);
+
+        vm.stopPrank();
+    }
+
+    function test_AaveV3ConnectorPartiallyMint() public {
+        uint256 maxMint = ltv.maxMint(user);
+        uint256 amountToMint = maxMint / getRandomNumberInRange(2, 10);
+        uint256 neededToMint = ltv.previewMint(amountToMint);
+
+        vm.startPrank(user);
+
+        weth.approve(address(ltv), neededToMint);
+        ltv.mint(amountToMint, user);
+
+        vm.stopPrank();
+    }
+
+    function test_AaveV3ConnectorPartiallyWithdraw() public {
         uint256 maxDeposit = ltv.maxDeposit(user);
+
+        vm.startPrank(user);
+
+        weth.approve(address(ltv), maxDeposit);
         ltv.deposit(maxDeposit, user);
+
         uint256 maxWithdraw = ltv.maxWithdraw(user);
-        uint256 amountToWithdraw = maxWithdraw / getRandomNumberInRange(x, 2, 10);
+        uint256 amountToWithdraw = maxWithdraw / getRandomNumberInRange(2, 10);
         ltv.withdraw(amountToWithdraw, user, user);
 
         vm.stopPrank();
     }
 
-    function test_AaveV3ConnectorPartiallyRedeem(uint256 x) public {
+    function test_AaveV3ConnectorPartiallyRedeem() public {
+        uint256 maxDeposit = ltv.maxDeposit(user);
+
         vm.startPrank(user);
 
-        uint256 maxDeposit = ltv.maxDeposit(user);
+        weth.approve(address(ltv), maxDeposit);
         ltv.deposit(maxDeposit, user);
+
         uint256 maxRedeem = ltv.maxRedeem(user);
-        uint256 amountToRedeem = maxRedeem / getRandomNumberInRange(x, 2, 10);
+        uint256 amountToRedeem = maxRedeem / getRandomNumberInRange(2, 10);
         ltv.redeem(amountToRedeem, user, user);
 
         vm.stopPrank();
     }
 
-    function test_AaveV3ConnectorPartiallyDepositCollateral(uint256 x) public {
+    function test_AaveV3ConnectorPartiallyDepositCollateral() public {
         uint256 maxDepositCollateral = ltv.maxDepositCollateral(user);
-        uint256 amountToDeposit = maxDepositCollateral / getRandomNumberInRange(x, 2, 10);
-        vm.prank(user);
-        ltv.depositCollateral(amountToDeposit, user);
-    }
+        uint256 amountToDeposit = maxDepositCollateral / getRandomNumberInRange(2, 10);
 
-    function test_AaveV3ConnectorPartiallyMintCollateral(uint256 x) public {
-        uint256 maxMintCollateral = ltv.maxMintCollateral(user);
-        uint256 amountToMint = maxMintCollateral / getRandomNumberInRange(x, 2, 10);
-        vm.prank(user);
-        ltv.mintCollateral(amountToMint, user);
-    }
-
-    function test_AaveV3ConnectorPartiallyWithdrawCollateral(uint256 x) public {
         vm.startPrank(user);
 
+        wsteth.approve(address(ltv), amountToDeposit);
+        ltv.depositCollateral(amountToDeposit, user);
+
+        vm.stopPrank();
+    }
+
+    function test_AaveV3ConnectorPartiallyMintCollateral() public {
+        uint256 maxMintCollateral = ltv.maxMintCollateral(user);
+        uint256 amountToMint = maxMintCollateral / getRandomNumberInRange(2, 10);
+        uint256 neededToMint = ltv.previewMintCollateral(amountToMint);
+
+        vm.startPrank(user);
+
+        wsteth.approve(address(ltv), neededToMint);
+        ltv.mintCollateral(amountToMint, user);
+
+        vm.stopPrank();
+    }
+
+    function test_AaveV3ConnectorPartiallyWithdrawCollateral() public {
         uint256 maxDepositCollateral = ltv.maxDepositCollateral(user);
+
+        vm.startPrank(user);
+
+        wsteth.approve(address(ltv), maxDepositCollateral);
         ltv.depositCollateral(maxDepositCollateral, user);
+
         uint256 maxWithdrawCollateral = ltv.maxWithdrawCollateral(user);
-        uint256 amountToWithdraw = maxWithdrawCollateral / getRandomNumberInRange(x, 2, 10);
+        uint256 amountToWithdraw = maxWithdrawCollateral / getRandomNumberInRange(2, 10);
         ltv.withdrawCollateral(amountToWithdraw, user, user);
 
         vm.stopPrank();
     }
 
-    function test_AaveV3ConnectorPartiallyRedeemCollateral(uint256 x) public {
+    function test_AaveV3ConnectorPartiallyRedeemCollateral() public {
+        uint256 maxDepositCollateral = ltv.maxDepositCollateral(user);
+
         vm.startPrank(user);
 
-        uint256 maxDepositCollateral = ltv.maxDepositCollateral(user);
+        wsteth.approve(address(ltv), maxDepositCollateral);
         ltv.depositCollateral(maxDepositCollateral, user);
+
         uint256 maxRedeemCollateral = ltv.maxRedeemCollateral(user);
-        uint256 amountToRedeem = maxRedeemCollateral / getRandomNumberInRange(x, 2, 10);
+        uint256 amountToRedeem = maxRedeemCollateral / getRandomNumberInRange(2, 10);
         ltv.redeemCollateral(amountToRedeem, user, user);
 
         vm.stopPrank();
