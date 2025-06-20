@@ -159,6 +159,28 @@ contract TransferFromTest is BaseTest, IERC20Errors, IERC20Events {
         assertEq(ltv.balanceOf(user), 0);
     }
 
+    function test_approveOneAddressTransferFromAnother(
+        DefaultTestData memory defaultData,
+        address user,
+        address anotherAccount,
+        uint256 transferAmount
+    ) public testWithPredefinedDefaultValues(defaultData) {
+        vm.assume(user != address(0));
+        vm.assume(user != defaultData.owner);
+        vm.assume(anotherAccount != address(0));
+        vm.assume(anotherAccount != user);
+        vm.assume(transferAmount > 0);
+
+        address owner = defaultData.owner;
+
+        vm.prank(owner);
+        ltv.approve(anotherAccount, transferAmount);
+
+        vm.prank(user);
+        vm.expectRevert(abi.encodeWithSelector(ERC20InsufficientAllowance.selector, user, 0, transferAmount));
+        ltv.transferFrom(owner, user, transferAmount);
+    }
+
     function test_notTransferToZeroAddress(DefaultTestData memory defaultData, uint256 transferAmount)
         public
         testWithPredefinedDefaultValues(defaultData)
