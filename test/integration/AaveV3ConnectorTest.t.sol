@@ -42,7 +42,7 @@ contract AaveV3ConnectorTest is Test {
         weth = IERC20(WETH);
         wsteth = IERC20(WSTETH);
 
-        aaveLendingConnector = new AaveV3Connector(weth, wsteth);
+        aaveLendingConnector = new AaveV3Connector(wsteth, weth);
         aaveV3OracleConnector = new AaveV3OracleConnector(WSTETH, WETH);
         slippageProvider = new ConstantSlippageProvider(10 ** 16, 10 ** 16, address(this));
 
