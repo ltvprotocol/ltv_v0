@@ -99,12 +99,63 @@ contract RoundingExecuteAuctionBorrowTest is AuctionTestCommon {
         int256 futureCollateralBefore = ltv.futureCollateralAssets();
 
         vm.startPrank(user);
-        deal(address(borrowToken), user, type(uint256).max);
-        borrowToken.approve(address(ltv), type(uint256).max);
+
+        deal(address(collateralToken), user, type(uint256).max);
+        collateralToken.approve(address(ltv), type(uint256).max);
+
         AuctionState memory initialAuctionState = getAuctionState();
+
         ltv.executeAuctionBorrow(-4443);
+
         int256 futureCollateralAfter = ltv.futureCollateralAssets();
-        assertEq(futureCollateralAfter, futureCollateralBefore + 2221);
+
+        assertEq(futureCollateralAfter, futureCollateralBefore - 2222);
+
+        checkFutureExecutorProfit(initialAuctionState);
+    }
+
+    function test_executeAuctionBorrowDepositAuctionRounding6Down(DefaultTestData memory data, address user)
+        public
+        testWithPredefinedDefaultValues(data)
+    {
+        prepareDepositAuction(2000000);
+
+        vm.roll(ltv.startAuction() + 243);
+
+        int256 initialFutureRewardCollateral = ltv.futureRewardCollateralAssets();
+
+        vm.startPrank(user);
+
+        deal(address(collateralToken), user, type(uint256).max);
+        collateralToken.approve(address(ltv), type(uint256).max);
+
+        AuctionState memory initialAuctionState = getAuctionState();
+
+        ltv.executeAuctionBorrow(-4443);
+
+        assertEq(ltv.futureRewardCollateralAssets(), initialFutureRewardCollateral + 22);
+
+        checkFutureExecutorProfit(initialAuctionState);
+    }
+
+    function test_executeAuctionBorrowDepositAuctionRounding8Down(DefaultTestData memory data, address user)
+        public
+        testWithPredefinedDefaultValues(data)
+    {
+        prepareDepositAuction(2000000);
+
+        vm.roll(ltv.startAuction() + 243);
+
+        vm.startPrank(user);
+
+        deal(address(collateralToken), user, 2222);
+        collateralToken.approve(address(ltv), 2222);
+
+        AuctionState memory initialAuctionState = getAuctionState();
+
+        ltv.executeAuctionBorrow(-4443);
+
+        assertEq(collateralToken.balanceOf(user), 5);
 
         checkFutureExecutorProfit(initialAuctionState);
     }

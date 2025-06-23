@@ -129,11 +129,9 @@ contract GovernorTest is BalancedTest {
             )
         );
         dummyLTV.setMaxSafeLTV(tooLowValue);
-
-        vm.expectRevert(
-            abi.encodeWithSelector(IAdministrationErrors.UnexpectedMaxSafeLTV.selector, Constants.LTV_DIVIDER)
-        );
+        
         dummyLTV.setMaxSafeLTV(uint128(Constants.LTV_DIVIDER));
+        assertEq(dummyLTV.maxSafeLTV(), uint128(Constants.LTV_DIVIDER));
     }
 
     function test_setMinProfitLTV(address owner, address user)
