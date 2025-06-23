@@ -129,7 +129,7 @@ contract GovernorTest is BalancedTest {
             )
         );
         dummyLTV.setMaxSafeLTV(tooLowValue);
-        
+
         dummyLTV.setMaxSafeLTV(uint128(Constants.LTV_DIVIDER));
         assertEq(dummyLTV.maxSafeLTV(), uint128(Constants.LTV_DIVIDER));
     }
