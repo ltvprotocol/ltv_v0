@@ -4,6 +4,9 @@ pragma solidity ^0.8.28;
 import "src/state_reader/GetLendingConnectorReader.sol";
 
 abstract contract Lending is GetLendingConnectorReader {
+    // In case of delegatecall revert, the revert reason is stored in the data parameter.
+    // We need to forward it further saving the revert message. Since revert only accepts a string
+    // or custom error, we need to use assembly to forward the revert reason
     function revertWithDataIfNeeded(bool isSuccess, bytes memory data) internal pure {
         if (!isSuccess) {
             assembly {
