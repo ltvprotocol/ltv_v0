@@ -47,7 +47,7 @@ abstract contract WithdrawCollateral is
         }
 
         if (owner != receiver) {
-            allowance[owner][receiver] -= shares;
+            _spendAllowance(owner, receiver, shares);
         }
 
         applyMaxGrowthFee(
@@ -65,8 +65,6 @@ abstract contract WithdrawCollateral is
         );
 
         _burn(owner, shares);
-
-        withdraw(assets);
 
         NextState memory nextState = NextStep.calculateNextStep(
             NextStepData({
@@ -96,6 +94,8 @@ abstract contract WithdrawCollateral is
                 collateralPrice: data.previewCollateralVaultData.collateralPrice
             })
         );
+
+        withdraw(assets);
 
         transferCollateralToken(receiver, assets);
 
