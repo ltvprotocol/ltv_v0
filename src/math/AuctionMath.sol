@@ -6,7 +6,6 @@ import "../Constants.sol";
 import "src/structs/data/AuctionData.sol";
 import "src/structs/state_transition/DeltaAuctionState.sol";
 import "src/errors/IAuctionErrors.sol";
-import "forge-std/console.sol";
 
 // since auction execution doesn't affect totalAssets we have only two conflicts here,
 // executor <=> future executor,
@@ -125,11 +124,17 @@ library AuctionMath {
             deltaState.deltaFutureCollateralAssets, data.futureBorrowAssets, data.futureCollateralAssets
         );
 
+        if (deltaState.deltaFutureBorrowAssets == -data.futureBorrowAssets) {
+            deltaState.deltaFutureCollateralAssets = -data.futureCollateralAssets;
+        }
+
         int256 deltaFutureRewardBorrowAssets = calculateDeltaFutureRewardBorrowAssetsFromDeltaFutureBorrowAssets(
             deltaState.deltaFutureBorrowAssets, data.futureBorrowAssets, data.futureRewardBorrowAssets
         );
         int256 deltaFutureRewardCollateralAssets =
-            deltaState.deltaUserCollateralAssets - deltaState.deltaFutureCollateralAssets;
+        calculateDeltaFutureRewardCollateralAssetsFromDeltaFutureCollateralAssets(
+            deltaState.deltaFutureCollateralAssets, data.futureCollateralAssets, data.futureRewardCollateralAssets
+        );
 
         deltaState.deltaUserFutureRewardBorrowAssets =
         calculateDeltaUserFutureRewardBorrowAssetsFromDeltaFutureRewardBorrowAssets(
@@ -161,7 +166,6 @@ library AuctionMath {
             deltaWithinAuctionSize = (availableBorrowAssets > 0 && availableBorrowAssets >= -deltaUserBorrowAssets)
                 || (availableBorrowAssets < 0 && availableBorrowAssets <= -deltaUserBorrowAssets);
         }
-        console.log("first point");
         require(
             hasOppositeSign && deltaWithinAuctionSize,
             IAuctionErrors.NoAuctionForProvidedDeltaFutureBorrow(
@@ -174,13 +178,18 @@ library AuctionMath {
         deltaState.deltaFutureBorrowAssets = calculateDeltaFutureBorrowAssetsFromDeltaUserBorrowAssets(
             deltaState.deltaUserBorrowAssets, data.futureBorrowAssets, data.futureRewardBorrowAssets, data.auctionStep
         );
-        console.log("second point");
         deltaState.deltaFutureCollateralAssets = calculateDeltaFutureCollateralAssetsFromDeltaFutureBorrowAssets(
             deltaState.deltaFutureBorrowAssets, data.futureCollateralAssets, data.futureBorrowAssets
         );
-        console.log("third point");
 
-        int256 deltaFutureRewardBorrowAssets = deltaState.deltaUserBorrowAssets - deltaState.deltaFutureBorrowAssets;
+        if (deltaState.deltaFutureCollateralAssets == -data.futureCollateralAssets) {
+            deltaState.deltaFutureBorrowAssets = -data.futureBorrowAssets;
+        }
+
+        int256 deltaFutureRewardBorrowAssets = calculateDeltaFutureRewardBorrowAssetsFromDeltaFutureBorrowAssets(
+            deltaState.deltaFutureBorrowAssets, data.futureBorrowAssets, data.futureRewardBorrowAssets
+        );
+
         int256 deltaFutureRewardCollateralAssets =
         calculateDeltaFutureRewardCollateralAssetsFromDeltaFutureCollateralAssets(
             deltaState.deltaFutureCollateralAssets, data.futureCollateralAssets, data.futureRewardCollateralAssets

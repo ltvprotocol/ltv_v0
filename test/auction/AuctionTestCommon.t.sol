@@ -38,6 +38,17 @@ contract AuctionTestCommon is BaseTest {
         assertGe(
             abs(initialAuctionState.futureBorrowAssets) * newReward, abs(auctionState.futureBorrowAssets) * oldReward
         );
+
+        // if futureBorrowAssets or futureCollateralAssets is 0, then the other one has to be 0 too
+        assertTrue(
+            (auctionState.futureBorrowAssets != 0 && auctionState.futureCollateralAssets != 0)
+                || (
+                    auctionState.futureBorrowAssets == 0 && auctionState.futureCollateralAssets == 0
+                        && auctionState.futureRewardBorrowAssets == 0 && auctionState.futureRewardCollateralAssets == 0
+                )
+        );
+
+        
     }
 
     function prepareUser(address user) public {

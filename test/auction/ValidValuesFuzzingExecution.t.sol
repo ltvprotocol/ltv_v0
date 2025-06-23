@@ -69,7 +69,7 @@ contract ValidValuesFuzzingExecution is AuctionTestCommon {
         checkFutureExecutorProfit(initialAuctionState);
     }
 
-    function test_borrowdDepositAuction(
+    function test_borrowDepositAuction(
         DefaultTestData memory data,
         address user,
         uint120 auctionSize,
