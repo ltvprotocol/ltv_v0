@@ -37,7 +37,7 @@ contract AaveV3ConnectorTest is Test {
     address user = address(0x123);
 
     function setUp() public {
-        vm.createSelectFork(vm.envString("MAINNET_RPC_URL"));
+        vm.createSelectFork(vm.envString("MAINNET_RPC_URL"), 22769382);
 
         weth = IERC20(WETH);
         wsteth = IERC20(WSTETH);
@@ -96,11 +96,6 @@ contract AaveV3ConnectorTest is Test {
         deal(WSTETH, user, 100 ether);
     }
 
-    function getRandomNumberInRange(uint256 min, uint256 max) public view returns (uint256 random) {
-        uint256 pseudoRandom = uint256(keccak256(abi.encode(block.timestamp, block.number)));
-        random = bound(pseudoRandom, min, max);
-    }
-
     function test_AaveV3ConnectorSet() public view {
         assertEq(address(aaveLendingConnector.BORROW_ASSET()), WETH);
         assertEq(address(aaveLendingConnector.COLLATERAL_ASSET()), WSTETH);
@@ -113,7 +108,7 @@ contract AaveV3ConnectorTest is Test {
         assertEq(address(ltv.collateralToken()), WSTETH);
     }
 
-    function test_AaveV3ConnectorDeposit() public {
+    function test_AaveV3ConnectorMaxDeposit() public {
         uint256 maxDeposit = ltv.maxDeposit(user);
 
         vm.startPrank(user);
@@ -124,7 +119,7 @@ contract AaveV3ConnectorTest is Test {
         vm.stopPrank();
     }
 
-    function test_AaveV3ConnectorMint() public {
+    function test_AaveV3ConnectorMaxMint() public {
         uint256 maxMint = ltv.maxMint(user);
         uint256 neededToMint = ltv.previewMint(maxMint);
 
@@ -136,7 +131,7 @@ contract AaveV3ConnectorTest is Test {
         vm.stopPrank();
     }
 
-    function test_AaveV3ConnectorWithdraw() public {
+    function test_AaveV3ConnectorMaxWithdraw() public {
         uint256 maxDeposit = ltv.maxDeposit(user);
 
         vm.startPrank(user);
@@ -150,7 +145,7 @@ contract AaveV3ConnectorTest is Test {
         vm.stopPrank();
     }
 
-    function test_AaveV3ConnectorRedeem() public {
+    function test_AaveV3ConnectorMaxRedeem() public {
         uint256 maxDeposit = ltv.maxDeposit(user);
 
         vm.startPrank(user);
@@ -164,7 +159,7 @@ contract AaveV3ConnectorTest is Test {
         vm.stopPrank();
     }
 
-    function test_AaveV3ConnectorDepositCollateral() public {
+    function test_AaveV3ConnectorMaxDepositCollateral() public {
         uint256 maxDepositCollateral = ltv.maxDepositCollateral(user);
 
         vm.startPrank(user);
@@ -175,7 +170,7 @@ contract AaveV3ConnectorTest is Test {
         vm.stopPrank();
     }
 
-    function test_AaveV3ConnectorMintCollateral() public {
+    function test_AaveV3ConnectorMaxMintCollateral() public {
         uint256 maxMintCollateral = ltv.maxMintCollateral(user);
         uint256 neededToMint = ltv.previewMintCollateral(maxMintCollateral);
 
@@ -187,7 +182,7 @@ contract AaveV3ConnectorTest is Test {
         vm.stopPrank();
     }
 
-    function test_AaveV3ConnectorWithdrawCollateral() public {
+    function test_AaveV3ConnectorMaxWithdrawCollateral() public {
         uint256 maxDepositCollateral = ltv.maxDepositCollateral(user);
 
         vm.startPrank(user);
@@ -201,7 +196,7 @@ contract AaveV3ConnectorTest is Test {
         vm.stopPrank();
     }
 
-    function test_AaveV3ConnectorRedeemCollateral() public {
+    function test_AaveV3ConnectorMaxRedeemCollateral() public {
         uint256 maxDepositCollateral = ltv.maxDepositCollateral(user);
 
         vm.startPrank(user);
@@ -215,32 +210,29 @@ contract AaveV3ConnectorTest is Test {
         vm.stopPrank();
     }
 
-    function test_AaveV3ConnectorPartiallyDeposit() public {
-        uint256 maxDeposit = ltv.maxDeposit(user);
-        uint256 amountToDeposit = maxDeposit / getRandomNumberInRange(2, 10);
-
+    function test_AaveV3ConnectorDeposit() public {
         vm.startPrank(user);
 
-        weth.approve(address(ltv), amountToDeposit);
-        ltv.deposit(amountToDeposit, user);
+        weth.approve(address(ltv), 1 ether);
+        uint256 shares = ltv.deposit(1 ether, user);
 
         vm.stopPrank();
+
+        assertEq(shares, 961165048539872840);
     }
 
-    function test_AaveV3ConnectorPartiallyMint() public {
-        uint256 maxMint = ltv.maxMint(user);
-        uint256 amountToMint = maxMint / getRandomNumberInRange(2, 10);
-        uint256 neededToMint = ltv.previewMint(amountToMint);
-
+    function test_AaveV3ConnectorMint() public {
         vm.startPrank(user);
 
-        weth.approve(address(ltv), neededToMint);
-        ltv.mint(amountToMint, user);
+        weth.approve(address(ltv), 1040404040411684729);
+        uint256 givenBorrowTokens = ltv.mint(1 ether, user);
 
         vm.stopPrank();
+
+        assertEq(givenBorrowTokens, 1040404040411684729);
     }
 
-    function test_AaveV3ConnectorPartiallyWithdraw() public {
+    function test_AaveV3ConnectorWithdraw() public {
         uint256 maxDeposit = ltv.maxDeposit(user);
 
         vm.startPrank(user);
@@ -248,14 +240,14 @@ contract AaveV3ConnectorTest is Test {
         weth.approve(address(ltv), maxDeposit);
         ltv.deposit(maxDeposit, user);
 
-        uint256 maxWithdraw = ltv.maxWithdraw(user);
-        uint256 amountToWithdraw = maxWithdraw / getRandomNumberInRange(2, 10);
-        ltv.withdraw(amountToWithdraw, user, user);
+        uint256 shares = ltv.withdraw(1 ether, user, user);
 
         vm.stopPrank();
+
+        assertEq(shares, 961165048544450031);
     }
 
-    function test_AaveV3ConnectorPartiallyRedeem() public {
+    function test_AaveV3ConnectorRedeem() public {
         uint256 maxDeposit = ltv.maxDeposit(user);
 
         vm.startPrank(user);
@@ -263,39 +255,36 @@ contract AaveV3ConnectorTest is Test {
         weth.approve(address(ltv), maxDeposit);
         ltv.deposit(maxDeposit, user);
 
-        uint256 maxRedeem = ltv.maxRedeem(user);
-        uint256 amountToRedeem = maxRedeem / getRandomNumberInRange(2, 10);
-        ltv.redeem(amountToRedeem, user, user);
+        uint256 assetsReceived = ltv.redeem(1 ether, user, user);
 
         vm.stopPrank();
+
+        assertEq(assetsReceived, 1040404040403035721);
     }
 
-    function test_AaveV3ConnectorPartiallyDepositCollateral() public {
-        uint256 maxDepositCollateral = ltv.maxDepositCollateral(user);
-        uint256 amountToDeposit = maxDepositCollateral / getRandomNumberInRange(2, 10);
-
+    function test_AaveV3ConnectorDepositCollateral() public {
         vm.startPrank(user);
 
-        wsteth.approve(address(ltv), amountToDeposit);
-        ltv.depositCollateral(amountToDeposit, user);
+        wsteth.approve(address(ltv), 1 ether);
+        uint256 shares = ltv.depositCollateral(1 ether, user);
 
         vm.stopPrank();
+
+        assertEq(shares, 1171155094622822850);
     }
 
-    function test_AaveV3ConnectorPartiallyMintCollateral() public {
-        uint256 maxMintCollateral = ltv.maxMintCollateral(user);
-        uint256 amountToMint = maxMintCollateral / getRandomNumberInRange(2, 10);
-        uint256 neededToMint = ltv.previewMintCollateral(amountToMint);
-
+    function test_AaveV3ConnectorMintCollateral() public {
         vm.startPrank(user);
 
-        wsteth.approve(address(ltv), neededToMint);
-        ltv.mintCollateral(amountToMint, user);
+        wsteth.approve(address(ltv), 853857874673156914);
+        uint256 givenCollateralToken = ltv.mintCollateral(1 ether, user);
 
         vm.stopPrank();
+
+        assertEq(givenCollateralToken, 853857874673156914);
     }
 
-    function test_AaveV3ConnectorPartiallyWithdrawCollateral() public {
+    function test_AaveV3ConnectorWithdrawCollateral() public {
         uint256 maxDepositCollateral = ltv.maxDepositCollateral(user);
 
         vm.startPrank(user);
@@ -303,14 +292,14 @@ contract AaveV3ConnectorTest is Test {
         wsteth.approve(address(ltv), maxDepositCollateral);
         ltv.depositCollateral(maxDepositCollateral, user);
 
-        uint256 maxWithdrawCollateral = ltv.maxWithdrawCollateral(user);
-        uint256 amountToWithdraw = maxWithdrawCollateral / getRandomNumberInRange(2, 10);
-        ltv.withdrawCollateral(amountToWithdraw, user, user);
+        uint256 shares = ltv.withdrawCollateral(1 ether, user, user);
 
         vm.stopPrank();
+
+        assertEq(shares, 1171155094627248649);
     }
 
-    function test_AaveV3ConnectorPartiallyRedeemCollateral() public {
+    function test_AaveV3ConnectorRedeemCollateral() public {
         uint256 maxDepositCollateral = ltv.maxDepositCollateral(user);
 
         vm.startPrank(user);
@@ -318,10 +307,10 @@ contract AaveV3ConnectorTest is Test {
         wsteth.approve(address(ltv), maxDepositCollateral);
         ltv.depositCollateral(maxDepositCollateral, user);
 
-        uint256 maxRedeemCollateral = ltv.maxRedeemCollateral(user);
-        uint256 amountToRedeem = maxRedeemCollateral / getRandomNumberInRange(2, 10);
-        ltv.redeemCollateral(amountToRedeem, user, user);
+        uint256 assetsReceived = ltv.redeemCollateral(1 ether, user, user);
 
         vm.stopPrank();
+
+        assertEq(assetsReceived, 853857874665986988);
     }
 }
