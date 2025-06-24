@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "./vault/TotalAssetsState.sol";
+import "./vault/CommonTotalAssetsState.sol";
 
 struct MaxGrowthFeeState {
-    TotalAssetsState totalAssetsState;
+    CommonTotalAssetsState commonTotalAssetsState;
+    uint256 withdrawRealCollateralAssets;
+    uint256 withdrawRealBorrowAssets;
     uint256 maxGrowthFee;
     uint256 supply;
     uint256 lastSeenTokenPrice;

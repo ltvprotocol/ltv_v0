@@ -127,8 +127,8 @@ contract BaseTest is Test {
         oracle.setAssetPrice(address(borrowToken), init.borrowPrice);
         oracle.setAssetPrice(address(collateralToken), init.collateralPrice);
 
-        deal(address(borrowToken), address(lendingProtocol), type(uint112).max);
-        deal(address(collateralToken), address(lendingProtocol), type(uint112).max);
+        deal(address(borrowToken), address(lendingProtocol), type(uint128).max);
+        deal(address(collateralToken), address(lendingProtocol), type(uint128).max);
 
         vm.roll(Constants.AMOUNT_OF_STEPS);
         ltv.setStartAuction(init.startAuction);

@@ -1,26 +1,30 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../../structs/state/vault/PreviewVaultState.sol";
+import "../../structs/state/vault/PreviewDepositVaultState.sol";
+import "../../structs/state/vault/PreviewWithdrawVaultState.sol";
 import "../../structs/state/vault/MaxDepositMintBorrowVaultState.sol";
 import "../../structs/state/vault/MaxWithdrawRedeemBorrowVaultState.sol";
 import "../../structs/state/MaxGrowthFeeState.sol";
 import "../../structs/state/vault/TotalAssetsState.sol";
 
 interface IBorrowVaultModule {
-    function previewDeposit(uint256 assets, PreviewVaultState memory previewVaultState)
+    function previewDeposit(uint256 assets, PreviewDepositVaultState memory previewDepositVaultState)
         external
         view
         returns (uint256);
 
-    function previewWithdraw(uint256 assets, PreviewVaultState memory previewVaultState)
+    function previewWithdraw(uint256 assets, PreviewWithdrawVaultState memory previewWithdrawVaultState)
         external
         view
         returns (uint256);
 
-    function previewMint(uint256 shares, PreviewVaultState memory previewVaultState) external view returns (uint256);
+    function previewMint(uint256 shares, PreviewDepositVaultState memory previewDepositVaultState)
+        external
+        view
+        returns (uint256);
 
-    function previewRedeem(uint256 shares, PreviewVaultState memory previewVaultState)
+    function previewRedeem(uint256 shares, PreviewWithdrawVaultState memory previewWithdrawVaultState)
         external
         view
         returns (uint256);

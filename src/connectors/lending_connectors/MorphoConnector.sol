@@ -36,12 +36,18 @@ contract MorphoConnector is ILendingConnector {
     function getRealCollateralAssets(bool isDeposit) external view returns (uint256) {
         (uint128 totalSupplyAssets, uint128 totalSupplyShares,,,,) = MORPHO.market(marketId);
         (uint128 supplyShares,,) = MORPHO.position(marketId, address(this));
+
+        if (totalSupplyShares == 0) return 0;
+
         return totalSupplyAssets.mulDiv(supplyShares, totalSupplyShares, isDeposit);
     }
 
     function getRealBorrowAssets(bool isDeposit) external view returns (uint256) {
         (,, uint128 totalBorrowAssets, uint128 totalBorrowShares,,) = MORPHO.market(marketId);
         (, uint128 borrowShares,) = MORPHO.position(marketId, address(this));
+
+        if (totalBorrowShares == 0) return 0;
+
         return totalBorrowAssets.mulDiv(borrowShares, totalBorrowShares, isDeposit);
     }
 }

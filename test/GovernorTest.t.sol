@@ -131,9 +131,9 @@ contract GovernorTest is BalancedTest {
         dummyLTV.setMaxSafeLTV(tooLowValue);
 
         vm.expectRevert(
-            abi.encodeWithSelector(IAdministrationErrors.UnexpectedMaxSafeLTV.selector, Constants.LTV_DIVIDER)
+            abi.encodeWithSelector(IAdministrationErrors.UnexpectedMaxSafeLTV.selector, Constants.LTV_DIVIDER + 1)
         );
-        dummyLTV.setMaxSafeLTV(uint128(Constants.LTV_DIVIDER));
+        dummyLTV.setMaxSafeLTV(uint128(Constants.LTV_DIVIDER) + 1);
     }
 
     function test_setMinProfitLTV(address owner, address user)
@@ -215,7 +215,7 @@ contract GovernorTest is BalancedTest {
 
         // Should revert if too high
         vm.startPrank(governor);
-        uint256 tooHighValue = 10 ** 18; // 100%
+        uint256 tooHighValue = 42 * 10 ** 18; // 100%
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.InvalidMaxDeleverageFee.selector, tooHighValue));
         dummyLTV.setMaxDeleverageFee(tooHighValue);
     }

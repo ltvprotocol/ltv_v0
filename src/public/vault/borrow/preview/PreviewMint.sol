@@ -7,17 +7,18 @@ import "../../../../math/MintRedeem.sol";
 abstract contract PreviewMint is Vault {
     using uMulDiv for uint256;
 
-    function previewMint(uint256 shares, PreviewVaultState memory state) public pure returns (uint256 assets) {
-        (assets,) = _previewMint(shares, previewVaultStateToPreviewBorrowVaultData(state, true));
+    function previewMint(uint256 shares, PreviewDepositVaultState memory state) public pure returns (uint256 assets) {
+        (assets,) = _previewMint(shares, previewDepositStateToPreviewDepositData(state));
     }
 
-    function _previewMint(uint256 shares, PreviewBorrowVaultData memory data)
+    function _previewMint(uint256 shares, PreviewDepositBorrowVaultData memory data)
         internal
         pure
         returns (uint256, DeltaFuture memory)
     {
-        uint256 sharesInUnderlying =
-            shares.mulDivUp(data.totalAssets, data.supplyAfterFee).mulDivUp(data.borrowPrice, Constants.ORACLE_DIVIDER);
+        uint256 sharesInUnderlying = shares.mulDivUp(data.depositTotalAssets, data.supplyAfterFee).mulDivUp(
+            data.borrowPrice, Constants.ORACLE_DIVIDER
+        );
 
         (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = MintRedeem.calculateMintRedeem(
             MintRedeemData({

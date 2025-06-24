@@ -8,7 +8,7 @@ abstract contract MaxRedeem is PreviewWithdraw, PreviewRedeem {
     using uMulDiv for uint256;
 
     function maxRedeem(MaxWithdrawRedeemBorrowVaultState memory state) public pure returns (uint256 max) {
-        return _maxRedeem(maxWithdrawRedeemBorrowVaultStateToMaxWithdrawRedeemBorrowVaultData(state));
+        return _maxRedeem(maxWithdrawRedeemStateToData(state));
     }
 
     function _maxRedeem(MaxWithdrawRedeemBorrowVaultData memory data) internal pure returns (uint256 max) {
@@ -19,10 +19,10 @@ abstract contract MaxRedeem is PreviewWithdraw, PreviewRedeem {
         }
 
         uint256 maxWithdrawInAssets = (maxSafeRealBorrow - uint256(data.realBorrow)).mulDivDown(
-            Constants.ORACLE_DIVIDER, data.previewBorrowVaultData.borrowPrice
+            Constants.ORACLE_DIVIDER, data.previewWithdrawBorrowVaultData.borrowPrice
         );
 
-        (uint256 vaultMaxWithdrawShares,) = _previewWithdraw(maxWithdrawInAssets, data.previewBorrowVaultData);
+        (uint256 vaultMaxWithdrawShares,) = _previewWithdraw(maxWithdrawInAssets, data.previewWithdrawBorrowVaultData);
         // round down to assume smaller border
         return data.ownerBalance < vaultMaxWithdrawShares ? data.ownerBalance : vaultMaxWithdrawShares;
     }

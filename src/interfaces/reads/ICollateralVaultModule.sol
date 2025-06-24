@@ -1,29 +1,30 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../../structs/state/vault/PreviewVaultState.sol";
+import "../../structs/state/vault/PreviewDepositVaultState.sol";
+import "../../structs/state/vault/PreviewWithdrawVaultState.sol";
 import "../../structs/state/vault/MaxDepositMintCollateralVaultState.sol";
 import "../../structs/state/vault/MaxWithdrawRedeemCollateralVaultState.sol";
 import "../../structs/state/MaxGrowthFeeState.sol";
 import "../../structs/state/vault/TotalAssetsState.sol";
 
 interface ICollateralVaultModule {
-    function previewDepositCollateral(uint256 assets, PreviewVaultState memory previewVaultState)
+    function previewDepositCollateral(uint256 assets, PreviewDepositVaultState memory previewDepositVaultState)
         external
         view
         returns (uint256);
 
-    function previewWithdrawCollateral(uint256 assets, PreviewVaultState memory previewVaultState)
+    function previewWithdrawCollateral(uint256 assets, PreviewWithdrawVaultState memory previewWithdrawVaultState)
         external
         view
         returns (uint256);
 
-    function previewMintCollateral(uint256 shares, PreviewVaultState memory previewVaultState)
+    function previewMintCollateral(uint256 shares, PreviewDepositVaultState memory previewDepositVaultState)
         external
         view
         returns (uint256);
 
-    function previewRedeemCollateral(uint256 shares, PreviewVaultState memory previewVaultState)
+    function previewRedeemCollateral(uint256 shares, PreviewWithdrawVaultState memory previewWithdrawVaultState)
         external
         view
         returns (uint256);

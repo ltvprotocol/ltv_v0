@@ -2,29 +2,27 @@
 pragma solidity ^0.8.28;
 
 import "../../interfaces/IModules.sol";
-import "src/state_reader/PreviewVaultStateReader.sol";
-import "src/state_reader/MaxDepositMintCollateralVaultStateReader.sol";
-import "src/state_reader/MaxWithdrawRedeemCollateralVaultStateReader.sol";
+import "src/state_reader/vault/MaxDepositMintCollateralVaultStateReader.sol";
+import "src/state_reader/vault/MaxWithdrawRedeemCollateralVaultStateReader.sol";
 
 abstract contract CollateralVaultRead is
-    PreviewVaultStateReader,
     MaxDepositMintCollateralVaultStateReader,
     MaxWithdrawRedeemCollateralVaultStateReader
 {
     function previewDepositCollateral(uint256 assets) external view returns (uint256) {
-        return modules.collateralVaultModule().previewDepositCollateral(assets, previewVaultState());
+        return modules.collateralVaultModule().previewDepositCollateral(assets, previewDepositVaultState());
     }
 
     function previewWithdrawCollateral(uint256 assets) external view returns (uint256) {
-        return modules.collateralVaultModule().previewWithdrawCollateral(assets, previewVaultState());
+        return modules.collateralVaultModule().previewWithdrawCollateral(assets, previewWithdrawVaultState());
     }
 
     function previewMintCollateral(uint256 shares) external view returns (uint256) {
-        return modules.collateralVaultModule().previewMintCollateral(shares, previewVaultState());
+        return modules.collateralVaultModule().previewMintCollateral(shares, previewDepositVaultState());
     }
 
     function previewRedeemCollateral(uint256 shares) external view returns (uint256) {
-        return modules.collateralVaultModule().previewRedeemCollateral(shares, previewVaultState());
+        return modules.collateralVaultModule().previewRedeemCollateral(shares, previewWithdrawVaultState());
     }
 
     function maxDepositCollateral(address) external view returns (uint256) {
@@ -52,10 +50,10 @@ abstract contract CollateralVaultRead is
     }
 
     function totalAssetsCollateral() external view returns (uint256) {
-        return modules.collateralVaultModule().totalAssetsCollateral(totalAssetsState());
+        return modules.collateralVaultModule().totalAssetsCollateral(totalAssetsState(false));
     }
 
     function totalAssetsCollateral(bool isDeposit) external view returns (uint256) {
-        return modules.collateralVaultModule().totalAssetsCollateral(isDeposit, totalAssetsState());
+        return modules.collateralVaultModule().totalAssetsCollateral(isDeposit, totalAssetsState(isDeposit));
     }
 }

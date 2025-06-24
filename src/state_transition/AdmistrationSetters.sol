@@ -8,7 +8,7 @@ import "../Constants.sol";
 
 contract AdmistrationSetters is LTVState, IAdministrationErrors, IAdministrationEvents {
     function _setTargetLTV(uint128 value) internal {
-        require(value > 0 && value < Constants.LTV_DIVIDER, UnexpectedTargetLTV(value));
+        require(value >= 0 && value < Constants.LTV_DIVIDER, UnexpectedTargetLTV(value));
         require(value <= maxSafeLTV && value >= minProfitLTV, InvalidLTVSet(value, maxSafeLTV, minProfitLTV));
         uint128 oldValue = targetLTV;
         targetLTV = value;
@@ -16,7 +16,7 @@ contract AdmistrationSetters is LTVState, IAdministrationErrors, IAdministration
     }
 
     function _setMaxSafeLTV(uint128 value) internal {
-        require(value > 0 && value < Constants.LTV_DIVIDER, UnexpectedMaxSafeLTV(value));
+        require(value > 0 && value <= Constants.LTV_DIVIDER, UnexpectedMaxSafeLTV(value));
         require(value >= targetLTV, InvalidLTVSet(targetLTV, value, minProfitLTV));
         uint128 oldValue = maxSafeLTV;
         maxSafeLTV = value;
@@ -24,7 +24,7 @@ contract AdmistrationSetters is LTVState, IAdministrationErrors, IAdministration
     }
 
     function _setMinProfitLTV(uint128 value) internal {
-        require(value > 0 && value < Constants.LTV_DIVIDER, UnexpectedMinProfitLTV(value));
+        require(value >= 0 && value < Constants.LTV_DIVIDER, UnexpectedMinProfitLTV(value));
         require(value <= targetLTV, InvalidLTVSet(targetLTV, maxSafeLTV, value));
         uint128 oldValue = minProfitLTV;
         minProfitLTV = value;
@@ -45,7 +45,7 @@ contract AdmistrationSetters is LTVState, IAdministrationErrors, IAdministration
     }
 
     function _setMaxDeleverageFee(uint256 value) internal {
-        require(value < 10 ** 18, InvalidMaxDeleverageFee(value));
+        require(value <= 10 ** 18, InvalidMaxDeleverageFee(value));
         uint256 oldValue = maxDeleverageFee;
         maxDeleverageFee = value;
         emit MaxDeleverageFeeChanged(oldValue, value);
@@ -83,6 +83,12 @@ contract AdmistrationSetters is LTVState, IAdministrationErrors, IAdministration
         uint256 oldValue = maxGrowthFee;
         maxGrowthFee = _maxGrowthFee;
         emit MaxGrowthFeeChanged(oldValue, _maxGrowthFee);
+    }
+
+    function _setVaultBalanceAsLendingConnector(address _vaultBalanceAsLendingConnector) internal {
+        address oldAddress = address(vaultBalanceAsLendingConnector);
+        vaultBalanceAsLendingConnector = ILendingConnector(_vaultBalanceAsLendingConnector);
+        emit VaultBalanceAsLendingConnectorUpdated(oldAddress, _vaultBalanceAsLendingConnector);
     }
 
     function _setIsDepositDisabled(bool value) internal {
