@@ -79,7 +79,7 @@ contract BaseTest is Test {
         borrowToken.initialize("Borrow", "BOR", 18);
 
         lendingProtocol = new MockDummyLending(init.owner);
-        oracle = IDummyOracle(new DummyOracle(init.owner));
+        oracle = IDummyOracle(new DummyOracle());
         slippageProvider = new ConstantSlippageProvider(init.collateralSlippage, init.borrowSlippage, init.owner);
         {
             ModulesState memory modulesState = ModulesState({

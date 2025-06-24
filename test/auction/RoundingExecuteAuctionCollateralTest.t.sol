@@ -120,7 +120,7 @@ contract RoundingExecuteAuctionCollateralTest is AuctionTestCommon {
         testWithPredefinedDefaultValues(data)
     {
         vm.assume(user != data.feeCollector);
-        prepareDepositAuction(2000000);
+        prepareDepositAuction(2000000, data.owner);
 
         vm.roll(ltv.startAuction() + 243);
 
@@ -146,7 +146,7 @@ contract RoundingExecuteAuctionCollateralTest is AuctionTestCommon {
         testWithPredefinedDefaultValues(data)
     {
         vm.assume(user != data.feeCollector);
-        prepareDepositAuction(2000000);
+        prepareDepositAuction(2000000, data.owner);
 
         vm.roll(ltv.startAuction() + 243);
 

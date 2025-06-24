@@ -69,7 +69,7 @@ contract RoundingExecuteAuctionBorrowTest is AuctionTestCommon {
         vm.assume(user != data.feeCollector);
         vm.assume(amount >= 2);
         executionAmount = executionAmount % amount + 1;
-        prepareDepositAuction(amount);
+        prepareDepositAuction(amount, data.owner);
 
         vm.roll(ltv.startAuction() + 243);
 
@@ -96,7 +96,7 @@ contract RoundingExecuteAuctionBorrowTest is AuctionTestCommon {
         testWithPredefinedDefaultValues(data)
     {
         vm.assume(user != data.feeCollector);
-        prepareDepositAuction(2000000);
+        prepareDepositAuction(2000000, data.owner);
 
         vm.roll(ltv.startAuction() + 243);
 
@@ -123,7 +123,7 @@ contract RoundingExecuteAuctionBorrowTest is AuctionTestCommon {
         testWithPredefinedDefaultValues(data)
     {
         vm.assume(user != data.feeCollector);
-        prepareDepositAuction(2000000);
+        prepareDepositAuction(2000000, data.owner);
 
         vm.roll(ltv.startAuction() + 243);
 
@@ -148,7 +148,7 @@ contract RoundingExecuteAuctionBorrowTest is AuctionTestCommon {
         testWithPredefinedDefaultValues(data)
     {
         vm.assume(user != data.feeCollector);
-        prepareDepositAuction(2000000);
+        prepareDepositAuction(2000000, data.owner);
 
         vm.roll(ltv.startAuction() + 243);
 
