@@ -27,5 +27,5 @@ struct StateInitData {
     address guardian;
     address governor;
     address emergencyDeleverager;
-    bytes callData;
+    bytes lendingConnectorData;
 }
