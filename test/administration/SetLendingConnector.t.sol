@@ -36,8 +36,7 @@ contract MockLendingConnector is ILendingConnector {
         revert UnexpectedMockGetRealBorrowAssets();
     }
 
-    function initializeProtocol(bytes memory) external pure {
-    }
+    function initializeProtocol(bytes memory) external pure {}
 }
 
 contract SetLendingConnectorTest is BaseTest {

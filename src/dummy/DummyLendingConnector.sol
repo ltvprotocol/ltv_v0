@@ -42,6 +42,5 @@ contract DummyLendingConnector is ILendingConnector {
         return LENDING_PROTOCOL.supplyBalance(address(COLLATERAL_TOKEN));
     }
 
-    function initializeProtocol(bytes memory) external pure {
-    }
+    function initializeProtocol(bytes memory) external pure {}
 }

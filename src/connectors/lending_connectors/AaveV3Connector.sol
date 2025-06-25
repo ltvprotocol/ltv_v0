@@ -46,6 +46,6 @@ contract AaveV3Connector is Initializable, ILendingConnector {
     }
 
     function initializeProtocol(bytes memory) external onlyInitializing {
-        POOL.setUserEMode(1); 
+        POOL.setUserEMode(1);
     }
 }
