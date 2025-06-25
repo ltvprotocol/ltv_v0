@@ -6,6 +6,7 @@ import "../../states/LTVState.sol";
 import "../writes/CommonWrite.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "../../events/IAdministrationEvents.sol";
+import "../../errors/IAdministrationErrors.sol";
 
 abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeable, IAdministrationEvents {
     function setTargetLTV(uint128 value) external {
@@ -89,6 +90,7 @@ abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeab
     }
 
     function setModules(IModules _modules) external onlyOwner {
+        if (address(_modules) == address(0)) revert IAdministrationErrors.EOADelegateCall();
         address oldModules = address(modules);
         modules = _modules;
         emit ModulesUpdated(oldModules, address(_modules));
