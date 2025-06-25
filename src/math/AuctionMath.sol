@@ -6,7 +6,6 @@ import "../Constants.sol";
 import "src/structs/data/AuctionData.sol";
 import "src/structs/state_transition/DeltaAuctionState.sol";
 import "src/errors/IAuctionErrors.sol";
-import "forge-std/console.sol";
 
 // since auction execution doesn't affect totalAssets we have only two conflicts here,
 // executor <=> future executor,
@@ -161,7 +160,6 @@ library AuctionMath {
             deltaWithinAuctionSize = (availableBorrowAssets > 0 && availableBorrowAssets >= -deltaUserBorrowAssets)
                 || (availableBorrowAssets < 0 && availableBorrowAssets <= -deltaUserBorrowAssets);
         }
-        console.log("first point");
         require(
             hasOppositeSign && deltaWithinAuctionSize,
             IAuctionErrors.NoAuctionForProvidedDeltaFutureBorrow(
@@ -174,11 +172,9 @@ library AuctionMath {
         deltaState.deltaFutureBorrowAssets = calculateDeltaFutureBorrowAssetsFromDeltaUserBorrowAssets(
             deltaState.deltaUserBorrowAssets, data.futureBorrowAssets, data.futureRewardBorrowAssets, data.auctionStep
         );
-        console.log("second point");
         deltaState.deltaFutureCollateralAssets = calculateDeltaFutureCollateralAssetsFromDeltaFutureBorrowAssets(
             deltaState.deltaFutureBorrowAssets, data.futureCollateralAssets, data.futureBorrowAssets
         );
-        console.log("third point");
 
         int256 deltaFutureRewardBorrowAssets = deltaState.deltaUserBorrowAssets - deltaState.deltaFutureBorrowAssets;
         int256 deltaFutureRewardCollateralAssets =
