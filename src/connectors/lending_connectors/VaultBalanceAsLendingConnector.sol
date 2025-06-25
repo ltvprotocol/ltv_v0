@@ -38,4 +38,6 @@ contract VaultBalanceAsLendingConnector is ILendingConnector {
     function supply(uint256) external pure {
         revert UnexpectedSupplyCall();
     }
+
+    function initializeProtocol(bytes memory) external pure {}
 }

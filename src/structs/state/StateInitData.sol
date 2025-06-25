@@ -23,10 +23,9 @@ struct StateInitData {
     ISlippageProvider slippageProvider;
     uint256 maxDeleverageFee;
     ILendingConnector vaultBalanceAsLendingConnector;
-    IModules modules;
     address owner;
     address guardian;
     address governor;
     address emergencyDeleverager;
-    bytes callData;
+    bytes lendingConnectorData;
 }

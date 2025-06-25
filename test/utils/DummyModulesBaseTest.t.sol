@@ -22,7 +22,8 @@ contract DummyModulesBaseTest is BaseTest {
             borrowVaultModule: IBorrowVaultModule(address(borrowVaultModule)),
             collateralVaultModule: ICollateralVaultModule(address(collateralVaultModule)),
             erc20Module: IERC20Module(address(erc20Module)),
-            lowLevelRebalanceModule: ILowLevelRebalanceModule(address(lowLevelRebalanceModule))
+            lowLevelRebalanceModule: ILowLevelRebalanceModule(address(lowLevelRebalanceModule)),
+            initializeModule: IInitializeModule(address(ltv.modules().initializeModule()))
         });
 
         vm.startPrank(ltv.owner());

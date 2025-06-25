@@ -2,5 +2,5 @@
 pragma solidity ^0.8.28;
 
 interface IInitError {
-    error FaildedToInitializeWithCallData(bytes callData);
+    error FaildedToInitialize(bytes data);
 }

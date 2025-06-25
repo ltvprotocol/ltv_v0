@@ -32,4 +32,6 @@ interface IAaveV3Pool {
         returns (uint256);
 
     function getReserveData(address asset) external view returns (ReserveData memory);
+
+    function setUserEMode(uint8 categoryId) external;
 }
