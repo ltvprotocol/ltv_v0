@@ -115,7 +115,7 @@ contract BaseTest is Test {
                 guardian: init.guardian,
                 governor: init.governor,
                 emergencyDeleverager: init.emergencyDeleverager,
-                callData: ""
+                lendingConnectorData: ""
             });
 
             ltv = new DummyLTV();

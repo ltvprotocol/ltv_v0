@@ -41,4 +41,7 @@ contract DummyLendingConnector is ILendingConnector {
     function getRealCollateralAssets(bool) external view override returns (uint256) {
         return LENDING_PROTOCOL.supplyBalance(address(COLLATERAL_TOKEN));
     }
+
+    function initializeProtocol(bytes memory) external pure {
+    }
 }
