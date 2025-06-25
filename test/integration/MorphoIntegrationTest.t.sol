@@ -41,7 +41,7 @@ contract MorphoIntegrationTest is Test {
     address public user;
 
     function setUp() public {
-        vm.createSelectFork(vm.envString("MAINNET_RPC_URL"));
+        vm.createSelectFork(vm.envString("RPC_MAINNET"));
 
         user = makeAddr("user");
 
