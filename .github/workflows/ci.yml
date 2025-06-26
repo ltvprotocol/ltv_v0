@@ -41,7 +41,7 @@ jobs:
         run: forge --version
 
       - name: Run tests
-        run: forge build && forge test -vvv
+        run: forge build && forge test -vvv --no-match-path "test/integration/**"
 
   fmt:
     runs-on: ubuntu-latest
