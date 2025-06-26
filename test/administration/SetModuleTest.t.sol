@@ -173,7 +173,7 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.updateGuardian, (user)), owner);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.updateEmergencyDeleverager, (user)), owner);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.totalSupply, ()), user);
-        
+
         return calls;
     }
 
@@ -326,4 +326,3 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
         ltv.setModules(currentModules);
     }
 }
- 
