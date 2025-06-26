@@ -41,7 +41,7 @@ contract MorphoIntegrationTest is Test {
     address public user;
 
     function setUp() public {
-        vm.createSelectFork(vm.envString("RPC_MAINNET"));
+        vm.createSelectFork(vm.envString("RPC_MAINNET"), 22769382);
 
         user = makeAddr("user");
 
@@ -251,7 +251,7 @@ contract MorphoIntegrationTest is Test {
         uint256 shares = ltv.withdraw(1 ether, user, user);
 
         vm.stopPrank();
-        assertEq(shares, 961165048543689321);
+        assertEq(shares, 1 ether + 1);
     }
 
     function test_MorphoConnectorRedeem() public {
@@ -265,7 +265,7 @@ contract MorphoIntegrationTest is Test {
         uint256 assetsReceived = ltv.redeem(1 ether, user, user);
 
         vm.stopPrank();
-        assertEq(assetsReceived, 1040404040404040404);
+        assertEq(assetsReceived, 1 ether - 1);
     }
 
     function test_MorphoConnectorDepositCollateral() public {
@@ -275,18 +275,18 @@ contract MorphoIntegrationTest is Test {
         uint256 shares = ltv.depositCollateral(1 ether, user);
 
         vm.stopPrank();
-        assertEq(shares, 1171247026667160869);
+        assertEq(shares, 1171155094625884439);
     }
 
     function test_MorphoConnectorMintCollateral() public {
         vm.startPrank(user);
 
-        wsteth.approve(address(ltv), 853790854731599679);
+        wsteth.approve(address(ltv), ltv.previewMintCollateral(1 ether));
         uint256 givenCollateralToken = ltv.mintCollateral(1 ether, user);
 
         vm.stopPrank();
 
-        assertEq(givenCollateralToken, 853790854731599679);
+        assertEq(givenCollateralToken, 853857874664705719);
     }
 
     function test_MorphoConnectorWithdrawCollateral() public {
@@ -301,7 +301,8 @@ contract MorphoIntegrationTest is Test {
 
         vm.stopPrank();
 
-        assertEq(shares, 1171247026667160872);
+        assertEq(shares, 1206289747464660974);
+        assertEq(shares, ltv.convertToSharesCollateral(1 ether) + 1);
     }
 
     function test_MorphoConnectorRedeemCollateral() public {
@@ -316,6 +317,7 @@ contract MorphoIntegrationTest is Test {
 
         vm.stopPrank();
 
-        assertEq(assetsReceived, 853790854731599675);
+        assertEq(assetsReceived, 828988227829811374);
+        assertEq(assetsReceived, ltv.convertToAssetsCollateral(1 ether) - 1);
     }
 }
