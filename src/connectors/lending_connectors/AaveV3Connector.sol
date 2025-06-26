@@ -12,20 +12,21 @@ contract AaveV3Connector is ILendingConnector {
     IERC20 public immutable COLLATERAL_A_TOKEN;
     IERC20 public immutable BORROW_V_TOKEN;
 
-    constructor(IERC20 _borrowAsset, IERC20 _collateralAsset) {
-        BORROW_ASSET = _borrowAsset;
+    constructor(IERC20 _collateralAsset, IERC20 _borrowAsset) {
         COLLATERAL_ASSET = _collateralAsset;
+        BORROW_ASSET = _borrowAsset;
 
         COLLATERAL_A_TOKEN = IERC20(POOL.getReserveData(address(COLLATERAL_ASSET)).aTokenAddress);
         BORROW_V_TOKEN = IERC20(POOL.getReserveData(address(BORROW_ASSET)).variableDebtTokenAddress);
     }
 
     function supply(uint256 amount) external {
-        POOL.supply(address(BORROW_ASSET), amount, address(this), 0);
+        COLLATERAL_ASSET.approve(address(POOL), amount);
+        POOL.supply(address(COLLATERAL_ASSET), amount, address(this), 0);
     }
 
     function withdraw(uint256 amount) external {
-        POOL.withdraw(address(BORROW_ASSET), amount, address(this));
+        POOL.withdraw(address(COLLATERAL_ASSET), amount, address(this));
     }
 
     function borrow(uint256 amount) external {
@@ -33,6 +34,7 @@ contract AaveV3Connector is ILendingConnector {
     }
 
     function repay(uint256 amount) external {
+        BORROW_ASSET.approve(address(POOL), amount);
         POOL.repay(address(BORROW_ASSET), amount, 2, address(this));
     }
 
