@@ -239,10 +239,6 @@ contract MulDivTest is Test {
         int256 result = sMulDiv.mulDivUp(x, y, denominator);
         int256 expected = (x * y) / denominator;
 
-        if (expected == 0) {
-            expected++;
-        }
-
         assertEq(result, expected);
     }
 
@@ -252,11 +248,7 @@ contract MulDivTest is Test {
         vm.assume(!isPositiveProduct(x, y, denominator));
 
         int256 result = sMulDiv.mulDivDown(x, y, denominator);
-        int256 expected = (x * y) / denominator;
-
-        if (expected != 0) {
-            expected--;
-        }
+        int256 expected = (x * y) / denominator - 1;
 
         assertEq(result, expected);
     }
