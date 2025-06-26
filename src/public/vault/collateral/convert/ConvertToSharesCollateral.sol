@@ -19,6 +19,6 @@ abstract contract ConvertToSharesCollateral is VaultCollateral {
         pure
         returns (uint256)
     {
-        return assets.mulDivDown(data.totalAssetsCollateral, data.supplyAfterFee);
+        return assets.mulDivDown(data.supplyAfterFee, data.totalAssetsCollateral);
     }
 }
