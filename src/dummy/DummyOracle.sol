@@ -4,16 +4,16 @@ pragma solidity ^0.8.28;
 import "./interfaces/IDummyOracle.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract DummyOracle is IDummyOracle, Ownable {
+contract DummyOracle is IDummyOracle {
     mapping(address => uint256) private prices;
 
-    constructor(address initialOwner) Ownable(initialOwner) {}
+    constructor() {}
 
     function getAssetPrice(address asset) external view returns (uint256) {
         return prices[asset];
     }
 
-    function setAssetPrice(address asset, uint256 price) external onlyOwner returns (uint256) {
+    function setAssetPrice(address asset, uint256 price) external returns (uint256) {
         prices[asset] = price;
         return price;
     }

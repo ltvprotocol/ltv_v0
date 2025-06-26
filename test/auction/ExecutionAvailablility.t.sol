@@ -42,7 +42,7 @@ contract ExecutionAvailablilityTest is AuctionTestCommon {
         testWithPredefinedDefaultValues(data)
     {
         prepareUser(user);
-        prepareDepositAuction(amount);
+        prepareDepositAuction(amount, data.owner);
 
         int256 deltaFutureBorrowAssetsOppositeSign = ltv.futureBorrowAssets() / 2;
         int256 deltaFutureCollateralAssetsOppositeSign = ltv.futureCollateralAssets() / 2;
@@ -72,7 +72,7 @@ contract ExecutionAvailablilityTest is AuctionTestCommon {
         public
         testWithPredefinedDefaultValues(data)
     {
-        prepareDepositAuction(amount);
+        prepareDepositAuction(amount, data.owner);
 
         int256 deltaFutureCollateralAssetsOverflow = -ltv.futureCollateralAssets() - 1;
         vm.expectRevert(
