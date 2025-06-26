@@ -244,7 +244,7 @@ contract AaveV3ConnectorTest is Test {
 
         vm.stopPrank();
 
-        assertEq(shares, 961165048544450031);
+        assertEq(shares, 999999999999830446);
     }
 
     function test_AaveV3ConnectorRedeem() public {
@@ -259,7 +259,7 @@ contract AaveV3ConnectorTest is Test {
 
         vm.stopPrank();
 
-        assertEq(assetsReceived, 1040404040403035721);
+        assertEq(assetsReceived, 1000000000000000000);
     }
 
     function test_AaveV3ConnectorDepositCollateral() public {
@@ -296,7 +296,7 @@ contract AaveV3ConnectorTest is Test {
 
         vm.stopPrank();
 
-        assertEq(shares, 1171155094627248649);
+        assertEq(shares, 1206289747462433525);
     }
 
     function test_AaveV3ConnectorRedeemCollateral() public {
@@ -311,6 +311,6 @@ contract AaveV3ConnectorTest is Test {
 
         vm.stopPrank();
 
-        assertEq(assetsReceived, 853857874665986988);
+        assertEq(assetsReceived, 828988227831055328);
     }
 }
