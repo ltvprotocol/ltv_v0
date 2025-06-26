@@ -90,7 +90,7 @@ abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeab
     }
 
     function setModules(IModules _modules) external onlyOwner {
-        if (address(_modules) == address(0)) revert IAdministrationErrors.EOADelegateCall();
+        require(address(_modules) != address(0), IAdministrationErrors.ZeroModulesProvider());
         address oldModules = address(modules);
         modules = _modules;
         emit ModulesUpdated(oldModules, address(_modules));

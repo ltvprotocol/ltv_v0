@@ -5,23 +5,20 @@ import "../../errors/IAdministrationErrors.sol";
 
 abstract contract CommonWrite {
     function _delegate(address implementation, bytes memory encodedParams) internal {
-        if (implementation == address(0) || implementation.code.length == 0) {
-            revert IAdministrationErrors.EOADelegateCall();
-        }
-
         (bool success, bytes memory returndata) = implementation.delegatecall(bytes.concat(msg.sig, encodedParams));
 
-        if (!success) {
-            if (returndata.length == 0) {
+        if (success) {
+            if (returndata.length == 0 && implementation.code.length == 0) {
                 revert IAdministrationErrors.EOADelegateCall();
             }
+
             assembly {
-                revert(add(returndata, 32), mload(returndata))
+                return(add(returndata, 32), mload(returndata))
             }
         }
 
         assembly {
-            return(add(returndata, 32), mload(returndata))
+            revert(add(returndata, 32), mload(returndata))
         }
     }
 }

@@ -24,4 +24,5 @@ interface IAdministrationErrors {
     error ZeroSlippageProvider();
     error EOADelegateCall();
     error VaultBalanceAsLendingConnectorNotSet();
+    error ZeroModulesProvider();
 }

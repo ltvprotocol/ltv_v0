@@ -23,29 +23,38 @@ import {AdministrationModule} from "../../src/elements/AdministrationModule.sol"
 import {State} from "../../src/interfaces/ILTV.sol";
 import "../../src/elements/WhitelistRegistry.sol";
 
+address constant EOA_ADDRESS = address(1);
+
 contract DummyModulesProvider is IModules {
     function borrowVaultModule() external pure override returns (IBorrowVaultModule) {
-        return IBorrowVaultModule(address(0));
+        return IBorrowVaultModule(EOA_ADDRESS);
     }
 
     function collateralVaultModule() external pure override returns (ICollateralVaultModule) {
-        return ICollateralVaultModule(address(0));
+        return ICollateralVaultModule(EOA_ADDRESS);
     }
 
     function lowLevelRebalanceModule() external pure override returns (ILowLevelRebalanceModule) {
-        return ILowLevelRebalanceModule(address(0));
+        return ILowLevelRebalanceModule(EOA_ADDRESS);
     }
 
     function auctionModule() external pure override returns (IAuctionModule) {
-        return IAuctionModule(address(0));
+        return IAuctionModule(EOA_ADDRESS);
     }
 
     function administrationModule() external pure override returns (IAdministrationModule) {
-        return IAdministrationModule(address(0));
+        return IAdministrationModule(EOA_ADDRESS);
     }
 
     function erc20Module() external pure override returns (IERC20Module) {
-        return IERC20Module(address(0));
+        return IERC20Module(EOA_ADDRESS);
+    }
+}
+
+// Helper needed to get EOA call error from high level call. The problem is that foundry returns different error bytes depending from verbosity level.
+contract HighLevelCallToEOAError {
+    function get() public view {
+        ILTV(EOA_ADDRESS).previewDeposit(0);
     }
 }
 
@@ -69,6 +78,13 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
         });
     }
 
+    function getEOAError() public returns (bytes memory) {
+        HighLevelCallToEOAError h = new HighLevelCallToEOAError();
+
+        (, bytes memory data) = address(h).call(abi.encodeCall(HighLevelCallToEOAError.get, ()));
+        return data;
+    }
+
     function modulesCallsWithCallers(
         address user,
         address owner,
@@ -76,8 +92,8 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
         address guardian,
         address emergencyDeleverager
     ) public pure returns (CallWithCaller[] memory) {
-        CallWithCaller[] memory calls = new CallWithCaller[](65);
-        uint256 amount = 1000;
+        CallWithCaller[] memory calls = new CallWithCaller[](70);
+        uint256 amount = 100;
         uint256 i = 0;
         bytes4[] memory signatures = new bytes4[](1);
         signatures[0] = ILTV.deposit.selector;
@@ -114,6 +130,10 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
         calls[i++] = CallWithCaller(abi.encodeWithSignature("totalAssetsCollateral(bool)", true), user);
         calls[i++] = CallWithCaller(abi.encodeWithSignature("totalAssets()"), user);
         calls[i++] = CallWithCaller(abi.encodeWithSignature("totalAssets(bool)", true), user);
+        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.previewExecuteAuctionBorrow, (-int256(amount))), user);
+        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.previewExecuteAuctionCollateral, (-int256(amount))), user);
+        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.executeAuctionBorrow, (-int256(amount))), user);
+        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.executeAuctionCollateral, (-int256(amount))), user);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.executeLowLevelRebalanceBorrow, (int256(amount))), user);
         calls[i++] =
             CallWithCaller(abi.encodeCall(ILTV.executeLowLevelRebalanceBorrowHint, (int256(amount), true)), user);
@@ -152,6 +172,8 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setOracleConnector, (user)), owner);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.updateGuardian, (user)), owner);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.updateEmergencyDeleverager, (user)), owner);
+        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.totalSupply, ()), user);
+        
         return calls;
     }
 
@@ -195,7 +217,7 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
     }
 
     function test_failIfZeroModulesProvider(DefaultTestData memory data) public testWithPredefinedDefaultValues(data) {
-        vm.expectRevert(IAdministrationErrors.EOADelegateCall.selector);
+        vm.expectRevert(IAdministrationErrors.ZeroModulesProvider.selector);
         vm.prank(data.owner);
         ltv.setModules(IModules(address(0)));
     }
@@ -213,8 +235,7 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
             modulesCallsWithCallers(data.owner, data.owner, data.governor, data.guardian, data.emergencyDeleverager);
 
         bytes memory expectedEOAError = abi.encodeWithSelector(IAdministrationErrors.EOADelegateCall.selector);
-        bytes memory expectedNonContractError =
-            abi.encode(string.concat("call to non-contract address ", vm.toString(address(0))));
+        bytes memory expectedNonContractError = getEOAError();
 
         for (uint256 i = 0; i < calls.length; i++) {
             vm.prank(calls[i].caller);
@@ -301,7 +322,8 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
         IModules currentModules = ltv.modules();
 
         vm.prank(user);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, user));
         ltv.setModules(currentModules);
     }
 }
+ 
