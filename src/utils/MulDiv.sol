@@ -85,7 +85,7 @@ library sMulDiv {
 
         int256 division = product / denominator;
 
-        if (division <= 0) {
+        if (division < 0) {
             return division;
         }
 

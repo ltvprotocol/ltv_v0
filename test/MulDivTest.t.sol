@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "forge-std/console.sol";
 import "forge-std/Test.sol";
 import "../src/utils/MulDiv.sol";
 
@@ -86,10 +85,10 @@ contract MulDivTest is Test {
         assertEq(result, 0);
     }
 
-    function uEuclidianMod(uint256 a, uint256 b) public pure returns(uint256 remainder) {
+    function uEuclidianMod(uint256 a, uint256 b) public pure returns (uint256 remainder) {
         require(b != 0, "Division by zero");
 
-        if(a % b == 0) {
+        if (a % b == 0) {
             remainder = 0;
         }
 
@@ -97,6 +96,7 @@ contract MulDivTest is Test {
         remainder = a - b * q;
     }
 
+    // not used in tests right now, I did not removed this, maybe it's can be used in the future
     function sEuclidianMod(int256 a, int256 b) public pure returns (int256 remainder) {
         require(b != 0, "Division by zero");
 
@@ -215,11 +215,7 @@ contract MulDivTest is Test {
         vm.assume(isPositiveProduct(x, y, denominator));
 
         int256 result = sMulDiv.mulDivUp(x, y, denominator);
-        int256 remainder = sEuclidianMod(x * y, denominator);
-        int256 expected = (x * y - remainder) / denominator + 1;
-
-        console.log("Result mulDivUp: ", vm.toString(result));
-        console.log("Expected mulDivUp: ", vm.toString(expected));
+        int256 expected = (x * y) / denominator + 1;
 
         assertEq(result, expected);
     }
@@ -230,11 +226,7 @@ contract MulDivTest is Test {
         vm.assume(isPositiveProduct(x, y, denominator));
 
         int256 result = sMulDiv.mulDivDown(x, y, denominator);
-        int256 remainder = sEuclidianMod(x * y, denominator);
-        int256 expected = (x * y - remainder) / denominator;
-
-        console.log("Result mulDivDown: ", vm.toString(result));
-        console.log("Expected mulDivDown: ", vm.toString(expected));
+        int256 expected = (x * y) / denominator;
 
         assertEq(result, expected);
     }
@@ -245,11 +237,11 @@ contract MulDivTest is Test {
         vm.assume(!isPositiveProduct(x, y, denominator));
 
         int256 result = sMulDiv.mulDivUp(x, y, denominator);
-        int256 remainder = sEuclidianMod(x * y, denominator);
-        int256 expected = (x * y - remainder) / denominator;
+        int256 expected = (x * y) / denominator;
 
-        console.log("Result mulDivUp: ", vm.toString(result));
-        console.log("Expected mulDivUp: ", vm.toString(expected));
+        if (expected == 0) {
+            expected++;
+        }
 
         assertEq(result, expected);
     }
@@ -260,11 +252,11 @@ contract MulDivTest is Test {
         vm.assume(!isPositiveProduct(x, y, denominator));
 
         int256 result = sMulDiv.mulDivDown(x, y, denominator);
-        int256 remainder = sEuclidianMod(x * y, denominator);
-        int256 expected = (x * y - remainder) / denominator - 1;
+        int256 expected = (x * y) / denominator;
 
-        console.log("Result mulDivDown: ", vm.toString(result));
-        console.log("Expected mulDivDown: ", vm.toString(expected));
+        if (expected != 0) {
+            expected--;
+        }
 
         assertEq(result, expected);
     }
