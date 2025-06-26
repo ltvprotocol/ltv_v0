@@ -37,7 +37,7 @@ contract AaveV3ConnectorTest is Test {
     address user = address(0x123);
 
     function setUp() public {
-        vm.createSelectFork(vm.envString("MAINNET_RPC_URL"), 22769382);
+        vm.createSelectFork(vm.envString("RPC_MAINNET"), 22769382);
 
         weth = IERC20(WETH);
         wsteth = IERC20(WSTETH);
