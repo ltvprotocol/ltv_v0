@@ -68,6 +68,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         public
         testWithPredefinedDefaultValues(data)
     {
+        vm.assume(user != address(0));
         uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false, "");
         deal(address(borrowToken), data.emergencyDeleverager, borrowAssets);
 
