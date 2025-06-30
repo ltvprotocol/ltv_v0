@@ -9,7 +9,7 @@ import "../../src/connectors/lending_connectors/VaultBalanceAsLendingConnector.s
 
 contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
     function test_normalData(DefaultTestData memory data) public testWithPredefinedDefaultValues(data) {
-        uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false);
+        uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false, "");
 
         deal(address(borrowToken), data.emergencyDeleverager, borrowAssets);
 
@@ -25,9 +25,9 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         assertEq(ltv.futureCollateralAssets(), 0);
         assertEq(ltv.futureRewardBorrowAssets(), 0);
         assertEq(ltv.futureRewardCollateralAssets(), 0);
-        assertEq(ltv.getLendingConnector().getRealBorrowAssets(false), 0);
-        assertEq(ltv.lendingConnector().getRealCollateralAssets(false), 0);
-        assertEq(ltv.lendingConnector().getRealBorrowAssets(false), 0);
+        assertEq(ltv.getLendingConnector().getRealBorrowAssets(false, ""), 0);
+        assertEq(ltv.lendingConnector().getRealCollateralAssets(false, ""), 0);
+        assertEq(ltv.lendingConnector().getRealBorrowAssets(false, ""), 0);
 
         assertEq(ltv.isVaultDeleveraged(), true);
         assertEq(address(ltv.getLendingConnector()), address(ltv.vaultBalanceAsLendingConnector()));
@@ -37,8 +37,8 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         vm.prank(data.governor);
         ltv.setMaxDeleverageFee(10 ** 18);
 
-        uint256 collateralAssets = ltv.getLendingConnector().getRealCollateralAssets(false);
-        uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false);
+        uint256 collateralAssets = ltv.getLendingConnector().getRealCollateralAssets(false, "");
+        uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false, "");
 
         deal(address(borrowToken), data.emergencyDeleverager, borrowAssets);
 
@@ -68,7 +68,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         public
         testWithPredefinedDefaultValues(data)
     {
-        uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false);
+        uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false, "");
         deal(address(borrowToken), data.emergencyDeleverager, borrowAssets);
 
         vm.startPrank(data.emergencyDeleverager);
@@ -86,15 +86,15 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
     }
 
     function test_lendingFullyWithdrawed(DefaultTestData memory data) public testWithPredefinedDefaultValues(data) {
-        uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false);
+        uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false, "");
         deal(address(borrowToken), data.emergencyDeleverager, borrowAssets);
 
         vm.startPrank(data.emergencyDeleverager);
         borrowToken.approve(address(ltv), borrowAssets);
         ltv.deleverageAndWithdraw(borrowAssets, 0);
 
-        assertEq(ltv.lendingConnector().getRealBorrowAssets(false), 0);
-        assertEq(ltv.lendingConnector().getRealCollateralAssets(false), 0);
+        assertEq(ltv.lendingConnector().getRealBorrowAssets(false, ""), 0);
+        assertEq(ltv.lendingConnector().getRealCollateralAssets(false, ""), 0);
     }
 
     /// forge-config: default.fuzz.runs = 8
@@ -104,7 +104,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
     {
         prepareEachFunctionSuccessfulExecution(user);
 
-        uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false);
+        uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false, "");
 
         deal(address(borrowToken), data.emergencyDeleverager, borrowAssets);
 
@@ -142,7 +142,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
     {
         prepareEachFunctionSuccessfulExecution(user);
 
-        uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false);
+        uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false, "");
 
         deal(address(borrowToken), data.emergencyDeleverager, borrowAssets);
 
@@ -170,7 +170,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
     {
         prepareEachFunctionSuccessfulExecution(user);
 
-        uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false);
+        uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false, "");
 
         deal(address(borrowToken), data.emergencyDeleverager, borrowAssets);
 
@@ -206,7 +206,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
     {
         prepareEachFunctionSuccessfulExecution(user);
 
-        uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false);
+        uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false, "");
 
         deal(address(borrowToken), data.emergencyDeleverager, borrowAssets);
 
@@ -235,7 +235,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
     {
         prepareEachFunctionSuccessfulExecution(user);
 
-        uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false);
+        uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false, "");
 
         deal(address(borrowToken), data.emergencyDeleverager, borrowAssets);
 
@@ -264,7 +264,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
     {
         assertEq(address(ltv.getLendingConnector()), address(ltv.lendingConnector()));
 
-        uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false);
+        uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false, "");
 
         deal(address(borrowToken), data.emergencyDeleverager, borrowAssets);
 
@@ -280,7 +280,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
     function test_isVaultDeleveragedChanged(DefaultTestData memory data) public testWithPredefinedDefaultValues(data) {
         assertEq(ltv.isVaultDeleveraged(), false);
 
-        uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false);
+        uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false, "");
 
         deal(address(borrowToken), data.emergencyDeleverager, borrowAssets);
 
@@ -307,7 +307,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         public
         testWithPredefinedDefaultValues(data)
     {
-        uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false);
+        uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false, "");
         uint256 amount = borrowAssets - 1;
         deal(address(borrowToken), data.emergencyDeleverager, amount);
 
@@ -323,7 +323,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         public
         testWithPredefinedDefaultValues(data)
     {
-        uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false);
+        uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false, "");
         deal(address(borrowToken), data.emergencyDeleverager, borrowAssets);
 
         vm.startPrank(data.emergencyDeleverager);
@@ -335,7 +335,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
     }
 
     function test_maxDeleverageFeeApplied(DefaultTestData memory data) public testWithPredefinedDefaultValues(data) {
-        uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false);
+        uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false, "");
         deal(address(borrowToken), data.emergencyDeleverager, borrowAssets);
 
         assertEq(ltv.convertToAssets(10 ** 18), 10 ** 18);

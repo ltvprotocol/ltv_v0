@@ -6,6 +6,6 @@ import "./GetLendingConnectorReader.sol";
 
 contract GetRealBorrowAssetsReader is GetLendingConnectorReader {
     function getRealBorrowAssets(bool isDeposit) external view returns (uint256) {
-        return getLendingConnector().getRealBorrowAssets(isDeposit);
+        return getLendingConnector().getRealBorrowAssets(isDeposit, connectorGetterData);
     }
 }

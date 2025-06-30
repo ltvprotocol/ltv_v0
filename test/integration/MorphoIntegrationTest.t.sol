@@ -21,6 +21,8 @@ import {LowLevelRebalanceModule, ILowLevelRebalanceModule} from "../../src/eleme
 import {AdministrationModule, IAdministrationModule} from "../../src/elements/AdministrationModule.sol";
 import {ILendingConnector} from "../../src/interfaces/ILendingConnector.sol";
 import {IOracleConnector} from "../../src/interfaces/IOracleConnector.sol";
+import {IInitializeModule} from "../../src/interfaces/reads/IInitializeModule.sol";
+import {InitializeModule} from "../../src/elements/InitializeModule.sol";
 
 contract MorphoIntegrationTest is Test {
     address constant MORPHO_BLUE = 0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb;
@@ -53,7 +55,7 @@ contract MorphoIntegrationTest is Test {
             lltv: 945000000000000000
         });
 
-        morphoLendingConnector = new MorphoConnector(marketParams);
+        morphoLendingConnector = new MorphoConnector();
         morphoOracleConnector = new MorphoOracleConnector(IMorphoOracle(MORPHO_ORACLE));
         slippageProvider = new ConstantSlippageProvider(10 ** 16, 10 ** 16, address(this));
 
@@ -66,7 +68,8 @@ contract MorphoIntegrationTest is Test {
             erc20Module: IERC20Module(address(new ERC20Module())),
             collateralVaultModule: ICollateralVaultModule(address(new CollateralVaultModule())),
             borrowVaultModule: IBorrowVaultModule(address(new BorrowVaultModule())),
-            lowLevelRebalanceModule: ILowLevelRebalanceModule(address(new LowLevelRebalanceModule()))
+            lowLevelRebalanceModule: ILowLevelRebalanceModule(address(new LowLevelRebalanceModule())),
+            initializeModule: IInitializeModule(address(new InitializeModule()))
         });
 
         modulesProvider = new ModulesProvider(modulesState);
@@ -88,16 +91,15 @@ contract MorphoIntegrationTest is Test {
             slippageProvider: slippageProvider,
             maxDeleverageFee: 50000000000000000,
             vaultBalanceAsLendingConnector: ILendingConnector(address(0)),
-            modules: modulesProvider,
             owner: address(this),
             guardian: address(this),
             governor: address(this),
             emergencyDeleverager: address(this),
-            callData: ""
+            lendingConnectorData: abi.encode(MORPHO_ORACLE, IRM, 945000000000000000, keccak256(abi.encode(marketParams)))
         });
 
         ltv = new LTV();
-        ltv.initialize(stateInitData);
+        ltv.initialize(stateInitData, modulesProvider);
 
         deal(WETH, address(this), 100 ether);
         deal(WSTETH, address(this), 100 ether);

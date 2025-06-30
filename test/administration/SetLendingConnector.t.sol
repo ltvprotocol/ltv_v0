@@ -28,11 +28,11 @@ contract MockLendingConnector is ILendingConnector {
         revert UnexpectedMockRepay();
     }
 
-    function getRealCollateralAssets(bool) external pure override returns (uint256) {
+    function getRealCollateralAssets(bool, bytes calldata) external pure override returns (uint256) {
         revert UnexpectedMockGetRealCollateralAssets();
     }
 
-    function getRealBorrowAssets(bool) external pure override returns (uint256) {
+    function getRealBorrowAssets(bool, bytes calldata) external pure override returns (uint256) {
         revert UnexpectedMockGetRealBorrowAssets();
     }
 
