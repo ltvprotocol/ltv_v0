@@ -66,4 +66,6 @@ contract MorphoConnector is ILendingConnector {
         (,, uint256 collateral) = MORPHO.position(_getMorphoConnectorStorage().marketId, address(this));
         return collateral;
     }
+
+    function initializeProtocol(bytes memory) external {}
 }
