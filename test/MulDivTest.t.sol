@@ -256,7 +256,7 @@ contract MulDivTest is Test {
 
     function assumeSMulDivOverflowWithRemainder(int256 product, int256 remainder) public pure {
         unchecked {
-            if(product < 0) {
+            if (product < 0) {
                 vm.assume(product - remainder < 0);
             }
         }
