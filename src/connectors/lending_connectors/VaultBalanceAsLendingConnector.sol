@@ -17,11 +17,11 @@ contract VaultBalanceAsLendingConnector is ILendingConnector {
         BORROW_TOKEN = _borrowToken;
     }
 
-    function getRealCollateralAssets(bool) external view returns (uint256) {
+    function getRealCollateralAssets(bool, bytes calldata) external view returns (uint256) {
         return COLLATERAL_TOKEN.balanceOf(msg.sender);
     }
 
-    function getRealBorrowAssets(bool) external view returns (uint256) {
+    function getRealBorrowAssets(bool, bytes calldata) external view returns (uint256) {
         return BORROW_TOKEN.balanceOf(msg.sender);
     }
 
