@@ -50,4 +50,6 @@ contract MorphoConnector is ILendingConnector {
 
         return totalBorrowAssets.mulDiv(borrowShares, totalBorrowShares, isDeposit);
     }
+
+    function initializeProtocol(bytes memory) external {}
 }

@@ -89,6 +89,10 @@ abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeab
     }
 
     function setModules(IModules _modules) external onlyOwner {
+        _setModules(_modules);
+    }
+
+    function _setModules(IModules _modules) internal {
         address oldModules = address(modules);
         modules = _modules;
         emit ModulesUpdated(oldModules, address(_modules));
