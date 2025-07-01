@@ -21,6 +21,7 @@ import {CollateralVaultModule} from "../../src/elements/CollateralVaultModule.so
 import {BorrowVaultModule} from "../../src/elements/BorrowVaultModule.sol";
 import {LowLevelRebalanceModule} from "../../src/elements/LowLevelRebalanceModule.sol";
 import {AdministrationModule} from "../../src/elements/AdministrationModule.sol";
+import {InitializeModule} from "../../src/elements/InitializeModule.sol";
 
 import "../../src/elements/ModulesProvider.sol";
 
@@ -88,7 +89,8 @@ contract BaseTest is Test {
                 erc20Module: IERC20Module(address(new ERC20Module())),
                 collateralVaultModule: ICollateralVaultModule(address(new CollateralVaultModule())),
                 borrowVaultModule: IBorrowVaultModule(address(new BorrowVaultModule())),
-                lowLevelRebalanceModule: ILowLevelRebalanceModule(address(new LowLevelRebalanceModule()))
+                lowLevelRebalanceModule: ILowLevelRebalanceModule(address(new LowLevelRebalanceModule())),
+                initializeModule: IInitializeModule(address(new InitializeModule()))
             });
             modulesProvider = new ModulesProvider(modulesState);
 
@@ -109,15 +111,15 @@ contract BaseTest is Test {
                 slippageProvider: slippageProvider,
                 maxDeleverageFee: init.maxDeleverageFee,
                 vaultBalanceAsLendingConnector: new VaultBalanceAsLendingConnector(collateralToken, borrowToken),
-                modules: modulesProvider,
                 owner: init.owner,
                 guardian: init.guardian,
                 governor: init.governor,
                 emergencyDeleverager: init.emergencyDeleverager,
-                callData: ""
+                lendingConnectorData: ""
             });
 
-            ltv = new DummyLTV(initData);
+            ltv = new DummyLTV();
+            ltv.initialize(initData, modulesProvider);
         }
 
         vm.startPrank(init.owner);
