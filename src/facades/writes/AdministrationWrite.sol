@@ -6,6 +6,7 @@ import "../../states/LTVState.sol";
 import "../writes/CommonWrite.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "../../events/IAdministrationEvents.sol";
+import "../../errors/IAdministrationErrors.sol";
 
 abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeable, IAdministrationEvents {
     function setTargetLTV(uint128 value) external {
