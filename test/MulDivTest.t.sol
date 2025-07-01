@@ -29,6 +29,79 @@ contract MulDivTest is Test {
         sMulDiv.mulDivDown(x, y, 0);
     }
 
+    function assumeUMulDivOverflowInputs(uint256 x, uint256 y, uint256 denominator) public pure {
+        vm.assume(denominator != 0);
+        vm.assume(x != 0);
+        vm.assume(y != 0);
+
+        unchecked {
+            vm.assume(type(uint256).max / x < y);
+        }
+    }
+
+    /// forge-config: default.allow_internal_expect_revert = true
+    function test_uMulDivUpRevertsOnOverflow(uint256 x, uint256 y, uint256 denominator) public {
+        assumeUMulDivOverflowInputs(x, y, denominator);
+
+        vm.expectRevert(bytes(""));
+        uMulDiv.mulDivUp(x, y, denominator);
+    }
+
+    /// forge-config: default.allow_internal_expect_revert = true
+    function test_uMulDivDownRevertsOnOverflow(uint256 x, uint256 y, uint256 denominator) public {
+        assumeUMulDivOverflowInputs(x, y, denominator);
+
+        vm.expectRevert(bytes(""));
+        uMulDiv.mulDivDown(x, y, denominator);
+    }
+
+    function assumeSMulDivOverflowWithRemainderInputs(int256 x, int256 y, int256 denominator) public pure {
+        vm.assume(denominator != 0);
+        vm.assume(x != 0);
+        vm.assume(y != 0);
+
+        unchecked {
+            int256 product = x * y;
+            vm.assume(product / y != x);
+        }
+    }
+
+    /// forge-config: default.allow_internal_expect_revert = true
+    function test_sMulDivUpRevertsOnOverflow(int256 x, int256 y, int256 denominator) public {
+        assumeSMulDivOverflowWithRemainderInputs(x, y, denominator);
+
+        vm.expectRevert(bytes("Multiplication overflow detected"));
+        sMulDiv.mulDivUp(x, y, denominator);
+    }
+
+    /// forge-config: default.allow_internal_expect_revert = true
+    function test_sMulDivDownRevertsOnOverflow(int256 x, int256 y, int256 denominator) public {
+        assumeSMulDivOverflowWithRemainderInputs(x, y, denominator);
+
+        vm.expectRevert(bytes("Multiplication overflow detected"));
+        sMulDiv.mulDivDown(x, y, denominator);
+    }
+
+    /// forge-config: default.allow_internal_expect_revert = true
+    function test_sMulDivUpDivisionOverflow() public {
+        int256 x = type(int256).min;
+        int256 y = 1;
+        int256 denominator = -1;
+
+        vm.expectRevert(bytes("Multiplication overflow detected"));
+        sMulDiv.mulDivUp(x, y, denominator);
+    }
+
+    /// forge-config: default.allow_internal_expect_revert = true
+    function test_sMulDivDownDivisionOverflow() public {
+        int256 x = type(int256).min;
+        int256 y = 1;
+        int256 denominator = -1;
+
+        vm.expectRevert(bytes("Multiplication overflow detected"));
+        sMulDiv.mulDivDown(x, y, denominator);
+    }
+
     function test_uMulDivUpZeroWhenXEqZero(uint256 y, uint256 denominator) public pure {
         vm.assume(denominator != 0);
 
@@ -96,7 +169,6 @@ contract MulDivTest is Test {
         remainder = a - b * q;
     }
 
-    // not used in tests right now, I did not removed this, maybe it's can be used in the future
     function sEuclidianMod(int256 a, int256 b) public pure returns (int256 remainder) {
         require(b != 0, "Division by zero");
 
@@ -167,13 +239,26 @@ contract MulDivTest is Test {
         vm.assume(denominator != 0);
         vm.assume(x != 0);
         vm.assume(y != 0);
+
         vm.assume(x != type(int256).min);
         vm.assume(x != type(int256).max);
+        vm.assume(y != type(int256).min);
+        vm.assume(y != type(int256).max);
+
         vm.assume(y != -1);
+        vm.assume(x != -1);
 
         unchecked {
             int256 product = x * y;
             vm.assume(y == 0 || product / y == x);
+        }
+    }
+
+    function assumeSMulDivOverflowWithRemainder(int256 product, int256 remainder) public pure {
+        unchecked {
+            if(product < 0) {
+                vm.assume(product - remainder < 0);
+            }
         }
     }
 
@@ -199,56 +284,57 @@ contract MulDivTest is Test {
         assertEq(result, sMulDiv.mulDivUp(x, y, denominator));
     }
 
-    function isPositiveProduct(int256 a, int256 b, int256 c) internal pure returns (bool) {
-        uint8 negativeCount = 0;
-
-        if (a < 0) negativeCount++;
-        if (b < 0) negativeCount++;
-        if (c < 0) negativeCount++;
-
-        return negativeCount % 2 == 0;
-    }
-
-    function test_sMulDivUpWithRemainderPositiveProduct(int256 x, int256 y, int256 denominator) public pure {
+    function test_sMulDivUpWithRemainderPositiveDenominator(int256 x, int256 y, int256 denominator) public pure {
         assumeSMulDivInputs(x, y, denominator);
         vm.assume((x * y) % denominator != 0);
-        vm.assume(isPositiveProduct(x, y, denominator));
+        vm.assume(denominator > 0);
+        int256 remainder = sEuclidianMod(x * y, denominator);
+        assumeSMulDivOverflowWithRemainder(x * y, remainder);
 
         int256 result = sMulDiv.mulDivUp(x, y, denominator);
-        int256 expected = (x * y) / denominator + 1;
+        int256 expected = (x * y - remainder) / denominator + 1;
 
         assertEq(result, expected);
     }
 
-    function test_sMulDivDownWithRemainderPositiveProduct(int256 x, int256 y, int256 denominator) public pure {
+    function test_sMulDivUpWithRemainderNegativeDenominator(int256 x, int256 y, int256 denominator) public pure {
         assumeSMulDivInputs(x, y, denominator);
         vm.assume((x * y) % denominator != 0);
-        vm.assume(isPositiveProduct(x, y, denominator));
+        vm.assume(denominator < 0);
 
-        int256 result = sMulDiv.mulDivDown(x, y, denominator);
-        int256 expected = (x * y) / denominator;
-
-        assertEq(result, expected);
-    }
-
-    function test_sMulDivUpWithRemainderNegativeProduct(int256 x, int256 y, int256 denominator) public pure {
-        assumeSMulDivInputs(x, y, denominator);
-        vm.assume((x * y) % denominator != 0);
-        vm.assume(!isPositiveProduct(x, y, denominator));
+        int256 remainder = sEuclidianMod(x * y, denominator);
+        assumeSMulDivOverflowWithRemainder(x * y, remainder);
 
         int256 result = sMulDiv.mulDivUp(x, y, denominator);
-        int256 expected = (x * y) / denominator;
+        int256 expected = (x * y - remainder) / denominator;
 
         assertEq(result, expected);
     }
 
-    function test_sMulDivDownWithRemainderNegativeProduct(int256 x, int256 y, int256 denominator) public pure {
+    function test_sMulDivDownWithRemainderPositiveDenominator(int256 x, int256 y, int256 denominator) public pure {
         assumeSMulDivInputs(x, y, denominator);
         vm.assume((x * y) % denominator != 0);
-        vm.assume(!isPositiveProduct(x, y, denominator));
+        vm.assume(denominator > 0);
+
+        int256 remainder = sEuclidianMod(x * y, denominator);
+        assumeSMulDivOverflowWithRemainder(x * y, remainder);
 
         int256 result = sMulDiv.mulDivDown(x, y, denominator);
-        int256 expected = (x * y) / denominator - 1;
+        int256 expected = (x * y - remainder) / denominator;
+
+        assertEq(result, expected);
+    }
+
+    function test_sMulDivDownWithRemainderNegativeDenominator(int256 x, int256 y, int256 denominator) public pure {
+        assumeSMulDivInputs(x, y, denominator);
+        vm.assume((x * y) % denominator != 0);
+        vm.assume(denominator < 0);
+
+        int256 remainder = sEuclidianMod(x * y, denominator);
+        assumeSMulDivOverflowWithRemainder(x * y, remainder);
+
+        int256 result = sMulDiv.mulDivDown(x, y, denominator);
+        int256 expected = (x * y - remainder) / denominator - 1;
 
         assertEq(result, expected);
     }
