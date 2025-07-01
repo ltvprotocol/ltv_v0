@@ -72,6 +72,6 @@ contract AuctionTestCommon is BaseTest {
     function prepareDepositAuction(uint128 amount) public {
         ltv.setFutureBorrowAssets(int256(uint256(amount)));
         ltv.setFutureCollateralAssets(int256(uint256(amount)) / 2);
-        ltv.setFutureRewardCollateralAssets(-int256(uint256(amount / 100)));
+        ltv.setFutureRewardCollateralAssets(-int256(uint256(amount / 200)));
     }
 }

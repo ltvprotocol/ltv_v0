@@ -90,12 +90,7 @@ interface ILTV is
 
     function getRealCollateralAssets(bool isDeposit) external view returns (uint256);
 
-    function initialize(
-        State.StateInitData memory stateInitData,
-        address initialOwner,
-        string memory _name,
-        string memory _symbol
-    ) external;
+    function initialize(StateInitData memory stateInitData, IModules modules) external;
 
     function isDepositDisabled() external view returns (bool);
 
@@ -271,22 +266,4 @@ interface ILTV is
     error OwnableInvalidOwner(address owner);
     error OwnableUnauthorizedAccount(address account);
     error ReentrancyGuardReentrantCall();
-}
-
-interface State {
-    struct StateInitData {
-        address collateralToken;
-        address borrowToken;
-        address feeCollector;
-        uint128 maxSafeLTV;
-        uint128 minProfitLTV;
-        uint128 targetLTV;
-        address lendingConnector;
-        address oracleConnector;
-        uint256 maxGrowthFee;
-        uint256 maxTotalAssetsInUnderlying;
-        address slippageProvider;
-        uint256 maxDeleverageFee;
-        address vaultBalanceAsLendingConnector;
-    }
 }

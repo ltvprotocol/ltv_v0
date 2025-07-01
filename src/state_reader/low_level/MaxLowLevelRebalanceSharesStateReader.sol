@@ -11,8 +11,8 @@ contract MaxLowLevelRebalanceSharesStateReader is MaxGrowthFeeStateReader {
             // overestimate assets for smaller border
             maxGrowthFeeState: maxGrowthFeeState(),
             maxTotalAssetsInUnderlying: maxTotalAssetsInUnderlying,
-            depositRealBorrowAssets: _lendingConnector.getRealBorrowAssets(true),
-            depositRealCollateralAssets: _lendingConnector.getRealCollateralAssets(true)
+            depositRealBorrowAssets: _lendingConnector.getRealBorrowAssets(true, connectorGetterData),
+            depositRealCollateralAssets: _lendingConnector.getRealCollateralAssets(true, connectorGetterData)
         });
     }
 }

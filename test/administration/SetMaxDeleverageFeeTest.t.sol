@@ -37,7 +37,7 @@ contract SetMaxDeleverageFeeTest is BaseTest {
     {
         uint256 deleverageFee = ltv.maxDeleverageFee();
 
-        uint256 borrowAssets = ILendingConnector(ltv.getLendingConnector()).getRealBorrowAssets(true);
+        uint256 borrowAssets = ILendingConnector(ltv.getLendingConnector()).getRealBorrowAssets(true, "");
         deal(address(borrowToken), defaultData.emergencyDeleverager, borrowAssets);
         vm.startPrank(defaultData.emergencyDeleverager);
         borrowToken.approve(address(ltv), borrowAssets);
@@ -73,7 +73,7 @@ contract SetMaxDeleverageFeeTest is BaseTest {
         vm.startPrank(defaultData.governor);
         ltv.setMaxDeleverageFee(newMaxDeleverageFee);
 
-        uint256 borrowAssets = ILendingConnector(ltv.getLendingConnector()).getRealBorrowAssets(true);
+        uint256 borrowAssets = ILendingConnector(ltv.getLendingConnector()).getRealBorrowAssets(true, "");
         deal(address(borrowToken), defaultData.emergencyDeleverager, borrowAssets);
         vm.startPrank(defaultData.emergencyDeleverager);
         borrowToken.approve(address(ltv), borrowAssets);

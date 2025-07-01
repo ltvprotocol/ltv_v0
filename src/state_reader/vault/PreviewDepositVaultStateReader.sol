@@ -9,8 +9,8 @@ contract PreviewDepositVaultStateReader is MaxGrowthFeeStateReader {
         ILendingConnector _lendingConnector = getLendingConnector();
         return PreviewDepositVaultState({
             maxGrowthFeeState: maxGrowthFeeState(),
-            depositRealBorrowAssets: _lendingConnector.getRealBorrowAssets(true),
-            depositRealCollateralAssets: _lendingConnector.getRealCollateralAssets(true),
+            depositRealBorrowAssets: _lendingConnector.getRealBorrowAssets(true, connectorGetterData),
+            depositRealCollateralAssets: _lendingConnector.getRealCollateralAssets(true, connectorGetterData),
             targetLTV: targetLTV,
             startAuction: startAuction,
             blockNumber: block.number,

@@ -68,7 +68,8 @@ library NextStep {
     }
 
     function mergingAuction(MergeAuctionData memory data) private pure returns (uint256 startAuction, bool merge) {
-        merge = data.futureBorrow * data.deltaFutureBorrow > 0 && data.futureCollateral * data.deltaFutureCollateral > 0;
+        merge =
+            data.futureBorrow * data.deltaFutureBorrow >= 0 && data.futureCollateral * data.deltaFutureCollateral >= 0;
 
         int256 auctionWeight = 0;
         if (data.futureRewardBorrow != 0) {
@@ -89,7 +90,7 @@ library NextStep {
         if (merge) {
             uint256 nextAuctionStep;
             if (auctionWeight + deltaAuctionWeight == 0) {
-                nextAuctionStep = 0;
+                nextAuctionStep = data.auctionStep;
             } else {
                 // round down to make auction longer
                 nextAuctionStep =

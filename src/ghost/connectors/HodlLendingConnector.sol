@@ -36,11 +36,13 @@ contract HodlLendingConnector is ILendingConnector {
         lendingProtocol.repay(assets);
     }
 
-    function getRealBorrowAssets(bool) external view returns (uint256) {
+    function getRealBorrowAssets(bool, bytes calldata) external view returns (uint256) {
         return lendingProtocol.borrowBalance(msg.sender);
     }
 
-    function getRealCollateralAssets(bool) external view returns (uint256) {
+    function getRealCollateralAssets(bool, bytes calldata) external view returns (uint256) {
         return lendingProtocol.supplyCollateralBalance(msg.sender);
     }
+
+    function initializeProtocol(bytes memory) external pure {}
 }

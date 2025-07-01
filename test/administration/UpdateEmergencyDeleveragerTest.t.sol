@@ -37,7 +37,7 @@ contract UpdateEmergencyDeleveragerTest is BaseTest {
         vm.prank(data.owner);
         ltv.updateEmergencyDeleverager(newAddress);
 
-        uint256 borrowAssets = ILendingConnector(ltv.getLendingConnector()).getRealBorrowAssets(true);
+        uint256 borrowAssets = ILendingConnector(ltv.getLendingConnector()).getRealBorrowAssets(true, "");
         deal(address(borrowToken), newAddress, borrowAssets);
         vm.startPrank(newAddress);
         borrowToken.approve(address(ltv), borrowAssets);
