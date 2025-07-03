@@ -67,7 +67,7 @@ contract MulDivTest is Test, EuclidianMod, UnsignedHelpers, SignedHelpers {
         vm.expectRevert(bytes("Multiplication overflow detected"));
         sMulDiv.mulDivUp(x, y, denominator);
     }
-    
+
     /// forge-config: default.allow_internal_expect_revert = true
     function test_sMulDivDownRevertsOnOverflow(int256 x, int256 y, int256 denominator) public {
         x = sHandleZero(x);
