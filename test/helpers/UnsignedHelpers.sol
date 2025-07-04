@@ -2,12 +2,13 @@
 pragma solidity ^0.8.28;
 
 contract UnsignedHelpers {
+    uint256 constant max = type(uint256).max;
+
     function uHandleZero(uint256 num) public pure returns (uint256) {
         return num = num == 0 ? 1 : num;
     }
 
     function uEliminateMulOverflow(uint256 x, uint256 y) public pure returns (uint256) {
-        uint256 max = type(uint256).max;
         uint256 maxDivY = max / y;
 
         if (x > maxDivY) {
@@ -18,8 +19,6 @@ contract UnsignedHelpers {
     }
 
     function uFindMulOverflow(uint256 x, uint256 y) public pure returns (uint256, uint256) {
-        uint256 max = type(uint256).max;
-
         if (x == 1 || y == 1) {
             return (2, max);
         }
@@ -61,8 +60,8 @@ contract UnsignedHelpers {
 
         if (x * y % denominator == 0) {
             if (x % denominator == 0 && y % denominator == 0) {
-                x = x == type(uint256).max ? x - 1 : x + 1;
-                y = y == type(uint256).max ? y - 1 : y + 1;
+                x = x == max ? x - 1 : x + 1;
+                y = y == max ? y - 1 : y + 1;
 
                 if (isMulOverflows(x, y)) {
                     x = x - 2;
@@ -73,7 +72,7 @@ contract UnsignedHelpers {
             }
 
             if (x % denominator == 0) {
-                x = x == type(uint256).max ? x - 1 : x + 1;
+                x = x == max ? x - 1 : x + 1;
 
                 if (isMulOverflows(x, y)) {
                     x = x - 2;
@@ -83,7 +82,7 @@ contract UnsignedHelpers {
             }
 
             if (y % denominator == 0) {
-                y = y == type(uint256).max ? y - 1 : y + 1;
+                y = y == max ? y - 1 : y + 1;
 
                 if (isMulOverflows(x, y)) {
                     y = y - 2;
@@ -92,7 +91,7 @@ contract UnsignedHelpers {
                 return (x, y, denominator);
             }
 
-            x = x == type(uint256).max ? x - 1 : x + 1;
+            x = x == max ? x - 1 : x + 1;
             return (x, y, denominator);
         }
 

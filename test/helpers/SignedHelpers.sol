@@ -1,78 +1,93 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
+import "forge-std/console.sol";
 import {EuclidianMod} from "../utils/math/EuclidianMod.sol";
 
 contract SignedHelpers is EuclidianMod {
+    int256 constant max = type(int256).max;
+    int256 constant min = type(int256).min;
+
     function sHandleZero(int256 num) public pure returns (int256) {
         return num = num == int256(0) ? int256(1) : num;
     }
 
     // need to fix but works with hardcoded values
     function sEliminateMulOverflow(int256 x, int256 y) public pure returns (int256, int256) {
-        y = y == -1 ? int256(1) : y;
-
-        int256 max = type(int256).max;
-
         // one time expression that should be removed in the future
         if (x == max || y == max) {
             return (1, 5);
         }
-
-        int256 maxDivY = max / y;
-
-        if (x > 0 && y > 0 && x > maxDivY) {
-            return (1, 5);
-        }
-
-        if (x < 0 && y < 0 && x < maxDivY) {
-            return (1, 5);
-        }
-
-        int256 min = type(int256).min;
 
         // one time expression that should be removed in the future
         if (x == min || y == min) {
             return (1, 5);
         }
 
+        // shoud be first but not works in this case
+        if ((x == min && y == -1) || (x == -1 && y == min)) {
+            return (min, 1);
+        }
+
+        y = y == -1 ? int256(1) : y;
+
+        if (x == 1 || y == 1) {
+            return (2, 2);
+        }
+
+        int256 maxDivY = max / y;
+
+        if (x > 0 && y > 0 && x > maxDivY) {
+            return (maxDivY - 1, y);
+        }
+
+        if (x < 0 && y < 0 && x < maxDivY) {
+            return (maxDivY + 1, y);
+        }
+
         int256 minDivY = min / y;
 
         if (x > 0 && y < 0 && x > minDivY) {
-            return (1, 5);
+            return (minDivY - 1, y);
         }
 
         if (x < 0 && y > 0 && x < minDivY) {
-            return (1, 5);
+            return (minDivY + 1, y);
         }
 
         return (x, y);
     }
 
     function sFindMulOverflow(int256 x, int256 y) public pure returns (int256, int256) {
+        if ((x == min && y == -1) || (x == -1 && y == min)) {
+            return (x, y);
+        }
+
         y = y == -1 ? int256(1) : y;
         x = x == -1 ? int256(1) : x;
 
-        int256 max = type(int256).max;
+        if (x == 1 || y == 1) {
+            return (2, max);
+        }
+
         int256 maxDivY = max / y;
 
         if (x > 0 && y > 0 && x <= maxDivY) {
-            return (max, 2);
+            return (maxDivY + 1, y);
         }
 
         if (x < 0 && y < 0 && x >= maxDivY) {
-            return (max, 2);
+            return (maxDivY - 1, y);
         }
 
-        int256 min = type(int256).min;
         int256 minDivY = min / y;
 
         if (x > 0 && y < 0 && x <= minDivY) {
-            return (min, -1);
+            return (minDivY + 1, y);
         }
 
         if (x < 0 && y > 0 && x >= minDivY) {
-            return (min, -1);
+            return (minDivY - 1, y);
         }
 
         return (x, y);
@@ -85,53 +100,26 @@ contract SignedHelpers is EuclidianMod {
         return x;
     }
 
-    // need to fix but works with hardcoded values
-    function sFindDivisionWithRemainder(int256 x, int256 y, int256 denominator)
+    function isMulOverflows(int256 x, int256 y) public pure returns (bool) {
+        (int256 overflowX, int256 overflowY) = sFindMulOverflow(x, y);
+
+        if (x == overflowX && y == overflowY) {
+            return true;
+        }
+
+        return false;
+    }
+
+    // rewrite without hardcoded values
+    function eliminateProductSubRemainderOverflow(int256 x, int256 y, int256 denominator)
         public
         pure
         returns (int256, int256, int256)
     {
-        if (denominator == 1) {
-            denominator = 2;
-        }
-
-        // need to think how to change or how to explain denominaotr sign check here
-        if (x * y % denominator == 0) {
-            if (denominator < 0) {
-                return (3, 2, -4);
-            }
-
-            return (3, 2, 4);
-        }
-
-        if (x % denominator == 0 && y % denominator == 0) {
-            if (denominator < 0) {
-                return (3, 2, -4);
-            }
-
-            return (3, 2, 4);
-        }
-
-        if (x % denominator == 0) {
-            if (denominator < 0) {
-                return (3, 2, -4);
-            }
-
-            return (3, 2, 4);
-        }
-
-        if (y % denominator == 0) {
-            if (denominator < 0) {
-                return (3, 2, -4);
-            }
-
-            return (3, 2, 4);
-        }
-
         int256 remainder = sEuclidianMod(x * y, denominator);
         // x*y-remainder > min
         // x*y > min + remainder - overflow not happens
-        if (x * y < type(int256).min + remainder) {
+        if (x * y < min + remainder) {
             if (denominator < 0) {
                 return (3, 2, -4);
             }
@@ -142,9 +130,70 @@ contract SignedHelpers is EuclidianMod {
         return (x, y, denominator);
     }
 
+    function sFindDivisionWithRemainder(int256 x, int256 y, int256 denominator)
+        public
+        pure
+        returns (int256, int256, int256)
+    {
+        if (denominator == 1 || (x * y == min && denominator == -1) || denominator == -1) {
+            denominator = denominator > 0 ? int256(2) : -2;
+        }
+
+        x = x == max ? int256(1) : x;
+        y = y == max ? int256(1) : y;
+
+        if (x * y % denominator == 0) {
+            if (x % denominator == 0 && y % denominator == 0) {
+                x = x == max ? x - 1 : x + 1;
+                y = y == max ? y - 1 : y + 1;
+
+                if (isMulOverflows(x, y)) {
+                    x = x - 2;
+                    y = y - 2;
+                }
+
+                (x, y, denominator) = eliminateProductSubRemainderOverflow(x, y, denominator);
+
+                return (x, y, denominator);
+            }
+
+            if (x % denominator == 0) {
+                x = x == max ? x - 1 : x + 1;
+
+                if (isMulOverflows(x, y)) {
+                    x = x - 2;
+                }
+
+                (x, y, denominator) = eliminateProductSubRemainderOverflow(x, y, denominator);
+
+                return (x, y, denominator);
+            }
+
+            if (y % denominator == 0) {
+                y = y == max ? y - 1 : y + 1;
+
+                if (isMulOverflows(x, y)) {
+                    y = y - 2;
+                }
+
+                (x, y, denominator) = eliminateProductSubRemainderOverflow(x, y, denominator);
+
+                return (x, y, denominator);
+            }
+
+            x = x == max ? x - 1 : x + 1;
+            (x, y, denominator) = eliminateProductSubRemainderOverflow(x, y, denominator);
+            return (x, y, denominator);
+        }
+
+        (x, y, denominator) = eliminateProductSubRemainderOverflow(x, y, denominator);
+
+        return (x, y, denominator);
+    }
+
     function toPositive(int256 num) public pure returns (int256) {
         if (num == 0) return 1;
-        if (num == type(int256).min) return type(int256).max;
+        if (num == min) return max;
 
         num = num < 0 ? -num : num;
         return num;
