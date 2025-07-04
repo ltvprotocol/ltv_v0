@@ -8,9 +8,10 @@ contract UnsignedHelpers {
 
     function uEliminateMulOverflow(uint256 x, uint256 y) public pure returns (uint256) {
         uint256 max = type(uint256).max;
+        uint256 maxDivY = max / y;
 
-        if (x > max / y) {
-            return max / y - 1;
+        if (x > maxDivY) {
+            return maxDivY - 1;
         }
 
         return x;
@@ -18,13 +19,28 @@ contract UnsignedHelpers {
 
     function uFindMulOverflow(uint256 x, uint256 y) public pure returns (uint256, uint256) {
         uint256 max = type(uint256).max;
+
+        if(x == 1 || y == 1) {
+            return (2, max);
+        }
+
         uint256 maxDivY = max / y;
 
-        if (x <= maxDivY) {
-            return (max, 2);
+        if (x <= maxDivY && maxDivY != max) {
+            return (maxDivY + 1, y);
         }
 
         return (x, y);
+    }
+
+    function isMulOverflows(uint256 x, uint256 y) public pure returns(bool) {
+        (uint256 overflowX, uint256 overflowY) = uFindMulOverflow(x, y);
+
+        if (x == overflowX && y == overflowY) {
+            return true;
+        }
+
+        return false;
     }
 
     function uFindDivisionWithoutRemainder(uint256 x, uint256 y, uint256 denominator) public pure returns (uint256) {
@@ -34,7 +50,6 @@ contract UnsignedHelpers {
         return x;
     }
 
-    // need to fix but works with hardcoded values
     function uFindDivisionWithRemainder(uint256 x, uint256 y, uint256 denominator)
         public
         pure
@@ -45,19 +60,40 @@ contract UnsignedHelpers {
         }
 
         if (x * y % denominator == 0) {
-            return (3, 2, 4);
-        }
+            if (x % denominator == 0 && y % denominator == 0) {
+                x = x == type(uint256).max ? x - 1 : x + 1;
+                y = y == type(uint256).max ? y - 1 : y + 1;
 
-        if (x % denominator == 0 && y % denominator == 0) {
-            return (3, 2, 4);
-        }
+                if (isMulOverflows(x, y)) {
+                    x = x - 2;
+                    y = y - 2;
+                }
 
-        if (x % denominator == 0) {
-            return (3, 2, 4);
-        }
+                return (x, y, denominator);
+            }
 
-        if (y % denominator == 0) {
-            return (3, 2, 4);
+            if (x % denominator == 0) {
+                x = x == type(uint256).max ? x - 1 : x + 1;
+
+                if (isMulOverflows(x, y)) {
+                    x = x - 2;
+                }
+
+                return (x, y, denominator);
+            }
+
+            if (y % denominator == 0) {
+                y = y == type(uint256).max ? y - 1 : y + 1;
+
+                if (isMulOverflows(x, y)) {
+                    y = y - 2;
+                }
+
+                return (x, y, denominator);
+            }
+
+            x = x == type(uint256).max ? x - 1 : x + 1;
+            return (x, y, denominator);
         }
 
         return (x, y, denominator);
