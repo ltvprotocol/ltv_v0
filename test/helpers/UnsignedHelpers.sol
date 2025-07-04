@@ -20,7 +20,7 @@ contract UnsignedHelpers {
     function uFindMulOverflow(uint256 x, uint256 y) public pure returns (uint256, uint256) {
         uint256 max = type(uint256).max;
 
-        if(x == 1 || y == 1) {
+        if (x == 1 || y == 1) {
             return (2, max);
         }
 
@@ -33,7 +33,7 @@ contract UnsignedHelpers {
         return (x, y);
     }
 
-    function isMulOverflows(uint256 x, uint256 y) public pure returns(bool) {
+    function isMulOverflows(uint256 x, uint256 y) public pure returns (bool) {
         (uint256 overflowX, uint256 overflowY) = uFindMulOverflow(x, y);
 
         if (x == overflowX && y == overflowY) {
