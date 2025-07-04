@@ -5,8 +5,8 @@ import "forge-std/console.sol";
 import {EuclidianMod} from "../utils/math/EuclidianMod.sol";
 
 contract SignedHelpers is EuclidianMod {
-    int256 constant max = type(int256).max;
-    int256 constant min = type(int256).min;
+    int256 constant intMax = type(int256).max;
+    int256 constant intMin = type(int256).min;
 
     function sHandleZero(int256 num) public pure returns (int256) {
         return num = num == int256(0) ? int256(1) : num;
@@ -15,18 +15,18 @@ contract SignedHelpers is EuclidianMod {
     // need to fix but works with hardcoded values
     function sEliminateMulOverflow(int256 x, int256 y) public pure returns (int256, int256) {
         // one time expression that should be removed in the future
-        if (x == max || y == max) {
+        if (x == intMax || y == intMax) {
             return (1, 5);
         }
 
         // one time expression that should be removed in the future
-        if (x == min || y == min) {
+        if (x == intMin || y == intMin) {
             return (1, 5);
         }
 
         // shoud be first but not works in this case
-        if ((x == min && y == -1) || (x == -1 && y == min)) {
-            return (min, 1);
+        if ((x == intMin && y == -1) || (x == -1 && y == intMin)) {
+            return (intMin, 1);
         }
 
         y = y == -1 ? int256(1) : y;
@@ -35,7 +35,7 @@ contract SignedHelpers is EuclidianMod {
             return (2, 2);
         }
 
-        int256 maxDivY = max / y;
+        int256 maxDivY = intMax / y;
 
         if (x > 0 && y > 0 && x > maxDivY) {
             return (maxDivY - 1, y);
@@ -45,7 +45,7 @@ contract SignedHelpers is EuclidianMod {
             return (maxDivY + 1, y);
         }
 
-        int256 minDivY = min / y;
+        int256 minDivY = intMin / y;
 
         if (x > 0 && y < 0 && x > minDivY) {
             return (minDivY - 1, y);
@@ -59,7 +59,7 @@ contract SignedHelpers is EuclidianMod {
     }
 
     function sFindMulOverflow(int256 x, int256 y) public pure returns (int256, int256) {
-        if ((x == min && y == -1) || (x == -1 && y == min)) {
+        if ((x == intMin && y == -1) || (x == -1 && y == intMin)) {
             return (x, y);
         }
 
@@ -67,10 +67,10 @@ contract SignedHelpers is EuclidianMod {
         x = x == -1 ? int256(1) : x;
 
         if (x == 1 || y == 1) {
-            return (2, max);
+            return (2, intMax);
         }
 
-        int256 maxDivY = max / y;
+        int256 maxDivY = intMax / y;
 
         if (x > 0 && y > 0 && x <= maxDivY) {
             return (maxDivY + 1, y);
@@ -80,7 +80,7 @@ contract SignedHelpers is EuclidianMod {
             return (maxDivY - 1, y);
         }
 
-        int256 minDivY = min / y;
+        int256 minDivY = intMin / y;
 
         if (x > 0 && y < 0 && x <= minDivY) {
             return (minDivY + 1, y);
@@ -119,7 +119,7 @@ contract SignedHelpers is EuclidianMod {
         int256 remainder = sEuclidianMod(x * y, denominator);
         // x*y-remainder > min
         // x*y > min + remainder - overflow not happens
-        if (x * y < min + remainder) {
+        if (x * y < intMin + remainder) {
             if (denominator < 0) {
                 return (3, 2, -4);
             }
@@ -135,17 +135,17 @@ contract SignedHelpers is EuclidianMod {
         pure
         returns (int256, int256, int256)
     {
-        if (denominator == 1 || (x * y == min && denominator == -1) || denominator == -1) {
+        if (denominator == 1 || (x * y == intMin && denominator == -1) || denominator == -1) {
             denominator = denominator > 0 ? int256(2) : -2;
         }
 
-        x = x == max ? int256(1) : x;
-        y = y == max ? int256(1) : y;
+        x = x == intMax ? int256(1) : x;
+        y = y == intMax ? int256(1) : y;
 
         if (x * y % denominator == 0) {
             if (x % denominator == 0 && y % denominator == 0) {
-                x = x == max ? x - 1 : x + 1;
-                y = y == max ? y - 1 : y + 1;
+                x = x == intMax ? x - 1 : x + 1;
+                y = y == intMax ? y - 1 : y + 1;
 
                 if (isMulOverflows(x, y)) {
                     x = x - 2;
@@ -158,7 +158,7 @@ contract SignedHelpers is EuclidianMod {
             }
 
             if (x % denominator == 0) {
-                x = x == max ? x - 1 : x + 1;
+                x = x == intMax ? x - 1 : x + 1;
 
                 if (isMulOverflows(x, y)) {
                     x = x - 2;
@@ -170,7 +170,7 @@ contract SignedHelpers is EuclidianMod {
             }
 
             if (y % denominator == 0) {
-                y = y == max ? y - 1 : y + 1;
+                y = y == intMax ? y - 1 : y + 1;
 
                 if (isMulOverflows(x, y)) {
                     y = y - 2;
@@ -181,7 +181,7 @@ contract SignedHelpers is EuclidianMod {
                 return (x, y, denominator);
             }
 
-            x = x == max ? x - 1 : x + 1;
+            x = x == intMax ? x - 1 : x + 1;
             (x, y, denominator) = eliminateProductSubRemainderOverflow(x, y, denominator);
             return (x, y, denominator);
         }
@@ -193,7 +193,7 @@ contract SignedHelpers is EuclidianMod {
 
     function toPositive(int256 num) public pure returns (int256) {
         if (num == 0) return 1;
-        if (num == min) return max;
+        if (num == intMin) return intMax;
 
         num = num < 0 ? -num : num;
         return num;
