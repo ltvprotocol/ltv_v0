@@ -4,8 +4,9 @@ pragma solidity ^0.8.28;
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "../../interfaces/ILendingConnector.sol";
 import "./interfaces/IAaveV3Pool.sol";
+import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
 
-contract AaveV3Connector is ILendingConnector {
+contract AaveV3Connector is Initializable, ILendingConnector {
     IAaveV3Pool public constant POOL = IAaveV3Pool(0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2);
     IERC20 public immutable BORROW_ASSET;
     IERC20 public immutable COLLATERAL_ASSET;
@@ -38,11 +39,15 @@ contract AaveV3Connector is ILendingConnector {
         POOL.repay(address(BORROW_ASSET), amount, 2, address(this));
     }
 
-    function getRealCollateralAssets(bool) external view returns (uint256) {
+    function getRealCollateralAssets(bool, bytes calldata) external view returns (uint256) {
         return COLLATERAL_A_TOKEN.balanceOf(msg.sender);
     }
 
-    function getRealBorrowAssets(bool) external view returns (uint256) {
+    function getRealBorrowAssets(bool, bytes calldata) external view returns (uint256) {
         return BORROW_V_TOKEN.balanceOf(msg.sender);
+    }
+
+    function initializeProtocol(bytes memory) external onlyInitializing {
+        POOL.setUserEMode(1);
     }
 }

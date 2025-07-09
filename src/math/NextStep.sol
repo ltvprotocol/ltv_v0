@@ -90,7 +90,7 @@ library NextStep {
         if (merge) {
             uint256 nextAuctionStep;
             if (auctionWeight + deltaAuctionWeight == 0) {
-                nextAuctionStep = 0;
+                nextAuctionStep = data.auctionStep;
             } else {
                 // round down to make auction longer
                 nextAuctionStep =
