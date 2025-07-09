@@ -5,49 +5,70 @@ import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "../../interfaces/ILendingConnector.sol";
 import "./interfaces/IAaveV3Pool.sol";
 import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
+import {LTVState} from "../../states/LTVState.sol";
+import "forge-std/console.sol";
 
-contract AaveV3Connector is Initializable, ILendingConnector {
+contract AaveV3Connector is LTVState, ILendingConnector {
     IAaveV3Pool public constant POOL = IAaveV3Pool(0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2);
-    IERC20 public immutable BORROW_ASSET;
-    IERC20 public immutable COLLATERAL_ASSET;
-    IERC20 public immutable COLLATERAL_A_TOKEN;
-    IERC20 public immutable BORROW_V_TOKEN;
 
-    constructor(IERC20 _collateralAsset, IERC20 _borrowAsset) {
-        COLLATERAL_ASSET = _collateralAsset;
-        BORROW_ASSET = _borrowAsset;
+    // bytes32(uint256(keccak256("ltv.storage.AaveConnector")) - 1)
+    bytes32 private constant AaveConnectorStorageLocation =
+        0x7b08b9e4e612d3755d3b35a5c73e7f62c5c011a4596e7560d57fe01e6a76f74f;
 
-        COLLATERAL_A_TOKEN = IERC20(POOL.getReserveData(address(COLLATERAL_ASSET)).aTokenAddress);
-        BORROW_V_TOKEN = IERC20(POOL.getReserveData(address(BORROW_ASSET)).variableDebtTokenAddress);
+    struct AaveConnectorStorage {
+        address collateralAsset;
+        address borrowAsset;
+    }
+
+    function _getAaveConnectorStorage() private pure returns (AaveConnectorStorage storage s) {
+        assembly {
+            s.slot := AaveConnectorStorageLocation
+        }
     }
 
     function supply(uint256 amount) external {
-        COLLATERAL_ASSET.approve(address(POOL), amount);
-        POOL.supply(address(COLLATERAL_ASSET), amount, address(this), 0);
+        collateralToken.approve(address(POOL), amount);
+        AaveConnectorStorage storage s = _getAaveConnectorStorage();
+        POOL.supply(s.collateralAsset, amount, address(this), 0);
     }
 
     function withdraw(uint256 amount) external {
-        POOL.withdraw(address(COLLATERAL_ASSET), amount, address(this));
+        AaveConnectorStorage storage s = _getAaveConnectorStorage();
+        POOL.withdraw(s.collateralAsset, amount, address(this));
     }
 
     function borrow(uint256 amount) external {
-        POOL.borrow(address(BORROW_ASSET), amount, 2, 0, address(this));
+        AaveConnectorStorage storage s = _getAaveConnectorStorage();
+        POOL.borrow(s.borrowAsset, amount, 2, 0, address(this));
     }
 
     function repay(uint256 amount) external {
-        BORROW_ASSET.approve(address(POOL), amount);
-        POOL.repay(address(BORROW_ASSET), amount, 2, address(this));
+        borrowToken.approve(address(POOL), amount);
+        AaveConnectorStorage storage s = _getAaveConnectorStorage();
+        POOL.repay(s.borrowAsset, amount, 2, address(this));
     }
 
-    function getRealCollateralAssets(bool, bytes calldata) external view returns (uint256) {
-        return COLLATERAL_A_TOKEN.balanceOf(msg.sender);
+    function getRealCollateralAssets(bool, bytes calldata data) external view returns (uint256) {
+        (address collateralAssetAddress,) = abi.decode(data, (address, address));
+
+        address collateralAToken = POOL.getReserveData(collateralAssetAddress).aTokenAddress;
+        return IERC20(collateralAToken).balanceOf(msg.sender);
     }
 
-    function getRealBorrowAssets(bool, bytes calldata) external view returns (uint256) {
-        return BORROW_V_TOKEN.balanceOf(msg.sender);
+    function getRealBorrowAssets(bool, bytes calldata data) external view returns (uint256) {
+        (, address borrowAssetAddress) = abi.decode(data, (address, address));
+
+        address borrowAToken = POOL.getReserveData(borrowAssetAddress).variableDebtTokenAddress;
+        return IERC20(borrowAToken).balanceOf(msg.sender);
     }
 
-    function initializeProtocol(bytes memory) external onlyInitializing {
-        POOL.setUserEMode(1);
+    function initializeProtocol(bytes memory data) external {
+        (address collateralAssetAddress, address borrowAssetAddress) = abi.decode(data, (address, address));
+
+        AaveConnectorStorage storage s = _getAaveConnectorStorage();
+        s.collateralAsset = collateralAssetAddress;
+        s.borrowAsset = borrowAssetAddress;
+
+        connectorGetterData = abi.encode(collateralAssetAddress, borrowAssetAddress);
     }
 }

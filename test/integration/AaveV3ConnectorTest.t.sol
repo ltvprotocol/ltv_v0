@@ -17,6 +17,8 @@ import {CollateralVaultModule, ICollateralVaultModule} from "../../src/elements/
 import {BorrowVaultModule, IBorrowVaultModule} from "../../src/elements/BorrowVaultModule.sol";
 import {LowLevelRebalanceModule, ILowLevelRebalanceModule} from "../../src/elements/LowLevelRebalanceModule.sol";
 import {AdministrationModule, IAdministrationModule} from "../../src/elements/AdministrationModule.sol";
+import {IInitializeModule} from "../../src/interfaces/reads/IInitializeModule.sol";
+import {InitializeModule} from "../../src/elements/InitializeModule.sol";
 
 import {StateInitData} from "../../src/structs/state/StateInitData.sol";
 import {ConstantSlippageProvider} from "../../src/connectors/slippage_providers/ConstantSlippageProvider.sol";
@@ -42,7 +44,7 @@ contract AaveV3ConnectorTest is Test {
         weth = IERC20(WETH);
         wsteth = IERC20(WSTETH);
 
-        aaveLendingConnector = new AaveV3Connector(wsteth, weth);
+        aaveLendingConnector = new AaveV3Connector();
         aaveV3OracleConnector = new AaveV3OracleConnector(WSTETH, WETH);
         slippageProvider = new ConstantSlippageProvider(10 ** 16, 10 ** 16, address(this));
 
@@ -52,7 +54,8 @@ contract AaveV3ConnectorTest is Test {
             erc20Module: IERC20Module(address(new ERC20Module())),
             collateralVaultModule: ICollateralVaultModule(address(new CollateralVaultModule())),
             borrowVaultModule: IBorrowVaultModule(address(new BorrowVaultModule())),
-            lowLevelRebalanceModule: ILowLevelRebalanceModule(address(new LowLevelRebalanceModule()))
+            lowLevelRebalanceModule: ILowLevelRebalanceModule(address(new LowLevelRebalanceModule())),
+            initializeModule: IInitializeModule(address(new InitializeModule()))
         });
 
         modulesProvider = new ModulesProvider(modulesState);
@@ -74,16 +77,15 @@ contract AaveV3ConnectorTest is Test {
             slippageProvider: slippageProvider,
             maxDeleverageFee: 50000000000000000,
             vaultBalanceAsLendingConnector: ILendingConnector(address(0)),
-            modules: modulesProvider,
             owner: address(this),
             guardian: address(this),
             governor: address(this),
             emergencyDeleverager: address(this),
-            callData: ""
+            lendingConnectorData: abi.encode(WSTETH, WETH)
         });
 
         ltv = new LTV();
-        ltv.initialize(stateInitData);
+        ltv.initialize(stateInitData, modulesProvider);
 
         deal(WETH, address(this), 100 ether);
         deal(WSTETH, address(this), 100 ether);
@@ -94,11 +96,6 @@ contract AaveV3ConnectorTest is Test {
 
         deal(WETH, user, 100 ether);
         deal(WSTETH, user, 100 ether);
-    }
-
-    function test_AaveV3ConnectorSet() public view {
-        assertEq(address(aaveLendingConnector.BORROW_ASSET()), WETH);
-        assertEq(address(aaveLendingConnector.COLLATERAL_ASSET()), WSTETH);
     }
 
     function test_AaveV3ConnectorConfigs() public view {
