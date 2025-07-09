@@ -14,15 +14,15 @@ contract SignedHelpers is EuclidianMod {
 
     // need to fix but works with hardcoded values
     function sEliminateMulOverflow(int256 x, int256 y) public pure returns (int256, int256) {
-        // one time expression that should be removed in the future
-        if (x == intMax || y == intMax) {
-            return (1, 5);
-        }
+        // // one time expression that should be removed in the future
+        // if (x == intMax || y == intMax) {
+        //     return (1, 5);
+        // }
 
-        // one time expression that should be removed in the future
-        if (x == intMin || y == intMin) {
-            return (1, 5);
-        }
+        // // one time expression that should be removed in the future
+        // if (x == intMin || y == intMin) {
+        //     return (1, 5);
+        // }
 
         // shoud be first but not works in this case
         if ((x == intMin && y == -1) || (x == -1 && y == intMin)) {
@@ -110,7 +110,7 @@ contract SignedHelpers is EuclidianMod {
         return false;
     }
 
-    // rewrite without hardcoded values
+    // probably not possible to rewrite without hardcoded values
     function eliminateProductSubRemainderOverflow(int256 x, int256 y, int256 denominator)
         public
         pure
