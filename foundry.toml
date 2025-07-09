@@ -9,3 +9,6 @@ ffi = true
 ast = true
 build_info = true
 extra_output = ["storageLayout"]
+
+[invariant]
+fail_on_revert=true

@@ -13,6 +13,7 @@ import "../../../../math/NextStep.sol";
 import "../../../../state_transition/TransferFromProtocol.sol";
 import "src/errors/IVaultErrors.sol";
 import "src/state_reader/vault/MaxWithdrawRedeemBorrowVaultStateReader.sol";
+import "forge-std/console.sol";
 
 abstract contract Withdraw is
     MaxWithdrawRedeemBorrowVaultStateReader,
@@ -33,24 +34,29 @@ abstract contract Withdraw is
         nonReentrant
         returns (uint256)
     {
+        console.log("one");
         MaxWithdrawRedeemBorrowVaultState memory state = maxWithdrawRedeemBorrowVaultState(owner);
         MaxWithdrawRedeemBorrowVaultData memory data = maxWithdrawRedeemStateToData(state);
         uint256 max = _maxWithdraw(data);
         require(assets <= max, ExceedsMaxWithdraw(owner, assets, max));
+        console.log("two");
 
         (uint256 shares, DeltaFuture memory deltaFuture) = _previewWithdraw(assets, data.previewWithdrawBorrowVaultData);
+        console.log("three");
 
         if (shares == 0) {
             return 0;
         }
 
-        if (owner != receiver) {
-            _spendAllowance(owner, receiver, shares);
+        if (owner != msg.sender) {
+            _spendAllowance(owner, msg.sender, shares);
         }
+        console.log("four");
 
         applyMaxGrowthFee(
             data.previewWithdrawBorrowVaultData.supplyAfterFee, data.previewWithdrawBorrowVaultData.withdrawTotalAssets
         );
+        console.log("five");
 
         _mintProtocolRewards(
             MintProtocolRewardsData({
@@ -61,8 +67,13 @@ abstract contract Withdraw is
                 assetPrice: data.previewWithdrawBorrowVaultData.borrowPrice
             })
         );
+        console.log("six");
+
+        console.log("shares", shares);
+        console.log("balance of owner", balanceOf[owner]);
 
         _burn(owner, shares);
+        console.log("seven");
 
         NextState memory nextState = NextStep.calculateNextStep(
             NextStepData({
@@ -84,6 +95,7 @@ abstract contract Withdraw is
                 auctionStep: CommonMath.calculateAuctionStep(startAuction, block.number)
             })
         );
+        console.log("eight");
 
         applyStateTransition(
             NextStateData({
@@ -92,10 +104,13 @@ abstract contract Withdraw is
                 collateralPrice: state.previewWithdrawVaultState.maxGrowthFeeState.commonTotalAssetsState.collateralPrice
             })
         );
+        console.log("nine");
 
         borrow(assets);
+        console.log("ten");
 
         transferBorrowToken(receiver, assets);
+        console.log("eleven");
 
         emit Withdraw(msg.sender, receiver, owner, assets, shares);
 

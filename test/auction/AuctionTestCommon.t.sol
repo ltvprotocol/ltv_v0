@@ -2,43 +2,9 @@
 pragma solidity ^0.8.28;
 
 import {BaseTest, DefaultTestData, Constants} from "../utils/BaseTest.t.sol";
+import {FutureExecutorInvariant, FutureExecutorInvariantState} from "./FutureExecutorInvariant.t.sol";
 
-contract AuctionTestCommon is BaseTest {
-    struct AuctionState {
-        int256 futureBorrowAssets;
-        int256 futureCollateralAssets;
-        int256 futureRewardBorrowAssets;
-        int256 futureRewardCollateralAssets;
-    }
-
-    function getAuctionState() internal view returns (AuctionState memory) {
-        return AuctionState({
-            futureBorrowAssets: ltv.futureBorrowAssets(),
-            futureCollateralAssets: ltv.futureCollateralAssets(),
-            futureRewardBorrowAssets: ltv.futureRewardBorrowAssets(),
-            futureRewardCollateralAssets: ltv.futureRewardCollateralAssets()
-        });
-    }
-
-    function abs(int256 a) internal pure returns (int256) {
-        return a < 0 ? -a : a;
-    }
-
-    function checkFutureExecutorProfit(AuctionState memory initialAuctionState) internal view {
-        AuctionState memory auctionState = getAuctionState();
-
-        int256 oldReward = (initialAuctionState.futureBorrowAssets + initialAuctionState.futureRewardBorrowAssets)
-            - (initialAuctionState.futureCollateralAssets + initialAuctionState.futureRewardCollateralAssets) * 2;
-
-        int256 newReward = (auctionState.futureBorrowAssets + auctionState.futureRewardBorrowAssets)
-            - (auctionState.futureCollateralAssets + auctionState.futureRewardCollateralAssets) * 2;
-
-        assertGe(newReward, 0, "newReward is not positive");
-
-        assertGe(
-            abs(initialAuctionState.futureBorrowAssets) * newReward, abs(auctionState.futureBorrowAssets) * oldReward
-        );
-    }
+contract AuctionTestCommon is BaseTest, FutureExecutorInvariant {
 
     function prepareUser(address user) public {
         deal(address(collateralToken), user, type(uint256).max);

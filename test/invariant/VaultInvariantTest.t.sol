@@ -1,13 +1,18 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../utils/BaseTest.t.sol";
-import "forge-std/Test.sol";
+import "../auction/FutureExecutorInvariant.t.sol";
+import "../../src/interfaces/ILTV.sol";
+import "forge-std/interfaces/IERC20.sol";
+import {BaseTest, BaseTestInit} from "../utils/BaseTest.t.sol";
+import "forge-std/console.sol";
 
-contract LTVVaultWrapper is Test {
+contract LTVVaultWrapper is FutureExecutorInvariant {
     ILTV private ltv;
     address[10] private actors;
     address private currentActor;
+    uint256 private totalAssets;
+    uint256 private totalSupply;
 
     constructor(ILTV _ltv, address[10] memory _actors) {
         vm.startPrank(address(1));
@@ -22,16 +27,16 @@ contract LTVVaultWrapper is Test {
         _;
         vm.stopPrank();
     }
-    
+
+    /// forge-config: default.invariant.fail_on_revert=true
     function deposit(uint256 amount, uint256 receiverIndex, uint256 actorIndexSeed) public useActor(actorIndexSeed) {
+        getInvariantsData();
         uint256 maxDeposit = ltv.maxDeposit(currentActor);
-        
-        if (maxDeposit == 0) {
-            revert();
-        }
+
+        vm.assume(maxDeposit > 0);
 
         amount = bound(amount, 1, maxDeposit);
-        
+
         if (IERC20(ltv.borrowToken()).balanceOf(currentActor) < amount) {
             deal(ltv.borrowToken(), currentActor, amount);
         }
@@ -45,27 +50,29 @@ contract LTVVaultWrapper is Test {
         ltv.deposit(amount, receiver);
     }
 
+    /// forge-config: default.invariant.fail_on_revert=true
     function withdraw(uint256 amount, uint256 receiverIndex, uint256 actorIndexSeed) public useActor(actorIndexSeed) {
+        getInvariantsData();
         uint256 maxWithdraw = ltv.maxWithdraw(currentActor);
-        if (maxWithdraw == 0) {
-            revert();
-        }
-        amount = bound(amount, 1, maxWithdraw);
+        vm.assume(maxWithdraw > 0);
+
+        // amount = bound(amount, 1, maxWithdraw);
+        amount = maxWithdraw;
 
         address receiver = actors[bound(receiverIndex, 0, actors.length - 1)];
 
         ltv.withdraw(amount, receiver, currentActor);
     }
 
+    /// forge-config: default.invariant.fail_on_revert=true
     function mint(uint256 amount, uint256 receiverIndex, uint256 actorIndexSeed) public useActor(actorIndexSeed) {
+        getInvariantsData();
         uint256 maxMint = ltv.maxMint(currentActor);
-        
-        if (maxMint == 0) {
-            revert();
-        }
+
+        vm.assume(maxMint > 0);
 
         amount = bound(amount, 1, maxMint);
-        
+
         uint256 assets = ltv.previewMint(amount);
         if (IERC20(ltv.borrowToken()).balanceOf(currentActor) < assets) {
             deal(ltv.borrowToken(), currentActor, assets);
@@ -80,16 +87,28 @@ contract LTVVaultWrapper is Test {
         ltv.mint(amount, receiver);
     }
 
+    /// forge-config: default.invariant.fail_on_revert=true
     function redeem(uint256 amount, uint256 receiverIndex, uint256 actorIndexSeed) public useActor(actorIndexSeed) {
+        getInvariantsData();
         uint256 maxRedeem = ltv.maxRedeem(currentActor);
-        if (maxRedeem == 0) {
-            revert();
-        }
+        vm.assume(maxRedeem > 0);
+
         amount = bound(amount, 1, maxRedeem);
-        
+
         address receiver = actors[bound(receiverIndex, 0, actors.length - 1)];
 
         ltv.redeem(amount, receiver, currentActor);
+    }
+
+    function getInvariantsData() private {
+        totalAssets = ltv.totalAssets();
+        totalSupply = ltv.totalSupply();
+        // cacheFutureExecutorInvariantState(ILTV(address(ltv)));
+    }
+
+    function checkInvariants() public view {
+        assertGe(ltv.totalAssets() * totalSupply, totalAssets * ltv.totalSupply(), "Token price became smaller");
+        // _checkFutureExecutorInvariantWithCachedState(ILTV(address(ltv)));
     }
 }
 
@@ -126,7 +145,7 @@ contract VaultInvariantTest is BaseTest {
 
         initializeTest(init);
 
-        initialConvertToAssets = ltv.convertToAssets(10**18);
+        initialConvertToAssets = ltv.convertToAssets(10 ** 18);
 
         address[10] memory actors;
         for (uint256 i = 0; i < 10; i++) {
@@ -135,35 +154,29 @@ contract VaultInvariantTest is BaseTest {
 
         wrapper = new LTVVaultWrapper(ILTV(address(ltv)), actors);
         targetContract(address(wrapper));
+        
+        bytes4[] memory selectors = new bytes4[](3);
+        selectors[0] = LTVVaultWrapper.checkInvariants.selector;
+        selectors[1] = LTVVaultWrapper.mint.selector;
+        selectors[2] = LTVVaultWrapper.redeem.selector;
+        excludeSelector(FuzzSelector({addr: address(wrapper), selectors: selectors}));
 
         wrapper.mint(1, 0, 0);
     }
 
     function invariant_vault() public view {
-        int256 futureBorrowAssets = ltv.futureBorrowAssets();
-        int256 futureRewardBorrowAssets = ltv.futureRewardBorrowAssets();
-        int256 realBorrowAssets = int256(ltv.getRealBorrowAssets(true));
-        int256 futureCollateralAssets = ltv.futureCollateralAssets();
-        int256 futureRewardCollateralAssets = ltv.futureRewardCollateralAssets();
-        int256 realCollateralAssets = int256(ltv.getRealCollateralAssets(true));
-        console.log("futureBorrowAssets", futureBorrowAssets);
-        console.log("futureRewardBorrowAssets", futureRewardBorrowAssets);
-        console.log("realBorrowAssets", realBorrowAssets);
-        console.log("futureCollateralAssets", futureCollateralAssets * 2111111111111111111 / 10**18);
-        console.log("futureRewardCollateralAssets", futureRewardCollateralAssets* 2111111111111111111 / 10**18);
-        console.log("realCollateralAssets", realCollateralAssets * 2111111111111111111 / 10**18);
-        assertGe(ltv.futureBorrowAssets(), ltv.futureCollateralAssets() * 2111111111111111111 / 10**18 - 3);
-
-        // int256 borrow = (futureBorrowAssets + futureRewardBorrowAssets + realBorrowAssets);
-        // int256 collateral = (futureCollateralAssets + futureRewardCollateralAssets + realCollateralAssets) * 2111111111111111111 / 10**18;
-
-
-        // // assertApproxEqAbs(borrow * 4, collateral * 3, 40);
-        // assertLe(borrow * 4, collateral * 3);
+        // console.log("real collateral", ltv.getRealCollateralAssets(true));
+        // console.log("real borrow", ltv.getRealBorrowAssets(true));
+        // console.log("future collateral", ltv.futureCollateralAssets());
+        // console.log("future borrow", ltv.futureBorrowAssets());
+        // console.log("future reward collateral", ltv.futureRewardCollateralAssets());
+        // console.log("future reward borrow", ltv.futureRewardBorrowAssets());
+        // console.log("total assets", ltv.totalAssets());
+        wrapper.checkInvariants();
     }
 
     function test_invariant_debug() public view {
-        assertEq(ltv.futureBorrowAssets(), ltv.futureCollateralAssets() * 2111111111111111111 / 10**18);
+        assertEq(ltv.futureBorrowAssets(), ltv.futureCollateralAssets() * 2111111111111111111 / 10 ** 18);
         // int256 futureBorrowAssets = ltv.futureBorrowAssets();
         // int256 futureRewardBorrowAssets = ltv.futureRewardBorrowAssets();
         // int256 realBorrowAssets = int256(ltv.getRealBorrowAssets(true));

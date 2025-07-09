@@ -18,6 +18,7 @@ contract DeleverageAndWithdrawTest is BalancedTest {
         // total assets were reduced for 0.5%
         assertEq(dummyLTV.totalAssets(), 995 * 10 ** 15);
 
+        vm.prank(owner);
         assertEq(dummyLTV.withdrawCollateral(995 * 10 ** 14, address(owner), address(owner)), 2 * 10 ** 17);
         dummyLTV.redeemCollateral(2 * 10 ** 17, address(owner), address(owner));
     }
