@@ -74,12 +74,12 @@ library sMulDiv {
 
         int256 division = product / denominator;
 
-        // if result is positive, than division returned number rounded towards zero, so mulDivDown is satisfied
+        // if result is positive, then division returned number rounded towards zero, so mulDivDown is satisfied
         if ((product > 0 && denominator > 0) || (product < 0 && denominator < 0)) {
             return division;
         }
 
-        // if result is negative or zero, than division rounded up, so we need to round down
+        // if result is negative or zero, then division rounded up, so we need to round down
         if (product % denominator != 0) {
             require(division != MIN_INT256, "Subtraction overflow");
 
@@ -114,18 +114,18 @@ library sMulDiv {
         // Perform the multiplication
         int256 product = x * y;
 
-        int256 division = product / denominator;
-
         if (product == MIN_INT256) {
             require(denominator != -1, "Division overflow");
         }
 
-        // if result is negative, than division returned number rounded towards zero, so mulDivUp is satisfied
+        int256 division = product / denominator;
+
+        // if result is negative, then division returned number rounded towards zero, so mulDivUp is satisfied
         if ((product < 0 && denominator > 0) || (product > 0 && denominator < 0)) {
             return division;
         }
 
-        // if result is positive or zero, than division rounded down, so we need to round up
+        // if result is positive or zero, then division rounded down, so we need to round up
         if (product % denominator != 0) {
             require(division != MAX_INT256, "Addition overflow");
 
