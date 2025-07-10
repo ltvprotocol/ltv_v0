@@ -81,7 +81,6 @@ library sMulDiv {
 
         // if result is negative or zero, than division rounded up, so we need to round down
         if (product % denominator != 0) {
-
             require(division != MIN_INT256, "Subtraction overflow");
 
             division -= 1;
@@ -128,7 +127,6 @@ library sMulDiv {
 
         // if result is positive or zero, than division rounded down, so we need to round up
         if (product % denominator != 0) {
-
             require(division != MAX_INT256, "Addition overflow");
 
             division += 1;
