@@ -39,7 +39,7 @@ contract AaveV3Connector is LTVState, ILendingConnector {
         return IERC20(borrowAToken).balanceOf(msg.sender);
     }
 
-    function initializeProtocol(bytes memory ) external {
+    function initializeProtocol(bytes memory) external {
         address collateralAToken = POOL.getReserveData(address(collateralToken)).aTokenAddress;
         address borrowAToken = POOL.getReserveData(address(borrowToken)).variableDebtTokenAddress;
 
