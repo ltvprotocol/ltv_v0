@@ -155,10 +155,8 @@ contract VaultInvariantTest is BaseTest {
         wrapper = new LTVVaultWrapper(ILTV(address(ltv)), actors);
         targetContract(address(wrapper));
         
-        bytes4[] memory selectors = new bytes4[](3);
+        bytes4[] memory selectors = new bytes4[](1);
         selectors[0] = LTVVaultWrapper.checkInvariants.selector;
-        selectors[1] = LTVVaultWrapper.mint.selector;
-        selectors[2] = LTVVaultWrapper.redeem.selector;
         excludeSelector(FuzzSelector({addr: address(wrapper), selectors: selectors}));
 
         wrapper.mint(1, 0, 0);
