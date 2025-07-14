@@ -67,7 +67,7 @@ abstract contract MaxWithdraw is PreviewWithdraw, PreviewRedeem {
         (uint256 userBalanceWithDelta,) = _previewWithdraw(userBalanceInAssets, data.previewWithdrawBorrowVaultData);
         if (userBalanceWithDelta > data.ownerBalance) {
             uint256 delta = userBalanceWithDelta + 3 - data.ownerBalance;
-            userBalanceInAssets = userBalanceInAssets > userBalanceInAssets - 2 * delta ? userBalanceInAssets - 2 * delta : 0;
+            userBalanceInAssets = userBalanceInAssets > 2 * delta ? userBalanceInAssets - 2 * delta : 0;
         }
 
         return userBalanceInAssets < vaultMaxWithdraw ? userBalanceInAssets : vaultMaxWithdraw;
