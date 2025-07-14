@@ -81,7 +81,7 @@ contract AaveV3ConnectorTest is Test {
             guardian: address(this),
             governor: address(this),
             emergencyDeleverager: address(this),
-            lendingConnectorData: abi.encode(WSTETH, WETH)
+            lendingConnectorData: abi.encode("")
         });
 
         ltv = new LTV();
