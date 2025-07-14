@@ -103,12 +103,24 @@ contract LTVVaultWrapper is FutureExecutorInvariant {
     function getInvariantsData() private {
         totalAssets = ltv.totalAssets();
         totalSupply = ltv.totalSupply();
-        // cacheFutureExecutorInvariantState(ILTV(address(ltv)));
     }
 
     function checkInvariants() public view {
         assertGe(ltv.totalAssets() * totalSupply, totalAssets * ltv.totalSupply(), "Token price became smaller");
-        // _checkFutureExecutorInvariantWithCachedState(ILTV(address(ltv)));
+        assertTrue(
+            (ltv.futureBorrowAssets() != 0 && ltv.futureCollateralAssets() != 0)
+                || ltv.futureCollateralAssets() == ltv.futureBorrowAssets(),
+            "Future borrow and collateral assets either both zero or both non-zero"
+        );
+
+        assertTrue(
+            (ltv.futureBorrowAssets() != 0) || ltv.futureRewardBorrowAssets() != 0,
+            "Future borrow or reward borrow assets never zero"
+        );
+        assertTrue(
+            (ltv.futureCollateralAssets() != 0) || ltv.futureRewardCollateralAssets() != 0,
+            "Future collateral or reward collateral assets never zero"
+        );
     }
 }
 
@@ -154,7 +166,7 @@ contract VaultInvariantTest is BaseTest {
 
         wrapper = new LTVVaultWrapper(ILTV(address(ltv)), actors);
         targetContract(address(wrapper));
-        
+
         bytes4[] memory selectors = new bytes4[](1);
         selectors[0] = LTVVaultWrapper.checkInvariants.selector;
         excludeSelector(FuzzSelector({addr: address(wrapper), selectors: selectors}));
@@ -163,35 +175,10 @@ contract VaultInvariantTest is BaseTest {
     }
 
     function invariant_vault() public view {
-        // console.log("real collateral", ltv.getRealCollateralAssets(true));
-        // console.log("real borrow", ltv.getRealBorrowAssets(true));
-        // console.log("future collateral", ltv.futureCollateralAssets());
-        // console.log("future borrow", ltv.futureBorrowAssets());
-        // console.log("future reward collateral", ltv.futureRewardCollateralAssets());
-        // console.log("future reward borrow", ltv.futureRewardBorrowAssets());
-        // console.log("total assets", ltv.totalAssets());
         wrapper.checkInvariants();
     }
 
     function test_invariant_debug() public view {
         assertEq(ltv.futureBorrowAssets(), ltv.futureCollateralAssets() * 2111111111111111111 / 10 ** 18);
-        // int256 futureBorrowAssets = ltv.futureBorrowAssets();
-        // int256 futureRewardBorrowAssets = ltv.futureRewardBorrowAssets();
-        // int256 realBorrowAssets = int256(ltv.getRealBorrowAssets(true));
-        // int256 futureCollateralAssets = ltv.futureCollateralAssets();
-        // int256 futureRewardCollateralAssets = ltv.futureRewardCollateralAssets();
-        // int256 realCollateralAssets = int256(ltv.getRealCollateralAssets(true));
-
-        // console.log("futureBorrowAssets", futureBorrowAssets * 10**18);
-        // console.log("futureRewardBorrowAssets", futureRewardBorrowAssets);
-        // console.log("realBorrowAssets", realBorrowAssets);
-        // console.log("futureCollateralAssets", futureCollateralAssets);
-        // console.log("futureRewardCollateralAssets", futureRewardCollateralAssets);
-        // console.log("realCollateralAssets", realCollateralAssets);
-
-        // int256 borrow = (futureBorrowAssets + futureRewardBorrowAssets + realBorrowAssets);
-        // int256 collateral = (futureCollateralAssets + futureRewardCollateralAssets + realCollateralAssets) * 2111111111111111111 / 10**18;
-
-        // assertLe(borrow * 4, collateral * 3);
     }
 }
