@@ -3,7 +3,6 @@ pragma solidity ^0.8.27;
 
 import {BaseTest, BaseTestInit} from "../../utils/BaseTest.t.sol";
 import {Constants} from "../../../src/Constants.sol";
-import "forge-std/console.sol";
 
 contract MaxWithdrawExceedsBalanceTest is BaseTest {
     address internal user;
@@ -42,16 +41,6 @@ contract MaxWithdrawExceedsBalanceTest is BaseTest {
     }
 
     function test_maxWithdrawExceedsBalance() public {
-        console.log("real collateral", ltv.getRealCollateralAssets(false));
-        console.log("real borrow", ltv.getRealBorrowAssets(false));
-        console.log("future collateral", ltv.futureCollateralAssets());
-        console.log("future borrow", ltv.futureBorrowAssets());
-        console.log("future reward collateral", ltv.futureRewardCollateralAssets());
-        console.log("future reward borrow", ltv.futureRewardBorrowAssets());
-        console.log("total assets", ltv.totalAssets());
-        console.log("start auction", ltv.startAuction());
-        console.log("block number", block.number);
-        console.log("total supply", ltv.totalSupply());
         vm.startPrank(user);
         ltv.withdraw(ltv.maxWithdraw(user), user, user);
     }
