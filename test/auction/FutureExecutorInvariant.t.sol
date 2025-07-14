@@ -54,8 +54,14 @@ contract FutureExecutorInvariant is Test {
         assertGe(newReward, 0, "newReward is not positive");
 
         assertGe(
+            abs(futureExecutorInvariantState.futureCollateralAssets) * newReward,
+            abs(auctionState.futureCollateralAssets) * oldReward,
+            "New reward is not greater than old reward, collateral measure"
+        );
+        assertGe(
             abs(futureExecutorInvariantState.futureBorrowAssets) * newReward,
-            abs(auctionState.futureBorrowAssets) * oldReward, "New reward is not greater than old reward"
+            abs(auctionState.futureBorrowAssets) * oldReward,
+            "New reward is not greater than old reward, borrow measure"
         );
     }
 }
