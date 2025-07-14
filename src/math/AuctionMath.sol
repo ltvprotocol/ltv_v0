@@ -13,27 +13,27 @@ import "src/errors/IAuctionErrors.sol";
 library AuctionMath {
     using sMulDiv for int256;
 
-    // delta future borrow needs to be rounded up to make auction more profitable for future executor
+    // delta future borrow needs to be rounded down to make auction reward bigger for future executor
     function calculateDeltaFutureBorrowAssetsFromDeltaUserBorrowAssets(
         int256 deltaUserBorrowAssets,
         int256 futureBorrowAssets,
         int256 futureRewardBorrowAssets,
         int256 auctionStep
     ) private pure returns (int256) {
-        return (deltaUserBorrowAssets * int256(Constants.AMOUNT_OF_STEPS)).mulDivUp(
+        return (deltaUserBorrowAssets * int256(Constants.AMOUNT_OF_STEPS)).mulDivDown(
             futureBorrowAssets,
             int256(Constants.AMOUNT_OF_STEPS) * futureBorrowAssets + auctionStep * futureRewardBorrowAssets
         );
     }
 
-    // delta future collateral needs to be rounded down to make auction more profitable for future executor
+    // delta future collateral needs to be rounded up to make rewards bigger for future executor
     function calculateDeltaFutureCollateralAssetsFromDeltaUserCollateralAssets(
         int256 deltaUserCollateralAssets,
         int256 futureCollateralAssets,
         int256 futureRewardCollateralAssets,
         int256 auctionStep
     ) private pure returns (int256) {
-        return (deltaUserCollateralAssets * int256(Constants.AMOUNT_OF_STEPS)).mulDivDown(
+        return (deltaUserCollateralAssets * int256(Constants.AMOUNT_OF_STEPS)).mulDivUp(
             futureCollateralAssets,
             int256(Constants.AMOUNT_OF_STEPS) * futureCollateralAssets + auctionStep * futureRewardCollateralAssets
         );
@@ -97,9 +97,13 @@ library AuctionMath {
         returns (DeltaAuctionState memory)
     {
         bool hasOppositeSign = data.futureCollateralAssets * deltaUserCollateralAssets < 0;
-        bool deltaWithinAuctionSize = (
-            data.futureCollateralAssets + data.futureRewardCollateralAssets + deltaUserCollateralAssets
-        ) * (data.futureCollateralAssets + data.futureRewardCollateralAssets) >= 0;
+        bool deltaWithinAuctionSize;
+        {
+            int256 availableCollateralAssets = data.futureCollateralAssets + data.futureRewardCollateralAssets;
+            deltaWithinAuctionSize = (
+                availableCollateralAssets > 0 && availableCollateralAssets >= -deltaUserCollateralAssets
+            ) || (availableCollateralAssets < 0 && availableCollateralAssets <= -deltaUserCollateralAssets);
+        }
         require(
             hasOppositeSign && deltaWithinAuctionSize,
             IAuctionErrors.NoAuctionForProvidedDeltaFutureCollateral(
@@ -120,11 +124,17 @@ library AuctionMath {
             deltaState.deltaFutureCollateralAssets, data.futureBorrowAssets, data.futureCollateralAssets
         );
 
+        if (deltaState.deltaFutureBorrowAssets == -data.futureBorrowAssets) {
+            deltaState.deltaFutureCollateralAssets = -data.futureCollateralAssets;
+        }
+
         int256 deltaFutureRewardBorrowAssets = calculateDeltaFutureRewardBorrowAssetsFromDeltaFutureBorrowAssets(
             deltaState.deltaFutureBorrowAssets, data.futureBorrowAssets, data.futureRewardBorrowAssets
         );
         int256 deltaFutureRewardCollateralAssets =
-            deltaState.deltaUserCollateralAssets - deltaState.deltaFutureCollateralAssets;
+        calculateDeltaFutureRewardCollateralAssetsFromDeltaFutureCollateralAssets(
+            deltaState.deltaFutureCollateralAssets, data.futureCollateralAssets, data.futureRewardCollateralAssets
+        );
 
         deltaState.deltaUserFutureRewardBorrowAssets =
         calculateDeltaUserFutureRewardBorrowAssetsFromDeltaFutureRewardBorrowAssets(
@@ -150,8 +160,12 @@ library AuctionMath {
         returns (DeltaAuctionState memory)
     {
         bool hasOppositeSign = data.futureBorrowAssets * deltaUserBorrowAssets < 0;
-        bool deltaWithinAuctionSize = (data.futureBorrowAssets + data.futureRewardBorrowAssets + deltaUserBorrowAssets)
-            * (data.futureBorrowAssets + data.futureRewardBorrowAssets) >= 0;
+        bool deltaWithinAuctionSize;
+        {
+            int256 availableBorrowAssets = data.futureBorrowAssets + data.futureRewardBorrowAssets;
+            deltaWithinAuctionSize = (availableBorrowAssets > 0 && availableBorrowAssets >= -deltaUserBorrowAssets)
+                || (availableBorrowAssets < 0 && availableBorrowAssets <= -deltaUserBorrowAssets);
+        }
         require(
             hasOppositeSign && deltaWithinAuctionSize,
             IAuctionErrors.NoAuctionForProvidedDeltaFutureBorrow(
@@ -164,12 +178,18 @@ library AuctionMath {
         deltaState.deltaFutureBorrowAssets = calculateDeltaFutureBorrowAssetsFromDeltaUserBorrowAssets(
             deltaState.deltaUserBorrowAssets, data.futureBorrowAssets, data.futureRewardBorrowAssets, data.auctionStep
         );
-
         deltaState.deltaFutureCollateralAssets = calculateDeltaFutureCollateralAssetsFromDeltaFutureBorrowAssets(
             deltaState.deltaFutureBorrowAssets, data.futureCollateralAssets, data.futureBorrowAssets
         );
 
-        int256 deltaFutureRewardBorrowAssets = deltaState.deltaUserBorrowAssets - deltaState.deltaFutureBorrowAssets;
+        if (deltaState.deltaFutureCollateralAssets == -data.futureCollateralAssets) {
+            deltaState.deltaFutureBorrowAssets = -data.futureBorrowAssets;
+        }
+
+        int256 deltaFutureRewardBorrowAssets = calculateDeltaFutureRewardBorrowAssetsFromDeltaFutureBorrowAssets(
+            deltaState.deltaFutureBorrowAssets, data.futureBorrowAssets, data.futureRewardBorrowAssets
+        );
+
         int256 deltaFutureRewardCollateralAssets =
         calculateDeltaFutureRewardCollateralAssetsFromDeltaFutureCollateralAssets(
             deltaState.deltaFutureCollateralAssets, data.futureCollateralAssets, data.futureRewardCollateralAssets

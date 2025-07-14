@@ -20,7 +20,7 @@ import {CollateralVaultModule} from "../../src/elements/CollateralVaultModule.so
 import {BorrowVaultModule} from "../../src/elements/BorrowVaultModule.sol";
 import {LowLevelRebalanceModule} from "../../src/elements/LowLevelRebalanceModule.sol";
 import {AdministrationModule} from "../../src/elements/AdministrationModule.sol";
-import {State} from "../../src/interfaces/ILTV.sol";
+import {InitializeModule} from "../../src/elements/InitializeModule.sol";
 import "../../src/elements/WhitelistRegistry.sol";
 
 address constant EOA_ADDRESS = address(1);
@@ -48,6 +48,10 @@ contract DummyModulesProvider is IModules {
 
     function erc20Module() external pure override returns (IERC20Module) {
         return IERC20Module(EOA_ADDRESS);
+    }
+
+    function initializeModule() external pure override returns (IInitializeModule) {
+        return IInitializeModule(EOA_ADDRESS);
     }
 }
 
@@ -186,7 +190,8 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
             lowLevelRebalanceModule: ILowLevelRebalanceModule(address(new LowLevelRebalanceModule())),
             auctionModule: IAuctionModule(address(new AuctionModule())),
             administrationModule: IAdministrationModule(address(new AdministrationModule())),
-            erc20Module: IERC20Module(address(new ERC20Module()))
+            erc20Module: IERC20Module(address(new ERC20Module())),
+            initializeModule: IInitializeModule(address(new InitializeModule()))
         });
 
         IModules newModules = new ModulesProvider(newModulesState);
@@ -272,7 +277,8 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
             lowLevelRebalanceModule: ILowLevelRebalanceModule(address(new LowLevelRebalanceModule())),
             auctionModule: IAuctionModule(address(new AuctionModule())),
             administrationModule: IAdministrationModule(address(new AdministrationModule())),
-            erc20Module: IERC20Module(address(new ERC20Module()))
+            erc20Module: IERC20Module(address(new ERC20Module())),
+            initializeModule: IInitializeModule(address(new InitializeModule()))
         });
         vm.assume(data.owner != address(0));
         vm.assume(data.guardian != address(0));
