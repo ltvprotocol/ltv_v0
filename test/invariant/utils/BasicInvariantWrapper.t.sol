@@ -42,8 +42,8 @@ contract BasicInvariantWrapper is Test {
         ltvUserBalanceBefore = int256(ltv.balanceOf(currentActor));
     }
 
-    function checkInvariants() public virtual view {
-                assertGe(ltv.totalAssets() * totalSupply, totalAssets * ltv.totalSupply(), "Token price became smaller");
+    function checkInvariants() public view virtual {
+        assertGe(ltv.totalAssets() * totalSupply, totalAssets * ltv.totalSupply(), "Token price became smaller");
         assertEq(
             int256(IERC20(ltv.borrowToken()).balanceOf(currentActor)),
             borrowUserBalanceBefore + deltaBorrow,
