@@ -63,6 +63,8 @@ library sMulDiv {
             if (x < 0 && y > 0) {
                 require(x >= MIN_INT256 / y, "Multiplication overflow detected");
             }
+        } else {
+            return 0;
         }
 
         // Perform the multiplication
@@ -109,6 +111,8 @@ library sMulDiv {
             if (x < 0 && y > 0) {
                 require(x >= MIN_INT256 / y, "Multiplication overflow detected");
             }
+        } else {
+            return 0;
         }
 
         // Perform the multiplication
