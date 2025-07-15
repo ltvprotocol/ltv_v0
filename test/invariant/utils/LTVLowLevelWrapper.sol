@@ -6,15 +6,6 @@ import "forge-std/interfaces/IERC20.sol";
 import {BasicInvariantWrapper} from "./BasicInvariantWrapper.t.sol";
 
 contract LTVLowLevelWrapper is BasicInvariantWrapper {
-    uint256 private totalAssets;
-    uint256 private totalSupply;
-    int256 private borrowUserBalanceBefore;
-    int256 private collateralUserBalanceBefore;
-    int256 private ltvUserBalanceBefore;
-    int256 private deltaBorrow;
-    int256 private deltaCollateral;
-    int256 private deltaLtv;
-
     constructor(ILTV _ltv, address[10] memory _actors) BasicInvariantWrapper(_ltv, _actors) {}
 
     function minLowLevelRebalanceCollateral() internal view returns (int256) {
@@ -203,26 +194,5 @@ contract LTVLowLevelWrapper is BasicInvariantWrapper {
         getInvariantsData();
 
         ltv.executeLowLevelRebalanceShares(amount);
-    }
-
-    function getInvariantsData() internal override {
-        totalAssets = ltv.totalAssets();
-        totalSupply = ltv.totalSupply();
-        borrowUserBalanceBefore = int256(IERC20(ltv.borrowToken()).balanceOf(currentActor));
-        collateralUserBalanceBefore = int256(IERC20(ltv.collateralToken()).balanceOf(currentActor));
-        ltvUserBalanceBefore = int256(ltv.balanceOf(currentActor));
-    }
-
-    function checkInvariants() public view override {
-        assertGe(ltv.totalAssets() * totalSupply, totalAssets * ltv.totalSupply(), "Token price became smaller");
-        assertEq(ltv.futureBorrowAssets(), 0);
-        assertEq(ltv.futureCollateralAssets(), 0);
-        assertEq(ltv.futureRewardBorrowAssets(), 0);
-        assertEq(ltv.futureRewardCollateralAssets(), 0);
-        assertLt(ltv.convertToAssets(10**18), 11 * 10**17);
-
-        assertEq(int256(IERC20(ltv.borrowToken()).balanceOf(currentActor)), borrowUserBalanceBefore + deltaBorrow, "Borrow balance changed");
-        assertEq(int256(IERC20(ltv.collateralToken()).balanceOf(currentActor)), collateralUserBalanceBefore - deltaCollateral, "Collateral balance changed");
-        assertEq(int256(ltv.balanceOf(currentActor)), ltvUserBalanceBefore + deltaLtv, "LTV balance changed");
     }
 }

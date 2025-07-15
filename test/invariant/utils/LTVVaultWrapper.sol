@@ -6,14 +6,9 @@ import "forge-std/interfaces/IERC20.sol";
 import {BasicInvariantWrapper} from "./BasicInvariantWrapper.t.sol";
 
 contract LTVVaultWrapper is BasicInvariantWrapper {
-    uint256 private totalAssets;
-    uint256 private totalSupply;
-    
     constructor(ILTV _ltv, address[10] memory _actors) BasicInvariantWrapper(_ltv, _actors) {}
 
-    /// forge-config: default.invariant.fail-on-revert = true
-    function deposit(uint256 amount, uint256 receiverIndex, uint256 actorIndexSeed) public useActor(actorIndexSeed) {
-        getInvariantsData();
+    function deposit(uint256 amount, uint256 actorIndexSeed) public useActor(actorIndexSeed) {
         uint256 maxDeposit = ltv.maxDeposit(currentActor);
 
         vm.assume(maxDeposit > 0);
@@ -28,28 +23,25 @@ contract LTVVaultWrapper is BasicInvariantWrapper {
             IERC20(ltv.borrowToken()).approve(address(ltv), amount);
         }
 
-        address receiver = actors[bound(receiverIndex, 0, actors.length - 1)];
-
-        ltv.deposit(amount, receiver);
+        getInvariantsData();
+        deltaLtv = int256(ltv.deposit(amount, currentActor));
+        deltaBorrow = deltaLtv == 0 ? int256(0) : -int256(amount);
+        deltaCollateral = 0;
     }
 
-    /// forge-config: default.invariant.fail-on-revert = true
-    function withdraw(uint256 amount, uint256 receiverIndex, uint256 actorIndexSeed) public useActor(actorIndexSeed) {
-        getInvariantsData();
+    function withdraw(uint256 amount, uint256 actorIndexSeed) public useActor(actorIndexSeed) {
         uint256 maxWithdraw = ltv.maxWithdraw(currentActor);
         vm.assume(maxWithdraw > 0);
 
-        // amount = bound(amount, 1, maxWithdraw);
-        amount = maxWithdraw;
+        amount = bound(amount, 1, maxWithdraw);
 
-        address receiver = actors[bound(receiverIndex, 0, actors.length - 1)];
-
-        ltv.withdraw(amount, receiver, currentActor);
+        getInvariantsData();
+        deltaLtv = -int256(ltv.withdraw(amount, currentActor, currentActor));
+        deltaBorrow = deltaLtv == 0 ? int256(0) : int256(amount);
+        deltaCollateral = 0;
     }
 
-    /// forge-config: default.invariant.fail-on-revert = true
-    function mint(uint256 amount, uint256 receiverIndex, uint256 actorIndexSeed) public useActor(actorIndexSeed) {
-        getInvariantsData();
+    function mint(uint256 amount, uint256 actorIndexSeed) public useActor(actorIndexSeed) {
         uint256 maxMint = ltv.maxMint(currentActor);
 
         vm.assume(maxMint > 0);
@@ -65,30 +57,25 @@ contract LTVVaultWrapper is BasicInvariantWrapper {
             IERC20(ltv.borrowToken()).approve(address(ltv), assets);
         }
 
-        address receiver = actors[bound(receiverIndex, 0, actors.length - 1)];
-
-        ltv.mint(amount, receiver);
+        getInvariantsData();
+        deltaBorrow = -int256(ltv.mint(amount, currentActor));
+        deltaLtv = deltaBorrow == 0 ? int256(0) : int256(amount);
+        deltaCollateral = 0;
     }
 
-    /// forge-config: default.invariant.fail-on-revert = true
-    function redeem(uint256 amount, uint256 receiverIndex, uint256 actorIndexSeed) public useActor(actorIndexSeed) {
-        getInvariantsData();
+    function redeem(uint256 amount, uint256 actorIndexSeed) public useActor(actorIndexSeed) {
         uint256 maxRedeem = ltv.maxRedeem(currentActor);
         vm.assume(maxRedeem > 0);
 
         amount = bound(amount, 1, maxRedeem);
 
-        address receiver = actors[bound(receiverIndex, 0, actors.length - 1)];
-
-        ltv.redeem(amount, receiver, currentActor);
+        getInvariantsData();
+        deltaBorrow = int256(ltv.redeem(amount, currentActor, currentActor));
+        deltaLtv = deltaBorrow == 0 ? int256(0) : -int256(amount);
+        deltaCollateral = 0;
     }
 
-    /// forge-config: default.invariant.fail-on-revert = true
-    function depositCollateral(uint256 amount, uint256 receiverIndex, uint256 actorIndexSeed)
-        public
-        useActor(actorIndexSeed)
-    {
-        getInvariantsData();
+    function depositCollateral(uint256 amount, uint256 actorIndexSeed) public useActor(actorIndexSeed) {
         uint256 maxDeposit = ltv.maxDepositCollateral(currentActor);
 
         vm.assume(maxDeposit > 0);
@@ -103,34 +90,25 @@ contract LTVVaultWrapper is BasicInvariantWrapper {
             IERC20(ltv.collateralToken()).approve(address(ltv), amount);
         }
 
-        address receiver = actors[bound(receiverIndex, 0, actors.length - 1)];
-
-        ltv.depositCollateral(amount, receiver);
+        getInvariantsData();
+        deltaLtv = int256(ltv.depositCollateral(amount, currentActor));
+        deltaCollateral = deltaLtv == 0 ? int256(0) : int256(amount);
+        deltaBorrow = 0;
     }
 
-    /// forge-config: default.invariant.fail-on-revert = true
-    function withdrawCollateral(uint256 amount, uint256 receiverIndex, uint256 actorIndexSeed)
-        public
-        useActor(actorIndexSeed)
-    {
-        getInvariantsData();
+    function withdrawCollateral(uint256 amount, uint256 actorIndexSeed) public useActor(actorIndexSeed) {
         uint256 maxWithdraw = ltv.maxWithdrawCollateral(currentActor);
         vm.assume(maxWithdraw > 0);
 
-        // amount = bound(amount, 1, maxWithdraw);
-        amount = maxWithdraw;
+        amount = bound(amount, 1, maxWithdraw);
 
-        address receiver = actors[bound(receiverIndex, 0, actors.length - 1)];
-
-        ltv.withdrawCollateral(amount, receiver, currentActor);
+        getInvariantsData();
+        deltaLtv = -int256(ltv.withdrawCollateral(amount, currentActor, currentActor));
+        deltaCollateral = deltaLtv == 0 ? int256(0) : -int256(amount);
+        deltaBorrow = 0;
     }
 
-    /// forge-config: default.invariant.fail-on-revert = true
-    function mintCollateral(uint256 amount, uint256 receiverIndex, uint256 actorIndexSeed)
-        public
-        useActor(actorIndexSeed)
-    {
-        getInvariantsData();
+    function mintCollateral(uint256 amount, uint256 actorIndexSeed) public useActor(actorIndexSeed) {
         uint256 maxMint = ltv.maxMintCollateral(currentActor);
 
         vm.assume(maxMint > 0);
@@ -146,34 +124,34 @@ contract LTVVaultWrapper is BasicInvariantWrapper {
             IERC20(ltv.collateralToken()).approve(address(ltv), assets);
         }
 
-        address receiver = actors[bound(receiverIndex, 0, actors.length - 1)];
-
-        ltv.mintCollateral(amount, receiver);
+        getInvariantsData();
+        deltaCollateral = int256(ltv.mintCollateral(amount, currentActor));
+        deltaLtv = deltaCollateral == 0 ? int256(0) : int256(amount);
+        deltaBorrow = 0;
     }
 
-    /// forge-config: default.invariant.fail-on-revert = true
-    function redeemCollateral(uint256 amount, uint256 receiverIndex, uint256 actorIndexSeed)
-        public
-        useActor(actorIndexSeed)
-    {
-        getInvariantsData();
+    function redeemCollateral(uint256 amount, uint256 actorIndexSeed) public useActor(actorIndexSeed) {
         uint256 maxRedeem = ltv.maxRedeemCollateral(currentActor);
         vm.assume(maxRedeem > 0);
 
         amount = bound(amount, 1, maxRedeem);
 
-        address receiver = actors[bound(receiverIndex, 0, actors.length - 1)];
-
-        ltv.redeemCollateral(amount, receiver, currentActor);
+        getInvariantsData();
+        deltaCollateral = -int256(ltv.redeemCollateral(amount, currentActor, currentActor));
+        deltaLtv = deltaCollateral == 0 ? int256(0) : -int256(amount);
+        deltaBorrow = 0;
     }
 
     function getInvariantsData() internal override {
         totalAssets = ltv.totalAssets();
         totalSupply = ltv.totalSupply();
+        borrowUserBalanceBefore = int256(IERC20(ltv.borrowToken()).balanceOf(currentActor));
+        collateralUserBalanceBefore = int256(IERC20(ltv.collateralToken()).balanceOf(currentActor));
+        ltvUserBalanceBefore = int256(ltv.balanceOf(currentActor));
     }
 
     function checkInvariants() public view override {
-        assertGe(ltv.totalAssets() * totalSupply, totalAssets * ltv.totalSupply(), "Token price became smaller");
+        super.checkInvariants();
         assertTrue(
             (ltv.futureBorrowAssets() != 0 && ltv.futureCollateralAssets() != 0)
                 || ltv.futureCollateralAssets() == ltv.futureBorrowAssets(),

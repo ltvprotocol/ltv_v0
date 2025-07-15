@@ -18,7 +18,7 @@ contract VaultInvariantTest is BasicInvariantTest {
     function setUp() public override {
         super.setUp();
 
-        _wrapper.mint(1, 0, 0);
+        _wrapper.mint(1, 0);
     }
 
     function invariant_vault() public view {

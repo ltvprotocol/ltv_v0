@@ -10,6 +10,16 @@ contract BasicInvariantWrapper is Test {
     address[10] internal actors;
     address internal currentActor;
 
+    uint256 internal totalAssets;
+    uint256 internal totalSupply;
+
+    int256 internal borrowUserBalanceBefore;
+    int256 internal collateralUserBalanceBefore;
+    int256 internal ltvUserBalanceBefore;
+    int256 internal deltaBorrow;
+    int256 internal deltaCollateral;
+    int256 internal deltaLtv;
+
     constructor(ILTV _ltv, address[10] memory _actors) {
         vm.startPrank(address(1));
         ltv = _ltv;
@@ -24,7 +34,26 @@ contract BasicInvariantWrapper is Test {
         vm.stopPrank();
     }
 
-    function getInvariantsData() internal virtual {}
+    function getInvariantsData() internal virtual {
+        totalAssets = ltv.totalAssets();
+        totalSupply = ltv.totalSupply();
+        borrowUserBalanceBefore = int256(IERC20(ltv.borrowToken()).balanceOf(currentActor));
+        collateralUserBalanceBefore = int256(IERC20(ltv.collateralToken()).balanceOf(currentActor));
+        ltvUserBalanceBefore = int256(ltv.balanceOf(currentActor));
+    }
 
-    function checkInvariants() public virtual view {}
+    function checkInvariants() public virtual view {
+                assertGe(ltv.totalAssets() * totalSupply, totalAssets * ltv.totalSupply(), "Token price became smaller");
+        assertEq(
+            int256(IERC20(ltv.borrowToken()).balanceOf(currentActor)),
+            borrowUserBalanceBefore + deltaBorrow,
+            "Borrow balance changed"
+        );
+        assertEq(
+            int256(IERC20(ltv.collateralToken()).balanceOf(currentActor)),
+            collateralUserBalanceBefore - deltaCollateral,
+            "Collateral balance changed"
+        );
+        assertEq(int256(ltv.balanceOf(currentActor)), ltvUserBalanceBefore + deltaLtv, "LTV balance changed");
+    }
 }
