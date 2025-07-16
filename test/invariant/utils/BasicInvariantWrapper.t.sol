@@ -4,6 +4,7 @@ pragma solidity ^0.8.28;
 import "../../../src/interfaces/ILTV.sol";
 import "forge-std/interfaces/IERC20.sol";
 import "forge-std/Test.sol";
+import "../../../src/Constants.sol";
 
 contract BasicInvariantWrapper is Test {
     ILTV internal ltv;
@@ -55,5 +56,10 @@ contract BasicInvariantWrapper is Test {
             "Collateral balance changed"
         );
         assertEq(int256(ltv.balanceOf(currentActor)), ltvUserBalanceBefore + deltaLtv, "LTV balance changed");
+    }
+
+    function moveBlock(uint256 blocks) public {
+        blocks = bound(blocks, 1, Constants.AMOUNT_OF_STEPS);
+        vm.roll(block.number + blocks);
     }
 }

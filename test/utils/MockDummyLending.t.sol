@@ -7,10 +7,11 @@ contract MockDummyLending is DummyLending {
     constructor(address initialOwner) DummyLending(initialOwner) {}
 
     function setSupplyBalance(address asset, uint256 amount) public {
-        supplyBalance[asset] = amount;
+        _supplyBalance[asset] = amount;
     }
 
     function setBorrowBalance(address asset, uint256 amount) public {
-        borrowBalance[asset] = amount;
+        _borrowBalance[asset] = amount;
     }
 }
+    

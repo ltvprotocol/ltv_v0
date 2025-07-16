@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {BaseTest, BaseTestInit} from "../../utils/BaseTest.t.sol";
+import {BaseTest, BaseTestInit, DummyLendingConnector, DummyOracleConnector} from "../../utils/BaseTest.t.sol";
 import "./BasicInvariantWrapper.t.sol";
+import "./DynamicLending.t.sol";
+import "./DynamicOracle.t.sol";
 
 abstract contract BasicInvariantTest is BaseTest {
     function setUp() public virtual {
@@ -25,10 +27,10 @@ abstract contract BasicInvariantTest is BaseTest {
             minProfitLTV: 5 * 10 ** 17,
             targetLTV: 75 * 10 ** 16,
             maxGrowthFee: 0,
-            collateralPrice: 2111111111111111111,
+            collateralPrice: 2 * 10 ** 18,
             borrowPrice: 10 ** 18,
             maxDeleverageFee: 0,
-            zeroAddressTokens: 20 * 2111111111111111111 - 35 * 10 ** 18
+            zeroAddressTokens: 4 * 10 ** 19 - 35 * 10 ** 18
         });
 
         initializeTest(init);
@@ -40,6 +42,20 @@ abstract contract BasicInvariantTest is BaseTest {
         bytes4[] memory selectors = new bytes4[](1);
         selectors[0] = bytes4(keccak256("checkInvariants()"));
         excludeSelector(FuzzSelector({addr: wrapper(), selectors: selectors}));
+
+        // 4 % yearly debt increase
+        DynamicLending _lending = new MockDynamicLending(4 * 10 ** 16);
+        // 6 % yearly collateral price increase
+        DynamicOracle _oracle = new DynamicOracle(
+            address(ltv.collateralToken()),
+            address(ltv.borrowToken()),
+            init.collateralPrice,
+            init.borrowPrice,
+            6 * 10 ** 16
+        );
+
+        vm.etch(address(oracle), address(_oracle).code);
+        vm.etch(address(lendingProtocol), address(_lending).code);
     }
 
     function wrapper() internal virtual returns (address);

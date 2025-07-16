@@ -2,34 +2,41 @@
 pragma solidity ^0.8.28;
 
 import "./interfaces/IDummyLending.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "forge-std/interfaces/IERC20.sol";
 
-contract DummyLending is IDummyLending, Ownable {
-    mapping(address => uint256) public supplyBalance;
-    mapping(address => uint256) public borrowBalance;
+contract DummyLending is IDummyLending {
+    mapping(address => uint256) internal _supplyBalance;
+    mapping(address => uint256) internal _borrowBalance;
 
-    constructor(address initialOwner) Ownable(initialOwner) {}
+    constructor(address initialOwner) {}
 
-    function borrow(address asset, uint256 amount) external onlyOwner {
-        borrowBalance[asset] += amount;
+    function borrowBalance(address asset) external view returns (uint256) {
+        return _borrowBalance[asset];
+    }
+
+    function supplyBalance(address asset) external view returns (uint256) {
+        return _supplyBalance[asset];
+    }
+
+    function borrow(address asset, uint256 amount) external {
+        _borrowBalance[asset] += amount;
         IERC20(asset).transfer(msg.sender, amount);
     }
 
-    function repay(address asset, uint256 amount) external onlyOwner {
-        require(borrowBalance[asset] >= amount, "Repay amount exceeds borrow balance");
+    function repay(address asset, uint256 amount) external {
+        require(_borrowBalance[asset] >= amount, "Repay amount exceeds borrow balance");
         IERC20(asset).transferFrom(msg.sender, address(this), amount);
-        borrowBalance[asset] -= amount;
+        _borrowBalance[asset] -= amount;
     }
 
-    function supply(address asset, uint256 amount) external onlyOwner {
+    function supply(address asset, uint256 amount) external {
         IERC20(asset).transferFrom(msg.sender, address(this), amount);
-        supplyBalance[asset] += amount;
+        _supplyBalance[asset] += amount;
     }
 
-    function withdraw(address asset, uint256 amount) external onlyOwner {
-        require(supplyBalance[asset] >= amount, "Withdraw amount exceeds supply balance");
+    function withdraw(address asset, uint256 amount) external {
+        require(_supplyBalance[asset] >= amount, "Withdraw amount exceeds supply balance");
         IERC20(asset).transfer(msg.sender, amount);
-        supplyBalance[asset] -= amount;
+        _supplyBalance[asset] -= amount;
     }
 }

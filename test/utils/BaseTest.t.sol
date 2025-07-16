@@ -123,7 +123,6 @@ contract BaseTest is Test {
         }
 
         vm.startPrank(init.owner);
-        Ownable(address(lendingProtocol)).transferOwnership(address(ltv));
         oracle.setAssetPrice(address(borrowToken), init.borrowPrice);
         oracle.setAssetPrice(address(collateralToken), init.collateralPrice);
 
