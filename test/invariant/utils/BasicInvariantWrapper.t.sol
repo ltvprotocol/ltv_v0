@@ -50,6 +50,12 @@ contract BasicInvariantWrapper is Test {
         vm.startPrank(currentActor);
         _;
         vm.stopPrank();
+        checkAndResetInvariants();
+    }
+
+    modifier makePostCheck() {
+        _;
+        checkAndResetInvariants();
     }
 
     function getInvariantsData() internal virtual {

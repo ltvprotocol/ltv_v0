@@ -22,7 +22,7 @@ contract LTVLowLevelWrapper is BasicInvariantWrapper {
 
     function executeLowLevelRebalanceBorrow(int256 amount, uint256 actorIndexSeed, uint256 blocksDelta)
         external
-        useActor(actorIndexSeed)
+        useActor(actorIndexSeed) makePostCheck
     {
         moveBlock(blocksDelta);
         int256 maxBorrow = ltv.maxLowLevelRebalanceBorrow();
@@ -60,7 +60,7 @@ contract LTVLowLevelWrapper is BasicInvariantWrapper {
 
     function executeLowLevelRebalanceBorrowHint(int256 amount, bool hint, uint256 actorIndexSeed, uint256 blocksDelta)
         external
-        useActor(actorIndexSeed)
+        useActor(actorIndexSeed) makePostCheck
     {
         moveBlock(blocksDelta);
         int256 maxBorrow = ltv.maxLowLevelRebalanceBorrow();
@@ -98,7 +98,7 @@ contract LTVLowLevelWrapper is BasicInvariantWrapper {
 
     function executeLowLevelRebalanceCollateral(int256 amount, uint256 actorIndexSeed, uint256 blocksDelta)
         external
-        useActor(actorIndexSeed)
+        useActor(actorIndexSeed) makePostCheck
     {
         moveBlock(blocksDelta);
         int256 maxCollateral = ltv.maxLowLevelRebalanceCollateral();
@@ -138,7 +138,7 @@ contract LTVLowLevelWrapper is BasicInvariantWrapper {
         bool hint,
         uint256 actorIndexSeed,
         uint256 blocksDelta
-    ) external useActor(actorIndexSeed) {
+    ) external useActor(actorIndexSeed) makePostCheck {
         moveBlock(blocksDelta);
         int256 maxCollateral = ltv.maxLowLevelRebalanceCollateral();
         int256 minCollateral = minLowLevelRebalanceCollateral();
@@ -174,7 +174,7 @@ contract LTVLowLevelWrapper is BasicInvariantWrapper {
 
     function executeLowLevelRebalanceShares(int256 amount, uint256 actorIndexSeed, uint256 blocksDelta)
         external
-        useActor(actorIndexSeed)
+        useActor(actorIndexSeed) makePostCheck
     {
         moveBlock(blocksDelta);
         int256 maxShares = ltv.maxLowLevelRebalanceShares();

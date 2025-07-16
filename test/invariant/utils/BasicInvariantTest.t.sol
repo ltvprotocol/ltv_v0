@@ -60,6 +60,10 @@ abstract contract BasicInvariantTest is BaseTest {
         vm.etch(address(lendingProtocol), address(_lending).code);
     }
 
+    function afterInvariant() public view virtual {
+        assertTrue(BasicInvariantWrapper(wrapper()).maxGrowthFeeReceived());
+    }
+
     function wrapper() internal view virtual returns (address);
 
     function createWrapper() internal virtual;

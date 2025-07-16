@@ -21,7 +21,10 @@ contract VaultInvariantTest is BasicInvariantTest {
         _wrapper.mint(1, 0, 100);
     }
 
-    function invariant_vault() public {
-        _wrapper.checkAndResetInvariants();
+    function afterInvariant() public view override {
+        super.afterInvariant();
+        _wrapper.auctionRewardsReceived();
     }
+
+    function invariant_vault() public pure {}
 }

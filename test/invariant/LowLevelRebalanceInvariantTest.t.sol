@@ -23,7 +23,5 @@ contract LowLevelRebalanceInvariantTest is BasicInvariantTest {
         _wrapper.executeLowLevelRebalanceShares(0, 0, 100);
     }
 
-    function invariant_lowLevelRebalance() public {
-        _wrapper.checkAndResetInvariants();
-    }
+    function invariant_lowLevelRebalance() public pure {}
 }
