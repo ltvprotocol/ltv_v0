@@ -15,13 +15,13 @@ contract VaultInvariantTest is BasicInvariantTest {
         _wrapper = new LTVVaultWrapper(ILTV(address(ltv)), actors());
     }
 
-    function setUp() public override {
+    function setUp() public virtual override {
         super.setUp();
 
-        _wrapper.mint(1, 0);
+        _wrapper.mint(1, 0, 100);
     }
 
-    function invariant_vault() public view {
-        _wrapper.checkInvariants();
+    function invariant_vault() public {
+        _wrapper.checkAndResetInvariants();
     }
 }

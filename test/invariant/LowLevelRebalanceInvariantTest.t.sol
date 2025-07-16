@@ -20,10 +20,10 @@ contract LowLevelRebalanceInvariantTest is BasicInvariantTest {
         vm.startPrank(ltv.governor());
         ltv.setMaxTotalAssetsInUnderlying(type(uint112).max);
         vm.stopPrank();
-        _wrapper.executeLowLevelRebalanceShares(0, 0);
+        _wrapper.executeLowLevelRebalanceShares(0, 0, 100);
     }
 
-    function invariant_lowLevelRebalance() public view {
-        _wrapper.checkInvariants();
+    function invariant_lowLevelRebalance() public {
+        _wrapper.checkAndResetInvariants();
     }
 }

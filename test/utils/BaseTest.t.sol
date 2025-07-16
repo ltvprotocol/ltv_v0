@@ -66,6 +66,8 @@ contract BaseTest is Test {
     IDummyOracle public oracle;
     ModulesProvider public modulesProvider;
     ConstantSlippageProvider public slippageProvider;
+    DummyOracleConnector public oracleConnector;
+    DummyLendingConnector public lendingConnector;
 
     function initializeTest(BaseTestInit memory init) internal {
         vm.assume(init.owner != address(0));
@@ -93,6 +95,8 @@ contract BaseTest is Test {
                 initializeModule: IInitializeModule(address(new InitializeModule()))
             });
             modulesProvider = new ModulesProvider(modulesState);
+            oracleConnector = new DummyOracleConnector(collateralToken, borrowToken, oracle);
+            lendingConnector = new DummyLendingConnector(collateralToken, borrowToken, lendingProtocol);
 
             StateInitData memory initData = StateInitData({
                 name: "Dummy LTV",
@@ -104,8 +108,8 @@ contract BaseTest is Test {
                 maxSafeLTV: init.maxSafeLTV,
                 minProfitLTV: init.minProfitLTV,
                 targetLTV: init.targetLTV,
-                lendingConnector: new DummyLendingConnector(collateralToken, borrowToken, lendingProtocol),
-                oracleConnector: new DummyOracleConnector(collateralToken, borrowToken, oracle),
+                lendingConnector: lendingConnector,
+                oracleConnector: oracleConnector,
                 maxGrowthFee: init.maxGrowthFee,
                 maxTotalAssetsInUnderlying: init.maxTotalAssetsInUnderlying,
                 slippageProvider: slippageProvider,

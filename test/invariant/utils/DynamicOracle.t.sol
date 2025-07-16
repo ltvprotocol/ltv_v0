@@ -3,6 +3,7 @@ pragma solidity ^0.8.28;
 
 import "forge-std/Base.sol";
 import "../../../src/dummy/interfaces/IDummyOracle.sol";
+import "./RateMath.sol";
 
 contract DynamicOracle is IDummyOracle, CommonBase {
     // Token addresses
@@ -13,27 +14,26 @@ contract DynamicOracle is IDummyOracle, CommonBase {
     uint256 private immutable initialBorrowPrice;
     uint256 private immutable initialCollateralPrice;
 
-    // Yearly collateral token price increase (in 1e18 precision)
-    uint256 private immutable yearlyCollateralIncrease;
-
-    // Assuming 12 second block time (2,628,000 blocks per year)
-    uint256 private constant BLOCKS_PER_YEAR = 2628000;
+    // Rate per block (in 1e18 precision)
+    uint256 private immutable ratePerBlock;
 
     // Deployment block number
     uint256 private immutable deploymentBlock;
+
+    uint256 public constant BLOCKS_PER_DAY = 7200;
 
     constructor(
         address _collateralToken,
         address _borrowToken,
         uint256 _initialCollateralPrice,
         uint256 _initialBorrowPrice,
-        uint256 _yearlyCollateralIncrease
+        uint256 _ratePerBlock
     ) {
         collateralToken = _collateralToken;
         borrowToken = _borrowToken;
         initialBorrowPrice = _initialBorrowPrice;
         initialCollateralPrice = _initialCollateralPrice;
-        yearlyCollateralIncrease = _yearlyCollateralIncrease;
+        ratePerBlock = _ratePerBlock;
         deploymentBlock = block.number;
     }
 
@@ -54,29 +54,11 @@ contract DynamicOracle is IDummyOracle, CommonBase {
      * Price increases by yearlyCollateralIncrease from initialCollateralPrice
      */
     function _calculateCollateralPrice() private view returns (uint256) {
-        uint256 blocksElapsed = vm.getBlockNumber() - deploymentBlock;
+        // need BLOCK_PER_DAY division to ensure that price is updated once in a day. It's needed for proper invariant testing
+        // where borrow price can be applied, but collateral still remains the same
+        uint256 blocksElapsed = (vm.getBlockNumber() - deploymentBlock) / BLOCKS_PER_DAY * BLOCKS_PER_DAY;
+        uint256 priceIncrease = RateMath.calculateRatePerBlock(ratePerBlock, blocksElapsed);
 
-        uint256 yearsElapsed = blocksElapsed * 1e18 / BLOCKS_PER_YEAR;
-
-        uint256 compoundRate = _calculateCompoundRate(yearsElapsed);
-
-        return (initialCollateralPrice * compoundRate) / 1e18;
-    }
-
-    /**
-     * @dev Calculate compound rate using the yearly increase rate
-     * @param yearsElapsed Years elapsed in 1e18 precision
-     * @return Compound rate in 1e18 precision
-     */
-    function _calculateCompoundRate(uint256 yearsElapsed) private view returns (uint256) {
-        if (yearsElapsed == 0) {
-            return 1e18; // No increase
-        }
-
-        uint256 rate = 1e18 + yearlyCollateralIncrease; // Convert to rate format
-
-        uint256 totalIncrease = ((rate - 1e18) * yearsElapsed) / 1e18;
-
-        return 1e18 + totalIncrease;
+        return initialCollateralPrice * priceIncrease / 1e18;
     }
 }

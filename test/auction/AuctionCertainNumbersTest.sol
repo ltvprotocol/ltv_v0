@@ -2,7 +2,6 @@
 pragma solidity ^0.8.28;
 
 import {AuctionTestCommon, DefaultTestData} from "./AuctionTestCommon.t.sol";
-import {console} from "forge-std/console.sol";
 
 contract AuctionCertainNumbersTest is AuctionTestCommon {
     struct AuctionCertainNumbersTestData {

@@ -8,7 +8,8 @@ import {BasicInvariantWrapper} from "./BasicInvariantWrapper.t.sol";
 contract LTVVaultWrapper is BasicInvariantWrapper {
     constructor(ILTV _ltv, address[10] memory _actors) BasicInvariantWrapper(_ltv, _actors) {}
 
-    function deposit(uint256 amount, uint256 actorIndexSeed) public useActor(actorIndexSeed) {
+    function deposit(uint256 amount, uint256 actorIndexSeed, uint256 blocksDelta) public useActor(actorIndexSeed) {
+        moveBlock(blocksDelta);
         uint256 maxDeposit = ltv.maxDeposit(currentActor);
 
         vm.assume(maxDeposit > 0);
@@ -29,7 +30,8 @@ contract LTVVaultWrapper is BasicInvariantWrapper {
         deltaCollateral = 0;
     }
 
-    function withdraw(uint256 amount, uint256 actorIndexSeed) public useActor(actorIndexSeed) {
+    function withdraw(uint256 amount, uint256 actorIndexSeed, uint256 blocksDelta) public useActor(actorIndexSeed) {
+        moveBlock(blocksDelta);
         uint256 maxWithdraw = ltv.maxWithdraw(currentActor);
         vm.assume(maxWithdraw > 0);
 
@@ -41,7 +43,8 @@ contract LTVVaultWrapper is BasicInvariantWrapper {
         deltaCollateral = 0;
     }
 
-    function mint(uint256 amount, uint256 actorIndexSeed) public useActor(actorIndexSeed) {
+    function mint(uint256 amount, uint256 actorIndexSeed, uint256 blocksDelta) public useActor(actorIndexSeed) {
+        moveBlock(blocksDelta);
         uint256 maxMint = ltv.maxMint(currentActor);
 
         vm.assume(maxMint > 0);
@@ -63,7 +66,8 @@ contract LTVVaultWrapper is BasicInvariantWrapper {
         deltaCollateral = 0;
     }
 
-    function redeem(uint256 amount, uint256 actorIndexSeed) public useActor(actorIndexSeed) {
+    function redeem(uint256 amount, uint256 actorIndexSeed, uint256 blocksDelta) public useActor(actorIndexSeed) {
+        moveBlock(blocksDelta);
         uint256 maxRedeem = ltv.maxRedeem(currentActor);
         vm.assume(maxRedeem > 0);
 
@@ -75,7 +79,8 @@ contract LTVVaultWrapper is BasicInvariantWrapper {
         deltaCollateral = 0;
     }
 
-    function depositCollateral(uint256 amount, uint256 actorIndexSeed) public useActor(actorIndexSeed) {
+    function depositCollateral(uint256 amount, uint256 actorIndexSeed, uint256 blocksDelta) public useActor(actorIndexSeed) {
+        moveBlock(blocksDelta);
         uint256 maxDeposit = ltv.maxDepositCollateral(currentActor);
 
         vm.assume(maxDeposit > 0);
@@ -96,7 +101,8 @@ contract LTVVaultWrapper is BasicInvariantWrapper {
         deltaBorrow = 0;
     }
 
-    function withdrawCollateral(uint256 amount, uint256 actorIndexSeed) public useActor(actorIndexSeed) {
+    function withdrawCollateral(uint256 amount, uint256 actorIndexSeed, uint256 blocksDelta) public useActor(actorIndexSeed) {
+        moveBlock(blocksDelta);
         uint256 maxWithdraw = ltv.maxWithdrawCollateral(currentActor);
         vm.assume(maxWithdraw > 0);
 
@@ -108,7 +114,8 @@ contract LTVVaultWrapper is BasicInvariantWrapper {
         deltaBorrow = 0;
     }
 
-    function mintCollateral(uint256 amount, uint256 actorIndexSeed) public useActor(actorIndexSeed) {
+    function mintCollateral(uint256 amount, uint256 actorIndexSeed, uint256 blocksDelta) public useActor(actorIndexSeed) {
+        moveBlock(blocksDelta);
         uint256 maxMint = ltv.maxMintCollateral(currentActor);
 
         vm.assume(maxMint > 0);
@@ -130,7 +137,8 @@ contract LTVVaultWrapper is BasicInvariantWrapper {
         deltaBorrow = 0;
     }
 
-    function redeemCollateral(uint256 amount, uint256 actorIndexSeed) public useActor(actorIndexSeed) {
+    function redeemCollateral(uint256 amount, uint256 actorIndexSeed, uint256 blocksDelta) public useActor(actorIndexSeed) {
+        moveBlock(blocksDelta);
         uint256 maxRedeem = ltv.maxRedeemCollateral(currentActor);
         vm.assume(maxRedeem > 0);
 
@@ -142,16 +150,8 @@ contract LTVVaultWrapper is BasicInvariantWrapper {
         deltaBorrow = 0;
     }
 
-    function getInvariantsData() internal override {
-        totalAssets = ltv.totalAssets();
-        totalSupply = ltv.totalSupply();
-        borrowUserBalanceBefore = int256(IERC20(ltv.borrowToken()).balanceOf(currentActor));
-        collateralUserBalanceBefore = int256(IERC20(ltv.collateralToken()).balanceOf(currentActor));
-        ltvUserBalanceBefore = int256(ltv.balanceOf(currentActor));
-    }
-
-    function checkInvariants() public view override {
-        super.checkInvariants();
+    function checkAndResetInvariants() public override {
+        super.checkAndResetInvariants();
         assertTrue(
             (ltv.futureBorrowAssets() != 0 && ltv.futureCollateralAssets() != 0)
                 || ltv.futureCollateralAssets() == ltv.futureBorrowAssets(),

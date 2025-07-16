@@ -26,7 +26,7 @@ abstract contract BasicInvariantTest is BaseTest {
             maxSafeLTV: 9 * 10 ** 17,
             minProfitLTV: 5 * 10 ** 17,
             targetLTV: 75 * 10 ** 16,
-            maxGrowthFee: 0,
+            maxGrowthFee: 20 * 10**16, // 20%
             collateralPrice: 2 * 10 ** 18,
             borrowPrice: 10 ** 18,
             maxDeleverageFee: 0,
@@ -35,30 +35,32 @@ abstract contract BasicInvariantTest is BaseTest {
 
         initializeTest(init);
 
+        vm.roll(0);
+
         createWrapper();
 
         targetContract(wrapper());
 
         bytes4[] memory selectors = new bytes4[](1);
-        selectors[0] = bytes4(keccak256("checkInvariants()"));
+        selectors[0] = bytes4(keccak256("checkAndResetInvariants()"));
         excludeSelector(FuzzSelector({addr: wrapper(), selectors: selectors}));
 
-        // 4 % yearly debt increase
-        DynamicLending _lending = new MockDynamicLending(4 * 10 ** 16);
-        // 6 % yearly collateral price increase
+        // 40 % yearly debt increase
+        DynamicLending _lending = new MockDynamicLending(1000000128033583744);
+        // 60 % yearly collateral price increase
         DynamicOracle _oracle = new DynamicOracle(
             address(ltv.collateralToken()),
             address(ltv.borrowToken()),
             init.collateralPrice,
             init.borrowPrice,
-            6 * 10 ** 16
+            1000000178844623744
         );
 
         vm.etch(address(oracle), address(_oracle).code);
         vm.etch(address(lendingProtocol), address(_lending).code);
     }
 
-    function wrapper() internal virtual returns (address);
+    function wrapper() internal view virtual returns (address);
 
     function createWrapper() internal virtual;
 
