@@ -79,7 +79,10 @@ contract LTVVaultWrapper is BasicInvariantWrapper {
         deltaCollateral = 0;
     }
 
-    function depositCollateral(uint256 amount, uint256 actorIndexSeed, uint256 blocksDelta) public useActor(actorIndexSeed) {
+    function depositCollateral(uint256 amount, uint256 actorIndexSeed, uint256 blocksDelta)
+        public
+        useActor(actorIndexSeed)
+    {
         moveBlock(blocksDelta);
         uint256 maxDeposit = ltv.maxDepositCollateral(currentActor);
 
@@ -101,7 +104,10 @@ contract LTVVaultWrapper is BasicInvariantWrapper {
         deltaBorrow = 0;
     }
 
-    function withdrawCollateral(uint256 amount, uint256 actorIndexSeed, uint256 blocksDelta) public useActor(actorIndexSeed) {
+    function withdrawCollateral(uint256 amount, uint256 actorIndexSeed, uint256 blocksDelta)
+        public
+        useActor(actorIndexSeed)
+    {
         moveBlock(blocksDelta);
         uint256 maxWithdraw = ltv.maxWithdrawCollateral(currentActor);
         vm.assume(maxWithdraw > 0);
@@ -114,7 +120,10 @@ contract LTVVaultWrapper is BasicInvariantWrapper {
         deltaBorrow = 0;
     }
 
-    function mintCollateral(uint256 amount, uint256 actorIndexSeed, uint256 blocksDelta) public useActor(actorIndexSeed) {
+    function mintCollateral(uint256 amount, uint256 actorIndexSeed, uint256 blocksDelta)
+        public
+        useActor(actorIndexSeed)
+    {
         moveBlock(blocksDelta);
         uint256 maxMint = ltv.maxMintCollateral(currentActor);
 
@@ -137,7 +146,10 @@ contract LTVVaultWrapper is BasicInvariantWrapper {
         deltaBorrow = 0;
     }
 
-    function redeemCollateral(uint256 amount, uint256 actorIndexSeed, uint256 blocksDelta) public useActor(actorIndexSeed) {
+    function redeemCollateral(uint256 amount, uint256 actorIndexSeed, uint256 blocksDelta)
+        public
+        useActor(actorIndexSeed)
+    {
         moveBlock(blocksDelta);
         uint256 maxRedeem = ltv.maxRedeemCollateral(currentActor);
         vm.assume(maxRedeem > 0);

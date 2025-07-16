@@ -6,14 +6,14 @@ library RateMath {
 
     function calculateRatePerBlock(uint256 ratePerBlock, uint256 blocksElapsed) internal pure returns (uint256) {
         if (blocksElapsed == 0) {
-            return 10**18;
+            return 10 ** 18;
         }
 
         if (blocksElapsed == 1) {
             return ratePerBlock;
         }
 
-        uint256 increasePerBlock = ratePerBlock - 10**18;
+        uint256 increasePerBlock = ratePerBlock - 10 ** 18;
         uint256 increasePerBlockSquared = increasePerBlock * increasePerBlock / 10 ** 18;
         uint256 increasePerBlockCubed = increasePerBlock * increasePerBlockSquared / 10 ** 18;
 

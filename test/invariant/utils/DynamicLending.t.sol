@@ -25,7 +25,7 @@ abstract contract DynamicLending is IDummyLending {
         uint256 blocksElapsed = getBlockNumber() - lastBlock;
 
         uint256 debtIncreaseCoeff = RateMath.calculateRatePerBlock(ratePerBlock, blocksElapsed);
-        return _borrowBalance[asset] * debtIncreaseCoeff / 10**18;
+        return _borrowBalance[asset] * debtIncreaseCoeff / 10 ** 18;
     }
 
     function supplyBalance(address asset) external view returns (uint256) {

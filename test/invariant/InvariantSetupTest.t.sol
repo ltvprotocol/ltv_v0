@@ -4,7 +4,6 @@ pragma solidity ^0.8.28;
 import "./VaultInvariantTest.t.sol";
 
 contract InvariantSetupTest is BasicInvariantTest {
-    
     LTVVaultWrapper internal _wrapper;
 
     function wrapper() internal view override returns (address) {
@@ -23,9 +22,9 @@ contract InvariantSetupTest is BasicInvariantTest {
     }
 
     function test_auctionRewardCheckWorks() public {
-        _wrapper.deposit(10**20, 0, 1000);
+        _wrapper.deposit(10 ** 20, 0, 1000);
         _wrapper.checkAndResetInvariants();
-        _wrapper.redeem(10**16, 0, 100);
+        _wrapper.redeem(10 ** 16, 0, 100);
         _wrapper.checkAndResetInvariants();
         assertTrue(_wrapper.auctionRewardsReceived());
     }
