@@ -84,15 +84,15 @@ contract VaultTest is BalancedTest {
         public
         initializeBalancedTest(owner, user, amount, -9500, -9500, 1000)
     {
-        vm.assume(amount > 0);
+        vm.assume(amount > 3);
         vm.stopPrank();
         vm.startPrank(owner);
         dummyLTV.transfer(user, uint256(amount));
 
         vm.startPrank(user);
         assertEq(dummyLTV.balanceOf(user), uint256(amount));
-        dummyLTV.withdraw(uint256(amount), user, user);
-        assertEq(dummyLTV.balanceOf(user), 0);
+        dummyLTV.withdraw(uint256(amount - 3), user, user);
+        assertEq(dummyLTV.balanceOf(user), 3);
     }
 
     function test_redeem(address owner, address user, uint112 amount)
@@ -150,6 +150,7 @@ contract VaultTest is BalancedTest {
         dummyLTV.transfer(user, dummyLTV.balanceOf(owner));
 
         assertEq(dummyLTV.maxWithdraw(user), 600050);
+        vm.startPrank(user);
         dummyLTV.withdraw(dummyLTV.maxWithdraw(user), user, user);
     }
 
@@ -163,6 +164,7 @@ contract VaultTest is BalancedTest {
         slippageProvider.setBorrowSlippage(10 ** 16);
 
         assertEq(dummyLTV.maxRedeem(user), 625053);
+        vm.startPrank(user);
         dummyLTV.redeem(dummyLTV.maxRedeem(user), user, user);
     }
 

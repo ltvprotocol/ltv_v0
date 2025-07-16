@@ -46,8 +46,8 @@ abstract contract WithdrawCollateral is
             return 0;
         }
 
-        if (owner != receiver) {
-            _spendAllowance(owner, receiver, shares);
+        if (owner != msg.sender) {
+            _spendAllowance(owner, msg.sender, shares);
         }
 
         applyMaxGrowthFee(

@@ -14,10 +14,12 @@ contract DeleverageAndWithdrawTest is BalancedTest {
         deal(address(borrowToken), address(emergencyDeleverager), type(uint112).max);
         borrowToken.approve(address(dummyLTV), type(uint112).max);
         dummyLTV.deleverageAndWithdraw(dummyLTV.getRealBorrowAssets(true), 5 * 10 ** 15);
+        vm.stopPrank();
 
         // total assets were reduced for 0.5%
         assertEq(dummyLTV.totalAssets(), 995 * 10 ** 15);
 
+        vm.startPrank(owner);
         assertEq(dummyLTV.withdrawCollateral(995 * 10 ** 14, address(owner), address(owner)), 2 * 10 ** 17);
         dummyLTV.redeemCollateral(2 * 10 ** 17, address(owner), address(owner));
     }
