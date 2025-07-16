@@ -69,7 +69,10 @@ abstract contract MaxWithdrawCollateral is PreviewWithdrawCollateral, PreviewRed
             _previewWithdrawCollateral(ownerBalanceAssets, data.previewCollateralVaultData);
         if (ownerBalanceWithDelta > data.ownerBalance) {
             uint256 delta = ownerBalanceWithDelta + 3 - data.ownerBalance;
-            ownerBalanceAssets = ownerBalanceAssets > 2 * delta ? ownerBalanceAssets - 2 * delta : 0;
+            if (ownerBalanceAssets < 2 * delta) {
+                return 0;
+            }
+            ownerBalanceAssets = ownerBalanceAssets - 2 * delta;
         }
 
         return ownerBalanceAssets < vaultWithdrawInAssets ? ownerBalanceAssets : vaultWithdrawInAssets;

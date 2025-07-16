@@ -46,27 +46,45 @@ library sMulDiv {
     function mulDivDown(int256 x, int256 y, int256 denominator) internal pure returns (int256) {
         require(denominator != 0, "Denominator cannot be zero");
 
-        // need to add 1 to MIN_INT256 since MIN_INT256 / (-1) causes overflow
         if (y != 0 && x != 0) {
-            require(
-                (y > 0 && x <= MAX_INT256 / y && x >= (MIN_INT256 + 1) / y)
-                    || (y < 0 && x >= MAX_INT256 / y && x <= (MIN_INT256 + 1) / y),
-                "Multiplication overflow detected"
-            );
+            if (x > 0 && y > 0) {
+                require(x <= MAX_INT256 / y, "Multiplication overflow detected");
+            }
+
+            if (x < 0 && y < 0) {
+                require(x >= MAX_INT256 / y, "Multiplication overflow detected");
+            }
+
+            if (x > 0 && y < 0) {
+                // MIN_INT256 / (-1) trick
+                require(y >= MIN_INT256 / x, "Multiplication overflow detected");
+            }
+
+            if (x < 0 && y > 0) {
+                require(x >= MIN_INT256 / y, "Multiplication overflow detected");
+            }
+        } else {
+            return 0;
         }
 
         // Perform the multiplication
         int256 product = x * y;
 
+        if (product == MIN_INT256) {
+            require(denominator != -1, "Division overflow");
+        }
+
         int256 division = product / denominator;
 
-        // if result is positive, than division returned number rounded towards zero, so mulDivDown is satisfied
+        // if result is positive, then division returned number rounded towards zero, so mulDivDown is satisfied
         if ((product > 0 && denominator > 0) || (product < 0 && denominator < 0)) {
             return division;
         }
 
-        // if result is negative or zero, than division rounded up, so we need to round down
+        // if result is negative or zero, then division rounded up, so we need to round down
         if (product % denominator != 0) {
+            require(division != MIN_INT256, "Subtraction overflow");
+
             division -= 1;
         }
 
@@ -76,27 +94,45 @@ library sMulDiv {
     function mulDivUp(int256 x, int256 y, int256 denominator) internal pure returns (int256) {
         require(denominator != 0, "Denominator cannot be zero");
 
-        // need to add 1 to MIN_INT256 since MIN_INT256 / (-1) causes overflow
         if (y != 0 && x != 0) {
-            require(
-                (y > 0 && x <= MAX_INT256 / y && x >= (MIN_INT256 + 1) / y)
-                    || (y < 0 && x >= MAX_INT256 / y && x <= (MIN_INT256 + 1) / y),
-                "Multiplication overflow detected"
-            );
+            if (x > 0 && y > 0) {
+                require(x <= MAX_INT256 / y, "Multiplication overflow detected");
+            }
+
+            if (x < 0 && y < 0) {
+                require(x >= MAX_INT256 / y, "Multiplication overflow detected");
+            }
+
+            if (x > 0 && y < 0) {
+                // MIN_INT256 / (-1) trick
+                require(y >= MIN_INT256 / x, "Multiplication overflow detected");
+            }
+
+            if (x < 0 && y > 0) {
+                require(x >= MIN_INT256 / y, "Multiplication overflow detected");
+            }
+        } else {
+            return 0;
         }
 
         // Perform the multiplication
         int256 product = x * y;
 
+        if (product == MIN_INT256) {
+            require(denominator != -1, "Division overflow");
+        }
+
         int256 division = product / denominator;
 
-        // if result is negative, than division returned number rounded towards zero, so mulDivUp is satisfied
+        // if result is negative, then division returned number rounded towards zero, so mulDivUp is satisfied
         if ((product < 0 && denominator > 0) || (product > 0 && denominator < 0)) {
             return division;
         }
 
-        // if result is positive or zero, than division rounded down, so we need to round up
+        // if result is positive or zero, then division rounded down, so we need to round up
         if (product % denominator != 0) {
+            require(division != MAX_INT256, "Addition overflow");
+
             division += 1;
         }
 
