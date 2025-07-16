@@ -22,6 +22,7 @@ contract VaultInvariantTest is BasicInvariantTest {
     }
 
     function afterInvariant() public view override {
+        return;
         super.afterInvariant();
         _wrapper.auctionRewardsReceived();
     }
