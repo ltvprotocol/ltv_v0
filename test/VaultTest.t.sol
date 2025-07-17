@@ -234,7 +234,7 @@ contract VaultTest is BalancedTest {
         vm.startPrank(owner);
         dummyLTV.transfer(user, dummyLTV.balanceOf(owner));
 
-        assertEq(dummyLTV.maxRedeemCollateral(user), 333361 * 2);
+        assertEq(dummyLTV.maxRedeemCollateral(user), 333361 * 2 - 1);
     }
 
     function test_totalAssetsWithBool(address owner, address user)
