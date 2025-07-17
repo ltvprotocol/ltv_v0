@@ -9,7 +9,7 @@ import "../../../src/dummy/DummyOracleConnector.sol";
 
 contract BasicInvariantWrapper is Test {
     ILTV internal ltv;
-    address[10] internal actors;
+    address[10] public actors;
     address internal currentActor;
 
     uint256 internal totalAssets;
@@ -21,7 +21,7 @@ contract BasicInvariantWrapper is Test {
     int256 internal deltaBorrow;
     int256 internal deltaCollateral;
     int256 internal deltaLtv;
-    uint256 internal collateralPriceBefore;
+    uint256 internal lastSeenTokenPriceBefore;
 
     uint256 internal feeCollectorBorrowBalanceBefore;
     uint256 internal feeCollectorCollateralBalanceBefore;
@@ -117,7 +117,7 @@ contract BasicInvariantWrapper is Test {
         }
 
         if (
-            collateralPriceBefore != DummyOracleConnector(ltv.oracleConnector()).getPriceCollateralOracle()
+            lastSeenTokenPriceBefore != ltv.lastSeenTokenPrice()
                 && (deltaBorrow * deltaCollateral != 0 || deltaBorrow * deltaLtv != 0 || deltaCollateral * deltaLtv != 0)
         ) {
             assertLt(feeCollectorLtvBalanceBefore, ltv.balanceOf(ltv.feeCollector()), "Max growth fee applied");
@@ -132,7 +132,7 @@ contract BasicInvariantWrapper is Test {
         ltvUserBalanceBefore = 0;
         deltaBorrow = 0;
         deltaCollateral = 0;
-        collateralPriceBefore = 0;
+        lastSeenTokenPriceBefore = 0;
         feeCollectorBorrowBalanceBefore = 0;
         feeCollectorCollateralBalanceBefore = 0;
         feeCollectorLtvBalanceBefore = 0;
@@ -148,7 +148,7 @@ contract BasicInvariantWrapper is Test {
     }
 
     function moveBlock(uint256 blocks) internal {
-        collateralPriceBefore = DummyOracleConnector(ltv.oracleConnector()).getPriceCollateralOracle();
+        lastSeenTokenPriceBefore = ltv.lastSeenTokenPrice();
         blockDelta = bound(blocks, 1, Constants.AMOUNT_OF_STEPS);
         vm.roll(block.number + blockDelta);
     }

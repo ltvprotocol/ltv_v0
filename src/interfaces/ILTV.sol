@@ -258,6 +258,8 @@ interface ILTV is
 
     function lendingConnector() external view returns (address);
 
+    function lastSeenTokenPrice() external view returns (uint256);
+
     event Initialized(uint64 version);
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
