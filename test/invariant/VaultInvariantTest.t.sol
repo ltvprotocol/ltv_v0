@@ -7,11 +7,11 @@ import {VaultInvariantWrapper, ILTV} from "./utils/VaultInvariantWrapper.t.sol";
 /**
  * @title VaultInvariantTest
  * @dev Invariant test contract specifically for LTV vault operations
- * 
+ *
  * This contract tests the LTV protocol's vault functionality using invariant testing.
  * Vault operations include standard DeFi vault functions like deposit, withdraw,
  * mint, and redeem for both borrow tokens and collateral tokens.
- * 
+ *
  * The test ensures that:
  * - All vault operations maintain protocol invariants
  * - User balances are correctly updated after operations
@@ -42,7 +42,7 @@ contract VaultInvariantTest is BaseInvariantTest {
 
     /**
      * @dev Sets up the test environment for vault operation testing
-     * 
+     *
      * This function:
      * 1. Calls the parent setUp to initialize the basic test environment
      * 2. Performs an initial mint operation to establish a baseline state
@@ -59,14 +59,14 @@ contract VaultInvariantTest is BaseInvariantTest {
 
     /**
      * @dev Hook called after each invariant test run
-     * 
+     *
      * This function verifies that:
      * 1. The max growth fee was properly applied (from parent)
      * 2. Auction rewards were received during testing
-     * 
+     *
      * These checks ensure that the protocol's fee and reward mechanisms
      * are working correctly throughout the invariant testing process.
-     * 
+     *
      * Note: This post check needed to make sure that auction reward check
      * was executed at least once, which ensures it's validity. Important to say that
      * there are some cases where auction rewards can be not applied which can lead to
@@ -76,7 +76,7 @@ contract VaultInvariantTest is BaseInvariantTest {
     function afterInvariant() public view override {
         // Call parent to check max growth fee
         super.afterInvariant();
-        
+
         // Verify that auction rewards were received during testing
         // This ensures the auction mechanism is functioning properly
         assertTrue(_wrapper.auctionRewardsReceived());
@@ -84,14 +84,14 @@ contract VaultInvariantTest is BaseInvariantTest {
 
     /**
      * @dev The main invariant test function
-     * 
+     *
      * This function is called by the fuzzer to test vault operations.
      * The actual testing logic is handled by the wrapper contract, which:
      * - Randomly selects actors and operations
      * - Performs various vault operations (deposit, withdraw, mint, redeem)
      * - Verifies that all invariants are maintained
      * - Ensures proper token transfers and balance updates
-     * 
+     *
      * The fuzzer will call various functions on the wrapper contract to test
      * different scenarios and ensure the vault remains robust and secure.
      */

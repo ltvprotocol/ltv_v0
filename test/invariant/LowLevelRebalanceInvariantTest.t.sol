@@ -7,10 +7,10 @@ import {LowLevelRebalanceInvariantWrapper, ILTV} from "./utils/LowLevelRebalance
 /**
  * @title LowLevelRebalanceInvariantTest
  * @dev Invariant test contract specifically for low-level rebalance operations
- * 
+ *
  * This contract tests the LTV protocol's low-level rebalance functionality using
  * invariant testing.
- * 
+ *
  * The test ensures that:
  * - All low-level rebalance operations maintain protocol invariants
  * - The protocol remains in a consistent state after rebalance operations
@@ -38,7 +38,7 @@ contract LowLevelRebalanceInvariantTest is BaseInvariantTest {
 
     /**
      * @dev Sets up the test environment for low-level rebalance testing
-     * 
+     *
      * This function:
      * 1. Calls the parent setUp to initialize the basic test environment
      * 2. Performs an initial rebalance operation to establish a baseline state
@@ -46,12 +46,12 @@ contract LowLevelRebalanceInvariantTest is BaseInvariantTest {
     function setUp() public override {
         // Initialize the basic test environment
         super.setUp();
-        
+
         // Set less maximum total assets to avoid overflows
         vm.startPrank(ltv.governor());
         ltv.setMaxTotalAssetsInUnderlying(type(uint120).max);
         vm.stopPrank();
-        
+
         // Perform an initial rebalance operation with zero amount
         // This establishes a baseline state and ensures the protocol is properly initialized
         _lowLevelWrapper.fuzzLowLevelRebalanceShares(0, 0, 100);
@@ -59,13 +59,13 @@ contract LowLevelRebalanceInvariantTest is BaseInvariantTest {
 
     /**
      * @dev The main invariant test function
-     * 
+     *
      * This function is called by the fuzzer to test low-level rebalance operations.
      * The actual testing logic is handled by the wrapper contract, which:
      * - Randomly selects actors and operations
      * - Performs low-level rebalance operations
      * - Verifies that all invariants are maintained
-     * 
+     *
      * The fuzzer will call various functions on the wrapper contract to test
      * different scenarios and ensure the protocol remains robust.
      */

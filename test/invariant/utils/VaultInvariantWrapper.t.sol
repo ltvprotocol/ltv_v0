@@ -8,14 +8,14 @@ import {BaseInvariantWrapper} from "./BaseInvariantWrapper.t.sol";
 /**
  * @title LTVVaultWrapper
  * @dev Wrapper contract for testing LTV vault operations (deposit/withdraw/mint/redeem)
- * 
+ *
  * This contract extends BaseInvariantWrapper to provide fuzzable functions for
  * all vault operations. It ensures that:
  * - All operations respect maximum limits
  * - User balances are properly tracked
  * - Invariants are maintained after each operation
  * - Additional vault-specific invariants are verified
- * 
+ *
  * The wrapper simulates realistic user interactions with the LTV vault,
  * including both borrow token and collateral token operations.
  */
@@ -40,7 +40,7 @@ contract VaultInvariantWrapper is BaseInvariantWrapper {
     {
         // Advance blocks to simulate time passage
         advanceBlocks(blocksDelta);
-        
+
         // Get maximum allowed deposit for current actor
         uint256 maxDeposit = ltv.maxDeposit(_currentTestActor);
 
@@ -62,7 +62,7 @@ contract VaultInvariantWrapper is BaseInvariantWrapper {
 
         // Capture state before operation
         captureInvariantState();
-        
+
         // Execute deposit and track changes
         _expectedLtvDelta = int256(ltv.deposit(amount, _currentTestActor));
         _expectedBorrowDelta = _expectedLtvDelta == 0 ? int256(0) : -int256(amount);
@@ -82,7 +82,7 @@ contract VaultInvariantWrapper is BaseInvariantWrapper {
     {
         // Advance blocks to simulate time passage
         advanceBlocks(blocksDelta);
-        
+
         // Get maximum allowed withdrawal for current actor
         uint256 maxWithdraw = ltv.maxWithdraw(_currentTestActor);
         vm.assume(maxWithdraw > 0);
@@ -92,7 +92,7 @@ contract VaultInvariantWrapper is BaseInvariantWrapper {
 
         // Capture state before operation
         captureInvariantState();
-        
+
         // Execute withdrawal and track changes
         _expectedLtvDelta = -int256(ltv.withdraw(amount, _currentTestActor, _currentTestActor));
         _expectedBorrowDelta = _expectedLtvDelta == 0 ? int256(0) : int256(amount);
@@ -112,7 +112,7 @@ contract VaultInvariantWrapper is BaseInvariantWrapper {
     {
         // Advance blocks to simulate time passage
         advanceBlocks(blocksDelta);
-        
+
         // Get maximum allowed mint for current actor
         uint256 maxMint = ltv.maxMint(_currentTestActor);
 
@@ -123,7 +123,7 @@ contract VaultInvariantWrapper is BaseInvariantWrapper {
 
         // Calculate required borrow tokens for minting
         uint256 assets = ltv.previewMint(amount);
-        
+
         // Ensure actor has enough borrow tokens
         if (IERC20(ltv.borrowToken()).balanceOf(_currentTestActor) < assets) {
             deal(ltv.borrowToken(), _currentTestActor, assets);
@@ -136,7 +136,7 @@ contract VaultInvariantWrapper is BaseInvariantWrapper {
 
         // Capture state before operation
         captureInvariantState();
-        
+
         // Execute mint and track changes
         _expectedBorrowDelta = -int256(ltv.mint(amount, _currentTestActor));
         _expectedLtvDelta = _expectedBorrowDelta == 0 ? int256(0) : int256(amount);
@@ -156,7 +156,7 @@ contract VaultInvariantWrapper is BaseInvariantWrapper {
     {
         // Advance blocks to simulate time passage
         advanceBlocks(blocksDelta);
-        
+
         // Get maximum allowed redemption for current actor
         uint256 maxRedeem = ltv.maxRedeem(_currentTestActor);
         vm.assume(maxRedeem > 0);
@@ -166,7 +166,7 @@ contract VaultInvariantWrapper is BaseInvariantWrapper {
 
         // Capture state before operation
         captureInvariantState();
-        
+
         // Execute redemption and track changes
         _expectedBorrowDelta = int256(ltv.redeem(amount, _currentTestActor, _currentTestActor));
         _expectedLtvDelta = _expectedBorrowDelta == 0 ? int256(0) : -int256(amount);
@@ -186,7 +186,7 @@ contract VaultInvariantWrapper is BaseInvariantWrapper {
     {
         // Advance blocks to simulate time passage
         advanceBlocks(blocksDelta);
-        
+
         // Get maximum allowed collateral deposit for current actor
         uint256 maxDeposit = ltv.maxDepositCollateral(_currentTestActor);
 
@@ -207,7 +207,7 @@ contract VaultInvariantWrapper is BaseInvariantWrapper {
 
         // Capture state before operation
         captureInvariantState();
-        
+
         // Execute collateral deposit and track changes
         _expectedLtvDelta = int256(ltv.depositCollateral(amount, _currentTestActor));
         _expectedCollateralDelta = _expectedLtvDelta == 0 ? int256(0) : int256(amount);
@@ -227,7 +227,7 @@ contract VaultInvariantWrapper is BaseInvariantWrapper {
     {
         // Advance blocks to simulate time passage
         advanceBlocks(blocksDelta);
-        
+
         // Get maximum allowed collateral withdrawal for current actor
         uint256 maxWithdraw = ltv.maxWithdrawCollateral(_currentTestActor);
         vm.assume(maxWithdraw > 0);
@@ -237,7 +237,7 @@ contract VaultInvariantWrapper is BaseInvariantWrapper {
 
         // Capture state before operation
         captureInvariantState();
-        
+
         // Execute collateral withdrawal and track changes
         _expectedLtvDelta = -int256(ltv.withdrawCollateral(amount, _currentTestActor, _currentTestActor));
         _expectedCollateralDelta = _expectedLtvDelta == 0 ? int256(0) : -int256(amount);
@@ -257,7 +257,7 @@ contract VaultInvariantWrapper is BaseInvariantWrapper {
     {
         // Advance blocks to simulate time passage
         advanceBlocks(blocksDelta);
-        
+
         // Get maximum allowed collateral mint for current actor
         uint256 maxMint = ltv.maxMintCollateral(_currentTestActor);
 
@@ -268,7 +268,7 @@ contract VaultInvariantWrapper is BaseInvariantWrapper {
 
         // Calculate required collateral tokens for minting
         uint256 assets = ltv.previewMintCollateral(amount);
-        
+
         // Ensure actor has enough collateral tokens
         if (IERC20(ltv.collateralToken()).balanceOf(_currentTestActor) < assets) {
             deal(ltv.collateralToken(), _currentTestActor, assets);
@@ -281,7 +281,7 @@ contract VaultInvariantWrapper is BaseInvariantWrapper {
 
         // Capture state before operation
         captureInvariantState();
-        
+
         // Execute collateral mint and track changes
         _expectedCollateralDelta = int256(ltv.mintCollateral(amount, _currentTestActor));
         _expectedLtvDelta = _expectedCollateralDelta == 0 ? int256(0) : int256(amount);
@@ -301,7 +301,7 @@ contract VaultInvariantWrapper is BaseInvariantWrapper {
     {
         // Advance blocks to simulate time passage
         advanceBlocks(blocksDelta);
-        
+
         // Get maximum allowed collateral redemption for current actor
         uint256 maxRedeem = ltv.maxRedeemCollateral(_currentTestActor);
         vm.assume(maxRedeem > 0);
@@ -311,7 +311,7 @@ contract VaultInvariantWrapper is BaseInvariantWrapper {
 
         // Capture state before operation
         captureInvariantState();
-        
+
         // Execute collateral redemption and track changes
         _expectedCollateralDelta = -int256(ltv.redeemCollateral(amount, _currentTestActor, _currentTestActor));
         _expectedLtvDelta = _expectedCollateralDelta == 0 ? int256(0) : -int256(amount);
@@ -329,7 +329,7 @@ contract VaultInvariantWrapper is BaseInvariantWrapper {
     function verifyAndResetInvariants() public override {
         // Call parent invariant checking
         super.verifyAndResetInvariants();
-        
+
         // Invariant: future borrow and collateral assets must both be zero or both be nonzero
         assertTrue(
             (ltv.futureBorrowAssets() != 0 && ltv.futureCollateralAssets() != 0)
@@ -342,7 +342,7 @@ contract VaultInvariantWrapper is BaseInvariantWrapper {
             (ltv.futureBorrowAssets() != 0) || ltv.futureRewardBorrowAssets() == 0,
             "If future borrow assets is zero, reward borrow assets must also be zero"
         );
-        
+
         // Invariant: if future collateral assets is zero, reward collateral assets must also be zero
         assertTrue(
             (ltv.futureCollateralAssets() != 0) || ltv.futureRewardCollateralAssets() == 0,

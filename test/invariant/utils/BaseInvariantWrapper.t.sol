@@ -228,7 +228,7 @@ contract BaseInvariantWrapper is Test {
      * @return True if auction was executed, false otherwise
      */
     function checkAuctionExecuted() internal view returns (bool) {
-       return (
+        return (
             _initialFutureCollateral > 0 && _initialFutureCollateral > ltv.futureCollateralAssets()
                 || _initialFutureCollateral < 0 && _initialFutureCollateral < ltv.futureCollateralAssets()
         );

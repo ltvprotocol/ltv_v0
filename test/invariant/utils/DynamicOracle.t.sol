@@ -8,7 +8,7 @@ import "./RateMath.sol";
 /**
  * @title DynamicOracle
  * @dev A mock oracle contract for invariant testing that simulates dynamic price movements
- * 
+ *
  * This contract implements a price oracle where:
  * - Borrow token price remains constant (stablecoin-like behavior)
  * - Collateral token price increases over time based on a configurable rate
@@ -82,18 +82,18 @@ contract DynamicOracle is IDummyOracle, CommonBase {
 
     /**
      * @dev Calculate the current collateral price based on elapsed blocks
-     * 
+     *
      * The price increases exponentially based on the rate per block and elapsed time.
      * The BLOCKS_PER_DAY division ensures price updates happen at daily intervals to
      * simulate the real world scenario.
-     * 
+     *
      * @return Current collateral price in 1e18 precision
      */
     function _calculateCollateralPrice() private view returns (uint256) {
         // Calculate blocks elapsed since deployment, rounded down to nearest day
         // This ensures price only changes once per day, not every block
         uint256 blocksElapsed = (vm.getBlockNumber() - deploymentBlock) / BLOCKS_PER_DAY * BLOCKS_PER_DAY;
-        
+
         // Calculate the cumulative price increase factor using RateMath
         uint256 priceIncrease = RateMath.calculateRatePerBlock(ratePerBlock, blocksElapsed);
 
