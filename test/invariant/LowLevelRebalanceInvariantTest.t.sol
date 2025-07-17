@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {BasicInvariantTest} from "./utils/BasicInvariantTest.t.sol";
-import {LTVLowLevelWrapper, ILTV} from "./utils/LTVLowLevelWrapper.sol";
+import {BaseInvariantTest} from "./utils/BaseInvariantTest.t.sol";
+import {LowLevelRebalanceInvariantWrapper, ILTV} from "./utils/LowLevelRebalanceInvariantWrapper.t.sol";
 
 /**
  * @title LowLevelRebalanceInvariantTest
@@ -16,16 +16,16 @@ import {LTVLowLevelWrapper, ILTV} from "./utils/LTVLowLevelWrapper.sol";
  * - The protocol remains in a consistent state after rebalance operations
  * - No tokens are lost or gained unexpectedly during rebalancing
  */
-contract LowLevelRebalanceInvariantTest is BasicInvariantTest {
+contract LowLevelRebalanceInvariantTest is BaseInvariantTest {
     // Instance of the low-level rebalance wrapper
-    LTVLowLevelWrapper internal _wrapper;
+    LowLevelRebalanceInvariantWrapper internal _lowLevelWrapper;
 
     /**
      * @dev Returns the address of the wrapper contract for fuzzing
      * @return Address of the LTVLowLevelWrapper contract
      */
     function wrapper() internal view override returns (address) {
-        return address(_wrapper);
+        return address(_lowLevelWrapper);
     }
 
     /**
@@ -33,7 +33,7 @@ contract LowLevelRebalanceInvariantTest is BasicInvariantTest {
      * This wrapper provides fuzzable functions for all low-level rebalance operations
      */
     function createWrapper() internal override {
-        _wrapper = new LTVLowLevelWrapper(ILTV(address(ltv)), actors());
+        _lowLevelWrapper = new LowLevelRebalanceInvariantWrapper(ILTV(address(ltv)), actors());
     }
 
     /**
@@ -54,7 +54,7 @@ contract LowLevelRebalanceInvariantTest is BasicInvariantTest {
         
         // Perform an initial rebalance operation with zero amount
         // This establishes a baseline state and ensures the protocol is properly initialized
-        _wrapper.executeLowLevelRebalanceShares(0, 0, 100);
+        _lowLevelWrapper.fuzzLowLevelRebalanceShares(0, 0, 100);
     }
 
     /**

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {BasicInvariantTest} from "./utils/BasicInvariantTest.t.sol";
-import {LTVVaultWrapper, ILTV} from "./utils/LTVVaultWrapper.sol";
+import {BaseInvariantTest} from "./utils/BaseInvariantTest.t.sol";
+import {VaultInvariantWrapper, ILTV} from "./utils/VaultInvariantWrapper.t.sol";
 
 /**
  * @title VaultInvariantTest
@@ -20,9 +20,9 @@ import {LTVVaultWrapper, ILTV} from "./utils/LTVVaultWrapper.sol";
  * - Auction rewards are distributed appropriately
  * - The protocol remains in a consistent state after all operations
  */
-contract VaultInvariantTest is BasicInvariantTest {
+contract VaultInvariantTest is BaseInvariantTest {
     // Instance of the vault wrapper
-    LTVVaultWrapper internal _wrapper;
+    VaultInvariantWrapper internal _wrapper;
 
     /**
      * @dev Returns the address of the wrapper contract for fuzzing
@@ -37,7 +37,7 @@ contract VaultInvariantTest is BasicInvariantTest {
      * This wrapper provides fuzzable functions for all vault operations
      */
     function createWrapper() internal override {
-        _wrapper = new LTVVaultWrapper(ILTV(address(ltv)), actors());
+        _wrapper = new VaultInvariantWrapper(ILTV(address(ltv)), actors());
     }
 
     /**
@@ -54,7 +54,7 @@ contract VaultInvariantTest is BasicInvariantTest {
 
         // Perform an initial mint operation to establish a baseline state
         // This ensures vault will be in target LTV state after auction exection
-        _wrapper.mint(1, 0, 100);
+        _wrapper.fuzzMint(1, 0, 100);
     }
 
     /**
@@ -79,7 +79,7 @@ contract VaultInvariantTest is BasicInvariantTest {
         
         // Verify that auction rewards were received during testing
         // This ensures the auction mechanism is functioning properly
-        _wrapper.auctionRewardsReceived();
+        assertTrue(_wrapper.auctionRewardsReceived());
     }
 
     /**

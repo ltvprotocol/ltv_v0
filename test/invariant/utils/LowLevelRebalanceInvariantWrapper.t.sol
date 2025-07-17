@@ -3,29 +3,29 @@ pragma solidity ^0.8.28;
 
 import "../../../src/interfaces/ILTV.sol";
 import "forge-std/interfaces/IERC20.sol";
-import {BasicInvariantWrapper} from "./BasicInvariantWrapper.t.sol";
+import {BaseInvariantWrapper} from "./BaseInvariantWrapper.t.sol";
 
 /**
  * @title LTVLowLevelWrapper
  * @dev Wrapper contract for testing LTV low-level rebalance operations
- * 
- * This contract extends BasicInvariantWrapper to provide fuzzable functions for
+ *
+ * This contract extends BaseInvariantWrapper to provide fuzzable functions for
  * low-level rebalance operations with invariant post checks.
  */
-contract LTVLowLevelWrapper is BasicInvariantWrapper {
+contract LowLevelRebalanceInvariantWrapper is BaseInvariantWrapper {
     /**
      * @dev Constructor initializes the low-level wrapper
      * @param _ltv The LTV protocol contract
      * @param _actors Array of test actors
      */
-    constructor(ILTV _ltv, address[10] memory _actors) BasicInvariantWrapper(_ltv, _actors) {}
+    constructor(ILTV _ltv, address[10] memory _actors) BaseInvariantWrapper(_ltv, _actors) {}
 
     /**
      * @dev Calculates the minimum collateral amount user can provide
      * @return Minimum collateral amount (can be negative)
      */
-    function minLowLevelRebalanceCollateral() internal view returns (int256) {
-        int256 userBalance = int256(ltv.balanceOf(currentActor));
+    function getMinRebalanceCollateral() internal view returns (int256) {
+        int256 userBalance = int256(ltv.balanceOf(_currentTestActor));
         (int256 collateral,) = ltv.previewLowLevelRebalanceShares(-userBalance);
         return collateral;
     }
@@ -34,8 +34,8 @@ contract LTVLowLevelWrapper is BasicInvariantWrapper {
      * @dev Calculates the minimum borrow amount user can provide
      * @return Minimum borrow amount (can be negative)
      */
-    function minLowLevelRebalanceBorrow() internal view returns (int256) {
-        int256 userBalance = int256(ltv.balanceOf(currentActor));
+    function getMinRebalanceBorrow() internal view returns (int256) {
+        int256 userBalance = int256(ltv.balanceOf(_currentTestActor));
         (, int256 borrow) = ltv.previewLowLevelRebalanceShares(-userBalance);
         return borrow;
     }
@@ -47,17 +47,17 @@ contract LTVLowLevelWrapper is BasicInvariantWrapper {
      * @param actorIndexSeed Fuzzer seed to select actor
      * @param blocksDelta Number of blocks to advance before operation
      */
-    function executeLowLevelRebalanceBorrow(int256 amount, uint256 actorIndexSeed, uint256 blocksDelta)
+    function fuzzLowLevelRebalanceBorrow(int256 amount, uint256 actorIndexSeed, uint256 blocksDelta)
         external
         useActor(actorIndexSeed)
-        makePostCheck
+        verifyInvariantsAfterOperation
     {
         // Advance blocks to simulate time passage
-        moveBlock(blocksDelta);
-        
+        advanceBlocks(blocksDelta);
+
         // Get valid range for borrow adjustment
         int256 maxBorrow = ltv.maxLowLevelRebalanceBorrow();
-        int256 minBorrow = minLowLevelRebalanceBorrow();
+        int256 minBorrow = getMinRebalanceBorrow();
 
         vm.assume(maxBorrow >= minBorrow);
 
@@ -65,31 +65,34 @@ contract LTVLowLevelWrapper is BasicInvariantWrapper {
         amount = bound(amount, minBorrow, maxBorrow);
 
         // Preview the operation to get expected changes
-        (deltaCollateral, deltaLtv) = ltv.previewLowLevelRebalanceBorrow(amount);
-        deltaBorrow = amount;
+        (_expectedCollateralDelta, _expectedLtvDelta) = ltv.previewLowLevelRebalanceBorrow(amount);
+        _expectedBorrowDelta = amount;
 
         // Handle collateral requirements (if positive, user needs to provide collateral)
-        if (deltaCollateral > 0) {
-            if (IERC20(ltv.collateralToken()).balanceOf(currentActor) < uint256(deltaCollateral)) {
-                deal(ltv.collateralToken(), currentActor, uint256(deltaCollateral));
+        if (_expectedCollateralDelta > 0) {
+            if (IERC20(ltv.collateralToken()).balanceOf(_currentTestActor) < uint256(_expectedCollateralDelta)) {
+                deal(ltv.collateralToken(), _currentTestActor, uint256(_expectedCollateralDelta));
             }
-            if (IERC20(ltv.collateralToken()).allowance(currentActor, address(ltv)) < uint256(deltaCollateral)) {
-                IERC20(ltv.collateralToken()).approve(address(ltv), uint256(deltaCollateral));
+            if (
+                IERC20(ltv.collateralToken()).allowance(_currentTestActor, address(ltv))
+                    < uint256(_expectedCollateralDelta)
+            ) {
+                IERC20(ltv.collateralToken()).approve(address(ltv), uint256(_expectedCollateralDelta));
             }
         }
 
         // Handle borrow requirements (if negative, user needs to provide borrow tokens)
         if (amount < 0) {
-            if (IERC20(ltv.borrowToken()).balanceOf(currentActor) < uint256(-amount)) {
-                deal(ltv.borrowToken(), currentActor, uint256(-amount));
+            if (IERC20(ltv.borrowToken()).balanceOf(_currentTestActor) < uint256(-amount)) {
+                deal(ltv.borrowToken(), _currentTestActor, uint256(-amount));
             }
-            if (IERC20(ltv.borrowToken()).allowance(currentActor, address(ltv)) < uint256(-amount)) {
+            if (IERC20(ltv.borrowToken()).allowance(_currentTestActor, address(ltv)) < uint256(-amount)) {
                 IERC20(ltv.borrowToken()).approve(address(ltv), uint256(-amount));
             }
         }
 
         // Capture state before operation
-        getInvariantsData();
+        captureInvariantState();
 
         // Execute the rebalance operation
         ltv.executeLowLevelRebalanceBorrow(amount);
@@ -103,17 +106,17 @@ contract LTVLowLevelWrapper is BasicInvariantWrapper {
      * @param actorIndexSeed Fuzzer seed to select actor
      * @param blocksDelta Number of blocks to advance before operation
      */
-    function executeLowLevelRebalanceBorrowHint(int256 amount, bool hint, uint256 actorIndexSeed, uint256 blocksDelta)
+    function fuzzLowLevelRebalanceBorrowHint(int256 amount, bool hint, uint256 actorIndexSeed, uint256 blocksDelta)
         external
         useActor(actorIndexSeed)
-        makePostCheck
+        verifyInvariantsAfterOperation
     {
         // Advance blocks to simulate time passage
-        moveBlock(blocksDelta);
-        
+        advanceBlocks(blocksDelta);
+
         // Get valid range for borrow adjustment
         int256 maxBorrow = ltv.maxLowLevelRebalanceBorrow();
-        int256 minBorrow = minLowLevelRebalanceBorrow();
+        int256 minBorrow = getMinRebalanceBorrow();
 
         vm.assume(maxBorrow >= minBorrow);
 
@@ -121,31 +124,34 @@ contract LTVLowLevelWrapper is BasicInvariantWrapper {
         amount = bound(amount, minBorrow, maxBorrow);
 
         // Preview the operation with hint to get expected changes
-        (deltaCollateral, deltaLtv) = ltv.previewLowLevelRebalanceBorrowHint(amount, hint);
-        deltaBorrow = amount;
+        (_expectedCollateralDelta, _expectedLtvDelta) = ltv.previewLowLevelRebalanceBorrowHint(amount, hint);
+        _expectedBorrowDelta = amount;
 
         // Handle collateral requirements (if positive, user needs to provide collateral)
-        if (deltaCollateral > 0) {
-            if (IERC20(ltv.collateralToken()).balanceOf(currentActor) < uint256(deltaCollateral)) {
-                deal(ltv.collateralToken(), currentActor, uint256(deltaCollateral));
+        if (_expectedCollateralDelta > 0) {
+            if (IERC20(ltv.collateralToken()).balanceOf(_currentTestActor) < uint256(_expectedCollateralDelta)) {
+                deal(ltv.collateralToken(), _currentTestActor, uint256(_expectedCollateralDelta));
             }
-            if (IERC20(ltv.collateralToken()).allowance(currentActor, address(ltv)) < uint256(deltaCollateral)) {
-                IERC20(ltv.collateralToken()).approve(address(ltv), uint256(deltaCollateral));
+            if (
+                IERC20(ltv.collateralToken()).allowance(_currentTestActor, address(ltv))
+                    < uint256(_expectedCollateralDelta)
+            ) {
+                IERC20(ltv.collateralToken()).approve(address(ltv), uint256(_expectedCollateralDelta));
             }
         }
 
         // Handle borrow requirements (if negative, user needs to provide borrow tokens)
         if (amount < 0) {
-            if (IERC20(ltv.borrowToken()).balanceOf(currentActor) < uint256(-amount)) {
-                deal(ltv.borrowToken(), currentActor, uint256(-amount));
+            if (IERC20(ltv.borrowToken()).balanceOf(_currentTestActor) < uint256(-amount)) {
+                deal(ltv.borrowToken(), _currentTestActor, uint256(-amount));
             }
-            if (IERC20(ltv.borrowToken()).allowance(currentActor, address(ltv)) < uint256(-amount)) {
+            if (IERC20(ltv.borrowToken()).allowance(_currentTestActor, address(ltv)) < uint256(-amount)) {
                 IERC20(ltv.borrowToken()).approve(address(ltv), uint256(-amount));
             }
         }
 
         // Capture state before operation
-        getInvariantsData();
+        captureInvariantState();
 
         // Execute the rebalance operation with hint
         ltv.executeLowLevelRebalanceBorrowHint(amount, hint);
@@ -158,49 +164,53 @@ contract LTVLowLevelWrapper is BasicInvariantWrapper {
      * @param actorIndexSeed Fuzzer seed to select actor
      * @param blocksDelta Number of blocks to advance before operation
      */
-    function executeLowLevelRebalanceCollateral(int256 amount, uint256 actorIndexSeed, uint256 blocksDelta)
+    function fuzzLowLevelRebalanceCollateral(int256 amount, uint256 actorIndexSeed, uint256 blocksDelta)
         external
         useActor(actorIndexSeed)
-        makePostCheck
+        verifyInvariantsAfterOperation
     {
         // Advance blocks to simulate time passage
-        moveBlock(blocksDelta);
-        
+        advanceBlocks(blocksDelta);
+
         // Get valid range for collateral adjustment
         int256 maxCollateral = ltv.maxLowLevelRebalanceCollateral();
-        int256 minCollateral = minLowLevelRebalanceCollateral();
+        int256 minCollateral = getMinRebalanceCollateral();
 
+        // Assume that max collateral is greater than min collateral
         vm.assume(maxCollateral >= minCollateral);
 
         // Bound the amount to valid range
         amount = bound(amount, minCollateral, maxCollateral);
 
         // Preview the operation to get expected changes
-        (deltaBorrow, deltaLtv) = ltv.previewLowLevelRebalanceCollateral(amount);
-        deltaCollateral = amount;
+        (_expectedBorrowDelta, _expectedLtvDelta) = ltv.previewLowLevelRebalanceCollateral(amount);
+        _expectedCollateralDelta = amount;
 
         // Handle borrow requirements (if negative, user needs to provide borrow tokens)
-        if (deltaBorrow < 0) {
-            if (IERC20(ltv.borrowToken()).balanceOf(currentActor) < uint256(-deltaBorrow)) {
-                deal(ltv.borrowToken(), currentActor, uint256(-deltaBorrow));
+        if (_expectedBorrowDelta < 0) {
+            if (IERC20(ltv.borrowToken()).balanceOf(_currentTestActor) < uint256(-_expectedBorrowDelta)) {
+                deal(ltv.borrowToken(), _currentTestActor, uint256(-_expectedBorrowDelta));
             }
-            if (IERC20(ltv.borrowToken()).allowance(currentActor, address(ltv)) < uint256(-deltaBorrow)) {
-                IERC20(ltv.borrowToken()).approve(address(ltv), uint256(-deltaBorrow));
+            if (IERC20(ltv.borrowToken()).allowance(_currentTestActor, address(ltv)) < uint256(-_expectedBorrowDelta)) {
+                IERC20(ltv.borrowToken()).approve(address(ltv), uint256(-_expectedBorrowDelta));
             }
         }
 
         // Handle collateral requirements (if positive, user needs to provide collateral)
         if (amount > 0) {
-            if (IERC20(ltv.collateralToken()).balanceOf(currentActor) < uint256(deltaCollateral)) {
-                deal(ltv.collateralToken(), currentActor, uint256(deltaCollateral));
+            if (IERC20(ltv.collateralToken()).balanceOf(_currentTestActor) < uint256(_expectedCollateralDelta)) {
+                deal(ltv.collateralToken(), _currentTestActor, uint256(_expectedCollateralDelta));
             }
-            if (IERC20(ltv.collateralToken()).allowance(currentActor, address(ltv)) < uint256(deltaCollateral)) {
-                IERC20(ltv.collateralToken()).approve(address(ltv), uint256(deltaCollateral));
+            if (
+                IERC20(ltv.collateralToken()).allowance(_currentTestActor, address(ltv))
+                    < uint256(_expectedCollateralDelta)
+            ) {
+                IERC20(ltv.collateralToken()).approve(address(ltv), uint256(_expectedCollateralDelta));
             }
         }
-        
+
         // Capture state before operation
-        getInvariantsData();
+        captureInvariantState();
 
         // Execute the rebalance operation
         ltv.executeLowLevelRebalanceCollateral(amount);
@@ -214,18 +224,17 @@ contract LTVLowLevelWrapper is BasicInvariantWrapper {
      * @param actorIndexSeed Fuzzer seed to select actor
      * @param blocksDelta Number of blocks to advance before operation
      */
-    function executeLowLevelRebalanceCollateralHint(
-        int256 amount,
-        bool hint,
-        uint256 actorIndexSeed,
-        uint256 blocksDelta
-    ) external useActor(actorIndexSeed) makePostCheck {
+    function fuzzLowLevelRebalanceCollateralHint(int256 amount, bool hint, uint256 actorIndexSeed, uint256 blocksDelta)
+        external
+        useActor(actorIndexSeed)
+        verifyInvariantsAfterOperation
+    {
         // Advance blocks to simulate time passage
-        moveBlock(blocksDelta);
-        
+        advanceBlocks(blocksDelta);
+
         // Get valid range for collateral adjustment
         int256 maxCollateral = ltv.maxLowLevelRebalanceCollateral();
-        int256 minCollateral = minLowLevelRebalanceCollateral();
+        int256 minCollateral = getMinRebalanceCollateral();
 
         vm.assume(maxCollateral >= minCollateral);
 
@@ -233,31 +242,31 @@ contract LTVLowLevelWrapper is BasicInvariantWrapper {
         amount = bound(amount, minCollateral, maxCollateral);
 
         // Preview the operation with hint to get expected changes
-        (deltaBorrow, deltaLtv) = ltv.previewLowLevelRebalanceCollateralHint(amount, hint);
-        deltaCollateral = amount;
+        (_expectedBorrowDelta, _expectedLtvDelta) = ltv.previewLowLevelRebalanceCollateralHint(amount, hint);
+        _expectedCollateralDelta = amount;
 
         // Handle borrow requirements (if negative, user needs to provide borrow tokens)
-        if (deltaBorrow < 0) {
-            if (IERC20(ltv.borrowToken()).balanceOf(currentActor) < uint256(-deltaBorrow)) {
-                deal(ltv.borrowToken(), currentActor, uint256(-deltaBorrow));
+        if (_expectedBorrowDelta < 0) {
+            if (IERC20(ltv.borrowToken()).balanceOf(_currentTestActor) < uint256(-_expectedBorrowDelta)) {
+                deal(ltv.borrowToken(), _currentTestActor, uint256(-_expectedBorrowDelta));
             }
-            if (IERC20(ltv.borrowToken()).allowance(currentActor, address(ltv)) < uint256(-deltaBorrow)) {
-                IERC20(ltv.borrowToken()).approve(address(ltv), uint256(-deltaBorrow));
+            if (IERC20(ltv.borrowToken()).allowance(_currentTestActor, address(ltv)) < uint256(-_expectedBorrowDelta)) {
+                IERC20(ltv.borrowToken()).approve(address(ltv), uint256(-_expectedBorrowDelta));
             }
         }
 
         // Handle collateral requirements (if positive, user needs to provide collateral)
         if (amount > 0) {
-            if (IERC20(ltv.collateralToken()).balanceOf(currentActor) < uint256(amount)) {
-                deal(ltv.collateralToken(), currentActor, uint256(amount));
+            if (IERC20(ltv.collateralToken()).balanceOf(_currentTestActor) < uint256(amount)) {
+                deal(ltv.collateralToken(), _currentTestActor, uint256(amount));
             }
-            if (IERC20(ltv.collateralToken()).allowance(currentActor, address(ltv)) < uint256(amount)) {
+            if (IERC20(ltv.collateralToken()).allowance(_currentTestActor, address(ltv)) < uint256(amount)) {
                 IERC20(ltv.collateralToken()).approve(address(ltv), uint256(amount));
             }
         }
-        
+
         // Capture state before operation
-        getInvariantsData();
+        captureInvariantState();
 
         // Execute the rebalance operation with hint
         ltv.executeLowLevelRebalanceCollateralHint(amount, hint);
@@ -270,17 +279,17 @@ contract LTVLowLevelWrapper is BasicInvariantWrapper {
      * @param actorIndexSeed Fuzzer seed to select actor
      * @param blocksDelta Number of blocks to advance before operation
      */
-    function executeLowLevelRebalanceShares(int256 amount, uint256 actorIndexSeed, uint256 blocksDelta)
+    function fuzzLowLevelRebalanceShares(int256 amount, uint256 actorIndexSeed, uint256 blocksDelta)
         external
         useActor(actorIndexSeed)
-        makePostCheck
+        verifyInvariantsAfterOperation
     {
         // Advance blocks to simulate time passage
-        moveBlock(blocksDelta);
-        
+        advanceBlocks(blocksDelta);
+
         // Get valid range for shares adjustment
         int256 maxShares = ltv.maxLowLevelRebalanceShares();
-        int256 minShares = -int256(ltv.balanceOf(currentActor));
+        int256 minShares = -int256(ltv.balanceOf(_currentTestActor));
 
         vm.assume(maxShares >= minShares);
 
@@ -288,31 +297,34 @@ contract LTVLowLevelWrapper is BasicInvariantWrapper {
         amount = bound(amount, minShares, maxShares);
 
         // Preview the operation to get expected changes
-        (deltaCollateral, deltaBorrow) = ltv.previewLowLevelRebalanceShares(amount);
-        deltaLtv = amount;
+        (_expectedCollateralDelta, _expectedBorrowDelta) = ltv.previewLowLevelRebalanceShares(amount);
+        _expectedLtvDelta = amount;
 
         // Handle collateral requirements (if positive, user needs to provide collateral)
-        if (deltaCollateral > 0) {
-            if (IERC20(ltv.collateralToken()).balanceOf(currentActor) < uint256(deltaCollateral)) {
-                deal(ltv.collateralToken(), currentActor, uint256(deltaCollateral));
+        if (_expectedCollateralDelta > 0) {
+            if (IERC20(ltv.collateralToken()).balanceOf(_currentTestActor) < uint256(_expectedCollateralDelta)) {
+                deal(ltv.collateralToken(), _currentTestActor, uint256(_expectedCollateralDelta));
             }
-            if (IERC20(ltv.collateralToken()).allowance(currentActor, address(ltv)) < uint256(deltaCollateral)) {
-                IERC20(ltv.collateralToken()).approve(address(ltv), uint256(deltaCollateral));
+            if (
+                IERC20(ltv.collateralToken()).allowance(_currentTestActor, address(ltv))
+                    < uint256(_expectedCollateralDelta)
+            ) {
+                IERC20(ltv.collateralToken()).approve(address(ltv), uint256(_expectedCollateralDelta));
             }
         }
 
         // Handle borrow requirements (if negative, user needs to provide borrow tokens)
-        if (deltaBorrow < 0) {
-            if (IERC20(ltv.borrowToken()).balanceOf(currentActor) < uint256(-deltaBorrow)) {
-                deal(ltv.borrowToken(), currentActor, uint256(-deltaBorrow));
+        if (_expectedBorrowDelta < 0) {
+            if (IERC20(ltv.borrowToken()).balanceOf(_currentTestActor) < uint256(-_expectedBorrowDelta)) {
+                deal(ltv.borrowToken(), _currentTestActor, uint256(-_expectedBorrowDelta));
             }
-            if (IERC20(ltv.borrowToken()).allowance(currentActor, address(ltv)) < uint256(-deltaBorrow)) {
-                IERC20(ltv.borrowToken()).approve(address(ltv), uint256(-deltaBorrow));
+            if (IERC20(ltv.borrowToken()).allowance(_currentTestActor, address(ltv)) < uint256(-_expectedBorrowDelta)) {
+                IERC20(ltv.borrowToken()).approve(address(ltv), uint256(-_expectedBorrowDelta));
             }
         }
-        
+
         // Capture state before operation
-        getInvariantsData();
+        captureInvariantState();
 
         // Execute the rebalance operation
         ltv.executeLowLevelRebalanceShares(amount);

@@ -3,13 +3,13 @@ pragma solidity ^0.8.28;
 
 import "../../../src/interfaces/ILTV.sol";
 import "forge-std/interfaces/IERC20.sol";
-import {BasicInvariantWrapper} from "./BasicInvariantWrapper.t.sol";
+import {BaseInvariantWrapper} from "./BaseInvariantWrapper.t.sol";
 
 /**
  * @title LTVVaultWrapper
  * @dev Wrapper contract for testing LTV vault operations (deposit/withdraw/mint/redeem)
  * 
- * This contract extends BasicInvariantWrapper to provide fuzzable functions for
+ * This contract extends BaseInvariantWrapper to provide fuzzable functions for
  * all vault operations. It ensures that:
  * - All operations respect maximum limits
  * - User balances are properly tracked
@@ -19,13 +19,13 @@ import {BasicInvariantWrapper} from "./BasicInvariantWrapper.t.sol";
  * The wrapper simulates realistic user interactions with the LTV vault,
  * including both borrow token and collateral token operations.
  */
-contract LTVVaultWrapper is BasicInvariantWrapper {
+contract VaultInvariantWrapper is BaseInvariantWrapper {
     /**
      * @dev Constructor initializes the vault wrapper
      * @param _ltv The LTV protocol contract
      * @param _actors Array of test actors
      */
-    constructor(ILTV _ltv, address[10] memory _actors) BasicInvariantWrapper(_ltv, _actors) {}
+    constructor(ILTV _ltv, address[10] memory _actors) BaseInvariantWrapper(_ltv, _actors) {}
 
     /**
      * @dev Allows a user to deposit borrow tokens and receive LTV tokens
@@ -33,16 +33,16 @@ contract LTVVaultWrapper is BasicInvariantWrapper {
      * @param actorIndexSeed Fuzzer seed to select actor
      * @param blocksDelta Number of blocks to advance before operation
      */
-    function deposit(uint256 amount, uint256 actorIndexSeed, uint256 blocksDelta)
+    function fuzzDeposit(uint256 amount, uint256 actorIndexSeed, uint256 blocksDelta)
         public
         useActor(actorIndexSeed)
-        makePostCheck
+        verifyInvariantsAfterOperation
     {
         // Advance blocks to simulate time passage
-        moveBlock(blocksDelta);
+        advanceBlocks(blocksDelta);
         
         // Get maximum allowed deposit for current actor
-        uint256 maxDeposit = ltv.maxDeposit(currentActor);
+        uint256 maxDeposit = ltv.maxDeposit(_currentTestActor);
 
         // Ensure there's something to deposit
         vm.assume(maxDeposit > 0);
@@ -51,22 +51,22 @@ contract LTVVaultWrapper is BasicInvariantWrapper {
         amount = bound(amount, 1, maxDeposit);
 
         // Ensure actor has enough borrow tokens
-        if (IERC20(ltv.borrowToken()).balanceOf(currentActor) < amount) {
-            deal(ltv.borrowToken(), currentActor, amount);
+        if (IERC20(ltv.borrowToken()).balanceOf(_currentTestActor) < amount) {
+            deal(ltv.borrowToken(), _currentTestActor, amount);
         }
 
         // Ensure actor has approved the LTV contract
-        if (IERC20(ltv.borrowToken()).allowance(currentActor, address(ltv)) < amount) {
+        if (IERC20(ltv.borrowToken()).allowance(_currentTestActor, address(ltv)) < amount) {
             IERC20(ltv.borrowToken()).approve(address(ltv), amount);
         }
 
         // Capture state before operation
-        getInvariantsData();
+        captureInvariantState();
         
         // Execute deposit and track changes
-        deltaLtv = int256(ltv.deposit(amount, currentActor));
-        deltaBorrow = deltaLtv == 0 ? int256(0) : -int256(amount);
-        deltaCollateral = 0;
+        _expectedLtvDelta = int256(ltv.deposit(amount, _currentTestActor));
+        _expectedBorrowDelta = _expectedLtvDelta == 0 ? int256(0) : -int256(amount);
+        _expectedCollateralDelta = 0;
     }
 
     /**
@@ -75,28 +75,28 @@ contract LTVVaultWrapper is BasicInvariantWrapper {
      * @param actorIndexSeed Fuzzer seed to select actor
      * @param blocksDelta Number of blocks to advance before operation
      */
-    function withdraw(uint256 amount, uint256 actorIndexSeed, uint256 blocksDelta)
+    function fuzzWithdraw(uint256 amount, uint256 actorIndexSeed, uint256 blocksDelta)
         public
         useActor(actorIndexSeed)
-        makePostCheck
+        verifyInvariantsAfterOperation
     {
         // Advance blocks to simulate time passage
-        moveBlock(blocksDelta);
+        advanceBlocks(blocksDelta);
         
         // Get maximum allowed withdrawal for current actor
-        uint256 maxWithdraw = ltv.maxWithdraw(currentActor);
+        uint256 maxWithdraw = ltv.maxWithdraw(_currentTestActor);
         vm.assume(maxWithdraw > 0);
 
         // Bound the amount to valid range
         amount = bound(amount, 1, maxWithdraw);
 
         // Capture state before operation
-        getInvariantsData();
+        captureInvariantState();
         
         // Execute withdrawal and track changes
-        deltaLtv = -int256(ltv.withdraw(amount, currentActor, currentActor));
-        deltaBorrow = deltaLtv == 0 ? int256(0) : int256(amount);
-        deltaCollateral = 0;
+        _expectedLtvDelta = -int256(ltv.withdraw(amount, _currentTestActor, _currentTestActor));
+        _expectedBorrowDelta = _expectedLtvDelta == 0 ? int256(0) : int256(amount);
+        _expectedCollateralDelta = 0;
     }
 
     /**
@@ -105,16 +105,16 @@ contract LTVVaultWrapper is BasicInvariantWrapper {
      * @param actorIndexSeed Fuzzer seed to select actor
      * @param blocksDelta Number of blocks to advance before operation
      */
-    function mint(uint256 amount, uint256 actorIndexSeed, uint256 blocksDelta)
+    function fuzzMint(uint256 amount, uint256 actorIndexSeed, uint256 blocksDelta)
         public
         useActor(actorIndexSeed)
-        makePostCheck
+        verifyInvariantsAfterOperation
     {
         // Advance blocks to simulate time passage
-        moveBlock(blocksDelta);
+        advanceBlocks(blocksDelta);
         
         // Get maximum allowed mint for current actor
-        uint256 maxMint = ltv.maxMint(currentActor);
+        uint256 maxMint = ltv.maxMint(_currentTestActor);
 
         vm.assume(maxMint > 0);
 
@@ -125,22 +125,22 @@ contract LTVVaultWrapper is BasicInvariantWrapper {
         uint256 assets = ltv.previewMint(amount);
         
         // Ensure actor has enough borrow tokens
-        if (IERC20(ltv.borrowToken()).balanceOf(currentActor) < assets) {
-            deal(ltv.borrowToken(), currentActor, assets);
+        if (IERC20(ltv.borrowToken()).balanceOf(_currentTestActor) < assets) {
+            deal(ltv.borrowToken(), _currentTestActor, assets);
         }
 
         // Ensure actor has approved the LTV contract
-        if (IERC20(ltv.borrowToken()).allowance(currentActor, address(ltv)) < assets) {
+        if (IERC20(ltv.borrowToken()).allowance(_currentTestActor, address(ltv)) < assets) {
             IERC20(ltv.borrowToken()).approve(address(ltv), assets);
         }
 
         // Capture state before operation
-        getInvariantsData();
+        captureInvariantState();
         
         // Execute mint and track changes
-        deltaBorrow = -int256(ltv.mint(amount, currentActor));
-        deltaLtv = deltaBorrow == 0 ? int256(0) : int256(amount);
-        deltaCollateral = 0;
+        _expectedBorrowDelta = -int256(ltv.mint(amount, _currentTestActor));
+        _expectedLtvDelta = _expectedBorrowDelta == 0 ? int256(0) : int256(amount);
+        _expectedCollateralDelta = 0;
     }
 
     /**
@@ -149,28 +149,28 @@ contract LTVVaultWrapper is BasicInvariantWrapper {
      * @param actorIndexSeed Fuzzer seed to select actor
      * @param blocksDelta Number of blocks to advance before operation
      */
-    function redeem(uint256 amount, uint256 actorIndexSeed, uint256 blocksDelta)
+    function fuzzRedeem(uint256 amount, uint256 actorIndexSeed, uint256 blocksDelta)
         public
         useActor(actorIndexSeed)
-        makePostCheck
+        verifyInvariantsAfterOperation
     {
         // Advance blocks to simulate time passage
-        moveBlock(blocksDelta);
+        advanceBlocks(blocksDelta);
         
         // Get maximum allowed redemption for current actor
-        uint256 maxRedeem = ltv.maxRedeem(currentActor);
+        uint256 maxRedeem = ltv.maxRedeem(_currentTestActor);
         vm.assume(maxRedeem > 0);
 
         // Bound the amount to valid range
         amount = bound(amount, 1, maxRedeem);
 
         // Capture state before operation
-        getInvariantsData();
+        captureInvariantState();
         
         // Execute redemption and track changes
-        deltaBorrow = int256(ltv.redeem(amount, currentActor, currentActor));
-        deltaLtv = deltaBorrow == 0 ? int256(0) : -int256(amount);
-        deltaCollateral = 0;
+        _expectedBorrowDelta = int256(ltv.redeem(amount, _currentTestActor, _currentTestActor));
+        _expectedLtvDelta = _expectedBorrowDelta == 0 ? int256(0) : -int256(amount);
+        _expectedCollateralDelta = 0;
     }
 
     /**
@@ -179,16 +179,16 @@ contract LTVVaultWrapper is BasicInvariantWrapper {
      * @param actorIndexSeed Fuzzer seed to select actor
      * @param blocksDelta Number of blocks to advance before operation
      */
-    function depositCollateral(uint256 amount, uint256 actorIndexSeed, uint256 blocksDelta)
+    function fuzzDepositCollateral(uint256 amount, uint256 actorIndexSeed, uint256 blocksDelta)
         public
         useActor(actorIndexSeed)
-        makePostCheck
+        verifyInvariantsAfterOperation
     {
         // Advance blocks to simulate time passage
-        moveBlock(blocksDelta);
+        advanceBlocks(blocksDelta);
         
         // Get maximum allowed collateral deposit for current actor
-        uint256 maxDeposit = ltv.maxDepositCollateral(currentActor);
+        uint256 maxDeposit = ltv.maxDepositCollateral(_currentTestActor);
 
         vm.assume(maxDeposit > 0);
 
@@ -196,22 +196,22 @@ contract LTVVaultWrapper is BasicInvariantWrapper {
         amount = bound(amount, 1, maxDeposit);
 
         // Ensure actor has enough collateral tokens
-        if (IERC20(ltv.collateralToken()).balanceOf(currentActor) < amount) {
-            deal(ltv.collateralToken(), currentActor, amount);
+        if (IERC20(ltv.collateralToken()).balanceOf(_currentTestActor) < amount) {
+            deal(ltv.collateralToken(), _currentTestActor, amount);
         }
 
         // Ensure actor has approved the LTV contract
-        if (IERC20(ltv.collateralToken()).allowance(currentActor, address(ltv)) < amount) {
+        if (IERC20(ltv.collateralToken()).allowance(_currentTestActor, address(ltv)) < amount) {
             IERC20(ltv.collateralToken()).approve(address(ltv), amount);
         }
 
         // Capture state before operation
-        getInvariantsData();
+        captureInvariantState();
         
         // Execute collateral deposit and track changes
-        deltaLtv = int256(ltv.depositCollateral(amount, currentActor));
-        deltaCollateral = deltaLtv == 0 ? int256(0) : int256(amount);
-        deltaBorrow = 0;
+        _expectedLtvDelta = int256(ltv.depositCollateral(amount, _currentTestActor));
+        _expectedCollateralDelta = _expectedLtvDelta == 0 ? int256(0) : int256(amount);
+        _expectedBorrowDelta = 0;
     }
 
     /**
@@ -220,28 +220,28 @@ contract LTVVaultWrapper is BasicInvariantWrapper {
      * @param actorIndexSeed Fuzzer seed to select actor
      * @param blocksDelta Number of blocks to advance before operation
      */
-    function withdrawCollateral(uint256 amount, uint256 actorIndexSeed, uint256 blocksDelta)
+    function fuzzWithdrawCollateral(uint256 amount, uint256 actorIndexSeed, uint256 blocksDelta)
         public
         useActor(actorIndexSeed)
-        makePostCheck
+        verifyInvariantsAfterOperation
     {
         // Advance blocks to simulate time passage
-        moveBlock(blocksDelta);
+        advanceBlocks(blocksDelta);
         
         // Get maximum allowed collateral withdrawal for current actor
-        uint256 maxWithdraw = ltv.maxWithdrawCollateral(currentActor);
+        uint256 maxWithdraw = ltv.maxWithdrawCollateral(_currentTestActor);
         vm.assume(maxWithdraw > 0);
 
         // Bound the amount to valid range
         amount = bound(amount, 1, maxWithdraw);
 
         // Capture state before operation
-        getInvariantsData();
+        captureInvariantState();
         
         // Execute collateral withdrawal and track changes
-        deltaLtv = -int256(ltv.withdrawCollateral(amount, currentActor, currentActor));
-        deltaCollateral = deltaLtv == 0 ? int256(0) : -int256(amount);
-        deltaBorrow = 0;
+        _expectedLtvDelta = -int256(ltv.withdrawCollateral(amount, _currentTestActor, _currentTestActor));
+        _expectedCollateralDelta = _expectedLtvDelta == 0 ? int256(0) : -int256(amount);
+        _expectedBorrowDelta = 0;
     }
 
     /**
@@ -250,16 +250,16 @@ contract LTVVaultWrapper is BasicInvariantWrapper {
      * @param actorIndexSeed Fuzzer seed to select actor
      * @param blocksDelta Number of blocks to advance before operation
      */
-    function mintCollateral(uint256 amount, uint256 actorIndexSeed, uint256 blocksDelta)
+    function fuzzMintCollateral(uint256 amount, uint256 actorIndexSeed, uint256 blocksDelta)
         public
         useActor(actorIndexSeed)
-        makePostCheck
+        verifyInvariantsAfterOperation
     {
         // Advance blocks to simulate time passage
-        moveBlock(blocksDelta);
+        advanceBlocks(blocksDelta);
         
         // Get maximum allowed collateral mint for current actor
-        uint256 maxMint = ltv.maxMintCollateral(currentActor);
+        uint256 maxMint = ltv.maxMintCollateral(_currentTestActor);
 
         vm.assume(maxMint > 0);
 
@@ -270,22 +270,22 @@ contract LTVVaultWrapper is BasicInvariantWrapper {
         uint256 assets = ltv.previewMintCollateral(amount);
         
         // Ensure actor has enough collateral tokens
-        if (IERC20(ltv.collateralToken()).balanceOf(currentActor) < assets) {
-            deal(ltv.collateralToken(), currentActor, assets);
+        if (IERC20(ltv.collateralToken()).balanceOf(_currentTestActor) < assets) {
+            deal(ltv.collateralToken(), _currentTestActor, assets);
         }
 
         // Ensure actor has approved the LTV contract
-        if (IERC20(ltv.collateralToken()).allowance(currentActor, address(ltv)) < assets) {
+        if (IERC20(ltv.collateralToken()).allowance(_currentTestActor, address(ltv)) < assets) {
             IERC20(ltv.collateralToken()).approve(address(ltv), assets);
         }
 
         // Capture state before operation
-        getInvariantsData();
+        captureInvariantState();
         
         // Execute collateral mint and track changes
-        deltaCollateral = int256(ltv.mintCollateral(amount, currentActor));
-        deltaLtv = deltaCollateral == 0 ? int256(0) : int256(amount);
-        deltaBorrow = 0;
+        _expectedCollateralDelta = int256(ltv.mintCollateral(amount, _currentTestActor));
+        _expectedLtvDelta = _expectedCollateralDelta == 0 ? int256(0) : int256(amount);
+        _expectedBorrowDelta = 0;
     }
 
     /**
@@ -294,41 +294,41 @@ contract LTVVaultWrapper is BasicInvariantWrapper {
      * @param actorIndexSeed Fuzzer seed to select actor
      * @param blocksDelta Number of blocks to advance before operation
      */
-    function redeemCollateral(uint256 amount, uint256 actorIndexSeed, uint256 blocksDelta)
+    function fuzzRedeemCollateral(uint256 amount, uint256 actorIndexSeed, uint256 blocksDelta)
         public
         useActor(actorIndexSeed)
-        makePostCheck
+        verifyInvariantsAfterOperation
     {
         // Advance blocks to simulate time passage
-        moveBlock(blocksDelta);
+        advanceBlocks(blocksDelta);
         
         // Get maximum allowed collateral redemption for current actor
-        uint256 maxRedeem = ltv.maxRedeemCollateral(currentActor);
+        uint256 maxRedeem = ltv.maxRedeemCollateral(_currentTestActor);
         vm.assume(maxRedeem > 0);
 
         // Bound the amount to valid range
         amount = bound(amount, 1, maxRedeem);
 
         // Capture state before operation
-        getInvariantsData();
+        captureInvariantState();
         
         // Execute collateral redemption and track changes
-        deltaCollateral = -int256(ltv.redeemCollateral(amount, currentActor, currentActor));
-        deltaLtv = deltaCollateral == 0 ? int256(0) : -int256(amount);
-        deltaBorrow = 0;
+        _expectedCollateralDelta = -int256(ltv.redeemCollateral(amount, _currentTestActor, _currentTestActor));
+        _expectedLtvDelta = _expectedCollateralDelta == 0 ? int256(0) : -int256(amount);
+        _expectedBorrowDelta = 0;
     }
 
     /**
-     * @dev Override of checkAndResetInvariants to add vault-specific invariant checks
+     * @dev Override of verifyAndResetInvariants to add vault-specific invariant checks
      *
      * Invariants enforced:
      * - If either future borrow or future collateral assets is nonzero, both must be nonzero (never only one is nonzero)
      * - If future borrow assets is zero, then future reward borrow assets must also be zero
      * - If future collateral assets is zero, then future reward collateral assets must also be zero
      */
-    function checkAndResetInvariants() public override {
+    function verifyAndResetInvariants() public override {
         // Call parent invariant checking
-        super.checkAndResetInvariants();
+        super.verifyAndResetInvariants();
         
         // Invariant: future borrow and collateral assets must both be zero or both be nonzero
         assertTrue(

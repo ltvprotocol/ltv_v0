@@ -2,12 +2,12 @@
 pragma solidity ^0.8.28;
 
 import {BaseTest, BaseTestInit, DummyLendingConnector, DummyOracleConnector} from "../../utils/BaseTest.t.sol";
-import "./BasicInvariantWrapper.t.sol";
+import "./BaseInvariantWrapper.t.sol";
 import "./DynamicLending.t.sol";
 import "./DynamicOracle.t.sol";
 
 /**
- * @title BasicInvariantTest
+ * @title BaseInvariantTest
  * @dev Base contract for invariant testing of the LTV protocol
  * 
  * This contract provides the foundational setup for invariant testing by:
@@ -18,7 +18,10 @@ import "./DynamicOracle.t.sol";
  * 
  * Child contracts should inherit from this and implement specific test scenarios
  */
-abstract contract BasicInvariantTest is BaseTest {
+abstract contract BaseInvariantTest is BaseTest {
+    uint256 private constant YEARLY_DEBT_INCREASE_RATE = 1000000128033583744;  // 40% yearly debt increase
+    uint256 private constant YEARLY_PRICE_INCREASE_RATE = 1000000178844623744; // 60% yearly price increase
+
     /**
      * @dev Sets up the test environment for invariant testing
      * 
@@ -68,21 +71,20 @@ abstract contract BasicInvariantTest is BaseTest {
         targetContract(wrapper());
 
         // Exclude invariant checking functions from fuzzing
-        // This prevents the fuzzer from calling checkAndResetInvariants() directly
+        // This prevents the fuzzer from calling verifyAndResetInvariants() directly
         bytes4[] memory selectors = new bytes4[](1);
-        selectors[0] = bytes4(keccak256("checkAndResetInvariants()"));
+        selectors[0] = bytes4(keccak256("verifyAndResetInvariants()"));
         excludeSelector(FuzzSelector({addr: wrapper(), selectors: selectors}));
 
         // Deploy dynamic lending protocol with 40% yearly debt increase
-        DynamicLending _lending = new MockDynamicLending(1000000128033583744);
+        DynamicLending _lending = new MockDynamicLending(YEARLY_DEBT_INCREASE_RATE);
         
-        // Deploy dynamic oracle with 60% yearly collateral price increase
         DynamicOracle _oracle = new DynamicOracle(
             address(ltv.collateralToken()),
             address(ltv.borrowToken()),
             init.collateralPrice,
             init.borrowPrice,
-            1000000178844623744  // 60% yearly increase rate
+            YEARLY_PRICE_INCREASE_RATE
         );
 
         // Replace the existing oracle and lending protocol with our dynamic mocks
@@ -104,7 +106,7 @@ abstract contract BasicInvariantTest is BaseTest {
      * It's considered that if invariant test fails here, then something's wrong.
      */
     function afterInvariant() public view virtual {
-        // assertTrue(BasicInvariantWrapper(wrapper()).maxGrowthFeeReceived());
+        assertTrue(BaseInvariantWrapper(wrapper()).maxGrowthFeeReceived());
     }
 
     /**
@@ -126,10 +128,10 @@ abstract contract BasicInvariantTest is BaseTest {
      * @return Array of 10 actor addresses
      */
     function actors() internal virtual returns (address[10] memory) {
-        address[10] memory _actors;
+        address[10] memory _testActors;
         for (uint256 i = 0; i < 10; i++) {
-            _actors[i] = address(uint160(i + 1));
+            _testActors[i] = address(uint160(i + 1));
         }
-        return _actors;
+        return _testActors;
     }
 }
