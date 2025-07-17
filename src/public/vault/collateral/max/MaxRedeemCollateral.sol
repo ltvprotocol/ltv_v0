@@ -27,6 +27,13 @@ abstract contract MaxRedeemCollateral is PreviewWithdrawCollateral, PreviewRedee
         (uint256 maxWithdrawInShares,) =
             _previewWithdrawCollateral(maxWithdrawInAssets, data.previewCollateralVaultData);
 
+        // avoid possible difference between redeem and withdraw
+        // redeem(withdraw(x) - 1) < x
+
+        if (maxWithdrawInShares > 0) {
+            maxWithdrawInShares -= 1;
+        }
+
         return maxWithdrawInShares < data.ownerBalance ? maxWithdrawInShares : data.ownerBalance;
     }
 }
