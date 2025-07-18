@@ -2,70 +2,12 @@
 pragma solidity ^0.8.28;
 
 import {BaseTest, DefaultTestData, Constants} from "../utils/BaseTest.t.sol";
+import {FutureExecutorInvariant, FutureExecutorInvariantState} from "./FutureExecutorInvariant.t.sol";
 import "../../src/utils/MulDiv.sol";
 
-contract AuctionTestCommon is BaseTest {
+contract AuctionTestCommon is BaseTest, FutureExecutorInvariant {
+    using uMulDiv for uint256;
     using sMulDiv for int256;
-
-    struct AuctionState {
-        int256 futureBorrowAssets;
-        int256 futureCollateralAssets;
-        int256 futureRewardBorrowAssets;
-        int256 futureRewardCollateralAssets;
-        int256 totalCollateral;
-        int256 totalBorrow;
-    }
-
-    function getAuctionState() internal view returns (AuctionState memory) {
-        return AuctionState({
-            futureBorrowAssets: ltv.futureBorrowAssets(),
-            futureCollateralAssets: ltv.futureCollateralAssets(),
-            futureRewardBorrowAssets: ltv.futureRewardBorrowAssets(),
-            futureRewardCollateralAssets: ltv.futureRewardCollateralAssets(),
-            totalCollateral: int256(ltv.getRealCollateralAssets(true)) + ltv.futureRewardCollateralAssets()
-                + ltv.futureCollateralAssets(),
-            totalBorrow: int256(ltv.getRealBorrowAssets(true)) + ltv.futureRewardBorrowAssets() + ltv.futureBorrowAssets()
-        });
-    }
-
-    function abs(int256 a) internal pure returns (int256) {
-        return a < 0 ? -a : a;
-    }
-
-    function checkFutureExecutorProfit(AuctionState memory initialAuctionState) internal view {
-        AuctionState memory auctionState = getAuctionState();
-        int256 collateralPrice = int256(oracle.getAssetPrice(address(collateralToken)));
-        int256 borrowPrice = int256(oracle.getAssetPrice(address(borrowToken)));
-
-        int256 oldReward = (initialAuctionState.futureBorrowAssets + initialAuctionState.futureRewardBorrowAssets)
-            - (initialAuctionState.futureCollateralAssets + initialAuctionState.futureRewardCollateralAssets).mulDivUp(
-                collateralPrice, borrowPrice
-            );
-
-        int256 newReward = (auctionState.futureBorrowAssets + auctionState.futureRewardBorrowAssets)
-            - (auctionState.futureCollateralAssets + auctionState.futureRewardCollateralAssets).mulDivDown(
-                collateralPrice, borrowPrice
-            );
-
-        assertGe(oldReward, 0, "oldReward is not positive");
-
-        assertGe(newReward, 0, "newReward is not positive");
-
-        assertGe(
-            abs(initialAuctionState.futureBorrowAssets) * newReward, abs(auctionState.futureBorrowAssets) * oldReward
-        );
-
-        // if futureBorrowAssets or futureCollateralAssets is 0, then the other one has to be 0 too
-        assertTrue(
-            (auctionState.futureBorrowAssets != 0 && auctionState.futureCollateralAssets != 0)
-                || (
-                    auctionState.futureBorrowAssets == 0 && auctionState.futureCollateralAssets == 0
-                        && auctionState.futureRewardBorrowAssets == 0 && auctionState.futureRewardCollateralAssets == 0
-                )
-        );
-
-        assertEq(auctionState.totalCollateral, initialAuctionState.totalCollateral);
-    }
 
     function prepareUser(address user) public {
         deal(address(collateralToken), user, type(uint256).max);

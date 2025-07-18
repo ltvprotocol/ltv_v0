@@ -45,7 +45,7 @@ abstract contract ExecuteLowLevelRebalanceCollateral is
         int256 max = maxLowLevelRebalanceCollateral(
             // using deposit real collateral assets since it overestimate collateral assets, so max value will be smaller
             MaxLowLevelRebalanceCollateralStateData({
-                realCollateralAssets: state.previewLowLevelRebalanceState.depositRealBorrowAssets,
+                realCollateralAssets: state.previewLowLevelRebalanceState.depositRealCollateralAssets,
                 targetLTV: state.previewLowLevelRebalanceState.targetLTV,
                 collateralPrice: state
                     .previewLowLevelRebalanceState

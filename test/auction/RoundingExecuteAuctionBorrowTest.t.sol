@@ -3,6 +3,7 @@ pragma solidity ^0.8.28;
 
 import {AuctionTestCommon, DefaultTestData, Constants} from "./AuctionTestCommon.t.sol";
 import {IOracleConnector} from "../../src/interfaces/IOracleConnector.sol";
+import {ILTV} from "../../src/interfaces/ILTV.sol";
 
 contract RoundingExecuteAuctionBorrowTest is AuctionTestCommon {
     function test_executeAuctionBorrowWithdrawAuctionRounding1Down(DefaultTestData memory data, address user)
@@ -18,11 +19,11 @@ contract RoundingExecuteAuctionBorrowTest is AuctionTestCommon {
         vm.startPrank(user);
         deal(address(borrowToken), user, type(uint256).max);
         borrowToken.approve(address(ltv), type(uint256).max);
-        AuctionState memory initialAuctionState = getAuctionState();
+        cacheFutureExecutorInvariantState(ILTV(address(ltv)));
         ltv.executeAuctionBorrow(4444);
         int256 futureBorrowAfter = ltv.futureBorrowAssets();
         assertEq(futureBorrowAfter, futureBorrowBefore + 4454);
-        checkFutureExecutorProfit(initialAuctionState);
+        _checkFutureExecutorInvariantWithCachedState(ILTV(address(ltv)));
     }
 
     function test_executeAuctionBorrowWithdrawAuctionRounding4Down(DefaultTestData memory data, address user)
@@ -40,7 +41,7 @@ contract RoundingExecuteAuctionBorrowTest is AuctionTestCommon {
         vm.startPrank(user);
         deal(address(borrowToken), user, type(uint256).max);
         borrowToken.approve(address(ltv), type(uint256).max);
-        AuctionState memory initialAuctionState = getAuctionState();
+        cacheFutureExecutorInvariantState(ILTV(address(ltv)));
         ltv.executeAuctionBorrow(4443);
         int256 expectedDeltaFutureBorrow = 4453;
         int256 futureBorrowAfter = ltv.futureBorrowAssets();
@@ -48,7 +49,7 @@ contract RoundingExecuteAuctionBorrowTest is AuctionTestCommon {
         assertEq(futureBorrowAfter, futureBorrowBefore + expectedDeltaFutureBorrow);
         assertEq(futureCollateralAfter, futureCollateralBefore + 2226);
 
-        checkFutureExecutorProfit(initialAuctionState);
+        _checkFutureExecutorInvariantWithCachedState(ILTV(address(ltv)));
     }
 
     function test_executeAuctionBorrowWithdrawAuctionRounding6Down() public {
@@ -79,7 +80,7 @@ contract RoundingExecuteAuctionBorrowTest is AuctionTestCommon {
         deal(address(collateralToken), user, type(uint256).max);
         collateralToken.approve(address(ltv), type(uint256).max);
 
-        AuctionState memory initialAuctionState = getAuctionState();
+        cacheFutureExecutorInvariantState(ILTV(address(ltv)));
 
         ltv.executeAuctionBorrow(-int256(uint256(executionAmount)));
 
@@ -88,7 +89,7 @@ contract RoundingExecuteAuctionBorrowTest is AuctionTestCommon {
         // no rounding here, deltaFutureBorrow has to be equal to deltaRealBorrow or to full auction size
         assertTrue(futureBorrowAfter == futureBorrowBefore - int256(uint256(executionAmount)) || futureBorrowAfter == 0);
 
-        checkFutureExecutorProfit(initialAuctionState);
+        _checkFutureExecutorInvariantWithCachedState(ILTV(address(ltv)));
     }
 
     function test_executeAuctionBorrowDepositAuctionRounding4Down(DefaultTestData memory data, address user)
@@ -107,7 +108,7 @@ contract RoundingExecuteAuctionBorrowTest is AuctionTestCommon {
         deal(address(collateralToken), user, type(uint256).max);
         collateralToken.approve(address(ltv), type(uint256).max);
 
-        AuctionState memory initialAuctionState = getAuctionState();
+        cacheFutureExecutorInvariantState(ILTV(address(ltv)));
 
         ltv.executeAuctionBorrow(-4443);
 
@@ -115,7 +116,7 @@ contract RoundingExecuteAuctionBorrowTest is AuctionTestCommon {
 
         assertEq(futureCollateralAfter, futureCollateralBefore - 2222);
 
-        checkFutureExecutorProfit(initialAuctionState);
+        _checkFutureExecutorInvariantWithCachedState(ILTV(address(ltv)));
     }
 
     function test_executeAuctionBorrowDepositAuctionRounding6Down(DefaultTestData memory data, address user)
@@ -134,13 +135,13 @@ contract RoundingExecuteAuctionBorrowTest is AuctionTestCommon {
         deal(address(collateralToken), user, type(uint256).max);
         collateralToken.approve(address(ltv), type(uint256).max);
 
-        AuctionState memory initialAuctionState = getAuctionState();
+        cacheFutureExecutorInvariantState(ILTV(address(ltv)));
 
         ltv.executeAuctionBorrow(-4443);
 
         assertEq(ltv.futureRewardCollateralAssets(), initialFutureRewardCollateral + 22);
 
-        checkFutureExecutorProfit(initialAuctionState);
+        _checkFutureExecutorInvariantWithCachedState(ILTV(address(ltv)));
     }
 
     function test_executeAuctionBorrowDepositAuctionRounding8Down(DefaultTestData memory data, address user)
@@ -157,12 +158,12 @@ contract RoundingExecuteAuctionBorrowTest is AuctionTestCommon {
         deal(address(collateralToken), user, 2222);
         collateralToken.approve(address(ltv), 2222);
 
-        AuctionState memory initialAuctionState = getAuctionState();
+        cacheFutureExecutorInvariantState(ILTV(address(ltv)));
 
         ltv.executeAuctionBorrow(-4443);
 
         assertEq(collateralToken.balanceOf(user), 5);
 
-        checkFutureExecutorProfit(initialAuctionState);
+        _checkFutureExecutorInvariantWithCachedState(ILTV(address(ltv)));
     }
 }
