@@ -12,11 +12,11 @@ import "./utils/BaseTest.t.sol";
 contract SharePriceOnStaticVaultTestPositiveAuction is BaseTest {
     // Point where case changes from cebc to ceccb
     uint256 private constant CASE_CHANGE_POSITIVE_AUCTION_SHARES_POINT = 4004000;
-    
+
     // Point where the positive pricing bonus becomes zero. At this point bonus from
     // cebc case fully dissapears because of payments for ceccb case.
     uint256 private constant ZERO_REWARD_POSITIVE_AUCTION_SHARES_POINT = 4204000;
-    
+
     // Number of test iterations to run within a 10-second timeframe
     uint256 private constant TEN_SECONDS_TEST_ITERATION_AMOUNT = 15564;
 
@@ -55,7 +55,7 @@ contract SharePriceOnStaticVaultTestPositiveAuction is BaseTest {
             zeroAddressTokens: 984016000 + 16000000 - 734000000 - 16000000 - 16_000
         });
         initializeTest(initData);
-        
+
         // Verify the 3:4 ratio relationship between collateral and borrow assets.
         // It's needed to make sure that vault configuration is correct.
         assertEq(
@@ -137,15 +137,15 @@ contract SharePriceOnStaticVaultTestPositiveAuction is BaseTest {
 
     /**
      * @dev Test the zero reward point area where withdrawal pricing bonus transitions to zero
-     * 
+     *
      * This test focuses on the critical area around 4,204,000 shares where
      * the positive pricing bonus becomes zero. The test verifies:
-     * 
+     *
      * 1. Withdrawal pricing is still favorable (assets > shares) before the zero point
      * 2. Withdrawal pricing decreases monotonically in this region
      * 3. Withdrawal pricing never drops below 1:1 (assets >= shares) before the zero point
      * 4. Withdrawal pricing drops below 1:1 immediately after the zero point
-     * 
+     *
      * This ensures a smooth transition from bonus pricing to neutral/penalty pricing
      */
     function test_zeroRewardPositiveAuctionPointArea() public positiveAuctionTest {

@@ -12,11 +12,11 @@ import "./utils/BaseTest.t.sol";
 contract SharePriceOnStaticVaultTestNegativeAuction is BaseTest {
     // Point where case changes from cebc to ceccb for negative auction
     uint256 private constant CASE_CHANGE_NEGATIVE_AUCTION_SHARES_POINT = 3_984_000;
-    
+
     // Point where the negative pricing penalty becomes zero. At this point penalty from
     // cecb case fully disappears because of payments for cecbc case.
     uint256 private constant ZERO_REWARD_NEGATIVE_AUCTION_SHARES_POINT = 4_190_000;
-    
+
     // Number of test iterations to run within a 10-second timeframe
     uint256 private constant TEN_SECONDS_TEST_ITERATION_AMOUNT = 15564;
 
@@ -46,7 +46,7 @@ contract SharePriceOnStaticVaultTestNegativeAuction is BaseTest {
             zeroAddressTokens: 1_016_000_000 + 16000000 - 765_984_000 - 16000000 - 16_000
         });
         initializeTest(initData);
-        
+
         // Verify the 3:4 ratio relationship between collateral and borrow assets.
         // It's needed to make sure that vault configuration is correct.
         assertEq(
@@ -118,15 +118,15 @@ contract SharePriceOnStaticVaultTestNegativeAuction is BaseTest {
 
     /**
      * @dev Test the zero reward point area where deposit pricing bonus transitions to zero
-     * 
+     *
      * This test focuses on the critical area around 41_200_00 assets where
      * the pricing bonus becomes zero. The test verifies:
-     * 
+     *
      * 1. Deposit pricing is still favorable (assets > shares) before the zero point
      * 2. Deposit pricing increases monotonically in this region
      * 3. Deposit pricing never exceeds 1:1 (assets <= shares) before the zero point
      * 4. Deposit pricing exceeds 1:1 immediately after the zero point
-     * 
+     *
      * This ensures a smooth transition from bonus pricing to neutral/penalty pricing
      */
     function test_zeroRewardNegativeAuctionPointArea() public negativeAuctionTest {
@@ -189,4 +189,4 @@ contract SharePriceOnStaticVaultTestNegativeAuction is BaseTest {
         // test next point decreases withdrawal pricing
         assertGt(nextPoint * caseChangePointAssets / caseChangePointShares, ltv.previewRedeem(nextPoint));
     }
-} 
+}
