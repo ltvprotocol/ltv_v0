@@ -2,6 +2,7 @@
 pragma solidity ^0.8.28;
 
 import "./AuctionTestCommon.t.sol";
+import {ILTV} from "../../src/interfaces/ILTV.sol";
 
 contract ValidValuesFuzzingExecution is AuctionTestCommon {
     function test_collateralWithdrawAuction(
@@ -10,10 +11,10 @@ contract ValidValuesFuzzingExecution is AuctionTestCommon {
         uint120 auctionSize,
         uint128 executionSize
     ) public testWithPredefinedDefaultValues(data) {
-        vm.assume(auctionSize >= 2);
+        vm.assume(auctionSize >= 3);
 
-        prepareWithdrawAuction(auctionSize, data.governor, user);
-        AuctionState memory initialAuctionState = getAuctionState();
+        prepareWithdrawAuctionWithCustomCollateralPrice(auctionSize, data.governor, user, 2_111_111_111_111_111_111);
+        cacheFutureExecutorInvariantState(ILTV(address(ltv)));
 
         deal(address(borrowToken), user, type(uint256).max);
 
@@ -22,7 +23,7 @@ contract ValidValuesFuzzingExecution is AuctionTestCommon {
         int256 deltaFutureCollateral = int256(uint256(executionSize)) % (-ltv.futureCollateralAssets()) + 1;
         ltv.executeAuctionCollateral(deltaFutureCollateral);
 
-        checkFutureExecutorProfit(initialAuctionState);
+        _checkFutureExecutorInvariantWithCachedState(ILTV(address(ltv)));
     }
 
     function test_collateralDepositAuction(
@@ -31,10 +32,10 @@ contract ValidValuesFuzzingExecution is AuctionTestCommon {
         uint120 auctionSize,
         uint128 executionSize
     ) public testWithPredefinedDefaultValues(data) {
-        vm.assume(auctionSize >= 2);
-        prepareDepositAuction(auctionSize);
+        vm.assume(auctionSize >= 3);
+        prepareDepositAuctionWithCustomCollateralPrice(auctionSize, 2_111_111_111_111_111_111, data.owner);
 
-        AuctionState memory initialAuctionState = getAuctionState();
+        cacheFutureExecutorInvariantState(ILTV(address(ltv)));
 
         deal(address(collateralToken), user, type(uint256).max);
 
@@ -44,7 +45,7 @@ contract ValidValuesFuzzingExecution is AuctionTestCommon {
             -(int256(uint256(executionSize)) % (ltv.futureCollateralAssets() + ltv.futureRewardCollateralAssets())) - 1;
         ltv.executeAuctionCollateral(deltaFutureCollateral);
 
-        checkFutureExecutorProfit(initialAuctionState);
+        _checkFutureExecutorInvariantWithCachedState(ILTV(address(ltv)));
     }
 
     function test_borrowWithdrawAuction(
@@ -53,10 +54,10 @@ contract ValidValuesFuzzingExecution is AuctionTestCommon {
         uint120 auctionSize,
         uint128 executionSize
     ) public testWithPredefinedDefaultValues(data) {
-        vm.assume(auctionSize >= 2);
+        vm.assume(auctionSize >= 3);
 
-        prepareWithdrawAuction(auctionSize, data.governor, user);
-        AuctionState memory initialAuctionState = getAuctionState();
+        prepareWithdrawAuctionWithCustomCollateralPrice(auctionSize, data.governor, user, 2_111_111_111_111_111_111);
+        cacheFutureExecutorInvariantState(ILTV(address(ltv)));
 
         deal(address(borrowToken), user, type(uint256).max);
 
@@ -66,27 +67,28 @@ contract ValidValuesFuzzingExecution is AuctionTestCommon {
             int256(uint256(executionSize)) % (-(ltv.futureBorrowAssets() + ltv.futureRewardBorrowAssets())) + 1;
         ltv.executeAuctionBorrow(deltaFutureBorrow);
 
-        checkFutureExecutorProfit(initialAuctionState);
+        _checkFutureExecutorInvariantWithCachedState(ILTV(address(ltv)));
     }
 
-    function test_borrowdDepositAuction(
+    function test_borrowDepositAuction(
         DefaultTestData memory data,
         address user,
         uint120 auctionSize,
         uint128 executionSize
     ) public testWithPredefinedDefaultValues(data) {
-        vm.assume(auctionSize >= 2);
-        prepareDepositAuction(auctionSize);
+        vm.assume(auctionSize >= 3);
+        prepareDepositAuctionWithCustomCollateralPrice(auctionSize, 2_111_111_111_111_111_111, data.owner);
 
-        AuctionState memory initialAuctionState = getAuctionState();
+        cacheFutureExecutorInvariantState(ILTV(address(ltv)));
 
         deal(address(collateralToken), user, type(uint256).max);
 
         vm.startPrank(user);
         collateralToken.approve(address(ltv), type(uint256).max);
         int256 deltaFutureBorrow = -(int256(uint256(executionSize)) % ltv.futureBorrowAssets()) - 1;
+
         ltv.executeAuctionBorrow(deltaFutureBorrow);
 
-        checkFutureExecutorProfit(initialAuctionState);
+        _checkFutureExecutorInvariantWithCachedState(ILTV(address(ltv)));
     }
 }

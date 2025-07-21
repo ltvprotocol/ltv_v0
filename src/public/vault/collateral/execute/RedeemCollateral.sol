@@ -39,8 +39,8 @@ abstract contract RedeemCollateral is
         uint256 max = _maxRedeemCollateral(data);
         require(shares <= max, ExceedsMaxRedeemCollateral(owner, shares, max));
 
-        if (owner != receiver) {
-            _spendAllowance(owner, receiver, shares);
+        if (owner != msg.sender) {
+            _spendAllowance(owner, msg.sender, shares);
         }
 
         (uint256 assets, DeltaFuture memory deltaFuture) =

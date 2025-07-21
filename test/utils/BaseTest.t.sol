@@ -21,6 +21,7 @@ import {CollateralVaultModule} from "../../src/elements/CollateralVaultModule.so
 import {BorrowVaultModule} from "../../src/elements/BorrowVaultModule.sol";
 import {LowLevelRebalanceModule} from "../../src/elements/LowLevelRebalanceModule.sol";
 import {AdministrationModule} from "../../src/elements/AdministrationModule.sol";
+import {InitializeModule} from "../../src/elements/InitializeModule.sol";
 
 import "../../src/elements/ModulesProvider.sol";
 
@@ -65,6 +66,8 @@ contract BaseTest is Test {
     IDummyOracle public oracle;
     ModulesProvider public modulesProvider;
     ConstantSlippageProvider public slippageProvider;
+    DummyOracleConnector public oracleConnector;
+    DummyLendingConnector public lendingConnector;
 
     function initializeTest(BaseTestInit memory init) internal {
         vm.assume(init.owner != address(0));
@@ -79,7 +82,7 @@ contract BaseTest is Test {
         borrowToken.initialize("Borrow", "BOR", 18);
 
         lendingProtocol = new MockDummyLending(init.owner);
-        oracle = IDummyOracle(new DummyOracle(init.owner));
+        oracle = IDummyOracle(new DummyOracle());
         slippageProvider = new ConstantSlippageProvider(init.collateralSlippage, init.borrowSlippage, init.owner);
         {
             ModulesState memory modulesState = ModulesState({
@@ -88,9 +91,12 @@ contract BaseTest is Test {
                 erc20Module: IERC20Module(address(new ERC20Module())),
                 collateralVaultModule: ICollateralVaultModule(address(new CollateralVaultModule())),
                 borrowVaultModule: IBorrowVaultModule(address(new BorrowVaultModule())),
-                lowLevelRebalanceModule: ILowLevelRebalanceModule(address(new LowLevelRebalanceModule()))
+                lowLevelRebalanceModule: ILowLevelRebalanceModule(address(new LowLevelRebalanceModule())),
+                initializeModule: IInitializeModule(address(new InitializeModule()))
             });
             modulesProvider = new ModulesProvider(modulesState);
+            oracleConnector = new DummyOracleConnector(collateralToken, borrowToken, oracle);
+            lendingConnector = new DummyLendingConnector(collateralToken, borrowToken, lendingProtocol);
 
             StateInitData memory initData = StateInitData({
                 name: "Dummy LTV",
@@ -102,26 +108,25 @@ contract BaseTest is Test {
                 maxSafeLTV: init.maxSafeLTV,
                 minProfitLTV: init.minProfitLTV,
                 targetLTV: init.targetLTV,
-                lendingConnector: new DummyLendingConnector(collateralToken, borrowToken, lendingProtocol),
-                oracleConnector: new DummyOracleConnector(collateralToken, borrowToken, oracle),
+                lendingConnector: lendingConnector,
+                oracleConnector: oracleConnector,
                 maxGrowthFee: init.maxGrowthFee,
                 maxTotalAssetsInUnderlying: init.maxTotalAssetsInUnderlying,
                 slippageProvider: slippageProvider,
                 maxDeleverageFee: init.maxDeleverageFee,
                 vaultBalanceAsLendingConnector: new VaultBalanceAsLendingConnector(collateralToken, borrowToken),
-                modules: modulesProvider,
                 owner: init.owner,
                 guardian: init.guardian,
                 governor: init.governor,
                 emergencyDeleverager: init.emergencyDeleverager,
-                callData: ""
+                lendingConnectorData: ""
             });
 
-            ltv = new DummyLTV(initData);
+            ltv = new DummyLTV();
+            ltv.initialize(initData, modulesProvider);
         }
 
         vm.startPrank(init.owner);
-        Ownable(address(lendingProtocol)).transferOwnership(address(ltv));
         oracle.setAssetPrice(address(borrowToken), init.borrowPrice);
         oracle.setAssetPrice(address(collateralToken), init.collateralPrice);
 

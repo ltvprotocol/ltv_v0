@@ -7,6 +7,7 @@ import "src/interfaces/reads/ILowLevelRebalanceModule.sol";
 import "src/interfaces/reads/IAuctionModule.sol";
 import "src/interfaces/reads/IAdministrationModule.sol";
 import "src/interfaces/reads/IERC20Module.sol";
+import "src/interfaces/reads/IInitializeModule.sol";
 
 struct ModulesState {
     IBorrowVaultModule borrowVaultModule;
@@ -15,4 +16,5 @@ struct ModulesState {
     IAuctionModule auctionModule;
     IAdministrationModule administrationModule;
     IERC20Module erc20Module;
+    IInitializeModule initializeModule;
 }

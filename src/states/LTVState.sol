@@ -72,4 +72,6 @@ abstract contract LTVState {
     address public governor;
     address public guardian;
     address public emergencyDeleverager;
+
+    bytes internal connectorGetterData;
 }
