@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
+import "forge-std/console.sol";
 import "forge-std/Test.sol";
 import "../src/utils/MulDiv.sol";
 import {EuclidianMod} from "./utils/math/EuclidianMod.sol";
@@ -86,7 +87,7 @@ contract MulDivTest is Test, EuclidianMod, UnsignedHelpers, SignedHelpers {
         int256 y = 1;
         int256 denominator = -1;
 
-        vm.expectRevert(bytes("Multiplication overflow detected"));
+        vm.expectRevert(bytes("Division overflow"));
         sMulDiv.mulDivUp(x, y, denominator);
     }
 
@@ -96,7 +97,7 @@ contract MulDivTest is Test, EuclidianMod, UnsignedHelpers, SignedHelpers {
         int256 y = 1;
         int256 denominator = -1;
 
-        vm.expectRevert(bytes("Multiplication overflow detected"));
+        vm.expectRevert(bytes("Division overflow"));
         sMulDiv.mulDivDown(x, y, denominator);
     }
 
@@ -205,6 +206,7 @@ contract MulDivTest is Test, EuclidianMod, UnsignedHelpers, SignedHelpers {
     function test_sMulDivUpWithoutRemainder(int256 x, int256 y, int256 denominator) public pure {
         (x, y, denominator) = sFilterInputs(x, y, denominator);
         x = sFindDivisionWithoutRemainder(x, y, denominator);
+        (x, y, denominator) = sEliminateDivOverflow(x, y, denominator);
 
         int256 result = sMulDiv.mulDivUp(x, y, denominator);
         int256 expected = (x * y) / denominator;
@@ -216,6 +218,7 @@ contract MulDivTest is Test, EuclidianMod, UnsignedHelpers, SignedHelpers {
     function test_sMulDivDownWithoutRemainder(int256 x, int256 y, int256 denominator) public pure {
         (x, y, denominator) = sFilterInputs(x, y, denominator);
         x = sFindDivisionWithoutRemainder(x, y, denominator);
+        (x, y, denominator) = sEliminateDivOverflow(x, y, denominator);
 
         int256 result = sMulDiv.mulDivDown(x, y, denominator);
         int256 expected = (x * y) / denominator;

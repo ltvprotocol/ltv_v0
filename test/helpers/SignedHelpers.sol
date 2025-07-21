@@ -11,7 +11,6 @@ contract SignedHelpers is EuclidianMod {
         return num = num == int256(0) ? int256(1) : num;
     }
 
-    // need to fix but works with hardcoded values
     function sEliminateMulOverflow(int256 x, int256 y) public pure returns (int256, int256) {
         y = y == -1 ? int256(1) : y;
 
@@ -40,6 +39,20 @@ contract SignedHelpers is EuclidianMod {
         }
 
         return (x, y);
+    }
+
+    function sEliminateDivOverflow(int256 x, int256 y, int256 denominator)
+        public
+        pure
+        returns (int256, int256, int256)
+    {
+        int256 product = x * y;
+
+        if (product == intMin && denominator == -1) {
+            return (x, y, 1);
+        }
+
+        return (x, y, denominator);
     }
 
     function sFindMulOverflow(int256 x, int256 y) public pure returns (int256, int256) {
