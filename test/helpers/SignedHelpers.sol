@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "forge-std/console.sol";
 import {EuclidianMod} from "../utils/math/EuclidianMod.sol";
 
 contract SignedHelpers is EuclidianMod {
@@ -14,21 +13,6 @@ contract SignedHelpers is EuclidianMod {
 
     // need to fix but works with hardcoded values
     function sEliminateMulOverflow(int256 x, int256 y) public pure returns (int256, int256) {
-        // // one time expression that should be removed in the future
-        // if (x == intMax || y == intMax) {
-        //     return (1, 5);
-        // }
-
-        // // one time expression that should be removed in the future
-        // if (x == intMin || y == intMin) {
-        //     return (1, 5);
-        // }
-
-        // shoud be first but not works in this case
-        if ((x == intMin && y == -1) || (x == -1 && y == intMin)) {
-            return (intMin, 1);
-        }
-
         y = y == -1 ? int256(1) : y;
 
         if (x == 1 || y == 1) {
