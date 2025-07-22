@@ -42,11 +42,15 @@ abstract contract Redeem is
             _spendAllowance(owner, msg.sender, shares);
         }
 
+        if (shares == 0) {
+            revert ZeroSharesWithdraw(receiver, owner);
+        }
+
         (uint256 assetsOut, DeltaFuture memory deltaFuture) =
             _previewRedeem(shares, data.previewWithdrawBorrowVaultData);
 
         if (assetsOut == 0) {
-            return 0;
+            revert ZeroAssetsWithdraw(receiver, owner);
         }
 
         applyMaxGrowthFee(

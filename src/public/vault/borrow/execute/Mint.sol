@@ -31,10 +31,14 @@ abstract contract Mint is
         uint256 max = _maxMint(data);
         require(shares <= max, ExceedsMaxMint(receiver, shares, max));
 
+        if (shares == 0) {
+            revert ZeroSharesDeposit(receiver);
+        }
+
         (uint256 assetsOut, DeltaFuture memory deltaFuture) = _previewMint(shares, data.previewDepositBorrowVaultData);
 
         if (assetsOut == 0) {
-            return 0;
+            revert ZeroSharesDeposit(receiver);
         }
 
         borrowToken.transferFrom(msg.sender, address(this), assetsOut);

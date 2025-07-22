@@ -31,10 +31,14 @@ abstract contract Deposit is
         uint256 max = _maxDeposit(data);
         require(assets <= max, ExceedsMaxDeposit(receiver, assets, max));
 
+        if (assets == 0) {
+            revert ZeroAssetsDeposit(receiver);
+        }
+
         (uint256 shares, DeltaFuture memory deltaFuture) = _previewDeposit(assets, data.previewDepositBorrowVaultData);
 
         if (shares == 0) {
-            return 0;
+            revert ZeroSharesDeposit(receiver);
         }
 
         borrowToken.transferFrom(msg.sender, address(this), assets);

@@ -43,11 +43,15 @@ abstract contract RedeemCollateral is
             _spendAllowance(owner, msg.sender, shares);
         }
 
+        if (shares == 0) {
+            revert ZeroSharesWithdraw(receiver, owner);
+        }
+
         (uint256 assets, DeltaFuture memory deltaFuture) =
             _previewRedeemCollateral(shares, data.previewCollateralVaultData);
 
         if (assets == 0) {
-            return 0;
+            revert ZeroAssetsWithdraw(receiver, owner);
         }
 
         applyMaxGrowthFee(

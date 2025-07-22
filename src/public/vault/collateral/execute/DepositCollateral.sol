@@ -37,11 +37,15 @@ abstract contract DepositCollateral is
         uint256 max = _maxDepositCollateral(data);
         require(assets <= max, ExceedsMaxDepositCollateral(receiver, assets, max));
 
+        if (assets == 0) {
+            revert ZeroAssetsDeposit(receiver);
+        }
+
         (uint256 shares, DeltaFuture memory deltaFuture) =
             _previewDepositCollateral(assets, data.previewCollateralVaultData);
 
         if (shares == 0) {
-            return 0;
+            revert ZeroSharesDeposit(receiver);
         }
 
         collateralToken.transferFrom(msg.sender, address(this), assets);

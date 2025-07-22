@@ -37,11 +37,15 @@ abstract contract MintCollateral is
         uint256 max = _maxMintCollateral(data);
         require(shares <= max, ExceedsMaxMintCollateral(receiver, shares, max));
 
+        if (shares == 0) {
+            revert ZeroSharesDeposit(receiver);
+        }
+
         (uint256 assets, DeltaFuture memory deltaFuture) =
             _previewMintCollateral(shares, data.previewCollateralVaultData);
 
         if (assets == 0) {
-            return 0;
+            revert ZeroAssetsDeposit(receiver);
         }
 
         collateralToken.transferFrom(msg.sender, address(this), assets);
