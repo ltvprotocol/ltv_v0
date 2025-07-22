@@ -68,6 +68,7 @@ contract MaxReedemCollateralMaxSafeBorderTest is BaseTest {
         assertGe(finalAmountOfAssets, min);
 
         // This test is not perfects
+        // To avoid this stupid constant 2**13 i can remove this check and keep only prev condition
         assertLt(finalAmountOfAssets - 2 ** 13, min);
     }
 }
