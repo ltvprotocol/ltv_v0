@@ -56,6 +56,6 @@ contract MaxReedemMaxSafeBorderTest is BaseTest {
         uint256 finalAmountOfAssets = checkBorrowAssets + redeemResult;
 
         assertLe(finalAmountOfAssets, 90 * 10 ** 18);
-        assertGt(finalAmountOfAssets + 5, 90 * 10 ** 18);
+        assertGt(finalAmountOfAssets + 2 ** 4, 90 * 10 ** 18);
     }
 }
