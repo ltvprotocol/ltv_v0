@@ -7,13 +7,7 @@ contract MaxReedemMaxSafeBorderTest is BaseTest {
     address internal user;
 
     function test_maxRedeemAtMaxSafeLTVBorder(uint256 borrowAssets) public {
-        uint256 checkBorrowAssets;
-
-        if (borrowAssets > 90 * 10 ** 18) {
-            checkBorrowAssets = borrowAssets % (90 * 10 ** 18);
-        } else {
-            checkBorrowAssets = borrowAssets;
-        }
+        uint256 checkBorrowAssets = bound(borrowAssets, 0, 90 * 10 ** 18);
 
         BaseTestInit memory init = BaseTestInit({
             owner: address(1),

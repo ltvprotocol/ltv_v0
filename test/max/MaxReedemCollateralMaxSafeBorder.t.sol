@@ -9,19 +9,7 @@ contract MaxReedemCollateralMaxSafeBorderTest is BaseTest {
     function test_maxRedeemCollateralAtMaxSafeLTVBorder(uint256 collateralAssets) public {
         uint256 min = uint256((100 * (10 ** 19)) / uint256(42));
 
-        uint256 checkCollateralAssets;
-
-        if (collateralAssets > 64 * min) {
-            checkCollateralAssets = collateralAssets % 64 * min;
-        } else {
-            checkCollateralAssets = collateralAssets;
-        }
-
-        if (checkCollateralAssets < min) {
-            checkCollateralAssets = checkCollateralAssets + min;
-        } else {
-            checkCollateralAssets = checkCollateralAssets;
-        }
+        uint256 checkCollateralAssets = bound(collateralAssets, min, 64 * min);
 
         BaseTestInit memory init = BaseTestInit({
             owner: address(1),
