@@ -68,6 +68,6 @@ contract MaxReedemCollateralMaxSafeBorderTest is BaseTest {
         assertGe(finalAmountOfAssets, min);
 
         // This test is not perfects
-        assertLt(finalAmountOfAssets - 2**13, min);
+        assertLt(finalAmountOfAssets - 2 ** 13, min);
     }
 }

@@ -31,7 +31,7 @@ abstract contract MaxRedeemCollateral is PreviewWithdrawCollateral, PreviewRedee
         (uint256 maxWithdrawInShares,) =
             _previewWithdrawCollateral(maxWithdrawInAssets - 3, data.previewCollateralVaultData);
 
-        (uint256 maxWithdrawInAssetsWithDelta, ) =
+        (uint256 maxWithdrawInAssetsWithDelta,) =
             _previewRedeemCollateral(maxWithdrawInShares, data.previewCollateralVaultData);
 
         if (maxWithdrawInAssetsWithDelta > maxWithdrawInAssets) {
