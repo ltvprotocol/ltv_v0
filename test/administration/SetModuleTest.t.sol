@@ -97,7 +97,8 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
         address emergencyDeleverager
     ) public pure returns (CallWithCaller[] memory) {
         CallWithCaller[] memory calls = new CallWithCaller[](70);
-        uint256 amount = 100;
+        uint256 amount = 7000;
+        uint256 amountAuction = 100;
         uint256 i = 0;
         bytes4[] memory signatures = new bytes4[](1);
         signatures[0] = ILTV.deposit.selector;
@@ -134,10 +135,10 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
         calls[i++] = CallWithCaller(abi.encodeWithSignature("totalAssetsCollateral(bool)", true), user);
         calls[i++] = CallWithCaller(abi.encodeWithSignature("totalAssets()"), user);
         calls[i++] = CallWithCaller(abi.encodeWithSignature("totalAssets(bool)", true), user);
-        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.previewExecuteAuctionBorrow, (-int256(amount))), user);
-        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.previewExecuteAuctionCollateral, (-int256(amount))), user);
-        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.executeAuctionBorrow, (-int256(amount))), user);
-        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.executeAuctionCollateral, (-int256(amount))), user);
+        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.previewExecuteAuctionBorrow, (-int256(amountAuction))), user);
+        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.previewExecuteAuctionCollateral, (-int256(amountAuction))), user);
+        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.executeAuctionBorrow, (-int256(amountAuction))), user);
+        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.executeAuctionCollateral, (-int256(amountAuction))), user);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.executeLowLevelRebalanceBorrow, (int256(amount))), user);
         calls[i++] =
             CallWithCaller(abi.encodeCall(ILTV.executeLowLevelRebalanceBorrowHint, (int256(amount), true)), user);
