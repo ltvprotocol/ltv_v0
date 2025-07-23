@@ -14,10 +14,6 @@ contract SignedHelpers is EuclidianMod {
     function sEliminateMulOverflow(int256 x, int256 y) public pure returns (int256, int256) {
         y = y == -1 ? int256(1) : y;
 
-        if (x == 1 || y == 1) {
-            return (2, 2);
-        }
-
         int256 maxDivY = intMax / y;
 
         if (x > 0 && y > 0 && x > maxDivY) {
@@ -91,8 +87,8 @@ contract SignedHelpers is EuclidianMod {
     }
 
     function sFindDivisionWithoutRemainder(int256 x, int256 y, int256 denominator) public pure returns (int256) {
-        if (x * y % denominator != 0) {
-            return x / denominator * denominator;
+        if ((x * y) % denominator != 0) {
+            return (x / denominator) * denominator;
         }
         return x;
     }
@@ -139,7 +135,7 @@ contract SignedHelpers is EuclidianMod {
         x = x == intMax ? int256(1) : x;
         y = y == intMax ? int256(1) : y;
 
-        if (x * y % denominator == 0) {
+        if ((x * y) % denominator == 0) {
             if (x % denominator == 0 && y % denominator == 0) {
                 x = x == intMax ? x - 1 : x + 1;
                 y = y == intMax ? y - 1 : y + 1;

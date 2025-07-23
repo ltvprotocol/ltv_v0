@@ -43,7 +43,7 @@ contract UnsignedHelpers {
     }
 
     function uFindDivisionWithoutRemainder(uint256 x, uint256 y, uint256 denominator) public pure returns (uint256) {
-        if (x * y % denominator != 0) {
+        if ((x * y) % denominator != 0) {
             return x / denominator * denominator;
         }
         return x;
@@ -58,7 +58,7 @@ contract UnsignedHelpers {
             denominator = 2;
         }
 
-        if (x * y % denominator == 0) {
+        if ((x * y) % denominator == 0) {
             if (x % denominator == 0 && y % denominator == 0) {
                 x = x == uintMax ? x - 1 : x + 1;
                 y = y == uintMax ? y - 1 : y + 1;
