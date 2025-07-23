@@ -7,6 +7,7 @@ import "../../Constants.sol";
 import "src/math/CasesOperator.sol";
 import "../../utils/MulDiv.sol";
 import "src/errors/IVaultErrors.sol";
+import "forge-std/console.sol";
 
 library DeltaSharesAndDeltaRealCollateral {
     // TODO: make correct round here
@@ -93,7 +94,7 @@ library DeltaSharesAndDeltaRealCollateral {
             // in cecb case divider needs to be rounded up, since it goes to divider with sign minus, needs to be rounded down
             dividerWithOneMinusTargetLTV -= int256(int8(data.cases.cecb))
                 * data.userFutureRewardCollateral.mulDivDown(DIVIDER, data.futureCollateral);
-            // in cebc case divider nneds to be rounded down, since it goes to divider with sign minus, needs to be rounded up
+            // in cebc case divider neds to be rounded down, since it goes to divider with sign minus and protocolFutureRewardBorrow and futureCollateral have different signs, needs to be rounded up
             divider -=
                 int256(int8(data.cases.cebc)) * data.protocolFutureRewardBorrow.mulDivUp(DIVIDER, data.futureCollateral);
             // in cecb case divider needs to be rounded up, since it goes to divider with sign plus, needs to be rounded up
@@ -106,7 +107,7 @@ library DeltaSharesAndDeltaRealCollateral {
         dividerWithOneMinusTargetLTV += int256(int8(data.cases.cecbc)) * int256(data.collateralSlippage);
         dividerWithOneMinusTargetLTV += int256(int8(data.cases.cmbc)) * int256(data.collateralSlippage);
 
-        if (data.cases.cmcb + data.cases.cecbc + data.cases.ceccb != 0) {
+        if (data.cases.cmcb + data.cases.cebc + data.cases.cecbc != 0) {
             divider += dividerWithOneMinusTargetLTV.mulDivDown(
                 int256(Constants.LTV_DIVIDER - data.targetLTV), int256(Constants.LTV_DIVIDER)
             );
@@ -123,12 +124,14 @@ library DeltaSharesAndDeltaRealCollateral {
     // HODLer conflict here. So the only conflict is between depositor/withdrawer and future executor. For future executor it's better to have bigger
     // futureBorrow, so we need always round delta future borrow to the top
     // cna - dividend is 0
-    // cmcb, cebc, ceccb - deltaFutureCollateral is positive, so dividend is negative, dividend needs to be rounded up, divider needs to be rounded down
-    // cmbc, cecb, cecbc - deltaFutureCollateral is negative, so dividend is positive, dividend needs to be rounded up, divider needs to be rounded up
+    // cmcb, cebc, cecbc - deltaFutureCollateral is positive, so dividend is negative, dividend needs to be rounded up, divider needs to be rounded down
+    // cmbc, cecb, ceccb - deltaFutureCollateral is negative, so dividend is positive, dividend needs to be rounded up, divider needs to be rounded up
     function calculateDeltaFutureCollateralByDeltaSharesAndDeltaRealCollateral(
         DeltaSharesAndDeltaRealCollateralData memory data
     ) external pure returns (int256, Cases memory) {
         int256 deltaFutureCollateral = 0;
+
+        console.log("futureCollateral", data.futureCollateral);
 
         while (true) {
             int256 dividend = calculateDividentByDeltaSharesAndRealCollateral(
@@ -168,8 +171,12 @@ library DeltaSharesAndDeltaRealCollateral {
                 data.cases = CasesOperator.generateCase(data.cases.ncase + 1);
                 continue;
             }
-            // up because it's better for protocol
+            // down because it's better for protocol
             deltaFutureCollateral = dividend.mulDivDown(DIVIDER, divider);
+            console.log("deltaFutureCollateral", deltaFutureCollateral);
+            console.log("dividend", dividend);
+            console.log("divider", divider);
+            console.log("case", data.cases.ncase);
 
             bool validity =
                 CasesOperator.checkCaseDeltaFutureCollateral(data.cases, data.futureCollateral, deltaFutureCollateral);

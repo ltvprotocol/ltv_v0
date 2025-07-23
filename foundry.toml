@@ -12,3 +12,4 @@ extra_output = ["storageLayout"]
 
 [invariant]
 fail_on_revert=true
+# depth=1000
