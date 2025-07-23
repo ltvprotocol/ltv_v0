@@ -4,429 +4,214 @@ pragma solidity ^0.8.28;
 import "../utils/BaseTest.t.sol";
 
 contract AuctionsOpeningTest is BaseTest {
-    uint256 constant STEPS = 10;
+    uint256 constant STEPS = 1000;
+    uint256 constant GIVEN_AMOUNT = 1_000_000;
 
-    function initBalances(address firstUser, address secondUser) public {
-        deal(address(collateralToken), address(this), 100 ether);
-        deal(address(borrowToken), address(this), 100 ether);
+    modifier positiveAuctionTest() {
+        BaseTestInit memory initData = BaseTestInit({
+            owner: address(1),
+            guardian: address(2),
+            governor: address(3),
+            emergencyDeleverager: address(4),
+            feeCollector: address(5),
+            futureBorrow: 16_000_000,
+            futureCollateral: 16_000_000,
+            auctionReward: -16_000,
+            startAuction: 1000,
+            collateralSlippage: 10 ** 16,
+            borrowSlippage: 10 ** 16,
+            maxTotalAssetsInUnderlying: type(uint128).max,
+            collateralAssets: 984_016_000,
+            borrowAssets: 734_000_000,
+            maxSafeLTV: 9 * 10 ** 17,
+            minProfitLTV: 5 * 10 ** 17,
+            targetLTV: 75 * 10 ** 16,
+            maxGrowthFee: 2 * 10 ** 17,
+            collateralPrice: 10 ** 18,
+            borrowPrice: 10 ** 18,
+            maxDeleverageFee: 2 * 10 ** 16,
+            zeroAddressTokens: 984016000 + 16000000 - 734000000 - 16000000 - 16_000
+        });
+        initializeTest(initData);
 
-        deal(address(collateralToken), firstUser, 100 ether);
-        deal(address(borrowToken), firstUser, 100 ether);
-
-        deal(address(collateralToken), secondUser, 100 ether);
-        deal(address(borrowToken), secondUser, 100 ether);
+        // Verify the 3:4 ratio relationship between collateral and borrow assets.
+        // It's needed to make sure that vault configuration is correct.
+        assertEq(
+            (
+                int256(ltv.getRealCollateralAssets(false)) + ltv.futureCollateralAssets()
+                    + ltv.futureRewardCollateralAssets()
+            ) * 3,
+            (int256(ltv.getRealBorrowAssets(false)) + ltv.futureBorrowAssets() + ltv.futureRewardBorrowAssets()) * 4
+        );
+        vm.pauseGasMetering();
+        _;
     }
 
-    function depositAndExecuteAuction(address user) public {
-        vm.startPrank(user);
-        borrowToken.approve(address(ltv), 1 ether);
-        ltv.deposit(1 ether, user);
-        vm.stopPrank();
+    modifier negativeAuctionTest() {
+        BaseTestInit memory initData = BaseTestInit({
+            owner: address(1),
+            guardian: address(2),
+            governor: address(3),
+            emergencyDeleverager: address(4),
+            feeCollector: address(5),
+            futureBorrow: -16_000_000,
+            futureCollateral: -16_000_000,
+            auctionReward: 16_000,
+            startAuction: 1000,
+            collateralSlippage: 10 ** 16,
+            borrowSlippage: 10 ** 16,
+            maxTotalAssetsInUnderlying: type(uint128).max,
+            collateralAssets: 1_016_000_000,
+            borrowAssets: 765_984_000,
+            maxSafeLTV: 9 * 10 ** 17,
+            minProfitLTV: 5 * 10 ** 17,
+            targetLTV: 75 * 10 ** 16,
+            maxGrowthFee: 2 * 10 ** 17,
+            collateralPrice: 10 ** 18,
+            borrowPrice: 10 ** 18,
+            maxDeleverageFee: 2 * 10 ** 16,
+            zeroAddressTokens: 1_016_000_000 + 16000000 - 765_984_000 - 16000000 - 16_000
+        });
+        initializeTest(initData);
 
-        int256 futureBorrow = ltv.futureBorrowAssets();
-        uint256 amount = futureBorrow > 0 ? uint256(futureBorrow) : uint256(-futureBorrow);
-        collateralToken.approve(address(ltv), amount);
-        ltv.executeAuctionBorrow(-futureBorrow);
+        // Verify the 3:4 ratio relationship between collateral and borrow assets.
+        // It's needed to make sure that vault configuration is correct.
+        assertEq(
+            (
+                int256(ltv.getRealCollateralAssets(false)) + ltv.futureCollateralAssets()
+                    + ltv.futureRewardCollateralAssets()
+            ) * 3,
+            (int256(ltv.getRealBorrowAssets(false)) + ltv.futureBorrowAssets() + ltv.futureRewardBorrowAssets()) * 4
+        );
+        vm.pauseGasMetering();
+        _;
     }
 
-    function initTest() public returns (address, address) {
-        address firstUser = address(0x123);
-        address secondUser = address(0x321);
-        initBalances(firstUser, secondUser);
-        depositAndExecuteAuction(firstUser);
+    // take a borrow with a positive auction:
 
-        return (firstUser, secondUser);
-    }
-
-    // grows for borrow:
-
-    function checkMaxWithdrawGrowsDuringAuctionOpening(address user) public {
-        uint256 prevMaxWithdraw = ltv.maxWithdraw(user);
-        uint256 currentMaxWithdraw;
-        uint256 prevPreviewWithdraw = ltv.previewWithdraw(prevMaxWithdraw);
-        uint256 currentPreviewWithdraw;
+    function test_withdrawBecomesMoreProfitableDuringAuctionOpening() public positiveAuctionTest {
+        uint256 prevShares = ltv.previewWithdraw(GIVEN_AMOUNT);
+        uint256 currentShares;
 
         for (uint256 i = 1; i <= STEPS; i++) {
             vm.roll(block.number + 1);
 
-            currentMaxWithdraw = ltv.maxWithdraw(user);
-            assertTrue(currentMaxWithdraw > prevMaxWithdraw);
+            currentShares = ltv.previewWithdraw(GIVEN_AMOUNT);
+            // checks that each step needed less and less shares to withdraw GIVEN_AMOUNT of assets
+            assertLt(currentShares, prevShares);
 
-            currentPreviewWithdraw = ltv.previewWithdraw(currentMaxWithdraw);
-            assertTrue(prevPreviewWithdraw == currentPreviewWithdraw);
-
-            prevMaxWithdraw = currentMaxWithdraw;
-            prevPreviewWithdraw = currentPreviewWithdraw;
+            prevShares = currentShares;
         }
     }
 
-    function test_AuctionOpeningDepositWithdraw(DefaultTestData memory defaultData)
-        public
-        testWithPredefinedDefaultValues(defaultData)
-    {
-        (address firstUser, address secondUser) = initTest();
-
-        vm.startPrank(secondUser);
-        borrowToken.approve(address(ltv), 1 ether);
-        ltv.deposit(1 ether, secondUser);
-        vm.stopPrank();
-
-        checkMaxWithdrawGrowsDuringAuctionOpening(firstUser);
-    }
-
-    function test_AuctionOpeningMintWithdraw(DefaultTestData memory defaultData)
-        public
-        testWithPredefinedDefaultValues(defaultData)
-    {
-        (address firstUser, address secondUser) = initTest();
-
-        vm.startPrank(secondUser);
-        uint256 neededToMint = ltv.previewMint(1 ether);
-        borrowToken.approve(address(ltv), neededToMint);
-        ltv.mint(1 ether, secondUser);
-        vm.stopPrank();
-
-        checkMaxWithdrawGrowsDuringAuctionOpening(firstUser);
-    }
-
-    function checkPreviewRedeemGrowsDuringAuctionOpening(address user) public {
-        uint256 prevMaxRedeem = ltv.maxRedeem(user);
-        uint256 currentMaxRedeem;
-        uint256 prevPreviewRedeem = ltv.previewRedeem(prevMaxRedeem);
-        uint256 currentPreviewRedeem;
+    function test_redeemBecomesMoreProfitableDuringAuctionOpening() public positiveAuctionTest {
+        uint256 prevAssets = ltv.previewRedeem(GIVEN_AMOUNT);
+        uint256 currentAssets;
 
         for (uint256 i = 1; i <= STEPS; i++) {
             vm.roll(block.number + 1);
 
-            currentMaxRedeem = ltv.maxRedeem(user);
-            assertTrue(currentMaxRedeem == prevMaxRedeem);
+            currentAssets = ltv.previewRedeem(GIVEN_AMOUNT);
+            // checks that each step user receives more and more assets for GIVEN_AMOUNT of shares
+            assertGt(currentAssets, prevAssets);
 
-            currentPreviewRedeem = ltv.previewRedeem(currentMaxRedeem);
-            assertTrue(currentPreviewRedeem > prevPreviewRedeem);
-
-            prevMaxRedeem = currentMaxRedeem;
-            prevPreviewRedeem = currentPreviewRedeem;
+            prevAssets = currentAssets;
         }
     }
 
-    function test_AuctionOpeningDepositRedeem(DefaultTestData memory defaultData)
-        public
-        testWithPredefinedDefaultValues(defaultData)
-    {
-        (address firstUser, address secondUser) = initTest();
+    // take a collateral with a positive auction:
 
-        vm.startPrank(secondUser);
-        borrowToken.approve(address(ltv), 1 ether);
-        ltv.deposit(1 ether, secondUser);
-        vm.stopPrank();
-
-        checkPreviewRedeemGrowsDuringAuctionOpening(firstUser);
-    }
-
-    function test_AuctionOpeningMintRedeem(DefaultTestData memory defaultData)
-        public
-        testWithPredefinedDefaultValues(defaultData)
-    {
-        (address firstUser, address secondUser) = initTest();
-
-        vm.startPrank(secondUser);
-        uint256 neededToMint = ltv.previewMint(1 ether);
-        borrowToken.approve(address(ltv), neededToMint);
-        ltv.mint(1 ether, secondUser);
-        vm.stopPrank();
-
-        checkPreviewRedeemGrowsDuringAuctionOpening(firstUser);
-    }
-
-    function checkPreviewDepositGrowsDuringAuctionOpening(address user) public {
-        uint256 prevMaxDeposit = ltv.maxDeposit(user);
-        uint256 currentMaxDeposit;
-        uint256 prevPreviewDeposit = ltv.previewDeposit(prevMaxDeposit);
-        uint256 currentPreviewDeposit;
+    function test_withdrawCollateralBecomesMoreProfitableDuringAuctionOpening() public positiveAuctionTest {
+        uint256 prevShares = ltv.previewWithdrawCollateral(GIVEN_AMOUNT);
+        uint256 currentShares;
 
         for (uint256 i = 1; i <= STEPS; i++) {
             vm.roll(block.number + 1);
 
-            currentMaxDeposit = ltv.maxDeposit(user);
-            assertTrue(currentMaxDeposit == prevMaxDeposit);
+            currentShares = ltv.previewWithdrawCollateral(GIVEN_AMOUNT);
+            // checks that each step needed less and less shares to withdraw GIVEN_AMOUNT of assets
+            assertLt(currentShares, prevShares);
 
-            currentPreviewDeposit = ltv.previewDeposit(currentMaxDeposit);
-            assertTrue(currentPreviewDeposit > prevPreviewDeposit);
-
-            prevMaxDeposit = currentMaxDeposit;
-            prevPreviewDeposit = currentPreviewDeposit;
+            prevShares = currentShares;
         }
     }
 
-    function test_AuctionOpeningWithdrawDeposit(DefaultTestData memory defaultData)
-        public
-        testWithPredefinedDefaultValues(defaultData)
-    {
-        (address firstUser, address secondUser) = initTest();
-
-        vm.startPrank(firstUser);
-        uint256 maxWithdraw = ltv.maxWithdraw(firstUser);
-        ltv.withdraw(maxWithdraw, firstUser, firstUser);
-        vm.stopPrank();
-
-        checkPreviewDepositGrowsDuringAuctionOpening(secondUser);
-    }
-
-    function test_AuctionOpeningRedeemDeposit(DefaultTestData memory defaultData)
-        public
-        testWithPredefinedDefaultValues(defaultData)
-    {
-        (address firstUser, address secondUser) = initTest();
-
-        vm.startPrank(firstUser);
-        uint256 maxRedeem = ltv.maxRedeem(firstUser);
-        ltv.redeem(maxRedeem, firstUser, firstUser);
-        vm.stopPrank();
-
-        checkPreviewDepositGrowsDuringAuctionOpening(secondUser);
-    }
-
-    function checkMaxMintGrowsDuringAuctionOpening(address user) public {
-        uint256 prevMaxMint = ltv.maxMint(user);
-        uint256 currentMaxMint;
-        uint256 prevPreviewMint = ltv.previewMint(prevMaxMint);
-        uint256 currentPreviewMint;
+    function test_redeemCollateralBecomesMoreProfitableDuringAuctionOpening() public positiveAuctionTest {
+        uint256 prevAssets = ltv.previewRedeemCollateral(GIVEN_AMOUNT);
+        uint256 currentAssets;
 
         for (uint256 i = 1; i <= STEPS; i++) {
             vm.roll(block.number + 1);
 
-            currentMaxMint = ltv.maxMint(user);
-            assertTrue(currentMaxMint > prevMaxMint);
+            currentAssets = ltv.previewRedeemCollateral(GIVEN_AMOUNT);
+            // checks that each step user receives more and more assets for GIVEN_AMOUNT of shares
+            assertGt(currentAssets, prevAssets);
 
-            currentPreviewMint = ltv.previewMint(currentMaxMint);
-            assertTrue(currentPreviewMint == prevPreviewMint);
-
-            prevMaxMint = currentMaxMint;
-            prevPreviewMint = currentPreviewMint;
+            prevAssets = currentAssets;
         }
     }
 
-    function test_AuctionOpeningWithdrawMint(DefaultTestData memory defaultData)
-        public
-        testWithPredefinedDefaultValues(defaultData)
-    {
-        (address firstUser, address secondUser) = initTest();
+    // bring a borrow with a negative auction:
 
-        vm.startPrank(firstUser);
-        uint256 maxWithdraw = ltv.maxWithdraw(firstUser);
-        ltv.withdraw(maxWithdraw, firstUser, firstUser);
-        vm.stopPrank();
-
-        checkMaxMintGrowsDuringAuctionOpening(secondUser);
-    }
-
-    function test_AuctionOpeningRedeemMint(DefaultTestData memory defaultData)
-        public
-        testWithPredefinedDefaultValues(defaultData)
-    {
-        (address firstUser, address secondUser) = initTest();
-
-        vm.startPrank(firstUser);
-        uint256 maxRedeem = ltv.maxRedeem(firstUser);
-        ltv.redeem(maxRedeem, firstUser, firstUser);
-        vm.stopPrank();
-
-        checkMaxMintGrowsDuringAuctionOpening(secondUser);
-    }
-
-    // grows for collateral:
-
-    function checkMaxWithdrawCollateralGrowsDuringAuctionOpening(address user) public {
-        uint256 prevMaxWithdraw = ltv.maxWithdrawCollateral(user);
-        uint256 currentMaxWithdraw;
-        uint256 prevPreviewWithdraw = ltv.previewWithdrawCollateral(prevMaxWithdraw);
-        uint256 currentPreviewWithdraw;
+    function test_depositBecomesMoreProfitableDuringAuctionOpening() public negativeAuctionTest {
+        uint256 prevShares = ltv.previewDeposit(GIVEN_AMOUNT);
+        uint256 currentShares;
 
         for (uint256 i = 1; i <= STEPS; i++) {
             vm.roll(block.number + 1);
 
-            currentMaxWithdraw = ltv.maxWithdrawCollateral(user);
-            assertTrue(currentMaxWithdraw > prevMaxWithdraw);
+            currentShares = ltv.previewDeposit(GIVEN_AMOUNT);
+            // checks that each step user receives more and more shares for GIVEN_AMOUNT of assets
+            assertGt(currentShares, prevShares);
 
-            currentPreviewWithdraw = ltv.previewWithdrawCollateral(currentMaxWithdraw);
-            assertTrue(prevPreviewWithdraw == currentPreviewWithdraw);
-
-            prevMaxWithdraw = currentMaxWithdraw;
-            prevPreviewWithdraw = currentPreviewWithdraw;
+            prevShares = currentShares;
         }
     }
 
-    function test_AuctionOpeningDepositWithdrawCollateral(DefaultTestData memory defaultData)
-        public
-        testWithPredefinedDefaultValues(defaultData)
-    {
-        (address firstUser, address secondUser) = initTest();
-
-        vm.startPrank(secondUser);
-        borrowToken.approve(address(ltv), 1 ether);
-        ltv.deposit(1 ether, secondUser);
-        vm.stopPrank();
-
-        checkMaxWithdrawCollateralGrowsDuringAuctionOpening(firstUser);
-    }
-
-    function test_AuctionOpeningMintWithdrawCollateral(DefaultTestData memory defaultData)
-        public
-        testWithPredefinedDefaultValues(defaultData)
-    {
-        (address firstUser, address secondUser) = initTest();
-
-        vm.startPrank(secondUser);
-        uint256 neededToMint = ltv.previewMint(1 ether);
-        borrowToken.approve(address(ltv), neededToMint);
-        ltv.mint(1 ether, secondUser);
-        vm.stopPrank();
-
-        checkMaxWithdrawCollateralGrowsDuringAuctionOpening(firstUser);
-    }
-
-    function checkPreviewRedeemCollateralGrowsDuringAuctionOpening(address user) public {
-        uint256 prevMaxRedeem = ltv.maxRedeemCollateral(user);
-        uint256 currentMaxRedeem;
-        uint256 prevPreviewRedeem = ltv.previewRedeemCollateral(prevMaxRedeem);
-        uint256 currentPreviewRedeem;
+    function test_mintBecomesMoreProfitableDuringAuctionOpening() public negativeAuctionTest {
+        uint256 prevAssets = ltv.previewMint(GIVEN_AMOUNT);
+        uint256 currentAssets;
 
         for (uint256 i = 1; i <= STEPS; i++) {
             vm.roll(block.number + 1);
 
-            currentMaxRedeem = ltv.maxRedeemCollateral(user);
-            assertTrue(currentMaxRedeem == prevMaxRedeem);
+            currentAssets = ltv.previewMint(GIVEN_AMOUNT);
+            // checks that each step needed less and less assets to mint GIVEN_AMOUNT of shares
+            assertLt(currentAssets, prevAssets);
 
-            currentPreviewRedeem = ltv.previewRedeemCollateral(currentMaxRedeem);
-            assertTrue(currentPreviewRedeem > prevPreviewRedeem);
-
-            prevMaxRedeem = currentMaxRedeem;
-            prevPreviewRedeem = currentPreviewRedeem;
+            prevAssets = currentAssets;
         }
     }
 
-    function test_AuctionOpeningDepositRedeemCollateral(DefaultTestData memory defaultData)
-        public
-        testWithPredefinedDefaultValues(defaultData)
-    {
-        (address firstUser, address secondUser) = initTest();
+    // bring a collateral with a negative auction:
 
-        vm.startPrank(secondUser);
-        borrowToken.approve(address(ltv), 1 ether);
-        ltv.deposit(1 ether, secondUser);
-        vm.stopPrank();
-
-        checkPreviewRedeemCollateralGrowsDuringAuctionOpening(firstUser);
-    }
-
-    function test_AuctionOpeningMintRedeemCollateral(DefaultTestData memory defaultData)
-        public
-        testWithPredefinedDefaultValues(defaultData)
-    {
-        (address firstUser, address secondUser) = initTest();
-
-        vm.startPrank(secondUser);
-        uint256 neededToMint = ltv.previewMint(1 ether);
-        borrowToken.approve(address(ltv), neededToMint);
-        ltv.mint(1 ether, secondUser);
-        vm.stopPrank();
-
-        checkPreviewRedeemCollateralGrowsDuringAuctionOpening(firstUser);
-    }
-
-    function checkPreviewDepositCollateralGrowsDuringAuctionOpening(address user) public {
-        uint256 prevMaxDeposit = ltv.maxDepositCollateral(user);
-        uint256 currentMaxDeposit;
-        uint256 prevPreviewDeposit = ltv.previewDepositCollateral(prevMaxDeposit);
-        uint256 currentPreviewDeposit;
+    function test_depositCollateralBecomesMoreProfitableDuringAuctionOpening() public negativeAuctionTest {
+        uint256 prevShares = ltv.previewDepositCollateral(GIVEN_AMOUNT);
+        uint256 currentShares;
 
         for (uint256 i = 1; i <= STEPS; i++) {
             vm.roll(block.number + 1);
 
-            currentMaxDeposit = ltv.maxDepositCollateral(user);
-            assertTrue(currentMaxDeposit == prevMaxDeposit);
+            currentShares = ltv.previewDepositCollateral(GIVEN_AMOUNT);
+            // checks that each step user receives more and more shares for GIVEN_AMOUNT of assets
+            assertGt(currentShares, prevShares);
 
-            currentPreviewDeposit = ltv.previewDepositCollateral(currentMaxDeposit);
-            assertTrue(currentPreviewDeposit > prevPreviewDeposit);
-
-            prevMaxDeposit = currentMaxDeposit;
-            prevPreviewDeposit = currentPreviewDeposit;
+            prevShares = currentShares;
         }
     }
 
-    function test_AuctionOpeningWithdrawDepositCollateral(DefaultTestData memory defaultData)
-        public
-        testWithPredefinedDefaultValues(defaultData)
-    {
-        (address firstUser, address secondUser) = initTest();
-
-        vm.startPrank(firstUser);
-        uint256 maxWithdraw = ltv.maxWithdraw(firstUser);
-        ltv.withdraw(maxWithdraw, firstUser, firstUser);
-        vm.stopPrank();
-
-        checkPreviewDepositCollateralGrowsDuringAuctionOpening(secondUser);
-    }
-
-    function test_AuctionOpeningRedeemDepositCollateral(DefaultTestData memory defaultData)
-        public
-        testWithPredefinedDefaultValues(defaultData)
-    {
-        (address firstUser, address secondUser) = initTest();
-
-        vm.startPrank(firstUser);
-        uint256 maxRedeem = ltv.maxRedeem(firstUser);
-        ltv.redeem(maxRedeem, firstUser, firstUser);
-        vm.stopPrank();
-
-        checkPreviewDepositCollateralGrowsDuringAuctionOpening(secondUser);
-    }
-
-    function checkMaxMintCollateralGrowsDuringAuctionOpening(address user) public {
-        uint256 prevMaxMint = ltv.maxMintCollateral(user);
-        uint256 currentMaxMint;
-        uint256 prevPreviewMint = ltv.previewMintCollateral(prevMaxMint);
-        uint256 currentPreviewMint;
+    function test_mintCollateralBecomesMoreProfitableDuringAuctionOpening() public negativeAuctionTest {
+        uint256 prevAssets = ltv.previewMintCollateral(GIVEN_AMOUNT);
+        uint256 currentAssets;
 
         for (uint256 i = 1; i <= STEPS; i++) {
             vm.roll(block.number + 1);
 
-            currentMaxMint = ltv.maxMintCollateral(user);
-            assertTrue(currentMaxMint > prevMaxMint);
+            currentAssets = ltv.previewMintCollateral(GIVEN_AMOUNT);
+            // checks that each step needed less and less assets to mint GIVEN_AMOUNT of shares
+            assertLt(currentAssets, prevAssets);
 
-            currentPreviewMint = ltv.previewMintCollateral(currentMaxMint);
-            assertTrue(currentPreviewMint == prevPreviewMint);
-
-            prevMaxMint = currentMaxMint;
-            prevPreviewMint = currentPreviewMint;
+            prevAssets = currentAssets;
         }
-    }
-
-    function test_AuctionOpeningWithdrawMintCollateral(DefaultTestData memory defaultData)
-        public
-        testWithPredefinedDefaultValues(defaultData)
-    {
-        (address firstUser, address secondUser) = initTest();
-
-        vm.startPrank(firstUser);
-        uint256 maxWithdraw = ltv.maxWithdraw(firstUser);
-        ltv.withdraw(maxWithdraw, firstUser, firstUser);
-        vm.stopPrank();
-
-        checkMaxMintCollateralGrowsDuringAuctionOpening(secondUser);
-    }
-
-    function test_AuctionOpeningRedeemMintCollateral(DefaultTestData memory defaultData)
-        public
-        testWithPredefinedDefaultValues(defaultData)
-    {
-        (address firstUser, address secondUser) = initTest();
-
-        vm.startPrank(firstUser);
-        uint256 maxRedeem = ltv.maxRedeem(firstUser);
-        ltv.redeem(maxRedeem, firstUser, firstUser);
-        vm.stopPrank();
-
-        checkMaxMintCollateralGrowsDuringAuctionOpening(secondUser);
     }
 }
