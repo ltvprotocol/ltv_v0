@@ -5,7 +5,14 @@ import "../utils/BaseTest.t.sol";
 
 contract AuctionsOpeningTest is BaseTest {
     uint256 constant STEPS = 1000;
+    uint256 constant TARGET_DELTA = 4;
+    uint256 constant TOLERANCE = 2;
     uint256 constant GIVEN_AMOUNT = 1_000_000;
+
+    function assertDeltaInCorrectRange(uint256 delta) public pure {
+        assertGe(delta, TARGET_DELTA - TOLERANCE);
+        assertLe(delta, TARGET_DELTA + TOLERANCE);
+    }
 
     modifier positiveAuctionTest() {
         BaseTestInit memory initData = BaseTestInit({
@@ -100,6 +107,9 @@ contract AuctionsOpeningTest is BaseTest {
             // checks that each step needed less and less shares to withdraw GIVEN_AMOUNT of assets
             assertLt(currentShares, prevShares);
 
+            uint256 delta = prevShares - currentShares;
+            assertDeltaInCorrectRange(delta);
+
             prevShares = currentShares;
         }
     }
@@ -114,6 +124,9 @@ contract AuctionsOpeningTest is BaseTest {
             currentAssets = ltv.previewRedeem(GIVEN_AMOUNT);
             // checks that each step user receives more and more assets for GIVEN_AMOUNT of shares
             assertGt(currentAssets, prevAssets);
+
+            uint256 delta = currentAssets - prevAssets;
+            assertDeltaInCorrectRange(delta);
 
             prevAssets = currentAssets;
         }
@@ -132,6 +145,9 @@ contract AuctionsOpeningTest is BaseTest {
             // checks that each step needed less and less shares to withdraw GIVEN_AMOUNT of assets
             assertLt(currentShares, prevShares);
 
+            uint256 delta = prevShares - currentShares;
+            assertDeltaInCorrectRange(delta);
+
             prevShares = currentShares;
         }
     }
@@ -146,6 +162,9 @@ contract AuctionsOpeningTest is BaseTest {
             currentAssets = ltv.previewRedeemCollateral(GIVEN_AMOUNT);
             // checks that each step user receives more and more assets for GIVEN_AMOUNT of shares
             assertGt(currentAssets, prevAssets);
+
+            uint256 delta = currentAssets - prevAssets;
+            assertDeltaInCorrectRange(delta);
 
             prevAssets = currentAssets;
         }
@@ -164,6 +183,9 @@ contract AuctionsOpeningTest is BaseTest {
             // checks that each step user receives more and more shares for GIVEN_AMOUNT of assets
             assertGt(currentShares, prevShares);
 
+            uint256 delta = currentShares - prevShares;
+            assertDeltaInCorrectRange(delta);
+
             prevShares = currentShares;
         }
     }
@@ -178,6 +200,9 @@ contract AuctionsOpeningTest is BaseTest {
             currentAssets = ltv.previewMint(GIVEN_AMOUNT);
             // checks that each step needed less and less assets to mint GIVEN_AMOUNT of shares
             assertLt(currentAssets, prevAssets);
+
+            uint256 delta = prevAssets - currentAssets;
+            assertDeltaInCorrectRange(delta);
 
             prevAssets = currentAssets;
         }
@@ -196,6 +221,9 @@ contract AuctionsOpeningTest is BaseTest {
             // checks that each step user receives more and more shares for GIVEN_AMOUNT of assets
             assertGt(currentShares, prevShares);
 
+            uint256 delta = currentShares - prevShares;
+            assertDeltaInCorrectRange(delta);
+
             prevShares = currentShares;
         }
     }
@@ -210,6 +238,9 @@ contract AuctionsOpeningTest is BaseTest {
             currentAssets = ltv.previewMintCollateral(GIVEN_AMOUNT);
             // checks that each step needed less and less assets to mint GIVEN_AMOUNT of shares
             assertLt(currentAssets, prevAssets);
+
+            uint256 delta = prevAssets - currentAssets;
+            assertDeltaInCorrectRange(delta);
 
             prevAssets = currentAssets;
         }
