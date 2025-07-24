@@ -65,21 +65,8 @@ abstract contract BaseAuctionInvariantWrapper is BaseInvariantWrapper {
         captureInvariantState();
         _expectedBorrowDelta = -amount;
         _expectedLtvDelta = 0;
-
-        int256 temp;
-        if (_initialFutureBorrow < 0) {
-            temp = -ltv.previewExecuteAuctionCollateral(-_initialFutureCollateral);
-        }
-
         _expectedCollateralDelta = -ltv.executeAuctionBorrow(amount);
-
-        if (ltv.futureBorrowAssets() == 0) {
-            if (_initialFutureBorrow > 0) {
-                _expectedBorrowDelta = _initialFutureBorrow;
-            } else {
-                _expectedBorrowDelta = _expectedBorrowDelta >= temp ? _expectedBorrowDelta : temp;
-            }
-        }
+        
         _auctionExecuted = true;
     }
 
@@ -121,21 +108,8 @@ abstract contract BaseAuctionInvariantWrapper is BaseInvariantWrapper {
         captureInvariantState();
         _expectedCollateralDelta = -amount;
         _expectedLtvDelta = 0;
-
-        int256 temp;
-        if (_initialFutureCollateral > 0) {
-            temp = -ltv.previewExecuteAuctionBorrow(-_initialFutureBorrow);
-        }
-
         _expectedBorrowDelta = -ltv.executeAuctionCollateral(amount);
 
-        if (ltv.futureCollateralAssets() == 0) {
-            if (_initialFutureCollateral < 0) {
-                _expectedCollateralDelta = _initialFutureCollateral;
-            } else {
-                _expectedCollateralDelta = _expectedCollateralDelta <= temp ? _expectedCollateralDelta : temp;
-            }
-        }
         _auctionExecuted = true;
     }
 }

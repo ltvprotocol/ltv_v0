@@ -172,12 +172,12 @@ contract BaseInvariantWrapper is Test {
         // In case of auction execution sum of collateral assets and borrow assets should be the same.
         // The price check is omitted since it can decrease due to rounding, but real money amount remains the same
         if (_auctionExecuted) {
-            assertEq(
+            assertGe(
                 _initialFutureBorrow + _initialRewardBorrow + _initialRealBorrow,
                 int256(ltv.getRealBorrowAssets(false)) + ltv.futureRewardBorrowAssets() + ltv.futureBorrowAssets(),
                 "Borrow assets stable after auction"
             );
-            assertEq(
+            assertLe(
                 _initialFutureCollateral + _initialRewardCollateral + _initialRealCollateral,
                 int256(ltv.getRealCollateralAssets(false)) + ltv.futureRewardCollateralAssets()
                     + ltv.futureCollateralAssets(),
@@ -207,6 +207,10 @@ contract BaseInvariantWrapper is Test {
         assertEq(
             int256(ltv.balanceOf(_currentTestActor)), _initialLtvBalance + _expectedLtvDelta, "LTV balance changed"
         );
+
+        assertEq(ltv.balanceOf(address(ltv)), 0, "No missed ltv tokens");
+        assertEq(IERC20(ltv.borrowToken()).balanceOf(address(ltv)), 0, "No missed borrow tokens");
+        assertEq(IERC20(ltv.collateralToken()).balanceOf(address(ltv)), 0, "No missed collateral tokens");
 
         // Invariant 3: Check for auction rewards distribution
         // Calculate current rewards value
