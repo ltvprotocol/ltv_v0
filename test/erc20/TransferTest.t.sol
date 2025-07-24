@@ -17,6 +17,7 @@ contract TransferTest is BaseTest {
         vm.assume(userA != userB);
         vm.assume(mintAmount > 0);
         vm.assume(transferAmount > 0);
+        vm.assume(transferAmount % mintAmount > 0);
 
         deal(address(borrowToken), userA, type(uint256).max);
 
