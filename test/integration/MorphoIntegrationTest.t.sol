@@ -236,12 +236,12 @@ contract MorphoIntegrationTest is Test {
     function test_MorphoConnectorMint() public {
         vm.startPrank(user);
 
-        weth.approve(address(ltv), 1040404040404040404);
+        weth.approve(address(ltv), 1040404040404040405);
         uint256 givenBorrowTokens = ltv.mint(1 ether, user);
 
         vm.stopPrank();
 
-        assertEq(givenBorrowTokens, 1040404040404040404);
+        assertEq(givenBorrowTokens, 1040404040404040405);
     }
 
     function test_MorphoConnectorWithdraw() public {
@@ -253,7 +253,7 @@ contract MorphoIntegrationTest is Test {
         uint256 shares = ltv.withdraw(1 ether, user, user);
 
         vm.stopPrank();
-        assertEq(shares, 1 ether + 1);
+        assertEq(shares, 1 ether);
     }
 
     function test_MorphoConnectorRedeem() public {
@@ -267,7 +267,7 @@ contract MorphoIntegrationTest is Test {
         uint256 assetsReceived = ltv.redeem(1 ether, user, user);
 
         vm.stopPrank();
-        assertEq(assetsReceived, 1 ether - 1);
+        assertEq(assetsReceived, 1 ether);
     }
 
     function test_MorphoConnectorDepositCollateral() public {

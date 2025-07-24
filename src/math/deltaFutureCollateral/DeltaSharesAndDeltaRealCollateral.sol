@@ -7,7 +7,6 @@ import "../../Constants.sol";
 import "src/math/CasesOperator.sol";
 import "../../utils/MulDiv.sol";
 import "src/errors/IVaultErrors.sol";
-import "forge-std/console.sol";
 
 library DeltaSharesAndDeltaRealCollateral {
     // TODO: make correct round here
@@ -153,8 +152,6 @@ library DeltaSharesAndDeltaRealCollateral {
     ) external pure returns (int256, Cases memory) {
         int256 deltaFutureCollateral = 0;
 
-        console.log("futureCollateral", data.futureCollateral);
-
         while (true) {
             int256 dividend = calculateDividentByDeltaSharesAndRealCollateral(
                 DividendData({
@@ -200,10 +197,6 @@ library DeltaSharesAndDeltaRealCollateral {
 
             bool needToRoundUp = (data.cases.cmcb + data.cases.ceccb + data.cases.cebc == 0);
             deltaFutureCollateral = dividend.mulDiv(DIVIDER, divider, needToRoundUp);
-            console.log("deltaFutureCollateral", deltaFutureCollateral);
-            console.log("dividend", dividend);
-            console.log("divider", divider);
-            console.log("case", data.cases.ncase);
 
             bool validity =
                 CasesOperator.checkCaseDeltaFutureCollateral(data.cases, data.futureCollateral, deltaFutureCollateral);

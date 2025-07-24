@@ -179,7 +179,8 @@ contract BaseInvariantWrapper is Test {
             );
             assertEq(
                 _initialFutureCollateral + _initialRewardCollateral + _initialRealCollateral,
-                int256(ltv.getRealCollateralAssets(false)) + ltv.futureRewardCollateralAssets() + ltv.futureCollateralAssets(),
+                int256(ltv.getRealCollateralAssets(false)) + ltv.futureRewardCollateralAssets()
+                    + ltv.futureCollateralAssets(),
                 "Collateral assets stable after auction"
             );
         } else {

@@ -4,7 +4,6 @@ pragma solidity ^0.8.28;
 import "../../../src/interfaces/ILTV.sol";
 import "forge-std/interfaces/IERC20.sol";
 import {BaseInvariantWrapper} from "./BaseInvariantWrapper.t.sol";
-import "forge-std/console.sol";
 
 abstract contract BaseAuctionInvariantWrapper is BaseInvariantWrapper {
     function maxAuctionDeltaUserBorrowAssets() public view returns (int256) {
@@ -66,9 +65,6 @@ abstract contract BaseAuctionInvariantWrapper is BaseInvariantWrapper {
         captureInvariantState();
         _expectedBorrowDelta = -amount;
         _expectedLtvDelta = 0;
-
-        console.log("borrow expected borrow", _expectedBorrowDelta);
-        console.log("borrow expected collateral", _expectedCollateralDelta);
 
         int256 temp;
         if (_initialFutureBorrow < 0) {
