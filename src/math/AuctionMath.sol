@@ -133,7 +133,6 @@ library AuctionMath {
             int256 availableCollateralAssets = availableDeltaUserCollateralAssets(
                 data.futureRewardCollateralAssets, data.auctionStep, data.futureCollateralAssets
             );
-            console.log("availableCollateralAssets", availableCollateralAssets);
             deltaWithinAuctionSize = (
                 availableCollateralAssets > 0 && availableCollateralAssets >= -deltaUserCollateralAssets
             ) || (availableCollateralAssets < 0 && availableCollateralAssets <= -deltaUserCollateralAssets);
