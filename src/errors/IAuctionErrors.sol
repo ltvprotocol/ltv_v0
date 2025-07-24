@@ -10,5 +10,7 @@ interface IAuctionErrors {
     );
 
     error UnexpectedDeltaUserBorrowAssets(int256 deltaUserBorrowAssets, int256 calculatedDeltaUserBorrowAssets);
-    error UnexpectedDeltaUserCollateralAssets(int256 deltaUserCollateralAssets, int256 calculatedDeltaUserCollateralAssets);
+    error UnexpectedDeltaUserCollateralAssets(
+        int256 deltaUserCollateralAssets, int256 calculatedDeltaUserCollateralAssets
+    );
 }
