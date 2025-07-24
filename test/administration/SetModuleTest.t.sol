@@ -136,7 +136,8 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
         calls[i++] = CallWithCaller(abi.encodeWithSignature("totalAssets()"), user);
         calls[i++] = CallWithCaller(abi.encodeWithSignature("totalAssets(bool)", true), user);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.previewExecuteAuctionBorrow, (-int256(amountAuction))), user);
-        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.previewExecuteAuctionCollateral, (-int256(amountAuction))), user);
+        calls[i++] =
+            CallWithCaller(abi.encodeCall(ILTV.previewExecuteAuctionCollateral, (-int256(amountAuction))), user);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.executeAuctionBorrow, (-int256(amountAuction))), user);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.executeAuctionCollateral, (-int256(amountAuction))), user);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.executeLowLevelRebalanceBorrow, (int256(amount))), user);

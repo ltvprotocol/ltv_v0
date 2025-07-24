@@ -33,7 +33,6 @@ abstract contract RedeemCollateral is
         nonReentrant
         returns (uint256)
     {
-
         if (shares == 0) {
             revert ZeroSharesWithdraw(receiver, owner);
         }

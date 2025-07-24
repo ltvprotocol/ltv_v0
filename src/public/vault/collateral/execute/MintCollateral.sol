@@ -31,7 +31,6 @@ abstract contract MintCollateral is
         nonReentrant
         returns (uint256)
     {
-
         if (shares == 0) {
             revert ZeroSharesDeposit(receiver);
         }

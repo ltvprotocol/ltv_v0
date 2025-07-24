@@ -33,7 +33,6 @@ abstract contract WithdrawCollateral is
         nonReentrant
         returns (uint256)
     {
-
         if (assets == 0) {
             revert ZeroAssetsWithdraw(receiver, owner);
         }

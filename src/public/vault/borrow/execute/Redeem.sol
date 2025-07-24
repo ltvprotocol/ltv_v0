@@ -33,7 +33,6 @@ abstract contract Redeem is
         nonReentrant
         returns (uint256 assets)
     {
-
         if (shares == 0) {
             revert ZeroSharesWithdraw(receiver, owner);
         }
