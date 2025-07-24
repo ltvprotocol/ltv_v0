@@ -41,7 +41,9 @@ contract AuctionTestCommon is BaseTest, FutureExecutorInvariant {
         vm.startPrank(user);
         deal(address(collateralToken), user, type(uint256).max);
         collateralToken.approve(address(ltv), type(uint256).max);
-        ltv.depositCollateral(amount, user);
+        if (amount != 0) {
+            ltv.depositCollateral(amount, user);
+        }
 
         ltv.executeLowLevelRebalanceShares(0);
 
