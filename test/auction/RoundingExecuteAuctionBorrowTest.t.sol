@@ -162,7 +162,7 @@ contract RoundingExecuteAuctionBorrowTest is AuctionTestCommon {
 
         ltv.executeAuctionBorrow(-4443);
 
-        assertEq(collateralToken.balanceOf(user), 5);
+        assertEq(collateralToken.balanceOf(user), 6);
 
         _checkFutureExecutorInvariantWithCachedState(ILTV(address(ltv)));
     }

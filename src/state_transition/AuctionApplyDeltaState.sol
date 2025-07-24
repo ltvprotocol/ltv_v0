@@ -23,24 +23,41 @@ abstract contract AuctionApplyDeltaState is
         futureRewardCollateralAssets +=
             deltaState.deltaProtocolFutureRewardCollateralAssets + deltaState.deltaUserFutureRewardCollateralAssets;
 
-        if (deltaState.deltaUserBorrowAssets < 0) {
+        if (deltaState.deltaUserCollateralAssets < 0) {
             collateralToken.transferFrom(msg.sender, address(this), uint256(-deltaState.deltaUserCollateralAssets));
-            supply(
-                uint256(-(deltaState.deltaUserCollateralAssets + deltaState.deltaProtocolFutureRewardCollateralAssets))
-            );
+        }
+        int256 supplyAmount =
+            -(deltaState.deltaUserCollateralAssets + deltaState.deltaProtocolFutureRewardCollateralAssets);
+
+        if (supplyAmount > 0) {
+            supply(uint256(supplyAmount));
+        }
+
+        if (deltaState.deltaUserBorrowAssets < 0) {
             borrow(uint256(-deltaState.deltaUserBorrowAssets));
             transferBorrowToken(msg.sender, uint256(-deltaState.deltaUserBorrowAssets));
-            if (deltaState.deltaProtocolFutureRewardCollateralAssets != 0) {
-                transferCollateralToken(feeCollector, uint256(deltaState.deltaProtocolFutureRewardCollateralAssets));
-            }
-        } else if (deltaState.deltaUserBorrowAssets > 0) {
+        }
+
+        if (deltaState.deltaUserBorrowAssets > 0) {
             borrowToken.transferFrom(msg.sender, address(this), uint256(deltaState.deltaUserBorrowAssets));
-            repay(uint256(deltaState.deltaUserBorrowAssets + deltaState.deltaProtocolFutureRewardBorrowAssets));
+        }
+
+        int256 repayAmount = deltaState.deltaUserBorrowAssets + deltaState.deltaProtocolFutureRewardBorrowAssets;
+        if (repayAmount > 0) {
+            repay(uint256(repayAmount));
+        }
+
+        if (deltaState.deltaUserCollateralAssets > 0) {
             withdraw(uint256(deltaState.deltaUserCollateralAssets));
             transferCollateralToken(msg.sender, uint256(deltaState.deltaUserCollateralAssets));
-            if (deltaState.deltaProtocolFutureRewardBorrowAssets != 0) {
-                transferBorrowToken(feeCollector, uint256(-deltaState.deltaProtocolFutureRewardBorrowAssets));
-            }
+        }
+
+        if (deltaState.deltaProtocolFutureRewardCollateralAssets > 0) {
+            transferCollateralToken(feeCollector, uint256(deltaState.deltaProtocolFutureRewardCollateralAssets));
+        }
+
+        if (deltaState.deltaProtocolFutureRewardBorrowAssets < 0) {
+            transferBorrowToken(feeCollector, uint256(-deltaState.deltaProtocolFutureRewardBorrowAssets));
         }
 
         emit AuctionExecuted(msg.sender, deltaState.deltaFutureCollateralAssets, deltaState.deltaFutureBorrowAssets);

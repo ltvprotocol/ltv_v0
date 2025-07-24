@@ -20,10 +20,13 @@ library AuctionMath {
         int256 futureRewardBorrowAssets,
         int256 auctionStep
     ) private pure returns (int256) {
-        return (deltaUserBorrowAssets * int256(Constants.AMOUNT_OF_STEPS)).mulDivDown(
-            futureBorrowAssets,
-            int256(Constants.AMOUNT_OF_STEPS) * futureBorrowAssets + auctionStep * futureRewardBorrowAssets
-        );
+        int256 divider =
+            futureBorrowAssets + futureRewardBorrowAssets.mulDivUp(auctionStep, int256(Constants.AMOUNT_OF_STEPS));
+
+        if (divider == 0) {
+            return -futureBorrowAssets;
+        }
+        return (deltaUserBorrowAssets).mulDivDown(futureBorrowAssets, divider);
     }
 
     // delta future collateral needs to be rounded up to make rewards bigger for future executor
@@ -33,10 +36,13 @@ library AuctionMath {
         int256 futureRewardCollateralAssets,
         int256 auctionStep
     ) private pure returns (int256) {
-        return (deltaUserCollateralAssets * int256(Constants.AMOUNT_OF_STEPS)).mulDivUp(
-            futureCollateralAssets,
-            int256(Constants.AMOUNT_OF_STEPS) * futureCollateralAssets + auctionStep * futureRewardCollateralAssets
-        );
+        int256 divider = futureCollateralAssets
+            + futureRewardCollateralAssets.mulDivDown(auctionStep, int256(Constants.AMOUNT_OF_STEPS));
+
+        if (divider == 0) {
+            return -futureCollateralAssets;
+        }
+        return (deltaUserCollateralAssets).mulDivUp(futureCollateralAssets, divider);
     }
 
     // delta future borrow needs to be rounded up to make auction more profitable for future executor
@@ -80,7 +86,7 @@ library AuctionMath {
         int256 deltaFutureRewardBorrowAssets,
         int256 auctionStep
     ) private pure returns (int256) {
-        return deltaFutureRewardBorrowAssets.mulDivUp(auctionStep, int256(Constants.AMOUNT_OF_STEPS));
+        return deltaFutureRewardBorrowAssets.mulDivDown(auctionStep, int256(Constants.AMOUNT_OF_STEPS));
     }
 
     // Fee collector and auction executor conflict. Resolve to give more to auction executor
@@ -88,7 +94,31 @@ library AuctionMath {
         int256 deltaFutureRewardCollateralAssets,
         int256 auctionStep
     ) private pure returns (int256) {
-        return deltaFutureRewardCollateralAssets.mulDivDown(auctionStep, int256(Constants.AMOUNT_OF_STEPS));
+        return deltaFutureRewardCollateralAssets.mulDivUp(auctionStep, int256(Constants.AMOUNT_OF_STEPS));
+    }
+
+    function availableDeltaUserBorrowAssets(
+        int256 futureRewardBorrowAssets,
+        int256 auctionStep,
+        int256 futureBorrowAssets
+    ) internal pure returns (int256) {
+        int256 deltaUserRewardBorrowAssets = calculateDeltaUserFutureRewardBorrowAssetsFromDeltaFutureRewardBorrowAssets(
+            -futureRewardBorrowAssets, auctionStep
+        );
+        return futureBorrowAssets - deltaUserRewardBorrowAssets;
+    }
+
+    function availableDeltaUserCollateralAssets(
+        int256 futureRewardCollateralAssets,
+        int256 auctionStep,
+        int256 futureCollateralAssets
+    ) internal pure returns (int256) {
+        int256 userRewardCollateralAssets =
+        calculateDeltaUserFutureRewardCollateralAssetsFromDeltaFutureRewardCollateralAssets(
+            -futureRewardCollateralAssets, auctionStep
+        );
+
+        return futureCollateralAssets - userRewardCollateralAssets;
     }
 
     function calculateExecuteAuctionCollateral(int256 deltaUserCollateralAssets, AuctionData memory data)
@@ -99,7 +129,9 @@ library AuctionMath {
         bool hasOppositeSign = data.futureCollateralAssets * deltaUserCollateralAssets < 0;
         bool deltaWithinAuctionSize;
         {
-            int256 availableCollateralAssets = data.futureCollateralAssets + data.futureRewardCollateralAssets;
+            int256 availableCollateralAssets = availableDeltaUserCollateralAssets(
+                data.futureRewardCollateralAssets, data.auctionStep, data.futureCollateralAssets
+            );
             deltaWithinAuctionSize = (
                 availableCollateralAssets > 0 && availableCollateralAssets >= -deltaUserCollateralAssets
             ) || (availableCollateralAssets < 0 && availableCollateralAssets <= -deltaUserCollateralAssets);
@@ -112,44 +144,85 @@ library AuctionMath {
         );
 
         DeltaAuctionState memory deltaState;
+
         deltaState.deltaUserCollateralAssets = deltaUserCollateralAssets;
-        deltaState.deltaFutureCollateralAssets = calculateDeltaFutureCollateralAssetsFromDeltaUserCollateralAssets(
-            deltaState.deltaUserCollateralAssets,
-            data.futureCollateralAssets,
-            data.futureRewardCollateralAssets,
-            data.auctionStep
-        );
 
-        deltaState.deltaFutureBorrowAssets = calculateDeltaFutureBorrowAssetsFromDeltaFutureCollateralAssets(
-            deltaState.deltaFutureCollateralAssets, data.futureBorrowAssets, data.futureCollateralAssets
-        );
+        // in case of negative auction rewards are in borrow
+        if (deltaUserCollateralAssets > 0) {
+            deltaState.deltaFutureCollateralAssets = deltaUserCollateralAssets;
+            deltaState.deltaFutureBorrowAssets = calculateDeltaFutureBorrowAssetsFromDeltaFutureCollateralAssets(
+                deltaState.deltaFutureCollateralAssets, data.futureBorrowAssets, data.futureCollateralAssets
+            );
 
-        if (deltaState.deltaFutureBorrowAssets == -data.futureBorrowAssets) {
-            deltaState.deltaFutureCollateralAssets = -data.futureCollateralAssets;
+            if (deltaState.deltaFutureBorrowAssets == -data.futureBorrowAssets) {
+                deltaState.deltaFutureCollateralAssets = -data.futureCollateralAssets;
+                deltaState.deltaUserCollateralAssets = deltaState.deltaFutureCollateralAssets;
+            }
+
+            int256 deltaFutureRewardBorrowAssets = calculateDeltaFutureRewardBorrowAssetsFromDeltaFutureBorrowAssets(
+                deltaState.deltaFutureBorrowAssets, data.futureBorrowAssets, data.futureRewardBorrowAssets
+            );
+
+            deltaState.deltaUserFutureRewardBorrowAssets =
+            calculateDeltaUserFutureRewardBorrowAssetsFromDeltaFutureRewardBorrowAssets(
+                deltaFutureRewardBorrowAssets, data.auctionStep
+            );
+
+            deltaState.deltaProtocolFutureRewardBorrowAssets =
+                deltaFutureRewardBorrowAssets - deltaState.deltaUserFutureRewardBorrowAssets;
+
+            deltaState.deltaUserBorrowAssets =
+                deltaState.deltaFutureBorrowAssets + deltaState.deltaUserFutureRewardBorrowAssets;
+        } else {
+            deltaState.deltaFutureCollateralAssets = calculateDeltaFutureCollateralAssetsFromDeltaUserCollateralAssets(
+                deltaState.deltaUserCollateralAssets,
+                data.futureCollateralAssets,
+                data.futureRewardCollateralAssets,
+                data.auctionStep
+            );
+
+            deltaState.deltaFutureBorrowAssets = calculateDeltaFutureBorrowAssetsFromDeltaFutureCollateralAssets(
+                deltaState.deltaFutureCollateralAssets, data.futureBorrowAssets, data.futureCollateralAssets
+            );
+            deltaState.deltaUserBorrowAssets = deltaState.deltaFutureBorrowAssets;
+
+            if (
+                deltaState.deltaFutureBorrowAssets == -data.futureBorrowAssets
+                    && deltaState.deltaFutureCollateralAssets != -data.futureCollateralAssets
+            ) {
+                deltaState.deltaFutureCollateralAssets = -data.futureCollateralAssets;
+
+                int256 deltaFutureRewardCollateralAssets =
+                calculateDeltaFutureRewardCollateralAssetsFromDeltaFutureCollateralAssets(
+                    deltaState.deltaFutureCollateralAssets,
+                    data.futureCollateralAssets,
+                    data.futureRewardCollateralAssets
+                );
+                deltaState.deltaUserFutureRewardCollateralAssets =
+                calculateDeltaUserFutureRewardCollateralAssetsFromDeltaFutureRewardCollateralAssets(
+                    deltaFutureRewardCollateralAssets, data.auctionStep
+                );
+
+                deltaState.deltaProtocolFutureRewardCollateralAssets =
+                    deltaFutureRewardCollateralAssets - deltaState.deltaUserFutureRewardCollateralAssets;
+
+                deltaState.deltaUserCollateralAssets =
+                    deltaState.deltaFutureCollateralAssets + deltaState.deltaUserFutureRewardCollateralAssets;
+            } else {
+                int256 deltaFutureRewardCollateralAssets =
+                calculateDeltaFutureRewardCollateralAssetsFromDeltaFutureCollateralAssets(
+                    deltaState.deltaFutureCollateralAssets,
+                    data.futureCollateralAssets,
+                    data.futureRewardCollateralAssets
+                );
+
+                deltaState.deltaUserFutureRewardCollateralAssets =
+                    deltaState.deltaUserCollateralAssets - deltaState.deltaFutureCollateralAssets;
+
+                deltaState.deltaProtocolFutureRewardCollateralAssets =
+                    deltaFutureRewardCollateralAssets - deltaState.deltaUserFutureRewardCollateralAssets;
+            }
         }
-
-        int256 deltaFutureRewardBorrowAssets = calculateDeltaFutureRewardBorrowAssetsFromDeltaFutureBorrowAssets(
-            deltaState.deltaFutureBorrowAssets, data.futureBorrowAssets, data.futureRewardBorrowAssets
-        );
-        int256 deltaFutureRewardCollateralAssets =
-        calculateDeltaFutureRewardCollateralAssetsFromDeltaFutureCollateralAssets(
-            deltaState.deltaFutureCollateralAssets, data.futureCollateralAssets, data.futureRewardCollateralAssets
-        );
-
-        deltaState.deltaUserFutureRewardBorrowAssets =
-        calculateDeltaUserFutureRewardBorrowAssetsFromDeltaFutureRewardBorrowAssets(
-            deltaFutureRewardBorrowAssets, data.auctionStep
-        );
-        deltaState.deltaUserFutureRewardCollateralAssets =
-            deltaState.deltaUserCollateralAssets - deltaState.deltaFutureCollateralAssets;
-
-        deltaState.deltaUserBorrowAssets =
-            deltaState.deltaFutureBorrowAssets + deltaState.deltaUserFutureRewardBorrowAssets;
-
-        deltaState.deltaProtocolFutureRewardBorrowAssets =
-            deltaFutureRewardBorrowAssets - deltaState.deltaUserFutureRewardBorrowAssets;
-        deltaState.deltaProtocolFutureRewardCollateralAssets =
-            deltaFutureRewardCollateralAssets - deltaState.deltaUserFutureRewardCollateralAssets;
 
         return deltaState;
     }
@@ -162,7 +235,8 @@ library AuctionMath {
         bool hasOppositeSign = data.futureBorrowAssets * deltaUserBorrowAssets < 0;
         bool deltaWithinAuctionSize;
         {
-            int256 availableBorrowAssets = data.futureBorrowAssets + data.futureRewardBorrowAssets;
+            int256 availableBorrowAssets =
+                availableDeltaUserBorrowAssets(data.futureRewardBorrowAssets, data.auctionStep, data.futureBorrowAssets);
             deltaWithinAuctionSize = (availableBorrowAssets > 0 && availableBorrowAssets >= -deltaUserBorrowAssets)
                 || (availableBorrowAssets < 0 && availableBorrowAssets <= -deltaUserBorrowAssets);
         }
@@ -174,41 +248,73 @@ library AuctionMath {
         );
 
         DeltaAuctionState memory deltaState;
+
         deltaState.deltaUserBorrowAssets = deltaUserBorrowAssets;
-        deltaState.deltaFutureBorrowAssets = calculateDeltaFutureBorrowAssetsFromDeltaUserBorrowAssets(
-            deltaState.deltaUserBorrowAssets, data.futureBorrowAssets, data.futureRewardBorrowAssets, data.auctionStep
-        );
-        deltaState.deltaFutureCollateralAssets = calculateDeltaFutureCollateralAssetsFromDeltaFutureBorrowAssets(
-            deltaState.deltaFutureBorrowAssets, data.futureCollateralAssets, data.futureBorrowAssets
-        );
+        // in case negative auction is active, rewards are in borrow
+        if (deltaUserBorrowAssets > 0) {
+            deltaState.deltaFutureBorrowAssets = calculateDeltaFutureBorrowAssetsFromDeltaUserBorrowAssets(
+                deltaState.deltaUserBorrowAssets,
+                data.futureBorrowAssets,
+                data.futureRewardBorrowAssets,
+                data.auctionStep
+            );
 
-        if (deltaState.deltaFutureCollateralAssets == -data.futureCollateralAssets) {
-            deltaState.deltaFutureBorrowAssets = -data.futureBorrowAssets;
+            deltaState.deltaFutureCollateralAssets = calculateDeltaFutureCollateralAssetsFromDeltaFutureBorrowAssets(
+                deltaState.deltaFutureBorrowAssets, data.futureCollateralAssets, data.futureBorrowAssets
+            );
+            deltaState.deltaUserCollateralAssets = deltaState.deltaFutureCollateralAssets;
+
+            if (
+                deltaState.deltaFutureCollateralAssets == -data.futureCollateralAssets
+                    && deltaState.deltaFutureBorrowAssets != -data.futureBorrowAssets
+            ) {
+                deltaState.deltaFutureBorrowAssets = -data.futureBorrowAssets;
+                int256 deltaFutureRewardBorrowAssets = calculateDeltaFutureRewardBorrowAssetsFromDeltaFutureBorrowAssets(
+                    deltaState.deltaFutureBorrowAssets, data.futureBorrowAssets, data.futureRewardBorrowAssets
+                );
+                deltaState.deltaUserFutureRewardBorrowAssets =
+                calculateDeltaUserFutureRewardBorrowAssetsFromDeltaFutureRewardBorrowAssets(
+                    deltaFutureRewardBorrowAssets, data.auctionStep
+                );
+                deltaState.deltaProtocolFutureRewardBorrowAssets =
+                    deltaFutureRewardBorrowAssets - deltaState.deltaUserFutureRewardBorrowAssets;
+                deltaState.deltaUserBorrowAssets =
+                    deltaState.deltaFutureBorrowAssets + deltaState.deltaUserFutureRewardBorrowAssets;
+            } else {
+                int256 deltaFutureRewardBorrowAssets = calculateDeltaFutureRewardBorrowAssetsFromDeltaFutureBorrowAssets(
+                    deltaState.deltaFutureBorrowAssets, data.futureBorrowAssets, data.futureRewardBorrowAssets
+                );
+                deltaState.deltaUserFutureRewardBorrowAssets =
+                    deltaState.deltaUserBorrowAssets - deltaState.deltaFutureBorrowAssets;
+                deltaState.deltaProtocolFutureRewardBorrowAssets =
+                    deltaFutureRewardBorrowAssets - deltaState.deltaUserFutureRewardBorrowAssets;
+            }
+        } else {
+            deltaState.deltaFutureBorrowAssets = deltaUserBorrowAssets;
+            deltaState.deltaFutureCollateralAssets = calculateDeltaFutureCollateralAssetsFromDeltaFutureBorrowAssets(
+                deltaState.deltaFutureBorrowAssets, data.futureCollateralAssets, data.futureBorrowAssets
+            );
+
+            if (deltaState.deltaFutureCollateralAssets == -data.futureCollateralAssets) {
+                deltaState.deltaFutureBorrowAssets = -data.futureBorrowAssets;
+                deltaState.deltaUserBorrowAssets = deltaState.deltaFutureBorrowAssets;
+            }
+
+            int256 deltaFutureRewardCollateralAssets =
+            calculateDeltaFutureRewardCollateralAssetsFromDeltaFutureCollateralAssets(
+                deltaState.deltaFutureCollateralAssets, data.futureCollateralAssets, data.futureRewardCollateralAssets
+            );
+            deltaState.deltaUserFutureRewardCollateralAssets =
+            calculateDeltaUserFutureRewardCollateralAssetsFromDeltaFutureRewardCollateralAssets(
+                deltaFutureRewardCollateralAssets, data.auctionStep
+            );
+
+            deltaState.deltaProtocolFutureRewardCollateralAssets =
+                deltaFutureRewardCollateralAssets - deltaState.deltaUserFutureRewardCollateralAssets;
+
+            deltaState.deltaUserCollateralAssets =
+                deltaState.deltaFutureCollateralAssets + deltaState.deltaUserFutureRewardCollateralAssets;
         }
-
-        int256 deltaFutureRewardBorrowAssets = calculateDeltaFutureRewardBorrowAssetsFromDeltaFutureBorrowAssets(
-            deltaState.deltaFutureBorrowAssets, data.futureBorrowAssets, data.futureRewardBorrowAssets
-        );
-
-        int256 deltaFutureRewardCollateralAssets =
-        calculateDeltaFutureRewardCollateralAssetsFromDeltaFutureCollateralAssets(
-            deltaState.deltaFutureCollateralAssets, data.futureCollateralAssets, data.futureRewardCollateralAssets
-        );
-
-        deltaState.deltaUserFutureRewardCollateralAssets =
-        calculateDeltaUserFutureRewardCollateralAssetsFromDeltaFutureRewardCollateralAssets(
-            deltaFutureRewardCollateralAssets, data.auctionStep
-        );
-        deltaState.deltaUserFutureRewardBorrowAssets =
-            deltaState.deltaUserBorrowAssets - deltaState.deltaFutureBorrowAssets;
-
-        deltaState.deltaUserCollateralAssets =
-            deltaState.deltaFutureCollateralAssets + deltaState.deltaUserFutureRewardCollateralAssets;
-
-        deltaState.deltaProtocolFutureRewardBorrowAssets =
-            deltaFutureRewardBorrowAssets - deltaState.deltaUserFutureRewardBorrowAssets;
-        deltaState.deltaProtocolFutureRewardCollateralAssets =
-            deltaFutureRewardCollateralAssets - deltaState.deltaUserFutureRewardCollateralAssets;
 
         return deltaState;
     }
