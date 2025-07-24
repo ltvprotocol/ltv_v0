@@ -66,7 +66,7 @@ abstract contract BaseAuctionInvariantWrapper is BaseInvariantWrapper {
         _expectedBorrowDelta = -amount;
         _expectedLtvDelta = 0;
         _expectedCollateralDelta = -ltv.executeAuctionBorrow(amount);
-        
+
         _auctionExecuted = true;
     }
 
