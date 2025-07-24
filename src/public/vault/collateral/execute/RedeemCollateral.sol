@@ -33,6 +33,11 @@ abstract contract RedeemCollateral is
         nonReentrant
         returns (uint256)
     {
+
+        if (shares == 0) {
+            revert ZeroSharesWithdraw(receiver, owner);
+        }
+
         MaxWithdrawRedeemCollateralVaultState memory state = maxWithdrawRedeemCollateralVaultState(owner);
         MaxWithdrawRedeemCollateralVaultData memory data =
             maxWithdrawRedeemCollateralVaultStateToMaxWithdrawRedeemCollateralVaultData(state);
@@ -43,15 +48,15 @@ abstract contract RedeemCollateral is
             _spendAllowance(owner, msg.sender, shares);
         }
 
-        if (shares == 0) {
-            revert ZeroSharesWithdraw(receiver, owner);
-        }
-
         (uint256 assets, DeltaFuture memory deltaFuture) =
             _previewRedeemCollateral(shares, data.previewCollateralVaultData);
 
         if (assets == 0) {
-            revert ZeroAssetsWithdraw(receiver, owner);
+            _burn(owner, shares);
+
+            emit Withdraw(msg.sender, receiver, owner, 0, shares);
+
+            return 0;
         }
 
         applyMaxGrowthFee(

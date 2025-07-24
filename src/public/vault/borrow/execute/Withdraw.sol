@@ -33,6 +33,10 @@ abstract contract Withdraw is
         nonReentrant
         returns (uint256)
     {
+        if (assets == 0) {
+            revert ZeroAssetsWithdraw(receiver, owner);
+        }
+
         MaxWithdrawRedeemBorrowVaultState memory state = maxWithdrawRedeemBorrowVaultState(owner);
         MaxWithdrawRedeemBorrowVaultData memory data = maxWithdrawRedeemStateToData(state);
         uint256 max = _maxWithdraw(data);
@@ -44,13 +48,7 @@ abstract contract Withdraw is
             _spendAllowance(owner, msg.sender, shares);
         }
 
-        if (assets == 0) {
-            revert ZeroAssetsWithdraw(receiver, owner);
-        }
-
-        if (shares == 0) {
-            revert ZeroSharesWithdraw(receiver, owner);
-        }
+        require(shares != 0);
 
         applyMaxGrowthFee(
             data.previewWithdrawBorrowVaultData.supplyAfterFee, data.previewWithdrawBorrowVaultData.withdrawTotalAssets

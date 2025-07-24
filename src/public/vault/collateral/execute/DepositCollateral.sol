@@ -31,24 +31,28 @@ abstract contract DepositCollateral is
         nonReentrant
         returns (uint256)
     {
+
+        if (assets == 0) {
+            revert ZeroAssetsDeposit(receiver);
+        }
+
         MaxDepositMintCollateralVaultState memory state = maxDepositMintCollateralVaultState();
         MaxDepositMintCollateralVaultData memory data =
             maxDepositMintCollateralVaultStateToMaxDepositMintCollateralVaultData(state);
         uint256 max = _maxDepositCollateral(data);
         require(assets <= max, ExceedsMaxDepositCollateral(receiver, assets, max));
 
-        if (assets == 0) {
-            revert ZeroAssetsDeposit(receiver);
-        }
-
         (uint256 shares, DeltaFuture memory deltaFuture) =
             _previewDepositCollateral(assets, data.previewCollateralVaultData);
 
-        if (shares == 0) {
-            revert ZeroSharesDeposit(receiver);
-        }
-
         collateralToken.transferFrom(msg.sender, address(this), assets);
+
+        if (shares == 0) {
+            
+            emit Deposit(msg.sender, receiver, assets, shares);
+
+            return 0;
+        }
 
         applyMaxGrowthFee(
             data.previewCollateralVaultData.supplyAfterFee, data.previewCollateralVaultData.withdrawTotalAssets

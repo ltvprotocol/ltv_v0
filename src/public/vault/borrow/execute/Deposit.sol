@@ -26,22 +26,27 @@ abstract contract Deposit is
     using uMulDiv for uint256;
 
     function deposit(uint256 assets, address receiver) external isFunctionAllowed nonReentrant returns (uint256) {
-        MaxDepositMintBorrowVaultState memory state = maxDepositMintBorrowVaultState();
-        MaxDepositMintBorrowVaultData memory data = maxDepositMintStateToData(state);
-        uint256 max = _maxDeposit(data);
-        require(assets <= max, ExceedsMaxDeposit(receiver, assets, max));
 
         if (assets == 0) {
             revert ZeroAssetsDeposit(receiver);
         }
 
+        MaxDepositMintBorrowVaultState memory state = maxDepositMintBorrowVaultState();
+        MaxDepositMintBorrowVaultData memory data = maxDepositMintStateToData(state);
+        uint256 max = _maxDeposit(data);
+        require(assets <= max, ExceedsMaxDeposit(receiver, assets, max));
+
         (uint256 shares, DeltaFuture memory deltaFuture) = _previewDeposit(assets, data.previewDepositBorrowVaultData);
 
-        if (shares == 0) {
-            revert ZeroSharesDeposit(receiver);
-        }
-
         borrowToken.transferFrom(msg.sender, address(this), assets);
+
+        if (shares == 0) {
+                    
+            emit Deposit(msg.sender, receiver, assets, 0);
+
+            return 0;
+
+        }
 
         applyMaxGrowthFee(
             data.previewDepositBorrowVaultData.supplyAfterFee, data.previewDepositBorrowVaultData.withdrawTotalAssets
