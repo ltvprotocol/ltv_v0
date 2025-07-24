@@ -156,7 +156,6 @@ library AuctionMath {
 
             if (deltaState.deltaFutureBorrowAssets == -data.futureBorrowAssets) {
                 deltaState.deltaFutureCollateralAssets = -data.futureCollateralAssets;
-                deltaState.deltaUserCollateralAssets = deltaState.deltaFutureCollateralAssets;
             }
 
             int256 deltaFutureRewardBorrowAssets = calculateDeltaFutureRewardBorrowAssetsFromDeltaFutureBorrowAssets(
@@ -205,9 +204,6 @@ library AuctionMath {
 
                 deltaState.deltaProtocolFutureRewardCollateralAssets =
                     deltaFutureRewardCollateralAssets - deltaState.deltaUserFutureRewardCollateralAssets;
-
-                deltaState.deltaUserCollateralAssets =
-                    deltaState.deltaFutureCollateralAssets + deltaState.deltaUserFutureRewardCollateralAssets;
             } else {
                 int256 deltaFutureRewardCollateralAssets =
                 calculateDeltaFutureRewardCollateralAssetsFromDeltaFutureCollateralAssets(
@@ -223,6 +219,15 @@ library AuctionMath {
                     deltaFutureRewardCollateralAssets - deltaState.deltaUserFutureRewardCollateralAssets;
             }
         }
+
+        require(
+            deltaState.deltaUserCollateralAssets
+                <= deltaState.deltaFutureCollateralAssets + deltaState.deltaUserFutureRewardCollateralAssets,
+            IAuctionErrors.UnexpectedDeltaUserCollateralAssets(
+                deltaState.deltaUserCollateralAssets,
+                deltaState.deltaFutureCollateralAssets + deltaState.deltaUserFutureRewardCollateralAssets
+            )
+        );
 
         return deltaState;
     }
@@ -278,8 +283,6 @@ library AuctionMath {
                 );
                 deltaState.deltaProtocolFutureRewardBorrowAssets =
                     deltaFutureRewardBorrowAssets - deltaState.deltaUserFutureRewardBorrowAssets;
-                deltaState.deltaUserBorrowAssets =
-                    deltaState.deltaFutureBorrowAssets + deltaState.deltaUserFutureRewardBorrowAssets;
             } else {
                 int256 deltaFutureRewardBorrowAssets = calculateDeltaFutureRewardBorrowAssetsFromDeltaFutureBorrowAssets(
                     deltaState.deltaFutureBorrowAssets, data.futureBorrowAssets, data.futureRewardBorrowAssets
@@ -297,7 +300,6 @@ library AuctionMath {
 
             if (deltaState.deltaFutureCollateralAssets == -data.futureCollateralAssets) {
                 deltaState.deltaFutureBorrowAssets = -data.futureBorrowAssets;
-                deltaState.deltaUserBorrowAssets = deltaState.deltaFutureBorrowAssets;
             }
 
             int256 deltaFutureRewardCollateralAssets =
@@ -315,6 +317,15 @@ library AuctionMath {
             deltaState.deltaUserCollateralAssets =
                 deltaState.deltaFutureCollateralAssets + deltaState.deltaUserFutureRewardCollateralAssets;
         }
+
+        require(
+            deltaState.deltaUserBorrowAssets
+                >= deltaState.deltaFutureBorrowAssets + deltaState.deltaUserFutureRewardBorrowAssets,
+            IAuctionErrors.UnexpectedDeltaUserBorrowAssets(
+                deltaState.deltaUserBorrowAssets,
+                deltaState.deltaFutureBorrowAssets + deltaState.deltaUserFutureRewardBorrowAssets
+            )
+        );
 
         return deltaState;
     }
