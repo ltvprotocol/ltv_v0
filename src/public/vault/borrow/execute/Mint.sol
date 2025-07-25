@@ -26,6 +26,10 @@ abstract contract Mint is
     using uMulDiv for uint256;
 
     function mint(uint256 shares, address receiver) external isFunctionAllowed nonReentrant returns (uint256 assets) {
+        if (shares == 0) {
+            revert ZeroSharesDeposit(receiver);
+        }
+
         MaxDepositMintBorrowVaultState memory state = maxDepositMintBorrowVaultState();
         MaxDepositMintBorrowVaultData memory data = maxDepositMintStateToData(state);
         uint256 max = _maxMint(data);
@@ -33,9 +37,7 @@ abstract contract Mint is
 
         (uint256 assetsOut, DeltaFuture memory deltaFuture) = _previewMint(shares, data.previewDepositBorrowVaultData);
 
-        if (assetsOut == 0) {
-            return 0;
-        }
+        require(assetsOut != 0);
 
         borrowToken.transferFrom(msg.sender, address(this), assetsOut);
 

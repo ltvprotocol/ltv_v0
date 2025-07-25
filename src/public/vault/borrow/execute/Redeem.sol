@@ -33,6 +33,10 @@ abstract contract Redeem is
         nonReentrant
         returns (uint256 assets)
     {
+        if (shares == 0) {
+            revert ZeroSharesWithdraw(receiver, owner);
+        }
+
         MaxWithdrawRedeemBorrowVaultState memory state = maxWithdrawRedeemBorrowVaultState(owner);
         MaxWithdrawRedeemBorrowVaultData memory data = maxWithdrawRedeemStateToData(state);
         uint256 max = _maxRedeem(data);
@@ -46,6 +50,10 @@ abstract contract Redeem is
             _previewRedeem(shares, data.previewWithdrawBorrowVaultData);
 
         if (assetsOut == 0) {
+            _burn(owner, shares);
+
+            emit Withdraw(msg.sender, receiver, owner, 0, shares);
+
             return 0;
         }
 

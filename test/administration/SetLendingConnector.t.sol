@@ -67,7 +67,7 @@ contract SetLendingConnectorTest is BaseTest {
         ltv.setLendingConnector(address(mockLendingConnector));
 
         vm.expectRevert(UnexpectedMockGetRealCollateralAssets.selector);
-        ltv.deposit(0, address(this));
+        ltv.deposit(1, address(this));
 
         vm.stopPrank();
     }

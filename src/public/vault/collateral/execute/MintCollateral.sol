@@ -31,6 +31,10 @@ abstract contract MintCollateral is
         nonReentrant
         returns (uint256)
     {
+        if (shares == 0) {
+            revert ZeroSharesDeposit(receiver);
+        }
+
         MaxDepositMintCollateralVaultState memory state = maxDepositMintCollateralVaultState();
         MaxDepositMintCollateralVaultData memory data =
             maxDepositMintCollateralVaultStateToMaxDepositMintCollateralVaultData(state);
@@ -40,9 +44,7 @@ abstract contract MintCollateral is
         (uint256 assets, DeltaFuture memory deltaFuture) =
             _previewMintCollateral(shares, data.previewCollateralVaultData);
 
-        if (assets == 0) {
-            return 0;
-        }
+        require(assets != 0);
 
         collateralToken.transferFrom(msg.sender, address(this), assets);
 
