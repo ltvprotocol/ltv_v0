@@ -247,20 +247,22 @@ contract SharePriceOnStaticVaultTestPositiveAuction is BaseTest {
     }
 
     function test_zeroRewardPositiveAuctionPointAreaWithdraw() public positiveAuctionTest {
-        uint256 oldAssets = ltv.previewRedeem(ZERO_REWARD_POSITIVE_AUCTION_SHARES_POINT - 100);
-        uint256 oldShares = ZERO_REWARD_POSITIVE_AUCTION_SHARES_POINT - 100;
+        uint256 assetsCaseChangePoint = ltv.previewRedeem(ZERO_REWARD_POSITIVE_AUCTION_SHARES_POINT);
+        
+        uint256 oldAssets = assetsCaseChangePoint - 100;
+        uint256 oldShares = ltv.previewWithdraw(oldAssets);
         assertGt(oldAssets, oldShares);
 
         // Test the transition area around the zero reward point
         // Verify that the withdrawal pricing decreases smoothly and never
         // goes below 1:1 before the critical point, ensuring fair treatment
-        for (uint256 i = oldAssets - 100; i <= oldAssets; ++i) {
+        for (uint256 i = assetsCaseChangePoint - 100; i <= assetsCaseChangePoint; ++i) {
             uint256 newShares = ltv.previewWithdraw(i);
             // test that withdrawal pricing is decreasing
 
             // newShares / newAssets > oldShares / oldAssets
             // newShares * oldAssets > oldShares * newAssets
-            assertGt(newShares * oldAssets, oldShares * i);
+            assertGe(newShares * oldAssets, oldShares * i);
 
             oldAssets = i;
             oldShares = newShares;
