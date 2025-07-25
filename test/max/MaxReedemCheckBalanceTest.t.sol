@@ -36,7 +36,7 @@ contract MaxReedemCheckBalanceTest is BaseTest {
     }
 
     function test_maxRedeemCheckBalance(uint256 amount) public {
-        uint256 checkAmount = bound(amount, 0, (5 * 10) ** 18);
+        uint256 checkAmount = bound(amount, 0, 5 * (10 ** 18));
 
         user = address(6);
         vm.prank(address(0));

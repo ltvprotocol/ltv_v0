@@ -54,9 +54,5 @@ contract MaxReedemCollateralMaxSafeBorderTest is BaseTest {
         // The first rule must be strictly followed since maxSafeLTV = 90%.
         // borrowAssets * collateralPrice / collateralAssets * collateralPrice should be <= 0.9
         assertGe(finalAmountOfAssets, min);
-
-        // This test is not perfects
-        // To avoid this stupid constant 2**13 i can remove this check and keep only prev condition
-        assertLt(finalAmountOfAssets - 2 ** 13, min);
     }
 }

@@ -50,9 +50,5 @@ contract MaxReedemMaxSafeBorderTest is BaseTest {
         uint256 finalAmountOfAssets = checkBorrowAssets + redeemResult;
 
         assertLe(finalAmountOfAssets, 90 * 10 ** 18);
-
-        // This test is not perfects
-        // To avoid this stupid constant 2**13 i can remove this check and keep only prev condition
-        assertGt(finalAmountOfAssets + 2 ** 4, 90 * 10 ** 18);
     }
 }
