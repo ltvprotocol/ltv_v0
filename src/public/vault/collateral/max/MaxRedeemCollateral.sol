@@ -24,8 +24,23 @@ abstract contract MaxRedeemCollateral is PreviewWithdrawCollateral, PreviewRedee
             Constants.ORACLE_DIVIDER, data.previewCollateralVaultData.collateralPrice
         );
 
+        if (maxWithdrawInAssets <= 3) {
+            return 0;
+        }
+
         (uint256 maxWithdrawInShares,) =
-            _previewWithdrawCollateral(maxWithdrawInAssets, data.previewCollateralVaultData);
+            _previewWithdrawCollateral(maxWithdrawInAssets - 3, data.previewCollateralVaultData);
+
+        (uint256 maxWithdrawInAssetsWithDelta,) =
+            _previewRedeemCollateral(maxWithdrawInShares, data.previewCollateralVaultData);
+
+        if (maxWithdrawInAssetsWithDelta > maxWithdrawInAssets) {
+            uint256 delta = maxWithdrawInAssetsWithDelta + 3 - maxWithdrawInAssets;
+            if (maxWithdrawInShares < 2 * delta) {
+                return 0;
+            }
+            maxWithdrawInShares = maxWithdrawInShares - 2 * delta;
+        }
 
         return maxWithdrawInShares < data.ownerBalance ? maxWithdrawInShares : data.ownerBalance;
     }
