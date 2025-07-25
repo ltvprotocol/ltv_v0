@@ -50,7 +50,5 @@ contract MaxReedemCollateralCheckBalanceTest is BaseTest {
         assertEq(maxRedeem, checkAmount);
 
         ltv.redeemCollateral(maxRedeem, user, user);
-
-        vm.stopPrank();
     }
 }
