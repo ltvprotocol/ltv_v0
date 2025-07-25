@@ -38,10 +38,11 @@ contract AuctionsOpeningTest is BaseTest {
             borrowPrice: 10 ** 18,
             maxDeleverageFee: 2 * 10 ** 16,
             zeroAddressTokens: 984016000 + 16000000 - 734000000 - 16000000 - 16_000
-            // The zero address holds the excess token balance to balance the system.
-            // This ensures the initial price of the protocol's token is 1.
-            // Computed as: collateralAssets + futureCollateral - borrowAssets - futureBorrow - auctionReward.
         });
+        // The zero address holds the excess token balance to balance the system.
+        // This ensures the initial price of the protocol's token is 1.
+        // Computed as: collateralAssets + futureCollateral - borrowAssets - futureBorrow - auctionReward.
+
         initializeTest(initData);
 
         // Verify the 3:4 ratio relationship between collateral and borrow assets.
@@ -81,10 +82,11 @@ contract AuctionsOpeningTest is BaseTest {
             borrowPrice: 10 ** 18,
             maxDeleverageFee: 2 * 10 ** 16,
             zeroAddressTokens: 1_016_000_000 + 16000000 - 765_984_000 - 16000000 - 16_000
-            // The zero address holds the excess token balance to balance the system.
-            // This ensures the initial price of the protocol's token is 1.
-            // Computed as: collateralAssets + futureCollateral - borrowAssets - futureBorrow - auctionReward.
         });
+        // The zero address holds the excess token balance to balance the system.
+        // This ensures the initial price of the protocol's token is 1.
+        // Computed as: collateralAssets + futureCollateral - borrowAssets - futureBorrow - auctionReward.
+
         initializeTest(initData);
 
         // Verify the 3:4 ratio relationship between collateral and borrow assets.
