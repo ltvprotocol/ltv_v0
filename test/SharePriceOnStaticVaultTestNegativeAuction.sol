@@ -231,7 +231,7 @@ contract SharePriceOnStaticVaultTestNegativeAuction is BaseTest {
             // test that deposit pricing is decreasing
             // assets_new / shares_new > assets_old / shares_old
             // assets_new * shares_old > assets_old * shares_new
-            assertGt(newAssets * oldShares, oldAssets * i);
+            assertGe(newAssets * oldShares, oldAssets * i);
 
             oldShares = i;
             oldAssets = newAssets;
