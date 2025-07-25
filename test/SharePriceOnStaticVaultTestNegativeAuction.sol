@@ -235,10 +235,7 @@ contract SharePriceOnStaticVaultTestNegativeAuction is BaseTest {
             initialShares = i;
             initialAssets = assets;
 
-            assertLe(assets, i); // <-- VERY VERY CAREFULLY LOOK AND THINK WHY
-                // VERY VERY CAREFULLY LOOK AND THINK WHY
-                // VERY VERY CAREFULLY LOOK AND THINK WHY
-                // VERY VERY CAREFULLY LOOK AND THINK WHY
+            assertLe(assets, i);
         }
 
         // Verify that immediately after the zero reward point,
