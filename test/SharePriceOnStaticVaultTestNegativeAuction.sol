@@ -221,15 +221,11 @@ contract SharePriceOnStaticVaultTestNegativeAuction is BaseTest {
         uint256 oldShares = zeroRewardPointShares - 100;
         uint256 oldAssets = ltv.previewMint(oldShares);
         assertGt(oldShares, oldAssets);
-        
+
         // Test the transition area around the zero reward point
         // Verify that the deposit pricing increases smoothly and never
         // goes above 1:1 before the critical point, ensuring fair treatment
-        for (
-            uint256 i = zeroRewardPointShares - 100;
-            i <= zeroRewardPointShares;
-            ++i
-        ) {
+        for (uint256 i = zeroRewardPointShares - 100; i <= zeroRewardPointShares; ++i) {
             uint256 newAssets = ltv.previewMint(i);
 
             // test that deposit pricing is decreasing

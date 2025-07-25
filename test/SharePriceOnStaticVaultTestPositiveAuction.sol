@@ -248,7 +248,7 @@ contract SharePriceOnStaticVaultTestPositiveAuction is BaseTest {
 
     function test_zeroRewardPositiveAuctionPointAreaWithdraw() public positiveAuctionTest {
         uint256 assetsCaseChangePoint = ltv.previewRedeem(ZERO_REWARD_POSITIVE_AUCTION_SHARES_POINT);
-        
+
         uint256 oldAssets = assetsCaseChangePoint - 100;
         uint256 oldShares = ltv.previewWithdraw(oldAssets);
         assertGt(oldAssets, oldShares);
