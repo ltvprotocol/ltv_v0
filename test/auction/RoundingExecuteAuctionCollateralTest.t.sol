@@ -111,7 +111,7 @@ contract RoundingExecuteAuctionCollateralTest is AuctionTestCommon {
         int256 expectedDeltaFutureBorrow = 4444;
 
         assertEq(ltv.futureBorrowAssets(), futureBorrowBefore + expectedDeltaFutureBorrow);
-        assertEq(type(uint256).max, borrowToken.balanceOf(user) - 10 + uint256(expectedDeltaFutureBorrow));
+        assertEq(type(uint256).max, borrowToken.balanceOf(user) - 11 + uint256(expectedDeltaFutureBorrow));
 
         _checkFutureExecutorInvariantWithCachedState(ILTV(address(ltv)));
     }

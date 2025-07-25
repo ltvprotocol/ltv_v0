@@ -8,4 +8,9 @@ interface IAuctionErrors {
     error NoAuctionForProvidedDeltaFutureBorrow(
         int256 futureBorrowAssets, int256 futureRewardBorrowAssets, int256 deltaUserBorrowAssets
     );
+
+    error UnexpectedDeltaUserBorrowAssets(int256 deltaUserBorrowAssets, int256 calculatedDeltaUserBorrowAssets);
+    error UnexpectedDeltaUserCollateralAssets(
+        int256 deltaUserCollateralAssets, int256 calculatedDeltaUserCollateralAssets
+    );
 }
