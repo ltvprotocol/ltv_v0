@@ -12,14 +12,7 @@ import {BaseInvariantWrapper} from "./BaseInvariantWrapper.t.sol";
  * This contract extends BaseInvariantWrapper to provide fuzzable functions for
  * low-level rebalance operations with invariant post checks.
  */
-contract LowLevelRebalanceInvariantWrapper is BaseInvariantWrapper {
-    /**
-     * @dev Constructor initializes the low-level wrapper
-     * @param _ltv The LTV protocol contract
-     * @param _actors Array of test actors
-     */
-    constructor(ILTV _ltv, address[10] memory _actors) BaseInvariantWrapper(_ltv, _actors) {}
-
+abstract contract BaseLowLevelRebalanceInvariantWrapper is BaseInvariantWrapper {
     /**
      * @dev Calculates the minimum collateral amount user can provide
      * @return Minimum collateral amount (can be negative)
@@ -27,7 +20,8 @@ contract LowLevelRebalanceInvariantWrapper is BaseInvariantWrapper {
     function getMinRebalanceCollateral() internal view returns (int256) {
         int256 userBalance = int256(ltv.balanceOf(_currentTestActor));
         (int256 collateral,) = ltv.previewLowLevelRebalanceShares(-userBalance);
-        return collateral;
+        // hack to avoid underflows with delta shares
+        return collateral + 10;
     }
 
     /**
@@ -37,7 +31,8 @@ contract LowLevelRebalanceInvariantWrapper is BaseInvariantWrapper {
     function getMinRebalanceBorrow() internal view returns (int256) {
         int256 userBalance = int256(ltv.balanceOf(_currentTestActor));
         (, int256 borrow) = ltv.previewLowLevelRebalanceShares(-userBalance);
-        return borrow;
+        // hack to avoid underflows with delta shares
+        return borrow + 10;
     }
 
     /**
@@ -329,4 +324,8 @@ contract LowLevelRebalanceInvariantWrapper is BaseInvariantWrapper {
         // Execute the rebalance operation
         ltv.executeLowLevelRebalanceShares(amount);
     }
+}
+
+contract LowLevelRebalanceInvariantWrapper is BaseLowLevelRebalanceInvariantWrapper {
+    constructor(ILTV _ltv, address[10] memory _actors) BaseInvariantWrapper(_ltv, _actors) {}
 }

@@ -82,8 +82,10 @@ contract SharePriceOnStaticVaultTestPositiveAuction is BaseTest {
                 shares,
                 i
                     - (
-                        i * PROJECTED_AUCTION_SIZE_DEPOSIT_AUCTION_MERGING_DIVIDEND
-                            / PROJECTED_AUCTION_SIZE_DEPOSIT_AUCTION_MERGING_DIVIDER + 99
+                        (
+                            i * PROJECTED_AUCTION_SIZE_DEPOSIT_AUCTION_MERGING_DIVIDEND
+                                + PROJECTED_AUCTION_SIZE_DEPOSIT_AUCTION_MERGING_DIVIDER - 1
+                        ) / PROJECTED_AUCTION_SIZE_DEPOSIT_AUCTION_MERGING_DIVIDER + 99
                     ) / 100
             );
         }
