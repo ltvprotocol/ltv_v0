@@ -311,11 +311,6 @@ contract SharePriceOnStaticVaultTestPositiveAuction is BaseTest {
         assertGt(caseChangePointAssets * 100000, caseChangePointShares * 100199);
         assertLt(caseChangePointAssets * 1000, caseChangePointShares * 1002);
 
-        // IMPORTANT IMPORTANT IMPORTANT
-        // REWRITE REWRITE REWRITE REWRITE
-        // BORDER BORDER BORDER BORDER
-        // поменял местами caseChangePointShares / caseChangePointAssets
-
         // Verify that the withdrawal pricing immediately decreases after the case change point
         uint256 nextPoint = caseChangePointAssets + 1;
         // test next point decreases withdrawal pricing
