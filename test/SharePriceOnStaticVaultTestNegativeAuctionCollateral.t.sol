@@ -91,19 +91,18 @@ contract SharePriceOnStaticVaultTestNegativeAuctionCollateral is BaseTest {
         uint256 step = CASE_CHANGE_NEGATIVE_AUCTION_ASSETS_POINT * 2 / TEN_SECONDS_TEST_ITERATION_AMOUNT;
 
         // Test that deposit pricing remains stable before the case change point
-        // for (uint256 i = 100; i < CASE_CHANGE_NEGATIVE_AUCTION_ASSETS_POINT; i += step) {
-        //     uint256 newShares = ltv.previewDepositCollateral(i);
+        for (uint256 i = 100; i < CASE_CHANGE_NEGATIVE_AUCTION_ASSETS_POINT; i += step) {
+            uint256 newShares = ltv.previewDepositCollateral(i);
 
-        //     // DELTA BETWEEN EACH NEW SHARES AND EACH NEW CALCULATED SHOULDN'T INCREASE
-        //     assertEq(i * caseChangePointShares / caseChangePointAssets, newShares);
-        // }
+            // DELTA BETWEEN EACH NEW SHARES AND EACH NEW CALCULATED SHOULDN'T INCREASE
+            assertEq(i * caseChangePointShares / caseChangePointAssets, newShares);
+        }
 
         // Test that deposit pricing decreases after the case change point
         step = (80_000_000 - CASE_CHANGE_NEGATIVE_AUCTION_ASSETS_POINT) * 2 / TEN_SECONDS_TEST_ITERATION_AMOUNT;
 
         uint256 oldAssets = caseChangePointAssets;
         uint256 oldShares = caseChangePointShares;
-
 
         // WILL FAIL BUT DON'T KNOW WHY
         for (uint256 i = CASE_CHANGE_NEGATIVE_AUCTION_ASSETS_POINT + step; i < 80_000_000; i += step) {
@@ -141,12 +140,12 @@ contract SharePriceOnStaticVaultTestNegativeAuctionCollateral is BaseTest {
         uint256 step = CASE_CHANGE_NEGATIVE_AUCTION_ASSETS_POINT * 2 / TEN_SECONDS_TEST_ITERATION_AMOUNT;
 
         // Test that deposit pricing remains stable before the case change point
-        // for (uint256 i = 100; i < CASE_CHANGE_NEGATIVE_AUCTION_ASSETS_POINT; i += step) {
-        //     uint256 newAssets = ltv.previewMintCollateral(i);
+        for (uint256 i = 100; i < CASE_CHANGE_NEGATIVE_AUCTION_ASSETS_POINT; i += step) {
+            uint256 newAssets = ltv.previewMintCollateral(i);
 
-        //     // THIS LINE FILL FAIL (100 != 99)
-        //     assertEq(i * caseChangePointAssets / caseChangePointAssets, newAssets);
-        // }
+            // THIS LINE FILL FAIL (100 != 99)
+            assertEq(i * caseChangePointAssets / caseChangePointAssets, newAssets);
+        }
 
         // Test that deposit pricing decreases after the case change point
         step = (80_000_000 - CASE_CHANGE_NEGATIVE_AUCTION_ASSETS_POINT) * 2 / TEN_SECONDS_TEST_ITERATION_AMOUNT;
@@ -172,7 +171,7 @@ contract SharePriceOnStaticVaultTestNegativeAuctionCollateral is BaseTest {
         // - Price should approach 96.1165% asymptotically
 
         // HERE NEED TO FIND CORRECT COEFFICIENT
-        
+
         // uint256 amount = 80_000_000;
         // uint256 assets = ltv.previewMintCollateral(amount);
 
@@ -242,8 +241,8 @@ contract SharePriceOnStaticVaultTestNegativeAuctionCollateral is BaseTest {
 
         // WILL FAIL
         for (
-            uint256 i = ZERO_REWARD_NEGATIVE_AUCTION_SHARES_POINT - 100; 
-            i <= ZERO_REWARD_NEGATIVE_AUCTION_SHARES_POINT; 
+            uint256 i = ZERO_REWARD_NEGATIVE_AUCTION_SHARES_POINT - 100;
+            i <= ZERO_REWARD_NEGATIVE_AUCTION_SHARES_POINT;
             ++i
         ) {
             uint256 newAssets = ltv.previewMintCollateral(i);

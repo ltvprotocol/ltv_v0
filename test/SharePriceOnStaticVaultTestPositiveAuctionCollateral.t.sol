@@ -18,15 +18,6 @@ contract SharePriceOnStaticVaultTestPositiveAuction is BaseTest {
     // Number of test iterations to run within a 10-second timeframe
     uint256 constant TEN_SECONDS_TEST_ITERATION_AMOUNT = 15564;
 
-    /**
-     * @dev For current vault state cmbc case delta future auction will be calculated as
-     * x * PROJECTED_AUCTION_SIZE_DEPOSIT_AUCTION_MERGING_DIVIDEND / PROJECTED_AUCTION_SIZE_DEPOSIT_AUCTION_MERGING_DIVIDER.
-     * To calculate projected payment, we need to divide this value by slippage precision(100) and round it up. So user will
-     * have to give as payment about 3.88349% of deposited assets
-     */
-    uint256 constant PROJECTED_AUCTION_SIZE_DEPOSIT_AUCTION_MERGING_DIVIDEND = 400;
-    uint256 constant PROJECTED_AUCTION_SIZE_DEPOSIT_AUCTION_MERGING_DIVIDER = 103;
-
     modifier positiveAuctionTest() {
         BaseTestInit memory initData = BaseTestInit({
             owner: address(1),
@@ -145,15 +136,15 @@ contract SharePriceOnStaticVaultTestPositiveAuction is BaseTest {
         uint256 step = caseChangePointAssets * 2 / TEN_SECONDS_TEST_ITERATION_AMOUNT;
 
         // Test that withdrawal pricing remains stable before the case change point
-        // for (uint256 i = 100; i < caseChangePointAssets; i += step) {
-        //     uint256 currentShares = ltv.previewWithdrawCollateral(i);
+        for (uint256 i = 100; i < caseChangePointAssets; i += step) {
+            uint256 currentShares = ltv.previewWithdrawCollateral(i);
 
-        //     // uint256 roundedUp = (i * caseChangePointShares + (caseChangePointAssets - 1)) / caseChangePointAssets;
-        //     // assertEq(roundedUp, currentShares);
+            // uint256 roundedUp = (i * caseChangePointShares + (caseChangePointAssets - 1)) / caseChangePointAssets;
+            // assertEq(roundedUp, currentShares);
 
-        //     // WILL FAIL HERE (98 != 100)
-        //     assertEq(i * caseChangePointShares / caseChangePointAssets, currentShares);
-        // }
+            // WILL FAIL HERE (98 != 100)
+            assertEq(i * caseChangePointShares / caseChangePointAssets, currentShares);
+        }
 
         // Verify the pricing bonus is within expected bounds (0.199% to 0.2%)
         // assertGt(caseChangePointAssets * 100000, caseChangePointShares * 100199);
@@ -165,21 +156,21 @@ contract SharePriceOnStaticVaultTestPositiveAuction is BaseTest {
         uint256 oldAssets = caseChangePointAssets;
         uint256 oldShares = caseChangePointShares;
 
-        // for (uint256 i = caseChangePointAssets + step; i < 80_000_000; i += step) {
-        //     uint256 newShares = ltv.previewWithdrawCollateral(i);
+        for (uint256 i = caseChangePointAssets + step; i < 80_000_000; i += step) {
+            uint256 newShares = ltv.previewWithdrawCollateral(i);
 
-        //     /*
-        //     * each next withdraw requires more shares for withdrawal
-        //     * in percentage ratio with how much the previous one required
-        //     */
+            /*
+            * each next withdraw requires more shares for withdrawal
+            * in percentage ratio with how much the previous one required
+            */
 
-        //     // newShares / newAssets > oldShares / oldAssets
-        //     // newShares * oldAssets > oldShares * newAssets
-        //     assertGt(newShares * oldAssets, oldShares * i);
+            // newShares / newAssets > oldShares / oldAssets
+            // newShares * oldAssets > oldShares * newAssets
+            assertGt(newShares * oldAssets, oldShares * i);
 
-        //     oldAssets = i;
-        //     oldShares = newShares;
-        // }
+            oldAssets = i;
+            oldShares = newShares;
+        }
 
         // Verify bounds for large withdrawals:
         // - Withdrawal pricing should not drop below 96.2% for 80M shares
@@ -253,8 +244,8 @@ contract SharePriceOnStaticVaultTestPositiveAuction is BaseTest {
 
         // EVERYTHING WILL FALL
         for (
-            uint256 i = ZERO_REWARD_POSITIVE_AUCTION_ASSETS_POINT - 100; 
-            i <= ZERO_REWARD_POSITIVE_AUCTION_ASSETS_POINT; 
+            uint256 i = ZERO_REWARD_POSITIVE_AUCTION_ASSETS_POINT - 100;
+            i <= ZERO_REWARD_POSITIVE_AUCTION_ASSETS_POINT;
             ++i
         ) {
             uint256 newShares = ltv.previewWithdrawCollateral(i);
