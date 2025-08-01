@@ -136,24 +136,25 @@ contract SharePriceOnStaticVaultTestNegativeAuctionCollateral is BaseTest {
         uint256 caseChangePointShares = CASE_CHANGE_NEGATIVE_AUCTION_SHARES_POINT;
         uint256 caseChangePointAssets = CASE_CHANGE_NEGATIVE_AUCTION_ASSETS_POINT;
 
-        uint256 step = CASE_CHANGE_NEGATIVE_AUCTION_ASSETS_POINT * 2 / TEN_SECONDS_TEST_ITERATION_AMOUNT;
+        uint256 step = CASE_CHANGE_NEGATIVE_AUCTION_SHARES_POINT * 2 / TEN_SECONDS_TEST_ITERATION_AMOUNT;
 
         // Test that deposit pricing remains stable before the case change point
-        for (uint256 i = 100; i < CASE_CHANGE_NEGATIVE_AUCTION_ASSETS_POINT; i += step) {
+        for (uint256 i = 100; i < CASE_CHANGE_NEGATIVE_AUCTION_SHARES_POINT; i += step) {
             uint256 newAssets = ltv.previewMintCollateral(i);
-            uint256 expectedAssets = i * caseChangePointAssets / caseChangePointShares;
+            uint256 expectedAssets = (i * caseChangePointAssets + caseChangePointShares - 1) / caseChangePointShares;
             uint256 delta = 1;
 
-            assertApproxEqAbs(newAssets, expectedAssets, delta);
+            // assertApproxEqAbs(newAssets, expectedAssets, delta);
+            assertEq(newAssets, expectedAssets);
         }
 
         // Test that deposit pricing decreases after the case change point
-        step = (80_000_000 - CASE_CHANGE_NEGATIVE_AUCTION_ASSETS_POINT) * 2 / TEN_SECONDS_TEST_ITERATION_AMOUNT;
+        step = (80_000_000 - CASE_CHANGE_NEGATIVE_AUCTION_SHARES_POINT) * 2 / TEN_SECONDS_TEST_ITERATION_AMOUNT;
 
         uint256 oldAssets = caseChangePointAssets;
         uint256 oldShares = caseChangePointShares;
 
-        for (uint256 i = CASE_CHANGE_NEGATIVE_AUCTION_ASSETS_POINT + step; i < 80_000_000; i += step) {
+        for (uint256 i = CASE_CHANGE_NEGATIVE_AUCTION_SHARES_POINT + step; i < 80_000_000; i += step) {
             uint256 newAssets = ltv.previewMintCollateral(i);
 
             // mint pricing is increasing each step (need more assets per share)

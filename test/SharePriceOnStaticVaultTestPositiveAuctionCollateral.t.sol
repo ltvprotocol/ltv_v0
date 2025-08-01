@@ -70,6 +70,7 @@ contract SharePriceOnStaticVaultTestPositiveAuctionCollateral is BaseTest {
             uint256 delta = 1;
 
             assertApproxEqAbs(shares, expectedShares, delta);
+            assertEq(shares, expectedShares);
         }
     }
 
@@ -252,7 +253,7 @@ contract SharePriceOnStaticVaultTestPositiveAuctionCollateral is BaseTest {
 
     function test_zeroRewardPositiveAuctionPointAreaWithdrawCollateral() public positiveAuctionTest {
         uint256 oldAssets = ZERO_REWARD_POSITIVE_AUCTION_ASSETS_POINT - 100;
-        uint256 oldShares = ZERO_REWARD_POSITIVE_AUCTION_SHARES_POINT - 100;
+        uint256 oldShares = ltv.previewWithdrawCollateral(oldAssets);
 
         // Test the transition area around the zero reward point
         // Verify that the withdrawal pricing decreases smoothly and never
