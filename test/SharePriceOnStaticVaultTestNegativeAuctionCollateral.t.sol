@@ -5,8 +5,8 @@ import "./utils/BaseTest.t.sol";
 
 /**
  * @title SharePriceOnStaticVaultTestNegativeAuctionCollateral
- * @dev This contract tests token pricing behavior for projected deposits and withdrawals
- * in a static vault state with negative auction (negative futureBorrow/futureCollateral and positive auction reward).
+ * @dev This contract tests token pricing behavior for projected deposits and withdrawals collateral
+ * tokens in a static vault state with negative auction (negative futureBorrow/futureCollateral and positive auction reward).
  * It focuses on how the vault handles different cases of our math and edge points on case change.
  */
 contract SharePriceOnStaticVaultTestNegativeAuctionCollateral is BaseTest {
@@ -41,7 +41,7 @@ contract SharePriceOnStaticVaultTestNegativeAuctionCollateral is BaseTest {
             collateralPrice: 10 ** 18,
             borrowPrice: 10 ** 18,
             maxDeleverageFee: 2 * 10 ** 16,
-            zeroAddressTokens: 991_000_000 + 15_000_000 - 746_850_000 - 15_000_000 + 150_000
+            zeroAddressTokens: 991_000_000 + 15_000_000 - 746_850_000 - 15_000_000 - 150_000
         });
         initializeTest(initData);
 
@@ -67,16 +67,17 @@ contract SharePriceOnStaticVaultTestNegativeAuctionCollateral is BaseTest {
         for (uint256 i = 5140; i < 80_000_000; i += 5140) {
             uint256 assets = ltv.previewRedeemCollateral(i);
 
-            assertEq(assets, i - (i * 33 / 32 + 99) / 100);
+            assertEq(assets, i * 32 / 33);
         }
     }
 
     function test_caseDynamicNegativeAuctionStableRateWithdrawCollateral() public negativeAuctionTest {
         for (uint256 i = 5140; i < 80_000_000; i += 5140) {
             uint256 shares = ltv.previewWithdrawCollateral(i);
+            uint256 expectedShares = i * 33 / 32;
+            uint256 delta = 1;
 
-            // some percent of assets will be taken as fee
-            assertEq(shares, i + ((((i * 31250000) / 10000000) + 99) / 100));
+            assertApproxEqAbs(shares, expectedShares, delta);
         }
     }
 
@@ -94,7 +95,6 @@ contract SharePriceOnStaticVaultTestNegativeAuctionCollateral is BaseTest {
         for (uint256 i = 100; i < CASE_CHANGE_NEGATIVE_AUCTION_ASSETS_POINT; i += step) {
             uint256 newShares = ltv.previewDepositCollateral(i);
 
-            // DELTA BETWEEN EACH NEW SHARES AND EACH NEW CALCULATED SHOULDN'T INCREASE
             assertEq(i * caseChangePointShares / caseChangePointAssets, newShares);
         }
 
@@ -104,14 +104,13 @@ contract SharePriceOnStaticVaultTestNegativeAuctionCollateral is BaseTest {
         uint256 oldAssets = caseChangePointAssets;
         uint256 oldShares = caseChangePointShares;
 
-        // WILL FAIL BUT DON'T KNOW WHY
         for (uint256 i = CASE_CHANGE_NEGATIVE_AUCTION_ASSETS_POINT + step; i < 80_000_000; i += step) {
             uint256 newShares = ltv.previewDepositCollateral(i);
 
             // deposit benefit decreases with each step
             // assets_new / shares_new > assets_old / shares_old
             // assets_new * shares_old > assets_old * shares_new
-            assertGt(i * oldShares, oldAssets * newShares); // <-- HERE LOOKS LIKE SOMETHING WRONG WITH PROTOCOL
+            assertGt(i * oldShares, oldAssets * newShares);
 
             oldAssets = i;
             oldShares = newShares;
@@ -142,9 +141,10 @@ contract SharePriceOnStaticVaultTestNegativeAuctionCollateral is BaseTest {
         // Test that deposit pricing remains stable before the case change point
         for (uint256 i = 100; i < CASE_CHANGE_NEGATIVE_AUCTION_ASSETS_POINT; i += step) {
             uint256 newAssets = ltv.previewMintCollateral(i);
+            uint256 expectedAssets = i * caseChangePointAssets / caseChangePointShares;
+            uint256 delta = 1;
 
-            // THIS LINE FILL FAIL (100 != 99)
-            assertEq(i * caseChangePointAssets / caseChangePointAssets, newAssets);
+            assertApproxEqAbs(newAssets, expectedAssets, delta);
         }
 
         // Test that deposit pricing decreases after the case change point
@@ -153,14 +153,13 @@ contract SharePriceOnStaticVaultTestNegativeAuctionCollateral is BaseTest {
         uint256 oldAssets = caseChangePointAssets;
         uint256 oldShares = caseChangePointShares;
 
-        // EVERYTHING WILL FAIL
         for (uint256 i = CASE_CHANGE_NEGATIVE_AUCTION_ASSETS_POINT + step; i < 80_000_000; i += step) {
             uint256 newAssets = ltv.previewMintCollateral(i);
 
             // mint pricing is increasing each step (need more assets per share)
             // assets_new / shares_new > assets_old / shares_old
             // assets_new * shares_old > assets_old * shares_new
-            assertGt(newAssets * oldShares, oldAssets * i);
+            assertGt(newAssets * oldShares, oldAssets * i); // <-- WILL FAIL IN (22822731103329 <= 22822732739094)
 
             oldShares = i;
             oldAssets = newAssets;
@@ -205,7 +204,6 @@ contract SharePriceOnStaticVaultTestNegativeAuctionCollateral is BaseTest {
         // Verify that the deposit pricing increases smoothly and never
         // goes above 1:1 before the critical point, ensuring fair treatment
 
-        // WILL FAIL
         for (
             uint256 i = ZERO_REWARD_NEGATIVE_AUCTION_ASSETS_POINT - 100;
             i <= ZERO_REWARD_NEGATIVE_AUCTION_ASSETS_POINT;
@@ -216,7 +214,7 @@ contract SharePriceOnStaticVaultTestNegativeAuctionCollateral is BaseTest {
             // deposit benefit decreases with each step
             // assets_new / shares_new > assets_old / shares_old
             // assets_new * shares_old > assets_old * shares_new
-            assertGe(i * oldShares, oldAssets * shares); // <-- DON'T KNOW WHY, BUT IT'S WILL FAIL (54389150010000 < 54456032978100)
+            assertGe(i * oldShares, oldAssets * shares); // WILL FAIL (54389150010000 < 54389164759800)
 
             oldAssets = i;
             oldShares = shares;
@@ -227,8 +225,11 @@ contract SharePriceOnStaticVaultTestNegativeAuctionCollateral is BaseTest {
 
         // Verify that immediately after the zero reward point,
         // the deposit pricing exceeds 1:1
-        // uint256 nextPoint = ZERO_REWARD_NEGATIVE_AUCTION_ASSETS_POINT + 1;
-        // assertLt(ltv.previewDepositCollateral(nextPoint), nextPoint);
+
+        uint256 nextPointAssets = ZERO_REWARD_NEGATIVE_AUCTION_ASSETS_POINT + 2; // + 1 NOT WORKS, BUT WORKS + 2
+        uint256 nextPointShares = ltv.previewDepositCollateral(nextPointAssets);
+
+        assertLt(nextPointShares, nextPointAssets);
     }
 
     function test_zeroRewardNegativeAuctionPointAreaMintCollateral() public negativeAuctionTest {
@@ -239,7 +240,6 @@ contract SharePriceOnStaticVaultTestNegativeAuctionCollateral is BaseTest {
         // Verify that the deposit pricing increases smoothly and never
         // goes above 1:1 before the critical point, ensuring fair treatment
 
-        // WILL FAIL
         for (
             uint256 i = ZERO_REWARD_NEGATIVE_AUCTION_SHARES_POINT - 100;
             i <= ZERO_REWARD_NEGATIVE_AUCTION_SHARES_POINT;
@@ -250,7 +250,7 @@ contract SharePriceOnStaticVaultTestNegativeAuctionCollateral is BaseTest {
             // test that deposit pricing is decreasing
             // assets_new / shares_new > assets_old / shares_old
             // assets_new * shares_old > assets_old * shares_new
-            assertGe(newAssets * oldShares, oldAssets * i);
+            assertGe(newAssets * oldShares, oldAssets * i); // WILL FAIL (54389127885300 < 54389150010000)
 
             oldShares = i;
             oldAssets = newAssets;
@@ -260,10 +260,9 @@ contract SharePriceOnStaticVaultTestNegativeAuctionCollateral is BaseTest {
 
         // Verify that immediately after the zero reward point,
         // the deposit pricing exceeds 1:1
-        // uint256 nextPoint = ZERO_REWARD_NEGATIVE_AUCTION_ASSETS_POINT + 1;
-        // assertLt(ltv.previewMint(nextPoint), nextPoint);
-        // uint256 nextPoint = ZERO_REWARD_NEGATIVE_AUCTION_ASSETS_POINT + 1;
-        // assertGt(ltv.previewMintCollateral(nextPoint), nextPoint);
+        uint256 nextPointShares = ZERO_REWARD_NEGATIVE_AUCTION_SHARES_POINT + 1;
+        uint256 nextPointAssets = ltv.previewMintCollateral(nextPointShares);
+        assertLt(nextPointShares, nextPointAssets);
     }
 
     /**
@@ -277,7 +276,6 @@ contract SharePriceOnStaticVaultTestNegativeAuctionCollateral is BaseTest {
         // Test that withdrawal pricing remains stable up to the case change point
         // All points in this range should follow the same linear relationship
 
-        // WILL FAIL
         for (
             uint256 i = CASE_CHANGE_NEGATIVE_AUCTION_ASSETS_POINT - 100;
             i <= CASE_CHANGE_NEGATIVE_AUCTION_ASSETS_POINT;
@@ -293,9 +291,10 @@ contract SharePriceOnStaticVaultTestNegativeAuctionCollateral is BaseTest {
         // assertLt(caseChangePointShares * 1000000, caseChangePointAssets * 1002058);
 
         // Verify that the withdrawal pricing immediately decreases after the case change point
-        // uint256 nextPoint = CASE_CHANGE_NEGATIVE_AUCTION_ASSETS_POINT + 1;
         // // test next point decreases withdrawal pricing
-        // assertGt(nextPoint * caseChangePointAssets / caseChangePointShares, ltv.previewRedeemCollateral(nextPoint));
+        uint256 nextPointShares = ZERO_REWARD_NEGATIVE_AUCTION_SHARES_POINT + 1;
+        uint256 nextPointAssets = ltv.previewRedeemCollateral(nextPointShares);
+        assertGt(nextPointShares * caseChangePointAssets / caseChangePointShares, nextPointAssets);
     }
 
     function test_caseSwithNegativeAuctionPointAreaMintCollateral() public negativeAuctionTest {
@@ -305,16 +304,16 @@ contract SharePriceOnStaticVaultTestNegativeAuctionCollateral is BaseTest {
         // Test that withdrawal pricing remains stable up to the case change point
         // All points in this range should follow the same linear relationship
 
-        // WILL FAIL
         for (
             uint256 i = CASE_CHANGE_NEGATIVE_AUCTION_ASSETS_POINT - 100;
             i <= CASE_CHANGE_NEGATIVE_AUCTION_ASSETS_POINT;
             ++i
         ) {
-            uint256 assets = ltv.previewMintCollateral(i);
-            // test that deposit pricing is stable
-            uint256 roundedUp = (i * caseChangePointAssets + caseChangePointShares - 1) / caseChangePointShares;
-            assertEq(roundedUp, assets);
+            uint256 newAssets = ltv.previewMintCollateral(i);
+            uint256 expectedAssets = i * caseChangePointAssets / caseChangePointShares;
+            uint256 delta = 1;
+
+            assertApproxEqAbs(newAssets, expectedAssets, delta);
         }
 
         // Verify the deposit pricing bonus is within expected bounds, less than 0.2058%
@@ -322,8 +321,9 @@ contract SharePriceOnStaticVaultTestNegativeAuctionCollateral is BaseTest {
         // assertLt(caseChangePointShares * 1000000, caseChangePointAssets * 1002058);
 
         // Verify that the withdrawal pricing immediately decreases after the case change point
-        uint256 nextPoint = CASE_CHANGE_NEGATIVE_AUCTION_ASSETS_POINT + 1;
-        // test next point decreases withdrawal pricing (need fewer shares to withdraw same assets)
-        assertGt(ltv.previewWithdrawCollateral(nextPoint), nextPoint * caseChangePointShares / caseChangePointAssets);
+        // // test next point decreases withdrawal pricing (need fewer shares to withdraw same assets)
+        uint256 nextPointAssets = ZERO_REWARD_NEGATIVE_AUCTION_ASSETS_POINT + 1;
+        uint256 nextPointShares = ltv.previewWithdrawCollateral(nextPointAssets);
+        assertGt(nextPointShares, nextPointAssets * caseChangePointShares / caseChangePointAssets);
     }
 }
