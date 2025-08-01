@@ -22,8 +22,24 @@ abstract contract MaxRedeem is PreviewWithdraw, PreviewRedeem {
             Constants.ORACLE_DIVIDER, data.previewWithdrawBorrowVaultData.borrowPrice
         );
 
-        (uint256 vaultMaxWithdrawShares,) = _previewWithdraw(maxWithdrawInAssets, data.previewWithdrawBorrowVaultData);
+        if (maxWithdrawInAssets <= 3) {
+            return 0;
+        }
+
+        (uint256 maxWithdrawInShares,) = _previewWithdraw(maxWithdrawInAssets - 3, data.previewWithdrawBorrowVaultData);
+
+        (uint256 maxWithdrawInAssetsWithDelta,) =
+            _previewRedeem(maxWithdrawInShares, data.previewWithdrawBorrowVaultData);
+
+        if (maxWithdrawInAssetsWithDelta > maxWithdrawInAssets) {
+            uint256 delta = maxWithdrawInAssetsWithDelta + 3 - maxWithdrawInAssets;
+            if (maxWithdrawInShares < 2 * delta) {
+                return 0;
+            }
+            maxWithdrawInShares = maxWithdrawInShares - 2 * delta;
+        }
+
         // round down to assume smaller border
-        return data.ownerBalance < vaultMaxWithdrawShares ? data.ownerBalance : vaultMaxWithdrawShares;
+        return data.ownerBalance < maxWithdrawInShares ? data.ownerBalance : maxWithdrawInShares;
     }
 }

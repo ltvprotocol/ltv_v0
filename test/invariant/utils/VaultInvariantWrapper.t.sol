@@ -19,14 +19,7 @@ import {BaseInvariantWrapper} from "./BaseInvariantWrapper.t.sol";
  * The wrapper simulates realistic user interactions with the LTV vault,
  * including both borrow token and collateral token operations.
  */
-contract VaultInvariantWrapper is BaseInvariantWrapper {
-    /**
-     * @dev Constructor initializes the vault wrapper
-     * @param _ltv The LTV protocol contract
-     * @param _actors Array of test actors
-     */
-    constructor(ILTV _ltv, address[10] memory _actors) BaseInvariantWrapper(_ltv, _actors) {}
-
+abstract contract BaseVaultInvariantWrapper is BaseInvariantWrapper {
     /**
      * @dev Allows a user to deposit borrow tokens and receive LTV tokens
      * @param amount Amount to deposit (will be bounded by maxDeposit)
@@ -326,7 +319,7 @@ contract VaultInvariantWrapper is BaseInvariantWrapper {
      * - If future borrow assets is zero, then future reward borrow assets must also be zero
      * - If future collateral assets is zero, then future reward collateral assets must also be zero
      */
-    function verifyAndResetInvariants() public override {
+    function verifyAndResetInvariants() public virtual override {
         // Call parent invariant checking
         super.verifyAndResetInvariants();
 
@@ -348,5 +341,19 @@ contract VaultInvariantWrapper is BaseInvariantWrapper {
             (ltv.futureCollateralAssets() != 0) || ltv.futureRewardCollateralAssets() == 0,
             "If future collateral assets is zero, reward collateral assets must also be zero"
         );
+
+        assertTrue(
+            ltv.futureBorrowAssets() <= 0 || ltv.futureRewardBorrowAssets() == 0,
+            "Future reward is in collateral when positive auction"
+        );
+
+        assertTrue(
+            ltv.futureCollateralAssets() >= 0 || ltv.futureRewardCollateralAssets() == 0,
+            "Future reward is in borrow when negative auction"
+        );
     }
+}
+
+contract VaultInvariantWrapper is BaseVaultInvariantWrapper {
+    constructor(ILTV _ltv, address[10] memory _actors) BaseInvariantWrapper(_ltv, _actors) {}
 }

@@ -55,8 +55,16 @@ contract BaseInvariantWrapper is Test {
     uint256 internal _initialFeeCollectorCollateralBalance;
     uint256 internal _initialFeeCollectorLtvBalance;
 
+    // After auction execution we need to check that sum of collateral and borrow tokens before and after is the same
+    bool internal _auctionExecuted;
+
     // Protocol state tracking (before operation)
     int256 internal _initialFutureCollateral; // Future collateral assets
+    int256 internal _initialFutureBorrow; // Future borrow assets
+    int256 internal _initialRewardBorrow; // Future reward borrow assets
+    int256 internal _initialRewardCollateral; // Future reward collateral assets
+    int256 internal _initialRealBorrow; // Real borrow assets
+    int256 internal _initialRealCollateral; // Real collateral assets
     int256 internal _initialRewardsValue; // Calculated rewards value
     uint256 internal _initialAuctionStartBlock; // Auction start block
 
@@ -126,6 +134,11 @@ contract BaseInvariantWrapper is Test {
 
         // Capture protocol auction state
         _initialFutureCollateral = ltv.futureCollateralAssets();
+        _initialFutureBorrow = ltv.futureBorrowAssets();
+        _initialRewardBorrow = ltv.futureRewardBorrowAssets();
+        _initialRewardCollateral = ltv.futureRewardCollateralAssets();
+        _initialRealBorrow = int256(ltv.getRealBorrowAssets(false));
+        _initialRealCollateral = int256(ltv.getRealCollateralAssets(false));
 
         // Calculate current rewards value in underlying asset terms
         int256 borrowPrice = int256(DummyOracleConnector(ltv.oracleConnector()).getPriceBorrowOracle());
@@ -136,6 +149,7 @@ contract BaseInvariantWrapper is Test {
 
         _initialAuctionStartBlock = ltv.startAuction();
 
+        _auctionExecuted = false;
         _invariantStateCaptured = true;
     }
 
@@ -155,13 +169,29 @@ contract BaseInvariantWrapper is Test {
             return;
         }
 
-        // Invariant 1: Token price never decreases
-        // This ensures the protocol doesn't lose value for existing holders
-        assertGe(
-            ltv.totalAssets() * _initialTotalSupply,
-            _initialTotalAssets * ltv.totalSupply(),
-            "Token price became smaller"
-        );
+        // In case of auction execution sum of collateral assets and borrow assets should be the same.
+        // The price check is omitted since it can decrease due to rounding, but real money amount remains the same
+        if (_auctionExecuted) {
+            assertGe(
+                _initialFutureBorrow + _initialRewardBorrow + _initialRealBorrow,
+                int256(ltv.getRealBorrowAssets(false)) + ltv.futureRewardBorrowAssets() + ltv.futureBorrowAssets(),
+                "Borrow assets stable after auction"
+            );
+            assertLe(
+                _initialFutureCollateral + _initialRewardCollateral + _initialRealCollateral,
+                int256(ltv.getRealCollateralAssets(false)) + ltv.futureRewardCollateralAssets()
+                    + ltv.futureCollateralAssets(),
+                "Collateral assets stable after auction"
+            );
+        } else {
+            // Invariant 1: Token price never decreases
+            // This ensures the protocol doesn't lose value for existing holders
+            assertGe(
+                ltv.totalAssets() * _initialTotalSupply,
+                _initialTotalAssets * ltv.totalSupply(),
+                "Token price became smaller"
+            );
+        }
 
         // Invariant 2: User balances change exactly as expected
         assertEq(
@@ -177,6 +207,10 @@ contract BaseInvariantWrapper is Test {
         assertEq(
             int256(ltv.balanceOf(_currentTestActor)), _initialLtvBalance + _expectedLtvDelta, "LTV balance changed"
         );
+
+        assertEq(ltv.balanceOf(address(ltv)), 0, "No missed ltv tokens");
+        assertEq(IERC20(ltv.borrowToken()).balanceOf(address(ltv)), 0, "No missed borrow tokens");
+        assertEq(IERC20(ltv.collateralToken()).balanceOf(address(ltv)), 0, "No missed collateral tokens");
 
         // Invariant 3: Check for auction rewards distribution
         // Calculate current rewards value

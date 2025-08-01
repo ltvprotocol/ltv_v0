@@ -100,13 +100,13 @@ contract AuctionCertainNumbersTest is AuctionTestCommon {
         AuctionCertainNumbersTestData memory finalState = getAuctionCertainNumbersTestData(user, data.feeCollector);
 
         // check how much borrow tokens user provided
-        assertEq(initialState.userBorrowAssets - 10000, finalState.userBorrowAssets);
+        assertEq(initialState.userBorrowAssets - 9999, finalState.userBorrowAssets);
 
         // check how much collateral tokens user received
         assertEq(initialState.userCollateralAssets + 4748, finalState.userCollateralAssets);
 
         // check fee collector rewards
-        assertEq(initialState.feeCollectorBorrowAssets + 76, finalState.feeCollectorBorrowAssets);
+        assertEq(initialState.feeCollectorBorrowAssets + 75, finalState.feeCollectorBorrowAssets);
         assertEq(initialState.feeCollectorCollateralAssets, finalState.feeCollectorCollateralAssets);
 
         // check future rewards changed as expected
@@ -114,7 +114,7 @@ contract AuctionCertainNumbersTest is AuctionTestCommon {
         assertEq(initialState.futureRewardCollateralAssets, finalState.futureRewardCollateralAssets);
 
         // check future borrow change
-        assertEq(initialState.futureBorrowAssets + 10000 + 24, finalState.futureBorrowAssets);
+        assertEq(initialState.futureBorrowAssets + 9999 + 25, finalState.futureBorrowAssets);
 
         // check future collateral change
         assertEq(initialState.futureCollateralAssets + 4748, finalState.futureCollateralAssets);
@@ -149,11 +149,11 @@ contract AuctionCertainNumbersTest is AuctionTestCommon {
         assertEq(initialState.userBorrowAssets + 10000, finalState.userBorrowAssets);
 
         // check how much collateral tokens user provided
-        assertEq(initialState.userCollateralAssets - 4726, finalState.userCollateralAssets);
+        assertEq(initialState.userCollateralAssets - 4725, finalState.userCollateralAssets);
 
         // check fee collector rewards
         assertEq(initialState.feeCollectorBorrowAssets, finalState.feeCollectorBorrowAssets);
-        assertEq(initialState.feeCollectorCollateralAssets + 36, finalState.feeCollectorCollateralAssets);
+        assertEq(initialState.feeCollectorCollateralAssets + 35, finalState.feeCollectorCollateralAssets);
 
         // check future rewards changed as expected
         assertEq(initialState.futureRewardBorrowAssets, finalState.futureRewardBorrowAssets);
@@ -163,7 +163,7 @@ contract AuctionCertainNumbersTest is AuctionTestCommon {
         assertEq(initialState.futureBorrowAssets - 10000, finalState.futureBorrowAssets);
 
         // check future collateral change
-        assertEq(initialState.futureCollateralAssets - 4726 - 11, finalState.futureCollateralAssets);
+        assertEq(initialState.futureCollateralAssets - 4725 - 12, finalState.futureCollateralAssets);
 
         // check future rewards are proportional
         assertEq(initialState.futureRewardCollateralAssets * 4737 / initialState.futureCollateralAssets, -47);

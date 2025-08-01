@@ -163,7 +163,7 @@ contract VaultTest is BalancedTest {
         dummyLTV.transfer(user, dummyLTV.balanceOf(owner));
         slippageProvider.setBorrowSlippage(10 ** 16);
 
-        assertEq(dummyLTV.maxRedeem(user), 625053);
+        assertEq(dummyLTV.maxRedeem(user), 625049);
         vm.startPrank(user);
         dummyLTV.redeem(dummyLTV.maxRedeem(user), user, user);
     }
@@ -234,7 +234,7 @@ contract VaultTest is BalancedTest {
         vm.startPrank(owner);
         dummyLTV.transfer(user, dummyLTV.balanceOf(owner));
 
-        assertEq(dummyLTV.maxRedeemCollateral(user), 333361 * 2);
+        assertEq(dummyLTV.maxRedeemCollateral(user), 333361 * 2 - 6);
     }
 
     function test_totalAssetsWithBool(address owner, address user)

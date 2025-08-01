@@ -2,16 +2,14 @@
 pragma solidity ^0.8.28;
 
 import "forge-std/Test.sol";
-import {MorphoConnector} from "../../src/connectors/lending_connectors/MorphoConnector.sol";
-import {MorphoOracleConnector} from "../../src/connectors/oracle_connectors/MorphoOracleConnector.sol";
-import {VaultBalanceAsLendingConnector} from
-    "../../src/connectors/lending_connectors/VaultBalanceAsLendingConnector.sol";
-import {IMorphoBlue} from "../../src/connectors/lending_connectors/interfaces/IMorphoBlue.sol";
-import {IMorphoOracle} from "../../src/connectors/oracle_connectors/interfaces/IMorphoOracle.sol";
-import {LTV} from "../../src/elements/LTV.sol";
-import "forge-std/interfaces/IERC20.sol";
-import {StateInitData} from "../../src/structs/state/StateInitData.sol";
-import {ConstantSlippageProvider} from "../../src/connectors/slippage_providers/ConstantSlippageProvider.sol";
+import "@openzeppelin/contracts/interfaces/IERC20.sol";
+
+import {ILendingConnector} from "../../src/interfaces/ILendingConnector.sol";
+import {IOracleConnector} from "../../src/interfaces/IOracleConnector.sol";
+import {IAaveOracle} from "../../src/connectors/oracle_connectors/interfaces/IAaveOracle.sol";
+import {AaveV3Connector} from "../../src/connectors/lending_connectors/AaveV3Connector.sol";
+import {AaveV3OracleConnector} from "../../src/connectors/oracle_connectors/AaveV3OracleConnector.sol";
+
 import {ModulesProvider, ModulesState} from "../../src/elements/ModulesProvider.sol";
 import {AuctionModule, IAuctionModule} from "../../src/elements/AuctionModule.sol";
 import {ERC20Module, IERC20Module} from "../../src/elements/ERC20Module.sol";
@@ -19,48 +17,36 @@ import {CollateralVaultModule, ICollateralVaultModule} from "../../src/elements/
 import {BorrowVaultModule, IBorrowVaultModule} from "../../src/elements/BorrowVaultModule.sol";
 import {LowLevelRebalanceModule, ILowLevelRebalanceModule} from "../../src/elements/LowLevelRebalanceModule.sol";
 import {AdministrationModule, IAdministrationModule} from "../../src/elements/AdministrationModule.sol";
-import {ILendingConnector} from "../../src/interfaces/ILendingConnector.sol";
-import {IOracleConnector} from "../../src/interfaces/IOracleConnector.sol";
 import {IInitializeModule} from "../../src/interfaces/reads/IInitializeModule.sol";
 import {InitializeModule} from "../../src/elements/InitializeModule.sol";
 
-contract MorphoIntegrationTest is Test {
-    address constant MORPHO_BLUE = 0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb;
+import {StateInitData} from "../../src/structs/state/StateInitData.sol";
+import {ConstantSlippageProvider} from "../../src/connectors/slippage_providers/ConstantSlippageProvider.sol";
+import {LTV} from "../../src/elements/LTV.sol";
+
+contract AaveV3ConnectorTest is Test {
     address constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
     address constant WSTETH = 0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0;
-    address constant MORPHO_ORACLE = 0xbD60A6770b27E084E8617335ddE769241B0e71D8;
-    address constant IRM = 0x870aC11D48B15DB9a138Cf899d20F13F79Ba00BC;
 
-    IMorphoBlue.MarketParams public marketParams;
-    MorphoConnector public morphoLendingConnector;
-    MorphoOracleConnector public morphoOracleConnector;
-    LTV public ltv;
-    IERC20 public weth;
-    IERC20 public wsteth;
-    ConstantSlippageProvider public slippageProvider;
-    ModulesProvider public modulesProvider;
+    AaveV3Connector aaveLendingConnector;
+    AaveV3OracleConnector aaveV3OracleConnector;
+    ConstantSlippageProvider slippageProvider;
+    ModulesProvider modulesProvider;
+    IERC20 weth;
+    IERC20 wsteth;
+    LTV ltv;
 
-    address public user;
+    address user = address(0x123);
 
     function setUp() public {
         vm.createSelectFork(vm.envString("RPC_MAINNET"), 22769382);
 
-        user = makeAddr("user");
-
-        marketParams = IMorphoBlue.MarketParams({
-            loanToken: WETH,
-            collateralToken: WSTETH,
-            oracle: MORPHO_ORACLE,
-            irm: IRM,
-            lltv: 945000000000000000
-        });
-
-        morphoLendingConnector = new MorphoConnector();
-        morphoOracleConnector = new MorphoOracleConnector(IMorphoOracle(MORPHO_ORACLE));
-        slippageProvider = new ConstantSlippageProvider(10 ** 16, 10 ** 16, address(this));
-
         weth = IERC20(WETH);
         wsteth = IERC20(WSTETH);
+
+        aaveLendingConnector = new AaveV3Connector();
+        aaveV3OracleConnector = new AaveV3OracleConnector(WSTETH, WETH);
+        slippageProvider = new ConstantSlippageProvider(10 ** 16, 10 ** 16, address(this));
 
         ModulesState memory modulesState = ModulesState({
             administrationModule: IAdministrationModule(address(new AdministrationModule())),
@@ -75,8 +61,8 @@ contract MorphoIntegrationTest is Test {
         modulesProvider = new ModulesProvider(modulesState);
 
         StateInitData memory stateInitData = StateInitData({
-            name: "123",
-            symbol: "123",
+            name: "AAVE LTV",
+            symbol: "ALTV",
             decimals: 18,
             collateralToken: WSTETH,
             borrowToken: WETH,
@@ -84,8 +70,8 @@ contract MorphoIntegrationTest is Test {
             maxSafeLTV: 800000000000000000,
             minProfitLTV: 500000000000000000,
             targetLTV: 750000000000000000,
-            lendingConnector: ILendingConnector(address(morphoLendingConnector)),
-            oracleConnector: IOracleConnector(address(morphoOracleConnector)),
+            lendingConnector: ILendingConnector(address(aaveLendingConnector)),
+            oracleConnector: IOracleConnector(address(aaveV3OracleConnector)),
             maxGrowthFee: 200000000000000000,
             maxTotalAssetsInUnderlying: type(uint128).max,
             slippageProvider: slippageProvider,
@@ -95,7 +81,7 @@ contract MorphoIntegrationTest is Test {
             guardian: address(this),
             governor: address(this),
             emergencyDeleverager: address(this),
-            lendingConnectorData: abi.encode(MORPHO_ORACLE, IRM, 945000000000000000, keccak256(abi.encode(marketParams)))
+            lendingConnectorData: abi.encode("")
         });
 
         ltv = new LTV();
@@ -112,20 +98,16 @@ contract MorphoIntegrationTest is Test {
         deal(WSTETH, user, 100 ether);
     }
 
-    function test_MorphoConnectorSet() public view {
+    function test_AaveV3ConnectorConfigs() public view {
+        assertEq(address(ltv.getLendingConnector()), address(aaveLendingConnector));
+        assertEq(address(ltv.oracleConnector()), address(aaveV3OracleConnector));
         assertEq(address(ltv.borrowToken()), WETH);
         assertEq(address(ltv.collateralToken()), WSTETH);
     }
 
-    function test_MorphoConnectorConfigs() public view {
-        assertEq(address(ltv.getLendingConnector()), address(morphoLendingConnector));
-        assertEq(address(ltv.oracleConnector()), address(morphoOracleConnector));
-        assertEq(address(ltv.borrowToken()), WETH);
-        assertEq(address(ltv.collateralToken()), WSTETH);
-    }
-
-    function test_MorphoConnectorMaxDepositBorrow() public {
+    function test_AaveV3ConnectorMaxDeposit() public {
         uint256 maxDeposit = ltv.maxDeposit(user);
+
         vm.startPrank(user);
 
         weth.approve(address(ltv), maxDeposit);
@@ -134,129 +116,135 @@ contract MorphoIntegrationTest is Test {
         vm.stopPrank();
     }
 
-    function test_MorphoConnectorMaxMint() public {
+    function test_AaveV3ConnectorMaxMint() public {
         uint256 maxMint = ltv.maxMint(user);
         uint256 neededToMint = ltv.previewMint(maxMint);
 
         vm.startPrank(user);
+
         weth.approve(address(ltv), neededToMint);
         ltv.mint(maxMint, user);
+
         vm.stopPrank();
     }
 
-    function test_MorphoConnectorMaxWithdraw() public {
+    function test_AaveV3ConnectorMaxWithdraw() public {
         uint256 maxDeposit = ltv.maxDeposit(user);
 
         vm.startPrank(user);
+
         weth.approve(address(ltv), maxDeposit);
         ltv.deposit(maxDeposit, user);
 
         uint256 maxWithdraw = ltv.maxWithdraw(user);
         ltv.withdraw(maxWithdraw, user, user);
+
         vm.stopPrank();
     }
 
-    function test_MorphoConnectorMaxRedeem() public {
+    function test_AaveV3ConnectorMaxRedeem() public {
         uint256 maxDeposit = ltv.maxDeposit(user);
 
         vm.startPrank(user);
+
         weth.approve(address(ltv), maxDeposit);
         ltv.deposit(maxDeposit, user);
 
         uint256 maxRedeem = ltv.maxRedeem(user);
         ltv.redeem(maxRedeem, user, user);
+
         vm.stopPrank();
     }
 
-    function test_MorphoConnectorMaxDepositCollateral() public {
+    function test_AaveV3ConnectorMaxDepositCollateral() public {
         uint256 maxDepositCollateral = ltv.maxDepositCollateral(user);
 
         vm.startPrank(user);
-        wsteth.approve(address(ltv), type(uint256).max);
+
+        wsteth.approve(address(ltv), maxDepositCollateral);
         ltv.depositCollateral(maxDepositCollateral, user);
+
         vm.stopPrank();
     }
 
-    function test_MorphoConnectorMaxMintCollateral() public {
+    function test_AaveV3ConnectorMaxMintCollateral() public {
         uint256 maxMintCollateral = ltv.maxMintCollateral(user);
+        uint256 neededToMint = ltv.previewMintCollateral(maxMintCollateral);
 
         vm.startPrank(user);
-        wsteth.approve(address(ltv), type(uint256).max);
+
+        wsteth.approve(address(ltv), neededToMint);
         ltv.mintCollateral(maxMintCollateral, user);
+
         vm.stopPrank();
     }
 
-    function test_MorphoConnectorMaxWithdrawCollateral() public {
+    function test_AaveV3ConnectorMaxWithdrawCollateral() public {
         uint256 maxDepositCollateral = ltv.maxDepositCollateral(user);
 
         vm.startPrank(user);
+
         wsteth.approve(address(ltv), maxDepositCollateral);
         ltv.depositCollateral(maxDepositCollateral, user);
 
         uint256 maxWithdrawCollateral = ltv.maxWithdrawCollateral(user);
         ltv.withdrawCollateral(maxWithdrawCollateral, user, user);
+
         vm.stopPrank();
     }
 
-    function test_MorphoConnectorMaxsRedeemCollateral() public {
+    function test_AaveV3ConnectorMaxRedeemCollateral() public {
         uint256 maxDepositCollateral = ltv.maxDepositCollateral(user);
 
         vm.startPrank(user);
+
         wsteth.approve(address(ltv), maxDepositCollateral);
         ltv.depositCollateral(maxDepositCollateral, user);
 
         uint256 maxRedeemCollateral = ltv.maxRedeemCollateral(user);
         ltv.redeemCollateral(maxRedeemCollateral, user, user);
+
         vm.stopPrank();
     }
 
-    function test_MorphoConnectorIntegration() public view {
-        assertEq(address(ltv.borrowToken()), WETH);
-        assertEq(address(ltv.collateralToken()), WSTETH);
-
-        uint256 collateralPrice = morphoOracleConnector.getPriceCollateralOracle();
-        uint256 borrowPrice = morphoOracleConnector.getPriceBorrowOracle();
-        assertGt(collateralPrice, 0);
-        assertEq(borrowPrice, 1e18);
-
-        assertEq(address(ltv.getLendingConnector()), address(morphoLendingConnector));
-        assertEq(address(ltv.oracleConnector()), address(morphoOracleConnector));
-    }
-
-    function test_MorphoConnectorDeposit() public {
+    function test_AaveV3ConnectorDeposit() public {
         vm.startPrank(user);
 
         weth.approve(address(ltv), 1 ether);
         uint256 shares = ltv.deposit(1 ether, user);
 
         vm.stopPrank();
-        assertEq(shares, 961165048543689320);
+
+        assertEq(shares, 961165048539872840);
     }
 
-    function test_MorphoConnectorMint() public {
+    function test_AaveV3ConnectorMint() public {
         vm.startPrank(user);
 
-        weth.approve(address(ltv), 1040404040404040405);
+        weth.approve(address(ltv), 1040404040411684729);
         uint256 givenBorrowTokens = ltv.mint(1 ether, user);
 
         vm.stopPrank();
 
-        assertEq(givenBorrowTokens, 1040404040404040405);
+        assertEq(givenBorrowTokens, 1040404040411684729);
     }
 
-    function test_MorphoConnectorWithdraw() public {
+    function test_AaveV3ConnectorWithdraw() public {
         uint256 maxDeposit = ltv.maxDeposit(user);
+
         vm.startPrank(user);
+
         weth.approve(address(ltv), maxDeposit);
         ltv.deposit(maxDeposit, user);
 
         uint256 shares = ltv.withdraw(1 ether, user, user);
 
         vm.stopPrank();
-        assertEq(shares, 1 ether);
+
+        assertEq(shares, 999999999999830446);
     }
 
-    function test_MorphoConnectorRedeem() public {
+    function test_AaveV3ConnectorRedeem() public {
         uint256 maxDeposit = ltv.maxDeposit(user);
 
         vm.startPrank(user);
@@ -267,31 +255,33 @@ contract MorphoIntegrationTest is Test {
         uint256 assetsReceived = ltv.redeem(1 ether, user, user);
 
         vm.stopPrank();
-        assertEq(assetsReceived, 1 ether);
+
+        assertEq(assetsReceived, 1000000000000000000);
     }
 
-    function test_MorphoConnectorDepositCollateral() public {
+    function test_AaveV3ConnectorDepositCollateral() public {
         vm.startPrank(user);
 
         wsteth.approve(address(ltv), 1 ether);
         uint256 shares = ltv.depositCollateral(1 ether, user);
 
         vm.stopPrank();
-        assertEq(shares, 1171155094625884439);
+
+        assertEq(shares, 1171155094622822850);
     }
 
-    function test_MorphoConnectorMintCollateral() public {
+    function test_AaveV3ConnectorMintCollateral() public {
         vm.startPrank(user);
 
-        wsteth.approve(address(ltv), ltv.previewMintCollateral(1 ether));
+        wsteth.approve(address(ltv), 853857874673156914);
         uint256 givenCollateralToken = ltv.mintCollateral(1 ether, user);
 
         vm.stopPrank();
 
-        assertEq(givenCollateralToken, 853857874664705719);
+        assertEq(givenCollateralToken, 853857874673156914);
     }
 
-    function test_MorphoConnectorWithdrawCollateral() public {
+    function test_AaveV3ConnectorWithdrawCollateral() public {
         uint256 maxDepositCollateral = ltv.maxDepositCollateral(user);
 
         vm.startPrank(user);
@@ -303,11 +293,10 @@ contract MorphoIntegrationTest is Test {
 
         vm.stopPrank();
 
-        assertEq(shares, 1206289747464660974);
-        assertEq(shares, ltv.convertToSharesCollateral(1 ether) + 1);
+        assertEq(shares, 1206289747462433525);
     }
 
-    function test_MorphoConnectorRedeemCollateral() public {
+    function test_AaveV3ConnectorRedeemCollateral() public {
         uint256 maxDepositCollateral = ltv.maxDepositCollateral(user);
 
         vm.startPrank(user);
@@ -319,7 +308,6 @@ contract MorphoIntegrationTest is Test {
 
         vm.stopPrank();
 
-        assertEq(assetsReceived, 828988227829811374);
-        assertEq(assetsReceived, ltv.convertToAssetsCollateral(1 ether) - 1);
+        assertEq(assetsReceived, 828988227831055328);
     }
 }
