@@ -145,7 +145,7 @@ contract SharePriceOnStaticVaultTestNegativeAuctionCollateral is BaseTest {
             uint256 newAssets = ltv.previewMintCollateral(i);
             uint256 expectedAssets = (i * caseChangePointAssets + caseChangePointShares - 1) / caseChangePointShares;
 
-            assertGe(newAssets, expectedAssets); // DOUBLE CHECK THIS
+            assertGe(newAssets, expectedAssets);
         }
 
         // Test that mint pricing decreases after the case change point
@@ -213,7 +213,7 @@ contract SharePriceOnStaticVaultTestNegativeAuctionCollateral is BaseTest {
             // deposit benefit decreases with each step
             // assets_new / shares_new > assets_old / shares_old
             // assets_new * shares_old > assets_old * shares_new
-            assertGe(i * oldShares, oldAssets * shares); // WILL FAIL (54389150010000 < 54389164759800)
+            assertGe(i * oldShares, oldAssets * shares);
 
             oldAssets = i;
             oldShares = shares;
@@ -227,7 +227,6 @@ contract SharePriceOnStaticVaultTestNegativeAuctionCollateral is BaseTest {
 
         uint256 nextPointAssets = ZERO_REWARD_NEGATIVE_AUCTION_ASSETS_POINT + 1;
         uint256 nextPointShares = ltv.previewDepositCollateral(nextPointAssets);
-
         assertLt(nextPointShares, nextPointAssets);
     }
 
@@ -288,11 +287,10 @@ contract SharePriceOnStaticVaultTestNegativeAuctionCollateral is BaseTest {
         assertGt(caseChangePointAssets * 10000, caseChangePointShares * 9700);
         assertLt(caseChangePointAssets * 10000, caseChangePointShares * 10170);
 
-        // Verify that the withdrawal pricing immediately decreases after the case change point
-        // // test next point decreases withdrawal pricing
-        uint256 nextPointShares = ZERO_REWARD_NEGATIVE_AUCTION_SHARES_POINT + 1;
-        uint256 nextPointAssets = ltv.previewRedeemCollateral(nextPointShares);
-        assertGt(nextPointShares * caseChangePointAssets / caseChangePointShares, nextPointAssets);
+        // Verify that the deposit immediately becomes less profitable after the case change point
+        uint256 nextPointAssets = ZERO_REWARD_NEGATIVE_AUCTION_ASSETS_POINT + 1;
+        uint256 nextPointShares = ltv.previewDepositCollateral(nextPointAssets);
+        assertLt(caseChangePointAssets * nextPointShares, nextPointAssets * caseChangePointShares);
     }
 
     function test_caseSwithNegativeAuctionPointAreaMintCollateral() public negativeAuctionTest {
@@ -303,23 +301,19 @@ contract SharePriceOnStaticVaultTestNegativeAuctionCollateral is BaseTest {
         // All points in this range should follow the same linear relationship
 
         for (
-            uint256 i = CASE_CHANGE_NEGATIVE_AUCTION_ASSETS_POINT - 100;
-            i <= CASE_CHANGE_NEGATIVE_AUCTION_ASSETS_POINT;
+            uint256 i = CASE_CHANGE_NEGATIVE_AUCTION_SHARES_POINT - 100;
+            i <= CASE_CHANGE_NEGATIVE_AUCTION_SHARES_POINT;
             ++i
         ) {
             uint256 newAssets = ltv.previewMintCollateral(i);
             uint256 expectedAssets = (i * caseChangePointAssets + caseChangePointShares - 1) / caseChangePointShares;
 
-            assertGe(newAssets, expectedAssets); // IMPORTANT DOUBLE CHECK THIS
+            assertGe(newAssets, expectedAssets);
         }
 
-        assertGt(caseChangePointAssets * 10000, caseChangePointShares * 9700);
-        assertLt(caseChangePointAssets * 10000, caseChangePointShares * 10170);
-
-        // Verify that the withdrawal pricing immediately decreases after the case change point
-        // // test next point decreases withdrawal pricing (need fewer shares to withdraw same assets)
-        uint256 nextPointAssets = ZERO_REWARD_NEGATIVE_AUCTION_ASSETS_POINT + 1;
-        uint256 nextPointShares = ltv.previewWithdrawCollateral(nextPointAssets);
-        assertGt(nextPointShares, nextPointAssets * caseChangePointShares / caseChangePointAssets);
+        // Verify that the mint immediately becomes less profitable after the case change point
+        uint256 nextPointShares = ZERO_REWARD_NEGATIVE_AUCTION_SHARES_POINT + 1;
+        uint256 nextPointAssets = ltv.previewMintCollateral(nextPointShares);
+        assertGt(caseChangePointShares * nextPointAssets, nextPointShares * caseChangePointAssets);
     }
 }

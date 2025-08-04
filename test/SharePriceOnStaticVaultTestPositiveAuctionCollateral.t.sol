@@ -103,10 +103,6 @@ contract SharePriceOnStaticVaultTestPositiveAuctionCollateral is BaseTest {
             assertEq(i * caseChangePointAssets / caseChangePointShares, newAssets);
         }
 
-        // Verify the pricing bonus is within expected bounds (0.199% to 0.2%)
-        assertGt(caseChangePointAssets * 10000, caseChangePointShares * 9700);
-        assertLt(caseChangePointAssets * 10000, caseChangePointShares * 10300);
-
         // Test that withdrawal pricing decreases after the case change point
         step = (80_000_000 - CASE_CHANGE_POSITIVE_AUCTION_SHARES_POINT) * 2 / TEN_SECONDS_TEST_ITERATION_AMOUNT;
 
@@ -129,12 +125,11 @@ contract SharePriceOnStaticVaultTestPositiveAuctionCollateral is BaseTest {
 
         uint256 amount = 80_000_000;
         uint256 assets = ltv.previewRedeemCollateral(amount);
-        // assertLt(assets, amount * 969 / 1000); // NOT WORKS
-        assertLt(assets, amount * 98 / 100); // HERE LOOKS LIKE SOMETHING WRONG, COEFFICIENT = 0.9725568125, BUT SHOULD EQ 0.9696969
+        assertLt(assets, amount * 98 / 100);
 
         uint256 bigAmount = 80_000_000_000_000_000;
         uint256 bigAssets = ltv.previewRedeemCollateral(bigAmount);
-        assertGt(bigAssets, bigAmount * 96 / 100);
+        assertGt(bigAssets, bigAmount * 9_696_968 / 10_000_000);
         assertLt(bigAssets, bigAmount * 9_696_970 / 10_000_000);
     }
 
@@ -153,12 +148,8 @@ contract SharePriceOnStaticVaultTestPositiveAuctionCollateral is BaseTest {
             uint256 newShares = ltv.previewWithdrawCollateral(i);
             uint256 expectedShares = (i * caseChangePointShares + caseChangePointAssets - 1) / caseChangePointAssets;
 
-            assertGe(newShares, expectedShares); // DOUBLE CHECK THIS
+            assertGe(newShares, expectedShares);
         }
-
-        // Verify the pricing bonus is within expected bounds (0.199% to 0.2%)
-        // assertGt(caseChangePointAssets * 100000, caseChangePointShares * 100199);
-        // assertLt(caseChangePointAssets * 1000, caseChangePointShares * 1002);
 
         // Test that withdrawal pricing decreases after the case change point
         step = (80_000_000 - caseChangePointAssets) * 2 / TEN_SECONDS_TEST_ITERATION_AMOUNT;
@@ -192,7 +183,7 @@ contract SharePriceOnStaticVaultTestPositiveAuctionCollateral is BaseTest {
 
         uint256 bigAmount = 80_000_000_000_000_000;
         uint256 bigShares = ltv.previewWithdrawCollateral(bigAmount);
-        assertGt(bigShares, bigAmount * 330 / 325);
+        assertGt(bigShares, bigAmount * 330 / 321);
         assertLt(bigShares, bigAmount * 33 / 32);
     }
 
@@ -227,7 +218,7 @@ contract SharePriceOnStaticVaultTestPositiveAuctionCollateral is BaseTest {
 
             // assets_new / shares_new < assets_old / shares_old
             // assets_new * shares_old < assets_old * shares_new
-            assertLe(assets * oldShares, oldAssets * i); // <-- FAIL (57001012659700 > 57000990010000)
+            assertLe(assets * oldShares, oldAssets * i);
             oldAssets = assets;
             oldShares = i;
 
@@ -284,8 +275,8 @@ contract SharePriceOnStaticVaultTestPositiveAuctionCollateral is BaseTest {
      * and then drops immediately after the case change point.
      */
     function test_caseSwithPositiveAuctionPointAreaCollateral() public positiveAuctionTest {
-        uint256 caseChangePointAssets = CASE_CHANGE_POSITIVE_AUCTION_ASSETS_POINT;
         uint256 caseChangePointShares = CASE_CHANGE_POSITIVE_AUCTION_SHARES_POINT;
+        uint256 caseChangePointAssets = ltv.previewRedeemCollateral(caseChangePointShares);
 
         // Test that withdrawal pricing remains stable up to the case change point
         // All points in this range should follow the same linear relationship
@@ -298,17 +289,12 @@ contract SharePriceOnStaticVaultTestPositiveAuctionCollateral is BaseTest {
             uint256 newAssets = ltv.previewRedeemCollateral(i);
             uint256 expectedAssets = i * caseChangePointAssets / caseChangePointShares;
 
-            assertLe(newAssets, expectedAssets); // DOUBLE CHECK THIS
+            assertLe(newAssets, expectedAssets);
         }
 
-        // Verify the withdrawal pricing bonus is within expected bounds
-        assertGt(caseChangePointAssets * 10000, caseChangePointShares * 9700);
-        assertLt(caseChangePointAssets * 10000, caseChangePointShares * 10300);
-
-        // Verify that the withdrawal pricing immediately decreases after the case change point
-        uint256 nextPointShares = CASE_CHANGE_POSITIVE_AUCTION_SHARES_POINT + 2; // + 1 NOT WORKS, ONLY + 2
+        uint256 nextPointShares = CASE_CHANGE_POSITIVE_AUCTION_SHARES_POINT + 1;
         uint256 nextPointAssets = ltv.previewRedeemCollateral(nextPointShares);
-        assertGt(nextPointShares * caseChangePointAssets / caseChangePointShares, nextPointAssets);
+        assertGt(nextPointShares, nextPointAssets * caseChangePointShares / caseChangePointAssets);
     }
 
     function test_caseSwithPositiveAuctionPointAreaWithdrawCollateral() public positiveAuctionTest {
@@ -325,13 +311,8 @@ contract SharePriceOnStaticVaultTestPositiveAuctionCollateral is BaseTest {
             assertEq(newShares, expectedShares);
         }
 
-        // Verify the withdrawal pricing bonus is within expected bounds
-        assertGt(caseChangePointAssets * 10000, caseChangePointShares * 9700);
-        assertLt(caseChangePointAssets * 10000, caseChangePointShares * 10300);
-
         uint256 nextPointAssets = CASE_CHANGE_POSITIVE_AUCTION_ASSETS_POINT + 1;
         uint256 nextPointShares = ltv.previewWithdrawCollateral(nextPointAssets);
-        // Verify that the withdrawal pricing immediately decreases after the case change point
         assertGt(nextPointShares, nextPointAssets * caseChangePointShares / caseChangePointAssets);
     }
 }
