@@ -284,7 +284,10 @@ contract SharePriceOnStaticVaultTestNegativeAuctionCollateral is BaseTest {
             assertEq(i * caseChangePointShares / caseChangePointAssets, shares);
         }
 
-        assertEq(ltv.previewDepositCollateral(CASE_CHANGE_NEGATIVE_AUCTION_ASSETS_POINT), CASE_CHANGE_NEGATIVE_AUCTION_SHARES_POINT);
+        assertEq(
+            ltv.previewDepositCollateral(CASE_CHANGE_NEGATIVE_AUCTION_ASSETS_POINT),
+            CASE_CHANGE_NEGATIVE_AUCTION_SHARES_POINT
+        );
 
         // Verify that the deposit immediately becomes less profitable after the case change point
         uint256 nextPointAssets = ZERO_REWARD_NEGATIVE_AUCTION_ASSETS_POINT + 1;

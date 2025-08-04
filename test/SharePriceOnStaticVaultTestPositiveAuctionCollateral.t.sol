@@ -292,7 +292,10 @@ contract SharePriceOnStaticVaultTestPositiveAuctionCollateral is BaseTest {
             assertLe(newAssets, expectedAssets);
         }
 
-        assertEq(ltv.previewRedeemCollateral(CASE_CHANGE_POSITIVE_AUCTION_SHARES_POINT), CASE_CHANGE_POSITIVE_AUCTION_ASSETS_POINT);
+        assertEq(
+            ltv.previewRedeemCollateral(CASE_CHANGE_POSITIVE_AUCTION_SHARES_POINT),
+            CASE_CHANGE_POSITIVE_AUCTION_ASSETS_POINT
+        );
 
         uint256 nextPointShares = CASE_CHANGE_POSITIVE_AUCTION_SHARES_POINT + 1;
         uint256 nextPointAssets = ltv.previewRedeemCollateral(nextPointShares);
