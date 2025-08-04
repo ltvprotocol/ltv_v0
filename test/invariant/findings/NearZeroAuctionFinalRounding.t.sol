@@ -48,9 +48,7 @@ contract NearZeroAuctionFinalRoundingTest is BaseTest {
         assertEq(ltv.futureCollateralAssets(), 0);
         assertEq(ltv.futureBorrowAssets(), 0);
         assertGe(
-            ltv.totalAssets() * initialTotalSupply,
-            initialTotalAssets * ltv.totalSupply(),
-            "Token price became smaller"
+            ltv.totalAssets() * initialTotalSupply, initialTotalAssets * ltv.totalSupply(), "Token price became smaller"
         );
     }
 }
