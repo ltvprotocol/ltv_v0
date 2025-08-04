@@ -284,13 +284,12 @@ contract SharePriceOnStaticVaultTestNegativeAuctionCollateral is BaseTest {
             assertEq(i * caseChangePointShares / caseChangePointAssets, shares);
         }
 
-        assertGt(caseChangePointAssets * 10000, caseChangePointShares * 9700);
-        assertLt(caseChangePointAssets * 10000, caseChangePointShares * 10170);
+        assertEq(ltv.previewDepositCollateral(CASE_CHANGE_NEGATIVE_AUCTION_ASSETS_POINT), CASE_CHANGE_NEGATIVE_AUCTION_SHARES_POINT);
 
         // Verify that the deposit immediately becomes less profitable after the case change point
         uint256 nextPointAssets = ZERO_REWARD_NEGATIVE_AUCTION_ASSETS_POINT + 1;
         uint256 nextPointShares = ltv.previewDepositCollateral(nextPointAssets);
-        assertLt(caseChangePointAssets * nextPointShares, nextPointAssets * caseChangePointShares);
+        assertLt(nextPointShares * caseChangePointAssets, nextPointAssets * caseChangePointShares);
     }
 
     function test_caseSwithNegativeAuctionPointAreaMintCollateral() public negativeAuctionTest {
@@ -314,6 +313,6 @@ contract SharePriceOnStaticVaultTestNegativeAuctionCollateral is BaseTest {
         // Verify that the mint immediately becomes less profitable after the case change point
         uint256 nextPointShares = ZERO_REWARD_NEGATIVE_AUCTION_SHARES_POINT + 1;
         uint256 nextPointAssets = ltv.previewMintCollateral(nextPointShares);
-        assertGt(caseChangePointShares * nextPointAssets, nextPointShares * caseChangePointAssets);
+        assertLt(nextPointShares, nextPointAssets * caseChangePointShares / caseChangePointAssets);
     }
 }
