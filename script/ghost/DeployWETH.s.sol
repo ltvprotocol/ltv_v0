@@ -7,7 +7,7 @@ import {Upgrades} from "openzeppelin-foundry-upgrades/Upgrades.sol";
 
 import {ProxyAdmin} from "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
 
-import {WETH} from "src/dummy/weth/WETH.sol";
+import {WETH} from "../../src/dummy/weth/WETH.sol";
 
 contract DeployWETH is Script {
     function setUp() public {}

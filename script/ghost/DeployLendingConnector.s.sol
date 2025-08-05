@@ -2,8 +2,8 @@
 pragma solidity ^0.8.27;
 
 import "forge-std/Script.sol";
-import "../src/interfaces/ILendingConnector.sol";
-import "../src/ghost/connectors/HodlLendingConnector.sol";
+import "../../src/interfaces/ILendingConnector.sol";
+import "../../src/ghost/connectors/HodlLendingConnector.sol";
 
 contract DeployHodlLendingConnector is Script {
     function run() external {

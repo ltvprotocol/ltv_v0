@@ -2,7 +2,7 @@
 pragma solidity ^0.8.27;
 
 import "forge-std/Script.sol";
-import "../src/connectors/lending_connectors/VaultBalanceAsLendingConnector.sol";
+import "../../src/connectors/lending_connectors/VaultBalanceAsLendingConnector.sol";
 
 contract DeployVaultBalanceAsLendingConnector is Script {
     function run() external {

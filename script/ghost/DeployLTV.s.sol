@@ -13,7 +13,7 @@ import "src/ghost/connectors/HodlLendingConnector.sol";
 import "src/ghost/connectors/SpookyOracleConnector.sol";
 import "src/interfaces/ISlippageProvider.sol";
 
-import {WETH} from "../src/dummy/weth/WETH.sol";
+import {WETH} from "../../src/dummy/weth/WETH.sol";
 
 import "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 import "@openzeppelin/contracts/proxy/beacon/UpgradeableBeacon.sol";

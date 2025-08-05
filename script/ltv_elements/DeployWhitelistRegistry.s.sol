@@ -2,7 +2,7 @@
 pragma solidity ^0.8.27;
 
 import "forge-std/Script.sol";
-import "../src/elements/WhitelistRegistry.sol";
+import "../../src/elements/WhitelistRegistry.sol";
 
 contract DeployWhitelistRegistry is Script {
     function run() external {
