@@ -278,4 +278,232 @@ contract MulDivTest is Test, EuclidianMod, UnsignedHelpers, SignedHelpers {
 
         assertEq(result, expected);
     }
+
+    // Special tests for unsigned MulDiv with hardcoded values
+
+    function test_uMulDivUpWithoutRemainderSpecial() public pure {
+        uint256 x = 6;
+        uint256 y = 2;
+        uint256 denominator = 3;
+        uint256 result = uMulDiv.mulDivUp(x, y, denominator);
+        assertEq(result, 4); // 12 / 3 = 4
+    }
+
+    function test_uMulDivUpWithRemainderSpecial() public pure {
+        uint256 x = 7;
+        uint256 y = 2;
+        uint256 denominator = 3;
+        uint256 result = uMulDiv.mulDivUp(x, y, denominator);
+        assertEq(result, 5); // 14 / 3 = 4.666...
+    }
+
+    function test_uMulDivDownWithoutRemainderSpecial() public pure {
+        uint256 x = 6;
+        uint256 y = 2;
+        uint256 denominator = 3;
+        uint256 result = uMulDiv.mulDivDown(x, y, denominator);
+        assertEq(result, 4); // 12 / 3 = 4
+    }
+
+    function test_uMulDivDownWithRemainderSpecial() public pure {
+        uint256 x = 7;
+        uint256 y = 2;
+        uint256 denominator = 3;
+        uint256 result = uMulDiv.mulDivDown(x, y, denominator);
+        assertEq(result, 4); // 14 / 3 = 4.666...
+    }
+
+    // Special tests for signed MulDiv with hardcoded values
+
+    function test_sMulDivUpSamePositiveWithoutRemainderSpecial() public pure {
+        int256 x = 6;
+        int256 y = 2;
+        int256 denominator = 3;
+        int256 result = sMulDiv.mulDivUp(x, y, denominator);
+        assertEq(result, 4); // 12 / 3 = 4
+    }
+
+    function test_sMulDivUpSamePositiveWithRemainderSpecial() public pure {
+        int256 x = 7;
+        int256 y = 2;
+        int256 denominator = 3;
+        int256 result = sMulDiv.mulDivUp(x, y, denominator);
+        assertEq(result, 5); // 14 / 3 = 4.666...
+    }
+
+    function test_sMulDivDownSamePositiveWithoutRemainderSpecial() public pure {
+        int256 x = 6;
+        int256 y = 2;
+        int256 denominator = 3;
+        int256 result = sMulDiv.mulDivDown(x, y, denominator);
+        assertEq(result, 4); // 12 / 3 = 4
+    }
+
+    function test_sMulDivDownSamePositiveWithRemainderSpecial() public pure {
+        int256 x = 7;
+        int256 y = 2;
+        int256 denominator = 3;
+        int256 result = sMulDiv.mulDivDown(x, y, denominator);
+        assertEq(result, 4); // 14 / 3 = 4.666...
+    }
+
+    function test_sMulDivUpSecondNegativeWithoutRemainderSpecial() public pure {
+        int256 x = 6;
+        int256 y = -2;
+        int256 denominator = 3;
+        int256 result = sMulDiv.mulDivUp(x, y, denominator);
+        assertEq(result, -4); // -12 / 3 = -4
+    }
+
+    function test_sMulDivUpSecondNegativeWithRemainderSpecial() public pure {
+        int256 x = 7;
+        int256 y = -2;
+        int256 denominator = 3;
+        int256 result = sMulDiv.mulDivUp(x, y, denominator);
+        assertEq(result, -4); // -14 / 3 = -4.666...
+    }
+
+    function test_sMulDivDownSecondNegativeWithoutRemainderSpecial() public pure {
+        int256 x = 6;
+        int256 y = -2;
+        int256 denominator = 3;
+        int256 result = sMulDiv.mulDivDown(x, y, denominator);
+        assertEq(result, -4); // -12 / 3 = -4
+    }
+
+    function test_sMulDivDownSecondNegativeWithRemainderSpecial() public pure {
+        int256 x = 7;
+        int256 y = -2;
+        int256 denominator = 3;
+        int256 result = sMulDiv.mulDivDown(x, y, denominator);
+        assertEq(result, -5); // -14 / 3 = -4.666...
+    }
+
+    function test_sMulDivUpSamePositiveWithRemainderNegativeDenominatorSpecial() public pure {
+        int256 x = 7;
+        int256 y = 2;
+        int256 denominator = -3;
+        int256 result = sMulDiv.mulDivUp(x, y, denominator);
+        assertEq(result, -4); // 14 / -3 = -4.666...
+    }
+
+    function test_sMulDivDownSamePositiveWithRemainderNegativeDenominatorSpecial() public pure {
+        int256 x = 7;
+        int256 y = 2;
+        int256 denominator = -3;
+        int256 result = sMulDiv.mulDivDown(x, y, denominator);
+        assertEq(result, -5); // 14 / -3 = -4.666...
+    }
+
+    function test_sMulDivUpSameNegativeWithRemainderSpecial() public pure {
+        int256 x = -7;
+        int256 y = -2;
+        int256 denominator = 3;
+        int256 result = sMulDiv.mulDivUp(x, y, denominator);
+        assertEq(result, 5); // 14 / 3 = 4.666...
+    }
+
+    function test_sMulDivDownSameNegativeWithRemainderSpecial() public pure {
+        int256 x = -7;
+        int256 y = -2;
+        int256 denominator = 3;
+        int256 result = sMulDiv.mulDivDown(x, y, denominator);
+        assertEq(result, 4); // 14 / 3 = 4.666...
+    }
+
+    function test_sMulDivUpFirstNegativeWithRemainderNegativeDenominatorSpecial() public pure {
+        int256 x = -7;
+        int256 y = 2;
+        int256 denominator = -3;
+        int256 result = sMulDiv.mulDivUp(x, y, denominator);
+        assertEq(result, 5); // -14 / -3 = 4.666...
+    }
+
+    function test_sMulDivDownFirstNegativeWithRemainderNegativeDenominatorSpecial() public pure {
+        int256 x = -7;
+        int256 y = 2;
+        int256 denominator = -3;
+        int256 result = sMulDiv.mulDivDown(x, y, denominator);
+        assertEq(result, 4); // -14 / -3 = 4.666...
+    }
+
+    function test_sMulDivUpSecondNegativeWithRemainderNegativeDenominatorSpecial() public pure {
+        int256 x = 7;
+        int256 y = -2;
+        int256 denominator = -3;
+        int256 result = sMulDiv.mulDivUp(x, y, denominator);
+        assertEq(result, 5); // -14 / -3 = 4.666...
+    }
+
+    function test_sMulDivDownSecondNegativeWithRemainderNegativeDenominatorSpecial() public pure {
+        int256 x = 7;
+        int256 y = -2;
+        int256 denominator = -3;
+        int256 result = sMulDiv.mulDivDown(x, y, denominator);
+        assertEq(result, 4); // -14 / -3 = 4.666...
+    }
+
+    function test_sMulDivUpAllNegativeWithoutRemainderSpecial() public pure {
+        int256 x = -6;
+        int256 y = -2;
+        int256 denominator = -3;
+        int256 result = sMulDiv.mulDivUp(x, y, denominator);
+        assertEq(result, -4); // 12 / -3 = -4
+    }
+
+    function test_sMulDivUpFirstNegativeWithoutRemainderSpecial() public pure {
+        int256 x = -6;
+        int256 y = 2;
+        int256 denominator = 3;
+        int256 result = sMulDiv.mulDivUp(x, y, denominator);
+        assertEq(result, -4); // -12 / 3 = -4
+    }
+
+    function test_sMulDivUpFirstNegativeWithRemainderSpecial() public pure {
+        int256 x = -7;
+        int256 y = 2;
+        int256 denominator = 3;
+        int256 result = sMulDiv.mulDivUp(x, y, denominator);
+        assertEq(result, -4); // -14 / 3 = -4.666...
+    }
+
+    function test_sMulDivDownFirstNegativeWithoutRemainderSpecial() public pure {
+        int256 x = -6;
+        int256 y = 2;
+        int256 denominator = 3;
+        int256 result = sMulDiv.mulDivDown(x, y, denominator);
+        assertEq(result, -4); // -12 / 3 = -4
+    }
+
+    function test_sMulDivDownFirstNegativeWithRemainderSpecial() public pure {
+        int256 x = -7;
+        int256 y = 2;
+        int256 denominator = 3;
+        int256 result = sMulDiv.mulDivDown(x, y, denominator);
+        assertEq(result, -5); // -14 / 3 = -4.666...
+    }
+
+    function test_sMulDivUpAllNegativeWithRemainderSpecial() public pure {
+        int256 x = -7;
+        int256 y = -2;
+        int256 denominator = -3;
+        int256 result = sMulDiv.mulDivUp(x, y, denominator);
+        assertEq(result, -4); // 14 / -3 = -4.666...
+    }
+
+    function test_sMulDivDownAllNegativeWithoutRemainderSpecial() public pure {
+        int256 x = -6;
+        int256 y = -2;
+        int256 denominator = -3;
+        int256 result = sMulDiv.mulDivDown(x, y, denominator);
+        assertEq(result, -4); // 12 / -3 = -4
+    }
+
+    function test_sMulDivDownAllNegativeWithRemainderSpecial() public pure {
+        int256 x = -7;
+        int256 y = -2;
+        int256 denominator = -3;
+        int256 result = sMulDiv.mulDivDown(x, y, denominator);
+        assertEq(result, -5); // 14 / -3 = -4.666...
+    }
 }
