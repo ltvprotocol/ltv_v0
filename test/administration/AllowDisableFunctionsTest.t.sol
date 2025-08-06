@@ -299,8 +299,8 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         selectors[19] = ILTV.setIsWhitelistActivated.selector;
         callers[19] = defaultData.governor;
 
-        calls[20] = abi.encodeCall(ILTV.setMaxDeleverageFee, 2 * 10 ** 16);
-        selectors[20] = ILTV.setMaxDeleverageFee.selector;
+        calls[20] = abi.encodeCall(ILTV.setMaxDeleverageFeex23, 2 * 10 ** 16);
+        selectors[20] = ILTV.setMaxDeleverageFeex23.selector;
         callers[20] = defaultData.governor;
 
         calls[21] = abi.encodeCall(ILTV.setMaxGrowthFeex23, 2 * 10 ** 16);

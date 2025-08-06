@@ -21,7 +21,7 @@ struct StateInitData {
     uint256 maxGrowthFeex23;
     uint256 maxTotalAssetsInUnderlying;
     ISlippageProvider slippageProvider;
-    uint256 maxDeleverageFee;
+    uint24 maxDeleverageFeex23;
     ILendingConnector vaultBalanceAsLendingConnector;
     address owner;
     address guardian;

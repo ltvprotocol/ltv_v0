@@ -29,7 +29,7 @@ contract MaxWithdrawExceedsBalanceTest is BaseTest {
             maxGrowthFeex23: 0,
             collateralPrice: 2111111111111111111,
             borrowPrice: 10 ** 18,
-            maxDeleverageFee: 0,
+            maxDeleverageFeex23: 0,
             zeroAddressTokens: 10707579638052243058
         });
 

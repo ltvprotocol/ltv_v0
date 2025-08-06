@@ -197,27 +197,27 @@ contract GovernorTest is BalancedTest {
         dummyLTV.setMaxTotalAssetsInUnderlying(newValue);
     }
 
-    function test_setMaxDeleverageFee(address owner, address user)
+    function test_setMaxDeleverageFeex23(address owner, address user)
         public
         initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
     {
-        uint256 newValue = 1 * 10 ** 17; // 10%
+        uint256 newValue = 2**23 / 10; // 10%
         address governor = ILTV(address(dummyLTV)).governor();
         vm.assume(user != governor);
         vm.startPrank(governor);
-        dummyLTV.setMaxDeleverageFee(newValue);
-        assertEq(dummyLTV.maxDeleverageFee(), newValue);
+        dummyLTV.setMaxDeleverageFeex23(newValue);
+        assertEq(dummyLTV.maxDeleverageFeex23(), newValue);
 
         // Should revert if not governor
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
-        dummyLTV.setMaxDeleverageFee(newValue);
+        dummyLTV.setMaxDeleverageFeex23(newValue);
 
         // Should revert if too high
         vm.startPrank(governor);
-        uint256 tooHighValue = 42 * 10 ** 18; // 100%
+        uint256 tooHighValue = 42 * 2**23; // 100%
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.InvalidMaxDeleverageFee.selector, tooHighValue));
-        dummyLTV.setMaxDeleverageFee(tooHighValue);
+        dummyLTV.setMaxDeleverageFeex23(tooHighValue);
     }
 
     function test_setIsWhitelistActivated(address owner, address user)

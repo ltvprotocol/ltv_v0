@@ -42,7 +42,7 @@ contract SharePriceOnStaticVaultTestNegativeAuction is BaseTest {
             maxGrowthFeex23: 2**23 / 5,
             collateralPrice: 10 ** 18,
             borrowPrice: 10 ** 18,
-            maxDeleverageFee: 2 * 10 ** 16,
+            maxDeleverageFeex23: 2**23 / 50,
             zeroAddressTokens: 1_016_000_000 + 16000000 - 765_984_000 - 16000000 - 16_000
         });
         initializeTest(initData);

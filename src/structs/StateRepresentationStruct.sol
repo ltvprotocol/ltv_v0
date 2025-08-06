@@ -18,5 +18,5 @@ struct StateRepresentationStruct {
     bool isDepositDisabled;
     bool isWithdrawDisabled;
     bool isWhitelistActivated;
-    uint256 maxDeleverageFee;
+    uint24 maxDeleverageFeex23;
 }

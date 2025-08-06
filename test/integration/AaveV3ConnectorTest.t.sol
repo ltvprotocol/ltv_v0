@@ -75,7 +75,7 @@ contract AaveV3ConnectorTest is Test {
             maxGrowthFeex23: 2**23 / 5,
             maxTotalAssetsInUnderlying: type(uint128).max,
             slippageProvider: slippageProvider,
-            maxDeleverageFee: 50000000000000000,
+            maxDeleverageFeex23: 50000000000000000,
             vaultBalanceAsLendingConnector: ILendingConnector(address(0)),
             owner: address(this),
             guardian: address(this),

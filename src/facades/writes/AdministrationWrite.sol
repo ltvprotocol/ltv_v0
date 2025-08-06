@@ -29,7 +29,7 @@ abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeab
         _delegate(address(modules.administrationModule()), abi.encode(_maxTotalAssetsInUnderlying));
     }
 
-    function setMaxDeleverageFee(uint256 value) external {
+    function setMaxDeleverageFeex23(uint24 value) external {
         _delegate(address(modules.administrationModule()), abi.encode(value));
     }
 

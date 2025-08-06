@@ -27,7 +27,7 @@ abstract contract Initialize is AdmistrationSetters, OwnableUpgradeable {
 
         _setFeeCollector(initData.feeCollector);
         _setMaxGrowthFeex23(initData.maxGrowthFeex23);
-        _setMaxDeleverageFee(initData.maxDeleverageFee);
+        _setMaxDeleverageFeex23(initData.maxDeleverageFeex23);
 
         _setMaxTotalAssetsInUnderlying(initData.maxTotalAssetsInUnderlying);
 

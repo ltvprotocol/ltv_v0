@@ -28,7 +28,7 @@ contract MaxReedemCollateralCheckBalanceTest is BaseTest {
             maxGrowthFeex23: 0,
             collateralPrice: 42 * 10 ** 17,
             borrowPrice: 10 ** 18,
-            maxDeleverageFee: 0,
+            maxDeleverageFeex23: 0,
             zeroAddressTokens: 25 * 10 ** 18
         });
 

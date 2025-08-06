@@ -8,8 +8,8 @@ interface IAdministrationErrors {
     error UnexpectedTargetLTV(uint128 targetLTV);
     error ZeroFeeCollector();
     error ImpossibleToCoverDeleverage(uint256 realBorrowAssets, uint256 providedAssets);
-    error InvalidMaxDeleverageFee(uint256 deleverageFee);
-    error ExceedsMaxDeleverageFee(uint256 deleverageFee, uint256 maxDeleverageFee);
+    error InvalidMaxDeleverageFee(uint256 deleverageFeex23);
+    error ExceedsMaxDeleverageFee(uint24 deleverageFeex23, uint24 maxDeleverageFeex23);
     error VaultAlreadyDeleveraged();
     error InvalidMaxGrowthFee(uint256 maxGrowthFeex23);
     error OnlyEmergencyDeleveragerInvalidCaller(address account);

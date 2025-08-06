@@ -46,7 +46,7 @@ struct BaseTestInit {
     uint256 maxGrowthFeex23;
     uint256 collateralPrice;
     uint256 borrowPrice;
-    uint256 maxDeleverageFee;
+    uint24 maxDeleverageFeex23;
     uint256 zeroAddressTokens;
 }
 
@@ -113,7 +113,7 @@ contract BaseTest is Test {
                 maxGrowthFeex23: init.maxGrowthFeex23,
                 maxTotalAssetsInUnderlying: init.maxTotalAssetsInUnderlying,
                 slippageProvider: slippageProvider,
-                maxDeleverageFee: init.maxDeleverageFee,
+                maxDeleverageFeex23: init.maxDeleverageFeex23,
                 vaultBalanceAsLendingConnector: new VaultBalanceAsLendingConnector(collateralToken, borrowToken),
                 owner: init.owner,
                 guardian: init.guardian,
@@ -174,7 +174,7 @@ contract BaseTest is Test {
             maxGrowthFeex23: 2**23 / 5,
             collateralPrice: 2 * 10 ** 18,
             borrowPrice: 10 ** 18,
-            maxDeleverageFee: 2 * 10 ** 16,
+            maxDeleverageFeex23: 2**23 / 50,
             zeroAddressTokens: 10 ** 18
         });
         initializeTest(initData);

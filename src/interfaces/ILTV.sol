@@ -98,7 +98,7 @@ interface ILTV is
 
     function isWithdrawDisabled() external view returns (bool);
 
-    function maxDeleverageFee() external view returns (uint256);
+    function maxDeleverageFeex23() external view returns (uint256);
 
     function maxDeposit(address) external view returns (uint256);
 
@@ -192,7 +192,7 @@ interface ILTV is
 
     function setLendingConnector(address _lendingConnector) external;
 
-    function setMaxDeleverageFee(uint256 value) external;
+    function setMaxDeleverageFeex23(uint24 value) external;
 
     function setMaxGrowthFeex23(uint256 _maxGrowthFeex23) external;
 

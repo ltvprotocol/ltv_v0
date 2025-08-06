@@ -44,10 +44,10 @@ contract AdmistrationSetters is LTVState, IAdministrationErrors, IAdministration
         emit MaxTotalAssetsInUnderlyingChanged(oldValue, _maxTotalAssetsInUnderlying);
     }
 
-    function _setMaxDeleverageFee(uint256 value) internal {
-        require(value <= 10 ** 18, InvalidMaxDeleverageFee(value));
-        uint256 oldValue = maxDeleverageFee;
-        maxDeleverageFee = value;
+    function _setMaxDeleverageFeex23(uint24 value) internal {
+        require(value <= 2**23, InvalidMaxDeleverageFee(value));
+        uint256 oldValue = maxDeleverageFeex23;
+        maxDeleverageFeex23 = value;
         emit MaxDeleverageFeeChanged(oldValue, value);
     }
 

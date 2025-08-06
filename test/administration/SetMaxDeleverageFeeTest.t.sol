@@ -20,12 +20,12 @@ contract SetMaxDeleverageFeeTest is BaseTest {
         public
         testWithPredefinedDefaultValues(defaultData)
     {
-        uint256 maxDeleverageFee = ltv.maxDeleverageFee();
-        uint256 deleverageFee = maxDeleverageFee + 1;
+        uint24 maxDeleverageFeex23 = ltv.maxDeleverageFeex23();
+        uint256 deleverageFee = maxDeleverageFeex23 + 1;
         vm.startPrank(defaultData.emergencyDeleverager);
         vm.expectRevert(
             abi.encodeWithSelector(
-                IAdministrationErrors.ExceedsMaxDeleverageFee.selector, deleverageFee, maxDeleverageFee
+                IAdministrationErrors.ExceedsMaxDeleverageFee.selector, deleverageFee, maxDeleverageFeex23
             )
         );
         ltv.deleverageAndWithdraw(0, deleverageFee);
@@ -35,14 +35,14 @@ contract SetMaxDeleverageFeeTest is BaseTest {
         public
         testWithPredefinedDefaultValues(defaultData)
     {
-        uint256 deleverageFee = ltv.maxDeleverageFee();
+        uint256 deleverageFeex23 = ltv.maxDeleverageFeex23();
 
         uint256 borrowAssets = ILendingConnector(ltv.getLendingConnector()).getRealBorrowAssets(true, "");
         deal(address(borrowToken), defaultData.emergencyDeleverager, borrowAssets);
         vm.startPrank(defaultData.emergencyDeleverager);
         borrowToken.approve(address(ltv), borrowAssets);
 
-        ltv.deleverageAndWithdraw(borrowAssets, deleverageFee);
+        ltv.deleverageAndWithdraw(borrowAssets, deleverageFeex23);
 
         uint256 zeroFeeAssets = borrowAssets * ltv.oracleConnector().getPriceBorrowOracle()
             / ltv.oracleConnector().getPriceCollateralOracle();
@@ -54,13 +54,13 @@ contract SetMaxDeleverageFeeTest is BaseTest {
         public
         testWithPredefinedDefaultValues(defaultData)
     {
-        uint128 newMaxDeleverageFee = 5 * 10 ** 16; // 0.05
+        uint128 newMaxDeleverageFeex23 = 2**23 / 20; // 0.05
         vm.startPrank(defaultData.governor);
         vm.expectEmit(true, true, true, true, address(ltv));
-        emit IAdministrationEvents.MaxDeleverageFeeChanged(ltv.maxDeleverageFee(), newMaxDeleverageFee);
-        ltv.setMaxDeleverageFee(newMaxDeleverageFee);
+        emit IAdministrationEvents.MaxDeleverageFeeChanged(ltv.maxDeleverageFeex23(), newMaxDeleverageFeex23);
+        ltv.setMaxDeleverageFeex23(newMaxDeleverageFeex23);
 
-        assertEq(ltv.maxDeleverageFee(), newMaxDeleverageFee);
+        assertEq(ltv.maxDeleverageFeex23(), newMaxDeleverageFeex23);
     }
 
     function test_canDeleverageWithZeroMaxFee(DefaultTestData memory defaultData)
@@ -69,9 +69,9 @@ contract SetMaxDeleverageFeeTest is BaseTest {
     {
         assertEq(collateralToken.balanceOf(defaultData.emergencyDeleverager), 0);
 
-        uint128 newMaxDeleverageFee = 0;
+        uint128 newMaxDeleverageFeex23 = 0;
         vm.startPrank(defaultData.governor);
-        ltv.setMaxDeleverageFee(newMaxDeleverageFee);
+        ltv.setMaxDeleverageFeex23(newMaxDeleverageFeex23);
 
         uint256 borrowAssets = ILendingConnector(ltv.getLendingConnector()).getRealBorrowAssets(true, "");
         deal(address(borrowToken), defaultData.emergencyDeleverager, borrowAssets);
@@ -88,22 +88,22 @@ contract SetMaxDeleverageFeeTest is BaseTest {
     }
 
     function test_passIfOne(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
-        uint128 newMaxDeleverageFee = uint128(1 * 10 ** 18); // 1.0
+        uint128 newMaxDeleverageFeex23 = uint128(2**23); // 1.0
         vm.startPrank(defaultData.governor);
-        ltv.setMaxDeleverageFee(newMaxDeleverageFee);
-        assertEq(ltv.maxDeleverageFee(), newMaxDeleverageFee);
+        ltv.setMaxDeleverageFeex23(newMaxDeleverageFeex23);
+        assertEq(ltv.maxDeleverageFeex23(), newMaxDeleverageFeex23);
     }
 
     function test_failIfFortyTwo(DefaultTestData memory defaultData)
         public
         testWithPredefinedDefaultValues(defaultData)
     {
-        uint128 newMaxDeleverageFee = uint128(42 * 10 ** 18);
+        uint128 newMaxDeleverageFeex23 = uint128(42 * 2**23);
         vm.startPrank(defaultData.governor);
         vm.expectRevert(
-            abi.encodeWithSelector(IAdministrationErrors.InvalidMaxDeleverageFee.selector, newMaxDeleverageFee)
+            abi.encodeWithSelector(IAdministrationErrors.InvalidMaxDeleverageFee.selector, newMaxDeleverageFeex23)
         );
-        ltv.setMaxDeleverageFee(newMaxDeleverageFee);
+        ltv.setMaxDeleverageFeex23(newMaxDeleverageFeex23);
     }
 
     function test_failIfNotGovernor(DefaultTestData memory defaultData, address user)
@@ -111,9 +111,9 @@ contract SetMaxDeleverageFeeTest is BaseTest {
         testWithPredefinedDefaultValues(defaultData)
     {
         vm.assume(user != defaultData.governor);
-        uint128 newMaxDeleverageFee = uint128(ltv.maxDeleverageFee());
+        uint128 newMaxDeleverageFeex23 = uint128(ltv.maxDeleverageFeex23());
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
-        ltv.setMaxDeleverageFee(newMaxDeleverageFee);
+        ltv.setMaxDeleverageFeex23(newMaxDeleverageFeex23);
     }
 }

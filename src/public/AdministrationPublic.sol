@@ -48,8 +48,8 @@ abstract contract AdministrationPublic is
         _setMaxTotalAssetsInUnderlying(_maxTotalAssetsInUnderlying);
     }
 
-    function setMaxDeleverageFee(uint256 value) external isFunctionAllowed onlyGovernor {
-        _setMaxDeleverageFee(value);
+    function setMaxDeleverageFeex23(uint24 value) external isFunctionAllowed onlyGovernor {
+        _setMaxDeleverageFeex23(value);
     }
 
     function setIsWhitelistActivated(bool activate) external isFunctionAllowed onlyGovernor {
@@ -97,7 +97,7 @@ abstract contract AdministrationPublic is
         onlyEmergencyDeleverager
         nonReentrant
     {
-        require(deleverageFee <= maxDeleverageFee, ExceedsMaxDeleverageFee(deleverageFee, maxDeleverageFee));
+        require(deleverageFee <= maxDeleverageFeex23, ExceedsMaxDeleverageFee(deleverageFee, maxDeleverageFeex23));
         require(!isVaultDeleveraged, VaultAlreadyDeleveraged());
         require(address(vaultBalanceAsLendingConnector) != address(0), VaultBalanceAsLendingConnectorNotSet());
 

@@ -54,7 +54,7 @@ abstract contract BaseInvariantTest is BaseTest {
             maxGrowthFeex23: 2**23 / 5, // 20% max growth fee
             collateralPrice: 2 * 10 ** 18, // 2 collateral price
             borrowPrice: 10 ** 18, // 1 borrow price
-            maxDeleverageFee: 0, // No deleverage fee
+            maxDeleverageFeex23: 0, // No deleverage fee
             zeroAddressTokens: 4 * 10 ** 19 - 35 * 10 ** 18 // adjust initial share price to be 1
         });
 

@@ -33,7 +33,7 @@ contract GeneratedBaseTest is DummyModulesBaseTest {
             maxGrowthFeex23: 2**23 / 5,
             collateralPrice: 10 ** 20,
             borrowPrice: 10 ** 20,
-            maxDeleverageFee: 2 * 10 ** 16,
+            maxDeleverageFeex23: 2**23 / 50,
             zeroAddressTokens: 0
         });
         initializeDummyTest(initData);

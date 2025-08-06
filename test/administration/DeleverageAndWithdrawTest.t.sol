@@ -35,7 +35,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
 
     function test_getEverythingAsFee(DefaultTestData memory data) public testWithPredefinedDefaultValues(data) {
         vm.prank(data.governor);
-        ltv.setMaxDeleverageFee(10 ** 18);
+        ltv.setMaxDeleverageFeex23(2**23);
 
         uint256 collateralAssets = ltv.getLendingConnector().getRealCollateralAssets(false, "");
         uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false, "");
@@ -45,7 +45,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         vm.startPrank(data.emergencyDeleverager);
 
         borrowToken.approve(address(ltv), borrowAssets);
-        ltv.deleverageAndWithdraw(borrowAssets, 10 ** 18);
+        ltv.deleverageAndWithdraw(borrowAssets, 2**23);
 
         assertEq(collateralToken.balanceOf(data.emergencyDeleverager), collateralAssets);
     }
@@ -54,14 +54,14 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         public
         testWithPredefinedDefaultValues(data)
     {
-        uint256 maxDeleverageFee = ltv.maxDeleverageFee();
+        uint24 maxDeleverageFeex23 = ltv.maxDeleverageFeex23();
         vm.startPrank(data.emergencyDeleverager);
         vm.expectRevert(
             abi.encodeWithSelector(
-                IAdministrationErrors.ExceedsMaxDeleverageFee.selector, maxDeleverageFee + 1, maxDeleverageFee
+                IAdministrationErrors.ExceedsMaxDeleverageFee.selector, maxDeleverageFeex23 + 1, maxDeleverageFeex23
             )
         );
-        ltv.deleverageAndWithdraw(0, maxDeleverageFee + 1);
+        ltv.deleverageAndWithdraw(0, maxDeleverageFeex23 + 1);
     }
 
     function test_successfulMoneyWithdrawal(DefaultTestData memory data, address user)
@@ -335,7 +335,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         ltv.deleverageAndWithdraw(borrowAssets, 0);
     }
 
-    function test_maxDeleverageFeeApplied(DefaultTestData memory data) public testWithPredefinedDefaultValues(data) {
+    function test_maxDeleverageFeex23Applied(DefaultTestData memory data) public testWithPredefinedDefaultValues(data) {
         uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false, "");
         deal(address(borrowToken), data.emergencyDeleverager, borrowAssets);
 
