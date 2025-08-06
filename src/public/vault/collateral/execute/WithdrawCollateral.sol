@@ -50,7 +50,7 @@ abstract contract WithdrawCollateral is
             _spendAllowance(owner, msg.sender, shares);
         }
 
-        require(shares != 0);
+        // require(shares != 0);
 
         applyMaxGrowthFee(
             data.previewCollateralVaultData.supplyAfterFee, data.previewCollateralVaultData.withdrawTotalAssets
