@@ -3,10 +3,20 @@ pragma solidity ^0.8.28;
 
 import "../errors/IAdministrationErrors.sol";
 import "../events/IAdministrationEvents.sol";
+import "../state_reader/GetIsDepositDisabled.sol";
+import "../state_reader/GetIsWithdrawDisabled.sol";
+import "../state_reader/GetIsWhitelistActivated.sol";
 import "../states/LTVState.sol";
 import "../Constants.sol";
 
-contract AdmistrationSetters is LTVState, IAdministrationErrors, IAdministrationEvents {
+contract AdmistrationSetters is
+    LTVState,
+    GetIsWhitelistActivated,
+    IAdministrationErrors,
+    IAdministrationEvents,
+    GetIsDepositDisabled,
+    GetIsWithdrawDisabled
+{
     function _setTargetLTV(uint16 dividend, uint16 divider) internal {
         require(dividend >= 0 && dividend < divider, UnexpectedTargetLTV(dividend, divider));
         require(
@@ -75,13 +85,15 @@ contract AdmistrationSetters is LTVState, IAdministrationErrors, IAdministration
 
     function _setIsWhitelistActivated(bool activate) internal {
         require(!activate || address(whitelistRegistry) != address(0), WhitelistRegistryNotSet());
-        bool oldValue = isWhitelistActivated;
-        isWhitelistActivated = activate;
+        bool oldValue = isWhitelistActivated();
+        boolSlot = activate
+            ? uint8(boolSlot | (2** IS_WHITELIST_ACTIVATED_BIT))
+            : uint8(boolSlot & ~(2** IS_WHITELIST_ACTIVATED_BIT));
         emit IsWhitelistActivatedChanged(oldValue, activate);
     }
 
     function _setWhitelistRegistry(IWhitelistRegistry value) internal {
-        require(address(value) != address(0) || !isWhitelistActivated, WhitelistIsActivated());
+        require(address(value) != address(0) || !isWhitelistActivated(), WhitelistIsActivated());
         address oldAddress = address(whitelistRegistry);
         whitelistRegistry = value;
         emit WhitelistRegistryUpdated(oldAddress, address(value));
@@ -116,14 +128,17 @@ contract AdmistrationSetters is LTVState, IAdministrationErrors, IAdministration
     }
 
     function _setIsDepositDisabled(bool value) internal {
-        bool oldValue = isDepositDisabled;
-        isDepositDisabled = value;
+        bool oldValue = isDepositDisabled();
+        boolSlot =
+            value ? uint8(boolSlot | (2 ** IS_DEPOSIT_DISABLED_BIT)) : uint8(boolSlot & ~(2 ** IS_DEPOSIT_DISABLED_BIT));
         emit IsDepositDisabledChanged(oldValue, value);
     }
 
     function _setIsWithdrawDisabled(bool value) internal {
-        bool oldValue = isWithdrawDisabled;
-        isWithdrawDisabled = value;
+        bool oldValue = isWithdrawDisabled();
+        boolSlot = value
+            ? uint8(boolSlot | (2 ** IS_WITHDRAW_DISABLED_BIT))
+            : uint8(boolSlot & ~(2 ** IS_WITHDRAW_DISABLED_BIT));
         emit IsWithdrawDisabledChanged(oldValue, value);
     }
 

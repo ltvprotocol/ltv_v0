@@ -7,23 +7,26 @@ import "../events/IERC20Events.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 import "src/errors/IAdministrationErrors.sol";
 import "src/errors/IERC20Errors.sol";
-
+import "src/state_reader/GetIsDepositDisabled.sol";
+import "src/state_reader/GetIsWithdrawDisabled.sol";
 abstract contract ERC20 is
     WhitelistModifier,
     FunctionStopperModifier,
     ReentrancyGuardUpgradeable,
+    GetIsDepositDisabled,
+    GetIsWithdrawDisabled,
     IERC20Events,
     IERC20Errors
 {
     function _mint(address to, uint256 amount) internal isReceiverWhitelisted(to) {
-        require(!isDepositDisabled, DepositIsDisabled());
+        require(!isDepositDisabled(), DepositIsDisabled());
         balanceOf[to] += amount;
         baseTotalSupply += amount;
         emit Transfer(address(0), to, amount);
     }
 
     function _burn(address from, uint256 amount) internal {
-        require(!isWithdrawDisabled, WithdrawIsDisabled());
+        require(!isWithdrawDisabled(), WithdrawIsDisabled());
         balanceOf[from] -= amount;
         baseTotalSupply -= amount;
         emit Transfer(from, address(0), amount);

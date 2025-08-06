@@ -100,6 +100,7 @@ contract MorphoIntegrationTest is Test {
             guardian: address(this),
             governor: address(this),
             emergencyDeleverager: address(this),
+            auctionDuration: 1000,
             lendingConnectorData: abi.encode(MORPHO_ORACLE, IRM, 945000000000000000, keccak256(abi.encode(marketParams)))
         });
 

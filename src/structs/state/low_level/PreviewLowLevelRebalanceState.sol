@@ -9,6 +9,7 @@ struct PreviewLowLevelRebalanceState {
     uint256 depositRealCollateralAssets;
     uint16 targetLTVDividend;
     uint16 targetLTVDivider;
-    uint64 blockNumber;
-    uint64 startAuction;
+    uint56 blockNumber;
+    uint56 startAuction;
+    uint24 auctionDuration;
 }

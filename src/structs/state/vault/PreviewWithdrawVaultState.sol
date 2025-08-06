@@ -7,8 +7,9 @@ struct PreviewWithdrawVaultState {
     MaxGrowthFeeState maxGrowthFeeState;
     uint16 targetLTVDividend;
     uint16 targetLTVDivider;
-    uint64 startAuction;
-    uint64 blockNumber;
+    uint56 startAuction;
+    uint24 auctionDuration;
+    uint56 blockNumber;
     uint256 collateralSlippage;
     uint256 borrowSlippage;
 }

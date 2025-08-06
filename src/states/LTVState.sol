@@ -46,7 +46,8 @@ abstract contract LTVState {
     uint256 public maxTotalAssetsInUnderlying;
     uint256 public lastSeenTokenPrice;
 
-    uint64 public startAuction;
+    uint56 public startAuction;
+    uint24 public auctionDuration;
 
     uint16 public maxGrowthFeeDividend;
     uint16 public maxGrowthFeeDivider;
@@ -62,10 +63,12 @@ abstract contract LTVState {
     
     uint8 public decimals;
 
-    bool public isDepositDisabled;
-    bool public isWithdrawDisabled;
-    bool public isWhitelistActivated;
-    bool public isVaultDeleveraged;
+    uint8 public constant IS_DEPOSIT_DISABLED_BIT = 0;
+    uint8 public constant IS_WITHDRAW_DISABLED_BIT = 1;
+    uint8 public constant IS_WHITELIST_ACTIVATED_BIT = 2;
+    uint8 public constant IS_VAULT_DELEVERAGED_BIT = 3;
+
+    uint8 public boolSlot;
 
     mapping(address => uint256) public balanceOf;
     mapping(address => mapping(address => uint256)) public allowance;

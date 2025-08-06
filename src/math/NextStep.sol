@@ -25,10 +25,10 @@ library NextStep {
         int256 futureRewardCollateral;
         int256 deltaFutureBorrow;
         int256 deltaFutureCollateral;
-        uint64 auctionStep;
+        uint24 auctionStep;
         int256 deltaFuturePaymentBorrow;
         int256 deltaFuturePaymentCollateral;
-        uint64 blockNumber;
+        uint56 blockNumber;
     }
 
     function calculateNextFutureRewardBorrow(
@@ -67,7 +67,7 @@ library NextStep {
         return futureCollateral + deltaFutureCollateral;
     }
 
-    function mergingAuction(MergeAuctionData memory data) private pure returns (uint64 startAuction, bool merge) {
+    function mergingAuction(MergeAuctionData memory data) private pure returns (uint56 startAuction, bool merge) {
         merge =
             data.futureBorrow * data.deltaFutureBorrow >= 0 && data.futureCollateral * data.deltaFutureCollateral >= 0;
 
@@ -88,12 +88,12 @@ library NextStep {
         }
 
         if (merge) {
-            uint64 nextAuctionStep;
+            uint24 nextAuctionStep;
             if (auctionWeight + deltaAuctionWeight == 0) {
                 nextAuctionStep = data.auctionStep;
             } else {
                 // round down to make auction longer
-                nextAuctionStep = uint64(
+                nextAuctionStep = uint24(
                     uint256(
                         int256(uint256(data.auctionStep)).mulDivDown(auctionWeight, auctionWeight + deltaAuctionWeight)
                     )

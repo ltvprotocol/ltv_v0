@@ -38,7 +38,7 @@ contract BalancedTest is DummyModulesBaseTest {
                 futureBorrow: futureBorrow,
                 futureCollateral: futureCollateral / 2,
                 auctionReward: auctionReward,
-                startAuction: uint64(Constants.AMOUNT_OF_STEPS / 2),
+                startAuction: uint56(1000 / 2),
                 collateralSlippage: 0,
                 borrowSlippage: 0,
                 maxTotalAssetsInUnderlying: type(uint128).max,

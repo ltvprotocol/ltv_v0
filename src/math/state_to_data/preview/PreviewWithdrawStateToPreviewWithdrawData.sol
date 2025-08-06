@@ -60,12 +60,12 @@ contract PreviewWithdrawStateToPreviewWithdrawData is MaxGrowthFee {
         data.borrow = int256(realBorrow) + data.futureBorrow + futureRewardBorrow;
         data.borrowPrice = state.maxGrowthFeeState.commonTotalAssetsState.borrowPrice;
 
-        uint256 auctionStep = CommonMath.calculateAuctionStep(state.startAuction, state.blockNumber);
+        uint256 auctionStep = CommonMath.calculateAuctionStep(state.startAuction, state.blockNumber, state.auctionDuration);
 
         data.userFutureRewardBorrow =
-            CommonMath.calculateUserFutureRewardBorrow(int256(futureRewardBorrow), auctionStep);
+            CommonMath.calculateUserFutureRewardBorrow(int256(futureRewardBorrow), auctionStep, state.auctionDuration);
         data.userFutureRewardCollateral =
-            CommonMath.calculateUserFutureRewardCollateral(int256(futureRewardCollateral), auctionStep);
+            CommonMath.calculateUserFutureRewardCollateral(int256(futureRewardCollateral), auctionStep, state.auctionDuration);
         data.protocolFutureRewardBorrow = futureRewardBorrow - data.userFutureRewardBorrow;
         data.protocolFutureRewardCollateral = futureRewardCollateral - data.userFutureRewardCollateral;
 

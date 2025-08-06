@@ -98,10 +98,12 @@ abstract contract AdministrationPublic is
         nonReentrant
     {
         require(
-            deleverageFeeDividend * maxDeleverageFeeDivider <= deleverageFeeDivider * maxDeleverageFeeDividend, 
-            ExceedsMaxDeleverageFee(deleverageFeeDividend, deleverageFeeDivider, maxDeleverageFeeDividend, maxDeleverageFeeDivider)
+            deleverageFeeDividend * maxDeleverageFeeDivider <= deleverageFeeDivider * maxDeleverageFeeDividend,
+            ExceedsMaxDeleverageFee(
+                deleverageFeeDividend, deleverageFeeDivider, maxDeleverageFeeDividend, maxDeleverageFeeDivider
+            )
         );
-        require(!isVaultDeleveraged, VaultAlreadyDeleveraged());
+        require(!isVaultDeleveraged(), VaultAlreadyDeleveraged());
         require(address(vaultBalanceAsLendingConnector) != address(0), VaultBalanceAsLendingConnectorNotSet());
 
         MaxGrowthFeeState memory state = maxGrowthFeeState();
@@ -129,7 +131,8 @@ abstract contract AdministrationPublic is
             oracleConnector.getPriceBorrowOracle(), oracleConnector.getPriceCollateralOracle()
         );
 
-        collateralToTransfer += (collateralAssets - collateralToTransfer).mulDivDown(deleverageFeeDividend, deleverageFeeDivider);
+        collateralToTransfer +=
+            (collateralAssets - collateralToTransfer).mulDivDown(deleverageFeeDividend, deleverageFeeDivider);
 
         if (realBorrowAssets != 0) {
             borrowToken.transferFrom(msg.sender, address(this), realBorrowAssets);
@@ -141,7 +144,7 @@ abstract contract AdministrationPublic is
         if (collateralToTransfer != 0) {
             collateralToken.transfer(msg.sender, collateralToTransfer);
         }
-        isVaultDeleveraged = true;
+        boolSlot = uint8(boolSlot | (2 ** IS_VAULT_DELEVERAGED_BIT));
         connectorGetterData = "";
     }
 

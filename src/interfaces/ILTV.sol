@@ -223,7 +223,9 @@ interface ILTV is
 
     function slippageProvider() external view returns (address);
 
-    function startAuction() external view returns (uint256);
+    function startAuction() external view returns (uint56);
+
+    function auctionDuration() external view returns (uint24);
 
     function symbol() external view returns (string memory);
 

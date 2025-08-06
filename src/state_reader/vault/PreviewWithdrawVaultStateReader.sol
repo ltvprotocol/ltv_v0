@@ -11,7 +11,8 @@ contract PreviewWithdrawVaultStateReader is MaxGrowthFeeStateReader {
             targetLTVDividend: targetLTVDividend,
             targetLTVDivider: targetLTVDivider,
             startAuction: startAuction,
-            blockNumber: uint64(block.number),
+            auctionDuration: auctionDuration,
+            blockNumber: uint56(block.number),
             collateralSlippage: slippageProvider.collateralSlippage(),
             borrowSlippage: slippageProvider.borrowSlippage()
         });

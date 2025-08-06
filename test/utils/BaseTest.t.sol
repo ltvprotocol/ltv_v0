@@ -34,7 +34,7 @@ struct BaseTestInit {
     int256 futureBorrow;
     int256 futureCollateral;
     int256 auctionReward;
-    uint64 startAuction;
+    uint56 startAuction;
     uint256 collateralSlippage;
     uint256 borrowSlippage;
     uint256 maxTotalAssetsInUnderlying;
@@ -129,6 +129,7 @@ contract BaseTest is Test {
                 guardian: init.guardian,
                 governor: init.governor,
                 emergencyDeleverager: init.emergencyDeleverager,
+                auctionDuration: 1000,
                 lendingConnectorData: ""
             });
 
@@ -143,7 +144,7 @@ contract BaseTest is Test {
         deal(address(borrowToken), address(lendingProtocol), type(uint128).max);
         deal(address(collateralToken), address(lendingProtocol), type(uint128).max);
 
-        vm.roll(Constants.AMOUNT_OF_STEPS);
+        vm.roll(1000);
         ltv.setStartAuction(init.startAuction);
         ltv.setFutureBorrowAssets(init.futureBorrow);
         ltv.setFutureCollateralAssets(init.futureCollateral);

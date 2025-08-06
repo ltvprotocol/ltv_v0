@@ -43,5 +43,7 @@ abstract contract Initialize is AdmistrationSetters, OwnableUpgradeable {
             abi.encodeCall(ILendingConnector.initializeProtocol, (initData.lendingConnectorData))
         );
         require(success, IInitError.FaildedToInitialize(initData.lendingConnectorData));
+
+        auctionDuration = initData.auctionDuration;
     }
 }

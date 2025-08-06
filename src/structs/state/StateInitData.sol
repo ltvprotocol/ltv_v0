@@ -32,5 +32,6 @@ struct StateInitData {
     address guardian;
     address governor;
     address emergencyDeleverager;
+    uint24 auctionDuration;
     bytes lendingConnectorData;
 }

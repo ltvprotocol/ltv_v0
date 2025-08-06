@@ -86,6 +86,7 @@ contract AaveV3ConnectorTest is Test {
             guardian: address(this),
             governor: address(this),
             emergencyDeleverager: address(this),
+            auctionDuration: 1000,
             lendingConnectorData: abi.encode("")
         });
 
