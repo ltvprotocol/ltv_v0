@@ -48,8 +48,6 @@ abstract contract Withdraw is
             _spendAllowance(owner, msg.sender, shares);
         }
 
-        // require(shares != 0);
-
         applyMaxGrowthFee(
             data.previewWithdrawBorrowVaultData.supplyAfterFee, data.previewWithdrawBorrowVaultData.withdrawTotalAssets
         );
