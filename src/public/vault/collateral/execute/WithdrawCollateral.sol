@@ -33,6 +33,10 @@ abstract contract WithdrawCollateral is
         nonReentrant
         returns (uint256)
     {
+        if (assets == 0) {
+            revert ZeroAssetsWithdraw(receiver, owner);
+        }
+
         MaxWithdrawRedeemCollateralVaultState memory state = maxWithdrawRedeemCollateralVaultState(owner);
         MaxWithdrawRedeemCollateralVaultData memory data =
             maxWithdrawRedeemCollateralVaultStateToMaxWithdrawRedeemCollateralVaultData(state);
@@ -41,10 +45,6 @@ abstract contract WithdrawCollateral is
 
         (uint256 shares, DeltaFuture memory deltaFuture) =
             _previewWithdrawCollateral(assets, data.previewCollateralVaultData);
-
-        if (shares == 0) {
-            return 0;
-        }
 
         if (owner != msg.sender) {
             _spendAllowance(owner, msg.sender, shares);

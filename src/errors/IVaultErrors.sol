@@ -17,4 +17,9 @@ interface IVaultErrors {
     error ExceedsMaxWithdrawCollateral(address owner, uint256 assets, uint256 max);
     error ExceedsMaxMintCollateral(address receiver, uint256 shares, uint256 max);
     error ExceedsMaxRedeemCollateral(address owner, uint256 shares, uint256 max);
+
+    error ZeroAssetsWithdraw(address receiver, address owner);
+    error ZeroSharesWithdraw(address receiver, address owner);
+    error ZeroAssetsDeposit(address receiver);
+    error ZeroSharesDeposit(address receiver);
 }

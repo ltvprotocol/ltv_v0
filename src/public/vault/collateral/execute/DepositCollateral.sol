@@ -31,6 +31,10 @@ abstract contract DepositCollateral is
         nonReentrant
         returns (uint256)
     {
+        if (assets == 0) {
+            revert ZeroAssetsDeposit(receiver);
+        }
+
         MaxDepositMintCollateralVaultState memory state = maxDepositMintCollateralVaultState();
         MaxDepositMintCollateralVaultData memory data =
             maxDepositMintCollateralVaultStateToMaxDepositMintCollateralVaultData(state);
@@ -40,11 +44,13 @@ abstract contract DepositCollateral is
         (uint256 shares, DeltaFuture memory deltaFuture) =
             _previewDepositCollateral(assets, data.previewCollateralVaultData);
 
+        collateralToken.transferFrom(msg.sender, address(this), assets);
+
         if (shares == 0) {
+            emit Deposit(msg.sender, receiver, assets, shares);
+
             return 0;
         }
-
-        collateralToken.transferFrom(msg.sender, address(this), assets);
 
         applyMaxGrowthFee(
             data.previewCollateralVaultData.supplyAfterFee, data.previewCollateralVaultData.withdrawTotalAssets

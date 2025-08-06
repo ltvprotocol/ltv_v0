@@ -58,7 +58,7 @@ abstract contract BaseVaultInvariantWrapper is BaseInvariantWrapper {
 
         // Execute deposit and track changes
         _expectedLtvDelta = int256(ltv.deposit(amount, _currentTestActor));
-        _expectedBorrowDelta = _expectedLtvDelta == 0 ? int256(0) : -int256(amount);
+        _expectedBorrowDelta = -int256(amount);
         _expectedCollateralDelta = 0;
     }
 
@@ -88,7 +88,7 @@ abstract contract BaseVaultInvariantWrapper is BaseInvariantWrapper {
 
         // Execute withdrawal and track changes
         _expectedLtvDelta = -int256(ltv.withdraw(amount, _currentTestActor, _currentTestActor));
-        _expectedBorrowDelta = _expectedLtvDelta == 0 ? int256(0) : int256(amount);
+        _expectedBorrowDelta = int256(amount);
         _expectedCollateralDelta = 0;
     }
 
@@ -132,7 +132,7 @@ abstract contract BaseVaultInvariantWrapper is BaseInvariantWrapper {
 
         // Execute mint and track changes
         _expectedBorrowDelta = -int256(ltv.mint(amount, _currentTestActor));
-        _expectedLtvDelta = _expectedBorrowDelta == 0 ? int256(0) : int256(amount);
+        _expectedLtvDelta = int256(amount);
         _expectedCollateralDelta = 0;
     }
 
@@ -162,7 +162,7 @@ abstract contract BaseVaultInvariantWrapper is BaseInvariantWrapper {
 
         // Execute redemption and track changes
         _expectedBorrowDelta = int256(ltv.redeem(amount, _currentTestActor, _currentTestActor));
-        _expectedLtvDelta = _expectedBorrowDelta == 0 ? int256(0) : -int256(amount);
+        _expectedLtvDelta = -int256(amount);
         _expectedCollateralDelta = 0;
     }
 
@@ -203,7 +203,7 @@ abstract contract BaseVaultInvariantWrapper is BaseInvariantWrapper {
 
         // Execute collateral deposit and track changes
         _expectedLtvDelta = int256(ltv.depositCollateral(amount, _currentTestActor));
-        _expectedCollateralDelta = _expectedLtvDelta == 0 ? int256(0) : int256(amount);
+        _expectedCollateralDelta = int256(amount);
         _expectedBorrowDelta = 0;
     }
 
@@ -233,7 +233,7 @@ abstract contract BaseVaultInvariantWrapper is BaseInvariantWrapper {
 
         // Execute collateral withdrawal and track changes
         _expectedLtvDelta = -int256(ltv.withdrawCollateral(amount, _currentTestActor, _currentTestActor));
-        _expectedCollateralDelta = _expectedLtvDelta == 0 ? int256(0) : -int256(amount);
+        _expectedCollateralDelta = -int256(amount);
         _expectedBorrowDelta = 0;
     }
 
@@ -277,7 +277,7 @@ abstract contract BaseVaultInvariantWrapper is BaseInvariantWrapper {
 
         // Execute collateral mint and track changes
         _expectedCollateralDelta = int256(ltv.mintCollateral(amount, _currentTestActor));
-        _expectedLtvDelta = _expectedCollateralDelta == 0 ? int256(0) : int256(amount);
+        _expectedLtvDelta = int256(amount);
         _expectedBorrowDelta = 0;
     }
 
@@ -307,7 +307,7 @@ abstract contract BaseVaultInvariantWrapper is BaseInvariantWrapper {
 
         // Execute collateral redemption and track changes
         _expectedCollateralDelta = -int256(ltv.redeemCollateral(amount, _currentTestActor, _currentTestActor));
-        _expectedLtvDelta = _expectedCollateralDelta == 0 ? int256(0) : -int256(amount);
+        _expectedLtvDelta = -int256(amount);
         _expectedBorrowDelta = 0;
     }
 
