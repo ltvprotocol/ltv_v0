@@ -82,7 +82,8 @@ contract PreviewWithdrawStateToPreviewWithdrawData is MaxGrowthFee {
             })
         );
 
-        data.targetLTV = state.targetLTV;
+        data.targetLTVDividend = state.targetLTVDividend;
+        data.targetLTVDivider = state.targetLTVDivider;
         data.collateralSlippage = state.collateralSlippage;
         data.borrowSlippage = state.borrowSlippage;
 

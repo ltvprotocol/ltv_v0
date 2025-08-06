@@ -9,16 +9,16 @@ import "../../events/IAdministrationEvents.sol";
 import "../../errors/IAdministrationErrors.sol";
 
 abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeable, IAdministrationEvents {
-    function setTargetLTV(uint128 value) external {
-        _delegate(address(modules.administrationModule()), abi.encode(value));
+    function setTargetLTV(uint16 dividend, uint16 divider) external {
+        _delegate(address(modules.administrationModule()), abi.encode(dividend, divider));
     }
 
-    function setMaxSafeLTV(uint128 value) external {
-        _delegate(address(modules.administrationModule()), abi.encode(value));
+    function setMaxSafeLTV(uint16 dividend, uint16 divider) external {
+        _delegate(address(modules.administrationModule()), abi.encode(dividend, divider));
     }
 
-    function setMinProfitLTV(uint128 value) external {
-        _delegate(address(modules.administrationModule()), abi.encode(value));
+    function setMinProfitLTV(uint16 dividend, uint16 divider) external {
+        _delegate(address(modules.administrationModule()), abi.encode(dividend, divider));
     }
 
     function setFeeCollector(address _feeCollector) external {
@@ -65,7 +65,7 @@ abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeab
         _delegate(address(modules.administrationModule()), abi.encode(_oracleConnector));
     }
 
-    function deleverageAndWithdraw(uint256 closeAmountBorrow, uint256 deleverageFee) external {
+    function deleverageAndWithdraw(uint256 closeAmountBorrow, uint24 deleverageFee) external {
         _delegate(address(modules.administrationModule()), abi.encode(closeAmountBorrow, deleverageFee));
     }
 
@@ -81,7 +81,7 @@ abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeab
         _delegate(address(modules.administrationModule()), abi.encode(newGovernor));
     }
 
-    function setMaxGrowthFeex23(uint256 _maxGrowthFeex23) external {
+    function setMaxGrowthFeex23(uint24 _maxGrowthFeex23) external {
         _delegate(address(modules.administrationModule()), abi.encode(_maxGrowthFeex23));
     }
 

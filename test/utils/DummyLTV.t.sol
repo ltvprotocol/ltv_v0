@@ -26,7 +26,7 @@ contract DummyLTV is LTV, ERC20 {
         futureRewardCollateralAssets = value;
     }
 
-    function setStartAuction(uint256 value) public {
+    function setStartAuction(uint64 value) public {
         startAuction = value;
     }
 

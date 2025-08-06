@@ -50,7 +50,7 @@ abstract contract PreviewLowLevelRebalanceStateToData is MaxGrowthFee {
             isDeposit
         );
 
-        uint256 auctionStep = CommonMath.calculateAuctionStep(state.startAuction, state.blockNumber);
+        uint64 auctionStep = CommonMath.calculateAuctionStep(state.startAuction, state.blockNumber);
 
         data.userFutureRewardBorrow = CommonMath.calculateUserFutureRewardBorrow(futureRewardBorrow, auctionStep);
         data.userFutureRewardCollateral =
@@ -91,6 +91,7 @@ abstract contract PreviewLowLevelRebalanceStateToData is MaxGrowthFee {
             })
         );
 
-        data.targetLTV = state.targetLTV;
+        data.targetLTVDividend = state.targetLTVDividend;
+        data.targetLTVDivider = state.targetLTVDivider;
     }
 }

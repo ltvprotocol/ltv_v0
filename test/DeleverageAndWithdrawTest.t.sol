@@ -30,7 +30,7 @@ contract DeleverageAndWithdrawTest is BalancedTest {
     {
         address emergencyDeleverager = ILTV(address(dummyLTV)).emergencyDeleverager();
         vm.assume(emergencyDeleverager != user);
-        uint256 deleverageFee = 2**23 / 100; // 1%
+        uint24 deleverageFee = uint24(2**23) / 100; // 1%
         uint256 closeAmount = 3 * 10 ** 18;
 
         // Should revert if not deleverager
@@ -41,7 +41,7 @@ contract DeleverageAndWithdrawTest is BalancedTest {
 
         // Should revert if fee too high
         vm.startPrank(emergencyDeleverager);
-        uint256 tooBigFee = ILTV(address(dummyLTV)).maxDeleverageFeex23() + 1;
+        uint24 tooBigFee = uint24(ILTV(address(dummyLTV)).maxDeleverageFeex23()) + 1;
         vm.expectRevert(
             abi.encodeWithSelector(
                 IAdministrationErrors.ExceedsMaxDeleverageFee.selector,

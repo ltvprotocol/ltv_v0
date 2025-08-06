@@ -62,13 +62,13 @@ library CommonMath {
         return futureRewardBorrowAssets.mulDiv(int256(borrowPrice), int256(Constants.ORACLE_DIVIDER), !isDeposit);
     }
 
-    function calculateAuctionStep(uint256 startAuction, uint256 blockNumber) internal pure returns (uint256) {
-        uint256 auctionStep = blockNumber - startAuction;
+    function calculateAuctionStep(uint64 startAuction, uint64 blockNumber) internal pure returns (uint64) {
+        uint64 auctionStep = blockNumber - startAuction;
 
         bool stuck = auctionStep > Constants.AMOUNT_OF_STEPS;
 
         if (stuck) {
-            return Constants.AMOUNT_OF_STEPS;
+            return uint64(Constants.AMOUNT_OF_STEPS);
         }
 
         return auctionStep;

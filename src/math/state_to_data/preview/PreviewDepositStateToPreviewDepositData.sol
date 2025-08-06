@@ -55,7 +55,7 @@ contract PreviewDepositStateToPreviewDepositData is MaxGrowthFee {
         data.borrow = int256(realBorrow) + data.futureBorrow + futureRewardBorrow;
         data.borrowPrice = state.maxGrowthFeeState.commonTotalAssetsState.borrowPrice;
 
-        uint256 auctionStep = CommonMath.calculateAuctionStep(state.startAuction, state.blockNumber);
+        uint64 auctionStep = CommonMath.calculateAuctionStep(state.startAuction, state.blockNumber);
 
         data.userFutureRewardBorrow =
             CommonMath.calculateUserFutureRewardBorrow(int256(futureRewardBorrow), auctionStep);
@@ -86,7 +86,8 @@ contract PreviewDepositStateToPreviewDepositData is MaxGrowthFee {
             })
         );
 
-        data.targetLTV = state.targetLTV;
+        data.targetLTVDividend = state.targetLTVDividend;
+        data.targetLTVDivider = state.targetLTVDivider;
         data.collateralSlippage = state.collateralSlippage;
         data.borrowSlippage = state.borrowSlippage;
 

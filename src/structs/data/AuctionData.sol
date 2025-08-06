@@ -6,5 +6,5 @@ struct AuctionData {
     int256 futureCollateralAssets;
     int256 futureRewardBorrowAssets;
     int256 futureRewardCollateralAssets;
-    int256 auctionStep;
+    uint64 auctionStep;
 }

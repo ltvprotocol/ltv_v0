@@ -13,8 +13,9 @@ contract PreviewLowLevelRebalanceStateReader is MaxGrowthFeeStateReader {
             maxGrowthFeeState: maxGrowthFeeState,
             depositRealBorrowAssets: _lendingConnector.getRealBorrowAssets(true, connectorGetterData),
             depositRealCollateralAssets: _lendingConnector.getRealCollateralAssets(true, connectorGetterData),
-            targetLTV: targetLTV,
-            blockNumber: block.number,
+            targetLTVDividend: targetLTVDividend,
+            targetLTVDivider: targetLTVDivider,
+            blockNumber: uint64(block.number),
             startAuction: startAuction
         });
     }

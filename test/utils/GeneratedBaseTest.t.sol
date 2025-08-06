@@ -27,13 +27,16 @@ contract GeneratedBaseTest is DummyModulesBaseTest {
             maxTotalAssetsInUnderlying: type(uint128).max,
             collateralAssets: realCollateral,
             borrowAssets: realBorrow,
-            maxSafeLTV: 9 * 10 ** 17,
-            minProfitLTV: 5 * 10 ** 17,
-            targetLTV: 75 * 10 ** 16,
-            maxGrowthFeex23: 2**23 / 5,
+            maxSafeLTVDividend: 9,
+            maxSafeLTVDivider: 10,
+            minProfitLTVDividend: 5,
+            minProfitLTVDivider: 10,
+            targetLTVDividend: 75,
+            targetLTVDivider: 100,
+            maxGrowthFeex23: uint24(2**23) / 5,
             collateralPrice: 10 ** 20,
             borrowPrice: 10 ** 20,
-            maxDeleverageFeex23: 2**23 / 50,
+            maxDeleverageFeex23: uint24(2**23) / 50,
             zeroAddressTokens: 0
         });
         initializeDummyTest(initData);

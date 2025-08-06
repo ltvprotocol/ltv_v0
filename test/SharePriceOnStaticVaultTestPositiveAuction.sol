@@ -45,13 +45,16 @@ contract SharePriceOnStaticVaultTestPositiveAuction is BaseTest {
             maxTotalAssetsInUnderlying: type(uint128).max,
             collateralAssets: 984_016_000,
             borrowAssets: 734_000_000,
-            maxSafeLTV: 9 * 10 ** 17,
-            minProfitLTV: 5 * 10 ** 17,
-            targetLTV: 75 * 10 ** 16,
-            maxGrowthFeex23: 2**23 / 5,
+            maxSafeLTVDividend: 9,
+            maxSafeLTVDivider: 10,
+            minProfitLTVDividend: 5,
+            minProfitLTVDivider: 10,
+            targetLTVDividend: 75,
+            targetLTVDivider: 100,
+            maxGrowthFeex23: uint24(2**23) / 5,
             collateralPrice: 10 ** 18,
             borrowPrice: 10 ** 18,
-            maxDeleverageFeex23: 2**23 / 50,
+            maxDeleverageFeex23: uint24(2**23) / 50,
             zeroAddressTokens: 984016000 + 16000000 - 734000000 - 16000000 - 16_000
         });
         initializeTest(initData);

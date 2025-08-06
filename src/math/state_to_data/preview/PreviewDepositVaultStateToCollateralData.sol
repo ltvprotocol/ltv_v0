@@ -56,7 +56,7 @@ abstract contract PreviewDepositVaultStateToCollateralData is TotalAssetsCollate
         data.borrow = int256(realBorrow) + data.futureBorrow + futureRewardBorrow;
         data.collateralPrice = state.maxGrowthFeeState.commonTotalAssetsState.collateralPrice;
 
-        uint256 auctionStep = CommonMath.calculateAuctionStep(state.startAuction, state.blockNumber);
+        uint64 auctionStep = CommonMath.calculateAuctionStep(state.startAuction, state.blockNumber);
 
         data.userFutureRewardBorrow =
             CommonMath.calculateUserFutureRewardBorrow(int256(futureRewardBorrow), auctionStep);
@@ -100,7 +100,8 @@ abstract contract PreviewDepositVaultStateToCollateralData is TotalAssetsCollate
             })
         );
 
-        data.targetLTV = state.targetLTV;
+        data.targetLTVDividend = state.targetLTVDividend;
+        data.targetLTVDivider = state.targetLTVDivider;
         data.collateralSlippage = state.collateralSlippage;
         data.borrowSlippage = state.borrowSlippage;
 

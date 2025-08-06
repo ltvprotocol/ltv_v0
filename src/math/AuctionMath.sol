@@ -18,10 +18,10 @@ library AuctionMath {
         int256 deltaUserBorrowAssets,
         int256 futureBorrowAssets,
         int256 futureRewardBorrowAssets,
-        int256 auctionStep
+        uint64 auctionStep
     ) private pure returns (int256) {
         int256 divider =
-            futureBorrowAssets + futureRewardBorrowAssets.mulDivUp(auctionStep, int256(Constants.AMOUNT_OF_STEPS));
+            futureBorrowAssets + futureRewardBorrowAssets.mulDivUp(int256(uint256(auctionStep)), int256(Constants.AMOUNT_OF_STEPS));
 
         if (divider == 0) {
             return -futureBorrowAssets;
@@ -34,10 +34,10 @@ library AuctionMath {
         int256 deltaUserCollateralAssets,
         int256 futureCollateralAssets,
         int256 futureRewardCollateralAssets,
-        int256 auctionStep
+        uint64 auctionStep
     ) private pure returns (int256) {
         int256 divider = futureCollateralAssets
-            + futureRewardCollateralAssets.mulDivDown(auctionStep, int256(Constants.AMOUNT_OF_STEPS));
+            + futureRewardCollateralAssets.mulDivDown(int256(uint256(auctionStep)), int256(Constants.AMOUNT_OF_STEPS));
 
         if (divider == 0) {
             return -futureCollateralAssets;
@@ -84,22 +84,22 @@ library AuctionMath {
     // Fee collector and auction executor conflict. Resolve to give more to auction executor
     function calculateDeltaUserFutureRewardBorrowAssetsFromDeltaFutureRewardBorrowAssets(
         int256 deltaFutureRewardBorrowAssets,
-        int256 auctionStep
+        uint64 auctionStep
     ) private pure returns (int256) {
-        return deltaFutureRewardBorrowAssets.mulDivDown(auctionStep, int256(Constants.AMOUNT_OF_STEPS));
+        return deltaFutureRewardBorrowAssets.mulDivDown(int256(uint256(auctionStep)), int256(Constants.AMOUNT_OF_STEPS));
     }
 
     // Fee collector and auction executor conflict. Resolve to give more to auction executor
     function calculateDeltaUserFutureRewardCollateralAssetsFromDeltaFutureRewardCollateralAssets(
         int256 deltaFutureRewardCollateralAssets,
-        int256 auctionStep
+        uint64 auctionStep
     ) private pure returns (int256) {
-        return deltaFutureRewardCollateralAssets.mulDivUp(auctionStep, int256(Constants.AMOUNT_OF_STEPS));
+        return deltaFutureRewardCollateralAssets.mulDivUp(int256(uint256(auctionStep)), int256(Constants.AMOUNT_OF_STEPS));
     }
 
     function availableDeltaUserBorrowAssets(
         int256 futureRewardBorrowAssets,
-        int256 auctionStep,
+        uint64 auctionStep,
         int256 futureBorrowAssets
     ) internal pure returns (int256) {
         int256 deltaUserRewardBorrowAssets = calculateDeltaUserFutureRewardBorrowAssetsFromDeltaFutureRewardBorrowAssets(
@@ -110,7 +110,7 @@ library AuctionMath {
 
     function availableDeltaUserCollateralAssets(
         int256 futureRewardCollateralAssets,
-        int256 auctionStep,
+        uint64 auctionStep,
         int256 futureCollateralAssets
     ) internal pure returns (int256) {
         int256 userRewardCollateralAssets =

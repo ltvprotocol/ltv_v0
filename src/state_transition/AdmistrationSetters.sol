@@ -7,28 +7,45 @@ import "../states/LTVState.sol";
 import "../Constants.sol";
 
 contract AdmistrationSetters is LTVState, IAdministrationErrors, IAdministrationEvents {
-    function _setTargetLTV(uint128 value) internal {
-        require(value >= 0 && value < Constants.LTV_DIVIDER, UnexpectedTargetLTV(value));
-        require(value <= maxSafeLTV && value >= minProfitLTV, InvalidLTVSet(value, maxSafeLTV, minProfitLTV));
-        uint128 oldValue = targetLTV;
-        targetLTV = value;
-        emit TargetLTVChanged(oldValue, targetLTV);
+    function _setTargetLTV(uint16 dividend, uint16 divider) internal {
+        require(dividend >= 0 && dividend < divider, UnexpectedTargetLTV(dividend, divider));
+        require(
+            dividend * maxSafeLTVDivider <= divider * maxSafeLTVDividend
+                && dividend * minProfitLTVDivider >= minProfitLTVDividend * divider,
+            InvalidLTVSet(
+                dividend, divider, maxSafeLTVDividend, maxSafeLTVDivider, minProfitLTVDividend, minProfitLTVDivider
+            )
+        );
+        uint16 oldValue = targetLTVDividend;
+        uint16 oldDivider = targetLTVDivider;
+        targetLTVDividend = dividend;
+        targetLTVDivider = divider;
+        emit TargetLTVChanged(oldValue, oldDivider, dividend, divider);
     }
 
-    function _setMaxSafeLTV(uint128 value) internal {
-        require(value > 0 && value <= Constants.LTV_DIVIDER, UnexpectedMaxSafeLTV(value));
-        require(value >= targetLTV, InvalidLTVSet(targetLTV, value, minProfitLTV));
-        uint128 oldValue = maxSafeLTV;
-        maxSafeLTV = value;
-        emit MaxSafeLTVChanged(oldValue, value);
+    function _setMaxSafeLTV(uint16 dividend, uint16 divider) internal {
+        require(dividend > 0 && divider <= divider, UnexpectedMaxSafeLTV(dividend, divider));
+        require(
+            dividend * minProfitLTVDivider >= minProfitLTVDividend * divider,
+            InvalidLTVSet(
+                targetLTVDividend, targetLTVDivider, dividend, divider, minProfitLTVDividend, minProfitLTVDivider
+            )
+        );
+        uint16 oldDividend = maxSafeLTVDividend;
+        uint16 oldDivider = maxSafeLTVDivider;
+        maxSafeLTVDividend = dividend;
+        maxSafeLTVDivider = divider;
+        emit MaxSafeLTVChanged(oldDividend, oldDivider, dividend, divider);
     }
 
-    function _setMinProfitLTV(uint128 value) internal {
-        require(value >= 0 && value < Constants.LTV_DIVIDER, UnexpectedMinProfitLTV(value));
-        require(value <= targetLTV, InvalidLTVSet(targetLTV, maxSafeLTV, value));
-        uint128 oldValue = minProfitLTV;
-        minProfitLTV = value;
-        emit MinProfitLTVChanged(oldValue, value);
+    function _setMinProfitLTV(uint16 dividend, uint16 divider) internal {
+        require(dividend >= 0 && dividend <= divider, UnexpectedMinProfitLTV(dividend, divider));
+        require(dividend * maxSafeLTVDivider <= divider * maxSafeLTVDividend, InvalidLTVSet(targetLTVDividend, targetLTVDivider, maxSafeLTVDividend, maxSafeLTVDivider, dividend, divider));
+        uint16 oldDividend = minProfitLTVDividend;
+        uint16 oldDivider = minProfitLTVDivider;
+        minProfitLTVDividend = dividend;
+        minProfitLTVDivider = divider;
+        emit MinProfitLTVChanged(oldDividend, oldDivider, dividend, divider);
     }
 
     function _setFeeCollector(address _feeCollector) internal {
@@ -45,7 +62,7 @@ contract AdmistrationSetters is LTVState, IAdministrationErrors, IAdministration
     }
 
     function _setMaxDeleverageFeex23(uint24 value) internal {
-        require(value <= 2**23, InvalidMaxDeleverageFee(value));
+        require(value <= uint24(2**23), InvalidMaxDeleverageFee(value));
         uint256 oldValue = maxDeleverageFeex23;
         maxDeleverageFeex23 = value;
         emit MaxDeleverageFeeChanged(oldValue, value);
@@ -78,8 +95,8 @@ contract AdmistrationSetters is LTVState, IAdministrationErrors, IAdministration
         }
     }
 
-    function _setMaxGrowthFeex23(uint256 _maxGrowthFeex23) internal {
-        require(_maxGrowthFeex23 <= 2**23, InvalidMaxGrowthFee(_maxGrowthFeex23));
+    function _setMaxGrowthFeex23(uint24 _maxGrowthFeex23) internal {
+        require(_maxGrowthFeex23 <= uint24(2**23), InvalidMaxGrowthFee(_maxGrowthFeex23));
         uint256 oldValue = maxGrowthFeex23;
         maxGrowthFeex23 = _maxGrowthFeex23;
         emit MaxGrowthFeeChanged(oldValue, _maxGrowthFeex23);

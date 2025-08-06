@@ -7,7 +7,8 @@ struct PreviewLowLevelRebalanceState {
     MaxGrowthFeeState maxGrowthFeeState;
     uint256 depositRealBorrowAssets;
     uint256 depositRealCollateralAssets;
-    uint128 targetLTV;
-    uint256 blockNumber;
-    uint256 startAuction;
+    uint16 targetLTVDividend;
+    uint16 targetLTVDivider;
+    uint64 blockNumber;
+    uint64 startAuction;
 }

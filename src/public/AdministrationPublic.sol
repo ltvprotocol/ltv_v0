@@ -24,16 +24,16 @@ abstract contract AdministrationPublic is
     using uMulDiv for uint256;
     using sMulDiv for int256;
 
-    function setTargetLTV(uint128 value) external isFunctionAllowed onlyGovernor {
-        _setTargetLTV(value);
+    function setTargetLTV(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor {
+        _setTargetLTV(dividend, divider);
     }
 
-    function setMaxSafeLTV(uint128 value) external isFunctionAllowed onlyGovernor {
-        _setMaxSafeLTV(value);
+    function setMaxSafeLTV(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor {
+        _setMaxSafeLTV(dividend, divider);
     }
 
-    function setMinProfitLTV(uint128 value) external isFunctionAllowed onlyGovernor {
-        _setMinProfitLTV(value);
+    function setMinProfitLTV(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor {
+        _setMinProfitLTV(dividend, divider);
     }
 
     function setFeeCollector(address _feeCollector) external isFunctionAllowed onlyGovernor {
@@ -68,7 +68,7 @@ abstract contract AdministrationPublic is
         _allowDisableFunctions(signatures, isDisabled);
     }
 
-    function setMaxGrowthFeex23(uint256 _maxGrowthFeex23) external isFunctionAllowed onlyGovernor {
+    function setMaxGrowthFeex23(uint24 _maxGrowthFeex23) external isFunctionAllowed onlyGovernor {
         _setMaxGrowthFeex23(_maxGrowthFeex23);
     }
 
@@ -92,7 +92,7 @@ abstract contract AdministrationPublic is
         _setVaultBalanceAsLendingConnector(_vaultBalanceAsLendingConnector);
     }
 
-    function deleverageAndWithdraw(uint256 closeAmountBorrow, uint256 deleverageFee)
+    function deleverageAndWithdraw(uint256 closeAmountBorrow, uint24 deleverageFee)
         external
         onlyEmergencyDeleverager
         nonReentrant
@@ -111,9 +111,9 @@ abstract contract AdministrationPublic is
         futureRewardBorrowAssets = 0;
         futureRewardCollateralAssets = 0;
         startAuction = 0;
-        _setMinProfitLTV(0);
-        _setTargetLTV(0);
-        _setMaxSafeLTV(uint128(Constants.LTV_DIVIDER));
+        _setMinProfitLTV(0, 1);
+        _setTargetLTV(0, 1);
+        _setMaxSafeLTV(1, 1);
 
         // round up to repay all assets
         uint256 realBorrowAssets = lendingConnector.getRealBorrowAssets(false, connectorGetterData);
@@ -127,7 +127,7 @@ abstract contract AdministrationPublic is
         );
 
         collateralToTransfer +=
-            (collateralAssets - collateralToTransfer).mulDivDown(deleverageFee, Constants.MAX_GROWTH_FEE_DIVIDER);
+            (collateralAssets - collateralToTransfer).mulDivDown(deleverageFee, 2**23);
 
         if (realBorrowAssets != 0) {
             borrowToken.transferFrom(msg.sender, address(this), realBorrowAssets);

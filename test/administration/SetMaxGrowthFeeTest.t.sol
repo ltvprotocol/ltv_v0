@@ -5,7 +5,7 @@ import "../utils/BaseTest.t.sol";
 
 contract SetMaxGrowthFeeTest is BaseTest {
     function test_checkSlot(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
-        uint256 newMaxGrowthFee = 2**23 * 15 / 1000;
+        uint24 newMaxGrowthFee = uint24(uint256(2**23) * 15 / 1000);
         vm.prank(defaultData.governor);
         ltv.setMaxGrowthFeex23(newMaxGrowthFee);
 
@@ -43,7 +43,7 @@ contract SetMaxGrowthFeeTest is BaseTest {
     }
 
     function test_failIfTooBig(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
-        uint256 invalidMaxGrowthFee = 2**24;
+        uint24 invalidMaxGrowthFee = type(uint24).max;
         vm.prank(defaultData.governor);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.InvalidMaxGrowthFee.selector, invalidMaxGrowthFee));
         ltv.setMaxGrowthFeex23(invalidMaxGrowthFee);

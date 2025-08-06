@@ -8,5 +8,6 @@ struct MaxDepositMintBorrowVaultData {
     uint256 realCollateral;
     uint256 realBorrow;
     uint256 maxTotalAssetsInUnderlying;
-    uint256 minProfitLTV;
+    uint16 minProfitLTVDividend;
+    uint16 minProfitLTVDivider;
 }

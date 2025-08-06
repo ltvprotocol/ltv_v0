@@ -8,9 +8,12 @@ struct StateRepresentationStruct {
     int256 futureRewardCollateralAssets;
     uint256 startAuction;
     uint256 baseTotalSupply;
-    uint128 maxSafeLTV;
-    uint128 minProfitLTV;
-    uint128 targetLTV;
+    uint16 maxSafeLTVDividend;
+    uint16 maxSafeLTVDivider;
+    uint16 minProfitLTVDividend;
+    uint16 minProfitLTVDivider;
+    uint16 targetLTVDividend;
+    uint16 targetLTVDivider;
     bool isVaultDeleveraged;
     uint256 lastSeenTokenPrice;
     uint256 maxGrowthFeex23;

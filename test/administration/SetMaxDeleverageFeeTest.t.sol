@@ -54,7 +54,7 @@ contract SetMaxDeleverageFeeTest is BaseTest {
         public
         testWithPredefinedDefaultValues(defaultData)
     {
-        uint128 newMaxDeleverageFeex23 = 2**23 / 20; // 0.05
+        uint24 newMaxDeleverageFeex23 = uint24(2**23) / 20; // 0.05
         vm.startPrank(defaultData.governor);
         vm.expectEmit(true, true, true, true, address(ltv));
         emit IAdministrationEvents.MaxDeleverageFeeChanged(ltv.maxDeleverageFeex23(), newMaxDeleverageFeex23);
@@ -69,7 +69,7 @@ contract SetMaxDeleverageFeeTest is BaseTest {
     {
         assertEq(collateralToken.balanceOf(defaultData.emergencyDeleverager), 0);
 
-        uint128 newMaxDeleverageFeex23 = 0;
+        uint24 newMaxDeleverageFeex23 = 0;
         vm.startPrank(defaultData.governor);
         ltv.setMaxDeleverageFeex23(newMaxDeleverageFeex23);
 
@@ -88,17 +88,17 @@ contract SetMaxDeleverageFeeTest is BaseTest {
     }
 
     function test_passIfOne(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
-        uint128 newMaxDeleverageFeex23 = uint128(2**23); // 1.0
+        uint24 newMaxDeleverageFeex23 = uint24(2**23); // 1.0
         vm.startPrank(defaultData.governor);
         ltv.setMaxDeleverageFeex23(newMaxDeleverageFeex23);
         assertEq(ltv.maxDeleverageFeex23(), newMaxDeleverageFeex23);
     }
 
-    function test_failIfFortyTwo(DefaultTestData memory defaultData)
+    function test_failIfTooBig(DefaultTestData memory defaultData)
         public
         testWithPredefinedDefaultValues(defaultData)
     {
-        uint128 newMaxDeleverageFeex23 = uint128(42 * 2**23);
+        uint24 newMaxDeleverageFeex23 = type(uint24).max;
         vm.startPrank(defaultData.governor);
         vm.expectRevert(
             abi.encodeWithSelector(IAdministrationErrors.InvalidMaxDeleverageFee.selector, newMaxDeleverageFeex23)
@@ -111,7 +111,7 @@ contract SetMaxDeleverageFeeTest is BaseTest {
         testWithPredefinedDefaultValues(defaultData)
     {
         vm.assume(user != defaultData.governor);
-        uint128 newMaxDeleverageFeex23 = uint128(ltv.maxDeleverageFeex23());
+        uint24 newMaxDeleverageFeex23 = uint24(ltv.maxDeleverageFeex23());
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
         ltv.setMaxDeleverageFeex23(newMaxDeleverageFeex23);

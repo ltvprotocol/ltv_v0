@@ -14,6 +14,6 @@ struct NextStepData {
     int256 deltaFuturePaymentCollateral;
     int256 deltaUserFutureRewardCollateral;
     int256 deltaProtocolFutureRewardCollateral;
-    uint256 blockNumber;
-    uint256 auctionStep;
+    uint64 blockNumber;
+    uint64 auctionStep;
 }

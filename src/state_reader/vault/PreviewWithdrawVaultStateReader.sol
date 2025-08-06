@@ -8,9 +8,10 @@ contract PreviewWithdrawVaultStateReader is MaxGrowthFeeStateReader {
     function previewWithdrawVaultState() internal view returns (PreviewWithdrawVaultState memory) {
         return PreviewWithdrawVaultState({
             maxGrowthFeeState: maxGrowthFeeState(),
-            targetLTV: targetLTV,
+            targetLTVDividend: targetLTVDividend,
+            targetLTVDivider: targetLTVDivider,
             startAuction: startAuction,
-            blockNumber: block.number,
+            blockNumber: uint64(block.number),
             collateralSlippage: slippageProvider.collateralSlippage(),
             borrowSlippage: slippageProvider.borrowSlippage()
         });

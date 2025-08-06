@@ -5,9 +5,10 @@ import "../MaxGrowthFeeState.sol";
 
 struct PreviewWithdrawVaultState {
     MaxGrowthFeeState maxGrowthFeeState;
-    uint128 targetLTV;
-    uint256 startAuction;
-    uint256 blockNumber;
+    uint16 targetLTVDividend;
+    uint16 targetLTVDivider;
+    uint64 startAuction;
+    uint64 blockNumber;
     uint256 collateralSlippage;
     uint256 borrowSlippage;
 }

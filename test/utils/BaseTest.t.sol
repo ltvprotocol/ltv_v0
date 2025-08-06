@@ -34,16 +34,19 @@ struct BaseTestInit {
     int256 futureBorrow;
     int256 futureCollateral;
     int256 auctionReward;
-    uint256 startAuction;
+    uint64 startAuction;
     uint256 collateralSlippage;
     uint256 borrowSlippage;
     uint256 maxTotalAssetsInUnderlying;
     uint256 collateralAssets;
     uint256 borrowAssets;
-    uint128 maxSafeLTV;
-    uint128 minProfitLTV;
-    uint128 targetLTV;
-    uint256 maxGrowthFeex23;
+    uint16 maxSafeLTVDividend;
+    uint16 maxSafeLTVDivider;
+    uint16 minProfitLTVDividend;
+    uint16 minProfitLTVDivider;
+    uint16 targetLTVDividend;
+    uint16 targetLTVDivider;
+    uint24 maxGrowthFeex23;
     uint256 collateralPrice;
     uint256 borrowPrice;
     uint24 maxDeleverageFeex23;
@@ -105,9 +108,12 @@ contract BaseTest is Test {
                 collateralToken: address(collateralToken),
                 borrowToken: address(borrowToken),
                 feeCollector: init.feeCollector,
-                maxSafeLTV: init.maxSafeLTV,
-                minProfitLTV: init.minProfitLTV,
-                targetLTV: init.targetLTV,
+                maxSafeLTVDividend: init.maxSafeLTVDividend,
+                maxSafeLTVDivider: init.maxSafeLTVDivider,
+                minProfitLTVDividend: init.minProfitLTVDividend,
+                minProfitLTVDivider: init.minProfitLTVDivider,
+                targetLTVDividend: init.targetLTVDividend,
+                targetLTVDivider: init.targetLTVDivider,
                 lendingConnector: lendingConnector,
                 oracleConnector: oracleConnector,
                 maxGrowthFeex23: init.maxGrowthFeex23,
@@ -168,13 +174,16 @@ contract BaseTest is Test {
             maxTotalAssetsInUnderlying: type(uint128).max,
             collateralAssets: 2 * 10 ** 18,
             borrowAssets: 3 * 10 ** 18,
-            maxSafeLTV: 9 * 10 ** 17,
-            minProfitLTV: 5 * 10 ** 17,
-            targetLTV: 75 * 10 ** 16,
-            maxGrowthFeex23: 2**23 / 5,
+            maxSafeLTVDividend: 9,
+            maxSafeLTVDivider: 10,
+            minProfitLTVDividend: 5,
+            minProfitLTVDivider: 10,
+            targetLTVDividend: 75,
+            targetLTVDivider: 100,
+            maxGrowthFeex23: uint24(2**23) / 5,
             collateralPrice: 2 * 10 ** 18,
             borrowPrice: 10 ** 18,
-            maxDeleverageFeex23: 2**23 / 50,
+            maxDeleverageFeex23: uint24(2**23) / 50,
             zeroAddressTokens: 10 ** 18
         });
         initializeTest(initData);

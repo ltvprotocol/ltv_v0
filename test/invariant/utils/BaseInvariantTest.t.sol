@@ -48,10 +48,13 @@ abstract contract BaseInvariantTest is BaseTest {
             maxTotalAssetsInUnderlying: type(uint128).max,
             collateralAssets: 2 * 10 ** 19, // 20 collateral tokens
             borrowAssets: 35 * 10 ** 18, // 35 borrow tokens
-            maxSafeLTV: 9 * 10 ** 17, // 90% max safe LTV
-            minProfitLTV: 5 * 10 ** 17, // 50% min profit LTV
-            targetLTV: 75 * 10 ** 16, // 75% target LTV
-            maxGrowthFeex23: 2**23 / 5, // 20% max growth fee
+            maxSafeLTVDividend: 9, // 90% max safe LTV
+            maxSafeLTVDivider: 10, // 90% max safe LTV
+            minProfitLTVDividend: 5, // 50% min profit LTV
+            minProfitLTVDivider: 10, // 50% min profit LTV
+            targetLTVDividend: 75, // 75% target LTV
+            targetLTVDivider: 100, // 75% target LTV
+            maxGrowthFeex23: uint24(2**23) / 5, // 20% max growth fee
             collateralPrice: 2 * 10 ** 18, // 2 collateral price
             borrowPrice: 10 ** 18, // 1 borrow price
             maxDeleverageFeex23: 0, // No deleverage fee

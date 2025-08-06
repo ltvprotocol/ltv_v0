@@ -2,10 +2,17 @@
 pragma solidity ^0.8.28;
 
 interface IAdministrationErrors {
-    error InvalidLTVSet(uint128 targetLTV, uint128 maxSafeLTV, uint128 minProfitLTV);
-    error UnexpectedMaxSafeLTV(uint128 maxSafeLTV);
-    error UnexpectedMinProfitLTV(uint128 minProfitLTV);
-    error UnexpectedTargetLTV(uint128 targetLTV);
+    error InvalidLTVSet(
+        uint24 targetLTVDividend,
+        uint24 targetLTVDivider,
+        uint24 maxSafeLTVDividend,
+        uint24 maxSafeLTVDivider,
+        uint24 minProfitLTVDividend,
+        uint24 minProfitLTVDivider
+    );
+    error UnexpectedMaxSafeLTV(uint24 maxSafeLTVDividend, uint24 maxSafeLTVDivider);
+    error UnexpectedMinProfitLTV(uint24 minProfitLTVDividend, uint24 minProfitLTVDivider);
+    error UnexpectedTargetLTV(uint24 targetLTVDividend, uint24 targetLTVDivider);
     error ZeroFeeCollector();
     error ImpossibleToCoverDeleverage(uint256 realBorrowAssets, uint256 providedAssets);
     error InvalidMaxDeleverageFee(uint256 deleverageFeex23);

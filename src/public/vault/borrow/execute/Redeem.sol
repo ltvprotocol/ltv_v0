@@ -81,8 +81,8 @@ abstract contract Redeem is
                 deltaUserFutureRewardCollateral: deltaFuture.deltaUserFutureRewardCollateral,
                 deltaProtocolFutureRewardBorrow: deltaFuture.deltaProtocolFutureRewardBorrow,
                 deltaProtocolFutureRewardCollateral: deltaFuture.deltaProtocolFutureRewardCollateral,
-                blockNumber: block.number,
-                auctionStep: CommonMath.calculateAuctionStep(startAuction, block.number)
+                blockNumber: uint64(block.number),
+                auctionStep: CommonMath.calculateAuctionStep(startAuction, uint64(block.number))
             })
         );
 

@@ -22,20 +22,20 @@ import "../structs/state/low_level/MaxLowLevelRebalanceCollateralStateData.sol";
 import "../structs/state/low_level/ExecuteLowLevelRebalanceState.sol";
 abstract contract LTVState {
     address public feeCollector;
-    address public collateralToken;
-    address public borrowToken;
+    IERC20 public collateralToken;
+    IERC20 public borrowToken;
 
-    address public lendingConnector;
-    address public vaultBalanceAsLendingConnector;
-    address public oracleConnector;
-    address public slippageProvider;
+    ILendingConnector public lendingConnector;
+    ILendingConnector public vaultBalanceAsLendingConnector;
+    IOracleConnector public oracleConnector;
+    ISlippageProvider public slippageProvider;
 
     address public governor;
     address public guardian;
     address public emergencyDeleverager;
 
-    address public whitelistRegistry;
-    address public modules;
+    IWhitelistRegistry public whitelistRegistry;
+    IModules public modules;
 
     int256 public futureBorrowAssets;
     int256 public futureCollateralAssets;
@@ -51,11 +51,11 @@ abstract contract LTVState {
     uint24 public maxGrowthFeex23;
     uint24 public maxDeleverageFeex23;
     
-    uint16 public maxSafeLTV;
+    uint16 public maxSafeLTVDividend;
     uint16 public maxSafeLTVDivider;
-    uint16 public minProfitLTV;
+    uint16 public minProfitLTVDividend;
     uint16 public minProfitLTVDivider;
-    uint16 public targetLTV;
+    uint16 public targetLTVDividend;
     uint16 public targetLTVDivider;
     
     uint8 public decimals;

@@ -6,7 +6,8 @@ import "./Cases.sol";
 struct DeltaRealBorrowAndDeltaRealCollateralData {
     int256 deltaRealCollateral;
     int256 deltaRealBorrow;
-    uint128 targetLTV;
+    uint16 targetLTVDividend;
+    uint16 targetLTVDivider;
     uint256 collateralSlippage;
     uint256 borrowSlippage;
     int256 collateral;
