@@ -277,20 +277,20 @@ contract GovernorTest is BalancedTest {
         dummyLTV.setSlippageProvider(address(0));
     }
 
-    function test_setMaxGrowthFee(address owner, address user)
+    function test_setMaxGrowthFeex23(address owner, address user)
         public
         initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
     {
-        uint256 newValue = 1 * 10 ** 16; // 1%
+        uint256 newValue = 2**23 / 100; // 1%
         address governor = ILTV(address(dummyLTV)).governor();
         vm.assume(user != governor);
         vm.startPrank(governor);
-        ILTV(address(dummyLTV)).setMaxGrowthFee(newValue);
-        assertEq(ILTV(address(dummyLTV)).maxGrowthFee(), newValue);
+        ILTV(address(dummyLTV)).setMaxGrowthFeex23(newValue);
+        assertEq(ILTV(address(dummyLTV)).maxGrowthFeex23(), newValue);
 
         // Should revert if not governor
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
-        ILTV(address(dummyLTV)).setMaxGrowthFee(newValue);
+        ILTV(address(dummyLTV)).setMaxGrowthFeex23(newValue);
     }
 }

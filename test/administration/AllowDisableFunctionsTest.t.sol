@@ -303,8 +303,8 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         selectors[20] = ILTV.setMaxDeleverageFee.selector;
         callers[20] = defaultData.governor;
 
-        calls[21] = abi.encodeCall(ILTV.setMaxGrowthFee, 2 * 10 ** 16);
-        selectors[21] = ILTV.setMaxGrowthFee.selector;
+        calls[21] = abi.encodeCall(ILTV.setMaxGrowthFeex23, 2 * 10 ** 16);
+        selectors[21] = ILTV.setMaxGrowthFeex23.selector;
         callers[21] = defaultData.governor;
 
         calls[22] = abi.encodeCall(ILTV.setMaxSafeLTV, 9 * 10 ** 17);

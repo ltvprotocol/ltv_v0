@@ -13,7 +13,7 @@ struct StateRepresentationStruct {
     uint128 targetLTV;
     bool isVaultDeleveraged;
     uint256 lastSeenTokenPrice;
-    uint256 maxGrowthFee;
+    uint256 maxGrowthFeex23;
     uint256 maxTotalAssetsInUnderlying;
     bool isDepositDisabled;
     bool isWithdrawDisabled;

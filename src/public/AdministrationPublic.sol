@@ -68,8 +68,8 @@ abstract contract AdministrationPublic is
         _allowDisableFunctions(signatures, isDisabled);
     }
 
-    function setMaxGrowthFee(uint256 _maxGrowthFee) external isFunctionAllowed onlyGovernor {
-        _setMaxGrowthFee(_maxGrowthFee);
+    function setMaxGrowthFeex23(uint256 _maxGrowthFeex23) external isFunctionAllowed onlyGovernor {
+        _setMaxGrowthFeex23(_maxGrowthFeex23);
     }
 
     function setIsDepositDisabled(bool value) external onlyGuardian {

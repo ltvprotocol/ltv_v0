@@ -20,58 +20,55 @@ import "../structs/state/low_level/MaxLowLevelRebalanceSharesState.sol";
 import "../structs/state/low_level/MaxLowLevelRebalanceBorrowStateData.sol";
 import "../structs/state/low_level/MaxLowLevelRebalanceCollateralStateData.sol";
 import "../structs/state/low_level/ExecuteLowLevelRebalanceState.sol";
-
 abstract contract LTVState {
-    // ------------------------------------------------
-
     address public feeCollector;
+    address public collateralToken;
+    address public borrowToken;
 
-    int256 public futureBorrowAssets;
-    int256 public futureCollateralAssets;
-    int256 public futureRewardBorrowAssets;
-    int256 public futureRewardCollateralAssets;
-    uint256 public startAuction;
-
-    // ERC 20 state
-    uint256 public baseTotalSupply;
-    mapping(address => uint256) public balanceOf;
-    mapping(address => mapping(address => uint256)) public allowance;
-    string public name;
-    string public symbol;
-    uint8 public decimals;
-
-    IERC20 public collateralToken;
-    IERC20 public borrowToken;
-
-    uint128 public maxSafeLTV;
-    uint128 public minProfitLTV;
-    uint128 public targetLTV;
-
-    ILendingConnector public lendingConnector;
-    bool public isVaultDeleveraged;
-    IOracleConnector public oracleConnector;
-
-    uint256 public lastSeenTokenPrice;
-
-    uint256 public maxGrowthFee;
-
-    uint256 public maxTotalAssetsInUnderlying;
-
-    mapping(bytes4 => bool) public _isFunctionDisabled;
-    ISlippageProvider public slippageProvider;
-    bool public isDepositDisabled;
-    bool public isWithdrawDisabled;
-    IWhitelistRegistry public whitelistRegistry;
-    bool public isWhitelistActivated;
-
-    uint256 public maxDeleverageFee;
-    ILendingConnector public vaultBalanceAsLendingConnector;
-
-    IModules public modules;
+    address public lendingConnector;
+    address public vaultBalanceAsLendingConnector;
+    address public oracleConnector;
+    address public slippageProvider;
 
     address public governor;
     address public guardian;
     address public emergencyDeleverager;
 
+    address public whitelistRegistry;
+    address public modules;
+
+    int256 public futureBorrowAssets;
+    int256 public futureCollateralAssets;
+    int256 public futureRewardBorrowAssets;
+    int256 public futureRewardCollateralAssets;
+
+    uint256 public baseTotalSupply;
+    uint256 public maxTotalAssetsInUnderlying;
+    uint256 public lastSeenTokenPrice;
+
+    uint64 public startAuction;
+
+    uint24 public maxGrowthFeex23;
+    uint24 public maxDeleverageFeex23;
+    
+    uint16 public maxSafeLTV;
+    uint16 public maxSafeLTVDivider;
+    uint16 public minProfitLTV;
+    uint16 public minProfitLTVDivider;
+    uint16 public targetLTV;
+    uint16 public targetLTVDivider;
+    
+    uint8 public decimals;
+
+    bool public isDepositDisabled;
+    bool public isWithdrawDisabled;
+    bool public isWhitelistActivated;
+    bool public isVaultDeleveraged;
+
+    mapping(address => uint256) public balanceOf;
+    mapping(address => mapping(address => uint256)) public allowance;
+    mapping(bytes4 => bool) public _isFunctionDisabled;
+    string public name;
+    string public symbol;
     bytes internal connectorGetterData;
 }

@@ -43,7 +43,7 @@ struct BaseTestInit {
     uint128 maxSafeLTV;
     uint128 minProfitLTV;
     uint128 targetLTV;
-    uint256 maxGrowthFee;
+    uint256 maxGrowthFeex23;
     uint256 collateralPrice;
     uint256 borrowPrice;
     uint256 maxDeleverageFee;
@@ -110,7 +110,7 @@ contract BaseTest is Test {
                 targetLTV: init.targetLTV,
                 lendingConnector: lendingConnector,
                 oracleConnector: oracleConnector,
-                maxGrowthFee: init.maxGrowthFee,
+                maxGrowthFeex23: init.maxGrowthFeex23,
                 maxTotalAssetsInUnderlying: init.maxTotalAssetsInUnderlying,
                 slippageProvider: slippageProvider,
                 maxDeleverageFee: init.maxDeleverageFee,
@@ -171,7 +171,7 @@ contract BaseTest is Test {
             maxSafeLTV: 9 * 10 ** 17,
             minProfitLTV: 5 * 10 ** 17,
             targetLTV: 75 * 10 ** 16,
-            maxGrowthFee: 2 * 10 ** 17,
+            maxGrowthFeex23: 2**23 / 5,
             collateralPrice: 2 * 10 ** 18,
             borrowPrice: 10 ** 18,
             maxDeleverageFee: 2 * 10 ** 16,

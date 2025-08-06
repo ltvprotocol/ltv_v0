@@ -4,7 +4,7 @@ pragma solidity ^0.8.28;
 import "./utils/BalancedTest.t.sol";
 
 contract MaxGrowthFeeTest is BalancedTest {
-    function test_maxGrowthFee(address owner, address user)
+    function test_maxGrowthFeex23(address owner, address user)
         public
         initializeBalancedTest(owner, user, 10 ** 18, 0, 0, 0)
     {

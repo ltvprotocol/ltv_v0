@@ -78,11 +78,11 @@ contract AdmistrationSetters is LTVState, IAdministrationErrors, IAdministration
         }
     }
 
-    function _setMaxGrowthFee(uint256 _maxGrowthFee) internal {
-        require(_maxGrowthFee <= 10 ** 18, InvalidMaxGrowthFee(_maxGrowthFee));
-        uint256 oldValue = maxGrowthFee;
-        maxGrowthFee = _maxGrowthFee;
-        emit MaxGrowthFeeChanged(oldValue, _maxGrowthFee);
+    function _setMaxGrowthFeex23(uint256 _maxGrowthFeex23) internal {
+        require(_maxGrowthFeex23 <= 2**23, InvalidMaxGrowthFee(_maxGrowthFeex23));
+        uint256 oldValue = maxGrowthFeex23;
+        maxGrowthFeex23 = _maxGrowthFeex23;
+        emit MaxGrowthFeeChanged(oldValue, _maxGrowthFeex23);
     }
 
     function _setVaultBalanceAsLendingConnector(address _vaultBalanceAsLendingConnector) internal {

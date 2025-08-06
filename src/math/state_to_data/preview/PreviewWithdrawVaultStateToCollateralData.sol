@@ -89,7 +89,7 @@ abstract contract PreviewWithdrawVaultStateToCollateralData is TotalAssetsCollat
         data.supplyAfterFee = _previewSupplyAfterFee(
             MaxGrowthFeeData({
                 withdrawTotalAssets: data.withdrawTotalAssets,
-                maxGrowthFee: state.maxGrowthFeeState.maxGrowthFee,
+                maxGrowthFeex23: state.maxGrowthFeeState.maxGrowthFeex23,
                 supply: totalSupply(state.maxGrowthFeeState.supply),
                 lastSeenTokenPrice: state.maxGrowthFeeState.lastSeenTokenPrice
             })

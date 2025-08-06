@@ -48,7 +48,7 @@ contract SharePriceOnStaticVaultTestPositiveAuction is BaseTest {
             maxSafeLTV: 9 * 10 ** 17,
             minProfitLTV: 5 * 10 ** 17,
             targetLTV: 75 * 10 ** 16,
-            maxGrowthFee: 2 * 10 ** 17,
+            maxGrowthFeex23: 2**23 / 5,
             collateralPrice: 10 ** 18,
             borrowPrice: 10 ** 18,
             maxDeleverageFee: 2 * 10 ** 16,

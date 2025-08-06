@@ -5,11 +5,11 @@ import "../utils/BaseTest.t.sol";
 
 contract SetMaxGrowthFeeTest is BaseTest {
     function test_checkSlot(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
-        uint256 newMaxGrowthFee = 15 * 10 ** 15;
+        uint256 newMaxGrowthFee = 2**23 * 15 / 1000;
         vm.prank(defaultData.governor);
-        ltv.setMaxGrowthFee(newMaxGrowthFee);
+        ltv.setMaxGrowthFeex23(newMaxGrowthFee);
 
-        assertEq(ltv.maxGrowthFee(), newMaxGrowthFee);
+        assertEq(ltv.maxGrowthFeex23(), newMaxGrowthFee);
     }
 
     function test_zeroMaxGrowthFee(DefaultTestData memory defaultData)
@@ -17,7 +17,7 @@ contract SetMaxGrowthFeeTest is BaseTest {
         testWithPredefinedDefaultValues(defaultData)
     {
         vm.prank(defaultData.governor);
-        ltv.setMaxGrowthFee(0);
+        ltv.setMaxGrowthFeex23(0);
 
         uint256 tokenPriceBefore = ltv.convertToAssets(10 ** 18);
         // increase total assets twice
@@ -32,7 +32,7 @@ contract SetMaxGrowthFeeTest is BaseTest {
         testWithPredefinedDefaultValues(defaultData)
     {
         vm.prank(defaultData.governor);
-        ltv.setMaxGrowthFee(10 ** 18);
+        ltv.setMaxGrowthFeex23(2**23);
 
         uint256 tokenPriceBefore = ltv.convertToAssets(10 ** 18);
         // increase total assets twice
@@ -43,10 +43,10 @@ contract SetMaxGrowthFeeTest is BaseTest {
     }
 
     function test_failIf42(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
-        uint256 invalidMaxGrowthFee = 42 * 10 ** 18;
+        uint256 invalidMaxGrowthFee = 2**23 * 42;
         vm.prank(defaultData.governor);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.InvalidMaxGrowthFee.selector, invalidMaxGrowthFee));
-        ltv.setMaxGrowthFee(invalidMaxGrowthFee);
+        ltv.setMaxGrowthFeex23(invalidMaxGrowthFee);
     }
 
     function test_failIfNotGovernor(DefaultTestData memory defaultData, address user)
@@ -57,6 +57,6 @@ contract SetMaxGrowthFeeTest is BaseTest {
 
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
-        ltv.setMaxGrowthFee(10 ** 18);
+        ltv.setMaxGrowthFeex23(2**23);
     }
 }

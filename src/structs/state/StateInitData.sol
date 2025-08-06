@@ -18,7 +18,7 @@ struct StateInitData {
     uint128 targetLTV;
     ILendingConnector lendingConnector;
     IOracleConnector oracleConnector;
-    uint256 maxGrowthFee;
+    uint256 maxGrowthFeex23;
     uint256 maxTotalAssetsInUnderlying;
     ISlippageProvider slippageProvider;
     uint256 maxDeleverageFee;

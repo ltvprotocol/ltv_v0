@@ -7,7 +7,7 @@ struct MaxGrowthFeeState {
     CommonTotalAssetsState commonTotalAssetsState;
     uint256 withdrawRealCollateralAssets;
     uint256 withdrawRealBorrowAssets;
-    uint256 maxGrowthFee;
+    uint256 maxGrowthFeex23;
     uint256 supply;
     uint256 lastSeenTokenPrice;
 }

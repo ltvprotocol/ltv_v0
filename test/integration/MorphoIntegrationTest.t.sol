@@ -86,7 +86,7 @@ contract MorphoIntegrationTest is Test {
             targetLTV: 750000000000000000,
             lendingConnector: ILendingConnector(address(morphoLendingConnector)),
             oracleConnector: IOracleConnector(address(morphoOracleConnector)),
-            maxGrowthFee: 200000000000000000,
+            maxGrowthFeex23: 2**23 / 5,
             maxTotalAssetsInUnderlying: type(uint128).max,
             slippageProvider: slippageProvider,
             maxDeleverageFee: 50000000000000000,

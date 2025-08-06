@@ -50,7 +50,7 @@ interface ILTV is
 
     function decimals() external view returns (uint8);
 
-    function maxGrowthFee() external view returns (uint256);
+    function maxGrowthFeex23() external view returns (uint256);
 
     function deleverageAndWithdraw(uint256 closeAmountBorrow, uint256 deleverageFee) external;
 
@@ -194,7 +194,7 @@ interface ILTV is
 
     function setMaxDeleverageFee(uint256 value) external;
 
-    function setMaxGrowthFee(uint256 _maxGrowthFee) external;
+    function setMaxGrowthFeex23(uint256 _maxGrowthFeex23) external;
 
     function setMaxSafeLTV(uint128 value) external;
 

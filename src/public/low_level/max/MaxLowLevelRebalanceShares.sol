@@ -83,7 +83,7 @@ abstract contract MaxLowLevelRebalanceShares is MaxGrowthFee {
             data.supplyAfterFee = _previewSupplyAfterFee(
                 MaxGrowthFeeData({
                     withdrawTotalAssets: withdrawTotalAssets,
-                    maxGrowthFee: state.maxGrowthFeeState.maxGrowthFee,
+                    maxGrowthFeex23: state.maxGrowthFeeState.maxGrowthFeex23,
                     supply: totalSupply(state.maxGrowthFeeState.supply),
                     lastSeenTokenPrice: state.maxGrowthFeeState.lastSeenTokenPrice
                 })

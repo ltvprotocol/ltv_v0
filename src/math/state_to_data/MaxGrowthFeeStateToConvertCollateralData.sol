@@ -35,7 +35,7 @@ abstract contract MaxGrowthFeeStateToConvertCollateralData is TotalAssetsCollate
         data.supplyAfterFee = _previewSupplyAfterFee(
             MaxGrowthFeeData({
                 withdrawTotalAssets: withdrawTotalAssets,
-                maxGrowthFee: state.maxGrowthFee,
+                maxGrowthFeex23: state.maxGrowthFeex23,
                 supply: totalSupply(state.supply),
                 lastSeenTokenPrice: state.lastSeenTokenPrice
             })

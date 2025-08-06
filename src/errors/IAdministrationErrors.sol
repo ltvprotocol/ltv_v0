@@ -11,7 +11,7 @@ interface IAdministrationErrors {
     error InvalidMaxDeleverageFee(uint256 deleverageFee);
     error ExceedsMaxDeleverageFee(uint256 deleverageFee, uint256 maxDeleverageFee);
     error VaultAlreadyDeleveraged();
-    error InvalidMaxGrowthFee(uint256 maxGrowthFee);
+    error InvalidMaxGrowthFee(uint256 maxGrowthFeex23);
     error OnlyEmergencyDeleveragerInvalidCaller(address account);
     error OnlyGovernorInvalidCaller(address account);
     error OnlyGuardianInvalidCaller(address account);

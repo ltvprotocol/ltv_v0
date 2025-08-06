@@ -51,7 +51,7 @@ abstract contract BaseInvariantTest is BaseTest {
             maxSafeLTV: 9 * 10 ** 17, // 90% max safe LTV
             minProfitLTV: 5 * 10 ** 17, // 50% min profit LTV
             targetLTV: 75 * 10 ** 16, // 75% target LTV
-            maxGrowthFee: 20 * 10 ** 16, // 20% max growth fee
+            maxGrowthFeex23: 2**23 / 5, // 20% max growth fee
             collateralPrice: 2 * 10 ** 18, // 2 collateral price
             borrowPrice: 10 ** 18, // 1 borrow price
             maxDeleverageFee: 0, // No deleverage fee
