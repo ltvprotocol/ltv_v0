@@ -55,7 +55,7 @@ contract DynamicOracle is IDummyOracle, CommonBase {
         initialBorrowPrice = _initialBorrowPrice;
         initialCollateralPrice = _initialCollateralPrice;
         ratePerBlock = _ratePerBlock;
-        deploymentBlock = block.number;
+        deploymentBlock = uint56(block.number);
     }
 
     /**

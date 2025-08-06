@@ -12,7 +12,10 @@ abstract contract AuctionStateToData {
             futureCollateralAssets: auctionState.futureCollateralAssets,
             futureRewardBorrowAssets: auctionState.futureRewardBorrowAssets,
             futureRewardCollateralAssets: auctionState.futureRewardCollateralAssets,
-            auctionStep: int256(CommonMath.calculateAuctionStep(auctionState.startAuction, block.number))
+            auctionStep: CommonMath.calculateAuctionStep(
+                auctionState.startAuction, uint56(block.number), auctionState.auctionDuration
+            ),
+            auctionDuration: auctionState.auctionDuration
         });
     }
 }

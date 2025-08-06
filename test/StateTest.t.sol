@@ -40,6 +40,6 @@ contract StateTest is BalancedTest {
         public
         initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
     {
-        assertEq(ILTV(address(dummyLTV)).startAuction(), Constants.AMOUNT_OF_STEPS / 2);
+        assertEq(ILTV(address(dummyLTV)).startAuction(), dummyLTV.auctionDuration() / 2);
     }
 }

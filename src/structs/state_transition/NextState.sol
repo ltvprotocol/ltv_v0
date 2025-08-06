@@ -6,7 +6,7 @@ struct NextState {
     int256 futureCollateral;
     int256 futureRewardBorrow;
     int256 futureRewardCollateral;
-    uint256 startAuction;
+    uint56 startAuction;
     bool merge;
     uint256 borrowPrice;
     uint256 collateralPrice;

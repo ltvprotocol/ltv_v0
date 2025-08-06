@@ -8,7 +8,8 @@ contract MaxDepositMintBorrowVaultStateReader is PreviewDepositVaultStateReader 
     function maxDepositMintBorrowVaultState() internal view returns (MaxDepositMintBorrowVaultState memory) {
         return MaxDepositMintBorrowVaultState({
             previewDepositVaultState: previewDepositVaultState(),
-            minProfitLTV: minProfitLTV,
+            minProfitLTVDividend: minProfitLTVDividend,
+            minProfitLTVDivider: minProfitLTVDivider,
             maxTotalAssetsInUnderlying: maxTotalAssetsInUnderlying
         });
     }
