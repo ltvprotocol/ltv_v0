@@ -62,33 +62,37 @@ library CommonMath {
         return futureRewardBorrowAssets.mulDiv(int256(borrowPrice), int256(Constants.ORACLE_DIVIDER), !isDeposit);
     }
 
-    function calculateAuctionStep(uint256 startAuction, uint256 blockNumber) internal pure returns (uint256) {
-        uint256 auctionStep = blockNumber - startAuction;
+    function calculateAuctionStep(uint56 startAuction, uint56 blockNumber, uint24 auctionDuration)
+        internal
+        pure
+        returns (uint24)
+    {
+        uint56 auctionStep = blockNumber - startAuction;
 
-        bool stuck = auctionStep > Constants.AMOUNT_OF_STEPS;
+        bool stuck = auctionStep > auctionDuration;
 
         if (stuck) {
-            return Constants.AMOUNT_OF_STEPS;
+            return auctionDuration;
         }
 
-        return auctionStep;
+        return uint24(auctionStep);
     }
 
     // Fee collector <=> Auction executor conflict. Resolve it in favor of the auction executor.
-    function calculateUserFutureRewardBorrow(int256 futureRewardBorrowAssets, uint256 auctionStep)
-        internal
-        pure
-        returns (int256)
-    {
-        return futureRewardBorrowAssets.mulDivUp(int256(auctionStep), int256(Constants.AMOUNT_OF_STEPS));
+    function calculateUserFutureRewardBorrow(
+        int256 futureRewardBorrowAssets,
+        uint256 auctionStep,
+        uint24 auctionDuration
+    ) internal pure returns (int256) {
+        return futureRewardBorrowAssets.mulDivUp(int256(auctionStep), int256(uint256(auctionDuration)));
     }
 
     // Fee collector <=> Auction executor conflict. Resolve it in favor of the auction executor.
-    function calculateUserFutureRewardCollateral(int256 futureRewardCollateralAssets, uint256 auctionStep)
-        internal
-        pure
-        returns (int256)
-    {
-        return futureRewardCollateralAssets.mulDivDown(int256(auctionStep), int256(Constants.AMOUNT_OF_STEPS));
+    function calculateUserFutureRewardCollateral(
+        int256 futureRewardCollateralAssets,
+        uint256 auctionStep,
+        uint24 auctionDuration
+    ) internal pure returns (int256) {
+        return futureRewardCollateralAssets.mulDivDown(int256(auctionStep), int256(uint256(auctionDuration)));
     }
 }

@@ -41,7 +41,7 @@ contract UpdateEmergencyDeleveragerTest is BaseTest {
         deal(address(borrowToken), newAddress, borrowAssets);
         vm.startPrank(newAddress);
         borrowToken.approve(address(ltv), borrowAssets);
-        ltv.deleverageAndWithdraw(borrowAssets, 0);
+        ltv.deleverageAndWithdraw(borrowAssets, 0, 1);
         vm.stopPrank();
 
         vm.prank(data.owner);
@@ -51,10 +51,10 @@ contract UpdateEmergencyDeleveragerTest is BaseTest {
         vm.expectRevert(
             abi.encodeWithSelector(IAdministrationErrors.OnlyEmergencyDeleveragerInvalidCaller.selector, newAddress)
         );
-        ltv.deleverageAndWithdraw(0, 0);
+        ltv.deleverageAndWithdraw(0, 0, 1);
 
         vm.prank(anotherNewAddress);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.VaultAlreadyDeleveraged.selector));
-        ltv.deleverageAndWithdraw(0, 0);
+        ltv.deleverageAndWithdraw(0, 0, 1);
     }
 }

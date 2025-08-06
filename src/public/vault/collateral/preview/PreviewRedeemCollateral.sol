@@ -37,7 +37,8 @@ abstract contract PreviewRedeemCollateral is VaultCollateral {
                 protocolFutureRewardCollateral: data.protocolFutureRewardCollateral,
                 collateralSlippage: data.collateralSlippage,
                 borrowSlippage: data.borrowSlippage,
-                targetLTV: data.targetLTV,
+                targetLTVDividend: data.targetLTVDividend,
+                targetLTVDivider: data.targetLTVDivider,
                 deltaShares: -1 * int256(sharesInUnderlying),
                 isBorrow: false
             })

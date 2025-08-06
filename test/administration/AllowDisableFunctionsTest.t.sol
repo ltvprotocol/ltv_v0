@@ -155,7 +155,7 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         selectors[0] = ILTV.allowDisableFunctions.selector;
         callers[0] = defaultData.guardian;
 
-        calls[1] = abi.encodeCall(ILTV.deleverageAndWithdraw, (type(uint112).max, 2 * 10 ** 16));
+        calls[1] = abi.encodeCall(ILTV.deleverageAndWithdraw, (type(uint112).max, uint16(1), uint16(50))); // 2% fee
         selectors[1] = ILTV.deleverageAndWithdraw.selector;
         callers[1] = defaultData.emergencyDeleverager;
 
@@ -299,15 +299,15 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         selectors[19] = ILTV.setIsWhitelistActivated.selector;
         callers[19] = defaultData.governor;
 
-        calls[20] = abi.encodeCall(ILTV.setMaxDeleverageFee, 2 * 10 ** 16);
+        calls[20] = abi.encodeCall(ILTV.setMaxDeleverageFee, (uint16(1), uint16(50))); // 2% fee
         selectors[20] = ILTV.setMaxDeleverageFee.selector;
         callers[20] = defaultData.governor;
 
-        calls[21] = abi.encodeCall(ILTV.setMaxGrowthFee, 2 * 10 ** 16);
+        calls[21] = abi.encodeCall(ILTV.setMaxGrowthFee, (uint16(1), uint16(5)));
         selectors[21] = ILTV.setMaxGrowthFee.selector;
         callers[21] = defaultData.governor;
 
-        calls[22] = abi.encodeCall(ILTV.setMaxSafeLTV, 9 * 10 ** 17);
+        calls[22] = abi.encodeCall(ILTV.setMaxSafeLTV, (9, 10));
         selectors[22] = ILTV.setMaxSafeLTV.selector;
         callers[22] = defaultData.governor;
 
@@ -315,7 +315,7 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         selectors[23] = ILTV.setMaxTotalAssetsInUnderlying.selector;
         callers[23] = defaultData.governor;
 
-        calls[24] = abi.encodeCall(ILTV.setMinProfitLTV, 5 * 10 ** 17);
+        calls[24] = abi.encodeCall(ILTV.setMinProfitLTV, (5, 10));
         selectors[24] = ILTV.setMinProfitLTV.selector;
         callers[24] = defaultData.governor;
 
@@ -323,7 +323,7 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         selectors[25] = ILTV.setSlippageProvider.selector;
         callers[25] = defaultData.governor;
 
-        calls[26] = abi.encodeCall(ILTV.setTargetLTV, 75 * 10 ** 16);
+        calls[26] = abi.encodeCall(ILTV.setTargetLTV, (75, 100));
         selectors[26] = ILTV.setTargetLTV.selector;
         callers[26] = defaultData.governor;
 

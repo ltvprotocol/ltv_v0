@@ -11,7 +11,8 @@ contract MaxGrowthFeeStateReader is TotalAssetsStateReader {
             commonTotalAssetsState: withdrawTotalAssetsState.commonTotalAssetsState,
             withdrawRealCollateralAssets: withdrawTotalAssetsState.realCollateralAssets,
             withdrawRealBorrowAssets: withdrawTotalAssetsState.realBorrowAssets,
-            maxGrowthFee: maxGrowthFee,
+            maxGrowthFeeDividend: maxGrowthFeeDividend,
+            maxGrowthFeeDivider: maxGrowthFeeDivider,
             supply: baseTotalSupply,
             lastSeenTokenPrice: lastSeenTokenPrice
         });

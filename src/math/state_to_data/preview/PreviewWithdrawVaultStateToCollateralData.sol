@@ -60,12 +60,14 @@ abstract contract PreviewWithdrawVaultStateToCollateralData is TotalAssetsCollat
         data.borrow = int256(realBorrow) + data.futureBorrow + futureRewardBorrow;
         data.collateralPrice = state.maxGrowthFeeState.commonTotalAssetsState.collateralPrice;
 
-        uint256 auctionStep = CommonMath.calculateAuctionStep(state.startAuction, state.blockNumber);
+        uint24 auctionStep =
+            CommonMath.calculateAuctionStep(state.startAuction, state.blockNumber, state.auctionDuration);
 
         data.userFutureRewardBorrow =
-            CommonMath.calculateUserFutureRewardBorrow(int256(futureRewardBorrow), auctionStep);
-        data.userFutureRewardCollateral =
-            CommonMath.calculateUserFutureRewardCollateral(int256(futureRewardCollateral), auctionStep);
+            CommonMath.calculateUserFutureRewardBorrow(int256(futureRewardBorrow), auctionStep, state.auctionDuration);
+        data.userFutureRewardCollateral = CommonMath.calculateUserFutureRewardCollateral(
+            int256(futureRewardCollateral), auctionStep, state.auctionDuration
+        );
         data.protocolFutureRewardBorrow = futureRewardBorrow - data.userFutureRewardBorrow;
         data.protocolFutureRewardCollateral = futureRewardCollateral - data.userFutureRewardCollateral;
 
@@ -89,13 +91,15 @@ abstract contract PreviewWithdrawVaultStateToCollateralData is TotalAssetsCollat
         data.supplyAfterFee = _previewSupplyAfterFee(
             MaxGrowthFeeData({
                 withdrawTotalAssets: data.withdrawTotalAssets,
-                maxGrowthFee: state.maxGrowthFeeState.maxGrowthFee,
+                maxGrowthFeeDividend: state.maxGrowthFeeState.maxGrowthFeeDividend,
+                maxGrowthFeeDivider: state.maxGrowthFeeState.maxGrowthFeeDivider,
                 supply: totalSupply(state.maxGrowthFeeState.supply),
                 lastSeenTokenPrice: state.maxGrowthFeeState.lastSeenTokenPrice
             })
         );
 
-        data.targetLTV = state.targetLTV;
+        data.targetLTVDividend = state.targetLTVDividend;
+        data.targetLTVDivider = state.targetLTVDivider;
         data.collateralSlippage = state.collateralSlippage;
         data.borrowSlippage = state.borrowSlippage;
 

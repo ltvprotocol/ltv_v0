@@ -11,7 +11,8 @@ contract GetAuctionStateReader is LTVState {
             futureBorrowAssets: futureBorrowAssets,
             futureRewardBorrowAssets: futureRewardBorrowAssets,
             futureRewardCollateralAssets: futureRewardCollateralAssets,
-            startAuction: startAuction
+            startAuction: startAuction,
+            auctionDuration: auctionDuration
         });
     }
 }

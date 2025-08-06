@@ -8,47 +8,69 @@ contract SetMinProfitLTVTest is BaseTest {
         public
         testWithPredefinedDefaultValues(defaultData)
     {
-        uint128 newMinProfitLTV = ltv.targetLTV() + 1;
+        uint16 newMinProfitLTVDividend = ltv.targetLTVDividend() + 1;
+        uint16 newMinProfitLTVDivider = ltv.targetLTVDivider();
         vm.startPrank(defaultData.governor);
         vm.expectRevert(
             abi.encodeWithSelector(
-                IAdministrationErrors.InvalidLTVSet.selector, ltv.targetLTV(), ltv.maxSafeLTV(), newMinProfitLTV
+                IAdministrationErrors.InvalidLTVSet.selector,
+                ltv.targetLTVDividend(),
+                ltv.targetLTVDivider(),
+                ltv.maxSafeLTVDividend(),
+                ltv.maxSafeLTVDivider(),
+                newMinProfitLTVDividend,
+                newMinProfitLTVDivider
             )
         );
-        ltv.setMinProfitLTV(newMinProfitLTV);
+        ltv.setMinProfitLTV(newMinProfitLTVDividend, newMinProfitLTVDivider);
     }
 
     function test_passIfZero(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
         vm.startPrank(defaultData.governor);
-        ltv.setMinProfitLTV(0);
-        assertEq(ltv.minProfitLTV(), 0);
+        ltv.setMinProfitLTV(0, 1);
+        assertEq(ltv.minProfitLTVDividend(), 0);
+        assertEq(ltv.minProfitLTVDivider(), 1);
     }
 
     function test_failIfOne(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
-        uint128 newMinProfitLTV = 1 * 10 ** 18; // 1.0
+        uint16 newMinProfitLTVDividend = 1;
+        uint16 newMinProfitLTVDivider = 1;
         vm.startPrank(defaultData.governor);
-        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.UnexpectedMinProfitLTV.selector, newMinProfitLTV));
-        ltv.setMinProfitLTV(newMinProfitLTV);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAdministrationErrors.UnexpectedMinProfitLTV.selector, newMinProfitLTVDividend, newMinProfitLTVDivider
+            )
+        );
+        ltv.setMinProfitLTV(newMinProfitLTVDividend, newMinProfitLTVDivider);
     }
 
     function test_failIf42(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
-        uint128 newMinProfitLTV = 42 * 10 ** 18;
+        uint16 newMinProfitLTVDividend = 42;
+        uint16 newMinProfitLTVDivider = 1;
         vm.startPrank(defaultData.governor);
-        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.UnexpectedMinProfitLTV.selector, newMinProfitLTV));
-        ltv.setMinProfitLTV(newMinProfitLTV);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAdministrationErrors.UnexpectedMinProfitLTV.selector, newMinProfitLTVDividend, newMinProfitLTVDivider
+            )
+        );
+        ltv.setMinProfitLTV(newMinProfitLTVDividend, newMinProfitLTVDivider);
     }
 
     function test_setAndCheckStorageSlot(DefaultTestData memory defaultData)
         public
         testWithPredefinedDefaultValues(defaultData)
     {
-        uint128 newMinProfitLTV = 45 * 10 ** 16; // 0.45
+        uint16 newMinProfitLTVDividend = 45;
+        uint16 newMinProfitLTVDivider = 100;
         vm.startPrank(defaultData.governor);
         vm.expectEmit(true, true, true, true, address(ltv));
-        emit IAdministrationEvents.MinProfitLTVChanged(ltv.minProfitLTV(), newMinProfitLTV);
-        ltv.setMinProfitLTV(newMinProfitLTV);
+        emit IAdministrationEvents.MinProfitLTVChanged(
+            ltv.minProfitLTVDividend(), ltv.minProfitLTVDivider(), newMinProfitLTVDividend, newMinProfitLTVDivider
+        );
+        ltv.setMinProfitLTV(newMinProfitLTVDividend, newMinProfitLTVDivider);
 
-        assertEq(ltv.minProfitLTV(), newMinProfitLTV);
+        assertEq(ltv.minProfitLTVDividend(), newMinProfitLTVDividend);
+        assertEq(ltv.minProfitLTVDivider(), newMinProfitLTVDivider);
     }
 
     function test_failIfNotGovernor(DefaultTestData memory defaultData, address user)
@@ -56,9 +78,10 @@ contract SetMinProfitLTVTest is BaseTest {
         testWithPredefinedDefaultValues(defaultData)
     {
         vm.assume(user != defaultData.governor);
-        uint128 newMinProfitLTV = ltv.minProfitLTV();
+        uint16 newMinProfitLTVDividend = ltv.minProfitLTVDividend();
+        uint16 newMinProfitLTVDivider = ltv.minProfitLTVDivider();
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
-        ltv.setMinProfitLTV(newMinProfitLTV);
+        ltv.setMinProfitLTV(newMinProfitLTVDividend, newMinProfitLTVDivider);
     }
 }

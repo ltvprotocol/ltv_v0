@@ -9,16 +9,16 @@ import "../../events/IAdministrationEvents.sol";
 import "../../errors/IAdministrationErrors.sol";
 
 abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeable, IAdministrationEvents {
-    function setTargetLTV(uint128 value) external {
-        _delegate(address(modules.administrationModule()), abi.encode(value));
+    function setTargetLTV(uint16 dividend, uint16 divider) external {
+        _delegate(address(modules.administrationModule()), abi.encode(dividend, divider));
     }
 
-    function setMaxSafeLTV(uint128 value) external {
-        _delegate(address(modules.administrationModule()), abi.encode(value));
+    function setMaxSafeLTV(uint16 dividend, uint16 divider) external {
+        _delegate(address(modules.administrationModule()), abi.encode(dividend, divider));
     }
 
-    function setMinProfitLTV(uint128 value) external {
-        _delegate(address(modules.administrationModule()), abi.encode(value));
+    function setMinProfitLTV(uint16 dividend, uint16 divider) external {
+        _delegate(address(modules.administrationModule()), abi.encode(dividend, divider));
     }
 
     function setFeeCollector(address _feeCollector) external {
@@ -29,8 +29,8 @@ abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeab
         _delegate(address(modules.administrationModule()), abi.encode(_maxTotalAssetsInUnderlying));
     }
 
-    function setMaxDeleverageFee(uint256 value) external {
-        _delegate(address(modules.administrationModule()), abi.encode(value));
+    function setMaxDeleverageFee(uint16 dividend, uint16 divider) external {
+        _delegate(address(modules.administrationModule()), abi.encode(dividend, divider));
     }
 
     function setIsWhitelistActivated(bool activate) external {
@@ -65,8 +65,13 @@ abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeab
         _delegate(address(modules.administrationModule()), abi.encode(_oracleConnector));
     }
 
-    function deleverageAndWithdraw(uint256 closeAmountBorrow, uint256 deleverageFee) external {
-        _delegate(address(modules.administrationModule()), abi.encode(closeAmountBorrow, deleverageFee));
+    function deleverageAndWithdraw(uint256 closeAmountBorrow, uint16 deleverageFeeDividend, uint16 deleverageFeeDivider)
+        external
+    {
+        _delegate(
+            address(modules.administrationModule()),
+            abi.encode(closeAmountBorrow, deleverageFeeDividend, deleverageFeeDivider)
+        );
     }
 
     function updateEmergencyDeleverager(address newEmergencyDeleverager) external {
@@ -81,8 +86,8 @@ abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeab
         _delegate(address(modules.administrationModule()), abi.encode(newGovernor));
     }
 
-    function setMaxGrowthFee(uint256 _maxGrowthFee) external {
-        _delegate(address(modules.administrationModule()), abi.encode(_maxGrowthFee));
+    function setMaxGrowthFee(uint16 dividend, uint16 divider) external {
+        _delegate(address(modules.administrationModule()), abi.encode(dividend, divider));
     }
 
     function setVaultBalanceAsLendingConnector(address _vaultBalanceAsLendingConnector) external {

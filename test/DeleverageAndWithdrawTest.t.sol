@@ -13,7 +13,7 @@ contract DeleverageAndWithdrawTest is BalancedTest {
         vm.startPrank(emergencyDeleverager);
         deal(address(borrowToken), address(emergencyDeleverager), type(uint112).max);
         borrowToken.approve(address(dummyLTV), type(uint112).max);
-        dummyLTV.deleverageAndWithdraw(dummyLTV.getRealBorrowAssets(true), 5 * 10 ** 15);
+        dummyLTV.deleverageAndWithdraw(dummyLTV.getRealBorrowAssets(true), uint16(1), uint16(200)); // 0.5% fee
         vm.stopPrank();
 
         // total assets were reduced for 0.5%
@@ -30,28 +30,34 @@ contract DeleverageAndWithdrawTest is BalancedTest {
     {
         address emergencyDeleverager = ILTV(address(dummyLTV)).emergencyDeleverager();
         vm.assume(emergencyDeleverager != user);
-        uint256 deleverageFee = 1 * 10 ** 16; // 1%
+        uint16 deleverageFeeDividend = 1; // 1%
+        uint16 deleverageFeeDivider = 100;
         uint256 closeAmount = 3 * 10 ** 18;
 
         // Should revert if not deleverager
         vm.expectRevert(
             abi.encodeWithSelector(IAdministrationErrors.OnlyEmergencyDeleveragerInvalidCaller.selector, user)
         );
-        ILTV(address(dummyLTV)).deleverageAndWithdraw(closeAmount, deleverageFee);
+        ILTV(address(dummyLTV)).deleverageAndWithdraw(closeAmount, deleverageFeeDividend, deleverageFeeDivider);
 
         // Should revert if fee too high
         vm.startPrank(emergencyDeleverager);
-        uint256 tooBigFee = ILTV(address(dummyLTV)).maxDeleverageFee() + 1;
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                IAdministrationErrors.ExceedsMaxDeleverageFee.selector,
-                tooBigFee,
-                ILTV(address(dummyLTV)).maxDeleverageFee()
-            )
-        );
+        uint16 maxDividend = ILTV(address(dummyLTV)).maxDeleverageFeeDividend();
+        uint16 maxDivider = ILTV(address(dummyLTV)).maxDeleverageFeeDivider();
+        uint16 tooHighDividend = maxDividend + 1; // This will make the fee higher than max
+
         deal(address(borrowToken), address(emergencyDeleverager), closeAmount);
         borrowToken.approve(address(dummyLTV), closeAmount);
 
-        ILTV(address(dummyLTV)).deleverageAndWithdraw(closeAmount, deleverageFee);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAdministrationErrors.ExceedsMaxDeleverageFee.selector,
+                tooHighDividend,
+                maxDivider,
+                maxDividend,
+                maxDivider
+            )
+        );
+        ILTV(address(dummyLTV)).deleverageAndWithdraw(closeAmount, tooHighDividend, maxDivider);
     }
 }

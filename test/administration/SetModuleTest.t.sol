@@ -159,17 +159,18 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setIsDepositDisabled, (true)), guardian);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setIsWithdrawDisabled, (true)), guardian);
         calls[i++] = CallWithCaller(
-            abi.encodeCall(ILTV.deleverageAndWithdraw, (type(uint112).max, 2 * 10 ** 16)), emergencyDeleverager
+            abi.encodeCall(ILTV.deleverageAndWithdraw, (type(uint112).max, uint16(1), uint16(50))),
+            emergencyDeleverager // 2% fee
         );
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setFeeCollector, (user)), governor);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setIsWhitelistActivated, (true)), governor);
-        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setMaxDeleverageFee, (amount)), governor);
-        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setMaxGrowthFee, (amount)), governor);
-        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setMaxSafeLTV, (uint128(9 * 10 ** 17))), governor);
-        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setMaxTotalAssetsInUnderlying, (amount)), governor);
-        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setTargetLTV, (uint128(75 * 10 ** 16))), governor);
+        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setMaxDeleverageFee, (uint16(1), uint16(20))), governor); // 5% fee
+        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setMaxGrowthFee, (uint16(1), uint16(5))), governor); // 20% fee
+        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setMaxSafeLTV, (9, 10)), governor);
+        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setMaxTotalAssetsInUnderlying, (type(uint128).max)), governor);
+        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setTargetLTV, (75, 100)), governor);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setSlippageProvider, (user)), governor);
-        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setMinProfitLTV, (uint128(5 * 10 ** 17))), governor);
+        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setMinProfitLTV, (5, 10)), governor);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setWhitelistRegistry, (user)), governor);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.updateGovernor, (user)), owner);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setLendingConnector, (user)), owner);
