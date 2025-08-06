@@ -26,7 +26,11 @@ contract SetMaxDeleverageFeeTest is BaseTest {
         vm.startPrank(defaultData.emergencyDeleverager);
         vm.expectRevert(
             abi.encodeWithSelector(
-                IAdministrationErrors.ExceedsMaxDeleverageFee.selector, tooHighDividend, maxDeleverageFeeDivider, maxDeleverageFeeDividend, maxDeleverageFeeDivider
+                IAdministrationErrors.ExceedsMaxDeleverageFee.selector,
+                tooHighDividend,
+                maxDeleverageFeeDivider,
+                maxDeleverageFeeDividend,
+                maxDeleverageFeeDivider
             )
         );
         ltv.deleverageAndWithdraw(0, tooHighDividend, maxDeleverageFeeDivider);
@@ -60,7 +64,12 @@ contract SetMaxDeleverageFeeTest is BaseTest {
         uint16 newMaxDeleverageFeeDivider = 20;
         vm.startPrank(defaultData.governor);
         vm.expectEmit(true, true, true, true, address(ltv));
-        emit IAdministrationEvents.MaxDeleverageFeeChanged(ltv.maxDeleverageFeeDividend(), ltv.maxDeleverageFeeDivider(), newMaxDeleverageFeeDividend, newMaxDeleverageFeeDivider);
+        emit IAdministrationEvents.MaxDeleverageFeeChanged(
+            ltv.maxDeleverageFeeDividend(),
+            ltv.maxDeleverageFeeDivider(),
+            newMaxDeleverageFeeDividend,
+            newMaxDeleverageFeeDivider
+        );
         ltv.setMaxDeleverageFee(newMaxDeleverageFeeDividend, newMaxDeleverageFeeDivider);
 
         assertEq(ltv.maxDeleverageFeeDividend(), newMaxDeleverageFeeDividend);
@@ -109,7 +118,11 @@ contract SetMaxDeleverageFeeTest is BaseTest {
         uint16 newMaxDeleverageFeeDivider = 5;
         vm.startPrank(defaultData.governor);
         vm.expectRevert(
-            abi.encodeWithSelector(IAdministrationErrors.InvalidMaxDeleverageFee.selector, newMaxDeleverageFeeDividend, newMaxDeleverageFeeDivider)
+            abi.encodeWithSelector(
+                IAdministrationErrors.InvalidMaxDeleverageFee.selector,
+                newMaxDeleverageFeeDividend,
+                newMaxDeleverageFeeDivider
+            )
         );
         ltv.setMaxDeleverageFee(newMaxDeleverageFeeDividend, newMaxDeleverageFeeDivider);
     }

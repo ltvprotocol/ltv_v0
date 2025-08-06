@@ -5,6 +5,6 @@ import "../states/LTVState.sol";
 
 contract GetIsDepositDisabled is LTVState {
     function isDepositDisabled() public view returns (bool) {
-        return boolSlot & (2** IS_DEPOSIT_DISABLED_BIT) != 0;
+        return boolSlot & (2 ** IS_DEPOSIT_DISABLED_BIT) != 0;
     }
 }

@@ -50,9 +50,11 @@ abstract contract PreviewLowLevelRebalanceStateToData is MaxGrowthFee {
             isDeposit
         );
 
-        uint24 auctionStep = CommonMath.calculateAuctionStep(state.startAuction, state.blockNumber, state.auctionDuration);
+        uint24 auctionStep =
+            CommonMath.calculateAuctionStep(state.startAuction, state.blockNumber, state.auctionDuration);
 
-        data.userFutureRewardBorrow = CommonMath.calculateUserFutureRewardBorrow(futureRewardBorrow, auctionStep, state.auctionDuration);
+        data.userFutureRewardBorrow =
+            CommonMath.calculateUserFutureRewardBorrow(futureRewardBorrow, auctionStep, state.auctionDuration);
         data.userFutureRewardCollateral =
             CommonMath.calculateUserFutureRewardCollateral(futureRewardCollateral, auctionStep, state.auctionDuration);
         data.protocolFutureRewardBorrow = futureRewardBorrow - data.userFutureRewardBorrow;
@@ -86,7 +88,7 @@ abstract contract PreviewLowLevelRebalanceStateToData is MaxGrowthFee {
             MaxGrowthFeeData({
                 withdrawTotalAssets: data.withdrawTotalAssets,
                 maxGrowthFeeDividend: state.maxGrowthFeeState.maxGrowthFeeDividend,
-            maxGrowthFeeDivider: state.maxGrowthFeeState.maxGrowthFeeDivider,
+                maxGrowthFeeDivider: state.maxGrowthFeeState.maxGrowthFeeDivider,
                 supply: totalSupply(state.maxGrowthFeeState.supply),
                 lastSeenTokenPrice: state.maxGrowthFeeState.lastSeenTokenPrice
             })

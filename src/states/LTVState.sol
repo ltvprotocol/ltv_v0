@@ -20,6 +20,7 @@ import "../structs/state/low_level/MaxLowLevelRebalanceSharesState.sol";
 import "../structs/state/low_level/MaxLowLevelRebalanceBorrowStateData.sol";
 import "../structs/state/low_level/MaxLowLevelRebalanceCollateralStateData.sol";
 import "../structs/state/low_level/ExecuteLowLevelRebalanceState.sol";
+
 abstract contract LTVState {
     address public feeCollector;
     IERC20 public collateralToken;
@@ -53,14 +54,14 @@ abstract contract LTVState {
     uint16 public maxGrowthFeeDivider;
     uint16 public maxDeleverageFeeDividend;
     uint16 public maxDeleverageFeeDivider;
-    
+
     uint16 public maxSafeLTVDividend;
     uint16 public maxSafeLTVDivider;
     uint16 public minProfitLTVDividend;
     uint16 public minProfitLTVDivider;
     uint16 public targetLTVDividend;
     uint16 public targetLTVDivider;
-    
+
     uint8 public decimals;
 
     uint8 public constant IS_DEPOSIT_DISABLED_BIT = 0;

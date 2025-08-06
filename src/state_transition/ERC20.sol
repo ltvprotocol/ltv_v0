@@ -9,6 +9,7 @@ import "src/errors/IAdministrationErrors.sol";
 import "src/errors/IERC20Errors.sol";
 import "src/state_reader/GetIsDepositDisabled.sol";
 import "src/state_reader/GetIsWithdrawDisabled.sol";
+
 abstract contract ERC20 is
     WhitelistModifier,
     FunctionStopperModifier,

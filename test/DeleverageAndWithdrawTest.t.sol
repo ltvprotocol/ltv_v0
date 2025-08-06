@@ -45,14 +45,17 @@ contract DeleverageAndWithdrawTest is BalancedTest {
         uint16 maxDividend = ILTV(address(dummyLTV)).maxDeleverageFeeDividend();
         uint16 maxDivider = ILTV(address(dummyLTV)).maxDeleverageFeeDivider();
         uint16 tooHighDividend = maxDividend + 1; // This will make the fee higher than max
-        
+
         deal(address(borrowToken), address(emergencyDeleverager), closeAmount);
         borrowToken.approve(address(dummyLTV), closeAmount);
 
         vm.expectRevert(
             abi.encodeWithSelector(
                 IAdministrationErrors.ExceedsMaxDeleverageFee.selector,
-                tooHighDividend, maxDivider, maxDividend, maxDivider
+                tooHighDividend,
+                maxDivider,
+                maxDividend,
+                maxDivider
             )
         );
         ILTV(address(dummyLTV)).deleverageAndWithdraw(closeAmount, tooHighDividend, maxDivider);

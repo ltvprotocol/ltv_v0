@@ -60,7 +60,11 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         vm.startPrank(data.emergencyDeleverager);
         vm.expectRevert(
             abi.encodeWithSelector(
-                IAdministrationErrors.ExceedsMaxDeleverageFee.selector, tooHighDividend, maxDeleverageFeeDivider, maxDeleverageFeeDividend, maxDeleverageFeeDivider
+                IAdministrationErrors.ExceedsMaxDeleverageFee.selector,
+                tooHighDividend,
+                maxDeleverageFeeDivider,
+                maxDeleverageFeeDividend,
+                maxDeleverageFeeDivider
             )
         );
         ltv.deleverageAndWithdraw(0, tooHighDividend, maxDeleverageFeeDivider);

@@ -87,8 +87,8 @@ contract AdmistrationSetters is
         require(!activate || address(whitelistRegistry) != address(0), WhitelistRegistryNotSet());
         bool oldValue = isWhitelistActivated();
         boolSlot = activate
-            ? uint8(boolSlot | (2** IS_WHITELIST_ACTIVATED_BIT))
-            : uint8(boolSlot & ~(2** IS_WHITELIST_ACTIVATED_BIT));
+            ? uint8(boolSlot | (2 ** IS_WHITELIST_ACTIVATED_BIT))
+            : uint8(boolSlot & ~(2 ** IS_WHITELIST_ACTIVATED_BIT));
         emit IsWhitelistActivatedChanged(oldValue, activate);
     }
 

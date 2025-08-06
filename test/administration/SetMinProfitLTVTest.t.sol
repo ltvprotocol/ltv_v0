@@ -36,7 +36,11 @@ contract SetMinProfitLTVTest is BaseTest {
         uint16 newMinProfitLTVDividend = 1;
         uint16 newMinProfitLTVDivider = 1;
         vm.startPrank(defaultData.governor);
-        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.UnexpectedMinProfitLTV.selector, newMinProfitLTVDividend, newMinProfitLTVDivider));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAdministrationErrors.UnexpectedMinProfitLTV.selector, newMinProfitLTVDividend, newMinProfitLTVDivider
+            )
+        );
         ltv.setMinProfitLTV(newMinProfitLTVDividend, newMinProfitLTVDivider);
     }
 
@@ -44,7 +48,11 @@ contract SetMinProfitLTVTest is BaseTest {
         uint16 newMinProfitLTVDividend = 42;
         uint16 newMinProfitLTVDivider = 1;
         vm.startPrank(defaultData.governor);
-        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.UnexpectedMinProfitLTV.selector, newMinProfitLTVDividend, newMinProfitLTVDivider));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAdministrationErrors.UnexpectedMinProfitLTV.selector, newMinProfitLTVDividend, newMinProfitLTVDivider
+            )
+        );
         ltv.setMinProfitLTV(newMinProfitLTVDividend, newMinProfitLTVDivider);
     }
 
@@ -56,7 +64,9 @@ contract SetMinProfitLTVTest is BaseTest {
         uint16 newMinProfitLTVDivider = 100;
         vm.startPrank(defaultData.governor);
         vm.expectEmit(true, true, true, true, address(ltv));
-        emit IAdministrationEvents.MinProfitLTVChanged(ltv.minProfitLTVDividend(), ltv.minProfitLTVDivider(), newMinProfitLTVDividend, newMinProfitLTVDivider);
+        emit IAdministrationEvents.MinProfitLTVChanged(
+            ltv.minProfitLTVDividend(), ltv.minProfitLTVDivider(), newMinProfitLTVDividend, newMinProfitLTVDivider
+        );
         ltv.setMinProfitLTV(newMinProfitLTVDividend, newMinProfitLTVDivider);
 
         assertEq(ltv.minProfitLTVDividend(), newMinProfitLTVDividend);

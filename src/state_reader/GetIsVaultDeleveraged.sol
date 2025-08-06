@@ -5,6 +5,6 @@ import "../states/LTVState.sol";
 
 contract GetIsVaultDeleveraged is LTVState {
     function isVaultDeleveraged() public view returns (bool) {
-        return boolSlot & (2** IS_VAULT_DELEVERAGED_BIT) != 0;
+        return boolSlot & (2 ** IS_VAULT_DELEVERAGED_BIT) != 0;
     }
 }

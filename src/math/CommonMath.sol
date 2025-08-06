@@ -62,7 +62,11 @@ library CommonMath {
         return futureRewardBorrowAssets.mulDiv(int256(borrowPrice), int256(Constants.ORACLE_DIVIDER), !isDeposit);
     }
 
-    function calculateAuctionStep(uint56 startAuction, uint56 blockNumber, uint24 auctionDuration) internal pure returns (uint24) {
+    function calculateAuctionStep(uint56 startAuction, uint56 blockNumber, uint24 auctionDuration)
+        internal
+        pure
+        returns (uint24)
+    {
         uint56 auctionStep = blockNumber - startAuction;
 
         bool stuck = auctionStep > auctionDuration;
@@ -75,20 +79,20 @@ library CommonMath {
     }
 
     // Fee collector <=> Auction executor conflict. Resolve it in favor of the auction executor.
-    function calculateUserFutureRewardBorrow(int256 futureRewardBorrowAssets, uint256 auctionStep, uint24 auctionDuration)
-        internal
-        pure
-        returns (int256)
-    {
+    function calculateUserFutureRewardBorrow(
+        int256 futureRewardBorrowAssets,
+        uint256 auctionStep,
+        uint24 auctionDuration
+    ) internal pure returns (int256) {
         return futureRewardBorrowAssets.mulDivUp(int256(auctionStep), int256(uint256(auctionDuration)));
     }
 
     // Fee collector <=> Auction executor conflict. Resolve it in favor of the auction executor.
-    function calculateUserFutureRewardCollateral(int256 futureRewardCollateralAssets, uint256 auctionStep, uint24 auctionDuration)
-        internal
-        pure
-        returns (int256)
-    {
+    function calculateUserFutureRewardCollateral(
+        int256 futureRewardCollateralAssets,
+        uint256 auctionStep,
+        uint24 auctionDuration
+    ) internal pure returns (int256) {
         return futureRewardCollateralAssets.mulDivDown(int256(auctionStep), int256(uint256(auctionDuration)));
     }
 }

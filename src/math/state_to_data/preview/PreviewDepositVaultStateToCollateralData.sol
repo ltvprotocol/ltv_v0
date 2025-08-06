@@ -56,12 +56,14 @@ abstract contract PreviewDepositVaultStateToCollateralData is TotalAssetsCollate
         data.borrow = int256(realBorrow) + data.futureBorrow + futureRewardBorrow;
         data.collateralPrice = state.maxGrowthFeeState.commonTotalAssetsState.collateralPrice;
 
-        uint24 auctionStep = CommonMath.calculateAuctionStep(state.startAuction, state.blockNumber, state.auctionDuration);
+        uint24 auctionStep =
+            CommonMath.calculateAuctionStep(state.startAuction, state.blockNumber, state.auctionDuration);
 
         data.userFutureRewardBorrow =
             CommonMath.calculateUserFutureRewardBorrow(int256(futureRewardBorrow), auctionStep, state.auctionDuration);
-        data.userFutureRewardCollateral =
-            CommonMath.calculateUserFutureRewardCollateral(int256(futureRewardCollateral), auctionStep, state.auctionDuration);
+        data.userFutureRewardCollateral = CommonMath.calculateUserFutureRewardCollateral(
+            int256(futureRewardCollateral), auctionStep, state.auctionDuration
+        );
         data.protocolFutureRewardBorrow = futureRewardBorrow - data.userFutureRewardBorrow;
         data.protocolFutureRewardCollateral = futureRewardCollateral - data.userFutureRewardCollateral;
 
@@ -95,7 +97,7 @@ abstract contract PreviewDepositVaultStateToCollateralData is TotalAssetsCollate
             MaxGrowthFeeData({
                 withdrawTotalAssets: data.withdrawTotalAssets,
                 maxGrowthFeeDividend: state.maxGrowthFeeState.maxGrowthFeeDividend,
-            maxGrowthFeeDivider: state.maxGrowthFeeState.maxGrowthFeeDivider,
+                maxGrowthFeeDivider: state.maxGrowthFeeState.maxGrowthFeeDivider,
                 supply: totalSupply(state.maxGrowthFeeState.supply),
                 lastSeenTokenPrice: state.maxGrowthFeeState.lastSeenTokenPrice
             })

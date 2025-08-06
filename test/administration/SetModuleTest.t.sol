@@ -159,7 +159,8 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setIsDepositDisabled, (true)), guardian);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setIsWithdrawDisabled, (true)), guardian);
         calls[i++] = CallWithCaller(
-            abi.encodeCall(ILTV.deleverageAndWithdraw, (type(uint112).max, uint16(1), uint16(50))), emergencyDeleverager // 2% fee
+            abi.encodeCall(ILTV.deleverageAndWithdraw, (type(uint112).max, uint16(1), uint16(50))),
+            emergencyDeleverager // 2% fee
         );
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setFeeCollector, (user)), governor);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setIsWhitelistActivated, (true)), governor);

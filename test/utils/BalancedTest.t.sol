@@ -51,7 +51,7 @@ contract BalancedTest is DummyModulesBaseTest {
                 targetLTVDividend: 75,
                 targetLTVDivider: 100,
                 maxGrowthFeeDividend: 1,
-            maxGrowthFeeDivider: 5,
+                maxGrowthFeeDivider: 5,
                 collateralPrice: 2 * 10 ** 20,
                 borrowPrice: 10 ** 20,
                 maxDeleverageFeeDividend: 1,

@@ -31,9 +31,7 @@ contract SetMaxSafeLTVTest is BaseTest {
         vm.startPrank(defaultData.governor);
         vm.expectRevert(
             abi.encodeWithSelector(
-                IAdministrationErrors.UnexpectedMaxSafeLTV.selector,
-                newMaxSafeLTVDividend,
-                newMaxSafeLTVDivider
+                IAdministrationErrors.UnexpectedMaxSafeLTV.selector, newMaxSafeLTVDividend, newMaxSafeLTVDivider
             )
         );
         ltv.setMaxSafeLTV(newMaxSafeLTVDividend, newMaxSafeLTVDivider);
@@ -50,7 +48,11 @@ contract SetMaxSafeLTVTest is BaseTest {
         uint16 newMaxSafeLTVDividend = 42;
         uint16 newMaxSafeLTVDivider = 1;
         vm.startPrank(defaultData.governor);
-        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.UnexpectedMaxSafeLTV.selector, newMaxSafeLTVDividend, newMaxSafeLTVDivider));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAdministrationErrors.UnexpectedMaxSafeLTV.selector, newMaxSafeLTVDividend, newMaxSafeLTVDivider
+            )
+        );
         ltv.setMaxSafeLTV(newMaxSafeLTVDividend, newMaxSafeLTVDivider);
     }
 
@@ -62,7 +64,9 @@ contract SetMaxSafeLTVTest is BaseTest {
         uint16 newMaxSafeLTVDivider = 100;
         vm.startPrank(defaultData.governor);
         vm.expectEmit(true, true, true, true, address(ltv));
-        emit IAdministrationEvents.MaxSafeLTVChanged(ltv.maxSafeLTVDividend(), ltv.maxSafeLTVDivider(), newMaxSafeLTVDividend, newMaxSafeLTVDivider);
+        emit IAdministrationEvents.MaxSafeLTVChanged(
+            ltv.maxSafeLTVDividend(), ltv.maxSafeLTVDivider(), newMaxSafeLTVDividend, newMaxSafeLTVDivider
+        );
         ltv.setMaxSafeLTV(newMaxSafeLTVDividend, newMaxSafeLTVDivider);
 
         assertEq(ltv.maxSafeLTVDividend(), newMaxSafeLTVDividend);

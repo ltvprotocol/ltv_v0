@@ -84,7 +84,7 @@ abstract contract MaxLowLevelRebalanceShares is MaxGrowthFee {
                 MaxGrowthFeeData({
                     withdrawTotalAssets: withdrawTotalAssets,
                     maxGrowthFeeDividend: state.maxGrowthFeeState.maxGrowthFeeDividend,
-            maxGrowthFeeDivider: state.maxGrowthFeeState.maxGrowthFeeDivider,
+                    maxGrowthFeeDivider: state.maxGrowthFeeState.maxGrowthFeeDivider,
                     supply: totalSupply(state.maxGrowthFeeState.supply),
                     lastSeenTokenPrice: state.maxGrowthFeeState.lastSeenTokenPrice
                 })

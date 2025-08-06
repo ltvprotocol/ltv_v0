@@ -58,7 +58,11 @@ contract SetTargetLTVTest is BaseTest {
         uint16 targetLTVDividend = 1;
         uint16 targetLTVDivider = 1;
         vm.startPrank(defaultData.governor);
-        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.UnexpectedTargetLTV.selector, targetLTVDividend, targetLTVDivider));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAdministrationErrors.UnexpectedTargetLTV.selector, targetLTVDividend, targetLTVDivider
+            )
+        );
         ltv.setTargetLTV(targetLTVDividend, targetLTVDivider);
     }
 
@@ -69,7 +73,11 @@ contract SetTargetLTVTest is BaseTest {
         uint16 targetLTVDividend = 42;
         uint16 targetLTVDivider = 1;
         vm.startPrank(defaultData.governor);
-        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.UnexpectedTargetLTV.selector, targetLTVDividend, targetLTVDivider));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAdministrationErrors.UnexpectedTargetLTV.selector, targetLTVDividend, targetLTVDivider
+            )
+        );
         ltv.setTargetLTV(targetLTVDividend, targetLTVDivider);
     }
 
@@ -81,7 +89,9 @@ contract SetTargetLTVTest is BaseTest {
         uint16 targetLTVDivider = 100;
         vm.startPrank(defaultData.governor);
         vm.expectEmit(true, true, true, true, address(ltv));
-        emit IAdministrationEvents.TargetLTVChanged(ltv.targetLTVDividend(), ltv.targetLTVDivider(), targetLTVDividend, targetLTVDivider);
+        emit IAdministrationEvents.TargetLTVChanged(
+            ltv.targetLTVDividend(), ltv.targetLTVDivider(), targetLTVDividend, targetLTVDivider
+        );
         ltv.setTargetLTV(targetLTVDividend, targetLTVDivider);
 
         assertEq(ltv.targetLTVDividend(), targetLTVDividend);

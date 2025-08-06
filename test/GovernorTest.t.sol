@@ -246,7 +246,11 @@ contract GovernorTest is BalancedTest {
         vm.startPrank(governor);
         uint16 tooHighDividend = 10; // 100/50 = 200% which is invalid
         uint16 tooLowDivider = 5;
-        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.InvalidMaxDeleverageFee.selector, tooHighDividend, tooLowDivider));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAdministrationErrors.InvalidMaxDeleverageFee.selector, tooHighDividend, tooLowDivider
+            )
+        );
         dummyLTV.setMaxDeleverageFee(tooHighDividend, tooLowDivider);
     }
 

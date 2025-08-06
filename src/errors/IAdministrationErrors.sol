@@ -16,7 +16,12 @@ interface IAdministrationErrors {
     error ZeroFeeCollector();
     error ImpossibleToCoverDeleverage(uint256 realBorrowAssets, uint256 providedAssets);
     error InvalidMaxDeleverageFee(uint16 maxDeleverageFeeDividend, uint16 maxDeleverageFeeDivider);
-    error ExceedsMaxDeleverageFee(uint16 deleverageFeeDividend, uint16 deleverageFeeDivider, uint16 maxDeleverageFeeDividend, uint16 maxDeleverageFeeDivider);
+    error ExceedsMaxDeleverageFee(
+        uint16 deleverageFeeDividend,
+        uint16 deleverageFeeDivider,
+        uint16 maxDeleverageFeeDividend,
+        uint16 maxDeleverageFeeDivider
+    );
     error VaultAlreadyDeleveraged();
     error InvalidMaxGrowthFee(uint16 maxGrowthFeeDividend, uint16 maxGrowthFeeDivider);
     error OnlyEmergencyDeleveragerInvalidCaller(address account);

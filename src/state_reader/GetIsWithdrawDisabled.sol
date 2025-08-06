@@ -5,6 +5,6 @@ import "../states/LTVState.sol";
 
 contract GetIsWithdrawDisabled is LTVState {
     function isWithdrawDisabled() public view returns (bool) {
-        return boolSlot & (2** IS_WITHDRAW_DISABLED_BIT) != 0;
+        return boolSlot & (2 ** IS_WITHDRAW_DISABLED_BIT) != 0;
     }
 }

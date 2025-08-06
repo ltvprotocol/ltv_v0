@@ -34,7 +34,9 @@ library LowLevelRebalanceMath {
                 ) - data.realBorrow - data.futureBorrow - data.userFutureRewardBorrow
         )
             // round up to leave more collateral in protocol
-            .mulDivUp(int256(uint256(data.targetLTVDivider)), int256(uint256(data.targetLTVDivider - data.targetLTVDividend)));
+            .mulDivUp(
+            int256(uint256(data.targetLTVDivider)), int256(uint256(data.targetLTVDivider - data.targetLTVDividend))
+        );
     }
 
     // in shares case: HODLer <=> depositor/withdrawer conflict, round down to have lower debt in protocol

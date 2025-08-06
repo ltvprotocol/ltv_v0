@@ -44,11 +44,16 @@ contract SetMaxGrowthFeeTest is BaseTest {
         assertEq(ltv.convertToAssets(10 ** 18), tokenPriceBefore);
     }
 
-    function test_failIfTooBig(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
+    function test_failIfTooBig(DefaultTestData memory defaultData)
+        public
+        testWithPredefinedDefaultValues(defaultData)
+    {
         uint16 invalidDividend = type(uint16).max;
         uint16 invalidDivider = 1;
         vm.prank(defaultData.governor);
-        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.InvalidMaxGrowthFee.selector, invalidDividend, invalidDivider));
+        vm.expectRevert(
+            abi.encodeWithSelector(IAdministrationErrors.InvalidMaxGrowthFee.selector, invalidDividend, invalidDivider)
+        );
         ltv.setMaxGrowthFee(invalidDividend, invalidDivider);
     }
 

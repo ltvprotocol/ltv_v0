@@ -5,6 +5,6 @@ import "../states/LTVState.sol";
 
 contract GetIsWhitelistActivated is LTVState {
     function isWhitelistActivated() public view returns (bool) {
-        return boolSlot & (2** IS_WHITELIST_ACTIVATED_BIT) != 0;
+        return boolSlot & (2 ** IS_WHITELIST_ACTIVATED_BIT) != 0;
     }
 }
