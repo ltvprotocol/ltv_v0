@@ -12,8 +12,8 @@ interface IAdministrationEvents {
 
     event WhitelistRegistryUpdated(address oldValue, address newValue);
     event MaxTotalAssetsInUnderlyingChanged(uint256 oldValue, uint256 newValue);
-    event MaxDeleverageFeeChanged(uint256 oldValue, uint256 newValue);
-    event MaxGrowthFeeChanged(uint256 oldValue, uint256 newValue);
+    event MaxDeleverageFeeChanged(uint16 oldDividend, uint16 oldDivider, uint16 newDividend, uint16 newDivider);
+    event MaxGrowthFeeChanged(uint16 oldDividend, uint16 oldDivider, uint16 newDividend, uint16 newDivider);
     event IsWhitelistActivatedChanged(bool oldValue, bool newValue);
     event IsDepositDisabledChanged(bool oldValue, bool newValue);
     event IsWithdrawDisabledChanged(bool oldValue, bool newValue);

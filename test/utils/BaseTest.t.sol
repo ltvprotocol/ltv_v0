@@ -46,10 +46,12 @@ struct BaseTestInit {
     uint16 minProfitLTVDivider;
     uint16 targetLTVDividend;
     uint16 targetLTVDivider;
-    uint24 maxGrowthFeex23;
+    uint16 maxGrowthFeeDividend;
+    uint16 maxGrowthFeeDivider;
     uint256 collateralPrice;
     uint256 borrowPrice;
-    uint24 maxDeleverageFeex23;
+    uint16 maxDeleverageFeeDividend;
+    uint16 maxDeleverageFeeDivider;
     uint256 zeroAddressTokens;
 }
 
@@ -116,10 +118,12 @@ contract BaseTest is Test {
                 targetLTVDivider: init.targetLTVDivider,
                 lendingConnector: lendingConnector,
                 oracleConnector: oracleConnector,
-                maxGrowthFeex23: init.maxGrowthFeex23,
+                maxGrowthFeeDividend: init.maxGrowthFeeDividend,
+                maxGrowthFeeDivider: init.maxGrowthFeeDivider,
                 maxTotalAssetsInUnderlying: init.maxTotalAssetsInUnderlying,
                 slippageProvider: slippageProvider,
-                maxDeleverageFeex23: init.maxDeleverageFeex23,
+                maxDeleverageFeeDividend: init.maxDeleverageFeeDividend,
+                maxDeleverageFeeDivider: init.maxDeleverageFeeDivider,
                 vaultBalanceAsLendingConnector: new VaultBalanceAsLendingConnector(collateralToken, borrowToken),
                 owner: init.owner,
                 guardian: init.guardian,
@@ -180,10 +184,12 @@ contract BaseTest is Test {
             minProfitLTVDivider: 10,
             targetLTVDividend: 75,
             targetLTVDivider: 100,
-            maxGrowthFeex23: uint24(2**23) / 5,
+            maxGrowthFeeDividend: 1,
+            maxGrowthFeeDivider: 5,
             collateralPrice: 2 * 10 ** 18,
             borrowPrice: 10 ** 18,
-            maxDeleverageFeex23: uint24(2**23) / 50,
+            maxDeleverageFeeDividend: 1,
+            maxDeleverageFeeDivider: 50,
             zeroAddressTokens: 10 ** 18
         });
         initializeTest(initData);

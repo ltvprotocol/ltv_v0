@@ -54,10 +54,12 @@ abstract contract BaseInvariantTest is BaseTest {
             minProfitLTVDivider: 10, // 50% min profit LTV
             targetLTVDividend: 75, // 75% target LTV
             targetLTVDivider: 100, // 75% target LTV
-            maxGrowthFeex23: uint24(2**23) / 5, // 20% max growth fee
+            maxGrowthFeeDividend: 1, // 20% max growth fee
+            maxGrowthFeeDivider: 5,
             collateralPrice: 2 * 10 ** 18, // 2 collateral price
             borrowPrice: 10 ** 18, // 1 borrow price
-            maxDeleverageFeex23: 0, // No deleverage fee
+            maxDeleverageFeeDividend: 0, // No deleverage fee
+            maxDeleverageFeeDivider: 1,
             zeroAddressTokens: 4 * 10 ** 19 - 35 * 10 ** 18 // adjust initial share price to be 1
         });
 

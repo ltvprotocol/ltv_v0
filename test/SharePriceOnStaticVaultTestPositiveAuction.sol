@@ -51,10 +51,12 @@ contract SharePriceOnStaticVaultTestPositiveAuction is BaseTest {
             minProfitLTVDivider: 10,
             targetLTVDividend: 75,
             targetLTVDivider: 100,
-            maxGrowthFeex23: uint24(2**23) / 5,
+            maxGrowthFeeDividend: 1,
+            maxGrowthFeeDivider: 5,
             collateralPrice: 10 ** 18,
             borrowPrice: 10 ** 18,
-            maxDeleverageFeex23: uint24(2**23) / 50,
+            maxDeleverageFeeDividend: 1,
+            maxDeleverageFeeDivider: 50,
             zeroAddressTokens: 984016000 + 16000000 - 734000000 - 16000000 - 16_000
         });
         initializeTest(initData);

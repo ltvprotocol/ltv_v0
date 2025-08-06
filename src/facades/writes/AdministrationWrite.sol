@@ -29,8 +29,8 @@ abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeab
         _delegate(address(modules.administrationModule()), abi.encode(_maxTotalAssetsInUnderlying));
     }
 
-    function setMaxDeleverageFeex23(uint24 value) external {
-        _delegate(address(modules.administrationModule()), abi.encode(value));
+    function setMaxDeleverageFee(uint16 dividend, uint16 divider) external {
+        _delegate(address(modules.administrationModule()), abi.encode(dividend, divider));
     }
 
     function setIsWhitelistActivated(bool activate) external {
@@ -65,8 +65,13 @@ abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeab
         _delegate(address(modules.administrationModule()), abi.encode(_oracleConnector));
     }
 
-    function deleverageAndWithdraw(uint256 closeAmountBorrow, uint24 deleverageFee) external {
-        _delegate(address(modules.administrationModule()), abi.encode(closeAmountBorrow, deleverageFee));
+    function deleverageAndWithdraw(uint256 closeAmountBorrow, uint16 deleverageFeeDividend, uint16 deleverageFeeDivider)
+        external
+    {
+        _delegate(
+            address(modules.administrationModule()),
+            abi.encode(closeAmountBorrow, deleverageFeeDividend, deleverageFeeDivider)
+        );
     }
 
     function updateEmergencyDeleverager(address newEmergencyDeleverager) external {
@@ -81,8 +86,8 @@ abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeab
         _delegate(address(modules.administrationModule()), abi.encode(newGovernor));
     }
 
-    function setMaxGrowthFeex23(uint24 _maxGrowthFeex23) external {
-        _delegate(address(modules.administrationModule()), abi.encode(_maxGrowthFeex23));
+    function setMaxGrowthFee(uint16 dividend, uint16 divider) external {
+        _delegate(address(modules.administrationModule()), abi.encode(dividend, divider));
     }
 
     function setVaultBalanceAsLendingConnector(address _vaultBalanceAsLendingConnector) external {

@@ -59,8 +59,8 @@ contract GovernorTest is BalancedTest {
         vm.startPrank(user);
         controller.executePayload(payloadId);
 
-        require(dummyLTV.targetLTVDividend() == 3);
-        require(dummyLTV.targetLTVDivider() == 5);
+        assertEq(dummyLTV.targetLTVDividend(), 6);
+        assertEq(dummyLTV.targetLTVDivider(), 10);
     }
 
     function test_setTargetLTV(address owner, address user)
@@ -85,7 +85,7 @@ contract GovernorTest is BalancedTest {
         // Should revert if outside bounds
         vm.startPrank(governor);
         uint16 tooHighValue = dummyLTV.maxSafeLTVDividend() + 1;
-        uint16 tooHighDivider = dummyLTV.maxSafeLTVDivider();
+        uint16 tooHighDivider = dummyLTV.maxSafeLTVDivider() + 1;
         vm.expectRevert(
             abi.encodeWithSelector(
                 IAdministrationErrors.InvalidLTVSet.selector,
@@ -224,27 +224,30 @@ contract GovernorTest is BalancedTest {
         dummyLTV.setMaxTotalAssetsInUnderlying(newValue);
     }
 
-    function test_setMaxDeleverageFeex23(address owner, address user)
+    function test_setMaxDeleverageFee(address owner, address user)
         public
         initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
     {
-        uint24 newValue = uint24(2**23) / 10; // 10%
+        uint16 newValueDividend = 1; // 10%
+        uint16 newValueDivider = 10;
         address governor = ILTV(address(dummyLTV)).governor();
         vm.assume(user != governor);
         vm.startPrank(governor);
-        dummyLTV.setMaxDeleverageFeex23(newValue);
-        assertEq(dummyLTV.maxDeleverageFeex23(), newValue);
+        dummyLTV.setMaxDeleverageFee(newValueDividend, newValueDivider);
+        assertEq(dummyLTV.maxDeleverageFeeDividend(), newValueDividend);
+        assertEq(dummyLTV.maxDeleverageFeeDivider(), newValueDivider);
 
         // Should revert if not governor
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
-        dummyLTV.setMaxDeleverageFeex23(newValue);
+        dummyLTV.setMaxDeleverageFee(newValueDividend, newValueDivider);
 
-        // Should revert if too high
+        // Should revert if dividend > divider
         vm.startPrank(governor);
-        uint24 tooHighValue = type(uint24).max; // 100%
-        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.InvalidMaxDeleverageFee.selector, tooHighValue));
-        dummyLTV.setMaxDeleverageFeex23(tooHighValue);
+        uint16 tooHighDividend = 10; // 100/50 = 200% which is invalid
+        uint16 tooLowDivider = 5;
+        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.InvalidMaxDeleverageFee.selector, tooHighDividend, tooLowDivider));
+        dummyLTV.setMaxDeleverageFee(tooHighDividend, tooLowDivider);
     }
 
     function test_setIsWhitelistActivated(address owner, address user)
@@ -304,20 +307,22 @@ contract GovernorTest is BalancedTest {
         dummyLTV.setSlippageProvider(address(0));
     }
 
-    function test_setMaxGrowthFeex23(address owner, address user)
+    function test_setMaxGrowthFee(address owner, address user)
         public
         initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
     {
-        uint24 newValue = uint24(2**23) / 100; // 1%
+        uint16 newValueDividend = 1; // 1%
+        uint16 newValueDivider = 100;
         address governor = ILTV(address(dummyLTV)).governor();
         vm.assume(user != governor);
         vm.startPrank(governor);
-        ILTV(address(dummyLTV)).setMaxGrowthFeex23(newValue);
-        assertEq(ILTV(address(dummyLTV)).maxGrowthFeex23(), newValue);
+        ILTV(address(dummyLTV)).setMaxGrowthFee(newValueDividend, newValueDivider);
+        assertEq(ILTV(address(dummyLTV)).maxGrowthFeeDividend(), newValueDividend);
+        assertEq(ILTV(address(dummyLTV)).maxGrowthFeeDivider(), newValueDivider);
 
         // Should revert if not governor
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
-        ILTV(address(dummyLTV)).setMaxGrowthFeex23(newValue);
+        ILTV(address(dummyLTV)).setMaxGrowthFee(newValueDividend, newValueDivider);
     }
 }

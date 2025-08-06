@@ -25,11 +25,11 @@ abstract contract MaxGrowthFee is TotalAssets, TotalSupply {
         return data.withdrawTotalAssets.mulDivDown(
             data.supply,
             data.supply.mulDivUp(
-                data.maxGrowthFeex23 * data.lastSeenTokenPrice,
-                Constants.LAST_SEEN_PRICE_PRECISION * 2**23
+                data.maxGrowthFeeDividend * data.lastSeenTokenPrice,
+                Constants.LAST_SEEN_PRICE_PRECISION * data.maxGrowthFeeDivider
             )
                 + data.withdrawTotalAssets.mulDivUp(
-                    2**23 - data.maxGrowthFeex23, 2**23
+                    data.maxGrowthFeeDivider - data.maxGrowthFeeDividend, data.maxGrowthFeeDivider
                 )
         );
     }
@@ -44,7 +44,8 @@ abstract contract MaxGrowthFee is TotalAssets, TotalSupply {
                     commonTotalAssetsState: state.commonTotalAssetsState
                 })
             ),
-            maxGrowthFeex23: state.maxGrowthFeex23,
+            maxGrowthFeeDividend: state.maxGrowthFeeDividend,
+            maxGrowthFeeDivider: state.maxGrowthFeeDivider,
             supply: totalSupply(state.supply),
             lastSeenTokenPrice: state.lastSeenTokenPrice
         });

@@ -48,8 +48,10 @@ abstract contract LTVState {
 
     uint64 public startAuction;
 
-    uint24 public maxGrowthFeex23;
-    uint24 public maxDeleverageFeex23;
+    uint16 public maxGrowthFeeDividend;
+    uint16 public maxGrowthFeeDivider;
+    uint16 public maxDeleverageFeeDividend;
+    uint16 public maxDeleverageFeeDivider;
     
     uint16 public maxSafeLTVDividend;
     uint16 public maxSafeLTVDivider;

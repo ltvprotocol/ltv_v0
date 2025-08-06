@@ -48,8 +48,8 @@ abstract contract AdministrationPublic is
         _setMaxTotalAssetsInUnderlying(_maxTotalAssetsInUnderlying);
     }
 
-    function setMaxDeleverageFeex23(uint24 value) external isFunctionAllowed onlyGovernor {
-        _setMaxDeleverageFeex23(value);
+    function setMaxDeleverageFee(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor {
+        _setMaxDeleverageFee(dividend, divider);
     }
 
     function setIsWhitelistActivated(bool activate) external isFunctionAllowed onlyGovernor {
@@ -68,8 +68,8 @@ abstract contract AdministrationPublic is
         _allowDisableFunctions(signatures, isDisabled);
     }
 
-    function setMaxGrowthFeex23(uint24 _maxGrowthFeex23) external isFunctionAllowed onlyGovernor {
-        _setMaxGrowthFeex23(_maxGrowthFeex23);
+    function setMaxGrowthFee(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor {
+        _setMaxGrowthFee(dividend, divider);
     }
 
     function setIsDepositDisabled(bool value) external onlyGuardian {
@@ -92,12 +92,15 @@ abstract contract AdministrationPublic is
         _setVaultBalanceAsLendingConnector(_vaultBalanceAsLendingConnector);
     }
 
-    function deleverageAndWithdraw(uint256 closeAmountBorrow, uint24 deleverageFee)
+    function deleverageAndWithdraw(uint256 closeAmountBorrow, uint16 deleverageFeeDividend, uint16 deleverageFeeDivider)
         external
         onlyEmergencyDeleverager
         nonReentrant
     {
-        require(deleverageFee <= maxDeleverageFeex23, ExceedsMaxDeleverageFee(deleverageFee, maxDeleverageFeex23));
+        require(
+            deleverageFeeDividend * maxDeleverageFeeDivider <= deleverageFeeDivider * maxDeleverageFeeDividend, 
+            ExceedsMaxDeleverageFee(deleverageFeeDividend, deleverageFeeDivider, maxDeleverageFeeDividend, maxDeleverageFeeDivider)
+        );
         require(!isVaultDeleveraged, VaultAlreadyDeleveraged());
         require(address(vaultBalanceAsLendingConnector) != address(0), VaultBalanceAsLendingConnectorNotSet());
 
@@ -126,8 +129,7 @@ abstract contract AdministrationPublic is
             oracleConnector.getPriceBorrowOracle(), oracleConnector.getPriceCollateralOracle()
         );
 
-        collateralToTransfer +=
-            (collateralAssets - collateralToTransfer).mulDivDown(deleverageFee, 2**23);
+        collateralToTransfer += (collateralAssets - collateralToTransfer).mulDivDown(deleverageFeeDividend, deleverageFeeDivider);
 
         if (realBorrowAssets != 0) {
             borrowToken.transferFrom(msg.sender, address(this), realBorrowAssets);

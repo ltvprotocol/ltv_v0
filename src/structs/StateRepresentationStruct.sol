@@ -16,10 +16,12 @@ struct StateRepresentationStruct {
     uint16 targetLTVDivider;
     bool isVaultDeleveraged;
     uint256 lastSeenTokenPrice;
-    uint256 maxGrowthFeex23;
+    uint16 maxGrowthFeeDividend;
+    uint16 maxGrowthFeeDivider;
     uint256 maxTotalAssetsInUnderlying;
     bool isDepositDisabled;
     bool isWithdrawDisabled;
     bool isWhitelistActivated;
-    uint24 maxDeleverageFeex23;
+    uint16 maxDeleverageFeeDividend;
+    uint16 maxDeleverageFeeDivider;
 }

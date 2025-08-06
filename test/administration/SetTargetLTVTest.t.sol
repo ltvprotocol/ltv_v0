@@ -30,7 +30,7 @@ contract SetTargetLTVTest is BaseTest {
         testWithPredefinedDefaultValues(defaultData)
     {
         uint16 targetLTVDividend = ltv.maxSafeLTVDividend() + 1;
-        uint16 targetLTVDivider = ltv.maxSafeLTVDivider();
+        uint16 targetLTVDivider = ltv.maxSafeLTVDivider() + 1;
         vm.startPrank(defaultData.governor);
         vm.expectRevert(
             abi.encodeWithSelector(

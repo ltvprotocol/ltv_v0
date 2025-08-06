@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
 import {BaseTest, BaseTestInit} from "../utils/BaseTest.t.sol";
@@ -28,10 +29,12 @@ contract MaxReedemCollateralCheckBalanceTest is BaseTest {
             minProfitLTVDivider: 10,
             targetLTVDividend: 75,
             targetLTVDivider: 100,
-            maxGrowthFeex23: 0,
+            maxGrowthFeeDividend: 0,
+            maxGrowthFeeDivider: 1,
             collateralPrice: 42 * 10 ** 17,
             borrowPrice: 10 ** 18,
-            maxDeleverageFeex23: 0,
+            maxDeleverageFeeDividend: 0,
+            maxDeleverageFeeDivider: 1,
             zeroAddressTokens: 25 * 10 ** 18
         });
 

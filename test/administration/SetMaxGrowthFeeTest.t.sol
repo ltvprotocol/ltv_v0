@@ -5,11 +5,13 @@ import "../utils/BaseTest.t.sol";
 
 contract SetMaxGrowthFeeTest is BaseTest {
     function test_checkSlot(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
-        uint24 newMaxGrowthFee = uint24(uint256(2**23) * 15 / 1000);
+        uint16 newMaxGrowthFeeDividend = 15;
+        uint16 newMaxGrowthFeeDivider = 1000;
         vm.prank(defaultData.governor);
-        ltv.setMaxGrowthFeex23(newMaxGrowthFee);
+        ltv.setMaxGrowthFee(newMaxGrowthFeeDividend, newMaxGrowthFeeDivider);
 
-        assertEq(ltv.maxGrowthFeex23(), newMaxGrowthFee);
+        assertEq(ltv.maxGrowthFeeDividend(), newMaxGrowthFeeDividend);
+        assertEq(ltv.maxGrowthFeeDivider(), newMaxGrowthFeeDivider);
     }
 
     function test_zeroMaxGrowthFee(DefaultTestData memory defaultData)
@@ -17,7 +19,7 @@ contract SetMaxGrowthFeeTest is BaseTest {
         testWithPredefinedDefaultValues(defaultData)
     {
         vm.prank(defaultData.governor);
-        ltv.setMaxGrowthFeex23(0);
+        ltv.setMaxGrowthFee(0, 1); // 0% fee
 
         uint256 tokenPriceBefore = ltv.convertToAssets(10 ** 18);
         // increase total assets twice
@@ -32,7 +34,7 @@ contract SetMaxGrowthFeeTest is BaseTest {
         testWithPredefinedDefaultValues(defaultData)
     {
         vm.prank(defaultData.governor);
-        ltv.setMaxGrowthFeex23(2**23);
+        ltv.setMaxGrowthFee(1, 1); // 100% fee
 
         uint256 tokenPriceBefore = ltv.convertToAssets(10 ** 18);
         // increase total assets twice
@@ -43,10 +45,11 @@ contract SetMaxGrowthFeeTest is BaseTest {
     }
 
     function test_failIfTooBig(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
-        uint24 invalidMaxGrowthFee = type(uint24).max;
+        uint16 invalidDividend = type(uint16).max;
+        uint16 invalidDivider = 1;
         vm.prank(defaultData.governor);
-        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.InvalidMaxGrowthFee.selector, invalidMaxGrowthFee));
-        ltv.setMaxGrowthFeex23(invalidMaxGrowthFee);
+        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.InvalidMaxGrowthFee.selector, invalidDividend, invalidDivider));
+        ltv.setMaxGrowthFee(invalidDividend, invalidDivider);
     }
 
     function test_failIfNotGovernor(DefaultTestData memory defaultData, address user)
@@ -57,6 +60,6 @@ contract SetMaxGrowthFeeTest is BaseTest {
 
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
-        ltv.setMaxGrowthFeex23(2**23);
+        ltv.setMaxGrowthFee(1, 1); // 100% fee
     }
 }

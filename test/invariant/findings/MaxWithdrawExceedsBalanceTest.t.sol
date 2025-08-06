@@ -29,10 +29,12 @@ contract MaxWithdrawExceedsBalanceTest is BaseTest {
             minProfitLTVDivider: 10,
             targetLTVDividend: 75,
             targetLTVDivider: 100,
-            maxGrowthFeex23: 0,
+            maxGrowthFeeDividend: 0,
+            maxGrowthFeeDivider: 1,
             collateralPrice: 2111111111111111111,
             borrowPrice: 10 ** 18,
-            maxDeleverageFeex23: 0,
+            maxDeleverageFeeDividend: 0,
+            maxDeleverageFeeDivider: 1,
             zeroAddressTokens: 10707579638052243058
         });
 

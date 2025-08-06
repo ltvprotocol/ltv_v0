@@ -15,10 +15,10 @@ interface IAdministrationErrors {
     error UnexpectedTargetLTV(uint24 targetLTVDividend, uint24 targetLTVDivider);
     error ZeroFeeCollector();
     error ImpossibleToCoverDeleverage(uint256 realBorrowAssets, uint256 providedAssets);
-    error InvalidMaxDeleverageFee(uint256 deleverageFeex23);
-    error ExceedsMaxDeleverageFee(uint24 deleverageFeex23, uint24 maxDeleverageFeex23);
+    error InvalidMaxDeleverageFee(uint16 maxDeleverageFeeDividend, uint16 maxDeleverageFeeDivider);
+    error ExceedsMaxDeleverageFee(uint16 deleverageFeeDividend, uint16 deleverageFeeDivider, uint16 maxDeleverageFeeDividend, uint16 maxDeleverageFeeDivider);
     error VaultAlreadyDeleveraged();
-    error InvalidMaxGrowthFee(uint256 maxGrowthFeex23);
+    error InvalidMaxGrowthFee(uint16 maxGrowthFeeDividend, uint16 maxGrowthFeeDivider);
     error OnlyEmergencyDeleveragerInvalidCaller(address account);
     error OnlyGovernorInvalidCaller(address account);
     error OnlyGuardianInvalidCaller(address account);

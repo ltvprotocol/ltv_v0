@@ -21,10 +21,12 @@ struct StateInitData {
     uint16 targetLTVDivider;
     ILendingConnector lendingConnector;
     IOracleConnector oracleConnector;
-    uint24 maxGrowthFeex23;
+    uint16 maxGrowthFeeDividend;
+    uint16 maxGrowthFeeDivider;
     uint256 maxTotalAssetsInUnderlying;
     ISlippageProvider slippageProvider;
-    uint24 maxDeleverageFeex23;
+    uint16 maxDeleverageFeeDividend;
+    uint16 maxDeleverageFeeDivider;
     ILendingConnector vaultBalanceAsLendingConnector;
     address owner;
     address guardian;

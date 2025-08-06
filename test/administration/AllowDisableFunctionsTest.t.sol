@@ -155,7 +155,7 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         selectors[0] = ILTV.allowDisableFunctions.selector;
         callers[0] = defaultData.guardian;
 
-        calls[1] = abi.encodeCall(ILTV.deleverageAndWithdraw, (type(uint112).max, 2 * 10 ** 16));
+        calls[1] = abi.encodeCall(ILTV.deleverageAndWithdraw, (type(uint112).max, uint16(1), uint16(50))); // 2% fee
         selectors[1] = ILTV.deleverageAndWithdraw.selector;
         callers[1] = defaultData.emergencyDeleverager;
 
@@ -299,12 +299,12 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         selectors[19] = ILTV.setIsWhitelistActivated.selector;
         callers[19] = defaultData.governor;
 
-        calls[20] = abi.encodeCall(ILTV.setMaxDeleverageFeex23, uint24(2**23) / 50);
-        selectors[20] = ILTV.setMaxDeleverageFeex23.selector;
+        calls[20] = abi.encodeCall(ILTV.setMaxDeleverageFee, (uint16(1), uint16(50))); // 2% fee
+        selectors[20] = ILTV.setMaxDeleverageFee.selector;
         callers[20] = defaultData.governor;
 
-        calls[21] = abi.encodeCall(ILTV.setMaxGrowthFeex23, uint24(2**23) / 5);
-        selectors[21] = ILTV.setMaxGrowthFeex23.selector;
+        calls[21] = abi.encodeCall(ILTV.setMaxGrowthFee, (uint16(1), uint16(5)));
+        selectors[21] = ILTV.setMaxGrowthFee.selector;
         callers[21] = defaultData.governor;
 
         calls[22] = abi.encodeCall(ILTV.setMaxSafeLTV, (9, 10));

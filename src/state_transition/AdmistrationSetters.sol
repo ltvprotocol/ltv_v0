@@ -24,9 +24,9 @@ contract AdmistrationSetters is LTVState, IAdministrationErrors, IAdministration
     }
 
     function _setMaxSafeLTV(uint16 dividend, uint16 divider) internal {
-        require(dividend > 0 && divider <= divider, UnexpectedMaxSafeLTV(dividend, divider));
+        require(dividend > 0 && dividend <= divider, UnexpectedMaxSafeLTV(dividend, divider));
         require(
-            dividend * minProfitLTVDivider >= minProfitLTVDividend * divider,
+            dividend * targetLTVDivider >= targetLTVDividend * divider,
             InvalidLTVSet(
                 targetLTVDividend, targetLTVDivider, dividend, divider, minProfitLTVDividend, minProfitLTVDivider
             )
@@ -39,8 +39,11 @@ contract AdmistrationSetters is LTVState, IAdministrationErrors, IAdministration
     }
 
     function _setMinProfitLTV(uint16 dividend, uint16 divider) internal {
-        require(dividend >= 0 && dividend <= divider, UnexpectedMinProfitLTV(dividend, divider));
-        require(dividend * maxSafeLTVDivider <= divider * maxSafeLTVDividend, InvalidLTVSet(targetLTVDividend, targetLTVDivider, maxSafeLTVDividend, maxSafeLTVDivider, dividend, divider));
+        require(dividend >= 0 && dividend < divider, UnexpectedMinProfitLTV(dividend, divider));
+        require(
+            dividend * targetLTVDivider <= divider * targetLTVDividend,
+            InvalidLTVSet(targetLTVDividend, targetLTVDivider, maxSafeLTVDividend, maxSafeLTVDivider, dividend, divider)
+        );
         uint16 oldDividend = minProfitLTVDividend;
         uint16 oldDivider = minProfitLTVDivider;
         minProfitLTVDividend = dividend;
@@ -61,11 +64,13 @@ contract AdmistrationSetters is LTVState, IAdministrationErrors, IAdministration
         emit MaxTotalAssetsInUnderlyingChanged(oldValue, _maxTotalAssetsInUnderlying);
     }
 
-    function _setMaxDeleverageFeex23(uint24 value) internal {
-        require(value <= uint24(2**23), InvalidMaxDeleverageFee(value));
-        uint256 oldValue = maxDeleverageFeex23;
-        maxDeleverageFeex23 = value;
-        emit MaxDeleverageFeeChanged(oldValue, value);
+    function _setMaxDeleverageFee(uint16 dividend, uint16 divider) internal {
+        require(dividend >= 0 && dividend <= divider, InvalidMaxDeleverageFee(dividend, divider));
+        uint16 oldDividend = maxDeleverageFeeDividend;
+        uint16 oldDivider = maxDeleverageFeeDivider;
+        maxDeleverageFeeDividend = dividend;
+        maxDeleverageFeeDivider = divider;
+        emit MaxDeleverageFeeChanged(oldDividend, oldDivider, dividend, divider);
     }
 
     function _setIsWhitelistActivated(bool activate) internal {
@@ -95,11 +100,13 @@ contract AdmistrationSetters is LTVState, IAdministrationErrors, IAdministration
         }
     }
 
-    function _setMaxGrowthFeex23(uint24 _maxGrowthFeex23) internal {
-        require(_maxGrowthFeex23 <= uint24(2**23), InvalidMaxGrowthFee(_maxGrowthFeex23));
-        uint256 oldValue = maxGrowthFeex23;
-        maxGrowthFeex23 = _maxGrowthFeex23;
-        emit MaxGrowthFeeChanged(oldValue, _maxGrowthFeex23);
+    function _setMaxGrowthFee(uint16 dividend, uint16 divider) internal {
+        require(dividend >= 0 && dividend <= divider, InvalidMaxGrowthFee(dividend, divider));
+        uint16 oldDividend = maxGrowthFeeDividend;
+        uint16 oldDivider = maxGrowthFeeDivider;
+        maxGrowthFeeDividend = dividend;
+        maxGrowthFeeDivider = divider;
+        emit MaxGrowthFeeChanged(oldDividend, oldDivider, dividend, divider);
     }
 
     function _setVaultBalanceAsLendingConnector(address _vaultBalanceAsLendingConnector) internal {
