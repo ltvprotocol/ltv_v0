@@ -36,6 +36,20 @@ abstract contract VaultStateTransition is LTVState, IStateUpdateEvent {
             startAuction = nextStateData.nextState.startAuction;
         }
 
+        // Because of precision loss, we can get futureCollateral assets to become zero, while futureBorrow assets is not zero.
+        // In this case we assume auction is fully executed and set it to zero. We won't lose any assets since auction is considered
+        // to be always profitable. In case of zeroing, all the profit goes to HODLer
+        if (
+            (futureBorrowAssets == 0 && futureCollateralAssets != 0)
+                || (futureBorrowAssets != 0 && futureCollateralAssets == 0)
+        ) {
+            futureBorrowAssets = 0;
+            futureCollateralAssets = 0;
+            futureRewardBorrowAssets = 0;
+            futureRewardCollateralAssets = 0;
+            startAuction = 0;
+        }
+
         emit StateUpdated(
             oldFutureBorrowAssets,
             oldFutureCollateralAssets,
