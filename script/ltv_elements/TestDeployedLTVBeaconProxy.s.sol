@@ -24,6 +24,7 @@ contract TestDeployedOnForkLTVBeaconProxy is Script, StdCheats, StdAssertions {
         ltv.executeLowLevelRebalanceCollateralHint(maxLowLevelRebalanceCollateral, true);
 
         address borrowToken = ltv.borrowToken();
+        ltv.withdraw(ltv.maxWithdraw(random), random, random);
         assertGt(IERC20(borrowToken).balanceOf(random), 0);
         assertGt(ltv.balanceOf(random), 0);
     }

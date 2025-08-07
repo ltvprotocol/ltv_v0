@@ -39,7 +39,7 @@ contract DeployLTVBeaconProxy is BaseScript {
         stateInitData.maxGrowthFeeDividend = uint16(vm.envUint("MAX_GROWTH_FEE_DIVIDEND"));
         stateInitData.maxGrowthFeeDivider = uint16(vm.envUint("MAX_GROWTH_FEE_DIVIDER"));
         stateInitData.maxTotalAssetsInUnderlying = vm.envUint("MAX_TOTAL_ASSETS_IN_UNDERLYING");
-        stateInitData.slippageProvider = ISlippageProvider(vm.envAddress("SLIPPAGE_PROVIDER"));
+        stateInitData.slippageProvider = ISlippageProvider(vm.envAddress("SLIPPAGE_CONNECTOR"));
         stateInitData.maxDeleverageFeeDividend = uint16(vm.envUint("MAX_DELEVERAGE_FEE_DIVIDEND"));
         stateInitData.maxDeleverageFeeDivider = uint16(vm.envUint("MAX_DELEVERAGE_FEE_DIVIDER"));
         stateInitData.vaultBalanceAsLendingConnector =
@@ -50,12 +50,11 @@ contract DeployLTVBeaconProxy is BaseScript {
         stateInitData.emergencyDeleverager = vm.envAddress("EMERGENCY_DELEVERAGER");
         stateInitData.auctionDuration = uint24(vm.envUint("AUCTION_DURATION"));
         string memory lendingConnectorName = vm.envString("LENDING_CONNECTOR_NAME");
-        if (keccak256(bytes(lendingConnectorName)) == keccak256(bytes("AaveV3"))) {
+        if (keccak256(abi.encodePacked(lendingConnectorName)) == keccak256(abi.encodePacked("AaveV3"))) {
             stateInitData.lendingConnectorData = abi.encode(vm.envUint("EMODE"));
         } else {
             revert("Unknown LENDING_CONNECTOR_NAME");
         }
-        stateInitData.lendingConnectorData = "";
 
         IModules modules = IModules(vm.envAddress("MODULES_PROVIDER"));
 

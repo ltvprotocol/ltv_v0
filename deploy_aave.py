@@ -110,15 +110,15 @@ def get_expected_address(chain, deploy_file, args = {}):
         print("❌ Could not find expected address in output")
         sys.exit(1)
 
-def get_deployed_contracts_file_path(chain):
-    return f"deploy/{chain}/aave/deployed_contracts.json"
+def get_deployed_contracts_file_path(chain, args_filename):
+    return f"deploy/{chain}/aave/deployed_contracts_{args_filename}"
 
 def get_args_file_path(chain, args_filename):
     return f"deploy/{chain}/aave/{args_filename}"
 
-def get_contract_is_deployed(chain, contract, args = {}):
+def get_contract_is_deployed(chain, contract, args_filename, args = {}):
     expected_address = get_expected_address(chain, CONTRACT_TO_DEPLOY_FILE[contract], args)
-    deployed_contracts_file_path = get_deployed_contracts_file_path(chain)
+    deployed_contracts_file_path = get_deployed_contracts_file_path(chain, args_filename)
     if not os.path.exists(deployed_contracts_file_path):
         return False
     
@@ -157,21 +157,20 @@ def deploy_contract(chain, contract, private_key, args = {}):
     else:
         return get_latest_receipt_contract_address(chain, contract)
 
-def ensure_deployed_contracts_file_exists(chain):
-    deploy_file_path = get_deployed_contracts_file_path(chain)
+def ensure_deployed_contracts_file_exists(chain, args_filename):
+    deploy_file_path = get_deployed_contracts_file_path(chain, args_filename)
     if not os.path.exists(deploy_file_path):
         # Create the deploy directory if it doesn't exist
         deploy_dir = os.path.dirname(deploy_file_path)
         os.makedirs(deploy_dir, exist_ok=True)
         # Write a simple deploy.json file as a placeholder
-        deployed_contracts_json_path = os.path.join(deploy_dir, "deployed_contracts.json")
-        with open(deployed_contracts_json_path, "w") as f:
+        with open(deploy_file_path, "w") as f:
             json.dump({}, f)
 
-def write_to_deploy_file(contract, chain, deployed_address, args = {}):
-    ensure_deployed_contracts_file_exists(chain)
+def write_to_deploy_file(contract, chain, deployed_address, args_filename, args = {}):
+    ensure_deployed_contracts_file_exists(chain, args_filename)
     
-    deployed_contracts_file_path = get_deployed_contracts_file_path(chain)
+    deployed_contracts_file_path = get_deployed_contracts_file_path(chain, args_filename)
     with open(deployed_contracts_file_path, "r") as f:
         data = json.load(f)
         data[contract.value] = deployed_address
@@ -185,258 +184,258 @@ def write_to_deploy_file(contract, chain, deployed_address, args = {}):
         sys.exit(1)
  
 
-def deploy_erc20_module(chain, private_key):
-    if get_contract_is_deployed(chain, CONTRACTS.ERC20_MODULE):
+def deploy_erc20_module(chain, private_key, args_filename):
+    if get_contract_is_deployed(chain, CONTRACTS.ERC20_MODULE, args_filename):
         print(f"✅ ERC20 module already deployed")
         return
     
     deployed_address = deploy_contract(chain, CONTRACTS.ERC20_MODULE, private_key)
-    write_to_deploy_file(CONTRACTS.ERC20_MODULE, chain, deployed_address)
+    write_to_deploy_file(CONTRACTS.ERC20_MODULE, chain, deployed_address, args_filename)
     print(f"✅ ERC20 module deployed at {deployed_address}")
 
-def deploy_borrow_vault_module(chain, private_key):
-    if not get_contract_is_deployed(chain, CONTRACTS.ERC20_MODULE):
+def deploy_borrow_vault_module(chain, private_key, args_filename):
+    if not get_contract_is_deployed(chain, CONTRACTS.ERC20_MODULE, args_filename):
         print(f"❌ ERC20 module must be deployed first")
         sys.exit(1)
     
-    if get_contract_is_deployed(chain, CONTRACTS.BORROW_VAULT_MODULE):
+    if get_contract_is_deployed(chain, CONTRACTS.BORROW_VAULT_MODULE, args_filename):
         print(f"✅ Borrow vault module already deployed")
         return
     
     deployed_address = deploy_contract(chain, CONTRACTS.BORROW_VAULT_MODULE, private_key)
-    write_to_deploy_file(CONTRACTS.BORROW_VAULT_MODULE, chain, deployed_address)
+    write_to_deploy_file(CONTRACTS.BORROW_VAULT_MODULE, chain, deployed_address, args_filename)
     print(f"✅ Borrow vault module deployed at {deployed_address}")
 
-def deploy_collateral_vault_module(chain, private_key):
-    if not get_contract_is_deployed(chain, CONTRACTS.BORROW_VAULT_MODULE):
+def deploy_collateral_vault_module(chain, private_key, args_filename):
+    if not get_contract_is_deployed(chain, CONTRACTS.BORROW_VAULT_MODULE, args_filename):
         print(f"❌ Borrow vault module must be deployed first")
         sys.exit(1)
     
-    if get_contract_is_deployed(chain, CONTRACTS.COLLATERAL_VAULT_MODULE):
+    if get_contract_is_deployed(chain, CONTRACTS.COLLATERAL_VAULT_MODULE, args_filename):
         print(f"✅ Collateral vault module already deployed")
         return
     
     deployed_address = deploy_contract(chain, CONTRACTS.COLLATERAL_VAULT_MODULE, private_key)
-    write_to_deploy_file(CONTRACTS.COLLATERAL_VAULT_MODULE, chain, deployed_address)
+    write_to_deploy_file(CONTRACTS.COLLATERAL_VAULT_MODULE, chain, deployed_address, args_filename)
     print(f"✅ Collateral vault module deployed at {deployed_address}")
 
-def deploy_low_level_rebalance_module(chain, private_key):
-    if not get_contract_is_deployed(chain, CONTRACTS.COLLATERAL_VAULT_MODULE):
+def deploy_low_level_rebalance_module(chain, private_key, args_filename):
+    if not get_contract_is_deployed(chain, CONTRACTS.COLLATERAL_VAULT_MODULE, args_filename):
         print(f"❌ Collateral vault module must be deployed first")
         sys.exit(1)
     
-    if get_contract_is_deployed(chain, CONTRACTS.LOW_LEVEL_REBALANCE_MODULE):
+    if get_contract_is_deployed(chain, CONTRACTS.LOW_LEVEL_REBALANCE_MODULE, args_filename):
         print(f"✅ Low level rebalance module already deployed")
         return
     
     deployed_address = deploy_contract(chain, CONTRACTS.LOW_LEVEL_REBALANCE_MODULE, private_key)
-    write_to_deploy_file(CONTRACTS.LOW_LEVEL_REBALANCE_MODULE, chain, deployed_address)
+    write_to_deploy_file(CONTRACTS.LOW_LEVEL_REBALANCE_MODULE, chain, deployed_address, args_filename)
     print(f"✅ Low level rebalance module deployed at {deployed_address}")
 
-def deploy_auction_module(chain, private_key):
-    if not get_contract_is_deployed(chain, CONTRACTS.LOW_LEVEL_REBALANCE_MODULE):
+def deploy_auction_module(chain, private_key, args_filename):
+    if not get_contract_is_deployed(chain, CONTRACTS.LOW_LEVEL_REBALANCE_MODULE, args_filename):
         print(f"❌ Low level rebalance module must be deployed first")
         sys.exit(1)
     
-    if get_contract_is_deployed(chain, CONTRACTS.AUCTION_MODULE):
+    if get_contract_is_deployed(chain, CONTRACTS.AUCTION_MODULE, args_filename):
         print(f"✅ Auction module already deployed")
         return
     
     deployed_address = deploy_contract(chain, CONTRACTS.AUCTION_MODULE, private_key)
-    write_to_deploy_file(CONTRACTS.AUCTION_MODULE, chain, deployed_address)
+    write_to_deploy_file(CONTRACTS.AUCTION_MODULE, chain, deployed_address, args_filename)
     print(f"✅ Auction module deployed at {deployed_address}")
 
-def deploy_administration_module(chain, private_key):
-    if not get_contract_is_deployed(chain, CONTRACTS.AUCTION_MODULE):
+def deploy_administration_module(chain, private_key, args_filename):
+    if not get_contract_is_deployed(chain, CONTRACTS.AUCTION_MODULE, args_filename):
         print(f"❌ Auction module must be deployed first")
         sys.exit(1)
     
-    if get_contract_is_deployed(chain, CONTRACTS.ADMINISTRATION_MODULE):
+    if get_contract_is_deployed(chain, CONTRACTS.ADMINISTRATION_MODULE, args_filename):
         print(f"✅ Administration module already deployed")
         return
     
     deployed_address = deploy_contract(chain, CONTRACTS.ADMINISTRATION_MODULE, private_key)
-    write_to_deploy_file(CONTRACTS.ADMINISTRATION_MODULE, chain, deployed_address)
+    write_to_deploy_file(CONTRACTS.ADMINISTRATION_MODULE, chain, deployed_address, args_filename)
     print(f"✅ Administration module deployed at {deployed_address}")
 
-def deploy_initialize_module(chain, private_key):
-    if not get_contract_is_deployed(chain, CONTRACTS.ADMINISTRATION_MODULE):
+def deploy_initialize_module(chain, private_key, args_filename):
+    if not get_contract_is_deployed(chain, CONTRACTS.ADMINISTRATION_MODULE, args_filename):
         print(f"❌ Administration module must be deployed first")
         sys.exit(1)
     
-    if get_contract_is_deployed(chain, CONTRACTS.INITIALIZE_MODULE):
+    if get_contract_is_deployed(chain, CONTRACTS.INITIALIZE_MODULE, args_filename):
         print(f"✅ Initialize module already deployed")
         return
     
     deployed_address = deploy_contract(chain, CONTRACTS.INITIALIZE_MODULE, private_key)
-    write_to_deploy_file(CONTRACTS.INITIALIZE_MODULE, chain, deployed_address)
+    write_to_deploy_file(CONTRACTS.INITIALIZE_MODULE, chain, deployed_address, args_filename)
     print(f"✅ Initialize module deployed at {deployed_address}")
 
-def deploy_modules_provider(chain, private_key):
-    with open(get_deployed_contracts_file_path(chain), "r") as f:
+def deploy_modules_provider(chain, private_key, args_filename):
+    with open(get_deployed_contracts_file_path(chain, args_filename), "r") as f:
         data = json.load(f)
-    if not get_contract_is_deployed(chain, CONTRACTS.ADMINISTRATION_MODULE):
+    if not get_contract_is_deployed(chain, CONTRACTS.ADMINISTRATION_MODULE, args_filename):
         print(f"❌ Administration module must be deployed first")
         sys.exit(1)
     
-    if get_contract_is_deployed(chain, CONTRACTS.MODULES_PROVIDER, data):
+    if get_contract_is_deployed(chain, CONTRACTS.MODULES_PROVIDER, args_filename, data):
         print(f"✅ Modules provider already deployed")
         return
     
     deployed_address = deploy_contract(chain, CONTRACTS.MODULES_PROVIDER, private_key, data)
-    write_to_deploy_file(CONTRACTS.MODULES_PROVIDER, chain, deployed_address, data)
+    write_to_deploy_file(CONTRACTS.MODULES_PROVIDER, chain, deployed_address, args_filename, data)
     print(f"✅ Modules provider deployed at {deployed_address}")
 
-def deploy_ltv(chain, private_key):
-    with open(get_deployed_contracts_file_path(chain), "r") as f:
+def deploy_ltv(chain, private_key, args_filename):
+    with open(get_deployed_contracts_file_path(chain, args_filename), "r") as f:
         data = json.load(f)
-    if not get_contract_is_deployed(chain, CONTRACTS.MODULES_PROVIDER, data):
+    if not get_contract_is_deployed(chain, CONTRACTS.MODULES_PROVIDER, args_filename, data):
         print(f"❌ Modules provider must be deployed first")
         sys.exit(1)
     
-    if get_contract_is_deployed(chain, CONTRACTS.LTV):
+    if get_contract_is_deployed(chain, CONTRACTS.LTV, args_filename):
         print(f"✅ LTV already deployed")
         return
     
     deployed_address = deploy_contract(chain, CONTRACTS.LTV, private_key)
-    write_to_deploy_file(CONTRACTS.LTV, chain, deployed_address)
+    write_to_deploy_file(CONTRACTS.LTV, chain, deployed_address, args_filename)
     print(f"✅ LTV deployed at {deployed_address}")
 
-def deploy_beacon(chain, private_key, args):
-    if not get_contract_is_deployed(chain, CONTRACTS.LTV):
+def deploy_beacon(chain, private_key, args_filename):
+    if not get_contract_is_deployed(chain, CONTRACTS.LTV, args_filename):
         print(f"❌ LTV must be deployed first")
         sys.exit(1)
         
-    with open(get_args_file_path(chain, args), "r") as f:
+    with open(get_args_file_path(chain, args_filename), "r") as f:
         data = json.load(f)
 
-    with open(get_deployed_contracts_file_path(chain), "r") as f:
+    with open(get_deployed_contracts_file_path(chain, args_filename), "r") as f:
         data.update(json.load(f))
     
-    if get_contract_is_deployed(chain, CONTRACTS.BEACON, data):
+    if get_contract_is_deployed(chain, CONTRACTS.BEACON, args_filename, data):
         print(f"✅ Beacon already deployed")
         return
 
     deployed_address = deploy_contract(chain, CONTRACTS.BEACON, private_key, data)
-    write_to_deploy_file(CONTRACTS.BEACON, chain, deployed_address, data)
+    write_to_deploy_file(CONTRACTS.BEACON, chain, deployed_address, args_filename, data)
     print(f"✅ Beacon deployed at {deployed_address}")
 
 def deploy_whitelist_registry(chain, private_key, args_filename):
     with open(get_args_file_path(chain, args_filename), "r") as f:
         data = json.load(f)
     
-    with open(get_deployed_contracts_file_path(chain), "r") as f:
+    with open(get_deployed_contracts_file_path(chain, args_filename), "r") as f:
         data.update(json.load(f))
 
-    if not get_contract_is_deployed(chain, CONTRACTS.BEACON, data):
+    if not get_contract_is_deployed(chain, CONTRACTS.BEACON, args_filename, data):
         print(f"❌ Beacon must be deployed first")
         sys.exit(1)
 
-    if get_contract_is_deployed(chain, CONTRACTS.WHITELIST_REGISTRY, data):
+    if get_contract_is_deployed(chain, CONTRACTS.WHITELIST_REGISTRY, args_filename, data):
         print(f"✅ Whitelist registry already deployed")
         return
     
     deployed_address = deploy_contract(chain, CONTRACTS.WHITELIST_REGISTRY, private_key, data)
-    write_to_deploy_file(CONTRACTS.WHITELIST_REGISTRY, chain, deployed_address, data)
+    write_to_deploy_file(CONTRACTS.WHITELIST_REGISTRY, chain, deployed_address, args_filename, data)
     print(f"✅ Whitelist registry deployed at {deployed_address}")
 
 def deploy_vault_balance_as_lending_connector(chain, private_key, args_filename):
     with open(get_args_file_path(chain, args_filename), "r") as f:
         data = json.load(f)
     
-    with open(get_deployed_contracts_file_path(chain), "r") as f:
+    with open(get_deployed_contracts_file_path(chain, args_filename), "r") as f:
         data.update(json.load(f))
     
-    if not get_contract_is_deployed(chain, CONTRACTS.WHITELIST_REGISTRY, data):
+    if not get_contract_is_deployed(chain, CONTRACTS.WHITELIST_REGISTRY, args_filename, data):
         print(f"❌ Whitelist registry must be deployed first")
         sys.exit(1)
     
-    if get_contract_is_deployed(chain, CONTRACTS.VAULT_BALANCE_AS_LENDING_CONNECTOR, data):
+    if get_contract_is_deployed(chain, CONTRACTS.VAULT_BALANCE_AS_LENDING_CONNECTOR, args_filename, data):
         print(f"✅ Vault balance as lending connector already deployed")
         return
     
     deployed_address = deploy_contract(chain, CONTRACTS.VAULT_BALANCE_AS_LENDING_CONNECTOR, private_key, data)
-    write_to_deploy_file(CONTRACTS.VAULT_BALANCE_AS_LENDING_CONNECTOR, chain, deployed_address, data)
+    write_to_deploy_file(CONTRACTS.VAULT_BALANCE_AS_LENDING_CONNECTOR, chain, deployed_address, args_filename, data)
     print(f"✅ Vault balance as lending connector deployed at {deployed_address}")
 
 def deploy_constant_slippage_connector(chain, private_key, args_filename):
     with open(get_args_file_path(chain, args_filename), "r") as f:
         data = json.load(f)
 
-    with open(get_deployed_contracts_file_path(chain), "r") as f:
+    with open(get_deployed_contracts_file_path(chain, args_filename), "r") as f:
         data.update(json.load(f))
 
-    if not get_contract_is_deployed(chain, CONTRACTS.VAULT_BALANCE_AS_LENDING_CONNECTOR, data):
+    if not get_contract_is_deployed(chain, CONTRACTS.VAULT_BALANCE_AS_LENDING_CONNECTOR, args_filename, data):
         print(f"❌ Vault balance as lending connector must be deployed first")
         sys.exit(1)
 
-    if get_contract_is_deployed(chain, CONTRACTS.SLIPPAGE_CONNECTOR, data):
+    if get_contract_is_deployed(chain, CONTRACTS.SLIPPAGE_CONNECTOR, args_filename, data):
         print(f"✅ Constant slippage connector already deployed")
         return
     
     deployed_address = deploy_contract(chain, CONTRACTS.SLIPPAGE_CONNECTOR, private_key, data)
-    write_to_deploy_file(CONTRACTS.SLIPPAGE_CONNECTOR, chain, deployed_address, data)
+    write_to_deploy_file(CONTRACTS.SLIPPAGE_CONNECTOR, chain, deployed_address, args_filename, data)
     print(f"✅ Constant slippage connector deployed at {deployed_address}")
 
 def deploy_oracle_connector(chain, private_key, args_filename):
     with open(get_args_file_path(chain, args_filename), "r") as f:
         data = json.load(f)
     
-    with open(get_deployed_contracts_file_path(chain), "r") as f:
+    with open(get_deployed_contracts_file_path(chain, args_filename), "r") as f:
         data.update(json.load(f))
     
-    if not get_contract_is_deployed(chain, CONTRACTS.BEACON, data):
+    if not get_contract_is_deployed(chain, CONTRACTS.BEACON, args_filename, data):
         print(f"❌ Beacon must be deployed first")
         sys.exit(1) 
 
-    if get_contract_is_deployed(chain, CONTRACTS.ORACLE_CONNECTOR, data):
+    if get_contract_is_deployed(chain, CONTRACTS.ORACLE_CONNECTOR, args_filename, data):
         print(f"✅ Oracle connector already deployed")
         return
     
     deployed_address = deploy_contract(chain, CONTRACTS.ORACLE_CONNECTOR, private_key, data)
-    write_to_deploy_file(CONTRACTS.ORACLE_CONNECTOR, chain, deployed_address, data)
+    write_to_deploy_file(CONTRACTS.ORACLE_CONNECTOR, chain, deployed_address, args_filename, data)
     print(f"✅ Oracle connector deployed at {deployed_address}")
 
 def deploy_lending_connector(chain, private_key, args_filename):    
     with open(get_args_file_path(chain, args_filename), "r") as f:
         data = json.load(f)
     
-    with open(get_deployed_contracts_file_path(chain), "r") as f:
+    with open(get_deployed_contracts_file_path(chain, args_filename), "r") as f:
         data.update(json.load(f))
 
-    if not get_contract_is_deployed(chain, CONTRACTS.ORACLE_CONNECTOR, data):
+    if not get_contract_is_deployed(chain, CONTRACTS.ORACLE_CONNECTOR, args_filename, data):
         print(f"❌ Oracle connector must be deployed first")
         sys.exit(1)
 
-    if get_contract_is_deployed(chain, CONTRACTS.LENDING_CONNECTOR):
+    if get_contract_is_deployed(chain, CONTRACTS.LENDING_CONNECTOR, args_filename):
         print(f"✅ Lending connector already deployed")
         return
     
     deployed_address = deploy_contract(chain, CONTRACTS.LENDING_CONNECTOR, private_key)
-    write_to_deploy_file(CONTRACTS.LENDING_CONNECTOR, chain, deployed_address)
+    write_to_deploy_file(CONTRACTS.LENDING_CONNECTOR, chain, deployed_address, args_filename)
     print(f"✅ Lending connector deployed at {deployed_address}")
 
 def deploy_ltv_beacon_proxy(chain, private_key, args_filename):
     with open(get_args_file_path(chain, args_filename), "r") as f:
         data = json.load(f)
     
-    with open(get_deployed_contracts_file_path(chain), "r") as f:
+    with open(get_deployed_contracts_file_path(chain, args_filename), "r") as f:
         data.update(json.load(f))
 
-    if not get_contract_is_deployed(chain, CONTRACTS.LENDING_CONNECTOR, data):
+    if not get_contract_is_deployed(chain, CONTRACTS.LENDING_CONNECTOR, args_filename, data):
         print(f"❌ Lending connector must be deployed first")
         sys.exit(1)
     
-    if get_contract_is_deployed(chain, CONTRACTS.LTV_BEACON_PROXY, data):
+    if get_contract_is_deployed(chain, CONTRACTS.LTV_BEACON_PROXY, args_filename, data):
         print(f"✅ LTV beacon proxy already deployed")
         return
     
     deployed_address = deploy_contract(chain, CONTRACTS.LTV_BEACON_PROXY, private_key, data)
-    write_to_deploy_file(CONTRACTS.LTV_BEACON_PROXY, chain, deployed_address, data)
+    write_to_deploy_file(CONTRACTS.LTV_BEACON_PROXY, chain, deployed_address, args_filename, data)
     print(f"✅ LTV beacon proxy deployed at {deployed_address}")
 
-def test_deployed_ltv_beacon_proxy(chain, private_key):
-    with open(get_deployed_contracts_file_path(chain), "r") as f:
+def test_deployed_ltv_beacon_proxy(chain, args_filename):
+    with open(get_deployed_contracts_file_path(chain, args_filename), "r") as f:
         data = json.load(f)
     
     env = os.environ.copy()
@@ -455,7 +454,7 @@ def main():
     parser = argparse.ArgumentParser(description="Foundry Script")
     parser.add_argument('--full-deploy', help='Full ltv protocol deployment', action='store_true')
     parser.add_argument('--chain', help='Chain to deploy to. Possible values: mainnet, local-fork-mainnet', required=True)
-    parser.add_argument('--args-filename', help='Name of the args file, stored in the deploy/(chain)/aave folder')
+    parser.add_argument('--args-filename', help='Name of the args file, stored in the deploy/(chain)/aave folder', required=True)
     parser.add_argument('--deploy-erc20-module', help='Deploy ERC20 module', action='store_true')
     parser.add_argument('--deploy-borrow-vault-module', help='Deploy Borrow vault module', action='store_true')
     parser.add_argument('--deploy-collateral-vault-module', help='Deploy Collateral vault module', action='store_true')
@@ -475,14 +474,10 @@ def main():
     parser.add_argument('--test-deployed-ltv-beacon-proxy', help='Test deployed LTV beacon proxy', action='store_true')
     parser.add_argument('--private-key', help='Private key to use for deployment (can also be set via PRIVATE_KEY env var)')
     
-    # parser.add_argument('--build', action='store_true', help='Run forge build')
-    # parser.add_argument('--test', action='store_true', help='Run forge test')
-    # parser.add_argument('--clean', action='store_true', help='Clean before building')
-    
     args = parser.parse_args()
     
     if args.test_deployed_ltv_beacon_proxy:
-        test_deployed_ltv_beacon_proxy(args.chain, args.private_key)
+        test_deployed_ltv_beacon_proxy(args.chain, args.args_filename)
         return
     
     # Check for private key from environment variable if not provided as argument
@@ -492,37 +487,33 @@ def main():
             print("❌ Private key must be provided either via --private-key argument or PRIVATE_KEY environment variable")
             sys.exit(1)
     
-    if args.full_deploy:
-        if not args.args_filename:
-            print("❌ --args-filename must be provided when using --full-deploy")
-            sys.exit(1)
     
     if args.deploy_erc20_module:
-        deploy_erc20_module(args.chain, args.private_key)
+        deploy_erc20_module(args.chain, args.private_key, args.args_filename)
     
     if args.deploy_borrow_vault_module:
-        deploy_borrow_vault_module(args.chain, args.private_key)
+        deploy_borrow_vault_module(args.chain, args.private_key, args.args_filename)
     
     if args.deploy_collateral_vault_module:
-        deploy_collateral_vault_module(args.chain, args.private_key)
+        deploy_collateral_vault_module(args.chain, args.private_key, args.args_filename)
     
     if args.deploy_low_level_rebalance_module:
-        deploy_low_level_rebalance_module(args.chain, args.private_key)
+        deploy_low_level_rebalance_module(args.chain, args.private_key, args.args_filename)
     
     if args.deploy_auction_module:
-        deploy_auction_module(args.chain, args.private_key)
+        deploy_auction_module(args.chain, args.private_key, args.args_filename)
     
     if args.deploy_administration_module:
-        deploy_administration_module(args.chain, args.private_key)
+        deploy_administration_module(args.chain, args.private_key, args.args_filename)
     
     if args.deploy_initialize_module:
-        deploy_initialize_module(args.chain, args.private_key)
+        deploy_initialize_module(args.chain, args.private_key, args.args_filename)
     
     if args.deploy_modules_provider:
-        deploy_modules_provider(args.chain, args.private_key)
+        deploy_modules_provider(args.chain, args.private_key, args.args_filename)
     
     if args.deploy_ltv:
-        deploy_ltv(args.chain, args.private_key)
+        deploy_ltv(args.chain, args.private_key, args.args_filename)
     
     if args.deploy_beacon:
         deploy_beacon(args.chain, args.private_key, args.args_filename)
@@ -546,15 +537,15 @@ def main():
         deploy_ltv_beacon_proxy(args.chain, args.private_key, args.args_filename)
     
     if args.full_deploy:
-        deploy_erc20_module(args.chain, args.private_key)
-        deploy_borrow_vault_module(args.chain, args.private_key)
-        deploy_collateral_vault_module(args.chain, args.private_key)
-        deploy_low_level_rebalance_module(args.chain, args.private_key)
-        deploy_auction_module(args.chain, args.private_key)
-        deploy_administration_module(args.chain, args.private_key)
-        deploy_initialize_module(args.chain, args.private_key)
-        deploy_modules_provider(args.chain, args.private_key)
-        deploy_ltv(args.chain, args.private_key)
+        deploy_erc20_module(args.chain, args.private_key, args.args_filename)
+        deploy_borrow_vault_module(args.chain, args.private_key, args.args_filename)
+        deploy_collateral_vault_module(args.chain, args.private_key, args.args_filename)
+        deploy_low_level_rebalance_module(args.chain, args.private_key, args.args_filename)
+        deploy_auction_module(args.chain, args.private_key, args.args_filename)
+        deploy_administration_module(args.chain, args.private_key, args.args_filename)
+        deploy_initialize_module(args.chain, args.private_key, args.args_filename)
+        deploy_modules_provider(args.chain, args.private_key, args.args_filename)
+        deploy_ltv(args.chain, args.private_key, args.args_filename)
         deploy_beacon(args.chain, args.private_key, args.args_filename)
         deploy_whitelist_registry(args.chain, args.private_key, args.args_filename)
         deploy_vault_balance_as_lending_connector(args.chain, args.private_key, args.args_filename)
@@ -562,20 +553,6 @@ def main():
         deploy_oracle_connector(args.chain, args.private_key, args.args_filename)
         deploy_lending_connector(args.chain, args.private_key, args.args_filename)
         deploy_ltv_beacon_proxy(args.chain, args.private_key, args.args_filename)
-    # if args.clean:
-    #     print("🧹 Cleaning build artifacts...")
-    #     subprocess.run(['forge', 'clean'], check=True)
-    
-    # if args.build:
-    #     success = success and run_command(['forge', 'build'], "Building project")
-    
-    # if args.test:
-    #     success = success and run_command(['forge', 'test'], "Running tests")
-    
-    # # If no specific command given, run both build and test
-    # if not args.build and not args.test:
-    #     success = success and run_command(['forge', 'build'], "Building project")
-    #     success = success and run_command(['forge', 'test'], "Running tests")
 
 
 if __name__ == "__main__":
