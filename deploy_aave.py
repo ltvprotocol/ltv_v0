@@ -33,6 +33,7 @@ CHAIN_TO_CHAIN_ID = {
     "mainnet": 1,
     "sepolia": 11155111,
     "local_fork_mainnet": 1,
+    "local_fork_sepolia": 11155111,
     "local": 31337,
 }
 
@@ -83,14 +84,14 @@ def get_rpc_url(chain):
         return os.getenv("RPC_MAINNET")
     elif chain == "sepolia":
         return os.getenv("RPC_SEPOLIA")
-    elif chain == "local_fork_mainnet" or chain == "local":
+    elif chain == "local_fork_mainnet" or chain == "local" or chain == "local_fork_sepolia":
         return "localhost:8545"
     else:
         print(f"❌ Invalid chain: {chain}")
         sys.exit(1)
 
 def need_verify(chain):
-    return chain != "local_fork_mainnet" and chain != "local"
+    return chain != "local_fork_mainnet" and chain != "local" and chain != "local_fork_sepolia"
 
 def get_latest_receipt_contract_address(chain, contract, lending_protocol):
     deploy_file = get_contract_to_deploy_file(lending_protocol, contract)
@@ -479,7 +480,7 @@ def test_deployed_ltv_beacon_proxy(chain, lending_protocol, args_filename):
 def main():
     parser = argparse.ArgumentParser(description="Foundry Script")
     parser.add_argument('--full-deploy', help='Full ltv protocol deployment', action='store_true')
-    parser.add_argument('--chain', help='Chain to deploy to. Possible values: mainnet, local-fork-mainnet', required=True)
+    parser.add_argument('--chain', help='Chain to deploy to. Possible values: mainnet, local-fork-mainnet, local-fork-sepolia, sepolia', required=True)
     parser.add_argument('--lending-protocol', help='Lending protocol to deploy for. Possible values: aave, compound, morpho', required=True)
     parser.add_argument('--args-filename', help='Name of the args file, stored in the deploy/(chain)/(lending_protocol) folder', required=True)
     parser.add_argument('--deploy-erc20-module', help='Deploy ERC20 module', action='store_true')
