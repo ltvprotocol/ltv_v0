@@ -35,7 +35,7 @@ CHAIN_TO_CHAIN_ID = {
     "local_fork_mainnet": 1,
     "local": 31337,
 }
-    
+
 def get_contract_to_deploy_file(lending_protocol, contract):
     """Returns the deployment file for a specific contract based on the lending protocol"""
     base_mapping = {
