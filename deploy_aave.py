@@ -22,10 +22,11 @@ class CONTRACTS(Enum):
     MODULES_PROVIDER = "MODULES_PROVIDER"
     LTV = "LTV"
     BEACON = "BEACON"
+    WHITELIST_REGISTRY = "WHITELIST_REGISTRY"
+    VAULT_BALANCE_AS_LENDING_CONNECTOR = "VAULT_BALANCE_AS_LENDING_CONNECTOR"
     SLIPPAGE_CONNECTOR = "SLIPPAGE_CONNECTOR"
     ORACLE_CONNECTOR = "ORACLE_CONNECTOR"
     LENDING_CONNECTOR = "LENDING_CONNECTOR"
-    WHITELIST_REGISTRY = "WHITELIST_REGISTRY"
     LTV_BEACON_PROXY = "LTV_BEACON_PROXY"
     
 CONTRACT_TO_DEPLOY_FILE = {
@@ -39,12 +40,18 @@ CONTRACT_TO_DEPLOY_FILE = {
     CONTRACTS.MODULES_PROVIDER: "script/ltv_elements/DeployModulesProvider.s.sol",
     CONTRACTS.LTV: "script/ltv_elements/DeployLTV.s.sol",
     CONTRACTS.BEACON: "script/ltv_elements/DeployBeacon.s.sol",
+    CONTRACTS.WHITELIST_REGISTRY: "script/ltv_elements/DeployWhitelistRegistry.s.sol",
+    CONTRACTS.VAULT_BALANCE_AS_LENDING_CONNECTOR: "script/ltv_elements/DeployVaultBalanceAsLendingConnector.s.sol",
     CONTRACTS.SLIPPAGE_CONNECTOR: "script/ltv_elements/DeployConstantSlippageConnector.s.sol",
+    CONTRACTS.ORACLE_CONNECTOR: "script/aave/DeployAaveOracleConnector.s.sol",
+    CONTRACTS.LENDING_CONNECTOR: "script/aave/DeployAaveLendingConnector.s.sol",
+    CONTRACTS.LTV_BEACON_PROXY: "script/ltv_elements/DeployLTVBeaconProxy.s.sol",
 }
 
 CHAIN_TO_CHAIN_ID = {
     "mainnet": 1,
     "sepolia": 11155111,
+    "local_fork_mainnet": 1,
     "local": 31337,
 }
 
@@ -53,12 +60,14 @@ def get_rpc_url(chain):
         return os.getenv("RPC_MAINNET")
     elif chain == "sepolia":
         return os.getenv("RPC_SEPOLIA")
-    elif chain == "local":
+    elif chain == "local_fork_mainnet" or chain == "local":
         return "localhost:8545"
     else:
         print(f"❌ Invalid chain: {chain}")
         sys.exit(1)
 
+def need_verify(chain):
+    return chain != "local_fork_mainnet" and chain != "local"
 
 def get_latest_receipt_contract_address(chain, contract):
     deploy_file_name = CONTRACT_TO_DEPLOY_FILE[contract].split("/")[-1]
@@ -83,6 +92,12 @@ def get_expected_address(chain, deploy_file, args = {}):
         capture_output=True,
         text=True
     )
+    
+    if result.returncode != 0:
+        print(result.stdout)
+        print(result.stderr)
+        print("❌ Error getting expected address")
+        sys.exit(1)
 
     # Look for the line with "Expected address:  0x..."
     match = re.search(r"Expected address:\s+(0x[a-fA-F0-9]{40})", result.stdout)
@@ -126,9 +141,15 @@ def deploy_contract(chain, contract, private_key, args = {}):
         
     rpc_url = get_rpc_url(chain)
     
-    vefity_part = f"--verify --etherscan-api-key {os.getenv('ETHERSCAN_API_KEY')}" if chain != "local" else ""
+    vefity_part = f"--verify --etherscan-api-key {os.getenv('ETHERSCAN_API_KEY')}" if need_verify(chain) else ""
     
     result = subprocess.run(["forge", "script", deploy_file, "--rpc-url", rpc_url, "--broadcast", vefity_part, "--private-key", private_key], env=env, text=True, capture_output=True)
+    
+    if result.returncode != 0:
+        print(result.stdout)
+        print(result.stderr)
+        print("❌ Error deploying contract")
+        sys.exit(1)
     
     match = re.search(r"Contract already deployed at:\s+(0x[a-fA-F0-9]{40})", result.stdout)
     if match:
@@ -300,6 +321,44 @@ def deploy_beacon(chain, private_key, args):
     write_to_deploy_file(CONTRACTS.BEACON, chain, deployed_address, data)
     print(f"✅ Beacon deployed at {deployed_address}")
 
+def deploy_whitelist_registry(chain, private_key, args_filename):
+    with open(get_args_file_path(chain, args_filename), "r") as f:
+        data = json.load(f)
+    
+    with open(get_deployed_contracts_file_path(chain), "r") as f:
+        data.update(json.load(f))
+
+    if not get_contract_is_deployed(chain, CONTRACTS.BEACON, data):
+        print(f"❌ Beacon must be deployed first")
+        sys.exit(1)
+
+    if get_contract_is_deployed(chain, CONTRACTS.WHITELIST_REGISTRY, data):
+        print(f"✅ Whitelist registry already deployed")
+        return
+    
+    deployed_address = deploy_contract(chain, CONTRACTS.WHITELIST_REGISTRY, private_key, data)
+    write_to_deploy_file(CONTRACTS.WHITELIST_REGISTRY, chain, deployed_address, data)
+    print(f"✅ Whitelist registry deployed at {deployed_address}")
+
+def deploy_vault_balance_as_lending_connector(chain, private_key, args_filename):
+    with open(get_args_file_path(chain, args_filename), "r") as f:
+        data = json.load(f)
+    
+    with open(get_deployed_contracts_file_path(chain), "r") as f:
+        data.update(json.load(f))
+    
+    if not get_contract_is_deployed(chain, CONTRACTS.WHITELIST_REGISTRY, data):
+        print(f"❌ Whitelist registry must be deployed first")
+        sys.exit(1)
+    
+    if get_contract_is_deployed(chain, CONTRACTS.VAULT_BALANCE_AS_LENDING_CONNECTOR, data):
+        print(f"✅ Vault balance as lending connector already deployed")
+        return
+    
+    deployed_address = deploy_contract(chain, CONTRACTS.VAULT_BALANCE_AS_LENDING_CONNECTOR, private_key, data)
+    write_to_deploy_file(CONTRACTS.VAULT_BALANCE_AS_LENDING_CONNECTOR, chain, deployed_address, data)
+    print(f"✅ Vault balance as lending connector deployed at {deployed_address}")
+
 def deploy_constant_slippage_connector(chain, private_key, args_filename):
     with open(get_args_file_path(chain, args_filename), "r") as f:
         data = json.load(f)
@@ -307,8 +366,8 @@ def deploy_constant_slippage_connector(chain, private_key, args_filename):
     with open(get_deployed_contracts_file_path(chain), "r") as f:
         data.update(json.load(f))
 
-    if not get_contract_is_deployed(chain, CONTRACTS.BEACON, data):
-        print(f"❌ Beacon must be deployed first")
+    if not get_contract_is_deployed(chain, CONTRACTS.VAULT_BALANCE_AS_LENDING_CONNECTOR, data):
+        print(f"❌ Vault balance as lending connector must be deployed first")
         sys.exit(1)
 
     if get_contract_is_deployed(chain, CONTRACTS.SLIPPAGE_CONNECTOR, data):
@@ -318,6 +377,79 @@ def deploy_constant_slippage_connector(chain, private_key, args_filename):
     deployed_address = deploy_contract(chain, CONTRACTS.SLIPPAGE_CONNECTOR, private_key, data)
     write_to_deploy_file(CONTRACTS.SLIPPAGE_CONNECTOR, chain, deployed_address, data)
     print(f"✅ Constant slippage connector deployed at {deployed_address}")
+
+def deploy_oracle_connector(chain, private_key, args_filename):
+    with open(get_args_file_path(chain, args_filename), "r") as f:
+        data = json.load(f)
+    
+    with open(get_deployed_contracts_file_path(chain), "r") as f:
+        data.update(json.load(f))
+    
+    if not get_contract_is_deployed(chain, CONTRACTS.BEACON, data):
+        print(f"❌ Beacon must be deployed first")
+        sys.exit(1) 
+
+    if get_contract_is_deployed(chain, CONTRACTS.ORACLE_CONNECTOR, data):
+        print(f"✅ Oracle connector already deployed")
+        return
+    
+    deployed_address = deploy_contract(chain, CONTRACTS.ORACLE_CONNECTOR, private_key, data)
+    write_to_deploy_file(CONTRACTS.ORACLE_CONNECTOR, chain, deployed_address, data)
+    print(f"✅ Oracle connector deployed at {deployed_address}")
+
+def deploy_lending_connector(chain, private_key, args_filename):    
+    with open(get_args_file_path(chain, args_filename), "r") as f:
+        data = json.load(f)
+    
+    with open(get_deployed_contracts_file_path(chain), "r") as f:
+        data.update(json.load(f))
+
+    if not get_contract_is_deployed(chain, CONTRACTS.ORACLE_CONNECTOR, data):
+        print(f"❌ Oracle connector must be deployed first")
+        sys.exit(1)
+
+    if get_contract_is_deployed(chain, CONTRACTS.LENDING_CONNECTOR):
+        print(f"✅ Lending connector already deployed")
+        return
+    
+    deployed_address = deploy_contract(chain, CONTRACTS.LENDING_CONNECTOR, private_key)
+    write_to_deploy_file(CONTRACTS.LENDING_CONNECTOR, chain, deployed_address)
+    print(f"✅ Lending connector deployed at {deployed_address}")
+
+def deploy_ltv_beacon_proxy(chain, private_key, args_filename):
+    with open(get_args_file_path(chain, args_filename), "r") as f:
+        data = json.load(f)
+    
+    with open(get_deployed_contracts_file_path(chain), "r") as f:
+        data.update(json.load(f))
+
+    if not get_contract_is_deployed(chain, CONTRACTS.LENDING_CONNECTOR, data):
+        print(f"❌ Lending connector must be deployed first")
+        sys.exit(1)
+    
+    if get_contract_is_deployed(chain, CONTRACTS.LTV_BEACON_PROXY, data):
+        print(f"✅ LTV beacon proxy already deployed")
+        return
+    
+    deployed_address = deploy_contract(chain, CONTRACTS.LTV_BEACON_PROXY, private_key, data)
+    write_to_deploy_file(CONTRACTS.LTV_BEACON_PROXY, chain, deployed_address, data)
+    print(f"✅ LTV beacon proxy deployed at {deployed_address}")
+
+def test_deployed_ltv_beacon_proxy(chain, private_key):
+    with open(get_deployed_contracts_file_path(chain), "r") as f:
+        data = json.load(f)
+    
+    env = os.environ.copy()
+    env["LTV_BEACON_PROXY"] = data["LTV_BEACON_PROXY"]
+
+    result = subprocess.run(["forge", "script", "script/ltv_elements/TestDeployedLTVBeaconProxy.s.sol"], env=env, text=True, capture_output=True)
+
+    if result.returncode != 0:
+        print(result.stdout)
+        print(result.stderr)
+        print("❌ Error testing deployed LTV beacon proxy")
+        sys.exit(1)
+    print(f"✅ LTV beacon proxy test passed")    
 
 def main():
     parser = argparse.ArgumentParser(description="Foundry Script")
@@ -334,7 +466,13 @@ def main():
     parser.add_argument('--deploy-modules-provider', help='Deploy Modules provider', action='store_true')
     parser.add_argument('--deploy-ltv', help='Deploy LTV', action='store_true')
     parser.add_argument('--deploy-beacon', help='Deploy Beacon', action='store_true')
+    parser.add_argument('--deploy-whitelist-registry', help='Deploy Whitelist registry', action='store_true')
+    parser.add_argument('--deploy-vault-balance-as-lending-connector', help='Deploy Vault balance as lending connector', action='store_true')
     parser.add_argument('--deploy-constant-slippage-connector', help='Deploy Constant slippage connector', action='store_true')
+    parser.add_argument('--deploy-oracle-connector', help='Deploy Oracle connector', action='store_true')
+    parser.add_argument('--deploy-lending-connector', help='Deploy Lending connector', action='store_true')
+    parser.add_argument('--deploy-ltv-beacon-proxy', help='Deploy LTV beacon proxy', action='store_true')
+    parser.add_argument('--test-deployed-ltv-beacon-proxy', help='Test deployed LTV beacon proxy', action='store_true')
     parser.add_argument('--private-key', help='Private key to use for deployment (can also be set via PRIVATE_KEY env var)')
     
     # parser.add_argument('--build', action='store_true', help='Run forge build')
@@ -342,6 +480,10 @@ def main():
     # parser.add_argument('--clean', action='store_true', help='Clean before building')
     
     args = parser.parse_args()
+    
+    if args.test_deployed_ltv_beacon_proxy:
+        test_deployed_ltv_beacon_proxy(args.chain, args.private_key)
+        return
     
     # Check for private key from environment variable if not provided as argument
     if not args.private_key:
@@ -385,8 +527,23 @@ def main():
     if args.deploy_beacon:
         deploy_beacon(args.chain, args.private_key, args.args_filename)
     
+    if args.deploy_whitelist_registry:
+        deploy_whitelist_registry(args.chain, args.private_key, args.args_filename)
+    
+    if args.deploy_vault_balance_as_lending_connector:
+        deploy_vault_balance_as_lending_connector(args.chain, args.private_key, args.args_filename)
+    
     if args.deploy_constant_slippage_connector:
         deploy_constant_slippage_connector(args.chain, args.private_key, args.args_filename)
+    
+    if args.deploy_oracle_connector:
+        deploy_oracle_connector(args.chain, args.private_key, args.args_filename)
+    
+    if args.deploy_lending_connector:
+        deploy_lending_connector(args.chain, args.private_key, args.args_filename)
+    
+    if args.deploy_ltv_beacon_proxy:
+        deploy_ltv_beacon_proxy(args.chain, args.private_key, args.args_filename)
     
     if args.full_deploy:
         deploy_erc20_module(args.chain, args.private_key)
@@ -399,7 +556,12 @@ def main():
         deploy_modules_provider(args.chain, args.private_key)
         deploy_ltv(args.chain, args.private_key)
         deploy_beacon(args.chain, args.private_key, args.args_filename)
+        deploy_whitelist_registry(args.chain, args.private_key, args.args_filename)
+        deploy_vault_balance_as_lending_connector(args.chain, args.private_key, args.args_filename)
         deploy_constant_slippage_connector(args.chain, args.private_key, args.args_filename)
+        deploy_oracle_connector(args.chain, args.private_key, args.args_filename)
+        deploy_lending_connector(args.chain, args.private_key, args.args_filename)
+        deploy_ltv_beacon_proxy(args.chain, args.private_key, args.args_filename)
     # if args.clean:
     #     print("🧹 Cleaning build artifacts...")
     #     subprocess.run(['forge', 'clean'], check=True)

@@ -5,6 +5,7 @@ import "src/structs/state/StateInitData.sol";
 import "src/errors/IInitError.sol";
 import "./AdmistrationSetters.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "forge-std/console.sol";
 
 abstract contract Initialize is AdmistrationSetters, OwnableUpgradeable {
     function initialize(StateInitData memory initData) public onlyInitializing {
@@ -38,6 +39,8 @@ abstract contract Initialize is AdmistrationSetters, OwnableUpgradeable {
         _updateEmergencyDeleverager(initData.emergencyDeleverager);
 
         lastSeenTokenPrice = 10 ** 18;
+
+        console.log("lendingConnector", address(lendingConnector));
 
         (bool success,) = address(lendingConnector).delegatecall(
             abi.encodeCall(ILendingConnector.initializeProtocol, (initData.lendingConnectorData))
