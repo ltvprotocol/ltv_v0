@@ -51,7 +51,7 @@ contract DeployLTVBeaconProxy is BaseScript {
         stateInitData.auctionDuration = uint24(vm.envUint("AUCTION_DURATION"));
         string memory lendingConnectorName = vm.envString("LENDING_CONNECTOR_NAME");
         if (keccak256(bytes(lendingConnectorName)) == keccak256(bytes("AaveV3"))) {
-            stateInitData.lendingConnectorData = "";
+            stateInitData.lendingConnectorData = abi.encode(vm.envUint("EMODE"));
         } else {
             revert("Unknown LENDING_CONNECTOR_NAME");
         }

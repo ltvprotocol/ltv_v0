@@ -454,7 +454,7 @@ def test_deployed_ltv_beacon_proxy(chain, private_key):
 def main():
     parser = argparse.ArgumentParser(description="Foundry Script")
     parser.add_argument('--full-deploy', help='Full ltv protocol deployment', action='store_true')
-    parser.add_argument('--chain', help='Chain to deploy to. Possible values: mainnet, sepolia, local', required=True)
+    parser.add_argument('--chain', help='Chain to deploy to. Possible values: mainnet, local-fork-mainnet', required=True)
     parser.add_argument('--args-filename', help='Name of the args file, stored in the deploy/(chain)/aave folder')
     parser.add_argument('--deploy-erc20-module', help='Deploy ERC20 module', action='store_true')
     parser.add_argument('--deploy-borrow-vault-module', help='Deploy Borrow vault module', action='store_true')
