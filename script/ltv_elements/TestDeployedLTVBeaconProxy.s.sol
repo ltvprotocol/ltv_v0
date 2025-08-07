@@ -7,8 +7,6 @@ import "forge-std/Script.sol";
 import "forge-std/interfaces/IERC20.sol";
 import "forge-std/StdAssertions.sol";
 
-
-// LTV_BEACON_PROXY=0x7A714884f9132F25e1a7e58d733e98d090f247b4 forge script script/ltv_elements/TestDeployedLTVBeaconProxy.s.sol
 contract TestDeployedOnForkLTVBeaconProxy is Script, StdCheats, StdAssertions {
     function run() public {
         vm.createSelectFork("http://127.0.0.1:8545");

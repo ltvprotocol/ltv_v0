@@ -1,5 +1,5 @@
 {
-    "LENDING_CONNECTOR_NAME": "",
+    "LENDING_CONNECTOR_NAME": "AaveV3",
     "BEACON_OWNER": "",
     "WHITELIST_OWNER": "",
     "NAME": "",
