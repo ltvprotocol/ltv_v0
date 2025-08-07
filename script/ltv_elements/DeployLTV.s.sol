@@ -13,4 +13,4 @@ contract DeployLTV is BaseScript {
     function hashedCreationCode() internal pure override returns (bytes32) { 
         return keccak256(type(LTV).creationCode);
     }
-} 
+}

@@ -52,6 +52,16 @@ contract DeployLTVBeaconProxy is BaseScript {
         string memory lendingConnectorName = vm.envString("LENDING_CONNECTOR_NAME");
         if (keccak256(abi.encodePacked(lendingConnectorName)) == keccak256(abi.encodePacked("AaveV3"))) {
             stateInitData.lendingConnectorData = abi.encode(vm.envUint("EMODE"));
+        } else if (keccak256(abi.encodePacked(lendingConnectorName)) == keccak256(abi.encodePacked("Morpho"))) {
+            address oracle = vm.envAddress("ORACLE");
+            address irm = vm.envAddress("IRM");
+            uint256 lltv = vm.envUint("LLTV");
+            stateInitData.lendingConnectorData = abi.encode(
+                oracle,
+                irm,
+                lltv,
+                keccak256(abi.encode(stateInitData.borrowToken, stateInitData.collateralToken, oracle, irm, lltv))
+            );
         } else {
             revert("Unknown LENDING_CONNECTOR_NAME");
         }

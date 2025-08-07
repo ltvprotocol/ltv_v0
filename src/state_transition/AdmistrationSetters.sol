@@ -20,7 +20,7 @@ contract AdmistrationSetters is
     function _setTargetLTV(uint16 dividend, uint16 divider) internal {
         require(dividend >= 0 && dividend < divider, UnexpectedTargetLTV(dividend, divider));
         require(
-            dividend * maxSafeLTVDivider <= divider * maxSafeLTVDividend
+            uint256(dividend) * maxSafeLTVDivider <= uint256(divider) * maxSafeLTVDividend
                 && dividend * minProfitLTVDivider >= minProfitLTVDividend * divider,
             InvalidLTVSet(
                 dividend, divider, maxSafeLTVDividend, maxSafeLTVDivider, minProfitLTVDividend, minProfitLTVDivider
@@ -36,7 +36,7 @@ contract AdmistrationSetters is
     function _setMaxSafeLTV(uint16 dividend, uint16 divider) internal {
         require(dividend > 0 && dividend <= divider, UnexpectedMaxSafeLTV(dividend, divider));
         require(
-            dividend * targetLTVDivider >= targetLTVDividend * divider,
+            uint256(dividend) * targetLTVDivider >= uint256(targetLTVDividend) * divider,
             InvalidLTVSet(
                 targetLTVDividend, targetLTVDivider, dividend, divider, minProfitLTVDividend, minProfitLTVDivider
             )
@@ -51,7 +51,7 @@ contract AdmistrationSetters is
     function _setMinProfitLTV(uint16 dividend, uint16 divider) internal {
         require(dividend >= 0 && dividend < divider, UnexpectedMinProfitLTV(dividend, divider));
         require(
-            dividend * targetLTVDivider <= divider * targetLTVDividend,
+            uint256(dividend) * targetLTVDivider <= uint256(divider) * targetLTVDividend,
             InvalidLTVSet(targetLTVDividend, targetLTVDivider, maxSafeLTVDividend, maxSafeLTVDivider, dividend, divider)
         );
         uint16 oldDividend = minProfitLTVDividend;
