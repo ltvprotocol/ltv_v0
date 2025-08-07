@@ -8,17 +8,20 @@ contract DeployAaveOracleConnector is BaseScript {
     function deploy() internal override {
         address collateralAsset = vm.envAddress("COLLATERAL_ASSET");
         address borrowAsset = vm.envAddress("BORROW_ASSET");
+        address oracle = vm.envAddress("AAVE_V3_ORACLE");
 
-        AaveV3OracleConnector connector = new AaveV3OracleConnector{salt: bytes32(0)}(collateralAsset, borrowAsset);
+        AaveV3OracleConnector connector =
+            new AaveV3OracleConnector{salt: bytes32(0)}(collateralAsset, borrowAsset, oracle);
         console.log("Aave connector deployed at", address(connector));
     }
 
     function hashedCreationCode() internal view override returns (bytes32) {
         address collateralAsset = vm.envAddress("COLLATERAL_ASSET");
         address borrowAsset = vm.envAddress("BORROW_ASSET");
-        
+        address oracle = vm.envAddress("AAVE_V3_ORACLE");
+
         return keccak256(
-            abi.encodePacked(type(AaveV3OracleConnector).creationCode, abi.encode(collateralAsset, borrowAsset))
+            abi.encodePacked(type(AaveV3OracleConnector).creationCode, abi.encode(collateralAsset, borrowAsset, oracle))
         );
     }
 }
