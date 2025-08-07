@@ -8,10 +8,9 @@ contract DeployConstantSlippageConnector is BaseScript {
     function deploy() internal override {
         uint256 collateralSlippage = vm.envUint("COLLATERAL_SLIPPAGE");
         uint256 borrowSlippage = vm.envUint("BORROW_SLIPPAGE");
-        address initialOwner = vm.envAddress("SLIPPAGE_PROVIDER_OWNER");
 
         ConstantSlippageProvider slippageProvider =
-            new ConstantSlippageProvider{salt: bytes32(0)}(collateralSlippage, borrowSlippage, initialOwner);
+            new ConstantSlippageProvider{salt: bytes32(0)}(collateralSlippage, borrowSlippage);
 
         console.log("ConstantSlippageProvider deployed at: ", address(slippageProvider));
     }
@@ -19,8 +18,7 @@ contract DeployConstantSlippageConnector is BaseScript {
     function hashedCreationCode() internal view override returns (bytes32) {
         uint256 collateralSlippage = vm.envUint("COLLATERAL_SLIPPAGE");
         uint256 borrowSlippage = vm.envUint("BORROW_SLIPPAGE");
-        address initialOwner = vm.envAddress("SLIPPAGE_PROVIDER_OWNER");
 
-        return keccak256(abi.encodePacked(type(ConstantSlippageProvider).creationCode, abi.encode(collateralSlippage, borrowSlippage, initialOwner)));
+        return keccak256(abi.encodePacked(type(ConstantSlippageProvider).creationCode, abi.encode(collateralSlippage, borrowSlippage)));
     }
 }

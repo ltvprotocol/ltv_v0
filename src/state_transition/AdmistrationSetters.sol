@@ -7,7 +7,6 @@ import "../state_reader/GetIsDepositDisabled.sol";
 import "../state_reader/GetIsWithdrawDisabled.sol";
 import "../state_reader/GetIsWhitelistActivated.sol";
 import "../states/LTVState.sol";
-import "../Constants.sol";
 
 contract AdmistrationSetters is
     LTVState,
