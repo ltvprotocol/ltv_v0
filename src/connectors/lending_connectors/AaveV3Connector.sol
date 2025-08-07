@@ -9,7 +9,11 @@ import {LTVState} from "../../states/LTVState.sol";
 import "forge-std/console.sol";
 
 contract AaveV3Connector is LTVState, ILendingConnector {
-    IAaveV3Pool public constant POOL = IAaveV3Pool(0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2);
+    IAaveV3Pool public immutable POOL;
+
+    constructor(address _pool) {
+        POOL = IAaveV3Pool(_pool);
+    }
 
     function supply(uint256 amount) external {
         collateralToken.approve(address(POOL), amount);

@@ -10,7 +10,6 @@ import "forge-std/StdAssertions.sol";
 contract TestDeployedOnForkLTVBeaconProxy is Script, StdCheats, StdAssertions {
     function run() public {
         vm.createSelectFork("http://127.0.0.1:8545");
-        require(block.chainid == 1, "Not a mainnet fork");
 
         ILTV ltv = ILTV(vm.envAddress("LTV_BEACON_PROXY"));
         address collateralToken = ltv.collateralToken();

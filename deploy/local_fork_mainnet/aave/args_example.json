@@ -26,5 +26,6 @@
     "GOVERNOR": "",
     "EMERGENCY_DELEVERAGER": "",
     "FEE_COLLECTOR": "",
-    "EMODE": 0
+    "EMODE": 0,
+    "AAVE_V3_POOL": ""
 }

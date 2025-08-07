@@ -433,12 +433,12 @@ def deploy_lending_connector(chain, lending_protocol, private_key, args_filename
         print(f"❌ Oracle connector must be deployed first")
         sys.exit(1)
 
-    if get_contract_is_deployed(chain, CONTRACTS.LENDING_CONNECTOR, lending_protocol, args_filename):
+    if get_contract_is_deployed(chain, CONTRACTS.LENDING_CONNECTOR, lending_protocol, args_filename, data):
         print(f"✅ Lending connector already deployed")
         return
     
-    deployed_address = deploy_contract(chain, CONTRACTS.LENDING_CONNECTOR, lending_protocol, private_key)
-    write_to_deploy_file(CONTRACTS.LENDING_CONNECTOR, chain, lending_protocol, deployed_address, args_filename)
+    deployed_address = deploy_contract(chain, CONTRACTS.LENDING_CONNECTOR, lending_protocol, private_key, data)
+    write_to_deploy_file(CONTRACTS.LENDING_CONNECTOR, chain, lending_protocol, deployed_address, args_filename, data)
     print(f"✅ Lending connector deployed at {deployed_address}")
 
 def deploy_ltv_beacon_proxy(chain, lending_protocol, private_key, args_filename):
