@@ -102,36 +102,16 @@ def get_latest_receipt_contract_address(chain, contract, lending_protocol):
         data = json.load(f)
         return data["transactions"][-1]["contractAddress"]
 
-def get_expected_address(chain, deploy_file, args = {}):
-    args["DEPLOY"] = False
-    env = os.environ.copy()
-    for k, v in args.items():
-        env[str(k)] = str(v)
-    
-    rpc_url = get_rpc_url(chain)
-
-    # The subprocess.run above does not capture output, so let's use subprocess.Popen to capture stdout
-    result = subprocess.run(
-        ["forge", "script", deploy_file, "--rpc-url", rpc_url, "-vv"],
-        env=env,
-        capture_output=True,
-        text=True
-    )
-    
-    if result.returncode != 0:
-        print(result.stdout)
-        print(result.stderr)
-        print("❌ Error getting expected address")
-        sys.exit(1)
+def get_expected_address(chain, contract, lending_protocol, args = {}):
+    res = run_script(chain, contract, lending_protocol, {}, args)
 
     # Look for the line with "Expected address:  0x..."
-    match = re.search(r"Expected address:\s+(0x[a-fA-F0-9]{40})", result.stdout)
+    match = re.search(r"Expected address:\s+(0x[a-fA-F0-9]{40})", res)
     if match:
         expected_address = match.group(1)
         return expected_address
     else:
-        print(result.stdout)
-        print(result.stderr)
+        print(res)
         print("❌ Could not find expected address in output")
         sys.exit(1)
 
@@ -142,8 +122,7 @@ def get_args_file_path(chain, lending_protocol, args_filename):
     return f"deploy/{chain}/{lending_protocol}/{args_filename}"
 
 def get_contract_is_deployed(chain, contract, lending_protocol, args_filename, args = {}):
-    deploy_file = get_contract_to_deploy_file(lending_protocol, contract)
-    expected_address = get_expected_address(chain, deploy_file, args)
+    expected_address = get_expected_address(chain, contract, lending_protocol, args)
     deployed_contracts_file_path = get_deployed_contracts_file_path(chain, lending_protocol, args_filename)
     if not os.path.exists(deployed_contracts_file_path):
         return False
@@ -152,32 +131,36 @@ def get_contract_is_deployed(chain, contract, lending_protocol, args_filename, a
         data = json.load(f)
         return contract.value in data and data[contract.value].lower() == expected_address.lower()  
 
-
-def deploy_contract(chain, contract, lending_protocol, private_key, args = {}):
+def run_script(chain, contract, lending_protocol, private_key = {}, args = {}):
     deploy_file = get_contract_to_deploy_file(lending_protocol, contract)
-    args["DEPLOY"] = True
-    if not os.path.exists(deploy_file):
-        print(f"❌ Contract path {deploy_file} does not exist")
-        sys.exit(1)
-        
     env = os.environ.copy()
-    
     for k, v in args.items():
         env[str(k)] = str(v)
         
+    private_key_part = ""
+    if private_key:
+        private_key_part = f"--broadcast --private-key {private_key}"
+        env["DEPLOY"] = "true"
+
+    else:
+        private_key_part = ""
+        env["DEPLOY"] = "false"
+        
     rpc_url = get_rpc_url(chain)
-    
-    vefity_part = f"--verify --etherscan-api-key {os.getenv('ETHERSCAN_API_KEY')}" if need_verify(chain) else ""
-    
-    result = subprocess.run(["forge", "script", deploy_file, "--rpc-url", rpc_url, "--broadcast", vefity_part, "--private-key", private_key], env=env, text=True, capture_output=True)
+    result = subprocess.run(["forge", "script", deploy_file, "--rpc-url", rpc_url, private_key_part, "-vv"], env=env, text=True, capture_output=True)
     
     if result.returncode != 0:
         print(result.stdout)
         print(result.stderr)
-        print("❌ Error deploying contract")
+        print("❌ Error running script")
         sys.exit(1)
     
-    match = re.search(r"Contract already deployed at:\s+(0x[a-fA-F0-9]{40})", result.stdout)
+    return result.stdout
+
+def deploy_contract(chain, contract, lending_protocol, private_key, args = {}):
+    res = run_script(chain, contract, lending_protocol, private_key, args)
+    
+    match = re.search(r"Contract already deployed at:\s+(0x[a-fA-F0-9]{40})", res)
     if match:
         return match.group(1)
     else:
@@ -204,8 +187,7 @@ def write_to_deploy_file(contract, chain, lending_protocol, deployed_address, ar
     with open(deployed_contracts_file_path, "w") as f:
         json.dump(data, f, indent=4)
 
-    deploy_file = get_contract_to_deploy_file(lending_protocol, contract)
-    expected_address = get_expected_address(chain, deploy_file, args)
+    expected_address = get_expected_address(chain, contract, lending_protocol, args)
     if not deployed_address.lower() == expected_address.lower():
         print(f"❌ Deployed address {deployed_address} does not match expected address {expected_address}")
         sys.exit(1)
