@@ -77,7 +77,7 @@ contract AdmistrationSetters is BoolWriter, BoolReader, IAdministrationErrors, I
     function _setIsWhitelistActivated(bool activate) internal {
         require(!activate || address(whitelistRegistry) != address(0), WhitelistRegistryNotSet());
         bool oldValue = isWhitelistActivated();
-        setBool(IS_WHITELIST_ACTIVATED_BIT, activate);
+        setBool(Constants.IS_WHITELIST_ACTIVATED_BIT, activate);
         emit IsWhitelistActivatedChanged(oldValue, activate);
     }
 
@@ -118,13 +118,13 @@ contract AdmistrationSetters is BoolWriter, BoolReader, IAdministrationErrors, I
 
     function _setIsDepositDisabled(bool value) internal {
         bool oldValue = isDepositDisabled();
-        setBool(IS_DEPOSIT_DISABLED_BIT, value);
+        setBool(Constants.IS_DEPOSIT_DISABLED_BIT, value);
         emit IsDepositDisabledChanged(oldValue, value);
     }
 
     function _setIsWithdrawDisabled(bool value) internal {
         bool oldValue = isWithdrawDisabled();
-        setBool(IS_WITHDRAW_DISABLED_BIT, value);
+        setBool(Constants.IS_WITHDRAW_DISABLED_BIT, value);
         emit IsWithdrawDisabledChanged(oldValue, value);
     }
 
