@@ -10,7 +10,7 @@ contract DeployBorrowVaultModule is BaseScript {
         console.log("BorrowVaultModule deployed at: ", address(borrowVaultModule));
     }
 
-    function hashedCreationCode() internal pure override returns (bytes32) { 
+    function hashedCreationCode() internal pure override returns (bytes32) {
         return keccak256(type(BorrowVaultModule).creationCode);
     }
-} 
+}

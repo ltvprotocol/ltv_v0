@@ -10,7 +10,7 @@ contract DeployAuctionModule is BaseScript {
         console.log("AuctionModule deployed at: ", address(auctionModule));
     }
 
-    function hashedCreationCode() internal pure override returns (bytes32) { 
+    function hashedCreationCode() internal pure override returns (bytes32) {
         return keccak256(type(AuctionModule).creationCode);
     }
 }

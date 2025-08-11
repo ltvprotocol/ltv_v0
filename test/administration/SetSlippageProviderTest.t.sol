@@ -34,8 +34,7 @@ contract SetSlippageProviderTest is BaseTest {
         vm.startPrank(defaultData.governor);
         uint256 newCollateralSlippage = 3 * 10 ** 16;
         uint256 newBorrowSlippage = 25 * 10 ** 15;
-        ConstantSlippageProvider provider =
-            new ConstantSlippageProvider(newCollateralSlippage, newBorrowSlippage);
+        ConstantSlippageProvider provider = new ConstantSlippageProvider(newCollateralSlippage, newBorrowSlippage);
         ltv.setSlippageProvider(address(provider));
         vm.stopPrank();
 

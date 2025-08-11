@@ -19,6 +19,10 @@ contract DeployConstantSlippageConnector is BaseScript {
         uint256 collateralSlippage = vm.envUint("COLLATERAL_SLIPPAGE");
         uint256 borrowSlippage = vm.envUint("BORROW_SLIPPAGE");
 
-        return keccak256(abi.encodePacked(type(ConstantSlippageProvider).creationCode, abi.encode(collateralSlippage, borrowSlippage)));
+        return keccak256(
+            abi.encodePacked(
+                type(ConstantSlippageProvider).creationCode, abi.encode(collateralSlippage, borrowSlippage)
+            )
+        );
     }
 }

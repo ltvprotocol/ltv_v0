@@ -10,7 +10,7 @@ contract DeployLowLevelRebalanceModule is BaseScript {
         console.log("LowLevelRebalanceModule deployed at: ", address(lowLevelRebalanceModule));
     }
 
-    function hashedCreationCode() internal pure override returns (bytes32) { 
+    function hashedCreationCode() internal pure override returns (bytes32) {
         return keccak256(type(LowLevelRebalanceModule).creationCode);
     }
-} 
+}
