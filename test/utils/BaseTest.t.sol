@@ -88,7 +88,7 @@ contract BaseTest is Test {
 
         lendingProtocol = new MockDummyLending(init.owner);
         oracle = IDummyOracle(new DummyOracle());
-        slippageProvider = new ConstantSlippageProvider(init.collateralSlippage, init.borrowSlippage, init.owner);
+        slippageProvider = new ConstantSlippageProvider(init.collateralSlippage, init.borrowSlippage);
         {
             ModulesState memory modulesState = ModulesState({
                 administrationModule: IAdministrationModule(address(new AdministrationModule())),

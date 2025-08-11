@@ -46,7 +46,7 @@ contract AaveV3ConnectorTest is Test {
 
         aaveLendingConnector = new AaveV3Connector();
         aaveV3OracleConnector = new AaveV3OracleConnector(WSTETH, WETH);
-        slippageProvider = new ConstantSlippageProvider(10 ** 16, 10 ** 16, address(this));
+        slippageProvider = new ConstantSlippageProvider(10 ** 16, 10 ** 16);
 
         ModulesState memory modulesState = ModulesState({
             administrationModule: IAdministrationModule(address(new AdministrationModule())),
