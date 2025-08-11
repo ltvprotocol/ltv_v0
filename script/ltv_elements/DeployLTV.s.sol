@@ -10,7 +10,7 @@ contract DeployLTV is BaseScript {
         console.log("LTV deployed at: ", address(ltv));
     }
 
-    function hashedCreationCode() internal pure override returns (bytes32) { 
+    function hashedCreationCode() internal pure override returns (bytes32) {
         return keccak256(type(LTV).creationCode);
     }
 }

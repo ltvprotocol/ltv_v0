@@ -10,7 +10,7 @@ contract DeployAdministrationModule is BaseScript {
         console.log("AdministrationModule deployed at: ", address(administrationModule));
     }
 
-    function hashedCreationCode() internal pure override returns (bytes32) { 
+    function hashedCreationCode() internal pure override returns (bytes32) {
         return keccak256(type(AdministrationModule).creationCode);
     }
-} 
+}

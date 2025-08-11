@@ -15,8 +15,6 @@ contract DeployBeacon is BaseScript {
     function hashedCreationCode() internal view override returns (bytes32) {
         address beaconOwner = vm.envAddress("BEACON_OWNER");
         address ltv = vm.envAddress("LTV");
-        return keccak256(
-            abi.encodePacked(type(UpgradeableBeacon).creationCode, abi.encode(ltv, beaconOwner))
-        );
+        return keccak256(abi.encodePacked(type(UpgradeableBeacon).creationCode, abi.encode(ltv, beaconOwner)));
     }
 }

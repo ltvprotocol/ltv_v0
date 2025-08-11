@@ -10,7 +10,7 @@ contract DeployInitializeModule is BaseScript {
         console.log("InitializeModule deployed at: ", address(initializeModule));
     }
 
-    function hashedCreationCode() internal pure override returns (bytes32) { 
+    function hashedCreationCode() internal pure override returns (bytes32) {
         return keccak256(type(InitializeModule).creationCode);
     }
-} 
+}

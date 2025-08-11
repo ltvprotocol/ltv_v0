@@ -10,7 +10,7 @@ contract DeployERC20Module is BaseScript {
         console.log("ERC20Module deployed at: ", address(erc20Module));
     }
 
-    function hashedCreationCode() internal pure override returns (bytes32) { 
+    function hashedCreationCode() internal pure override returns (bytes32) {
         return keccak256(type(ERC20Module).creationCode);
     }
 }

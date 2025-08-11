@@ -16,7 +16,7 @@ contract DeployAaveOracleConnector is BaseScript {
     function hashedCreationCode() internal view override returns (bytes32) {
         address collateralAsset = vm.envAddress("COLLATERAL_ASSET");
         address borrowAsset = vm.envAddress("BORROW_ASSET");
-        
+
         return keccak256(
             abi.encodePacked(type(AaveV3OracleConnector).creationCode, abi.encode(collateralAsset, borrowAsset))
         );
