@@ -8,7 +8,6 @@ import "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.s
 import "openzeppelin-contracts/contracts/access/Ownable.sol";
 import "openzeppelin-contracts/contracts/proxy/transparent/ProxyAdmin.sol";
 
-
 import "forge-std/StdCheats.sol";
 import "forge-std/StdAssertions.sol";
 import "../../src/interfaces/ILTV.sol";
@@ -51,7 +50,6 @@ struct OldStateBackup {
     uint8 decimals;
     address collateralToken;
     address borrowToken;
-    ILendingConnector lendingConnector;
     IOracleConnector oracleConnector;
     uint256 lastSeenTokenPrice;
     uint256 maxTotalAssetsInUnderlying;
@@ -65,6 +63,7 @@ struct NewFields {
     address guardian;
     address emergencyDeleverager;
     address modules;
+    address lendingConnector;
     uint24 auctionDuration;
     uint16 maxGrowthFeeDividend;
     uint16 maxGrowthFeeDivider;
@@ -146,7 +145,6 @@ contract OldStateCleaner is OldState {
         delete maxSafeLTV;
         delete minProfitLTV;
         delete targetLTV;
-        backup.lendingConnector = lendingConnector;
         delete lendingConnector;
         backup.oracleConnector = oracleConnector;
         delete oracleConnector;
@@ -167,7 +165,6 @@ contract OldStateCleaner is OldState {
     }
 }
 
-
 contract NewStateRemapper is LTVState {
     function remapState(OldStateBackup calldata oldState, NewFields calldata newFields) public {
         feeCollector = oldState.feeCollector;
@@ -182,7 +179,7 @@ contract NewStateRemapper is LTVState {
         decimals = oldState.decimals;
         collateralToken = IERC20(oldState.collateralToken);
         borrowToken = IERC20(oldState.borrowToken);
-        lendingConnector = oldState.lendingConnector;
+        lendingConnector = ILendingConnector(newFields.lendingConnector);
         oracleConnector = oldState.oracleConnector;
         lastSeenTokenPrice = oldState.lastSeenTokenPrice;
         maxTotalAssetsInUnderlying = oldState.maxTotalAssetsInUnderlying;
@@ -255,6 +252,7 @@ contract DeployGhostUpgrade is Script, StdCheats, StdAssertions {
             guardian: vm.envAddress("GUARDIAN"),
             emergencyDeleverager: vm.envAddress("EMERGENCY_DELEVERAGER"),
             modules: vm.envAddress("MODULES_PROVIDER"),
+            lendingConnector: vm.envAddress("LENDING_CONNECTOR"),
             auctionDuration: 1000,
             maxGrowthFeeDividend: 1,
             maxGrowthFeeDivider: 5,
@@ -268,6 +266,7 @@ contract DeployGhostUpgrade is Script, StdCheats, StdAssertions {
             targetLTVDivider: 100,
             boolSlot: 0
         });
+        // vm.startBroadcast();
         vm.startPrank(msg.sender);
         Upgrader upgrader = new Upgrader{salt: bytes32(0)}(msg.sender);
         address proxy = vm.envAddress("PROXY");
@@ -282,16 +281,17 @@ contract DeployGhostUpgrade is Script, StdCheats, StdAssertions {
 
         ProxyAdmin(proxyAdmin).transferOwnership(address(upgrader));
         upgrader.upgrade(proxy, proxyAdmin, ltv, msg.sender, newFields);
+        // vm.stopBroadcast();
         vm.stopPrank();
 
+        // test part
         ILTV _ltv = ILTV(vm.envAddress("PROXY"));
         address collateralToken = _ltv.collateralToken();
         address random = makeAddr("random");
         vm.startPrank(random);
         deal(collateralToken, random, type(uint256).max);
         IERC20(collateralToken).approve(address(_ltv), type(uint256).max);
-        int256 maxLowLevelRebalanceCollateral = _ltv.maxLowLevelRebalanceCollateral();
-        _ltv.executeLowLevelRebalanceCollateralHint(maxLowLevelRebalanceCollateral, true);
+        _ltv.executeLowLevelRebalanceCollateralHint(10 ** 18, true);
 
         address borrowToken = _ltv.borrowToken();
         _ltv.withdraw(_ltv.maxWithdraw(random), random, random);

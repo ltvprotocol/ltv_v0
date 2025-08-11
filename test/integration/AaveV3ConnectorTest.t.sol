@@ -44,9 +44,9 @@ contract AaveV3ConnectorTest is Test {
         weth = IERC20(WETH);
         wsteth = IERC20(WSTETH);
 
-        aaveLendingConnector = new AaveV3Connector();
-        aaveV3OracleConnector = new AaveV3OracleConnector(WSTETH, WETH);
-        slippageProvider = new ConstantSlippageProvider(10 ** 16, 10 ** 16, address(this));
+        aaveLendingConnector = new AaveV3Connector(0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2);
+        aaveV3OracleConnector = new AaveV3OracleConnector(WSTETH, WETH, 0x54586bE62E3c3580375aE3723C145253060Ca0C2);
+        slippageProvider = new ConstantSlippageProvider(10 ** 16, 10 ** 16);
 
         ModulesState memory modulesState = ModulesState({
             administrationModule: IAdministrationModule(address(new AdministrationModule())),

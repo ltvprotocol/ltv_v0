@@ -73,6 +73,8 @@ def get_contract_to_deploy_file(lending_protocol, contract):
             return "script/aave/DeployAaveLendingConnector.s.sol"
         elif lending_protocol == "morpho":
             return "script/morpho/DeployMorphoLendingConnector.s.sol"
+        elif lending_protocol == "ghost":
+            return "script/ghost/DeployLendingConnector.s.sol"
         else:
             print(f"❌ Unsupported lending protocol: {lending_protocol}")
             print("Supported protocols: aave, morpho")
@@ -408,15 +410,15 @@ def deploy_oracle_connector(chain, lending_protocol, private_key, args_filename)
     write_to_deploy_file(CONTRACTS.ORACLE_CONNECTOR, chain, lending_protocol, deployed_address, args_filename, data)
     print(f"✅ Oracle connector deployed at {deployed_address}")
 
-def deploy_lending_connector(chain, lending_protocol, private_key, args_filename):    
+def deploy_lending_connector(chain, lending_protocol, private_key, args_filename, contract = CONTRACTS.ORACLE_CONNECTOR):    
     with open(get_args_file_path(chain, lending_protocol, args_filename), "r") as f:
         data = json.load(f)
     
     with open(get_deployed_contracts_file_path(chain, lending_protocol, args_filename), "r") as f:
         data.update(json.load(f))
 
-    if not get_contract_is_deployed(chain, CONTRACTS.ORACLE_CONNECTOR, lending_protocol, args_filename, data):
-        print(f"❌ Oracle connector must be deployed first")
+    if not get_contract_is_deployed(chain, contract, lending_protocol, args_filename, data):
+        print(f"❌ {contract.value} must be deployed first")
         sys.exit(1)
 
     if get_contract_is_deployed(chain, CONTRACTS.LENDING_CONNECTOR, lending_protocol, args_filename, data):
@@ -596,6 +598,7 @@ def main():
         deploy_whitelist_registry(args.chain, args.lending_protocol, args.private_key, args.args_filename, CONTRACTS.LTV)
         deploy_vault_balance_as_lending_connector(args.chain, args.lending_protocol, args.private_key, args.args_filename)
         deploy_constant_slippage_connector(args.chain, args.lending_protocol, args.private_key, args.args_filename)
+        deploy_lending_connector(args.chain, args.lending_protocol, args.private_key, args.args_filename, CONTRACTS.SLIPPAGE_CONNECTOR)
         upgrade_ghost(args.chain, args.lending_protocol, args.private_key, args.args_filename)
 
 
