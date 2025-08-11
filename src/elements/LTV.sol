@@ -15,12 +15,8 @@ import "../facades/writes/AdministrationWrite.sol";
 import "../facades/writes/InitializeWrite.sol";
 import "src/state_reader/GetRealBorrowAssetsReader.sol";
 import "src/state_reader/GetRealCollateralAssetsReader.sol";
-import "src/state_reader/GetIsDepositDisabled.sol";
-import "src/state_reader/GetIsWithdrawDisabled.sol";
-import "src/state_reader/GetIsWhitelistActivated.sol";
 
 contract LTV is
-    GetIsWhitelistActivated,
     AuctionRead,
     AuctionWrite,
     ERC20Read,
@@ -34,7 +30,5 @@ contract LTV is
     AdministrationWrite,
     InitializeWrite,
     GetRealBorrowAssetsReader,
-    GetRealCollateralAssetsReader,
-    GetIsDepositDisabled,
-    GetIsWithdrawDisabled
+    GetRealCollateralAssetsReader
 {}

@@ -7,15 +7,12 @@ import "../events/IERC20Events.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 import "src/errors/IAdministrationErrors.sol";
 import "src/errors/IERC20Errors.sol";
-import "src/state_reader/GetIsDepositDisabled.sol";
-import "src/state_reader/GetIsWithdrawDisabled.sol";
+import "src/state_reader/BoolReader.sol";
 
 abstract contract ERC20 is
     WhitelistModifier,
     FunctionStopperModifier,
     ReentrancyGuardUpgradeable,
-    GetIsDepositDisabled,
-    GetIsWithdrawDisabled,
     IERC20Events,
     IERC20Errors
 {
