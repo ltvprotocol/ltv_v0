@@ -6,7 +6,6 @@ import "../../interfaces/ILendingConnector.sol";
 import "./interfaces/IAaveV3Pool.sol";
 import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
 import {LTVState} from "../../states/LTVState.sol";
-import "forge-std/console.sol";
 
 contract AaveV3Connector is LTVState, ILendingConnector {
     IAaveV3Pool public constant POOL = IAaveV3Pool(0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2);
