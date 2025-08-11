@@ -12,7 +12,8 @@ struct PreviewCollateralVaultData {
     int256 protocolFutureRewardCollateral;
     uint256 collateralSlippage;
     uint256 borrowSlippage;
-    uint128 targetLTV;
+    uint16 targetLTVDividend;
+    uint16 targetLTVDivider;
     uint256 collateralPrice;
     uint256 supplyAfterFee;
     uint256 totalAssetsCollateral;

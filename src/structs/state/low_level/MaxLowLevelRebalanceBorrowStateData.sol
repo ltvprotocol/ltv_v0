@@ -4,6 +4,7 @@ pragma solidity ^0.8.28;
 struct MaxLowLevelRebalanceBorrowStateData {
     uint256 realBorrowAssets;
     uint256 maxTotalAssetsInUnderlying;
-    uint256 targetLTV;
+    uint16 targetLTVDividend;
+    uint16 targetLTVDivider;
     uint256 borrowPrice;
 }

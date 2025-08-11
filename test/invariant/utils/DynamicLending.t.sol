@@ -47,10 +47,10 @@ abstract contract DynamicLending is IDummyLending {
         uint256 lastBlock = lastDebtIncreaseBlock[asset];
 
         // If debt was already increased this block, return current balance
-        if (lastBlock == block.number) return _borrowBalance[asset];
+        if (lastBlock == uint56(block.number)) return _borrowBalance[asset];
 
         // Calculate blocks elapsed since last debt increase
-        uint256 blocksElapsed = block.number - lastBlock;
+        uint256 blocksElapsed = uint56(block.number) - lastBlock;
 
         // Calculate the cumulative interest factor using RateMath
         uint256 debtIncreaseCoeff = RateMath.calculateRatePerBlock(ratePerBlock, blocksElapsed);
@@ -153,7 +153,7 @@ abstract contract DynamicLending is IDummyLending {
         _borrowBalance[asset] = borrowBalance(asset);
 
         // Update the last debt increase block to current block
-        lastDebtIncreaseBlock[asset] = block.number;
+        lastDebtIncreaseBlock[asset] = uint56(block.number);
     }
 
     /**

@@ -44,9 +44,9 @@ contract AaveV3ConnectorTest is Test {
         weth = IERC20(WETH);
         wsteth = IERC20(WSTETH);
 
-        aaveLendingConnector = new AaveV3Connector();
-        aaveV3OracleConnector = new AaveV3OracleConnector(WSTETH, WETH);
-        slippageProvider = new ConstantSlippageProvider(10 ** 16, 10 ** 16, address(this));
+        aaveLendingConnector = new AaveV3Connector(0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2);
+        aaveV3OracleConnector = new AaveV3OracleConnector(WSTETH, WETH, 0x54586bE62E3c3580375aE3723C145253060Ca0C2);
+        slippageProvider = new ConstantSlippageProvider(10 ** 16, 10 ** 16);
 
         ModulesState memory modulesState = ModulesState({
             administrationModule: IAdministrationModule(address(new AdministrationModule())),
@@ -67,21 +67,27 @@ contract AaveV3ConnectorTest is Test {
             collateralToken: WSTETH,
             borrowToken: WETH,
             feeCollector: address(this),
-            maxSafeLTV: 800000000000000000,
-            minProfitLTV: 500000000000000000,
-            targetLTV: 750000000000000000,
+            maxSafeLTVDividend: 8,
+            maxSafeLTVDivider: 10,
+            minProfitLTVDividend: 5,
+            minProfitLTVDivider: 10,
+            targetLTVDividend: 75,
+            targetLTVDivider: 100,
             lendingConnector: ILendingConnector(address(aaveLendingConnector)),
             oracleConnector: IOracleConnector(address(aaveV3OracleConnector)),
-            maxGrowthFee: 200000000000000000,
+            maxGrowthFeeDividend: 1,
+            maxGrowthFeeDivider: 5,
             maxTotalAssetsInUnderlying: type(uint128).max,
             slippageProvider: slippageProvider,
-            maxDeleverageFee: 50000000000000000,
+            maxDeleverageFeeDividend: 1,
+            maxDeleverageFeeDivider: 20,
             vaultBalanceAsLendingConnector: ILendingConnector(address(0)),
             owner: address(this),
             guardian: address(this),
             governor: address(this),
             emergencyDeleverager: address(this),
-            lendingConnectorData: abi.encode("")
+            auctionDuration: 1000,
+            lendingConnectorData: abi.encode(1)
         });
 
         ltv = new LTV();

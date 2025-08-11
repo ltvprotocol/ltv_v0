@@ -26,7 +26,8 @@ library DeltaRealBorrowAndDeltaRealCollateral {
         int256 protocolFutureRewardCollateral;
         int256 collateral;
         int256 deltaRealCollateral;
-        uint128 targetLTV;
+        uint16 targetLTVDividend;
+        uint16 targetLTVDivider;
     }
 
     struct DividerData {
@@ -38,7 +39,8 @@ library DeltaRealBorrowAndDeltaRealCollateral {
         int256 collateral;
         int256 protocolFutureRewardBorrow;
         int256 protocolFutureRewardCollateral;
-        uint128 targetLTV;
+        uint16 targetLTVDividend;
+        uint16 targetLTVDivider;
         int256 userFutureRewardBorrow;
         int256 userFutureRewardCollateral;
     }
@@ -88,7 +90,9 @@ library DeltaRealBorrowAndDeltaRealCollateral {
 
         dividendWithTargetLTV -= int256(int8(data.cases.ceccb)) * int256(data.protocolFutureRewardCollateral);
 
-        dividend += dividendWithTargetLTV.mulDiv(int128(data.targetLTV), int256(Constants.LTV_DIVIDER), needToRoundUp);
+        dividend += dividendWithTargetLTV.mulDiv(
+            int256(uint256(data.targetLTVDividend)), int256(uint256(data.targetLTVDivider)), needToRoundUp
+        );
 
         return dividend;
     }
@@ -186,7 +190,9 @@ library DeltaRealBorrowAndDeltaRealCollateral {
         dividerTargetLTVCollateralSlippage = dividerTargetLTVCollateralSlippage * int256(data.collateralSlippage);
         dividerTargetLTV += dividerTargetLTVCollateralSlippage;
 
-        dividerTargetLTV = dividerTargetLTV.mulDiv(int128(data.targetLTV), int256(Constants.LTV_DIVIDER), needToRoundUp);
+        dividerTargetLTV = dividerTargetLTV.mulDiv(
+            int256(uint256(data.targetLTVDividend)), int256(uint256(data.targetLTVDivider)), needToRoundUp
+        );
 
         divider += dividerTargetLTV;
 
@@ -244,7 +250,8 @@ library DeltaRealBorrowAndDeltaRealCollateral {
                     protocolFutureRewardCollateral: data.protocolFutureRewardCollateral,
                     collateral: data.collateral,
                     deltaRealCollateral: data.deltaRealCollateral,
-                    targetLTV: data.targetLTV
+                    targetLTVDividend: data.targetLTVDividend,
+                    targetLTVDivider: data.targetLTVDivider
                 })
             );
 
@@ -262,7 +269,8 @@ library DeltaRealBorrowAndDeltaRealCollateral {
                     collateral: data.collateral,
                     protocolFutureRewardBorrow: data.protocolFutureRewardBorrow,
                     protocolFutureRewardCollateral: data.protocolFutureRewardCollateral,
-                    targetLTV: data.targetLTV,
+                    targetLTVDividend: data.targetLTVDividend,
+                    targetLTVDivider: data.targetLTVDivider,
                     userFutureRewardBorrow: data.userFutureRewardBorrow,
                     userFutureRewardCollateral: data.userFutureRewardCollateral
                 })

@@ -13,7 +13,8 @@ abstract contract MaxWithdraw is PreviewWithdraw, PreviewRedeem {
 
     function _maxWithdraw(MaxWithdrawRedeemBorrowVaultData memory data) internal pure returns (uint256) {
         // round down to assume smaller border
-        uint256 maxSafeRealBorrow = uint256(data.realCollateral).mulDivDown(data.maxSafeLTV, Constants.LTV_DIVIDER);
+        uint256 maxSafeRealBorrow =
+            uint256(data.realCollateral).mulDivDown(data.maxSafeLTVDividend, data.maxSafeLTVDivider);
         if (maxSafeRealBorrow <= uint256(data.realBorrow)) {
             return 0;
         }

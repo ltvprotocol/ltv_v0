@@ -23,13 +23,18 @@ contract NearZeroAuctionFinalRoundingTest is BaseTest {
             maxTotalAssetsInUnderlying: type(uint128).max,
             collateralAssets: 1894736842,
             borrowAssets: 3000000000,
-            maxSafeLTV: 9 * 10 ** 17,
-            minProfitLTV: 5 * 10 ** 17,
-            targetLTV: 75 * 10 ** 16,
-            maxGrowthFee: 0,
+            maxSafeLTVDividend: 9,
+            maxSafeLTVDivider: 10,
+            minProfitLTVDividend: 5,
+            minProfitLTVDivider: 10,
+            targetLTVDividend: 75,
+            targetLTVDivider: 100,
+            maxGrowthFeeDividend: 0,
+            maxGrowthFeeDivider: 5,
             collateralPrice: 2111111111111111111,
             borrowPrice: 10 ** 18,
-            maxDeleverageFee: 0,
+            maxDeleverageFeeDividend: 0,
+            maxDeleverageFeeDivider: 50,
             zeroAddressTokens: 10707579638052243058
         });
 

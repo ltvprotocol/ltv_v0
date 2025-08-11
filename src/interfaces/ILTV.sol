@@ -50,9 +50,12 @@ interface ILTV is
 
     function decimals() external view returns (uint8);
 
-    function maxGrowthFee() external view returns (uint256);
+    function maxGrowthFeeDividend() external view returns (uint16);
 
-    function deleverageAndWithdraw(uint256 closeAmountBorrow, uint256 deleverageFee) external;
+    function maxGrowthFeeDivider() external view returns (uint16);
+
+    function deleverageAndWithdraw(uint256 closeAmountBorrow, uint16 deleverageFeeDividend, uint16 deleverageFeeDivider)
+        external;
 
     function deposit(uint256 assets, address receiver) external returns (uint256);
 
@@ -98,7 +101,9 @@ interface ILTV is
 
     function isWithdrawDisabled() external view returns (bool);
 
-    function maxDeleverageFee() external view returns (uint256);
+    function maxDeleverageFeeDividend() external view returns (uint16);
+
+    function maxDeleverageFeeDivider() external view returns (uint16);
 
     function maxDeposit(address) external view returns (uint256);
 
@@ -118,7 +123,9 @@ interface ILTV is
 
     function maxRedeemCollateral(address owner) external view returns (uint256);
 
-    function maxSafeLTV() external view returns (uint128);
+    function maxSafeLTVDividend() external view returns (uint16);
+
+    function maxSafeLTVDivider() external view returns (uint16);
 
     function maxTotalAssetsInUnderlying() external view returns (uint256);
 
@@ -126,7 +133,9 @@ interface ILTV is
 
     function maxWithdrawCollateral(address owner) external view returns (uint256);
 
-    function minProfitLTV() external view returns (uint128);
+    function minProfitLTVDividend() external view returns (uint16);
+
+    function minProfitLTVDivider() external view returns (uint16);
 
     function mint(uint256 shares, address receiver) external returns (uint256 assets);
 
@@ -192,21 +201,21 @@ interface ILTV is
 
     function setLendingConnector(address _lendingConnector) external;
 
-    function setMaxDeleverageFee(uint256 value) external;
+    function setMaxDeleverageFee(uint16 dividend, uint16 divider) external;
 
-    function setMaxGrowthFee(uint256 _maxGrowthFee) external;
+    function setMaxGrowthFee(uint16 dividend, uint16 divider) external;
 
-    function setMaxSafeLTV(uint128 value) external;
+    function setMaxSafeLTV(uint16 dividend, uint16 divider) external;
 
     function setMaxTotalAssetsInUnderlying(uint256 _maxTotalAssetsInUnderlying) external;
 
-    function setMinProfitLTV(uint128 value) external;
+    function setMinProfitLTV(uint16 dividend, uint16 divider) external;
 
     function setOracleConnector(address _oracleConnector) external;
 
     function setSlippageProvider(address _slippageProvider) external;
 
-    function setTargetLTV(uint128 value) external;
+    function setTargetLTV(uint16 dividend, uint16 divider) external;
 
     function setWhitelistRegistry(address value) external;
 
@@ -214,11 +223,15 @@ interface ILTV is
 
     function slippageProvider() external view returns (address);
 
-    function startAuction() external view returns (uint256);
+    function startAuction() external view returns (uint56);
+
+    function auctionDuration() external view returns (uint24);
 
     function symbol() external view returns (string memory);
 
-    function targetLTV() external view returns (uint128);
+    function targetLTVDividend() external view returns (uint16);
+
+    function targetLTVDivider() external view returns (uint16);
 
     function totalAssets() external view returns (uint256);
 

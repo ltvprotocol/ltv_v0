@@ -5,13 +5,14 @@ import "./interfaces/IAaveOracle.sol";
 import "../../interfaces/IOracleConnector.sol";
 
 contract AaveV3OracleConnector is IOracleConnector {
-    IAaveOracle public constant ORACLE = IAaveOracle(0x54586bE62E3c3580375aE3723C145253060Ca0C2);
+    IAaveOracle public immutable ORACLE;
     address public immutable COLLATERAL_ASSET;
     address public immutable BORROW_ASSET;
 
-    constructor(address _collateralAsset, address _borrowAsset) {
+    constructor(address _collateralAsset, address _borrowAsset, address _oracle) {
         COLLATERAL_ASSET = _collateralAsset;
         BORROW_ASSET = _borrowAsset;
+        ORACLE = IAaveOracle(_oracle);
     }
 
     function getPriceCollateralOracle() external view returns (uint256) {
