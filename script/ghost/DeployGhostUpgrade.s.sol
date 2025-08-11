@@ -7,6 +7,8 @@ import "../../src/states/LTVState.sol";
 import "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
 import "openzeppelin-contracts/contracts/access/Ownable.sol";
 import "openzeppelin-contracts/contracts/proxy/transparent/ProxyAdmin.sol";
+import "../../src/events/IERC20Events.sol";
+import "forge-std/Vm.sol";
 
 import "forge-std/StdCheats.sol";
 import "forge-std/StdAssertions.sol";
@@ -34,6 +36,12 @@ function getHolders() pure returns (address[19] memory) {
         0xA9FbD3dea591433624F29D01FE47Ad1E6F25ad48,
         0x4d0072045BFaE4A76Fe16F4e1F3c6ca6Ac8709Ab
     ];
+}
+
+struct ApprovalData {
+    address owner;
+    address spender;
+    uint256 amount;
 }
 
 struct OldStateBackup {
@@ -76,6 +84,7 @@ struct NewFields {
     uint16 targetLTVDividend;
     uint16 targetLTVDivider;
     uint8 boolSlot;
+    ApprovalData[] allowances;
 }
 
 abstract contract OldState {
@@ -116,7 +125,7 @@ abstract contract OldState {
 error Mismatch(uint256, uint256);
 
 contract OldStateCleaner is OldState {
-    function cleanAndBackup() public returns (OldStateBackup memory) {
+    function cleanAndBackup(ApprovalData[] memory allowances) public returns (OldStateBackup memory) {
         OldStateBackup memory backup;
         backup.feeCollector = feeCollector;
         delete feeCollector;
@@ -159,6 +168,9 @@ contract OldStateCleaner is OldState {
             backup.balances[i] = balanceOf[holders[i]];
             delete balanceOf[holders[i]];
             holdersBalance += backup.balances[i];
+        }
+        for (uint256 i = 0; i < allowances.length; i++) {
+            delete allowance[allowances[i].owner][allowances[i].spender];
         }
         require(backup.baseTotalSupply == holdersBalance, Mismatch(backup.baseTotalSupply, holdersBalance));
         return backup;
@@ -208,6 +220,9 @@ contract NewStateRemapper is LTVState {
         targetLTVDividend = newFields.targetLTVDividend;
         targetLTVDivider = newFields.targetLTVDivider;
         boolSlot = newFields.boolSlot;
+        for (uint256 i = 0; i < newFields.allowances.length; i++) {
+            allowance[newFields.allowances[i].owner][newFields.allowances[i].spender] = newFields.allowances[i].amount;
+        }
     }
 }
 
@@ -234,7 +249,7 @@ contract Upgrader is Ownable {
         ProxyAdmin proxyAdmin = ProxyAdmin(_proxyAdmin);
         OldStateCleaner oldStateCleaner = new OldStateCleaner();
         proxyAdmin.upgradeAndCall(ITransparentUpgradeableProxy(proxy), address(oldStateCleaner), "");
-        OldStateBackup memory oldState = OldStateCleaner(proxy).cleanAndBackup();
+        OldStateBackup memory oldState = OldStateCleaner(proxy).cleanAndBackup(newFields.allowances);
         NewStateRemapper newStateRemapper = new NewStateRemapper();
         proxyAdmin.upgradeAndCall(ITransparentUpgradeableProxy(proxy), address(newStateRemapper), "");
         NewStateRemapper(proxy).remapState(oldState, newFields);
@@ -244,7 +259,26 @@ contract Upgrader is Ownable {
 }
 
 contract DeployGhostUpgrade is Script, StdCheats, StdAssertions {
+    function getApprovalLogs(address proxy) internal returns (ApprovalData[] memory) {
+        bytes32[] memory topics = new bytes32[](1);
+        topics[0] = keccak256("Approval(address,address,uint256)");
+        Vm.EthGetLogs[] memory logs = vm.eth_getLogs(0, block.number, proxy, topics);
+        ApprovalData[] memory approvals = new ApprovalData[](logs.length);
+        for (uint256 i = 0; i < logs.length; i++) {
+            approvals[i] = ApprovalData({
+                owner: address(uint160(uint256(logs[i].topics[1]))),
+                spender: address(uint160(uint256(logs[i].topics[2]))),
+                amount: abi.decode(logs[i].data, (uint256))
+            });
+        }
+        return approvals;
+    }
+
     function run() public {
+        address proxy = vm.envAddress("PROXY");
+        address proxyAdmin = vm.envAddress("PROXY_ADMIN");
+        address ltv = vm.envAddress("LTV");
+        ApprovalData[] memory allowances = getApprovalLogs(proxy);
         NewFields memory newFields = NewFields({
             vaultBalanceAsLendingConnector: vm.envAddress("VAULT_BALANCE_AS_LENDING_CONNECTOR"),
             slippageProvider: vm.envAddress("SLIPPAGE_CONNECTOR"),
@@ -264,14 +298,12 @@ contract DeployGhostUpgrade is Script, StdCheats, StdAssertions {
             minProfitLTVDivider: 10,
             targetLTVDividend: 75,
             targetLTVDivider: 100,
-            boolSlot: 0
+            boolSlot: 0,
+            allowances: allowances
         });
         // vm.startBroadcast();
         vm.startPrank(msg.sender);
         Upgrader upgrader = new Upgrader{salt: bytes32(0)}(msg.sender);
-        address proxy = vm.envAddress("PROXY");
-        address proxyAdmin = vm.envAddress("PROXY_ADMIN");
-        address ltv = vm.envAddress("LTV");
 
         vm.store(proxyAdmin, 0, bytes32(uint256(uint160(msg.sender))));
 
@@ -297,5 +329,8 @@ contract DeployGhostUpgrade is Script, StdCheats, StdAssertions {
         _ltv.withdraw(_ltv.maxWithdraw(random), random, random);
         assertGt(IERC20(borrowToken).balanceOf(random), 0);
         assertGt(_ltv.balanceOf(random), 0);
+        assertGt(
+            _ltv.allowance(0xbd6158Bc84546E235dc8CB62fD6a98De2f7B17bF, 0xE2A7f267124AC3E4131f27b9159c78C521A44F3c), 0
+        );
     }
 }
