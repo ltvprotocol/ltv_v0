@@ -28,6 +28,7 @@ class CONTRACTS(Enum):
     ORACLE_CONNECTOR = "ORACLE_CONNECTOR"
     LENDING_CONNECTOR = "LENDING_CONNECTOR"
     LTV_BEACON_PROXY = "LTV_BEACON_PROXY"
+    GHOST_UPGRADE = "GHOST_UPGRADE"
 
 CHAIN_TO_CHAIN_ID = {
     "mainnet": 1,
@@ -54,6 +55,7 @@ def get_contract_to_deploy_file(lending_protocol, contract):
         CONTRACTS.VAULT_BALANCE_AS_LENDING_CONNECTOR: "script/ltv_elements/DeployVaultBalanceAsLendingConnector.s.sol",
         CONTRACTS.SLIPPAGE_CONNECTOR: "script/ltv_elements/DeployConstantSlippageConnector.s.sol",
         CONTRACTS.LTV_BEACON_PROXY: "script/ltv_elements/DeployLTVBeaconProxy.s.sol",
+        CONTRACTS.GHOST_UPGRADE: "script/ghost/DeployGhostUpgrade.s.sol:DeployGhostUpgrade",
     }
     
     # Handle protocol-specific connectors
@@ -137,17 +139,18 @@ def run_script(chain, contract, lending_protocol, private_key = {}, args = {}):
     for k, v in args.items():
         env[str(k)] = str(v)
         
-    private_key_part = ""
+    private_key_part = []
     if private_key:
-        private_key_part = f"--broadcast --private-key {private_key}"
+        private_key_part.append("--private-key")
+        private_key_part.append(private_key)
         env["DEPLOY"] = "true"
+        private_key_part.append("--broadcast")
 
     else:
-        private_key_part = ""
         env["DEPLOY"] = "false"
         
     rpc_url = get_rpc_url(chain)
-    result = subprocess.run(["forge", "script", deploy_file, "--rpc-url", rpc_url, private_key_part, "-vv"], env=env, text=True, capture_output=True)
+    result = subprocess.run(["forge", "script", deploy_file, "--rpc-url", rpc_url, "-vv"] + private_key_part, env=env, text=True, capture_output=True)
     
     if result.returncode != 0:
         print(result.stdout)
@@ -329,15 +332,15 @@ def deploy_beacon(chain, lending_protocol, private_key, args_filename):
     write_to_deploy_file(CONTRACTS.BEACON, chain, lending_protocol, deployed_address, args_filename, data)
     print(f"✅ Beacon deployed at {deployed_address}")
 
-def deploy_whitelist_registry(chain, lending_protocol, private_key, args_filename):
+def  deploy_whitelist_registry(chain, lending_protocol, private_key, args_filename, contract = CONTRACTS.BEACON):
     with open(get_args_file_path(chain, lending_protocol, args_filename), "r") as f:
         data = json.load(f)
     
     with open(get_deployed_contracts_file_path(chain, lending_protocol, args_filename), "r") as f:
         data.update(json.load(f))
 
-    if not get_contract_is_deployed(chain, CONTRACTS.BEACON, lending_protocol, args_filename, data):
-        print(f"❌ Beacon must be deployed first")
+    if not get_contract_is_deployed(chain, contract, lending_protocol, args_filename, data):
+        print(f"❌ {contract.value} must be deployed first")
         sys.exit(1)
 
     if get_contract_is_deployed(chain, CONTRACTS.WHITELIST_REGISTRY, lending_protocol, args_filename, data):
@@ -443,6 +446,21 @@ def deploy_ltv_beacon_proxy(chain, lending_protocol, private_key, args_filename)
     write_to_deploy_file(CONTRACTS.LTV_BEACON_PROXY, chain, lending_protocol, deployed_address, args_filename, data)
     print(f"✅ LTV beacon proxy deployed at {deployed_address}")
 
+def upgrade_ghost(chain, lending_protocol, private_key, args_filename):
+    with open(get_deployed_contracts_file_path(chain, lending_protocol, args_filename), "r") as f:
+        data = json.load(f)
+        
+    with open(get_args_file_path(chain, lending_protocol, args_filename), "r") as f:
+        data.update(json.load(f))
+    
+    if not get_contract_is_deployed(chain, CONTRACTS.SLIPPAGE_CONNECTOR, lending_protocol, args_filename, data):
+        print(f"❌ Slippage connector must be deployed first")
+        sys.exit(1)
+    
+    run_script(chain, CONTRACTS.GHOST_UPGRADE, lending_protocol, private_key, data)
+    print(f"✅ Ghost upgrade is successful")
+
+    
 def test_deployed_ltv_beacon_proxy(chain, lending_protocol, args_filename):
     with open(get_deployed_contracts_file_path(chain, lending_protocol, args_filename), "r") as f:
         data = json.load(f)
@@ -463,7 +481,7 @@ def main():
     parser = argparse.ArgumentParser(description="Foundry Script")
     parser.add_argument('--full-deploy', help='Full ltv protocol deployment', action='store_true')
     parser.add_argument('--chain', help='Chain to deploy to. Possible values: mainnet, local-fork-mainnet, local-fork-sepolia, sepolia', required=True)
-    parser.add_argument('--lending-protocol', help='Lending protocol to deploy for. Possible values: aave, compound, morpho', required=True)
+    parser.add_argument('--lending-protocol', help='Lending protocol to deploy for. Possible values: aave, ghost, morpho', required=True)
     parser.add_argument('--args-filename', help='Name of the args file, stored in the deploy/(chain)/(lending_protocol) folder', required=True)
     parser.add_argument('--deploy-erc20-module', help='Deploy ERC20 module', action='store_true')
     parser.add_argument('--deploy-borrow-vault-module', help='Deploy Borrow vault module', action='store_true')
@@ -482,6 +500,7 @@ def main():
     parser.add_argument('--deploy-lending-connector', help='Deploy Lending connector', action='store_true')
     parser.add_argument('--deploy-ltv-beacon-proxy', help='Deploy LTV beacon proxy', action='store_true')
     parser.add_argument('--test-deployed-ltv-beacon-proxy', help='Test deployed LTV beacon proxy', action='store_true')
+    parser.add_argument('--upgrade-ghost', help='Upgrade ghost testnet', action='store_true')
     parser.add_argument('--private-key', help='Private key to use for deployment (can also be set via PRIVATE_KEY env var)')
     
     args = parser.parse_args()
@@ -563,6 +582,21 @@ def main():
         deploy_oracle_connector(args.chain, args.lending_protocol, args.private_key, args.args_filename)
         deploy_lending_connector(args.chain, args.lending_protocol, args.private_key, args.args_filename)
         deploy_ltv_beacon_proxy(args.chain, args.lending_protocol, args.private_key, args.args_filename)
+
+    if args.upgrade_ghost:
+        deploy_erc20_module(args.chain, args.lending_protocol, args.private_key, args.args_filename)
+        deploy_borrow_vault_module(args.chain, args.lending_protocol, args.private_key, args.args_filename)
+        deploy_collateral_vault_module(args.chain, args.lending_protocol, args.private_key, args.args_filename)
+        deploy_low_level_rebalance_module(args.chain, args.lending_protocol, args.private_key, args.args_filename)
+        deploy_auction_module(args.chain, args.lending_protocol, args.private_key, args.args_filename)
+        deploy_administration_module(args.chain, args.lending_protocol, args.private_key, args.args_filename)
+        deploy_initialize_module(args.chain, args.lending_protocol, args.private_key, args.args_filename)
+        deploy_modules_provider(args.chain, args.lending_protocol, args.private_key, args.args_filename)
+        deploy_ltv(args.chain, args.lending_protocol, args.private_key, args.args_filename)
+        deploy_whitelist_registry(args.chain, args.lending_protocol, args.private_key, args.args_filename, CONTRACTS.LTV)
+        deploy_vault_balance_as_lending_connector(args.chain, args.lending_protocol, args.private_key, args.args_filename)
+        deploy_constant_slippage_connector(args.chain, args.lending_protocol, args.private_key, args.args_filename)
+        upgrade_ghost(args.chain, args.lending_protocol, args.private_key, args.args_filename)
 
 
 if __name__ == "__main__":
