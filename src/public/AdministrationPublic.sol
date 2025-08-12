@@ -116,11 +116,12 @@ abstract contract AdministrationPublic is
         _setMaxSafeLTV(uint128(Constants.LTV_DIVIDER));
 
         // round up to repay all assets
-        uint256 realBorrowAssets = lendingConnector.getRealBorrowAssets(false, connectorGetterData);
+        bytes memory _lendingConnectorGetterData = lendingConnectorGetterData;
+        uint256 realBorrowAssets = lendingConnector.getRealBorrowAssets(false, _lendingConnectorGetterData);
 
         require(closeAmountBorrow >= realBorrowAssets, ImpossibleToCoverDeleverage(realBorrowAssets, closeAmountBorrow));
 
-        uint256 collateralAssets = lendingConnector.getRealCollateralAssets(false, connectorGetterData);
+        uint256 collateralAssets = lendingConnector.getRealCollateralAssets(false, _lendingConnectorGetterData);
 
         uint256 collateralToTransfer = realBorrowAssets.mulDivDown(
             oracleConnector.getPriceBorrowOracle(), oracleConnector.getPriceCollateralOracle()
@@ -140,7 +141,7 @@ abstract contract AdministrationPublic is
             collateralToken.transfer(msg.sender, collateralToTransfer);
         }
         isVaultDeleveraged = true;
-        connectorGetterData = "";
+        lendingConnectorGetterData = "";
     }
 
     function updateEmergencyDeleverager(address newEmergencyDeleverager) external onlyOwner {

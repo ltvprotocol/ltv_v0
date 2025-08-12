@@ -73,5 +73,6 @@ abstract contract LTVState {
     address public guardian;
     address public emergencyDeleverager;
 
-    bytes internal connectorGetterData;
+    bytes internal lendingConnectorGetterData;
+
 }

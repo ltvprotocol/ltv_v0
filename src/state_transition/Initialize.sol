@@ -40,7 +40,7 @@ abstract contract Initialize is AdmistrationSetters, OwnableUpgradeable {
         lastSeenTokenPrice = 10 ** 18;
 
         (bool success,) = address(lendingConnector).delegatecall(
-            abi.encodeCall(ILendingConnector.initializeProtocol, (initData.lendingConnectorData))
+            abi.encodeCall(ILendingConnector.initializeLendingConnectorData, (initData.lendingConnectorData))
         );
         require(success, IInitError.FaildedToInitialize(initData.lendingConnectorData));
     }

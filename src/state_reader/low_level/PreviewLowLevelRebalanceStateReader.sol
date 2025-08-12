@@ -8,11 +8,11 @@ contract PreviewLowLevelRebalanceStateReader is MaxGrowthFeeStateReader {
     function previewLowLevelRebalanceState() internal view returns (PreviewLowLevelRebalanceState memory) {
         MaxGrowthFeeState memory maxGrowthFeeState = maxGrowthFeeState();
         ILendingConnector _lendingConnector = getLendingConnector();
-
+        bytes memory _lendingConnectorGetterData = lendingConnectorGetterData;
         return PreviewLowLevelRebalanceState({
             maxGrowthFeeState: maxGrowthFeeState,
-            depositRealBorrowAssets: _lendingConnector.getRealBorrowAssets(true, connectorGetterData),
-            depositRealCollateralAssets: _lendingConnector.getRealCollateralAssets(true, connectorGetterData),
+            depositRealBorrowAssets: _lendingConnector.getRealBorrowAssets(true, _lendingConnectorGetterData),
+            depositRealCollateralAssets: _lendingConnector.getRealCollateralAssets(true, _lendingConnectorGetterData),
             targetLTV: targetLTV,
             blockNumber: block.number,
             startAuction: startAuction
