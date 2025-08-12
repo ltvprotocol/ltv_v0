@@ -48,6 +48,11 @@ abstract contract Initialize is AdmistrationSetters, OwnableUpgradeable {
             abi.encodeCall(IOracleConnector.initializeOracleConnectorData, (initData.oracleConnectorData))
         );
         require(success, IInitError.FaildedToInitializeOracleConnector(initData.oracleConnectorData));
+
+        (success,) = address(slippageProvider).delegatecall(
+            abi.encodeCall(ISlippageProvider.initializeSlippageProviderData, (initData.slippageProviderData))
+        );
+        require(success, IInitError.FaildedToInitializeSlippageProvider(initData.slippageProviderData));
         
     }
 }

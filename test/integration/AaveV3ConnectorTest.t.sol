@@ -46,7 +46,7 @@ contract AaveV3ConnectorTest is Test {
 
         aaveLendingConnector = new AaveV3Connector();
         aaveV3OracleConnector = new AaveV3OracleConnector();
-        slippageProvider = new ConstantSlippageProvider(10 ** 16, 10 ** 16, address(this));
+        slippageProvider = new ConstantSlippageProvider();
 
         ModulesState memory modulesState = ModulesState({
             administrationModule: IAdministrationModule(address(new AdministrationModule())),
@@ -82,7 +82,8 @@ contract AaveV3ConnectorTest is Test {
             governor: address(this),
             emergencyDeleverager: address(this),
             lendingConnectorData: abi.encode(""),
-            oracleConnectorData: abi.encode(WSTETH, WETH)
+            oracleConnectorData: "",
+            slippageProviderData: abi.encode(10 ** 16, 10 ** 16)
         });
 
         ltv = new LTV();

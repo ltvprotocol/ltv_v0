@@ -264,6 +264,8 @@ interface ILTV is
 
     function oracleConnectorGetterData() external view returns (bytes memory);
 
+    function slippageProviderGetterData() external view returns (bytes memory);
+
     event Initialized(uint64 version);
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 

@@ -83,7 +83,7 @@ contract BaseTest is Test {
 
         lendingProtocol = new MockDummyLending(init.owner);
         oracle = IDummyOracle(new DummyOracle());
-        slippageProvider = new ConstantSlippageProvider(init.collateralSlippage, init.borrowSlippage, init.owner);
+        slippageProvider = new ConstantSlippageProvider();
         {
             ModulesState memory modulesState = ModulesState({
                 administrationModule: IAdministrationModule(address(new AdministrationModule())),
@@ -120,7 +120,8 @@ contract BaseTest is Test {
                 governor: init.governor,
                 emergencyDeleverager: init.emergencyDeleverager,
                 lendingConnectorData: "",
-                oracleConnectorData: abi.encode(address(collateralToken), address(borrowToken))
+                oracleConnectorData: "",
+                slippageProviderData: abi.encode(init.collateralSlippage, init.borrowSlippage)
             });
 
             ltv = new DummyLTV();

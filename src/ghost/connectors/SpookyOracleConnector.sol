@@ -22,7 +22,7 @@ contract SpookyOracleConnector is LTVState, IOracleConnector {
         return ORACLE.getAssetPrice(collateralAsset);
     }
 
-    function initializeOracleConnectorData(bytes calldata oracleConnectorData) external {
-        oracleConnectorGetterData = oracleConnectorData;
+    function initializeOracleConnectorData(bytes calldata) external {
+        oracleConnectorGetterData = abi.encode(address(collateralToken), address(borrowToken));
     }
 }

@@ -29,4 +29,5 @@ struct StateInitData {
     address emergencyDeleverager;
     bytes lendingConnectorData;
     bytes oracleConnectorData;
+    bytes slippageProviderData;
 }

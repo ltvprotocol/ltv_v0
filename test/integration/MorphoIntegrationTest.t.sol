@@ -57,7 +57,7 @@ contract MorphoIntegrationTest is Test {
 
         morphoLendingConnector = new MorphoConnector();
         morphoOracleConnector = new MorphoOracleConnector(IMorphoOracle(MORPHO_ORACLE));
-        slippageProvider = new ConstantSlippageProvider(10 ** 16, 10 ** 16, address(this));
+        slippageProvider = new ConstantSlippageProvider();
 
         weth = IERC20(WETH);
         wsteth = IERC20(WSTETH);
@@ -96,7 +96,8 @@ contract MorphoIntegrationTest is Test {
             governor: address(this),
             emergencyDeleverager: address(this),
             lendingConnectorData: abi.encode(MORPHO_ORACLE, IRM, 945000000000000000, keccak256(abi.encode(marketParams))),
-            oracleConnectorData: ""
+            oracleConnectorData: "",
+            slippageProviderData: abi.encode(10 ** 16, 10 ** 16)
         });
 
         ltv = new LTV();
