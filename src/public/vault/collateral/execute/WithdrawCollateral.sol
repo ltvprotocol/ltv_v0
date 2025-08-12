@@ -99,7 +99,7 @@ abstract contract WithdrawCollateral is
 
         transferCollateralToken(receiver, assets);
 
-        emit Withdraw(msg.sender, receiver, owner, assets, shares);
+        emit WithdrawCollateral(msg.sender, receiver, owner, assets, shares);
 
         return shares;
     }
