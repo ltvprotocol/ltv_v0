@@ -7,6 +7,7 @@ import "./Lending.sol";
 import "src/modifiers/FunctionStopperModifier.sol";
 import "src/events/ILowLevelRebalanceEvent.sol";
 import "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
+
 abstract contract ExecuteLowLevelRebalance is
     FunctionStopperModifier,
     ERC20,
@@ -15,7 +16,7 @@ abstract contract ExecuteLowLevelRebalance is
     ILowLevelRebalanceEvent
 {
     using SafeERC20 for IERC20;
-    
+
     function executeLowLevelRebalance(
         int256 deltaRealCollateralAsset,
         int256 deltaRealBorrowAssets,

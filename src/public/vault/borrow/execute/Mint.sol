@@ -26,7 +26,7 @@ abstract contract Mint is
 {
     using uMulDiv for uint256;
     using SafeERC20 for IERC20;
-    
+
     function mint(uint256 shares, address receiver) external isFunctionAllowed nonReentrant returns (uint256 assets) {
         MaxDepositMintBorrowVaultState memory state = maxDepositMintBorrowVaultState();
         MaxDepositMintBorrowVaultData memory data = maxDepositMintStateToData(state);

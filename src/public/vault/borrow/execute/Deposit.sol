@@ -26,7 +26,7 @@ abstract contract Deposit is
 {
     using uMulDiv for uint256;
     using SafeERC20 for IERC20;
-    
+
     function deposit(uint256 assets, address receiver) external isFunctionAllowed nonReentrant returns (uint256) {
         MaxDepositMintBorrowVaultState memory state = maxDepositMintBorrowVaultState();
         MaxDepositMintBorrowVaultData memory data = maxDepositMintStateToData(state);

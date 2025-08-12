@@ -6,7 +6,7 @@ import "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 
 abstract contract TransferFromProtocol is WhitelistModifier {
     using SafeERC20 for IERC20;
-    
+
     function transferBorrowToken(address to, uint256 amount) internal isReceiverWhitelisted(to) {
         borrowToken.safeTransfer(to, amount);
     }

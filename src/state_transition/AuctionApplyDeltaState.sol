@@ -8,6 +8,7 @@ import "src/modifiers/FunctionStopperModifier.sol";
 import "src/events/IAuctionEvent.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 import "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
+
 abstract contract AuctionApplyDeltaState is
     Lending,
     TransferFromProtocol,
@@ -16,7 +17,7 @@ abstract contract AuctionApplyDeltaState is
     IAuctionEvent
 {
     using SafeERC20 for IERC20;
-    
+
     function applyDeltaState(DeltaAuctionState memory deltaState) internal {
         futureBorrowAssets += deltaState.deltaFutureBorrowAssets;
         futureCollateralAssets += deltaState.deltaFutureCollateralAssets;
