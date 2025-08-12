@@ -2,26 +2,27 @@
 pragma solidity ^0.8.27;
 
 import "../../interfaces/IOracleConnector.sol";
-import "forge-std/interfaces/IERC20.sol";
+import "../../states/LTVState.sol";
 import "../spooky/ISpookyOracle.sol";
 
-contract SpookyOracleConnector is IOracleConnector {
+contract SpookyOracleConnector is LTVState, IOracleConnector {
     ISpookyOracle public immutable ORACLE;
 
-    IERC20 public immutable COLLATERAL_TOKEN;
-    IERC20 public immutable BORROW_TOKEN;
-
-    constructor(IERC20 _collateralToken, IERC20 _borrowToken, ISpookyOracle _oracle) {
-        COLLATERAL_TOKEN = _collateralToken;
-        BORROW_TOKEN = _borrowToken;
+    constructor(ISpookyOracle _oracle) {
         ORACLE = _oracle;
     }
 
-    function getPriceBorrowOracle() external view returns (uint256) {
-        return ORACLE.getAssetPrice(address(BORROW_TOKEN));
+    function getPriceBorrowOracle(bytes calldata oracleConnectorGetterData) external view returns (uint256) {
+        (, address borrowAsset) = abi.decode(oracleConnectorGetterData, (address, address));
+        return ORACLE.getAssetPrice(borrowAsset);
     }
 
-    function getPriceCollateralOracle() external view returns (uint256) {
-        return ORACLE.getAssetPrice(address(COLLATERAL_TOKEN));
+    function getPriceCollateralOracle(bytes calldata oracleConnectorGetterData) external view returns (uint256) {
+        (address collateralAsset,) = abi.decode(oracleConnectorGetterData, (address, address));
+        return ORACLE.getAssetPrice(collateralAsset);
+    }
+
+    function initializeOracleConnectorData(bytes calldata oracleConnectorData) external {
+        oracleConnectorGetterData = oracleConnectorData;
     }
 }

@@ -95,7 +95,8 @@ contract MorphoIntegrationTest is Test {
             guardian: address(this),
             governor: address(this),
             emergencyDeleverager: address(this),
-            lendingConnectorData: abi.encode(MORPHO_ORACLE, IRM, 945000000000000000, keccak256(abi.encode(marketParams)))
+            lendingConnectorData: abi.encode(MORPHO_ORACLE, IRM, 945000000000000000, keccak256(abi.encode(marketParams))),
+            oracleConnectorData: ""
         });
 
         ltv = new LTV();
@@ -214,8 +215,8 @@ contract MorphoIntegrationTest is Test {
         assertEq(address(ltv.borrowToken()), WETH);
         assertEq(address(ltv.collateralToken()), WSTETH);
 
-        uint256 collateralPrice = morphoOracleConnector.getPriceCollateralOracle();
-        uint256 borrowPrice = morphoOracleConnector.getPriceBorrowOracle();
+        uint256 collateralPrice = morphoOracleConnector.getPriceCollateralOracle(ltv.oracleConnectorGetterData());
+        uint256 borrowPrice = morphoOracleConnector.getPriceBorrowOracle(ltv.oracleConnectorGetterData());
         assertGt(collateralPrice, 0);
         assertEq(borrowPrice, 1e18);
 

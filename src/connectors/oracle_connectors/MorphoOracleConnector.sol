@@ -11,11 +11,13 @@ contract MorphoOracleConnector is IOracleConnector {
         ORACLE = _oracle;
     }
 
-    function getPriceCollateralOracle() external view returns (uint256) {
+    function getPriceCollateralOracle(bytes calldata) external view returns (uint256) {
         return ORACLE.price() / 10 ** 18;
     }
 
-    function getPriceBorrowOracle() external pure returns (uint256) {
+    function getPriceBorrowOracle(bytes calldata) external pure returns (uint256) {
         return 10 ** 18;
     }
+
+    function initializeOracleConnectorData(bytes calldata) external {}
 }

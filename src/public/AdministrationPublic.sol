@@ -123,8 +123,10 @@ abstract contract AdministrationPublic is
 
         uint256 collateralAssets = lendingConnector.getRealCollateralAssets(false, _lendingConnectorGetterData);
 
+        bytes memory _oracleConnectorGetterData = oracleConnectorGetterData;
+
         uint256 collateralToTransfer = realBorrowAssets.mulDivDown(
-            oracleConnector.getPriceBorrowOracle(), oracleConnector.getPriceCollateralOracle()
+            oracleConnector.getPriceBorrowOracle(_oracleConnectorGetterData), oracleConnector.getPriceCollateralOracle(_oracleConnectorGetterData)
         );
 
         collateralToTransfer +=

@@ -2,5 +2,7 @@
 pragma solidity ^0.8.28;
 
 interface IInitError {
-    error FaildedToInitialize(bytes data);
+    error FaildedToInitializeLendingConnector(bytes data);
+    error FaildedToInitializeOracleConnector(bytes data);
+    error FaildedToInitializeSlippageProvider(bytes data);
 }

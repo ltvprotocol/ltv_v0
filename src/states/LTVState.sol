@@ -73,6 +73,7 @@ abstract contract LTVState {
     address public guardian;
     address public emergencyDeleverager;
 
-    bytes internal lendingConnectorGetterData;
+    bytes public lendingConnectorGetterData;
+    bytes public oracleConnectorGetterData;
 
 }

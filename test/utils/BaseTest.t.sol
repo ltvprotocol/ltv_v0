@@ -95,7 +95,7 @@ contract BaseTest is Test {
                 initializeModule: IInitializeModule(address(new InitializeModule()))
             });
             modulesProvider = new ModulesProvider(modulesState);
-            oracleConnector = new DummyOracleConnector(collateralToken, borrowToken, oracle);
+            oracleConnector = new DummyOracleConnector(oracle);
             lendingConnector = new DummyLendingConnector(collateralToken, borrowToken, lendingProtocol);
 
             StateInitData memory initData = StateInitData({
@@ -119,7 +119,8 @@ contract BaseTest is Test {
                 guardian: init.guardian,
                 governor: init.governor,
                 emergencyDeleverager: init.emergencyDeleverager,
-                lendingConnectorData: ""
+                lendingConnectorData: "",
+                oracleConnectorData: abi.encode(address(collateralToken), address(borrowToken))
             });
 
             ltv = new DummyLTV();

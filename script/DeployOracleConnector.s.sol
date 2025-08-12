@@ -9,12 +9,10 @@ import "../src/ghost/connectors/SpookyOracleConnector.sol";
 contract DeploySpookyOracleConnector is Script {
     function run() external {
         address spookyOracle = vm.envAddress("SPOOKY_ORACLE");
-        address collateralToken = vm.envAddress("COLLATERAL_TOKEN");
-        address borrowToken = vm.envAddress("BORROW_TOKEN");
 
         vm.startBroadcast();
         SpookyOracleConnector connector =
-            new SpookyOracleConnector(IERC20(collateralToken), IERC20(borrowToken), ISpookyOracle(spookyOracle));
+            new SpookyOracleConnector(ISpookyOracle(spookyOracle));
         vm.stopBroadcast();
 
         console.log("Spooky oracle connector address: ", address(connector));

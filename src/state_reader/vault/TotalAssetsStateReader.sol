@@ -9,6 +9,7 @@ contract TotalAssetsStateReader is GetLendingConnectorReader {
     function totalAssetsState(bool isDeposit) internal view returns (TotalAssetsState memory) {
         ILendingConnector _lendingConnector = getLendingConnector();
         bytes memory _lendingConnectorGetterData = lendingConnectorGetterData;
+        bytes memory _oracleConnectorGetterData = oracleConnectorGetterData;
         return TotalAssetsState({
             // default behavior - don't overestimate our assets
             realCollateralAssets: _lendingConnector.getRealCollateralAssets(isDeposit, _lendingConnectorGetterData),
@@ -18,8 +19,8 @@ contract TotalAssetsStateReader is GetLendingConnectorReader {
                 futureCollateralAssets: futureCollateralAssets,
                 futureRewardBorrowAssets: futureRewardBorrowAssets,
                 futureRewardCollateralAssets: futureRewardCollateralAssets,
-                borrowPrice: oracleConnector.getPriceBorrowOracle(),
-                collateralPrice: oracleConnector.getPriceCollateralOracle()
+                borrowPrice: oracleConnector.getPriceBorrowOracle(_oracleConnectorGetterData),
+                collateralPrice: oracleConnector.getPriceCollateralOracle(_oracleConnectorGetterData)
             })
         });
     }

@@ -11,7 +11,7 @@ contract MaxLowLevelRebalanceBorrowStateReader is GetLendingConnectorReader {
             realBorrowAssets: getLendingConnector().getRealBorrowAssets(false, lendingConnectorGetterData),
             maxTotalAssetsInUnderlying: maxTotalAssetsInUnderlying,
             targetLTV: targetLTV,
-            borrowPrice: oracleConnector.getPriceBorrowOracle()
+            borrowPrice: oracleConnector.getPriceBorrowOracle(oracleConnectorGetterData)
         });
     }
 }

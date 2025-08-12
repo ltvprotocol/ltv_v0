@@ -260,6 +260,10 @@ interface ILTV is
 
     function lastSeenTokenPrice() external view returns (uint256);
 
+    function lendingConnectorGetterData() external view returns (bytes memory);
+
+    function oracleConnectorGetterData() external view returns (bytes memory);
+
     event Initialized(uint64 version);
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 

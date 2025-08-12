@@ -42,6 +42,12 @@ abstract contract Initialize is AdmistrationSetters, OwnableUpgradeable {
         (bool success,) = address(lendingConnector).delegatecall(
             abi.encodeCall(ILendingConnector.initializeLendingConnectorData, (initData.lendingConnectorData))
         );
-        require(success, IInitError.FaildedToInitialize(initData.lendingConnectorData));
+        require(success, IInitError.FaildedToInitializeLendingConnector(initData.lendingConnectorData));
+
+        (success,) = address(oracleConnector).delegatecall(
+            abi.encodeCall(IOracleConnector.initializeOracleConnectorData, (initData.oracleConnectorData))
+        );
+        require(success, IInitError.FaildedToInitializeOracleConnector(initData.oracleConnectorData));
+        
     }
 }

@@ -7,13 +7,15 @@ import "../../src/interfaces/IOracleConnector.sol";
 contract SimpleMockOracleConnector is IOracleConnector {
     error MockOracleError();
 
-    function getPriceCollateralOracle() external pure override returns (uint256) {
+    function getPriceCollateralOracle(bytes calldata) external pure override returns (uint256) {
         revert MockOracleError();
     }
 
-    function getPriceBorrowOracle() external pure override returns (uint256) {
+    function getPriceBorrowOracle(bytes calldata) external pure override returns (uint256) {
         revert MockOracleError();
     }
+
+    function initializeOracleConnectorData(bytes calldata) external {}
 }
 
 contract SetOracleConnectorTest is BaseTest {

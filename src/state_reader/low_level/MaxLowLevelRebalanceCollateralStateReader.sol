@@ -15,7 +15,7 @@ contract MaxLowLevelRebalanceCollateralStateReader is GetLendingConnectorReader 
             realCollateralAssets: getLendingConnector().getRealCollateralAssets(true, lendingConnectorGetterData),
             maxTotalAssetsInUnderlying: maxTotalAssetsInUnderlying,
             targetLTV: targetLTV,
-            collateralPrice: oracleConnector.getPriceCollateralOracle()
+            collateralPrice: oracleConnector.getPriceCollateralOracle(oracleConnectorGetterData)
         });
     }
 }

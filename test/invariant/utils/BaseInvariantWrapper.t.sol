@@ -141,8 +141,8 @@ contract BaseInvariantWrapper is Test {
         _initialRealCollateral = int256(ltv.getRealCollateralAssets(false));
 
         // Calculate current rewards value in underlying asset terms
-        int256 borrowPrice = int256(DummyOracleConnector(ltv.oracleConnector()).getPriceBorrowOracle());
-        int256 collateralPrice = int256(DummyOracleConnector(ltv.oracleConnector()).getPriceCollateralOracle());
+        int256 borrowPrice = int256(DummyOracleConnector(ltv.oracleConnector()).getPriceBorrowOracle(ltv.oracleConnectorGetterData()));
+        int256 collateralPrice = int256(DummyOracleConnector(ltv.oracleConnector()).getPriceCollateralOracle(ltv.oracleConnectorGetterData()));
         _initialRewardsValue = (
             ltv.futureRewardBorrowAssets() * borrowPrice - ltv.futureRewardCollateralAssets() * collateralPrice
         ) / int256(Constants.ORACLE_DIVIDER);
@@ -214,8 +214,8 @@ contract BaseInvariantWrapper is Test {
 
         // Invariant 3: Check for auction rewards distribution
         // Calculate current rewards value
-        int256 borrowPrice = int256(DummyOracleConnector(ltv.oracleConnector()).getPriceBorrowOracle());
-        int256 collateralPrice = int256(DummyOracleConnector(ltv.oracleConnector()).getPriceCollateralOracle());
+        int256 borrowPrice = int256(DummyOracleConnector(ltv.oracleConnector()).getPriceBorrowOracle(ltv.oracleConnectorGetterData()));
+        int256 collateralPrice = int256(DummyOracleConnector(ltv.oracleConnector()).getPriceCollateralOracle(ltv.oracleConnectorGetterData()));
         int256 rewardsAfter = (
             ltv.futureRewardBorrowAssets() * borrowPrice - ltv.futureRewardCollateralAssets() * collateralPrice
         ) / int256(Constants.ORACLE_DIVIDER);
