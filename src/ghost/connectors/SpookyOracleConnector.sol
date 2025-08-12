@@ -2,7 +2,7 @@
 pragma solidity ^0.8.27;
 
 import "../../interfaces/IOracleConnector.sol";
-import "forge-std/interfaces/IERC20.sol";
+import "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import "../spooky/ISpookyOracle.sol";
 
 contract SpookyOracleConnector is IOracleConnector {

@@ -7,7 +7,7 @@ import "src/structs/state_transition/DeltaAuctionState.sol";
 import "src/modifiers/FunctionStopperModifier.sol";
 import "src/events/IAuctionEvent.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
-
+import "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 abstract contract AuctionApplyDeltaState is
     Lending,
     TransferFromProtocol,
@@ -15,6 +15,8 @@ abstract contract AuctionApplyDeltaState is
     FunctionStopperModifier,
     IAuctionEvent
 {
+    using SafeERC20 for IERC20;
+    
     function applyDeltaState(DeltaAuctionState memory deltaState) internal {
         futureBorrowAssets += deltaState.deltaFutureBorrowAssets;
         futureCollateralAssets += deltaState.deltaFutureCollateralAssets;
@@ -24,7 +26,7 @@ abstract contract AuctionApplyDeltaState is
             deltaState.deltaProtocolFutureRewardCollateralAssets + deltaState.deltaUserFutureRewardCollateralAssets;
 
         if (deltaState.deltaUserCollateralAssets < 0) {
-            collateralToken.transferFrom(msg.sender, address(this), uint256(-deltaState.deltaUserCollateralAssets));
+            collateralToken.safeTransferFrom(msg.sender, address(this), uint256(-deltaState.deltaUserCollateralAssets));
         }
         int256 supplyAmount =
             -(deltaState.deltaUserCollateralAssets + deltaState.deltaProtocolFutureRewardCollateralAssets);
@@ -39,7 +41,7 @@ abstract contract AuctionApplyDeltaState is
         }
 
         if (deltaState.deltaUserBorrowAssets > 0) {
-            borrowToken.transferFrom(msg.sender, address(this), uint256(deltaState.deltaUserBorrowAssets));
+            borrowToken.safeTransferFrom(msg.sender, address(this), uint256(deltaState.deltaUserBorrowAssets));
         }
 
         int256 repayAmount = deltaState.deltaUserBorrowAssets + deltaState.deltaProtocolFutureRewardBorrowAssets;

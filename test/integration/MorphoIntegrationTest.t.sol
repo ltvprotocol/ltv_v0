@@ -9,7 +9,7 @@ import {VaultBalanceAsLendingConnector} from
 import {IMorphoBlue} from "../../src/connectors/lending_connectors/interfaces/IMorphoBlue.sol";
 import {IMorphoOracle} from "../../src/connectors/oracle_connectors/interfaces/IMorphoOracle.sol";
 import {LTV} from "../../src/elements/LTV.sol";
-import "forge-std/interfaces/IERC20.sol";
+import "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {StateInitData} from "../../src/structs/state/StateInitData.sol";
 import {ConstantSlippageProvider} from "../../src/connectors/slippage_providers/ConstantSlippageProvider.sol";
 import {ModulesProvider, ModulesState} from "../../src/elements/ModulesProvider.sol";

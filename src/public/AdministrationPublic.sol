@@ -12,6 +12,7 @@ import "../state_transition/AdmistrationSetters.sol";
 import "../math/MaxGrowthFee.sol";
 import "../state_reader/MaxGrowthFeeStateReader.sol";
 import "../state_transition/ApplyMaxGrowthFee.sol";
+import "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 
 abstract contract AdministrationPublic is
     MaxGrowthFee,
@@ -23,6 +24,7 @@ abstract contract AdministrationPublic is
 {
     using uMulDiv for uint256;
     using sMulDiv for int256;
+    using SafeERC20 for IERC20;
 
     function setTargetLTV(uint128 value) external isFunctionAllowed onlyGovernor {
         _setTargetLTV(value);
@@ -130,14 +132,14 @@ abstract contract AdministrationPublic is
             (collateralAssets - collateralToTransfer).mulDivDown(deleverageFee, Constants.MAX_GROWTH_FEE_DIVIDER);
 
         if (realBorrowAssets != 0) {
-            borrowToken.transferFrom(msg.sender, address(this), realBorrowAssets);
+            borrowToken.safeTransferFrom(msg.sender, address(this), realBorrowAssets);
             repay(realBorrowAssets);
         }
 
         withdraw(collateralAssets);
 
         if (collateralToTransfer != 0) {
-            collateralToken.transfer(msg.sender, collateralToTransfer);
+            collateralToken.safeTransfer(msg.sender, collateralToTransfer);
         }
         isVaultDeleveraged = true;
         connectorGetterData = "";

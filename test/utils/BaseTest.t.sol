@@ -95,8 +95,11 @@ contract BaseTest is Test {
                 initializeModule: IInitializeModule(address(new InitializeModule()))
             });
             modulesProvider = new ModulesProvider(modulesState);
-            oracleConnector = new DummyOracleConnector(collateralToken, borrowToken, oracle);
-            lendingConnector = new DummyLendingConnector(collateralToken, borrowToken, lendingProtocol);
+            oracleConnector =
+                new DummyOracleConnector(IERC20(address(collateralToken)), IERC20(address(borrowToken)), oracle);
+            lendingConnector = new DummyLendingConnector(
+                IERC20(address(collateralToken)), IERC20(address(borrowToken)), lendingProtocol
+            );
 
             StateInitData memory initData = StateInitData({
                 name: "Dummy LTV",
@@ -114,7 +117,9 @@ contract BaseTest is Test {
                 maxTotalAssetsInUnderlying: init.maxTotalAssetsInUnderlying,
                 slippageProvider: slippageProvider,
                 maxDeleverageFee: init.maxDeleverageFee,
-                vaultBalanceAsLendingConnector: new VaultBalanceAsLendingConnector(collateralToken, borrowToken),
+                vaultBalanceAsLendingConnector: new VaultBalanceAsLendingConnector(
+                    IERC20(address(collateralToken)), IERC20(address(borrowToken))
+                ),
                 owner: init.owner,
                 guardian: init.guardian,
                 governor: init.governor,
