@@ -215,18 +215,18 @@ contract AaveV3ConnectorTest is Test {
 
         vm.stopPrank();
 
-        assertEq(shares, 961165048539872840);
+        assertEq(shares, 961165048543689319);
     }
 
     function test_AaveV3ConnectorMint() public {
         vm.startPrank(user);
 
-        weth.approve(address(ltv), 1040404040411684729);
+        weth.approve(address(ltv), 1040404040404040406);
         uint256 givenBorrowTokens = ltv.mint(1 ether, user);
 
         vm.stopPrank();
 
-        assertEq(givenBorrowTokens, 1040404040411684729);
+        assertEq(givenBorrowTokens, 1040404040404040406);
     }
 
     function test_AaveV3ConnectorWithdraw() public {
@@ -241,7 +241,7 @@ contract AaveV3ConnectorTest is Test {
 
         vm.stopPrank();
 
-        assertEq(shares, 999999999999830446);
+        assertEq(shares, 1000000000000000001);
     }
 
     function test_AaveV3ConnectorRedeem() public {
@@ -256,7 +256,7 @@ contract AaveV3ConnectorTest is Test {
 
         vm.stopPrank();
 
-        assertEq(assetsReceived, 1000000000000000000);
+        assertEq(assetsReceived, 999999999999999999);
     }
 
     function test_AaveV3ConnectorDepositCollateral() public {
@@ -267,7 +267,7 @@ contract AaveV3ConnectorTest is Test {
 
         vm.stopPrank();
 
-        assertEq(shares, 1171155094622822850);
+        assertEq(shares, 1171155094624127041);
     }
 
     function test_AaveV3ConnectorMintCollateral() public {
@@ -278,7 +278,7 @@ contract AaveV3ConnectorTest is Test {
 
         vm.stopPrank();
 
-        assertEq(givenCollateralToken, 853857874673156914);
+        assertEq(givenCollateralToken, 853857874665986989);
     }
 
     function test_AaveV3ConnectorWithdrawCollateral() public {
@@ -293,7 +293,7 @@ contract AaveV3ConnectorTest is Test {
 
         vm.stopPrank();
 
-        assertEq(shares, 1206289747462433525);
+        assertEq(shares, 1206289747462850855);
     }
 
     function test_AaveV3ConnectorRedeemCollateral() public {
@@ -308,6 +308,6 @@ contract AaveV3ConnectorTest is Test {
 
         vm.stopPrank();
 
-        assertEq(assetsReceived, 828988227831055328);
+        assertEq(assetsReceived, 828988227831055327);
     }
 }

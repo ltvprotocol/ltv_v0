@@ -15,10 +15,10 @@ contract AaveV3OracleConnector is IOracleConnector {
     }
 
     function getPriceCollateralOracle() external view returns (uint256) {
-        return ORACLE.getAssetPrice(COLLATERAL_ASSET);
+        return ORACLE.getAssetPrice(COLLATERAL_ASSET) * 10**10;
     }
 
     function getPriceBorrowOracle() external view returns (uint256) {
-        return ORACLE.getAssetPrice(BORROW_ASSET);
+        return ORACLE.getAssetPrice(BORROW_ASSET) * 10**10;
     }
 }
