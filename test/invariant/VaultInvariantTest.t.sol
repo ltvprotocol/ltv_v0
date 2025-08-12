@@ -74,7 +74,6 @@ contract VaultInvariantTest is BaseInvariantTest {
      * It's considered that if invariant test fails here, then something's wrong.
      */
     function afterInvariant() public view override {
-        return;
         // Call parent to check max growth fee
         super.afterInvariant();
 
