@@ -2,7 +2,6 @@
 pragma solidity ^0.8.28;
 
 import "src/structs/state/StateInitData.sol";
-import "src/errors/IInitError.sol";
 import "./AdmistrationSetters.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
@@ -21,10 +20,6 @@ abstract contract Initialize is AdmistrationSetters, OwnableUpgradeable {
         _setTargetLTV(initData.targetLTV);
         _setMinProfitLTV(initData.minProfitLTV);
 
-        _setLendingConnector(initData.lendingConnector);
-        _setOracleConnector(initData.oracleConnector);
-        _setSlippageProvider(initData.slippageProvider);
-
         _setFeeCollector(initData.feeCollector);
         _setMaxGrowthFee(initData.maxGrowthFee);
         _setMaxDeleverageFee(initData.maxDeleverageFee);
@@ -39,20 +34,8 @@ abstract contract Initialize is AdmistrationSetters, OwnableUpgradeable {
 
         lastSeenTokenPrice = 10 ** 18;
 
-        (bool success,) = address(lendingConnector).delegatecall(
-            abi.encodeCall(ILendingConnector.initializeLendingConnectorData, (initData.lendingConnectorData))
-        );
-        require(success, IInitError.FaildedToInitializeLendingConnector(initData.lendingConnectorData));
-
-        (success,) = address(oracleConnector).delegatecall(
-            abi.encodeCall(IOracleConnector.initializeOracleConnectorData, (initData.oracleConnectorData))
-        );
-        require(success, IInitError.FaildedToInitializeOracleConnector(initData.oracleConnectorData));
-
-        (success,) = address(slippageProvider).delegatecall(
-            abi.encodeCall(ISlippageProvider.initializeSlippageProviderData, (initData.slippageProviderData))
-        );
-        require(success, IInitError.FaildedToInitializeSlippageProvider(initData.slippageProviderData));
-        
+        _setLendingConnector(initData.lendingConnector, initData.lendingConnectorData);
+        _setOracleConnector(initData.oracleConnector, initData.oracleConnectorData);
+        _setSlippageProvider(initData.slippageProvider, initData.slippageProviderData);
     }
 }

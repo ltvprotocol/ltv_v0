@@ -60,8 +60,8 @@ abstract contract AdministrationPublic is
         _setWhitelistRegistry(value);
     }
 
-    function setSlippageProvider(ISlippageProvider _slippageProvider) external isFunctionAllowed onlyGovernor {
-        _setSlippageProvider(_slippageProvider);
+    function setSlippageProvider(ISlippageProvider _slippageProvider, bytes memory slippageProviderData) external isFunctionAllowed onlyGovernor {
+        _setSlippageProvider(_slippageProvider, slippageProviderData);
     }
 
     function allowDisableFunctions(bytes4[] memory signatures, bool isDisabled) external onlyGuardian {
@@ -80,12 +80,12 @@ abstract contract AdministrationPublic is
         _setIsWithdrawDisabled(value);
     }
 
-    function setLendingConnector(ILendingConnector _lendingConnector) external onlyOwner {
-        _setLendingConnector(_lendingConnector);
+    function setLendingConnector(ILendingConnector _lendingConnector, bytes memory lendingConnectorData) external onlyOwner {
+        _setLendingConnector(_lendingConnector, lendingConnectorData);
     }
 
-    function setOracleConnector(IOracleConnector _oracleConnector) external onlyOwner {
-        _setOracleConnector(_oracleConnector);
+    function setOracleConnector(IOracleConnector _oracleConnector, bytes memory oracleConnectorData) external onlyOwner {
+        _setOracleConnector(_oracleConnector, oracleConnectorData);
     }
 
     function setVaultBalanceAsLendingConnector(address _vaultBalanceAsLendingConnector) external onlyOwner {

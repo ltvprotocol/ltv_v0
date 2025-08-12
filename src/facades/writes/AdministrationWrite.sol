@@ -41,8 +41,8 @@ abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeab
         _delegate(address(modules.administrationModule()), abi.encode(value));
     }
 
-    function setSlippageProvider(address _slippageProvider) external {
-        _delegate(address(modules.administrationModule()), abi.encode(_slippageProvider));
+    function setSlippageProvider(address _slippageProvider, bytes memory slippageProviderData) external {
+        _delegate(address(modules.administrationModule()), abi.encode(_slippageProvider, slippageProviderData));
     }
 
     function allowDisableFunctions(bytes4[] memory signatures, bool isDisabled) external {
@@ -57,12 +57,12 @@ abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeab
         _delegate(address(modules.administrationModule()), abi.encode(value));
     }
 
-    function setLendingConnector(address _lendingConnector) external {
-        _delegate(address(modules.administrationModule()), abi.encode(_lendingConnector));
+    function setLendingConnector(address _lendingConnector, bytes memory lendingConnectorData) external {
+        _delegate(address(modules.administrationModule()), abi.encode(_lendingConnector, lendingConnectorData));
     }
 
-    function setOracleConnector(address _oracleConnector) external {
-        _delegate(address(modules.administrationModule()), abi.encode(_oracleConnector));
+    function setOracleConnector(address _oracleConnector, bytes memory oracleConnectorData) external {
+        _delegate(address(modules.administrationModule()), abi.encode(_oracleConnector, oracleConnectorData));
     }
 
     function deleverageAndWithdraw(uint256 closeAmountBorrow, uint256 deleverageFee) external {

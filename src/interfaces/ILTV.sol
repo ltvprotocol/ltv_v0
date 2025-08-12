@@ -190,7 +190,7 @@ interface ILTV is
 
     function setIsWithdrawDisabled(bool value) external;
 
-    function setLendingConnector(address _lendingConnector) external;
+    function setLendingConnector(address _lendingConnector, bytes memory lendingConnectorData) external;
 
     function setMaxDeleverageFee(uint256 value) external;
 
@@ -202,9 +202,9 @@ interface ILTV is
 
     function setMinProfitLTV(uint128 value) external;
 
-    function setOracleConnector(address _oracleConnector) external;
+    function setOracleConnector(address _oracleConnector, bytes memory oracleConnectorData) external;
 
-    function setSlippageProvider(address _slippageProvider) external;
+    function setSlippageProvider(address _slippageProvider, bytes memory slippageProviderData) external;
 
     function setTargetLTV(uint128 value) external;
 

@@ -65,11 +65,15 @@ contract AdmistrationSetters is LTVState, IAdministrationErrors, IAdministration
         emit WhitelistRegistryUpdated(oldAddress, address(value));
     }
 
-    function _setSlippageProvider(ISlippageProvider _slippageProvider) internal {
+    function _setSlippageProvider(ISlippageProvider _slippageProvider, bytes memory slippageProviderData) internal {
         require(address(_slippageProvider) != address(0), ZeroSlippageProvider());
         address oldAddress = address(slippageProvider);
         slippageProvider = _slippageProvider;
-        emit SlippageProviderUpdated(oldAddress, address(_slippageProvider));
+        (bool success,) = address(slippageProvider).delegatecall(
+            abi.encodeCall(ISlippageProvider.initializeSlippageProviderData, (slippageProviderData))
+        );
+        require(success, FailedToSetSlippageProvider(address(_slippageProvider), slippageProviderData));
+        emit SlippageProviderUpdated(oldAddress, slippageProviderData, address(_slippageProvider), slippageProviderData);
     }
 
     function _allowDisableFunctions(bytes4[] memory signatures, bool isDisabled) internal {
@@ -103,16 +107,24 @@ contract AdmistrationSetters is LTVState, IAdministrationErrors, IAdministration
         emit IsWithdrawDisabledChanged(oldValue, value);
     }
 
-    function _setLendingConnector(ILendingConnector _lendingConnector) internal {
+    function _setLendingConnector(ILendingConnector _lendingConnector, bytes memory lendingConnectorData) internal {
         address oldAddress = address(lendingConnector);
         lendingConnector = _lendingConnector;
-        emit LendingConnectorUpdated(oldAddress, address(_lendingConnector));
+        (bool success,) = address(lendingConnector).delegatecall(
+            abi.encodeCall(ILendingConnector.initializeLendingConnectorData, (lendingConnectorData))
+        );
+        require(success, FailedToSetLendingConnector(address(_lendingConnector), lendingConnectorData));
+        emit LendingConnectorUpdated(oldAddress, lendingConnectorData, address(_lendingConnector), lendingConnectorData);
     }
 
-    function _setOracleConnector(IOracleConnector _oracleConnector) internal {
+    function _setOracleConnector(IOracleConnector _oracleConnector, bytes memory oracleConnectorData) internal {
         address oldAddress = address(oracleConnector);
         oracleConnector = _oracleConnector;
-        emit OracleConnectorUpdated(oldAddress, address(_oracleConnector));
+        (bool success,) = address(oracleConnector).delegatecall(
+            abi.encodeCall(IOracleConnector.initializeOracleConnectorData, (oracleConnectorData))
+        );
+        require(success, FailedToSetOracleConnector(address(_oracleConnector), oracleConnectorData));
+        emit OracleConnectorUpdated(oldAddress, oracleConnectorData, address(_oracleConnector), oracleConnectorData);
     }
 
     function _updateEmergencyDeleverager(address newEmergencyDeleverager) internal {

@@ -12,13 +12,13 @@ contract SetSlippageProviderTest is BaseTest {
         vm.assume(user != defaultData.governor);
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
-        ltv.setSlippageProvider(address(0));
+        ltv.setSlippageProvider(address(0), abi.encode(10 ** 16, 10 ** 16));
     }
 
     function test_checkSlot(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
         vm.startPrank(defaultData.governor);
         ConstantSlippageProvider provider = new ConstantSlippageProvider();
-        ltv.setSlippageProvider(address(provider));
+        ltv.setSlippageProvider(address(provider), abi.encode(10 ** 16, 10 ** 16));
         vm.stopPrank();
 
         assertEq(address(ltv.slippageProvider()), address(provider));
@@ -36,7 +36,7 @@ contract SetSlippageProviderTest is BaseTest {
         uint256 newBorrowSlippage = 25 * 10 ** 15;
         ConstantSlippageProvider provider =
             new ConstantSlippageProvider();
-        ltv.setSlippageProvider(address(provider));
+        ltv.setSlippageProvider(address(provider), abi.encode(newCollateralSlippage, newBorrowSlippage));
         vm.stopPrank();
 
         assertNotEq(ISlippageProvider(ltv.slippageProvider()).collateralSlippage(ltv.slippageProviderGetterData()), initialCollateralSlippage);
@@ -51,6 +51,6 @@ contract SetSlippageProviderTest is BaseTest {
     {
         vm.startPrank(defaultData.governor);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.ZeroSlippageProvider.selector));
-        ltv.setSlippageProvider(address(0));
+        ltv.setSlippageProvider(address(0), abi.encode(10 ** 16, 10 ** 16));
     }
 }

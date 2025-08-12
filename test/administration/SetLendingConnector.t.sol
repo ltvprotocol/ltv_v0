@@ -51,8 +51,8 @@ contract SetLendingConnectorTest is BaseTest {
 
         vm.prank(defaultData.owner);
         vm.expectEmit(true, true, true, true, address(ltv));
-        emit IAdministrationEvents.LendingConnectorUpdated(oldLendingConnector, address(mockLendingConnector));
-        ltv.setLendingConnector(address(mockLendingConnector));
+        emit IAdministrationEvents.LendingConnectorUpdated(oldLendingConnector, "", address(mockLendingConnector), "");
+        ltv.setLendingConnector(address(mockLendingConnector), "");
 
         assertEq(address(ltv.getLendingConnector()), address(mockLendingConnector));
     }
@@ -64,7 +64,7 @@ contract SetLendingConnectorTest is BaseTest {
         mockLendingConnector = new MockLendingConnector();
 
         vm.prank(defaultData.owner);
-        ltv.setLendingConnector(address(mockLendingConnector));
+        ltv.setLendingConnector(address(mockLendingConnector), "");
 
         vm.expectRevert(UnexpectedMockGetRealCollateralAssets.selector);
         ltv.deposit(0, address(this));
@@ -82,6 +82,6 @@ contract SetLendingConnectorTest is BaseTest {
 
         vm.prank(user);
         vm.expectRevert(abi.encodeWithSelector(OwnableUpgradeable.OwnableUnauthorizedAccount.selector, user));
-        ltv.setLendingConnector(address(mockLendingConnector));
+        ltv.setLendingConnector(address(mockLendingConnector), "");
     }
 }

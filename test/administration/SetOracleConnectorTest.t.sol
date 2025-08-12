@@ -30,8 +30,8 @@ contract SetOracleConnectorTest is BaseTest {
 
         vm.prank(defaultData.owner);
         vm.expectEmit(true, true, true, true, address(ltv));
-        emit IAdministrationEvents.OracleConnectorUpdated(oldOracleConnector, address(mockOracleConnector));
-        ltv.setOracleConnector(address(mockOracleConnector));
+        emit IAdministrationEvents.OracleConnectorUpdated(oldOracleConnector, "", address(mockOracleConnector), "");
+        ltv.setOracleConnector(address(mockOracleConnector), "");
 
         assertEq(address(ltv.oracleConnector()), address(mockOracleConnector));
     }
@@ -43,7 +43,7 @@ contract SetOracleConnectorTest is BaseTest {
         mockOracleConnector = new SimpleMockOracleConnector();
 
         vm.prank(defaultData.owner);
-        ltv.setOracleConnector(address(mockOracleConnector));
+        ltv.setOracleConnector(address(mockOracleConnector), "");
 
         assertEq(address(ltv.oracleConnector()), address(mockOracleConnector));
 
@@ -71,6 +71,6 @@ contract SetOracleConnectorTest is BaseTest {
 
         vm.prank(user);
         vm.expectRevert(abi.encodeWithSelector(OwnableUpgradeable.OwnableUnauthorizedAccount.selector, user));
-        ltv.setOracleConnector(address(mockOracleConnector));
+        ltv.setOracleConnector(address(mockOracleConnector), "");
     }
 }
