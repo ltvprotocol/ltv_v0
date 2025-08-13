@@ -6,14 +6,14 @@ interface IAdministrationEvents {
     event GuardianUpdated(address oldValue, address newValue);
     event GovernorUpdated(address oldValue, address newValue);
 
-    event TargetLTVChanged(uint128 oldValue, uint128 newValue);
-    event MaxSafeLTVChanged(uint128 oldValue, uint128 newValue);
-    event MinProfitLTVChanged(uint128 oldValue, uint128 newValue);
+    event TargetLTVChanged(uint16 oldDividend, uint16 oldDivider, uint16 newDividend, uint16 newDivider);
+    event MaxSafeLTVChanged(uint16 oldDividend, uint16 oldDivider, uint16 newDividend, uint16 newDivider);
+    event MinProfitLTVChanged(uint16 oldDividend, uint16 oldDivider, uint16 newDividend, uint16 newDivider);
 
     event WhitelistRegistryUpdated(address oldValue, address newValue);
     event MaxTotalAssetsInUnderlyingChanged(uint256 oldValue, uint256 newValue);
-    event MaxDeleverageFeeChanged(uint256 oldValue, uint256 newValue);
-    event MaxGrowthFeeChanged(uint256 oldValue, uint256 newValue);
+    event MaxDeleverageFeeChanged(uint16 oldDividend, uint16 oldDivider, uint16 newDividend, uint16 newDivider);
+    event MaxGrowthFeeChanged(uint16 oldDividend, uint16 oldDivider, uint16 newDividend, uint16 newDivider);
     event IsWhitelistActivatedChanged(bool oldValue, bool newValue);
     event IsDepositDisabledChanged(bool oldValue, bool newValue);
     event IsWithdrawDisabledChanged(bool oldValue, bool newValue);
