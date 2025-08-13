@@ -11,8 +11,7 @@ contract DeploySpookyOracleConnector is Script {
         address spookyOracle = vm.envAddress("SPOOKY_ORACLE");
 
         vm.startBroadcast();
-        SpookyOracleConnector connector =
-            new SpookyOracleConnector(ISpookyOracle(spookyOracle));
+        SpookyOracleConnector connector = new SpookyOracleConnector(ISpookyOracle(spookyOracle));
         vm.stopBroadcast();
 
         console.log("Spooky oracle connector address: ", address(connector));

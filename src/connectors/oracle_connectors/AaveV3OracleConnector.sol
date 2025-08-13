@@ -8,7 +8,6 @@ import "../../states/LTVState.sol";
 contract AaveV3OracleConnector is LTVState, IOracleConnector {
     IAaveOracle public constant ORACLE = IAaveOracle(0x54586bE62E3c3580375aE3723C145253060Ca0C2);
 
-
     function getPriceCollateralOracle(bytes calldata oracleConnectorGetterData) external view returns (uint256) {
         (address collateralAsset,) = abi.decode(oracleConnectorGetterData, (address, address));
         return ORACLE.getAssetPrice(collateralAsset) * 10 ** 10;

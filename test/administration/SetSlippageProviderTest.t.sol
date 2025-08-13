@@ -28,21 +28,34 @@ contract SetSlippageProviderTest is BaseTest {
         public
         testWithPredefinedDefaultValues(defaultData)
     {
-        uint256 initialCollateralSlippage = ISlippageProvider(ltv.slippageProvider()).collateralSlippage(ltv.slippageProviderGetterData());
-        uint256 initialBorrowSlippage = ISlippageProvider(ltv.slippageProvider()).borrowSlippage(ltv.slippageProviderGetterData());
+        uint256 initialCollateralSlippage =
+            ISlippageProvider(ltv.slippageProvider()).collateralSlippage(ltv.slippageProviderGetterData());
+        uint256 initialBorrowSlippage =
+            ISlippageProvider(ltv.slippageProvider()).borrowSlippage(ltv.slippageProviderGetterData());
 
         vm.startPrank(defaultData.governor);
         uint256 newCollateralSlippage = 3 * 10 ** 16;
         uint256 newBorrowSlippage = 25 * 10 ** 15;
-        ConstantSlippageProvider provider =
-            new ConstantSlippageProvider();
+        ConstantSlippageProvider provider = new ConstantSlippageProvider();
         ltv.setSlippageProvider(address(provider), abi.encode(newCollateralSlippage, newBorrowSlippage));
         vm.stopPrank();
 
-        assertNotEq(ISlippageProvider(ltv.slippageProvider()).collateralSlippage(ltv.slippageProviderGetterData()), initialCollateralSlippage);
-        assertNotEq(ISlippageProvider(ltv.slippageProvider()).borrowSlippage(ltv.slippageProviderGetterData()), initialBorrowSlippage);
-        assertEq(ISlippageProvider(ltv.slippageProvider()).collateralSlippage(ltv.slippageProviderGetterData()), newCollateralSlippage);
-        assertEq(ISlippageProvider(ltv.slippageProvider()).borrowSlippage(ltv.slippageProviderGetterData()), newBorrowSlippage);
+        assertNotEq(
+            ISlippageProvider(ltv.slippageProvider()).collateralSlippage(ltv.slippageProviderGetterData()),
+            initialCollateralSlippage
+        );
+        assertNotEq(
+            ISlippageProvider(ltv.slippageProvider()).borrowSlippage(ltv.slippageProviderGetterData()),
+            initialBorrowSlippage
+        );
+        assertEq(
+            ISlippageProvider(ltv.slippageProvider()).collateralSlippage(ltv.slippageProviderGetterData()),
+            newCollateralSlippage
+        );
+        assertEq(
+            ISlippageProvider(ltv.slippageProvider()).borrowSlippage(ltv.slippageProviderGetterData()),
+            newBorrowSlippage
+        );
     }
 
     function test_failIfZeroSlippageProvider(DefaultTestData memory defaultData)

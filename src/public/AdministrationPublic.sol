@@ -60,7 +60,11 @@ abstract contract AdministrationPublic is
         _setWhitelistRegistry(value);
     }
 
-    function setSlippageProvider(ISlippageProvider _slippageProvider, bytes memory slippageProviderData) external isFunctionAllowed onlyGovernor {
+    function setSlippageProvider(ISlippageProvider _slippageProvider, bytes memory slippageProviderData)
+        external
+        isFunctionAllowed
+        onlyGovernor
+    {
         _setSlippageProvider(_slippageProvider, slippageProviderData);
     }
 
@@ -80,11 +84,17 @@ abstract contract AdministrationPublic is
         _setIsWithdrawDisabled(value);
     }
 
-    function setLendingConnector(ILendingConnector _lendingConnector, bytes memory lendingConnectorData) external onlyOwner {
+    function setLendingConnector(ILendingConnector _lendingConnector, bytes memory lendingConnectorData)
+        external
+        onlyOwner
+    {
         _setLendingConnector(_lendingConnector, lendingConnectorData);
     }
 
-    function setOracleConnector(IOracleConnector _oracleConnector, bytes memory oracleConnectorData) external onlyOwner {
+    function setOracleConnector(IOracleConnector _oracleConnector, bytes memory oracleConnectorData)
+        external
+        onlyOwner
+    {
         _setOracleConnector(_oracleConnector, oracleConnectorData);
     }
 
@@ -126,7 +136,8 @@ abstract contract AdministrationPublic is
         bytes memory _oracleConnectorGetterData = oracleConnectorGetterData;
 
         uint256 collateralToTransfer = realBorrowAssets.mulDivDown(
-            oracleConnector.getPriceBorrowOracle(_oracleConnectorGetterData), oracleConnector.getPriceCollateralOracle(_oracleConnectorGetterData)
+            oracleConnector.getPriceBorrowOracle(_oracleConnectorGetterData),
+            oracleConnector.getPriceCollateralOracle(_oracleConnectorGetterData)
         );
 
         collateralToTransfer +=

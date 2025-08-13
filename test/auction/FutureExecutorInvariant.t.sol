@@ -34,8 +34,10 @@ contract FutureExecutorInvariant is Test {
 
     function _checkFutureExecutorInvariantWithCachedState(ILTV ltv) internal view {
         bytes memory oracleConnectorGetterData = ltv.oracleConnectorGetterData();
-        int256 collateralPrice = int256(IOracleConnector(address(ltv.oracleConnector())).getPriceCollateralOracle(oracleConnectorGetterData));
-        int256 borrowPrice = int256(IOracleConnector(address(ltv.oracleConnector())).getPriceBorrowOracle(oracleConnectorGetterData));
+        int256 collateralPrice =
+            int256(IOracleConnector(address(ltv.oracleConnector())).getPriceCollateralOracle(oracleConnectorGetterData));
+        int256 borrowPrice =
+            int256(IOracleConnector(address(ltv.oracleConnector())).getPriceBorrowOracle(oracleConnectorGetterData));
 
         FutureExecutorInvariantState memory auctionState = getFutureExecutorInvariantState(ltv);
 

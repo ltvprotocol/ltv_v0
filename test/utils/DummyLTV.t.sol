@@ -39,13 +39,15 @@ contract DummyLTV is LTV, ERC20 {
     }
 
     function setCollateralSlippage(uint256 value) public {
-        (uint256 collateralSlippage, uint256 borrowSlippage) = abi.decode(slippageProviderGetterData, (uint256, uint256));
+        (uint256 collateralSlippage, uint256 borrowSlippage) =
+            abi.decode(slippageProviderGetterData, (uint256, uint256));
         collateralSlippage = value;
         slippageProviderGetterData = abi.encode(collateralSlippage, borrowSlippage);
     }
 
     function setBorrowSlippage(uint256 value) public {
-        (uint256 collateralSlippage, uint256 borrowSlippage) = abi.decode(slippageProviderGetterData, (uint256, uint256));
+        (uint256 collateralSlippage, uint256 borrowSlippage) =
+            abi.decode(slippageProviderGetterData, (uint256, uint256));
         borrowSlippage = value;
         slippageProviderGetterData = abi.encode(collateralSlippage, borrowSlippage);
     }

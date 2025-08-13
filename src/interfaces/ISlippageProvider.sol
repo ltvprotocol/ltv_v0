@@ -4,6 +4,6 @@ pragma solidity ^0.8.27;
 interface ISlippageProvider {
     function collateralSlippage(bytes calldata slippageProviderGetterData) external view returns (uint256);
     function borrowSlippage(bytes calldata slippageProviderGetterData) external view returns (uint256);
-    
+
     function initializeSlippageProviderData(bytes calldata slippageProviderData) external;
 }

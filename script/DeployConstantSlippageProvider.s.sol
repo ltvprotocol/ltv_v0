@@ -8,8 +8,7 @@ contract DeployConstantSlippageProvider is Script {
     function run() external {
         vm.startBroadcast();
 
-        ConstantSlippageProvider slippageProvider =
-            new ConstantSlippageProvider();
+        ConstantSlippageProvider slippageProvider = new ConstantSlippageProvider();
 
         console.log("ConstantSlippageProvider deployed at: ", address(slippageProvider));
 
