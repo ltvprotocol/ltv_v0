@@ -34,7 +34,7 @@ abstract contract Initialize is AdmistrationSetters, OwnableUpgradeable {
 
         auctionDuration = initData.auctionDuration;
         lastSeenTokenPrice = 10 ** 18;
-        
+
         _setLendingConnector(initData.lendingConnector, initData.lendingConnectorData);
         _setOracleConnector(initData.oracleConnector, initData.oracleConnectorData);
         _setSlippageProvider(initData.slippageProvider, initData.slippageProviderData);

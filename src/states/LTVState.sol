@@ -70,7 +70,7 @@ abstract contract LTVState {
     mapping(bytes4 => bool) public _isFunctionDisabled;
     string public name;
     string public symbol;
-    
+
     bytes public lendingConnectorGetterData;
     bytes public oracleConnectorGetterData;
     bytes public slippageProviderGetterData;
