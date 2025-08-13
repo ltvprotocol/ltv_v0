@@ -42,10 +42,6 @@ abstract contract WithdrawCollateral is
         (uint256 shares, DeltaFuture memory deltaFuture) =
             _previewWithdrawCollateral(assets, data.previewCollateralVaultData);
 
-        if (shares == 0) {
-            return 0;
-        }
-
         if (owner != msg.sender) {
             _spendAllowance(owner, msg.sender, shares);
         }

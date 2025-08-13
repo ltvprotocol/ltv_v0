@@ -33,10 +33,6 @@ abstract contract Deposit is
 
         (uint256 shares, DeltaFuture memory deltaFuture) = _previewDeposit(assets, data.previewDepositBorrowVaultData);
 
-        if (shares == 0) {
-            return 0;
-        }
-
         borrowToken.transferFrom(msg.sender, address(this), assets);
 
         applyMaxGrowthFee(

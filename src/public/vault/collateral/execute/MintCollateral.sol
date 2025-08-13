@@ -40,10 +40,6 @@ abstract contract MintCollateral is
         (uint256 assets, DeltaFuture memory deltaFuture) =
             _previewMintCollateral(shares, data.previewCollateralVaultData);
 
-        if (assets == 0) {
-            return 0;
-        }
-
         collateralToken.transferFrom(msg.sender, address(this), assets);
 
         applyMaxGrowthFee(

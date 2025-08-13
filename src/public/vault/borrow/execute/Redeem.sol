@@ -45,10 +45,6 @@ abstract contract Redeem is
         (uint256 assetsOut, DeltaFuture memory deltaFuture) =
             _previewRedeem(shares, data.previewWithdrawBorrowVaultData);
 
-        if (assetsOut == 0) {
-            return 0;
-        }
-
         applyMaxGrowthFee(
             data.previewWithdrawBorrowVaultData.supplyAfterFee, data.previewWithdrawBorrowVaultData.withdrawTotalAssets
         );

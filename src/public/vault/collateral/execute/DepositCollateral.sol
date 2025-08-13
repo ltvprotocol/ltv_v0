@@ -40,10 +40,6 @@ abstract contract DepositCollateral is
         (uint256 shares, DeltaFuture memory deltaFuture) =
             _previewDepositCollateral(assets, data.previewCollateralVaultData);
 
-        if (shares == 0) {
-            return 0;
-        }
-
         collateralToken.transferFrom(msg.sender, address(this), assets);
 
         applyMaxGrowthFee(

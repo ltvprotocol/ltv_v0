@@ -40,10 +40,6 @@ abstract contract Withdraw is
 
         (uint256 shares, DeltaFuture memory deltaFuture) = _previewWithdraw(assets, data.previewWithdrawBorrowVaultData);
 
-        if (shares == 0) {
-            return 0;
-        }
-
         if (owner != msg.sender) {
             _spendAllowance(owner, msg.sender, shares);
         }

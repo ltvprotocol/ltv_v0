@@ -46,10 +46,6 @@ abstract contract RedeemCollateral is
         (uint256 assets, DeltaFuture memory deltaFuture) =
             _previewRedeemCollateral(shares, data.previewCollateralVaultData);
 
-        if (assets == 0) {
-            return 0;
-        }
-
         applyMaxGrowthFee(
             data.previewCollateralVaultData.supplyAfterFee, data.previewCollateralVaultData.withdrawTotalAssets
         );

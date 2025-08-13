@@ -33,10 +33,6 @@ abstract contract Mint is
 
         (uint256 assetsOut, DeltaFuture memory deltaFuture) = _previewMint(shares, data.previewDepositBorrowVaultData);
 
-        if (assetsOut == 0) {
-            return 0;
-        }
-
         borrowToken.transferFrom(msg.sender, address(this), assetsOut);
 
         applyMaxGrowthFee(
