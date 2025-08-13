@@ -30,9 +30,9 @@ contract SetupInvariantTest is BaseInvariantTest {
     }
 
     function test_dynamicOracle() public {
-        uint256 initialCollateralPrice = oracleConnector.getPriceCollateralOracle();
+        uint256 initialCollateralPrice = oracleConnector.getPriceCollateralOracle(ltv.oracleConnectorGetterData());
         vm.roll(100000);
-        assertGt(oracleConnector.getPriceCollateralOracle(), initialCollateralPrice);
+        assertGt(oracleConnector.getPriceCollateralOracle(ltv.oracleConnectorGetterData()), initialCollateralPrice);
     }
 
     function test_dynamicLending() public {

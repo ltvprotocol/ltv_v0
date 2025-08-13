@@ -8,5 +8,5 @@ interface ILendingConnector {
     function repay(uint256 assets) external;
     function getRealCollateralAssets(bool isDeposit, bytes calldata data) external view returns (uint256);
     function getRealBorrowAssets(bool isDeposit, bytes calldata data) external view returns (uint256);
-    function initializeProtocol(bytes memory data) external;
+    function initializeLendingConnectorData(bytes memory data) external;
 }

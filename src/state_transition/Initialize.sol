@@ -2,7 +2,6 @@
 pragma solidity ^0.8.28;
 
 import "src/structs/state/StateInitData.sol";
-import "src/errors/IInitError.sol";
 import "./AdmistrationSetters.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
@@ -21,10 +20,6 @@ abstract contract Initialize is AdmistrationSetters, OwnableUpgradeable {
         _setTargetLTV(initData.targetLTVDividend, initData.targetLTVDivider);
         _setMinProfitLTV(initData.minProfitLTVDividend, initData.minProfitLTVDivider);
 
-        _setLendingConnector(initData.lendingConnector);
-        _setOracleConnector(initData.oracleConnector);
-        _setSlippageProvider(initData.slippageProvider);
-
         _setFeeCollector(initData.feeCollector);
         _setMaxGrowthFee(initData.maxGrowthFeeDividend, initData.maxGrowthFeeDivider);
         _setMaxDeleverageFee(initData.maxDeleverageFeeDividend, initData.maxDeleverageFeeDivider);
@@ -37,13 +32,11 @@ abstract contract Initialize is AdmistrationSetters, OwnableUpgradeable {
         _updateGuardian(initData.guardian);
         _updateEmergencyDeleverager(initData.emergencyDeleverager);
 
+        auctionDuration = initData.auctionDuration;
         lastSeenTokenPrice = 10 ** 18;
 
-        (bool success,) = address(lendingConnector).delegatecall(
-            abi.encodeCall(ILendingConnector.initializeProtocol, (initData.lendingConnectorData))
-        );
-        require(success, IInitError.FaildedToInitialize(initData.lendingConnectorData));
-
-        auctionDuration = initData.auctionDuration;
+        _setLendingConnector(initData.lendingConnector, initData.lendingConnectorData);
+        _setOracleConnector(initData.oracleConnector, initData.oracleConnectorData);
+        _setSlippageProvider(initData.slippageProvider, initData.slippageProviderData);
     }
 }

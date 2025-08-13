@@ -60,8 +60,12 @@ abstract contract AdministrationPublic is
         _setWhitelistRegistry(value);
     }
 
-    function setSlippageProvider(ISlippageProvider _slippageProvider) external isFunctionAllowed onlyGovernor {
-        _setSlippageProvider(_slippageProvider);
+    function setSlippageProvider(ISlippageProvider _slippageProvider, bytes memory slippageProviderData)
+        external
+        isFunctionAllowed
+        onlyGovernor
+    {
+        _setSlippageProvider(_slippageProvider, slippageProviderData);
     }
 
     function allowDisableFunctions(bytes4[] memory signatures, bool isDisabled) external onlyGuardian {
@@ -80,12 +84,18 @@ abstract contract AdministrationPublic is
         _setIsWithdrawDisabled(value);
     }
 
-    function setLendingConnector(ILendingConnector _lendingConnector) external onlyOwner {
-        _setLendingConnector(_lendingConnector);
+    function setLendingConnector(ILendingConnector _lendingConnector, bytes memory lendingConnectorData)
+        external
+        onlyOwner
+    {
+        _setLendingConnector(_lendingConnector, lendingConnectorData);
     }
 
-    function setOracleConnector(IOracleConnector _oracleConnector) external onlyOwner {
-        _setOracleConnector(_oracleConnector);
+    function setOracleConnector(IOracleConnector _oracleConnector, bytes memory oracleConnectorData)
+        external
+        onlyOwner
+    {
+        _setOracleConnector(_oracleConnector, oracleConnectorData);
     }
 
     function setVaultBalanceAsLendingConnector(address _vaultBalanceAsLendingConnector) external onlyOwner {
@@ -121,14 +131,18 @@ abstract contract AdministrationPublic is
         _setMaxSafeLTV(1, 1);
 
         // round up to repay all assets
-        uint256 realBorrowAssets = lendingConnector.getRealBorrowAssets(false, connectorGetterData);
+        bytes memory _lendingConnectorGetterData = lendingConnectorGetterData;
+        uint256 realBorrowAssets = lendingConnector.getRealBorrowAssets(false, _lendingConnectorGetterData);
 
         require(closeAmountBorrow >= realBorrowAssets, ImpossibleToCoverDeleverage(realBorrowAssets, closeAmountBorrow));
 
-        uint256 collateralAssets = lendingConnector.getRealCollateralAssets(false, connectorGetterData);
+        uint256 collateralAssets = lendingConnector.getRealCollateralAssets(false, _lendingConnectorGetterData);
+
+        bytes memory _oracleConnectorGetterData = oracleConnectorGetterData;
 
         uint256 collateralToTransfer = realBorrowAssets.mulDivDown(
-            oracleConnector.getPriceBorrowOracle(), oracleConnector.getPriceCollateralOracle()
+            oracleConnector.getPriceBorrowOracle(_oracleConnectorGetterData),
+            oracleConnector.getPriceCollateralOracle(_oracleConnectorGetterData)
         );
 
         collateralToTransfer +=
@@ -145,7 +159,7 @@ abstract contract AdministrationPublic is
             collateralToken.transfer(msg.sender, collateralToTransfer);
         }
         setBool(Constants.IS_VAULT_DELEVERAGED_BIT, true);
-        connectorGetterData = "";
+        lendingConnectorGetterData = "";
     }
 
     function updateEmergencyDeleverager(address newEmergencyDeleverager) external onlyOwner {

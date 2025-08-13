@@ -7,17 +7,19 @@ import "../../structs/state/vault/PreviewDepositVaultState.sol";
 contract PreviewDepositVaultStateReader is MaxGrowthFeeStateReader {
     function previewDepositVaultState() internal view returns (PreviewDepositVaultState memory) {
         ILendingConnector _lendingConnector = getLendingConnector();
+        bytes memory _lendingConnectorGetterData = lendingConnectorGetterData;
+        bytes memory _slippageProviderGetterData = slippageProviderGetterData;
         return PreviewDepositVaultState({
             maxGrowthFeeState: maxGrowthFeeState(),
-            depositRealBorrowAssets: _lendingConnector.getRealBorrowAssets(true, connectorGetterData),
-            depositRealCollateralAssets: _lendingConnector.getRealCollateralAssets(true, connectorGetterData),
+            depositRealBorrowAssets: _lendingConnector.getRealBorrowAssets(true, _lendingConnectorGetterData),
+            depositRealCollateralAssets: _lendingConnector.getRealCollateralAssets(true, _lendingConnectorGetterData),
             targetLTVDividend: targetLTVDividend,
             targetLTVDivider: targetLTVDivider,
             startAuction: startAuction,
             auctionDuration: auctionDuration,
             blockNumber: uint56(block.number),
-            collateralSlippage: slippageProvider.collateralSlippage(),
-            borrowSlippage: slippageProvider.borrowSlippage()
+            collateralSlippage: slippageProvider.collateralSlippage(_slippageProviderGetterData),
+            borrowSlippage: slippageProvider.borrowSlippage(_slippageProviderGetterData)
         });
     }
 }

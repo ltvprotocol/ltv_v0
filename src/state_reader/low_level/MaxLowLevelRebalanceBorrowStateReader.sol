@@ -8,11 +8,11 @@ contract MaxLowLevelRebalanceBorrowStateReader is GetLendingConnectorReader {
     function maxLowLevelRebalanceBorrowState() internal view returns (MaxLowLevelRebalanceBorrowStateData memory) {
         return MaxLowLevelRebalanceBorrowStateData({
             // round up to assume smaller border
-            realBorrowAssets: getLendingConnector().getRealBorrowAssets(false, connectorGetterData),
+            realBorrowAssets: getLendingConnector().getRealBorrowAssets(false, lendingConnectorGetterData),
             maxTotalAssetsInUnderlying: maxTotalAssetsInUnderlying,
             targetLTVDividend: targetLTVDividend,
             targetLTVDivider: targetLTVDivider,
-            borrowPrice: oracleConnector.getPriceBorrowOracle()
+            borrowPrice: oracleConnector.getPriceBorrowOracle(oracleConnectorGetterData)
         });
     }
 }

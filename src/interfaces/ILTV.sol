@@ -199,7 +199,7 @@ interface ILTV is
 
     function setIsWithdrawDisabled(bool value) external;
 
-    function setLendingConnector(address _lendingConnector) external;
+    function setLendingConnector(address _lendingConnector, bytes memory lendingConnectorData) external;
 
     function setMaxDeleverageFee(uint16 dividend, uint16 divider) external;
 
@@ -211,9 +211,9 @@ interface ILTV is
 
     function setMinProfitLTV(uint16 dividend, uint16 divider) external;
 
-    function setOracleConnector(address _oracleConnector) external;
+    function setOracleConnector(address _oracleConnector, bytes memory oracleConnectorData) external;
 
-    function setSlippageProvider(address _slippageProvider) external;
+    function setSlippageProvider(address _slippageProvider, bytes memory slippageProviderData) external;
 
     function setTargetLTV(uint16 dividend, uint16 divider) external;
 
@@ -272,6 +272,12 @@ interface ILTV is
     function lendingConnector() external view returns (address);
 
     function lastSeenTokenPrice() external view returns (uint256);
+
+    function lendingConnectorGetterData() external view returns (bytes memory);
+
+    function oracleConnectorGetterData() external view returns (bytes memory);
+
+    function slippageProviderGetterData() external view returns (bytes memory);
 
     event Initialized(uint64 version);
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);

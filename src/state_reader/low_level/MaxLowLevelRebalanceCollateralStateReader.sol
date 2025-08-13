@@ -12,11 +12,11 @@ contract MaxLowLevelRebalanceCollateralStateReader is GetLendingConnectorReader 
     {
         return MaxLowLevelRebalanceCollateralStateData({
             // round up to assume smaller border
-            realCollateralAssets: getLendingConnector().getRealCollateralAssets(true, connectorGetterData),
+            realCollateralAssets: getLendingConnector().getRealCollateralAssets(true, lendingConnectorGetterData),
             maxTotalAssetsInUnderlying: maxTotalAssetsInUnderlying,
             targetLTVDividend: targetLTVDividend,
             targetLTVDivider: targetLTVDivider,
-            collateralPrice: oracleConnector.getPriceCollateralOracle()
+            collateralPrice: oracleConnector.getPriceCollateralOracle(oracleConnectorGetterData)
         });
     }
 }

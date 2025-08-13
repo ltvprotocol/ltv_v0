@@ -34,4 +34,6 @@ struct StateInitData {
     address emergencyDeleverager;
     uint24 auctionDuration;
     bytes lendingConnectorData;
+    bytes oracleConnectorData;
+    bytes slippageProviderData;
 }
