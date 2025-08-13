@@ -14,6 +14,7 @@ struct LowLevelRebalanceData {
     uint256 borrowPrice;
     uint256 supplyAfterFee;
     uint256 totalAssets;
-    uint128 targetLTV;
+    uint16 targetLTVDividend;
+    uint16 targetLTVDivider;
     uint256 withdrawTotalAssets;
 }

@@ -32,7 +32,8 @@ abstract contract PreviewMint is Vault {
                 protocolFutureRewardCollateral: data.protocolFutureRewardCollateral,
                 collateralSlippage: data.collateralSlippage,
                 borrowSlippage: data.borrowSlippage,
-                targetLTV: data.targetLTV,
+                targetLTVDividend: data.targetLTVDividend,
+                targetLTVDivider: data.targetLTVDivider,
                 deltaShares: int256(sharesInUnderlying),
                 isBorrow: true
             })

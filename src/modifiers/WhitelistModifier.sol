@@ -3,8 +3,9 @@ pragma solidity ^0.8.28;
 
 import "../states/LTVState.sol";
 import "src/errors/IAdministrationErrors.sol";
+import "src/state_reader/BoolReader.sol";
 
-abstract contract WhitelistModifier is LTVState, IAdministrationErrors {
+abstract contract WhitelistModifier is LTVState, BoolReader, IAdministrationErrors {
     modifier isReceiverWhitelisted(address to) {
         _isReceiverWhitelisted(to);
         _;
@@ -12,7 +13,7 @@ abstract contract WhitelistModifier is LTVState, IAdministrationErrors {
 
     function _isReceiverWhitelisted(address receiver) private view {
         require(
-            !isWhitelistActivated || receiver == feeCollector || whitelistRegistry.isAddressWhitelisted(receiver),
+            !isWhitelistActivated() || receiver == feeCollector || whitelistRegistry.isAddressWhitelisted(receiver),
             ReceiverNotWhitelisted(receiver)
         );
     }

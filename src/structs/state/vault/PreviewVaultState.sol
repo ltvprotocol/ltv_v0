@@ -5,7 +5,8 @@ import "../MaxGrowthFeeState.sol";
 
 struct PreviewVaultState {
     MaxGrowthFeeState maxGrowthFeeState;
-    uint128 targetLTV;
+    uint16 targetLTVDividend;
+    uint16 targetLTVDivider;
     uint256 startAuction;
     uint256 blockNumber;
     uint256 collateralSlippage;
