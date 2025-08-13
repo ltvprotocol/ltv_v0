@@ -22,12 +22,14 @@ library DeltaSharesAndDeltaRealBorrow {
         uint256 borrowSlippage;
         int256 deltaRealBorrow;
         int256 deltaShares;
-        uint128 targetLTV;
+        uint16 targetLTVDividend;
+        uint16 targetLTVDivider;
         Cases cases;
     }
 
     struct DividerData {
-        uint128 targetLTV;
+        uint16 targetLTVDividend;
+        uint16 targetLTVDivider;
         int256 userFutureRewardBorrow;
         int256 futureBorrow;
         uint256 borrowSlippage;
@@ -60,9 +62,13 @@ library DeltaSharesAndDeltaRealBorrow {
         dividendWithTargetLTV += int256(int8(data.cases.ceccb)) * data.protocolFutureRewardCollateral;
 
         dividend += dividendWithOneMinusTargetLTV.mulDiv(
-            int256(Constants.LTV_DIVIDER - data.targetLTV), int256(Constants.LTV_DIVIDER), needToRoundUp
+            int256(uint256(data.targetLTVDivider - data.targetLTVDividend)),
+            int256(uint256(data.targetLTVDivider)),
+            needToRoundUp
         );
-        dividend += dividendWithTargetLTV.mulDiv(int128(data.targetLTV), int256(Constants.LTV_DIVIDER), needToRoundUp);
+        dividend += dividendWithTargetLTV.mulDiv(
+            int256(uint256(data.targetLTVDividend)), int256(uint256(data.targetLTVDivider)), needToRoundUp
+        );
 
         return dividend;
     }
@@ -91,14 +97,18 @@ library DeltaSharesAndDeltaRealBorrow {
 
             divider += int256(int8(data.cases.cecb))
                 * data.protocolFutureRewardCollateral.mulDiv(
-                    (DIVIDER * int128(data.targetLTV)), (data.futureBorrow * int256(Constants.LTV_DIVIDER)), needToRoundUp
+                    (DIVIDER * int256(uint256(data.targetLTVDividend))),
+                    (data.futureBorrow * int256(uint256(data.targetLTVDivider))),
+                    needToRoundUp
                 );
         }
 
         dividerWithOneMinusTargetLTV += int256(int8(data.cases.ceccb)) * int256(data.borrowSlippage);
         dividerWithOneMinusTargetLTV += int256(int8(data.cases.cmcb)) * int256(data.borrowSlippage);
         divider += dividerWithOneMinusTargetLTV.mulDiv(
-            int256(Constants.LTV_DIVIDER - data.targetLTV), int256(Constants.LTV_DIVIDER), needToRoundUp
+            int256(uint256(data.targetLTVDivider - data.targetLTVDividend)),
+            int256(uint256(data.targetLTVDivider)),
+            needToRoundUp
         );
 
         return divider;
@@ -154,7 +164,8 @@ library DeltaSharesAndDeltaRealBorrow {
                     borrowSlippage: data.borrowSlippage,
                     deltaRealBorrow: data.deltaRealBorrow,
                     deltaShares: data.deltaShares,
-                    targetLTV: data.targetLTV,
+                    targetLTVDividend: data.targetLTVDividend,
+                    targetLTVDivider: data.targetLTVDivider,
                     cases: data.cases
                 })
             );
@@ -165,7 +176,8 @@ library DeltaSharesAndDeltaRealBorrow {
 
             int256 divider = calculateDividerByDeltaSharesAndDeltaRealBorrow(
                 DividerData({
-                    targetLTV: data.targetLTV,
+                    targetLTVDividend: data.targetLTVDividend,
+                    targetLTVDivider: data.targetLTVDivider,
                     userFutureRewardBorrow: data.userFutureRewardBorrow,
                     futureBorrow: data.futureBorrow,
                     borrowSlippage: data.borrowSlippage,

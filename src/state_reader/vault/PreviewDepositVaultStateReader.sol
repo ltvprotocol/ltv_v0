@@ -13,9 +13,11 @@ contract PreviewDepositVaultStateReader is MaxGrowthFeeStateReader {
             maxGrowthFeeState: maxGrowthFeeState(),
             depositRealBorrowAssets: _lendingConnector.getRealBorrowAssets(true, _lendingConnectorGetterData),
             depositRealCollateralAssets: _lendingConnector.getRealCollateralAssets(true, _lendingConnectorGetterData),
-            targetLTV: targetLTV,
+            targetLTVDividend: targetLTVDividend,
+            targetLTVDivider: targetLTVDivider,
             startAuction: startAuction,
-            blockNumber: block.number,
+            auctionDuration: auctionDuration,
+            blockNumber: uint56(block.number),
             collateralSlippage: slippageProvider.collateralSlippage(_slippageProviderGetterData),
             borrowSlippage: slippageProvider.borrowSlippage(_slippageProviderGetterData)
         });

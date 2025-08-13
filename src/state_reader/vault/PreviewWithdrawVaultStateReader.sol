@@ -9,9 +9,11 @@ contract PreviewWithdrawVaultStateReader is MaxGrowthFeeStateReader {
         bytes memory _slippageProviderGetterData = slippageProviderGetterData;
         return PreviewWithdrawVaultState({
             maxGrowthFeeState: maxGrowthFeeState(),
-            targetLTV: targetLTV,
+            targetLTVDividend: targetLTVDividend,
+            targetLTVDivider: targetLTVDivider,
             startAuction: startAuction,
-            blockNumber: block.number,
+            auctionDuration: auctionDuration,
+            blockNumber: uint56(block.number),
             collateralSlippage: slippageProvider.collateralSlippage(_slippageProviderGetterData),
             borrowSlippage: slippageProvider.borrowSlippage(_slippageProviderGetterData)
         });

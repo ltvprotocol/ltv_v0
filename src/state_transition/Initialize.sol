@@ -16,13 +16,13 @@ abstract contract Initialize is AdmistrationSetters, OwnableUpgradeable {
         collateralToken = IERC20(initData.collateralToken);
         borrowToken = IERC20(initData.borrowToken);
 
-        _setMaxSafeLTV(initData.maxSafeLTV);
-        _setTargetLTV(initData.targetLTV);
-        _setMinProfitLTV(initData.minProfitLTV);
+        _setMaxSafeLTV(initData.maxSafeLTVDividend, initData.maxSafeLTVDivider);
+        _setTargetLTV(initData.targetLTVDividend, initData.targetLTVDivider);
+        _setMinProfitLTV(initData.minProfitLTVDividend, initData.minProfitLTVDivider);
 
         _setFeeCollector(initData.feeCollector);
-        _setMaxGrowthFee(initData.maxGrowthFee);
-        _setMaxDeleverageFee(initData.maxDeleverageFee);
+        _setMaxGrowthFee(initData.maxGrowthFeeDividend, initData.maxGrowthFeeDivider);
+        _setMaxDeleverageFee(initData.maxDeleverageFeeDividend, initData.maxDeleverageFeeDivider);
 
         _setMaxTotalAssetsInUnderlying(initData.maxTotalAssetsInUnderlying);
 
@@ -32,8 +32,9 @@ abstract contract Initialize is AdmistrationSetters, OwnableUpgradeable {
         _updateGuardian(initData.guardian);
         _updateEmergencyDeleverager(initData.emergencyDeleverager);
 
+        auctionDuration = initData.auctionDuration;
         lastSeenTokenPrice = 10 ** 18;
-
+        
         _setLendingConnector(initData.lendingConnector, initData.lendingConnectorData);
         _setOracleConnector(initData.oracleConnector, initData.oracleConnectorData);
         _setSlippageProvider(initData.slippageProvider, initData.slippageProviderData);

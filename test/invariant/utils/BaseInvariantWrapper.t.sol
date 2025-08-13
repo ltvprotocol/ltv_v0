@@ -229,8 +229,8 @@ contract BaseInvariantWrapper is Test {
         // Check if auction was executed and rewards should be distributed
         // Multiply by 10 to account for rounding errors
         if (
-            _initialAuctionStartBlock + Constants.AMOUNT_OF_STEPS > block.number && checkAuctionExecuted()
-                && _initialRewardsValue - rewardsAfter >= int256(10 * Constants.AMOUNT_OF_STEPS)
+            _initialAuctionStartBlock + ltv.auctionDuration() > uint56(block.number) && checkAuctionExecuted()
+                && _initialRewardsValue - rewardsAfter >= int256(10 * uint256(ltv.auctionDuration()))
         ) {
             // Verify that fee collector received rewards
             assertTrue(
@@ -255,12 +255,12 @@ contract BaseInvariantWrapper is Test {
 
     /**
      * @dev Advances the blockchain by a specified number of blocks
-     * @param blocksToAdvance Number of blocks to advance (bounded between 1 and AMOUNT_OF_STEPS)
+     * @param blocksToAdvance Number of blocks to advance (bounded between 1 and auctionDuration)
      */
     function advanceBlocks(uint256 blocksToAdvance) internal {
         _initialLastSeenTokenPrice = ltv.lastSeenTokenPrice();
-        _blocksAdvanced = bound(blocksToAdvance, 1, Constants.AMOUNT_OF_STEPS);
-        vm.roll(block.number + _blocksAdvanced);
+        _blocksAdvanced = bound(blocksToAdvance, 1, ltv.auctionDuration());
+        vm.roll(uint56(block.number) + _blocksAdvanced);
     }
 
     /**

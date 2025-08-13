@@ -21,7 +21,7 @@ contract TransferTest is BaseTest {
         deal(address(borrowToken), userA, type(uint256).max);
 
         vm.startPrank(defaultData.governor);
-        ltv.setMaxSafeLTV(10 ** 18 - 1);
+        ltv.setMaxSafeLTV(1, 1);
         ltv.mintFreeTokens(mintAmount, userA);
         vm.stopPrank();
 
