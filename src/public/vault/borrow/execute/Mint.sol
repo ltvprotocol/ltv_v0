@@ -26,10 +26,6 @@ abstract contract Mint is
     using uMulDiv for uint256;
 
     function mint(uint256 shares, address receiver) external isFunctionAllowed nonReentrant returns (uint256 assets) {
-        if (shares == 0) {
-            revert ZeroSharesDeposit(receiver);
-        }
-
         MaxDepositMintBorrowVaultState memory state = maxDepositMintBorrowVaultState();
         MaxDepositMintBorrowVaultData memory data = maxDepositMintStateToData(state);
         uint256 max = _maxMint(data);

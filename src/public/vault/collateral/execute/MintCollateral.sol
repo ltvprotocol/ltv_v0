@@ -31,10 +31,6 @@ abstract contract MintCollateral is
         nonReentrant
         returns (uint256)
     {
-        if (shares == 0) {
-            revert ZeroSharesDeposit(receiver);
-        }
-
         MaxDepositMintCollateralVaultState memory state = maxDepositMintCollateralVaultState();
         MaxDepositMintCollateralVaultData memory data =
             maxDepositMintCollateralVaultStateToMaxDepositMintCollateralVaultData(state);

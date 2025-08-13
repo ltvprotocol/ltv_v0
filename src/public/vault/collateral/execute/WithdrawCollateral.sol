@@ -33,10 +33,6 @@ abstract contract WithdrawCollateral is
         nonReentrant
         returns (uint256)
     {
-        if (assets == 0) {
-            revert ZeroAssetsWithdraw(receiver, owner);
-        }
-
         MaxWithdrawRedeemCollateralVaultState memory state = maxWithdrawRedeemCollateralVaultState(owner);
         MaxWithdrawRedeemCollateralVaultData memory data =
             maxWithdrawRedeemCollateralVaultStateToMaxWithdrawRedeemCollateralVaultData(state);
