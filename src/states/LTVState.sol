@@ -63,12 +63,6 @@ abstract contract LTVState {
     uint16 public targetLTVDivider;
 
     uint8 public decimals;
-
-    uint8 public constant IS_DEPOSIT_DISABLED_BIT = 0;
-    uint8 public constant IS_WITHDRAW_DISABLED_BIT = 1;
-    uint8 public constant IS_WHITELIST_ACTIVATED_BIT = 2;
-    uint8 public constant IS_VAULT_DELEVERAGED_BIT = 3;
-
     uint8 public boolSlot;
 
     mapping(address => uint256) public balanceOf;

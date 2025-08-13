@@ -144,7 +144,7 @@ abstract contract AdministrationPublic is
         if (collateralToTransfer != 0) {
             collateralToken.transfer(msg.sender, collateralToTransfer);
         }
-        boolSlot = uint8(boolSlot | (2 ** IS_VAULT_DELEVERAGED_BIT));
+        setBool(Constants.IS_VAULT_DELEVERAGED_BIT, true);
         connectorGetterData = "";
     }
 
