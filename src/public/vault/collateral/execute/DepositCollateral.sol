@@ -91,7 +91,7 @@ abstract contract DepositCollateral is
             })
         );
 
-        emit Deposit(msg.sender, receiver, assets, shares);
+        emit DepositCollateral(msg.sender, receiver, assets, shares);
 
         _mint(receiver, shares);
 

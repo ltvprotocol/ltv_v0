@@ -58,8 +58,6 @@ abstract contract ExecuteLowLevelRebalance is
             _mint(msg.sender, uint256(deltaShares));
         }
 
-        emit LowLevelRebalanceExecuted(
-            msg.sender, deltaRealCollateralAsset, deltaRealBorrowAssets, deltaShares, deltaProtocolFutureRewardShares
-        );
+        emit LowLevelRebalanceExecuted(msg.sender, deltaRealCollateralAsset, deltaRealBorrowAssets, deltaShares);
     }
 }
