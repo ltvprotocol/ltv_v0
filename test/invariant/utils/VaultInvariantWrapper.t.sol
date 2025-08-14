@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import "../../../src/interfaces/ILTV.sol";
-import "forge-std/interfaces/IERC20.sol";
+import "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {BaseInvariantWrapper} from "./BaseInvariantWrapper.t.sol";
 
 /**

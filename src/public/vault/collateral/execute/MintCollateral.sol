@@ -12,6 +12,7 @@ import "src/errors/IVaultErrors.sol";
 import "../preview/PreviewMintCollateral.sol";
 import "../../../../math/NextStep.sol";
 import "src/state_reader/vault/MaxDepositMintCollateralVaultStateReader.sol";
+import "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 
 abstract contract MintCollateral is
     MaxDepositMintCollateralVaultStateReader,
@@ -24,6 +25,7 @@ abstract contract MintCollateral is
     IVaultErrors
 {
     using uMulDiv for uint256;
+    using SafeERC20 for IERC20;
 
     function mintCollateral(uint256 shares, address receiver)
         external
@@ -44,7 +46,7 @@ abstract contract MintCollateral is
             return 0;
         }
 
-        collateralToken.transferFrom(msg.sender, address(this), assets);
+        collateralToken.safeTransferFrom(msg.sender, address(this), assets);
 
         applyMaxGrowthFee(
             data.previewCollateralVaultData.supplyAfterFee, data.previewCollateralVaultData.withdrawTotalAssets

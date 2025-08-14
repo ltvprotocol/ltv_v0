@@ -2,10 +2,13 @@
 pragma solidity ^0.8.27;
 
 import "../interfaces/ILendingConnector.sol";
-import "forge-std/interfaces/IERC20.sol";
+import "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 import "../dummy/interfaces/IDummyLending.sol";
 
 contract DummyLendingConnector is ILendingConnector {
+    using SafeERC20 for IERC20;
+
     IERC20 public immutable COLLATERAL_TOKEN;
     IERC20 public immutable BORROW_TOKEN;
     IDummyLending public immutable LENDING_PROTOCOL;
@@ -17,7 +20,7 @@ contract DummyLendingConnector is ILendingConnector {
     }
 
     function supply(uint256 assets) external override {
-        COLLATERAL_TOKEN.approve(address(LENDING_PROTOCOL), assets);
+        COLLATERAL_TOKEN.forceApprove(address(LENDING_PROTOCOL), assets);
         LENDING_PROTOCOL.supply(address(COLLATERAL_TOKEN), assets);
     }
 
@@ -30,7 +33,7 @@ contract DummyLendingConnector is ILendingConnector {
     }
 
     function repay(uint256 assets) external override {
-        BORROW_TOKEN.approve(address(LENDING_PROTOCOL), assets);
+        BORROW_TOKEN.forceApprove(address(LENDING_PROTOCOL), assets);
         LENDING_PROTOCOL.repay(address(BORROW_TOKEN), assets);
     }
 

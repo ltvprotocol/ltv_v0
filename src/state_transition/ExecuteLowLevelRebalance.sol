@@ -6,6 +6,7 @@ import "./TransferFromProtocol.sol";
 import "./Lending.sol";
 import "src/modifiers/FunctionStopperModifier.sol";
 import "src/events/ILowLevelRebalanceEvent.sol";
+import "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 
 abstract contract ExecuteLowLevelRebalance is
     FunctionStopperModifier,
@@ -14,6 +15,8 @@ abstract contract ExecuteLowLevelRebalance is
     Lending,
     ILowLevelRebalanceEvent
 {
+    using SafeERC20 for IERC20;
+
     function executeLowLevelRebalance(
         int256 deltaRealCollateralAsset,
         int256 deltaRealBorrowAssets,
@@ -35,12 +38,12 @@ abstract contract ExecuteLowLevelRebalance is
         }
 
         if (deltaRealCollateralAsset > 0) {
-            collateralToken.transferFrom(msg.sender, address(this), uint256(deltaRealCollateralAsset));
+            collateralToken.safeTransferFrom(msg.sender, address(this), uint256(deltaRealCollateralAsset));
             supply(uint256(deltaRealCollateralAsset));
         }
 
         if (deltaRealBorrowAssets < 0) {
-            borrowToken.transferFrom(msg.sender, address(this), uint256(-deltaRealBorrowAssets));
+            borrowToken.safeTransferFrom(msg.sender, address(this), uint256(-deltaRealBorrowAssets));
             repay(uint256(-deltaRealBorrowAssets));
         }
 

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import "../../../src/dummy/interfaces/IDummyLending.sol";
-import "forge-std/interfaces/IERC20.sol";
+import "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import "forge-std/Test.sol";
 import "./RateMath.sol";
 

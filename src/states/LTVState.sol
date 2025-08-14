@@ -6,7 +6,7 @@ import "../interfaces/IOracleConnector.sol";
 import "../interfaces/IWhitelistRegistry.sol";
 import "../interfaces/ISlippageProvider.sol";
 import "../interfaces/IModules.sol";
-import "forge-std/interfaces/IERC20.sol";
+import "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import "../structs/state/vault/TotalAssetsState.sol";
 import "../structs/state/MaxGrowthFeeState.sol";
 import "../structs/state/vault/PreviewVaultState.sol";
