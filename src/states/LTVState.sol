@@ -22,56 +22,53 @@ import "../structs/state/low_level/MaxLowLevelRebalanceCollateralStateData.sol";
 import "../structs/state/low_level/ExecuteLowLevelRebalanceState.sol";
 
 abstract contract LTVState {
-    // ------------------------------------------------
-
     address public feeCollector;
-
-    int256 public futureBorrowAssets;
-    int256 public futureCollateralAssets;
-    int256 public futureRewardBorrowAssets;
-    int256 public futureRewardCollateralAssets;
-    uint256 public startAuction;
-
-    // ERC 20 state
-    uint256 public baseTotalSupply;
-    mapping(address => uint256) public balanceOf;
-    mapping(address => mapping(address => uint256)) public allowance;
-    string public name;
-    string public symbol;
-    uint8 public decimals;
-
     IERC20 public collateralToken;
     IERC20 public borrowToken;
 
-    uint128 public maxSafeLTV;
-    uint128 public minProfitLTV;
-    uint128 public targetLTV;
-
     ILendingConnector public lendingConnector;
-    bool public isVaultDeleveraged;
-    IOracleConnector public oracleConnector;
-
-    uint256 public lastSeenTokenPrice;
-
-    uint256 public maxGrowthFee;
-
-    uint256 public maxTotalAssetsInUnderlying;
-
-    mapping(bytes4 => bool) public _isFunctionDisabled;
-    ISlippageProvider public slippageProvider;
-    bool public isDepositDisabled;
-    bool public isWithdrawDisabled;
-    IWhitelistRegistry public whitelistRegistry;
-    bool public isWhitelistActivated;
-
-    uint256 public maxDeleverageFee;
     ILendingConnector public vaultBalanceAsLendingConnector;
-
-    IModules public modules;
+    IOracleConnector public oracleConnector;
+    ISlippageProvider public slippageProvider;
 
     address public governor;
     address public guardian;
     address public emergencyDeleverager;
 
+    IWhitelistRegistry public whitelistRegistry;
+    IModules public modules;
+
+    int256 public futureBorrowAssets;
+    int256 public futureCollateralAssets;
+    int256 public futureRewardBorrowAssets;
+    int256 public futureRewardCollateralAssets;
+
+    uint256 public baseTotalSupply;
+    uint256 public maxTotalAssetsInUnderlying;
+    uint256 public lastSeenTokenPrice;
+
+    uint56 public startAuction;
+    uint24 public auctionDuration;
+
+    uint16 public maxGrowthFeeDividend;
+    uint16 public maxGrowthFeeDivider;
+    uint16 public maxDeleverageFeeDividend;
+    uint16 public maxDeleverageFeeDivider;
+
+    uint16 public maxSafeLTVDividend;
+    uint16 public maxSafeLTVDivider;
+    uint16 public minProfitLTVDividend;
+    uint16 public minProfitLTVDivider;
+    uint16 public targetLTVDividend;
+    uint16 public targetLTVDivider;
+
+    uint8 public decimals;
+    uint8 public boolSlot;
+
+    mapping(address => uint256) public balanceOf;
+    mapping(address => mapping(address => uint256)) public allowance;
+    mapping(bytes4 => bool) public _isFunctionDisabled;
+    string public name;
+    string public symbol;
     bytes internal connectorGetterData;
 }

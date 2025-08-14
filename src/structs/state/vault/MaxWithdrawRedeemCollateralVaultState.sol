@@ -5,6 +5,7 @@ import "./PreviewWithdrawVaultState.sol";
 
 struct MaxWithdrawRedeemCollateralVaultState {
     PreviewWithdrawVaultState previewWithdrawVaultState;
-    uint256 maxSafeLTV;
+    uint16 maxSafeLTVDividend;
+    uint16 maxSafeLTVDivider;
     uint256 ownerBalance;
 }

@@ -50,11 +50,13 @@ abstract contract PreviewLowLevelRebalanceStateToData is MaxGrowthFee {
             isDeposit
         );
 
-        uint256 auctionStep = CommonMath.calculateAuctionStep(state.startAuction, state.blockNumber);
+        uint24 auctionStep =
+            CommonMath.calculateAuctionStep(state.startAuction, state.blockNumber, state.auctionDuration);
 
-        data.userFutureRewardBorrow = CommonMath.calculateUserFutureRewardBorrow(futureRewardBorrow, auctionStep);
+        data.userFutureRewardBorrow =
+            CommonMath.calculateUserFutureRewardBorrow(futureRewardBorrow, auctionStep, state.auctionDuration);
         data.userFutureRewardCollateral =
-            CommonMath.calculateUserFutureRewardCollateral(futureRewardCollateral, auctionStep);
+            CommonMath.calculateUserFutureRewardCollateral(futureRewardCollateral, auctionStep, state.auctionDuration);
         data.protocolFutureRewardBorrow = futureRewardBorrow - data.userFutureRewardBorrow;
         data.protocolFutureRewardCollateral = futureRewardCollateral - data.userFutureRewardCollateral;
 
@@ -85,12 +87,14 @@ abstract contract PreviewLowLevelRebalanceStateToData is MaxGrowthFee {
         data.supplyAfterFee = _previewSupplyAfterFee(
             MaxGrowthFeeData({
                 withdrawTotalAssets: data.withdrawTotalAssets,
-                maxGrowthFee: state.maxGrowthFeeState.maxGrowthFee,
+                maxGrowthFeeDividend: state.maxGrowthFeeState.maxGrowthFeeDividend,
+                maxGrowthFeeDivider: state.maxGrowthFeeState.maxGrowthFeeDivider,
                 supply: totalSupply(state.maxGrowthFeeState.supply),
                 lastSeenTokenPrice: state.maxGrowthFeeState.lastSeenTokenPrice
             })
         );
 
-        data.targetLTV = state.targetLTV;
+        data.targetLTVDividend = state.targetLTVDividend;
+        data.targetLTVDivider = state.targetLTVDivider;
     }
 }

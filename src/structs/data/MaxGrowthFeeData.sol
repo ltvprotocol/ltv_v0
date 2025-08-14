@@ -3,7 +3,8 @@ pragma solidity ^0.8.28;
 
 struct MaxGrowthFeeData {
     uint256 withdrawTotalAssets;
-    uint256 maxGrowthFee;
+    uint16 maxGrowthFeeDividend;
+    uint16 maxGrowthFeeDivider;
     uint256 supply;
     uint256 lastSeenTokenPrice;
 }

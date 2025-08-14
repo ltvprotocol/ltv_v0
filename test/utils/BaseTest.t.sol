@@ -34,19 +34,24 @@ struct BaseTestInit {
     int256 futureBorrow;
     int256 futureCollateral;
     int256 auctionReward;
-    uint256 startAuction;
+    uint56 startAuction;
     uint256 collateralSlippage;
     uint256 borrowSlippage;
     uint256 maxTotalAssetsInUnderlying;
     uint256 collateralAssets;
     uint256 borrowAssets;
-    uint128 maxSafeLTV;
-    uint128 minProfitLTV;
-    uint128 targetLTV;
-    uint256 maxGrowthFee;
+    uint16 maxSafeLTVDividend;
+    uint16 maxSafeLTVDivider;
+    uint16 minProfitLTVDividend;
+    uint16 minProfitLTVDivider;
+    uint16 targetLTVDividend;
+    uint16 targetLTVDivider;
+    uint16 maxGrowthFeeDividend;
+    uint16 maxGrowthFeeDivider;
     uint256 collateralPrice;
     uint256 borrowPrice;
-    uint256 maxDeleverageFee;
+    uint16 maxDeleverageFeeDividend;
+    uint16 maxDeleverageFeeDivider;
     uint256 zeroAddressTokens;
 }
 
@@ -105,20 +110,26 @@ contract BaseTest is Test {
                 collateralToken: address(collateralToken),
                 borrowToken: address(borrowToken),
                 feeCollector: init.feeCollector,
-                maxSafeLTV: init.maxSafeLTV,
-                minProfitLTV: init.minProfitLTV,
-                targetLTV: init.targetLTV,
+                maxSafeLTVDividend: init.maxSafeLTVDividend,
+                maxSafeLTVDivider: init.maxSafeLTVDivider,
+                minProfitLTVDividend: init.minProfitLTVDividend,
+                minProfitLTVDivider: init.minProfitLTVDivider,
+                targetLTVDividend: init.targetLTVDividend,
+                targetLTVDivider: init.targetLTVDivider,
                 lendingConnector: lendingConnector,
                 oracleConnector: oracleConnector,
-                maxGrowthFee: init.maxGrowthFee,
+                maxGrowthFeeDividend: init.maxGrowthFeeDividend,
+                maxGrowthFeeDivider: init.maxGrowthFeeDivider,
                 maxTotalAssetsInUnderlying: init.maxTotalAssetsInUnderlying,
                 slippageProvider: slippageProvider,
-                maxDeleverageFee: init.maxDeleverageFee,
+                maxDeleverageFeeDividend: init.maxDeleverageFeeDividend,
+                maxDeleverageFeeDivider: init.maxDeleverageFeeDivider,
                 vaultBalanceAsLendingConnector: new VaultBalanceAsLendingConnector(collateralToken, borrowToken),
                 owner: init.owner,
                 guardian: init.guardian,
                 governor: init.governor,
                 emergencyDeleverager: init.emergencyDeleverager,
+                auctionDuration: 1000,
                 lendingConnectorData: ""
             });
 
@@ -133,7 +144,7 @@ contract BaseTest is Test {
         deal(address(borrowToken), address(lendingProtocol), type(uint128).max);
         deal(address(collateralToken), address(lendingProtocol), type(uint128).max);
 
-        vm.roll(Constants.AMOUNT_OF_STEPS);
+        vm.roll(1000);
         ltv.setStartAuction(init.startAuction);
         ltv.setFutureBorrowAssets(init.futureBorrow);
         ltv.setFutureCollateralAssets(init.futureCollateral);
@@ -168,13 +179,18 @@ contract BaseTest is Test {
             maxTotalAssetsInUnderlying: type(uint128).max,
             collateralAssets: 2 * 10 ** 18,
             borrowAssets: 3 * 10 ** 18,
-            maxSafeLTV: 9 * 10 ** 17,
-            minProfitLTV: 5 * 10 ** 17,
-            targetLTV: 75 * 10 ** 16,
-            maxGrowthFee: 2 * 10 ** 17,
+            maxSafeLTVDividend: 9,
+            maxSafeLTVDivider: 10,
+            minProfitLTVDividend: 5,
+            minProfitLTVDivider: 10,
+            targetLTVDividend: 75,
+            targetLTVDivider: 100,
+            maxGrowthFeeDividend: 1,
+            maxGrowthFeeDivider: 5,
             collateralPrice: 2 * 10 ** 18,
             borrowPrice: 10 ** 18,
-            maxDeleverageFee: 2 * 10 ** 16,
+            maxDeleverageFeeDividend: 1,
+            maxDeleverageFeeDivider: 50,
             zeroAddressTokens: 10 ** 18
         });
         initializeTest(initData);
