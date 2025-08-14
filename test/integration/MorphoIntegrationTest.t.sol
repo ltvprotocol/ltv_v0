@@ -57,7 +57,7 @@ contract MorphoIntegrationTest is Test {
 
         morphoLendingConnector = new MorphoConnector();
         morphoOracleConnector = new MorphoOracleConnector(IMorphoOracle(MORPHO_ORACLE));
-        slippageProvider = new ConstantSlippageProvider(10 ** 16, 10 ** 16, address(this));
+        slippageProvider = new ConstantSlippageProvider(10 ** 16, 10 ** 16);
 
         weth = IERC20(WETH);
         wsteth = IERC20(WSTETH);

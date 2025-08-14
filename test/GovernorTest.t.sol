@@ -300,7 +300,7 @@ contract GovernorTest is BalancedTest {
         address governor = ILTV(address(dummyLTV)).governor();
         vm.assume(user != governor);
         vm.startPrank(governor);
-        ConstantSlippageProvider provider = new ConstantSlippageProvider(0, 0, owner);
+        ConstantSlippageProvider provider = new ConstantSlippageProvider(0, 0);
 
         dummyLTV.setSlippageProvider(address(provider));
         assertEq(address(dummyLTV.slippageProvider()), address(provider));

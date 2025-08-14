@@ -17,7 +17,7 @@ contract SetSlippageProviderTest is BaseTest {
 
     function test_checkSlot(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
         vm.startPrank(defaultData.governor);
-        ConstantSlippageProvider provider = new ConstantSlippageProvider(2 * 10 ** 16, 2 * 10 ** 16, defaultData.owner);
+        ConstantSlippageProvider provider = new ConstantSlippageProvider(2 * 10 ** 16, 2 * 10 ** 16);
         ltv.setSlippageProvider(address(provider));
         vm.stopPrank();
 
@@ -34,8 +34,7 @@ contract SetSlippageProviderTest is BaseTest {
         vm.startPrank(defaultData.governor);
         uint256 newCollateralSlippage = 3 * 10 ** 16;
         uint256 newBorrowSlippage = 25 * 10 ** 15;
-        ConstantSlippageProvider provider =
-            new ConstantSlippageProvider(newCollateralSlippage, newBorrowSlippage, defaultData.owner);
+        ConstantSlippageProvider provider = new ConstantSlippageProvider(newCollateralSlippage, newBorrowSlippage);
         ltv.setSlippageProvider(address(provider));
         vm.stopPrank();
 
