@@ -178,8 +178,10 @@ contract SignedHelpers is EuclidianMod {
                 x = x - 1;
             } else if (x < -1) {
                 x = x + 1;
-            } else {
+            } else if (y > 1) {
                 y = y - 1;
+            } else {
+                y = y + 1;
             }
 
             (x, y, denominator) = eliminateProductSubRemainderOverflow(x, y, denominator);
