@@ -17,17 +17,17 @@ abstract contract Initialize is AdmistrationSetters, OwnableUpgradeable {
         collateralToken = IERC20(initData.collateralToken);
         borrowToken = IERC20(initData.borrowToken);
 
-        _setMaxSafeLTV(initData.maxSafeLTV);
-        _setTargetLTV(initData.targetLTV);
-        _setMinProfitLTV(initData.minProfitLTV);
+        _setMaxSafeLTV(initData.maxSafeLTVDividend, initData.maxSafeLTVDivider);
+        _setTargetLTV(initData.targetLTVDividend, initData.targetLTVDivider);
+        _setMinProfitLTV(initData.minProfitLTVDividend, initData.minProfitLTVDivider);
 
         _setLendingConnector(initData.lendingConnector);
         _setOracleConnector(initData.oracleConnector);
         _setSlippageProvider(initData.slippageProvider);
 
         _setFeeCollector(initData.feeCollector);
-        _setMaxGrowthFee(initData.maxGrowthFee);
-        _setMaxDeleverageFee(initData.maxDeleverageFee);
+        _setMaxGrowthFee(initData.maxGrowthFeeDividend, initData.maxGrowthFeeDivider);
+        _setMaxDeleverageFee(initData.maxDeleverageFeeDividend, initData.maxDeleverageFeeDivider);
 
         _setMaxTotalAssetsInUnderlying(initData.maxTotalAssetsInUnderlying);
 
@@ -43,5 +43,7 @@ abstract contract Initialize is AdmistrationSetters, OwnableUpgradeable {
             abi.encodeCall(ILendingConnector.initializeProtocol, (initData.lendingConnectorData))
         );
         require(success, IInitError.FaildedToInitialize(initData.lendingConnectorData));
+
+        auctionDuration = initData.auctionDuration;
     }
 }

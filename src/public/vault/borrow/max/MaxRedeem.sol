@@ -13,7 +13,8 @@ abstract contract MaxRedeem is PreviewWithdraw, PreviewRedeem {
 
     function _maxRedeem(MaxWithdrawRedeemBorrowVaultData memory data) internal pure returns (uint256 max) {
         // round down to assume smaller border
-        uint256 maxSafeRealBorrow = uint256(data.realCollateral).mulDivDown(data.maxSafeLTV, Constants.LTV_DIVIDER);
+        uint256 maxSafeRealBorrow =
+            uint256(data.realCollateral).mulDivDown(data.maxSafeLTVDividend, data.maxSafeLTVDivider);
         if (maxSafeRealBorrow <= uint256(data.realBorrow)) {
             return 0;
         }
@@ -22,8 +23,24 @@ abstract contract MaxRedeem is PreviewWithdraw, PreviewRedeem {
             Constants.ORACLE_DIVIDER, data.previewWithdrawBorrowVaultData.borrowPrice
         );
 
-        (uint256 vaultMaxWithdrawShares,) = _previewWithdraw(maxWithdrawInAssets, data.previewWithdrawBorrowVaultData);
+        if (maxWithdrawInAssets <= 3) {
+            return 0;
+        }
+
+        (uint256 maxWithdrawInShares,) = _previewWithdraw(maxWithdrawInAssets - 3, data.previewWithdrawBorrowVaultData);
+
+        (uint256 maxWithdrawInAssetsWithDelta,) =
+            _previewRedeem(maxWithdrawInShares, data.previewWithdrawBorrowVaultData);
+
+        if (maxWithdrawInAssetsWithDelta > maxWithdrawInAssets) {
+            uint256 delta = maxWithdrawInAssetsWithDelta + 3 - maxWithdrawInAssets;
+            if (maxWithdrawInShares < 2 * delta) {
+                return 0;
+            }
+            maxWithdrawInShares = maxWithdrawInShares - 2 * delta;
+        }
+
         // round down to assume smaller border
-        return data.ownerBalance < vaultMaxWithdrawShares ? data.ownerBalance : vaultMaxWithdrawShares;
+        return data.ownerBalance < maxWithdrawInShares ? data.ownerBalance : maxWithdrawInShares;
     }
 }

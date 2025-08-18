@@ -7,6 +7,7 @@ import "src/structs/state_transition/DeltaAuctionState.sol";
 import "src/modifiers/FunctionStopperModifier.sol";
 import "src/events/IAuctionEvent.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
+import "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 
 abstract contract AuctionApplyDeltaState is
     Lending,
@@ -15,6 +16,8 @@ abstract contract AuctionApplyDeltaState is
     FunctionStopperModifier,
     IAuctionEvent
 {
+    using SafeERC20 for IERC20;
+
     function applyDeltaState(DeltaAuctionState memory deltaState) internal {
         futureBorrowAssets += deltaState.deltaFutureBorrowAssets;
         futureCollateralAssets += deltaState.deltaFutureCollateralAssets;
@@ -23,24 +26,41 @@ abstract contract AuctionApplyDeltaState is
         futureRewardCollateralAssets +=
             deltaState.deltaProtocolFutureRewardCollateralAssets + deltaState.deltaUserFutureRewardCollateralAssets;
 
+        if (deltaState.deltaUserCollateralAssets < 0) {
+            collateralToken.safeTransferFrom(msg.sender, address(this), uint256(-deltaState.deltaUserCollateralAssets));
+        }
+        int256 supplyAmount =
+            -(deltaState.deltaUserCollateralAssets + deltaState.deltaProtocolFutureRewardCollateralAssets);
+
+        if (supplyAmount > 0) {
+            supply(uint256(supplyAmount));
+        }
+
         if (deltaState.deltaUserBorrowAssets < 0) {
-            collateralToken.transferFrom(msg.sender, address(this), uint256(-deltaState.deltaUserCollateralAssets));
-            supply(
-                uint256(-(deltaState.deltaUserCollateralAssets + deltaState.deltaProtocolFutureRewardCollateralAssets))
-            );
             borrow(uint256(-deltaState.deltaUserBorrowAssets));
             transferBorrowToken(msg.sender, uint256(-deltaState.deltaUserBorrowAssets));
-            if (deltaState.deltaProtocolFutureRewardCollateralAssets != 0) {
-                transferCollateralToken(feeCollector, uint256(deltaState.deltaProtocolFutureRewardCollateralAssets));
-            }
-        } else if (deltaState.deltaUserBorrowAssets > 0) {
-            borrowToken.transferFrom(msg.sender, address(this), uint256(deltaState.deltaUserBorrowAssets));
-            repay(uint256(deltaState.deltaUserBorrowAssets + deltaState.deltaProtocolFutureRewardBorrowAssets));
+        }
+
+        if (deltaState.deltaUserBorrowAssets > 0) {
+            borrowToken.safeTransferFrom(msg.sender, address(this), uint256(deltaState.deltaUserBorrowAssets));
+        }
+
+        int256 repayAmount = deltaState.deltaUserBorrowAssets + deltaState.deltaProtocolFutureRewardBorrowAssets;
+        if (repayAmount > 0) {
+            repay(uint256(repayAmount));
+        }
+
+        if (deltaState.deltaUserCollateralAssets > 0) {
             withdraw(uint256(deltaState.deltaUserCollateralAssets));
             transferCollateralToken(msg.sender, uint256(deltaState.deltaUserCollateralAssets));
-            if (deltaState.deltaProtocolFutureRewardBorrowAssets != 0) {
-                transferBorrowToken(feeCollector, uint256(-deltaState.deltaProtocolFutureRewardBorrowAssets));
-            }
+        }
+
+        if (deltaState.deltaProtocolFutureRewardCollateralAssets > 0) {
+            transferCollateralToken(feeCollector, uint256(deltaState.deltaProtocolFutureRewardCollateralAssets));
+        }
+
+        if (deltaState.deltaProtocolFutureRewardBorrowAssets < 0) {
+            transferBorrowToken(feeCollector, uint256(-deltaState.deltaProtocolFutureRewardBorrowAssets));
         }
 
         emit AuctionExecuted(msg.sender, deltaState.deltaFutureCollateralAssets, deltaState.deltaFutureBorrowAssets);

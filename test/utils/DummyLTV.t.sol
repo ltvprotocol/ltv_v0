@@ -5,7 +5,7 @@ import "src/elements/LTV.sol";
 import "src/state_transition/ERC20.sol";
 import "src/interfaces/IModules.sol";
 
-contract DummyLTV is LTV, ERC20 {
+contract DummyLTV is LTV {
     function setFutureBorrowAssets(int256 value) public {
         futureBorrowAssets = value;
     }
@@ -26,15 +26,17 @@ contract DummyLTV is LTV, ERC20 {
         futureRewardCollateralAssets = value;
     }
 
-    function setStartAuction(uint256 value) public {
+    function setStartAuction(uint56 value) public {
         startAuction = value;
     }
 
     function mintFreeTokens(uint256 amount, address receiver) public {
-        _mint(receiver, amount);
+        balanceOf[receiver] += amount;
+        baseTotalSupply += amount;
     }
 
     function burnTokens(uint256 amount, address owner) public {
-        _burn(owner, amount);
+        balanceOf[owner] -= amount;
+        baseTotalSupply -= amount;
     }
 }

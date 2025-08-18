@@ -16,7 +16,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         vm.startPrank(data.emergencyDeleverager);
 
         borrowToken.approve(address(ltv), borrowAssets);
-        ltv.deleverageAndWithdraw(borrowAssets, 10 ** 16);
+        ltv.deleverageAndWithdraw(borrowAssets, 1, 100);
 
         // equivalent to 30 * 10**17 borrow assets + 1% fee
         uint256 expectedBalance = 15 * 10 ** 17 + 5 * 10 ** 15;
@@ -35,7 +35,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
 
     function test_getEverythingAsFee(DefaultTestData memory data) public testWithPredefinedDefaultValues(data) {
         vm.prank(data.governor);
-        ltv.setMaxDeleverageFee(10 ** 18);
+        ltv.setMaxDeleverageFee(1, 1); // 100% fee
 
         uint256 collateralAssets = ltv.getLendingConnector().getRealCollateralAssets(false, "");
         uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false, "");
@@ -45,7 +45,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         vm.startPrank(data.emergencyDeleverager);
 
         borrowToken.approve(address(ltv), borrowAssets);
-        ltv.deleverageAndWithdraw(borrowAssets, 10 ** 18);
+        ltv.deleverageAndWithdraw(borrowAssets, 1, 1);
 
         assertEq(collateralToken.balanceOf(data.emergencyDeleverager), collateralAssets);
     }
@@ -54,14 +54,20 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         public
         testWithPredefinedDefaultValues(data)
     {
-        uint256 maxDeleverageFee = ltv.maxDeleverageFee();
+        uint16 maxDeleverageFeeDividend = ltv.maxDeleverageFeeDividend();
+        uint16 maxDeleverageFeeDivider = ltv.maxDeleverageFeeDivider();
+        uint16 tooHighDividend = maxDeleverageFeeDividend + 1; // This will exceed max
         vm.startPrank(data.emergencyDeleverager);
         vm.expectRevert(
             abi.encodeWithSelector(
-                IAdministrationErrors.ExceedsMaxDeleverageFee.selector, maxDeleverageFee + 1, maxDeleverageFee
+                IAdministrationErrors.ExceedsMaxDeleverageFee.selector,
+                tooHighDividend,
+                maxDeleverageFeeDivider,
+                maxDeleverageFeeDividend,
+                maxDeleverageFeeDivider
             )
         );
-        ltv.deleverageAndWithdraw(0, maxDeleverageFee + 1);
+        ltv.deleverageAndWithdraw(0, tooHighDividend, maxDeleverageFeeDivider);
     }
 
     function test_successfulMoneyWithdrawal(DefaultTestData memory data, address user)
@@ -74,7 +80,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
 
         vm.startPrank(data.emergencyDeleverager);
         borrowToken.approve(address(ltv), borrowAssets);
-        ltv.deleverageAndWithdraw(borrowAssets, 0);
+        ltv.deleverageAndWithdraw(borrowAssets, 0, 1);
 
         vm.startPrank(address(0));
         ltv.transfer(address(user), ltv.balanceOf(address(0)));
@@ -92,7 +98,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
 
         vm.startPrank(data.emergencyDeleverager);
         borrowToken.approve(address(ltv), borrowAssets);
-        ltv.deleverageAndWithdraw(borrowAssets, 0);
+        ltv.deleverageAndWithdraw(borrowAssets, 0, 1);
 
         assertEq(ltv.lendingConnector().getRealBorrowAssets(false, ""), 0);
         assertEq(ltv.lendingConnector().getRealCollateralAssets(false, ""), 0);
@@ -112,7 +118,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         vm.startPrank(data.emergencyDeleverager);
 
         borrowToken.approve(address(ltv), borrowAssets);
-        ltv.deleverageAndWithdraw(borrowAssets, 10 ** 16);
+        ltv.deleverageAndWithdraw(borrowAssets, 1, 100);
 
         int256 amount = 10 ** 10;
         vm.expectRevert(
@@ -150,7 +156,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         vm.startPrank(data.emergencyDeleverager);
 
         borrowToken.approve(address(ltv), borrowAssets);
-        ltv.deleverageAndWithdraw(borrowAssets, 10 ** 16);
+        ltv.deleverageAndWithdraw(borrowAssets, 1, 100);
 
         assertEq(ltv.maxLowLevelRebalanceBorrow(), 0);
 
@@ -178,7 +184,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         vm.startPrank(data.emergencyDeleverager);
 
         borrowToken.approve(address(ltv), borrowAssets);
-        ltv.deleverageAndWithdraw(borrowAssets, 0);
+        ltv.deleverageAndWithdraw(borrowAssets, 0, 1);
 
         int256 amount = 10 ** 10;
 
@@ -214,7 +220,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         vm.startPrank(data.emergencyDeleverager);
 
         borrowToken.approve(address(ltv), borrowAssets);
-        ltv.deleverageAndWithdraw(borrowAssets, 0);
+        ltv.deleverageAndWithdraw(borrowAssets, 0, 1);
 
         int256 amount = 10 ** 10;
 
@@ -243,7 +249,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         vm.startPrank(data.emergencyDeleverager);
 
         borrowToken.approve(address(ltv), borrowAssets);
-        ltv.deleverageAndWithdraw(borrowAssets, 0);
+        ltv.deleverageAndWithdraw(borrowAssets, 0, 1);
 
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(VaultBalanceAsLendingConnector.UnexpectedSupplyCall.selector));
@@ -272,7 +278,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         vm.startPrank(data.emergencyDeleverager);
 
         borrowToken.approve(address(ltv), borrowAssets);
-        ltv.deleverageAndWithdraw(borrowAssets, 10 ** 16);
+        ltv.deleverageAndWithdraw(borrowAssets, 1, 100);
 
         assertEq(address(ltv.getLendingConnector()), address(ltv.vaultBalanceAsLendingConnector()));
         assertNotEq(address(ltv.getLendingConnector()), address(ltv.lendingConnector()));
@@ -288,7 +294,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         vm.startPrank(data.emergencyDeleverager);
 
         borrowToken.approve(address(ltv), borrowAssets);
-        ltv.deleverageAndWithdraw(borrowAssets, 10 ** 16);
+        ltv.deleverageAndWithdraw(borrowAssets, 1, 100);
 
         assertEq(ltv.isVaultDeleveraged(), true);
     }
@@ -301,7 +307,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         ltv.setVaultBalanceAsLendingConnector(address(0));
         vm.startPrank(data.emergencyDeleverager);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.VaultBalanceAsLendingConnectorNotSet.selector));
-        ltv.deleverageAndWithdraw(0, 0);
+        ltv.deleverageAndWithdraw(0, 0, 1);
     }
 
     function test_failIfNotEnoughBorrowAssets(DefaultTestData memory data)
@@ -317,7 +323,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         vm.expectRevert(
             abi.encodeWithSelector(IAdministrationErrors.ImpossibleToCoverDeleverage.selector, borrowAssets, amount)
         );
-        ltv.deleverageAndWithdraw(amount, 0);
+        ltv.deleverageAndWithdraw(amount, 0, 1);
     }
 
     function test_failIfVaultAlreadyDeleveraged(DefaultTestData memory data)
@@ -329,10 +335,10 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
 
         vm.startPrank(data.emergencyDeleverager);
         borrowToken.approve(address(ltv), borrowAssets);
-        ltv.deleverageAndWithdraw(borrowAssets, 0);
+        ltv.deleverageAndWithdraw(borrowAssets, 0, 1);
 
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.VaultAlreadyDeleveraged.selector));
-        ltv.deleverageAndWithdraw(borrowAssets, 0);
+        ltv.deleverageAndWithdraw(borrowAssets, 0, 1);
     }
 
     function test_maxDeleverageFeeApplied(DefaultTestData memory data) public testWithPredefinedDefaultValues(data) {
@@ -346,7 +352,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         vm.startPrank(data.emergencyDeleverager);
         borrowToken.approve(address(ltv), borrowAssets);
         uint256 supplyBefore = ltv.totalSupply();
-        ltv.deleverageAndWithdraw(borrowAssets, 0);
+        ltv.deleverageAndWithdraw(borrowAssets, 0, 1);
         assertGt(ltv.totalSupply(), supplyBefore);
     }
 }

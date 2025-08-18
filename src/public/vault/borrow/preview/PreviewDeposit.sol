@@ -35,7 +35,8 @@ abstract contract PreviewDeposit is Vault {
                 protocolFutureRewardCollateral: data.protocolFutureRewardCollateral,
                 collateralSlippage: data.collateralSlippage,
                 borrowSlippage: data.borrowSlippage,
-                targetLTV: data.targetLTV,
+                targetLTVDividend: data.targetLTVDividend,
+                targetLTVDivider: data.targetLTVDivider,
                 deltaRealCollateral: 0,
                 deltaRealBorrow: -1 * int256(assetsInUnderlying)
             })

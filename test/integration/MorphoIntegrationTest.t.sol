@@ -9,7 +9,7 @@ import {VaultBalanceAsLendingConnector} from
 import {IMorphoBlue} from "../../src/connectors/lending_connectors/interfaces/IMorphoBlue.sol";
 import {IMorphoOracle} from "../../src/connectors/oracle_connectors/interfaces/IMorphoOracle.sol";
 import {LTV} from "../../src/elements/LTV.sol";
-import "forge-std/interfaces/IERC20.sol";
+import "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {StateInitData} from "../../src/structs/state/StateInitData.sol";
 import {ConstantSlippageProvider} from "../../src/connectors/slippage_providers/ConstantSlippageProvider.sol";
 import {ModulesProvider, ModulesState} from "../../src/elements/ModulesProvider.sol";
@@ -81,20 +81,26 @@ contract MorphoIntegrationTest is Test {
             collateralToken: WSTETH,
             borrowToken: WETH,
             feeCollector: address(this),
-            maxSafeLTV: 800000000000000000,
-            minProfitLTV: 500000000000000000,
-            targetLTV: 750000000000000000,
+            maxSafeLTVDividend: 8,
+            maxSafeLTVDivider: 10,
+            minProfitLTVDividend: 5,
+            minProfitLTVDivider: 10,
+            targetLTVDividend: 75,
+            targetLTVDivider: 100,
             lendingConnector: ILendingConnector(address(morphoLendingConnector)),
             oracleConnector: IOracleConnector(address(morphoOracleConnector)),
-            maxGrowthFee: 200000000000000000,
+            maxGrowthFeeDividend: 1,
+            maxGrowthFeeDivider: 5,
             maxTotalAssetsInUnderlying: type(uint128).max,
             slippageProvider: slippageProvider,
-            maxDeleverageFee: 50000000000000000,
+            maxDeleverageFeeDividend: 1,
+            maxDeleverageFeeDivider: 20,
             vaultBalanceAsLendingConnector: ILendingConnector(address(0)),
             owner: address(this),
             guardian: address(this),
             governor: address(this),
             emergencyDeleverager: address(this),
+            auctionDuration: 1000,
             lendingConnectorData: abi.encode(MORPHO_ORACLE, IRM, 945000000000000000, keccak256(abi.encode(marketParams)))
         });
 
@@ -236,12 +242,12 @@ contract MorphoIntegrationTest is Test {
     function test_MorphoConnectorMint() public {
         vm.startPrank(user);
 
-        weth.approve(address(ltv), 1040404040404040404);
+        weth.approve(address(ltv), 1040404040404040405);
         uint256 givenBorrowTokens = ltv.mint(1 ether, user);
 
         vm.stopPrank();
 
-        assertEq(givenBorrowTokens, 1040404040404040404);
+        assertEq(givenBorrowTokens, 1040404040404040405);
     }
 
     function test_MorphoConnectorWithdraw() public {
@@ -253,7 +259,7 @@ contract MorphoIntegrationTest is Test {
         uint256 shares = ltv.withdraw(1 ether, user, user);
 
         vm.stopPrank();
-        assertEq(shares, 1 ether + 1);
+        assertEq(shares, 1 ether);
     }
 
     function test_MorphoConnectorRedeem() public {
@@ -267,7 +273,7 @@ contract MorphoIntegrationTest is Test {
         uint256 assetsReceived = ltv.redeem(1 ether, user, user);
 
         vm.stopPrank();
-        assertEq(assetsReceived, 1 ether - 1);
+        assertEq(assetsReceived, 1 ether);
     }
 
     function test_MorphoConnectorDepositCollateral() public {

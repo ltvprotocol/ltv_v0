@@ -3,10 +3,6 @@ pragma solidity ^0.8.28;
 
 interface ILowLevelRebalanceEvent {
     event LowLevelRebalanceExecuted(
-        address indexed executor,
-        int256 deltaRealCollateralAsset,
-        int256 deltaRealBorrowAssets,
-        int256 deltaShares,
-        int256 deltaProtocolFutureRewardShares
+        address indexed executor, int256 deltaRealCollateralAsset, int256 deltaRealBorrowAssets, int256 deltaShares
     );
 }

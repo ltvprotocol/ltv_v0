@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import "forge-std/interfaces/IERC20.sol";
+import "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import "../../interfaces/ILendingConnector.sol";
 
 contract VaultBalanceAsLendingConnector is ILendingConnector {

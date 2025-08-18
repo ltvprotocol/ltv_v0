@@ -35,7 +35,8 @@ abstract contract PreviewWithdrawCollateral is VaultCollateral {
                 protocolFutureRewardCollateral: data.protocolFutureRewardCollateral,
                 collateralSlippage: data.collateralSlippage,
                 borrowSlippage: data.borrowSlippage,
-                targetLTV: data.targetLTV,
+                targetLTVDividend: data.targetLTVDividend,
+                targetLTVDivider: data.targetLTVDivider,
                 deltaRealCollateral: -int256(assetsInUnderlying),
                 deltaRealBorrow: 0
             })
