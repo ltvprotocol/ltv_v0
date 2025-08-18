@@ -12,6 +12,7 @@ import "../preview/PreviewMint.sol";
 import "../../../../math/NextStep.sol";
 import "src/errors/IVaultErrors.sol";
 import "src/state_reader/vault/MaxDepositMintBorrowVaultStateReader.sol";
+import "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 
 abstract contract Mint is
     MaxDepositMintBorrowVaultStateReader,
@@ -24,6 +25,7 @@ abstract contract Mint is
     IVaultErrors
 {
     using uMulDiv for uint256;
+    using SafeERC20 for IERC20;
 
     function mint(uint256 shares, address receiver) external isFunctionAllowed nonReentrant returns (uint256 assets) {
         MaxDepositMintBorrowVaultState memory state = maxDepositMintBorrowVaultState();
@@ -37,7 +39,7 @@ abstract contract Mint is
             return 0;
         }
 
-        borrowToken.transferFrom(msg.sender, address(this), assetsOut);
+        borrowToken.safeTransferFrom(msg.sender, address(this), assetsOut);
 
         applyMaxGrowthFee(
             data.previewDepositBorrowVaultData.supplyAfterFee, data.previewDepositBorrowVaultData.withdrawTotalAssets

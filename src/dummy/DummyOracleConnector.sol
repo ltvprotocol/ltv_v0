@@ -3,7 +3,7 @@ pragma solidity ^0.8.27;
 
 import "../interfaces/IOracleConnector.sol";
 import "./interfaces/IDummyOracle.sol";
-import "forge-std/interfaces/IERC20.sol";
+import "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 
 contract DummyOracleConnector is IOracleConnector {
     IERC20 public immutable COLLATERAL_TOKEN;
