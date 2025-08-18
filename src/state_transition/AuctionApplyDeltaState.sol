@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
+import {ReentrancyGuardUpgradeable} from
+    "openzeppelin-contracts-upgradeable/contracts/utils/ReentrancyGuardUpgradeable.sol";
 import {DeltaAuctionState} from "src/structs/state_transition/DeltaAuctionState.sol";
 import {IAuctionEvent} from "src/events/IAuctionEvent.sol";
 import {FunctionStopperModifier} from "src/modifiers/FunctionStopperModifier.sol";
@@ -15,6 +18,8 @@ abstract contract AuctionApplyDeltaState is
     FunctionStopperModifier,
     IAuctionEvent
 {
+    using SafeERC20 for IERC20;
+
     function applyDeltaState(DeltaAuctionState memory deltaState) internal {
         futureBorrowAssets += deltaState.deltaFutureBorrowAssets;
         futureCollateralAssets += deltaState.deltaFutureCollateralAssets;
@@ -24,7 +29,7 @@ abstract contract AuctionApplyDeltaState is
             deltaState.deltaProtocolFutureRewardCollateralAssets + deltaState.deltaUserFutureRewardCollateralAssets;
 
         if (deltaState.deltaUserCollateralAssets < 0) {
-            collateralToken.transferFrom(msg.sender, address(this), uint256(-deltaState.deltaUserCollateralAssets));
+            collateralToken.safeTransferFrom(msg.sender, address(this), uint256(-deltaState.deltaUserCollateralAssets));
         }
         int256 supplyAmount =
             -(deltaState.deltaUserCollateralAssets + deltaState.deltaProtocolFutureRewardCollateralAssets);
@@ -39,7 +44,7 @@ abstract contract AuctionApplyDeltaState is
         }
 
         if (deltaState.deltaUserBorrowAssets > 0) {
-            borrowToken.transferFrom(msg.sender, address(this), uint256(deltaState.deltaUserBorrowAssets));
+            borrowToken.safeTransferFrom(msg.sender, address(this), uint256(deltaState.deltaUserBorrowAssets));
         }
 
         int256 repayAmount = deltaState.deltaUserBorrowAssets + deltaState.deltaProtocolFutureRewardBorrowAssets;

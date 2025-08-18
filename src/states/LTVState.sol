@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {IERC20} from "forge-std/interfaces/IERC20.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
 import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
 import {IWhitelistRegistry} from "src/interfaces/IWhitelistRegistry.sol";
@@ -18,7 +18,8 @@ import {AuctionState} from "src/structs/state/AuctionState.sol";
 import {PreviewLowLevelRebalanceState} from "src/structs/state/low_level/PreviewLowLevelRebalanceState.sol";
 import {MaxLowLevelRebalanceSharesState} from "src/structs/state/low_level/MaxLowLevelRebalanceSharesState.sol";
 import {MaxLowLevelRebalanceBorrowStateData} from "src/structs/state/low_level/MaxLowLevelRebalanceBorrowStateData.sol";
-import {MaxLowLevelRebalanceCollateralStateData} from "src/structs/state/low_level/MaxLowLevelRebalanceCollateralStateData.sol";
+import {MaxLowLevelRebalanceCollateralStateData} from
+    "src/structs/state/low_level/MaxLowLevelRebalanceCollateralStateData.sol";
 import {ExecuteLowLevelRebalanceState} from "src/structs/state/low_level/ExecuteLowLevelRebalanceState.sol";
 
 abstract contract LTVState {

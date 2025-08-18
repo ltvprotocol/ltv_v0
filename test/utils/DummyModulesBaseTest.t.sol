@@ -17,7 +17,6 @@ import {DummyCollateralVaultModule} from "test/utils/modules/DummyCollateralVaul
 import {DummyERC20Module} from "test/utils/modules/DummyERC20Module.t.sol";
 import {DummyLowLevelRebalanceModule} from "test/utils/modules/DummyLowLevelRebalanceModule.t.sol";
 
-
 contract DummyModulesBaseTest is BaseTest {
     DummyLTV public dummyLTV;
 

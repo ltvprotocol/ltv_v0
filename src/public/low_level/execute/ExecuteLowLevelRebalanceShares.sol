@@ -11,7 +11,8 @@ import {ExecuteLowLevelRebalance} from "src/state_transition/ExecuteLowLevelReba
 import {ExecuteLowLevelRebalanceStateReader} from "src/state_reader/low_level/ExecuteLowLevelRebalanceStateReader.sol";
 import {PreviewLowLevelRebalanceShares} from "src/public/low_level/preview/PreviewLowLevelRebalanceShares.sol";
 import {MaxLowLevelRebalanceShares} from "src/public/low_level/max/MaxLowLevelRebalanceShares.sol";
-import {PreviewLowLevelRebalanceStateToData} from "src/math/state_to_data/preview/PreviewLowLevelRebalanceStateToData.sol";
+import {PreviewLowLevelRebalanceStateToData} from
+    "src/math/state_to_data/preview/PreviewLowLevelRebalanceStateToData.sol";
 import {CommonMath} from "src/math/CommonMath.sol";
 
 abstract contract ExecuteLowLevelRebalanceShares is

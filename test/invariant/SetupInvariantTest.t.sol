@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 import {ILTV} from "src/interfaces/ILTV.sol";
 import {BaseInvariantTest} from "test/invariant/utils/BaseInvariantTest.t.sol";
-import {VaultInvariantTest, VaultInvariantWrapper} from "test/invariant/VaultInvariantTest.t.sol";
+import {VaultInvariantWrapper} from "test/invariant/VaultInvariantTest.t.sol";
 
 contract SetupInvariantTest is BaseInvariantTest {
     VaultInvariantWrapper internal _wrapper;

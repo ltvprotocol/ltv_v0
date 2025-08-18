@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {BaseTest, DefaultTestData} from "test/utils/BaseTest.t.sol";
+import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
+import {DefaultTestData} from "test/utils/BaseTest.t.sol";
 import {PrepareEachFunctionSuccessfulExecution} from "test/administration/PrepareEachFunctionSuccessfulExecution.sol";
 import {ILTV} from "src/interfaces/ILTV.sol";
 import {IModules} from "src/interfaces/IModules.sol";

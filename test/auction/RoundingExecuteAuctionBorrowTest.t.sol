@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {AuctionTestCommon, DefaultTestData, Constants} from "test/auction/AuctionTestCommon.t.sol";
-import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
+import {DefaultTestData} from "test/utils/BaseTest.t.sol";
+import {AuctionTestCommon} from "test/auction/AuctionTestCommon.t.sol";
 import {ILTV} from "src/interfaces/ILTV.sol";
 
 contract RoundingExecuteAuctionBorrowTest is AuctionTestCommon {

@@ -2,8 +2,8 @@
 pragma solidity ^0.8.28;
 
 import {Test} from "forge-std/Test.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {MockERC20} from "forge-std/mocks/MockERC20.sol";
-import {ILTV} from "src/interfaces/ILTV.sol";
 import {IDummyOracle} from "src/dummy/interfaces/IDummyOracle.sol";
 import {IAdministrationModule} from "src/interfaces/reads/IAdministrationModule.sol";
 import {IAuctionModule} from "src/interfaces/reads/IAuctionModule.sol";
@@ -12,8 +12,6 @@ import {ICollateralVaultModule} from "src/interfaces/reads/ICollateralVaultModul
 import {IBorrowVaultModule} from "src/interfaces/reads/IBorrowVaultModule.sol";
 import {ILowLevelRebalanceModule} from "src/interfaces/reads/ILowLevelRebalanceModule.sol";
 import {IInitializeModule} from "src/interfaces/reads/IInitializeModule.sol";
-import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
-import {Constants} from "src/Constants.sol";
 import {StateInitData} from "src/structs/state/StateInitData.sol";
 import {ModulesState} from "src/structs/state/ModulesState.sol";
 import {DummyLTV} from "test/utils/DummyLTV.t.sol";
@@ -23,7 +21,6 @@ import {DummyLendingConnector} from "src/dummy/DummyLendingConnector.sol";
 import {DummyOracleConnector} from "src/dummy/DummyOracleConnector.sol";
 import {ConstantSlippageProvider} from "src/connectors/slippage_providers/ConstantSlippageProvider.sol";
 import {VaultBalanceAsLendingConnector} from "src/connectors/lending_connectors/VaultBalanceAsLendingConnector.sol";
-import {Timelock} from "src/timelock/Timelock.sol";
 import {AuctionModule} from "src/elements/AuctionModule.sol";
 import {ERC20Module} from "src/elements/ERC20Module.sol";
 import {CollateralVaultModule} from "src/elements/CollateralVaultModule.sol";
@@ -108,8 +105,11 @@ contract BaseTest is Test {
                 initializeModule: IInitializeModule(address(new InitializeModule()))
             });
             modulesProvider = new ModulesProvider(modulesState);
-            oracleConnector = new DummyOracleConnector(collateralToken, borrowToken, oracle);
-            lendingConnector = new DummyLendingConnector(collateralToken, borrowToken, lendingProtocol);
+            oracleConnector =
+                new DummyOracleConnector(IERC20(address(collateralToken)), IERC20(address(borrowToken)), oracle);
+            lendingConnector = new DummyLendingConnector(
+                IERC20(address(collateralToken)), IERC20(address(borrowToken)), lendingProtocol
+            );
 
             StateInitData memory initData = StateInitData({
                 name: "Dummy LTV",
@@ -132,7 +132,9 @@ contract BaseTest is Test {
                 slippageProvider: slippageProvider,
                 maxDeleverageFeeDividend: init.maxDeleverageFeeDividend,
                 maxDeleverageFeeDivider: init.maxDeleverageFeeDivider,
-                vaultBalanceAsLendingConnector: new VaultBalanceAsLendingConnector(collateralToken, borrowToken),
+                vaultBalanceAsLendingConnector: new VaultBalanceAsLendingConnector(
+                    IERC20(address(collateralToken)), IERC20(address(borrowToken))
+                ),
                 owner: init.owner,
                 guardian: init.guardian,
                 governor: init.governor,

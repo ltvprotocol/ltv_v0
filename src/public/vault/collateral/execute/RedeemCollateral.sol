@@ -16,7 +16,8 @@ import {ApplyMaxGrowthFee} from "src/state_transition/ApplyMaxGrowthFee.sol";
 import {MintProtocolRewards} from "src/state_transition/MintProtocolRewards.sol";
 import {Lending} from "src/state_transition/Lending.sol";
 import {TransferFromProtocol} from "src/state_transition/TransferFromProtocol.sol";
-import {MaxWithdrawRedeemCollateralVaultStateReader} from "src/state_reader/vault/MaxWithdrawRedeemCollateralVaultStateReader.sol";
+import {MaxWithdrawRedeemCollateralVaultStateReader} from
+    "src/state_reader/vault/MaxWithdrawRedeemCollateralVaultStateReader.sol";
 import {MaxRedeemCollateral} from "src/public/vault/collateral/max/MaxRedeemCollateral.sol";
 import {PreviewRedeemCollateral} from "src/public/vault/collateral/preview/PreviewRedeemCollateral.sol";
 import {NextStep} from "src/math/NextStep.sol";

@@ -4,7 +4,8 @@ pragma solidity ^0.8.28;
 import {PreviewDepositVaultStateReader} from "src/state_reader/vault/PreviewDepositVaultStateReader.sol";
 import {PreviewWithdrawVaultStateReader} from "src/state_reader/vault/PreviewWithdrawVaultStateReader.sol";
 import {MaxDepositMintBorrowVaultStateReader} from "src/state_reader/vault/MaxDepositMintBorrowVaultStateReader.sol";
-import {MaxWithdrawRedeemBorrowVaultStateReader} from "src/state_reader/vault/MaxWithdrawRedeemBorrowVaultStateReader.sol";
+import {MaxWithdrawRedeemBorrowVaultStateReader} from
+    "src/state_reader/vault/MaxWithdrawRedeemBorrowVaultStateReader.sol";
 
 abstract contract BorrowVaultRead is
     PreviewDepositVaultStateReader,

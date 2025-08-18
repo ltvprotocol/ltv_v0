@@ -3,7 +3,8 @@ pragma solidity ^0.8.28;
 
 import {MaxGrowthFeeState} from "src/structs/state/MaxGrowthFeeState.sol";
 import {ConvertCollateralData} from "src/structs/data/vault/ConvertCollateralData.sol";
-import {MaxGrowthFeeStateToConvertCollateralData} from "src/math/state_to_data/MaxGrowthFeeStateToConvertCollateralData.sol";
+import {MaxGrowthFeeStateToConvertCollateralData} from
+    "src/math/state_to_data/MaxGrowthFeeStateToConvertCollateralData.sol";
 import {VaultCollateral} from "src/math/VaultCollateral.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 

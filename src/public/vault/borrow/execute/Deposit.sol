@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 import {IERC4626Events} from "src/events/IERC4626Events.sol";
 import {IVaultErrors} from "src/errors/IVaultErrors.sol";
 import {MaxDepositMintBorrowVaultState} from "src/structs/state/vault/MaxDepositMintBorrowVaultState.sol";
@@ -33,6 +35,7 @@ abstract contract Deposit is
     IVaultErrors
 {
     using uMulDiv for uint256;
+    using SafeERC20 for IERC20;
 
     function deposit(uint256 assets, address receiver) external isFunctionAllowed nonReentrant returns (uint256) {
         MaxDepositMintBorrowVaultState memory state = maxDepositMintBorrowVaultState();
@@ -46,7 +49,7 @@ abstract contract Deposit is
             return 0;
         }
 
-        borrowToken.transferFrom(msg.sender, address(this), assets);
+        borrowToken.safeTransferFrom(msg.sender, address(this), assets);
 
         applyMaxGrowthFee(
             data.previewDepositBorrowVaultData.supplyAfterFee, data.previewDepositBorrowVaultData.withdrawTotalAssets

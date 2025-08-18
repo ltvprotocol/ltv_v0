@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import {IERC20} from "forge-std/interfaces/IERC20.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
 import {IDummyOracle} from "src/dummy/interfaces/IDummyOracle.sol";
 

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
 import {IModules} from "src/interfaces/IModules.sol";
 import {IAuctionModule} from "src/interfaces/reads/IAuctionModule.sol";
 import {IERC20Module} from "src/interfaces/reads/IERC20Module.sol";

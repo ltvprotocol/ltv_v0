@@ -2,7 +2,6 @@
 pragma solidity ^0.8.27;
 
 import {BaseTest, BaseTestInit} from "test/utils/BaseTest.t.sol";
-import {Constants} from "src/Constants.sol";
 
 contract NearZeroAuctionFinalRoundingTest is BaseTest {
     address internal user;

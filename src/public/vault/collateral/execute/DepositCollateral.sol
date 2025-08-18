@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 import {IERC4626Events} from "src/events/IERC4626Events.sol";
 import {IVaultErrors} from "src/errors/IVaultErrors.sol";
 import {MaxDepositMintCollateralVaultState} from "src/structs/state/vault/MaxDepositMintCollateralVaultState.sol";
@@ -15,7 +17,8 @@ import {ERC20} from "src/state_transition/ERC20.sol";
 import {ApplyMaxGrowthFee} from "src/state_transition/ApplyMaxGrowthFee.sol";
 import {MintProtocolRewards} from "src/state_transition/MintProtocolRewards.sol";
 import {Lending} from "src/state_transition/Lending.sol";
-import {MaxDepositMintCollateralVaultStateReader} from "src/state_reader/vault/MaxDepositMintCollateralVaultStateReader.sol";
+import {MaxDepositMintCollateralVaultStateReader} from
+    "src/state_reader/vault/MaxDepositMintCollateralVaultStateReader.sol";
 import {MaxDepositCollateral} from "src/public/vault/collateral/max/MaxDepositCollateral.sol";
 import {PreviewDepositCollateral} from "src/public/vault/collateral/preview/PreviewDepositCollateral.sol";
 import {NextStep} from "src/math/NextStep.sol";
@@ -33,6 +36,7 @@ abstract contract DepositCollateral is
     IVaultErrors
 {
     using uMulDiv for uint256;
+    using SafeERC20 for IERC20;
 
     function depositCollateral(uint256 assets, address receiver)
         external
@@ -53,7 +57,7 @@ abstract contract DepositCollateral is
             return 0;
         }
 
-        collateralToken.transferFrom(msg.sender, address(this), assets);
+        collateralToken.safeTransferFrom(msg.sender, address(this), assets);
 
         applyMaxGrowthFee(
             data.previewCollateralVaultData.supplyAfterFee, data.previewCollateralVaultData.withdrawTotalAssets

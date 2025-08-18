@@ -3,7 +3,8 @@ pragma solidity ^0.8.28;
 
 import {MaxWithdrawRedeemBorrowVaultState} from "src/structs/state/vault/MaxWithdrawRedeemBorrowVaultState.sol";
 import {MaxWithdrawRedeemBorrowVaultData} from "src/structs/data/vault/MaxWithdrawRedeemBorrowVaultData.sol";
-import {PreviewWithdrawStateToPreviewWithdrawData} from "src/math/state_to_data/preview/PreviewWithdrawStateToPreviewWithdrawData.sol";
+import {PreviewWithdrawStateToPreviewWithdrawData} from
+    "src/math/state_to_data/preview/PreviewWithdrawStateToPreviewWithdrawData.sol";
 import {CommonMath} from "src/math/CommonMath.sol";
 
 contract MaxWithdrawRedeemStateToData is PreviewWithdrawStateToPreviewWithdrawData {

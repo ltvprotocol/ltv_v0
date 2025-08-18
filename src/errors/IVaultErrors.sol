@@ -3,7 +3,8 @@ pragma solidity ^0.8.28;
 
 import {DeltaSharesAndDeltaRealBorrowData} from "src/structs/data/vault/DeltaSharesAndDeltaRealBorrowData.sol";
 import {DeltaSharesAndDeltaRealCollateralData} from "src/structs/data/vault/DeltaSharesAndDeltaRealCollateralData.sol";
-import {DeltaRealBorrowAndDeltaRealCollateralData} from "src/structs/data/vault/DeltaRealBorrowAndDeltaRealCollateralData.sol";
+import {DeltaRealBorrowAndDeltaRealCollateralData} from
+    "src/structs/data/vault/DeltaRealBorrowAndDeltaRealCollateralData.sol";
 
 interface IVaultErrors {
     error DeltaSharesAndDeltaRealBorrowUnexpectedError(DeltaSharesAndDeltaRealBorrowData data);

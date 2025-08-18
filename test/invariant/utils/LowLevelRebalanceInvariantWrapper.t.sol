@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {IERC20} from "forge-std/interfaces/IERC20.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {ILTV} from "src/interfaces/ILTV.sol";
 import {BaseInvariantWrapper} from "test/invariant/utils/BaseInvariantWrapper.t.sol";
 

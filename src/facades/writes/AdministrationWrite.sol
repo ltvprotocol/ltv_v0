@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import {OwnableUpgradeable} from "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
 import {IModules} from "src/interfaces/IModules.sol";
 import {IAdministrationEvents} from "src/events/IAdministrationEvents.sol";
 import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
-import {LTVState} from  "src/states/LTVState.sol";
+import {LTVState} from "src/states/LTVState.sol";
 import {CommonWrite} from "src/facades/writes/CommonWrite.sol";
 
 abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeable, IAdministrationEvents {
