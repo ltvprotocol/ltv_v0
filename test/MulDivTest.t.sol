@@ -11,25 +11,25 @@ import {SignedHelpers} from "./helpers/SignedHelpers.sol";
 contract MulDivTest is Test, EuclidianMod, UnsignedHelpers, SignedHelpers {
     /// forge-config: default.allow_internal_expect_revert = true
     function test_uMulDivUpRevertsOnZeroDenominator(uint256 x, uint256 y) public {
-        vm.expectRevert(bytes("Denominator cannot be zero"));
+        vm.expectRevert(bytes(""));
         uMulDiv.mulDivUp(x, y, 0);
     }
 
     /// forge-config: default.allow_internal_expect_revert = true
     function test_uMulDivDownRevertsOnZeroDenominator(uint256 x, uint256 y) public {
-        vm.expectRevert(bytes("Denominator cannot be zero"));
+        vm.expectRevert(bytes(""));
         uMulDiv.mulDivDown(x, y, 0);
     }
 
     /// forge-config: default.allow_internal_expect_revert = true
     function test_sMulDivUpRevertsOnZeroDenominator(int256 x, int256 y) public {
-        vm.expectRevert(bytes("Denominator cannot be zero"));
+        vm.expectRevert(bytes(""));
         sMulDiv.mulDivUp(x, y, 0);
     }
 
     /// forge-config: default.allow_internal_expect_revert = true
     function test_sMulDivDownRevertsOnZeroDenominator(int256 x, int256 y) public {
-        vm.expectRevert(bytes("Denominator cannot be zero"));
+        vm.expectRevert(bytes(""));
         sMulDiv.mulDivDown(x, y, 0);
     }
 
@@ -65,7 +65,7 @@ contract MulDivTest is Test, EuclidianMod, UnsignedHelpers, SignedHelpers {
 
         (x, y) = sFindMulOverflow(x, y);
 
-        vm.expectRevert(bytes("Multiplication overflow detected"));
+        vm.expectRevert(bytes(""));
         sMulDiv.mulDivUp(x, y, denominator);
     }
 
@@ -77,7 +77,7 @@ contract MulDivTest is Test, EuclidianMod, UnsignedHelpers, SignedHelpers {
 
         (x, y) = sFindMulOverflow(x, y);
 
-        vm.expectRevert(bytes("Multiplication overflow detected"));
+        vm.expectRevert(bytes(""));
         sMulDiv.mulDivDown(x, y, denominator);
     }
 

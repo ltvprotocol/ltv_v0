@@ -6,8 +6,6 @@ library uMulDiv {
     uint256 internal constant MAX_UINT256 = 2 ** 256 - 1;
 
     function mulDivDown(uint256 factorA, uint256 factorB, uint256 denominator) internal pure returns (uint256 result) {
-        require(denominator != 0, "Denominator cannot be zero");
-
         /// @solidity memory-safe-assembly
         assembly {
             if iszero(mul(denominator, iszero(mul(factorB, gt(factorA, div(MAX_UINT256, factorB)))))) { revert(0, 0) }
@@ -17,7 +15,6 @@ library uMulDiv {
     }
 
     function mulDivUp(uint256 x, uint256 y, uint256 denominator) internal pure returns (uint256 z) {
-        require(denominator != 0, "Denominator cannot be zero");
         /// @solidity memory-safe-assembly
         assembly {
             if iszero(mul(denominator, iszero(mul(y, gt(x, div(MAX_UINT256, y)))))) { revert(0, 0) }
@@ -43,100 +40,78 @@ library sMulDiv {
     // Minimum value of a signed 256-bit integer
     int256 internal constant MIN_INT256 = type(int256).min;
 
-    function mulDivDown(int256 x, int256 y, int256 denominator) internal pure returns (int256) {
-        require(denominator != 0, "Denominator cannot be zero");
+    function mulDivDown(int256 x, int256 y, int256 denominator) internal pure returns (int256 result) {
+        /// @solidity memory-safe-assembly
+        assembly {
+            // Early return for zero denominator
+            if iszero(denominator) { revert(0, 0) }
 
-        if (y != 0 && x != 0) {
-            if (x > 0 && y > 0) {
-                require(x <= MAX_INT256 / y, "Multiplication overflow detected");
+            // Early return for zero inputs
+            let anyZero := or(iszero(x), iszero(y))
+            if anyZero { result := 0 }
+
+            if iszero(anyZero) {
+                // Perform multiplication
+                let product := mul(x, y)
+                if eq(product, 0x8000000000000000000000000000000000000000000000000000000000000000) {
+                    if or(
+                        eq(y, 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff),
+                        eq(denominator, 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff)
+                    ) { revert(0, 0) }
+                }
+                if iszero(eq(x, sdiv(product, y))) { revert(0, 0) }
+
+                // Perform division
+                let division := sdiv(product, denominator)
+
+                // Determine if result should be positive or negative
+                let shouldBeNegative := xor(shr(255, product), shr(255, denominator))
+
+                if shouldBeNegative {
+                    // Result should be negative, check if we need to round down
+                    if smod(product, denominator) { division := sub(division, 1) }
+                }
+
+                result := division
             }
-
-            if (x < 0 && y < 0) {
-                require(x >= MAX_INT256 / y, "Multiplication overflow detected");
-            }
-
-            if (x > 0 && y < 0) {
-                // MIN_INT256 / (-1) trick
-                require(y >= MIN_INT256 / x, "Multiplication overflow detected");
-            }
-
-            if (x < 0 && y > 0) {
-                require(x >= MIN_INT256 / y, "Multiplication overflow detected");
-            }
-        } else {
-            return 0;
         }
-
-        // Perform the multiplication
-        int256 product = x * y;
-
-        if (product == MIN_INT256) {
-            require(denominator != -1, "Division overflow");
-        }
-
-        int256 division = product / denominator;
-
-        // if result is positive, then division returned number rounded towards zero, so mulDivDown is satisfied
-        if ((product > 0 && denominator > 0) || (product < 0 && denominator < 0)) {
-            return division;
-        }
-
-        // if result is negative or zero, then division rounded up, so we need to round down
-        if (product % denominator != 0) {
-            require(division != MIN_INT256, "Subtraction overflow");
-
-            division -= 1;
-        }
-
-        return division;
     }
 
-    function mulDivUp(int256 x, int256 y, int256 denominator) internal pure returns (int256) {
-        require(denominator != 0, "Denominator cannot be zero");
+    function mulDivUp(int256 x, int256 y, int256 denominator) internal pure returns (int256 result) {
+        /// @solidity memory-safe-assembly
+        assembly {
+            // Early return for zero denominator
+            if iszero(denominator) { revert(0, 0) }
 
-        if (y != 0 && x != 0) {
-            if (x > 0 && y > 0) {
-                require(x <= MAX_INT256 / y, "Multiplication overflow detected");
+            // Early return for zero inputs
+            let anyZero := or(iszero(x), iszero(y))
+            if anyZero { result := 0 }
+
+            if iszero(anyZero) {
+                // Perform multiplication
+                let product := mul(x, y)
+                if eq(product, 0x8000000000000000000000000000000000000000000000000000000000000000) {
+                    if or(
+                        eq(y, 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff),
+                        eq(denominator, 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff)
+                    ) { revert(0, 0) }
+                }
+                if iszero(eq(x, sdiv(product, y))) { revert(0, 0) }
+
+                // Perform division
+                let division := sdiv(product, denominator)
+
+                // Determine if result should be positive or negative
+                let shouldBePositive := eq(shr(255, product), shr(255, denominator))
+
+                if shouldBePositive {
+                    // Result should be negative, check if we need to round down
+                    if smod(product, denominator) { division := add(division, 1) }
+                }
+
+                result := division
             }
-
-            if (x < 0 && y < 0) {
-                require(x >= MAX_INT256 / y, "Multiplication overflow detected");
-            }
-
-            if (x > 0 && y < 0) {
-                // MIN_INT256 / (-1) trick
-                require(y >= MIN_INT256 / x, "Multiplication overflow detected");
-            }
-
-            if (x < 0 && y > 0) {
-                require(x >= MIN_INT256 / y, "Multiplication overflow detected");
-            }
-        } else {
-            return 0;
         }
-
-        // Perform the multiplication
-        int256 product = x * y;
-
-        if (product == MIN_INT256) {
-            require(denominator != -1, "Division overflow");
-        }
-
-        int256 division = product / denominator;
-
-        // if result is negative, then division returned number rounded towards zero, so mulDivUp is satisfied
-        if ((product < 0 && denominator > 0) || (product > 0 && denominator < 0)) {
-            return division;
-        }
-
-        // if result is positive or zero, then division rounded down, so we need to round up
-        if (product % denominator != 0) {
-            require(division != MAX_INT256, "Addition overflow");
-
-            division += 1;
-        }
-
-        return division;
     }
 
     function mulDiv(int256 x, int256 y, int256 denominator, bool isUp) internal pure returns (int256) {
