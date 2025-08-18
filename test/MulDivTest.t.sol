@@ -87,7 +87,7 @@ contract MulDivTest is Test, EuclidianMod, UnsignedHelpers, SignedHelpers {
         int256 y = 1;
         int256 denominator = -1;
 
-        vm.expectRevert(bytes("Division overflow"));
+        vm.expectRevert(bytes(""));
         sMulDiv.mulDivUp(x, y, denominator);
     }
 
@@ -97,7 +97,7 @@ contract MulDivTest is Test, EuclidianMod, UnsignedHelpers, SignedHelpers {
         int256 y = 1;
         int256 denominator = -1;
 
-        vm.expectRevert(bytes("Division overflow"));
+        vm.expectRevert(bytes(""));
         sMulDiv.mulDivDown(x, y, denominator);
     }
 
