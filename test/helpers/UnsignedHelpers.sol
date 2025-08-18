@@ -91,7 +91,11 @@ contract UnsignedHelpers {
                 return (x, y, denominator);
             }
 
-            x = x == uintMax ? x - 1 : x + 1;
+            if (x > 1) {
+                x = x - 1;
+            } else {
+                y = y - 1;
+            }
             return (x, y, denominator);
         }
 

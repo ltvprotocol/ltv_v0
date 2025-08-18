@@ -174,7 +174,14 @@ contract SignedHelpers is EuclidianMod {
                 return (x, y, denominator);
             }
 
-            x = x == intMax ? x - 1 : x + 1;
+            if (x > 1) {
+                x = x - 1;
+            } else if (x < -1) {
+                x = x + 1;
+            } else {
+                y = y - 1;
+            }
+
             (x, y, denominator) = eliminateProductSubRemainderOverflow(x, y, denominator);
             return (x, y, denominator);
         }
