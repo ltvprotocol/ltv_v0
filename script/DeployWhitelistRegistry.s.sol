@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import "forge-std/Script.sol";
-import "../src/elements/WhitelistRegistry.sol";
+import {Script} from "forge-std/Script.sol";
+import {console} from "forge-std/console.sol";
+import {WhitelistRegistry} from "src/elements/WhitelistRegistry.sol";
 
 contract DeployWhitelistRegistry is Script {
     function run() external {

@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../../interfaces/IModules.sol";
-import "../../states/LTVState.sol";
-import "../writes/CommonWrite.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "../../events/IAdministrationEvents.sol";
-import "../../errors/IAdministrationErrors.sol";
+import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import {IModules} from "src/interfaces/IModules.sol";
+import {IAdministrationEvents} from "src/events/IAdministrationEvents.sol";
+import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
+import {LTVState} from  "src/states/LTVState.sol";
+import {CommonWrite} from "src/facades/writes/CommonWrite.sol";
 
 abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeable, IAdministrationEvents {
     function setTargetLTV(uint16 dividend, uint16 divider) external {

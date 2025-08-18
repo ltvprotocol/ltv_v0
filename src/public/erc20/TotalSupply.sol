@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../../Constants.sol";
+import {Constants} from "src/Constants.sol";
 
 abstract contract TotalSupply {
     function totalSupply(uint256 supply) public pure virtual returns (uint256) {

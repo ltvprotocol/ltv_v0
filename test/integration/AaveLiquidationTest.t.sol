@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 import {Test} from "forge-std/Test.sol";
 import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
-import "./interfaces/IAaveV3Pool.sol";
+import {IAaveV3Pool} from "test/integration/interfaces/IAaveV3Pool.sol";
 
 contract AaveLiquidationTest is Test {
     IAaveV3Pool public AAVE_POOL = IAaveV3Pool(0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2);

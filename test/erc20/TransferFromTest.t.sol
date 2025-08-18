@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../utils/BaseTest.t.sol";
-import "src/errors/IERC20Errors.sol";
-import "src/events/IERC20Events.sol";
+import {BaseTest, DefaultTestData} from "test/utils/BaseTest.t.sol";
+import {IERC20Errors} from "src/errors/IERC20Errors.sol";
+import {IERC20Events} from "src/events/IERC20Events.sol";
 
 contract TransferFromTest is BaseTest, IERC20Errors, IERC20Events {
     function test_notTransferWithoutApprove(DefaultTestData memory defaultData, address user, uint256 transferAmount)

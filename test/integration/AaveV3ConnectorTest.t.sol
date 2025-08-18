@@ -1,28 +1,31 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "forge-std/Test.sol";
-import "@openzeppelin/contracts/interfaces/IERC20.sol";
-
-import {ILendingConnector} from "../../src/interfaces/ILendingConnector.sol";
-import {IOracleConnector} from "../../src/interfaces/IOracleConnector.sol";
-import {IAaveOracle} from "../../src/connectors/oracle_connectors/interfaces/IAaveOracle.sol";
-import {AaveV3Connector} from "../../src/connectors/lending_connectors/AaveV3Connector.sol";
-import {AaveV3OracleConnector} from "../../src/connectors/oracle_connectors/AaveV3OracleConnector.sol";
-
-import {ModulesProvider, ModulesState} from "../../src/elements/ModulesProvider.sol";
-import {AuctionModule, IAuctionModule} from "../../src/elements/AuctionModule.sol";
-import {ERC20Module, IERC20Module} from "../../src/elements/ERC20Module.sol";
-import {CollateralVaultModule, ICollateralVaultModule} from "../../src/elements/CollateralVaultModule.sol";
-import {BorrowVaultModule, IBorrowVaultModule} from "../../src/elements/BorrowVaultModule.sol";
-import {LowLevelRebalanceModule, ILowLevelRebalanceModule} from "../../src/elements/LowLevelRebalanceModule.sol";
-import {AdministrationModule, IAdministrationModule} from "../../src/elements/AdministrationModule.sol";
-import {IInitializeModule} from "../../src/interfaces/reads/IInitializeModule.sol";
-import {InitializeModule} from "../../src/elements/InitializeModule.sol";
-
-import {StateInitData} from "../../src/structs/state/StateInitData.sol";
-import {ConstantSlippageProvider} from "../../src/connectors/slippage_providers/ConstantSlippageProvider.sol";
-import {LTV} from "../../src/elements/LTV.sol";
+import {Test} from "forge-std/Test.sol";
+import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
+import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
+import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
+import {IAuctionModule} from "src/interfaces/reads/IAuctionModule.sol";
+import {IERC20Module} from "src/interfaces/reads/IERC20Module.sol";
+import {ICollateralVaultModule} from "src/interfaces/reads/ICollateralVaultModule.sol";
+import {IBorrowVaultModule} from "src/interfaces/reads/IBorrowVaultModule.sol";
+import {ILowLevelRebalanceModule} from "src/interfaces/reads/ILowLevelRebalanceModule.sol";
+import {IAdministrationModule} from "src/interfaces/reads/IAdministrationModule.sol";
+import {IInitializeModule} from "src/interfaces/reads/IInitializeModule.sol";
+import {IAaveOracle} from "src/connectors/oracle_connectors/interfaces/IAaveOracle.sol";
+import {StateInitData} from "src/structs/state/StateInitData.sol";
+import {AaveV3Connector} from "src/connectors/lending_connectors/AaveV3Connector.sol";
+import {AaveV3OracleConnector} from "src/connectors/oracle_connectors/AaveV3OracleConnector.sol";
+import {ConstantSlippageProvider} from "src/connectors/slippage_providers/ConstantSlippageProvider.sol";
+import {InitializeModule} from "src/elements/InitializeModule.sol";
+import {ModulesProvider, ModulesState} from "src/elements/ModulesProvider.sol";
+import {AuctionModule} from "src/elements/AuctionModule.sol";
+import {ERC20Module} from "src/elements/ERC20Module.sol";
+import {CollateralVaultModule} from "src/elements/CollateralVaultModule.sol";
+import {BorrowVaultModule} from "src/elements/BorrowVaultModule.sol";
+import {LowLevelRebalanceModule} from "src/elements/LowLevelRebalanceModule.sol";
+import {AdministrationModule} from "src/elements/AdministrationModule.sol";
+import {LTV} from "src/elements/LTV.sol";
 
 contract AaveV3ConnectorTest is Test {
     address constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;

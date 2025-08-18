@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../../../src/dummy/interfaces/IDummyLending.sol";
-import "forge-std/interfaces/IERC20.sol";
-import "forge-std/Test.sol";
-import "./RateMath.sol";
+import {Test} from "forge-std/Test.sol";
+import {IERC20} from "forge-std/interfaces/IERC20.sol";
+import {IDummyLending} from "src/dummy/interfaces/IDummyLending.sol";
+import {RateMath} from "test/invariant/utils/RateMath.sol";
 
 /**
  * @title DynamicLending

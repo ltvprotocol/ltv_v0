@@ -1,8 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../preview/PreviewWithdraw.sol";
-import "../preview/PreviewRedeem.sol";
+import {Constants} from "src/Constants.sol";
+import {MaxWithdrawRedeemBorrowVaultState} from "src/structs/state/vault/MaxWithdrawRedeemBorrowVaultState.sol";
+import {MaxWithdrawRedeemBorrowVaultData} from "src/structs/data/vault/MaxWithdrawRedeemBorrowVaultData.sol";
+import {PreviewWithdraw} from "src/public/vault/borrow/preview/PreviewWithdraw.sol";
+import {PreviewRedeem} from "src/public/vault/borrow/preview/PreviewRedeem.sol";
+import {uMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract MaxWithdraw is PreviewWithdraw, PreviewRedeem {
     using uMulDiv for uint256;

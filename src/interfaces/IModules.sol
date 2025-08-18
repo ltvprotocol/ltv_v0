@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "./reads/IERC20Module.sol";
-import "./reads/IAuctionModule.sol";
-import "./reads/ILowLevelRebalanceModule.sol";
-import "./reads/IBorrowVaultModule.sol";
-import "./reads/ICollateralVaultModule.sol";
-import "./reads/IAdministrationModule.sol";
-import "./reads/IInitializeModule.sol";
+import {IERC20Module} from "src/interfaces/reads/IERC20Module.sol";
+import {IAuctionModule} from "src/interfaces/reads/IAuctionModule.sol";
+import {ILowLevelRebalanceModule} from "src/interfaces/reads/ILowLevelRebalanceModule.sol";
+import {IBorrowVaultModule} from "src/interfaces/reads/IBorrowVaultModule.sol";
+import {ICollateralVaultModule} from "src/interfaces/reads/ICollateralVaultModule.sol";
+import {IAdministrationModule} from "src/interfaces/reads/IAdministrationModule.sol";
+import {IInitializeModule} from "src/interfaces/reads/IInitializeModule.sol";
 
 interface IModules {
     function auctionModule() external view returns (IAuctionModule);

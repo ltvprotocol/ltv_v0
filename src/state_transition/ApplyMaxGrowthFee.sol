@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "./ERC20.sol";
-import "../public/erc20/TotalSupply.sol";
-import "../public/vault/borrow/TotalAssets.sol";
+import {Constants} from "src/Constants.sol";
+import {ERC20} from "src/state_transition/ERC20.sol";
+import {TotalSupply} from "src/public/erc20/TotalSupply.sol";
+import {TotalAssets} from "src/public/vault/borrow/TotalAssets.sol";
+import {uMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract ApplyMaxGrowthFee is TotalAssets, TotalSupply, ERC20 {
     using uMulDiv for uint256;

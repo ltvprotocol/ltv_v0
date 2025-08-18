@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {BaseTest, BaseTestInit} from "../utils/BaseTest.t.sol";
-import {Constants} from "../../src/Constants.sol";
+import {BaseTest, BaseTestInit} from "test/utils/BaseTest.t.sol";
+import {Constants} from "src/Constants.sol";
 
 contract MaxReedemCollateralCheckBalanceTest is BaseTest {
     address internal user;

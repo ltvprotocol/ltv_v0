@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "forge-std/interfaces/IERC20.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "../spooky/ISpookyOracle.sol";
+import {IERC20} from "forge-std/interfaces/IERC20.sol";
+import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import {ISpookyOracle} from "src/ghost/spooky/ISpookyOracle.sol";
 
 contract HodlMyBeerLending is Initializable {
     mapping(address => uint256) public supplyCollateralBalance;

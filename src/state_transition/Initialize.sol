@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "src/structs/state/StateInitData.sol";
-import "src/errors/IInitError.sol";
-import "./AdmistrationSetters.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import {IERC20} from "forge-std/interfaces/IERC20.sol";
+import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
+import {IInitError} from "src/errors/IInitError.sol";
+import {StateInitData} from "src/structs/state/StateInitData.sol";
+import {AdmistrationSetters} from "src/state_transition/AdmistrationSetters.sol";
 
 abstract contract Initialize is AdmistrationSetters, OwnableUpgradeable {
     function initialize(StateInitData memory initData) public onlyInitializing {

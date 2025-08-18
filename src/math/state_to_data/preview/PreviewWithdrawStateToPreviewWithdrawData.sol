@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "src/structs/state/vault/PreviewWithdrawVaultState.sol";
-import "src/structs/data/vault/PreviewWithdrawBorrowVaultData.sol";
-import "../../CommonMath.sol";
-import "../../MaxGrowthFee.sol";
-import "src/utils/MulDiv.sol";
+import {PreviewWithdrawVaultState} from "src/structs/state/vault/PreviewWithdrawVaultState.sol";
+import {PreviewWithdrawBorrowVaultData} from "src/structs/data/vault/PreviewWithdrawBorrowVaultData.sol";
+import {TotalAssetsData} from "src/structs/data/vault/TotalAssetsData.sol";
+import {MaxGrowthFeeData} from "src/structs/data/MaxGrowthFeeData.sol";
+import {MaxGrowthFee} from "src/math/MaxGrowthFee.sol";
+import {CommonMath} from "src/math/CommonMath.sol";
+import {uMulDiv} from "src/utils/MulDiv.sol";
 
 contract PreviewWithdrawStateToPreviewWithdrawData is MaxGrowthFee {
     using uMulDiv for uint256;

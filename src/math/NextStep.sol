@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../structs/state_transition/NextState.sol";
-import "../structs/state_transition/NextStateData.sol";
-import "../structs/state_transition/NextStepData.sol";
-import "../utils/MulDiv.sol";
+import {NextState} from "src/structs/state_transition/NextState.sol";
+import {NextStateData} from "src/structs/state_transition/NextStateData.sol";
+import {NextStepData} from "src/structs/state_transition/NextStepData.sol";
+import {sMulDiv, uMulDiv} from "src/utils/MulDiv.sol";
 
 library NextStep {
     using sMulDiv for int256;

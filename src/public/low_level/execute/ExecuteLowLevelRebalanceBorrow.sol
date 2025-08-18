@@ -1,13 +1,16 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "src/public/low_level/preview/PreviewLowLevelRebalanceBorrow.sol";
-import "src/public/low_level/max/MaxLowLevelRebalanceBorrow.sol";
-import "src/state_transition/ApplyMaxGrowthFee.sol";
-import "src/math/state_to_data/preview/PreviewLowLevelRebalanceStateToData.sol";
-import "src/state_transition/ExecuteLowLevelRebalance.sol";
-import "src/errors/ILowLevelRebalanceErrors.sol";
-import "src/state_reader/low_level/ExecuteLowLevelRebalanceStateReader.sol";
+import {ExecuteLowLevelRebalanceState} from "src/structs/state/low_level/ExecuteLowLevelRebalanceState.sol";
+import {LowLevelRebalanceData} from "src/structs/data/low_level/LowLevelRebalanceData.sol";
+import {MaxLowLevelRebalanceBorrowStateData} from "src/structs/state/low_level/MaxLowLevelRebalanceBorrowStateData.sol";
+import {ILowLevelRebalanceErrors} from "src/errors/ILowLevelRebalanceErrors.sol";
+import {ApplyMaxGrowthFee} from "src/state_transition/ApplyMaxGrowthFee.sol";
+import {ExecuteLowLevelRebalance} from "src/state_transition/ExecuteLowLevelRebalance.sol";
+import {ExecuteLowLevelRebalanceStateReader} from "src/state_reader/low_level/ExecuteLowLevelRebalanceStateReader.sol";
+import {PreviewLowLevelRebalanceBorrow} from "src/public/low_level/preview/PreviewLowLevelRebalanceBorrow.sol";
+import {MaxLowLevelRebalanceBorrow} from "src/public/low_level/max/MaxLowLevelRebalanceBorrow.sol";
+import {PreviewLowLevelRebalanceStateToData} from "src/math/state_to_data/preview/PreviewLowLevelRebalanceStateToData.sol";
 
 abstract contract ExecuteLowLevelRebalanceBorrow is
     ExecuteLowLevelRebalanceStateReader,

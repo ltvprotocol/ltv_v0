@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../utils/BaseTest.t.sol";
-import "../../src/interfaces/IOracleConnector.sol";
+import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import {BaseTest, DefaultTestData} from "test/utils/BaseTest.t.sol";
+import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
+import {IAdministrationEvents} from "src/events/IAdministrationEvents.sol";
 
 contract SimpleMockOracleConnector is IOracleConnector {
     error MockOracleError();

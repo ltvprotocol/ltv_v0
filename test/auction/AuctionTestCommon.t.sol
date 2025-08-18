@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {BaseTest, DefaultTestData, Constants} from "../utils/BaseTest.t.sol";
-import {FutureExecutorInvariant, FutureExecutorInvariantState} from "./FutureExecutorInvariant.t.sol";
-import "../../src/utils/MulDiv.sol";
+import {BaseTest, DefaultTestData} from "test/utils/BaseTest.t.sol";
+import {Constants} from "src/Constants.sol";
+import {FutureExecutorInvariant, FutureExecutorInvariantState} from "test/auction/FutureExecutorInvariant.t.sol";
+import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
 
 contract AuctionTestCommon is BaseTest, FutureExecutorInvariant {
     using uMulDiv for uint256;

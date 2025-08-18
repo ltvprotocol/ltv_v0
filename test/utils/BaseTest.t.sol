@@ -1,29 +1,37 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../../src/dummy/DummyOracle.sol";
-import "forge-std/Test.sol";
+import {Test} from "forge-std/Test.sol";
 import {MockERC20} from "forge-std/mocks/MockERC20.sol";
-import {MockDummyLending} from "./MockDummyLending.t.sol";
-import "./DummyLTV.t.sol";
-import "../../src/Constants.sol";
-import "../../src/dummy/DummyLendingConnector.sol";
-import "../../src/dummy/DummyOracleConnector.sol";
-import "../../src/connectors/slippage_providers/ConstantSlippageProvider.sol";
-import "../../src/connectors/lending_connectors/VaultBalanceAsLendingConnector.sol";
-import "../../src/timelock/Timelock.sol";
-import {ILTV} from "../../src/interfaces/ILTV.sol";
-import {IAdministrationErrors} from "../../src/errors/IAdministrationErrors.sol";
-
-import {AuctionModule} from "../../src/elements/AuctionModule.sol";
-import {ERC20Module} from "../../src/elements/ERC20Module.sol";
-import {CollateralVaultModule} from "../../src/elements/CollateralVaultModule.sol";
-import {BorrowVaultModule} from "../../src/elements/BorrowVaultModule.sol";
-import {LowLevelRebalanceModule} from "../../src/elements/LowLevelRebalanceModule.sol";
-import {AdministrationModule} from "../../src/elements/AdministrationModule.sol";
-import {InitializeModule} from "../../src/elements/InitializeModule.sol";
-
-import "../../src/elements/ModulesProvider.sol";
+import {ILTV} from "src/interfaces/ILTV.sol";
+import {IDummyOracle} from "src/dummy/interfaces/IDummyOracle.sol";
+import {IAdministrationModule} from "src/interfaces/reads/IAdministrationModule.sol";
+import {IAuctionModule} from "src/interfaces/reads/IAuctionModule.sol";
+import {IERC20Module} from "src/interfaces/reads/IERC20Module.sol";
+import {ICollateralVaultModule} from "src/interfaces/reads/ICollateralVaultModule.sol";
+import {IBorrowVaultModule} from "src/interfaces/reads/IBorrowVaultModule.sol";
+import {ILowLevelRebalanceModule} from "src/interfaces/reads/ILowLevelRebalanceModule.sol";
+import {IInitializeModule} from "src/interfaces/reads/IInitializeModule.sol";
+import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
+import {Constants} from "src/Constants.sol";
+import {StateInitData} from "src/structs/state/StateInitData.sol";
+import {ModulesState} from "src/structs/state/ModulesState.sol";
+import {DummyLTV} from "test/utils/DummyLTV.t.sol";
+import {MockDummyLending} from "test/utils/MockDummyLending.t.sol";
+import {DummyOracle} from "src/dummy/DummyOracle.sol";
+import {DummyLendingConnector} from "src/dummy/DummyLendingConnector.sol";
+import {DummyOracleConnector} from "src/dummy/DummyOracleConnector.sol";
+import {ConstantSlippageProvider} from "src/connectors/slippage_providers/ConstantSlippageProvider.sol";
+import {VaultBalanceAsLendingConnector} from "src/connectors/lending_connectors/VaultBalanceAsLendingConnector.sol";
+import {Timelock} from "src/timelock/Timelock.sol";
+import {AuctionModule} from "src/elements/AuctionModule.sol";
+import {ERC20Module} from "src/elements/ERC20Module.sol";
+import {CollateralVaultModule} from "src/elements/CollateralVaultModule.sol";
+import {BorrowVaultModule} from "src/elements/BorrowVaultModule.sol";
+import {LowLevelRebalanceModule} from "src/elements/LowLevelRebalanceModule.sol";
+import {AdministrationModule} from "src/elements/AdministrationModule.sol";
+import {InitializeModule} from "src/elements/InitializeModule.sol";
+import {ModulesProvider} from "src/elements/ModulesProvider.sol";
 
 struct BaseTestInit {
     address owner;

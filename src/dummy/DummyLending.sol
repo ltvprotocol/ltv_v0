@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "./interfaces/IDummyLending.sol";
-import "forge-std/interfaces/IERC20.sol";
+import {IERC20} from "forge-std/interfaces/IERC20.sol";
+import {IDummyLending} from "src/dummy/interfaces/IDummyLending.sol";
 
 contract DummyLending is IDummyLending {
     mapping(address => uint256) internal _supplyBalance;

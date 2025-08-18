@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import "../interfaces/ILendingConnector.sol";
-import "forge-std/interfaces/IERC20.sol";
-import "../dummy/interfaces/IDummyLending.sol";
+import {IERC20} from "forge-std/interfaces/IERC20.sol";
+import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
+import {IDummyLending} from "src/dummy/interfaces/IDummyLending.sol";
 
 contract DummyLendingConnector is ILendingConnector {
     IERC20 public immutable COLLATERAL_TOKEN;

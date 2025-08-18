@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "./AdministrationWrite.sol";
-import "../../interfaces/IModules.sol";
-import "../../structs/state/StateInitData.sol";
-import "src/interfaces/IModules.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "../../utils/RevertWithDataIfNeeded.sol";
+import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import {IInitializeModule} from "src/interfaces/reads/IInitializeModule.sol";
+import {IModules} from "src/interfaces/IModules.sol";
+import {StateInitData} from "src/structs/state/StateInitData.sol";
+import {AdministrationWrite} from "src/facades/writes/AdministrationWrite.sol";
+import {RevertWithDataIfNeeded} from "src/utils/RevertWithDataIfNeeded.sol";
 
 abstract contract InitializeWrite is AdministrationWrite, RevertWithDataIfNeeded {
     function initialize(StateInitData memory initData, IModules modules) external initializer {

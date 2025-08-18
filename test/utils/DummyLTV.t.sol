@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "src/elements/LTV.sol";
-import "src/state_transition/ERC20.sol";
-import "src/interfaces/IModules.sol";
+import {IModules} from "src/interfaces/IModules.sol";
+import {LTV} from "src/elements/LTV.sol";
+import {ERC20} from "src/state_transition/ERC20.sol";
 
 contract DummyLTV is LTV {
     function setFutureBorrowAssets(int256 value) public {

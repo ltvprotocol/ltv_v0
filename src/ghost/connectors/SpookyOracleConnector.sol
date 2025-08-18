@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import "../../interfaces/IOracleConnector.sol";
-import "forge-std/interfaces/IERC20.sol";
-import "../spooky/ISpookyOracle.sol";
+import {IERC20} from "forge-std/interfaces/IERC20.sol";
+import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
+import {ISpookyOracle} from "src/ghost/spooky/ISpookyOracle.sol";
 
 contract SpookyOracleConnector is IOracleConnector {
     ISpookyOracle public immutable ORACLE;

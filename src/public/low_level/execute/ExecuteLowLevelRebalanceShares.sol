@@ -1,13 +1,18 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "src/public/low_level/preview/PreviewLowLevelRebalanceShares.sol";
-import "src/public/low_level/max/MaxLowLevelRebalanceShares.sol";
-import "src/state_transition/ApplyMaxGrowthFee.sol";
-import "src/math/state_to_data/preview/PreviewLowLevelRebalanceStateToData.sol";
-import "src/state_transition/ExecuteLowLevelRebalance.sol";
-import "src/errors/ILowLevelRebalanceErrors.sol";
-import "src/state_reader/low_level/ExecuteLowLevelRebalanceStateReader.sol";
+import {LowLevelRebalanceData} from "src/structs/data/low_level/LowLevelRebalanceData.sol";
+import {ExecuteLowLevelRebalanceState} from "src/structs/state/low_level/ExecuteLowLevelRebalanceState.sol";
+import {TotalAssetsState} from "src/structs/state/vault/TotalAssetsState.sol";
+import {MaxLowLevelRebalanceSharesData} from "src/structs/data/low_level/MaxLowLevelRebalanceSharesData.sol";
+import {ILowLevelRebalanceErrors} from "src/errors/ILowLevelRebalanceErrors.sol";
+import {ApplyMaxGrowthFee} from "src/state_transition/ApplyMaxGrowthFee.sol";
+import {ExecuteLowLevelRebalance} from "src/state_transition/ExecuteLowLevelRebalance.sol";
+import {ExecuteLowLevelRebalanceStateReader} from "src/state_reader/low_level/ExecuteLowLevelRebalanceStateReader.sol";
+import {PreviewLowLevelRebalanceShares} from "src/public/low_level/preview/PreviewLowLevelRebalanceShares.sol";
+import {MaxLowLevelRebalanceShares} from "src/public/low_level/max/MaxLowLevelRebalanceShares.sol";
+import {PreviewLowLevelRebalanceStateToData} from "src/math/state_to_data/preview/PreviewLowLevelRebalanceStateToData.sol";
+import {CommonMath} from "src/math/CommonMath.sol";
 
 abstract contract ExecuteLowLevelRebalanceShares is
     ExecuteLowLevelRebalanceStateReader,

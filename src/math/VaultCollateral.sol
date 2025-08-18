@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "./state_to_data/max/MaxDepositMintCollateralStateToData.sol";
-import "./state_to_data/max/MaxWithdrawRedeemCollateralStateToData.sol";
-import "./state_to_data/MaxGrowthFeeStateToConvertCollateralData.sol";
+import {Constants} from "src/Constants.sol";
+import {MaxDepositMintCollateralStateToData} from "src/math/state_to_data/max/MaxDepositMintCollateralStateToData.sol";
+import {MaxWithdrawRedeemCollateralStateToData} from "src/math/state_to_data/max/MaxWithdrawRedeemCollateralStateToData.sol";
+import {MaxGrowthFeeStateToConvertCollateralData} from "src/math/state_to_data/MaxGrowthFeeStateToConvertCollateralData.sol";
+import {uMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract VaultCollateral is
     MaxDepositMintCollateralStateToData,
