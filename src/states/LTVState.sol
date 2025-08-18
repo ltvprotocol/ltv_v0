@@ -16,11 +16,6 @@ import {MaxDepositMintCollateralVaultState} from "src/structs/state/vault/MaxDep
 import {MaxWithdrawRedeemCollateralVaultState} from "src/structs/state/vault/MaxWithdrawRedeemCollateralVaultState.sol";
 import {AuctionState} from "src/structs/state/AuctionState.sol";
 import {PreviewLowLevelRebalanceState} from "src/structs/state/low_level/PreviewLowLevelRebalanceState.sol";
-import {MaxLowLevelRebalanceSharesState} from "src/structs/state/low_level/MaxLowLevelRebalanceSharesState.sol";
-import {MaxLowLevelRebalanceBorrowStateData} from "src/structs/state/low_level/MaxLowLevelRebalanceBorrowStateData.sol";
-import {MaxLowLevelRebalanceCollateralStateData} from
-    "src/structs/state/low_level/MaxLowLevelRebalanceCollateralStateData.sol";
-import {ExecuteLowLevelRebalanceState} from "src/structs/state/low_level/ExecuteLowLevelRebalanceState.sol";
 
 abstract contract LTVState {
     address public feeCollector;

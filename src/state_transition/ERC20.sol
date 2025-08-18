@@ -5,10 +5,8 @@ import {ReentrancyGuardUpgradeable} from
     "openzeppelin-contracts-upgradeable/contracts/utils/ReentrancyGuardUpgradeable.sol";
 import {IERC20Events} from "src/events/IERC20Events.sol";
 import {IERC20Errors} from "src/errors/IERC20Errors.sol";
-import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
 import {WhitelistModifier} from "src/modifiers/WhitelistModifier.sol";
 import {FunctionStopperModifier} from "src/modifiers/FunctionStopperModifier.sol";
-import {BoolReader} from "src/state_reader/BoolReader.sol";
 
 abstract contract ERC20 is
     WhitelistModifier,

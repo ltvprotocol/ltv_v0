@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "./Cases.sol";
+import {Cases} from "src/structs/data/vault/Cases.sol";
 
 struct DeltaRealBorrowAndDeltaRealCollateralData {
     int256 deltaRealCollateral;
