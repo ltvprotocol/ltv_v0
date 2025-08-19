@@ -11,7 +11,6 @@ import {ILowLevelRebalanceModule} from "src/interfaces/reads/ILowLevelRebalanceM
 import {IAdministrationModule} from "src/interfaces/reads/IAdministrationModule.sol";
 import {IInitializeModule} from "src/interfaces/reads/IInitializeModule.sol";
 import {ModulesState} from "src/structs/state/ModulesState.sol";
-import {InitializeModule} from "src/elements/InitializeModule.sol";
 
 contract ModulesProvider is IModules, Ownable {
     // Module slot constants

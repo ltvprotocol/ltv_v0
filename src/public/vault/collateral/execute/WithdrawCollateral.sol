@@ -11,7 +11,6 @@ import {MaxWithdrawRedeemCollateralVaultState} from "src/structs/state/vault/Max
 import {DeltaFuture} from "src/structs/state_transition/DeltaFuture.sol";
 import {MintProtocolRewardsData} from "src/structs/data/MintProtocolRewardsData.sol";
 import {VaultStateTransition} from "src/state_transition/VaultStateTransition.sol";
-import {ERC20} from "src/state_transition/ERC20.sol";
 import {ApplyMaxGrowthFee} from "src/state_transition/ApplyMaxGrowthFee.sol";
 import {MintProtocolRewards} from "src/state_transition/MintProtocolRewards.sol";
 import {Lending} from "src/state_transition/Lending.sol";
@@ -19,7 +18,6 @@ import {TransferFromProtocol} from "src/state_transition/TransferFromProtocol.so
 import {MaxWithdrawRedeemCollateralVaultStateReader} from
     "src/state_reader/vault/MaxWithdrawRedeemCollateralVaultStateReader.sol";
 import {MaxWithdrawCollateral} from "src/public/vault/collateral/max/MaxWithdrawCollateral.sol";
-import {PreviewWithdrawCollateral} from "src/public/vault/collateral/preview/PreviewWithdrawCollateral.sol";
 import {NextStep} from "src/math/NextStep.sol";
 import {CommonMath} from "src/math/CommonMath.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";

@@ -7,15 +7,6 @@ import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
 import {IWhitelistRegistry} from "src/interfaces/IWhitelistRegistry.sol";
 import {ISlippageProvider} from "src/interfaces/ISlippageProvider.sol";
 import {IModules} from "src/interfaces/IModules.sol";
-import {TotalAssetsState} from "src/structs/state/vault/TotalAssetsState.sol";
-import {MaxGrowthFeeState} from "src/structs/state/MaxGrowthFeeState.sol";
-import {PreviewVaultState} from "src/structs/state/vault/PreviewVaultState.sol";
-import {MaxDepositMintBorrowVaultState} from "src/structs/state/vault/MaxDepositMintBorrowVaultState.sol";
-import {MaxWithdrawRedeemBorrowVaultState} from "src/structs/state/vault/MaxWithdrawRedeemBorrowVaultState.sol";
-import {MaxDepositMintCollateralVaultState} from "src/structs/state/vault/MaxDepositMintCollateralVaultState.sol";
-import {MaxWithdrawRedeemCollateralVaultState} from "src/structs/state/vault/MaxWithdrawRedeemCollateralVaultState.sol";
-import {AuctionState} from "src/structs/state/AuctionState.sol";
-import {PreviewLowLevelRebalanceState} from "src/structs/state/low_level/PreviewLowLevelRebalanceState.sol";
 
 abstract contract LTVState {
     address public feeCollector;

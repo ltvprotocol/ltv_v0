@@ -13,14 +13,12 @@ import {NextStateData} from "src/structs/state_transition/NextStateData.sol";
 import {NextStepData} from "src/structs/state_transition/NextStepData.sol";
 import {MintProtocolRewardsData} from "src/structs/data/MintProtocolRewardsData.sol";
 import {VaultStateTransition} from "src/state_transition/VaultStateTransition.sol";
-import {ERC20} from "src/state_transition/ERC20.sol";
 import {ApplyMaxGrowthFee} from "src/state_transition/ApplyMaxGrowthFee.sol";
 import {MintProtocolRewards} from "src/state_transition/MintProtocolRewards.sol";
 import {Lending} from "src/state_transition/Lending.sol";
 import {MaxDepositMintCollateralVaultStateReader} from
     "src/state_reader/vault/MaxDepositMintCollateralVaultStateReader.sol";
 import {MaxDepositCollateral} from "src/public/vault/collateral/max/MaxDepositCollateral.sol";
-import {PreviewDepositCollateral} from "src/public/vault/collateral/preview/PreviewDepositCollateral.sol";
 import {NextStep} from "src/math/NextStep.sol";
 import {CommonMath} from "src/math/CommonMath.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";

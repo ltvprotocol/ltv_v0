@@ -2,7 +2,6 @@
 pragma solidity ^0.8.28;
 
 import {NextState} from "src/structs/state_transition/NextState.sol";
-import {NextStateData} from "src/structs/state_transition/NextStateData.sol";
 import {NextStepData} from "src/structs/state_transition/NextStepData.sol";
 import {sMulDiv, uMulDiv} from "src/utils/MulDiv.sol";
 

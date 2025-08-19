@@ -6,7 +6,6 @@ import {LowLevelRebalanceData} from "src/structs/data/low_level/LowLevelRebalanc
 import {TotalAssetsData} from "src/structs/data/vault/TotalAssetsData.sol";
 import {TotalAssetsState} from "src/structs/state/vault/TotalAssetsState.sol";
 import {MaxGrowthFeeData} from "src/structs/data/MaxGrowthFeeData.sol";
-import {LowLevelRebalanceMath} from "src/math/LowLevelRebalanceMath.sol";
 import {MaxGrowthFee} from "src/math/MaxGrowthFee.sol";
 import {CommonMath} from "src/math/CommonMath.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";

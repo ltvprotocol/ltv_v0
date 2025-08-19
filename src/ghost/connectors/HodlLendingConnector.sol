@@ -4,7 +4,6 @@ pragma solidity ^0.8.27;
 import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
 import {IHodlMyBeerLending} from "src/ghost/hodlmybeer/IHodlMyBeerLending.sol";
-import {ISpookyOracle} from "src/ghost/spooky/ISpookyOracle.sol";
 
 contract HodlLendingConnector is ILendingConnector {
     IHodlMyBeerLending public immutable lendingProtocol;

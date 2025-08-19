@@ -3,8 +3,6 @@ pragma solidity ^0.8.28;
 
 import {Constants} from "src/Constants.sol";
 import {Cases} from "src/structs/data/vault/Cases.sol";
-import {DeltaFuture} from "src/structs/state_transition/DeltaFuture.sol";
-import {CasesOperator} from "src/math/CasesOperator.sol";
 import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
 
 library CommonBorrowCollateral {
