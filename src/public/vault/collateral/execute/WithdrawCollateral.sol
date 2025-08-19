@@ -39,15 +39,15 @@ abstract contract WithdrawCollateral is
         uint256 max = _maxWithdrawCollateral(data);
         require(assets <= max, ExceedsMaxWithdrawCollateral(owner, assets, max));
 
-        (uint256 shares, DeltaFuture memory deltaFuture) =
+        (uint256 sharesOut, DeltaFuture memory deltaFuture) =
             _previewWithdrawCollateral(assets, data.previewCollateralVaultData);
 
-        if (shares == 0) {
+        if (sharesOut == 0) {
             return 0;
         }
 
         if (owner != msg.sender) {
-            _spendAllowance(owner, msg.sender, shares);
+            _spendAllowance(owner, msg.sender, sharesOut);
         }
 
         applyMaxGrowthFee(
@@ -64,7 +64,7 @@ abstract contract WithdrawCollateral is
             })
         );
 
-        _burn(owner, shares);
+        _burn(owner, sharesOut);
 
         NextState memory nextState = NextStep.calculateNextStep(
             NextStepData({
@@ -99,8 +99,8 @@ abstract contract WithdrawCollateral is
 
         transferCollateralToken(receiver, assets);
 
-        emit WithdrawCollateral(msg.sender, receiver, owner, assets, shares);
+        emit WithdrawCollateral(msg.sender, receiver, owner, assets, sharesOut);
 
-        return shares;
+        return sharesOut;
     }
 }

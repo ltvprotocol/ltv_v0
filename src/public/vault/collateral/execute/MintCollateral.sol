@@ -39,14 +39,14 @@ abstract contract MintCollateral is
         uint256 max = _maxMintCollateral(data);
         require(shares <= max, ExceedsMaxMintCollateral(receiver, shares, max));
 
-        (uint256 assets, DeltaFuture memory deltaFuture) =
+        (uint256 assetsOut, DeltaFuture memory deltaFuture) =
             _previewMintCollateral(shares, data.previewCollateralVaultData);
 
-        if (assets == 0) {
+        if (assetsOut == 0) {
             return 0;
         }
 
-        collateralToken.safeTransferFrom(msg.sender, address(this), assets);
+        collateralToken.safeTransferFrom(msg.sender, address(this), assetsOut);
 
         applyMaxGrowthFee(
             data.previewCollateralVaultData.supplyAfterFee, data.previewCollateralVaultData.withdrawTotalAssets
@@ -62,7 +62,7 @@ abstract contract MintCollateral is
             })
         );
 
-        supply(assets);
+        supply(assetsOut);
 
         NextState memory nextState = NextStep.calculateNextStep(
             NextStepData({
@@ -93,10 +93,10 @@ abstract contract MintCollateral is
             })
         );
 
-        emit DepositCollateral(msg.sender, receiver, assets, shares);
+        emit DepositCollateral(msg.sender, receiver, assetsOut, shares);
 
         _mint(receiver, shares);
 
-        return assets;
+        return assetsOut;
     }
 }
