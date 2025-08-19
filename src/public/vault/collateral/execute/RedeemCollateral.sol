@@ -51,10 +51,10 @@ abstract contract RedeemCollateral is
             _spendAllowance(owner, msg.sender, shares);
         }
 
-        (uint256 assets, DeltaFuture memory deltaFuture) =
+        (uint256 assetsOut, DeltaFuture memory deltaFuture) =
             _previewRedeemCollateral(shares, data.previewCollateralVaultData);
 
-        if (assets == 0) {
+        if (assetsOut == 0) {
             return 0;
         }
 
@@ -103,12 +103,12 @@ abstract contract RedeemCollateral is
             })
         );
 
-        withdraw(assets);
+        withdraw(assetsOut);
 
-        transferCollateralToken(receiver, assets);
+        transferCollateralToken(receiver, assetsOut);
 
-        emit WithdrawCollateral(msg.sender, receiver, owner, assets, shares);
+        emit WithdrawCollateral(msg.sender, receiver, owner, assetsOut, shares);
 
-        return assets;
+        return assetsOut;
     }
 }

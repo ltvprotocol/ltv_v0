@@ -46,14 +46,15 @@ abstract contract Withdraw is
         uint256 max = _maxWithdraw(data);
         require(assets <= max, ExceedsMaxWithdraw(owner, assets, max));
 
-        (uint256 shares, DeltaFuture memory deltaFuture) = _previewWithdraw(assets, data.previewWithdrawBorrowVaultData);
+        (uint256 sharesOut, DeltaFuture memory deltaFuture) =
+            _previewWithdraw(assets, data.previewWithdrawBorrowVaultData);
 
-        if (shares == 0) {
+        if (sharesOut == 0) {
             return 0;
         }
 
         if (owner != msg.sender) {
-            _spendAllowance(owner, msg.sender, shares);
+            _spendAllowance(owner, msg.sender, sharesOut);
         }
 
         applyMaxGrowthFee(
@@ -70,7 +71,7 @@ abstract contract Withdraw is
             })
         );
 
-        _burn(owner, shares);
+        _burn(owner, sharesOut);
 
         NextState memory nextState = NextStep.calculateNextStep(
             NextStepData({
@@ -105,8 +106,8 @@ abstract contract Withdraw is
 
         transferBorrowToken(receiver, assets);
 
-        emit Withdraw(msg.sender, receiver, owner, assets, shares);
+        emit Withdraw(msg.sender, receiver, owner, assets, sharesOut);
 
-        return shares;
+        return sharesOut;
     }
 }

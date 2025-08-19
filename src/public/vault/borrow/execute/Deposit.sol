@@ -41,9 +41,10 @@ abstract contract Deposit is
         uint256 max = _maxDeposit(data);
         require(assets <= max, ExceedsMaxDeposit(receiver, assets, max));
 
-        (uint256 shares, DeltaFuture memory deltaFuture) = _previewDeposit(assets, data.previewDepositBorrowVaultData);
+        (uint256 sharesOut, DeltaFuture memory deltaFuture) =
+            _previewDeposit(assets, data.previewDepositBorrowVaultData);
 
-        if (shares == 0) {
+        if (sharesOut == 0) {
             return 0;
         }
 
@@ -94,10 +95,10 @@ abstract contract Deposit is
             })
         );
 
-        emit Deposit(msg.sender, receiver, assets, shares);
+        emit Deposit(msg.sender, receiver, assets, sharesOut);
 
-        _mint(receiver, shares);
+        _mint(receiver, sharesOut);
 
-        return shares;
+        return sharesOut;
     }
 }
