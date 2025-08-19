@@ -178,8 +178,9 @@ library DeltaRealBorrowAndDeltaRealCollateral {
             dividertargetLtvDivFutureCollateral -=
                 int256(int8(data.cases.cecb)) * int256(data.protocolFutureRewardCollateral);
             // takes effect only in cecb case. Since it goes to divider with plus sign, needs to be rounded down
-            dividertargetLtvDivFutureCollateral =
-                dividertargetLtvDivFutureCollateral.mulDiv(Constants.DIVIDER_PRECISION, int256(data.futureCollateral), needToRoundUp);
+            dividertargetLtvDivFutureCollateral = dividertargetLtvDivFutureCollateral.mulDiv(
+                Constants.DIVIDER_PRECISION, int256(data.futureCollateral), needToRoundUp
+            );
             dividertargetLtv += dividertargetLtvDivFutureCollateral;
         }
 

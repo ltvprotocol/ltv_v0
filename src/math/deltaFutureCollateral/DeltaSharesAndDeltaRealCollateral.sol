@@ -97,10 +97,14 @@ library DeltaSharesAndDeltaRealCollateral {
         int256 divider;
         if (data.futureCollateral != 0) {
             dividerWithOneMinustargetLtv += int256(int8(data.cases.cecb))
-                * (-data.userFutureRewardCollateral).mulDiv(Constants.DIVIDER_PRECISION, data.futureCollateral, needToRoundUp);
+                * (-data.userFutureRewardCollateral).mulDiv(
+                    Constants.DIVIDER_PRECISION, data.futureCollateral, needToRoundUp
+                );
 
             divider += int256(int8(data.cases.cebc))
-                * (-data.protocolFutureRewardBorrow).mulDiv(Constants.DIVIDER_PRECISION, data.futureCollateral, needToRoundUp);
+                * (-data.protocolFutureRewardBorrow).mulDiv(
+                    Constants.DIVIDER_PRECISION, data.futureCollateral, needToRoundUp
+                );
 
             divider += int256(int8(data.cases.cecb))
                 * (data.protocolFutureRewardCollateral).mulDiv(
