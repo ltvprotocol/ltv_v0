@@ -503,10 +503,6 @@ def main():
     
     args = parser.parse_args()
     
-    if args.test_deployed_ltv_beacon_proxy:
-        test_deployed_ltv_beacon_proxy(args.chain, args.lending_protocol, args.args_filename)
-        return
-    
     # Check for private key from environment variable if not provided as argument
     if not args.private_key:
         args.private_key = os.getenv('PRIVATE_KEY')
@@ -580,7 +576,9 @@ def main():
         deploy_oracle_connector(args.chain, args.lending_protocol, args.private_key, args.args_filename)
         deploy_lending_connector(args.chain, args.lending_protocol, args.private_key, args.args_filename)
         deploy_ltv_beacon_proxy(args.chain, args.lending_protocol, args.private_key, args.args_filename)
-
+    
+    if args.test_deployed_ltv_beacon_proxy:
+        test_deployed_ltv_beacon_proxy(args.chain, args.lending_protocol, args.args_filename)
 
 if __name__ == "__main__":
     main()
