@@ -5,99 +5,99 @@ import {BaseTest, DefaultTestData} from "test/utils/BaseTest.t.sol";
 import {IAdministrationEvents} from "src/events/IAdministrationEvents.sol";
 import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
 
-contract SetTargetLTVTest is BaseTest {
+contract SettargetLtvTest is BaseTest {
     function test_failIfLessThanMinProfit(DefaultTestData memory defaultData)
         public
         testWithPredefinedDefaultValues(defaultData)
     {
-        uint16 targetLTVDividend = ltv.minProfitLTVDividend() - 1;
-        uint16 targetLTVDivider = ltv.minProfitLTVDivider();
+        uint16 targetLtvDividend = ltv.minProfitLtvDividend() - 1;
+        uint16 targetLtvDivider = ltv.minProfitLtvDivider();
         vm.startPrank(defaultData.governor);
         vm.expectRevert(
             abi.encodeWithSelector(
                 IAdministrationErrors.InvalidLTVSet.selector,
-                targetLTVDividend,
-                targetLTVDivider,
-                ltv.maxSafeLTVDividend(),
-                ltv.maxSafeLTVDivider(),
-                ltv.minProfitLTVDividend(),
-                ltv.minProfitLTVDivider()
+                targetLtvDividend,
+                targetLtvDivider,
+                ltv.maxSafeLtvDividend(),
+                ltv.maxSafeLtvDivider(),
+                ltv.minProfitLtvDividend(),
+                ltv.minProfitLtvDivider()
             )
         );
-        ltv.setTargetLTV(targetLTVDividend, targetLTVDivider);
+        ltv.settargetLtv(targetLtvDividend, targetLtvDivider);
     }
 
     function test_failIfGreaterThanMaxSafe(DefaultTestData memory defaultData)
         public
         testWithPredefinedDefaultValues(defaultData)
     {
-        uint16 targetLTVDividend = ltv.maxSafeLTVDividend() + 1;
-        uint16 targetLTVDivider = ltv.maxSafeLTVDivider() + 1;
+        uint16 targetLtvDividend = ltv.maxSafeLtvDividend() + 1;
+        uint16 targetLtvDivider = ltv.maxSafeLtvDivider() + 1;
         vm.startPrank(defaultData.governor);
         vm.expectRevert(
             abi.encodeWithSelector(
                 IAdministrationErrors.InvalidLTVSet.selector,
-                targetLTVDividend,
-                targetLTVDivider,
-                ltv.maxSafeLTVDividend(),
-                ltv.maxSafeLTVDivider(),
-                ltv.minProfitLTVDividend(),
-                ltv.minProfitLTVDivider()
+                targetLtvDividend,
+                targetLtvDivider,
+                ltv.maxSafeLtvDividend(),
+                ltv.maxSafeLtvDivider(),
+                ltv.minProfitLtvDividend(),
+                ltv.minProfitLtvDivider()
             )
         );
-        ltv.setTargetLTV(targetLTVDividend, targetLTVDivider);
+        ltv.settargetLtv(targetLtvDividend, targetLtvDivider);
     }
 
     function test_failIfZero(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
         vm.startPrank(defaultData.governor);
-        ltv.setMinProfitLTV(0, 1);
-        ltv.setTargetLTV(0, 1);
-        assertEq(ltv.targetLTVDividend(), 0);
-        assertEq(ltv.targetLTVDivider(), 1);
+        ltv.setminProfitLtv(0, 1);
+        ltv.settargetLtv(0, 1);
+        assertEq(ltv.targetLtvDividend(), 0);
+        assertEq(ltv.targetLtvDivider(), 1);
     }
 
     function test_failIfOne(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
-        uint16 targetLTVDividend = 1;
-        uint16 targetLTVDivider = 1;
+        uint16 targetLtvDividend = 1;
+        uint16 targetLtvDivider = 1;
         vm.startPrank(defaultData.governor);
         vm.expectRevert(
             abi.encodeWithSelector(
-                IAdministrationErrors.UnexpectedTargetLTV.selector, targetLTVDividend, targetLTVDivider
+                IAdministrationErrors.UnexpectedtargetLtv.selector, targetLtvDividend, targetLtvDivider
             )
         );
-        ltv.setTargetLTV(targetLTVDividend, targetLTVDivider);
+        ltv.settargetLtv(targetLtvDividend, targetLtvDivider);
     }
 
     function test_failIfFortyTwo(DefaultTestData memory defaultData)
         public
         testWithPredefinedDefaultValues(defaultData)
     {
-        uint16 targetLTVDividend = 42;
-        uint16 targetLTVDivider = 1;
+        uint16 targetLtvDividend = 42;
+        uint16 targetLtvDivider = 1;
         vm.startPrank(defaultData.governor);
         vm.expectRevert(
             abi.encodeWithSelector(
-                IAdministrationErrors.UnexpectedTargetLTV.selector, targetLTVDividend, targetLTVDivider
+                IAdministrationErrors.UnexpectedtargetLtv.selector, targetLtvDividend, targetLtvDivider
             )
         );
-        ltv.setTargetLTV(targetLTVDividend, targetLTVDivider);
+        ltv.settargetLtv(targetLtvDividend, targetLtvDivider);
     }
 
     function test_setAndCheckStorageSlot(DefaultTestData memory defaultData)
         public
         testWithPredefinedDefaultValues(defaultData)
     {
-        uint16 targetLTVDividend = 74;
-        uint16 targetLTVDivider = 100;
+        uint16 targetLtvDividend = 74;
+        uint16 targetLtvDivider = 100;
         vm.startPrank(defaultData.governor);
         vm.expectEmit(true, true, true, true, address(ltv));
-        emit IAdministrationEvents.TargetLTVChanged(
-            ltv.targetLTVDividend(), ltv.targetLTVDivider(), targetLTVDividend, targetLTVDivider
+        emit IAdministrationEvents.targetLtvChanged(
+            ltv.targetLtvDividend(), ltv.targetLtvDivider(), targetLtvDividend, targetLtvDivider
         );
-        ltv.setTargetLTV(targetLTVDividend, targetLTVDivider);
+        ltv.settargetLtv(targetLtvDividend, targetLtvDivider);
 
-        assertEq(ltv.targetLTVDividend(), targetLTVDividend);
-        assertEq(ltv.targetLTVDivider(), targetLTVDivider);
+        assertEq(ltv.targetLtvDividend(), targetLtvDividend);
+        assertEq(ltv.targetLtvDivider(), targetLtvDivider);
     }
 
     function test_failIfNotGovernor(DefaultTestData memory defaultData, address user)
@@ -105,10 +105,10 @@ contract SetTargetLTVTest is BaseTest {
         testWithPredefinedDefaultValues(defaultData)
     {
         vm.assume(user != defaultData.governor);
-        uint16 newTargetLTVDividend = ltv.targetLTVDividend();
-        uint16 newTargetLTVDivider = ltv.targetLTVDivider();
+        uint16 newtargetLtvDividend = ltv.targetLtvDividend();
+        uint16 newtargetLtvDivider = ltv.targetLtvDivider();
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
-        ltv.setTargetLTV(newTargetLTVDividend, newTargetLTVDivider);
+        ltv.settargetLtv(newtargetLtvDividend, newtargetLtvDivider);
     }
 }

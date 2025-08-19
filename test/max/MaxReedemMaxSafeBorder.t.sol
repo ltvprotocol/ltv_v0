@@ -6,7 +6,7 @@ import {BaseTest, BaseTestInit} from "test/utils/BaseTest.t.sol";
 contract MaxReedemMaxSafeBorderTest is BaseTest {
     address internal user;
 
-    function test_maxRedeemAtMaxSafeLTVBorder(uint256 borrowAssets) public {
+    function test_maxRedeemAtmaxSafeLtvBorder(uint256 borrowAssets) public {
         uint256 checkBorrowAssets = bound(borrowAssets, 0, 90 * 10 ** 18);
 
         BaseTestInit memory init = BaseTestInit({
@@ -24,12 +24,12 @@ contract MaxReedemMaxSafeBorderTest is BaseTest {
             maxTotalAssetsInUnderlying: type(uint128).max,
             collateralAssets: uint256((100 * (10 ** 19)) / uint256(42)),
             borrowAssets: checkBorrowAssets,
-            maxSafeLTVDividend: 9, // 90%
-            maxSafeLTVDivider: 10,
-            minProfitLTVDividend: 5,
-            minProfitLTVDivider: 10,
-            targetLTVDividend: 75,
-            targetLTVDivider: 100,
+            maxSafeLtvDividend: 9, // 90%
+            maxSafeLtvDivider: 10,
+            minProfitLtvDividend: 5,
+            minProfitLtvDivider: 10,
+            targetLtvDividend: 75,
+            targetLtvDivider: 100,
             maxGrowthFeeDividend: 0,
             maxGrowthFeeDivider: 1,
             collateralPrice: 42 * 10 ** 17,

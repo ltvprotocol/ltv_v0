@@ -121,9 +121,9 @@ interface ILTV is
 
     function maxRedeemCollateral(address owner) external view returns (uint256);
 
-    function maxSafeLTVDividend() external view returns (uint16);
+    function maxSafeLtvDividend() external view returns (uint16);
 
-    function maxSafeLTVDivider() external view returns (uint16);
+    function maxSafeLtvDivider() external view returns (uint16);
 
     function maxTotalAssetsInUnderlying() external view returns (uint256);
 
@@ -131,9 +131,9 @@ interface ILTV is
 
     function maxWithdrawCollateral(address owner) external view returns (uint256);
 
-    function minProfitLTVDividend() external view returns (uint16);
+    function minProfitLtvDividend() external view returns (uint16);
 
-    function minProfitLTVDivider() external view returns (uint16);
+    function minProfitLtvDivider() external view returns (uint16);
 
     function mint(uint256 shares, address receiver) external returns (uint256 assets);
 
@@ -203,17 +203,17 @@ interface ILTV is
 
     function setMaxGrowthFee(uint16 dividend, uint16 divider) external;
 
-    function setMaxSafeLTV(uint16 dividend, uint16 divider) external;
+    function setmaxSafeLtv(uint16 dividend, uint16 divider) external;
 
     function setMaxTotalAssetsInUnderlying(uint256 _maxTotalAssetsInUnderlying) external;
 
-    function setMinProfitLTV(uint16 dividend, uint16 divider) external;
+    function setminProfitLtv(uint16 dividend, uint16 divider) external;
 
     function setOracleConnector(address _oracleConnector) external;
 
     function setSlippageProvider(address _slippageProvider) external;
 
-    function setTargetLTV(uint16 dividend, uint16 divider) external;
+    function settargetLtv(uint16 dividend, uint16 divider) external;
 
     function setWhitelistRegistry(address value) external;
 
@@ -227,9 +227,9 @@ interface ILTV is
 
     function symbol() external view returns (string memory);
 
-    function targetLTVDividend() external view returns (uint16);
+    function targetLtvDividend() external view returns (uint16);
 
-    function targetLTVDivider() external view returns (uint16);
+    function targetLtvDivider() external view returns (uint16);
 
     function totalAssets() external view returns (uint256);
 

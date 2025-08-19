@@ -30,8 +30,8 @@ contract MaxDepositMintStateToData is PreviewDepositStateToPreviewDepositData {
             data.realBorrow, data.realCollateral, state.previewDepositVaultState
         );
 
-        data.minProfitLTVDividend = state.minProfitLTVDividend;
-        data.minProfitLTVDivider = state.minProfitLTVDivider;
+        data.minProfitLtvDividend = state.minProfitLtvDividend;
+        data.minProfitLtvDivider = state.minProfitLtvDivider;
         data.maxTotalAssetsInUnderlying = state.maxTotalAssetsInUnderlying;
         return data;
     }

@@ -7,7 +7,7 @@ struct MaxWithdrawRedeemBorrowVaultData {
     PreviewWithdrawBorrowVaultData previewWithdrawBorrowVaultData;
     uint256 realCollateral;
     uint256 realBorrow;
-    uint16 maxSafeLTVDividend;
-    uint16 maxSafeLTVDivider;
+    uint16 maxSafeLtvDividend;
+    uint16 maxSafeLtvDivider;
     uint256 ownerBalance;
 }

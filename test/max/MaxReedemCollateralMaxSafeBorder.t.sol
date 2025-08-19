@@ -6,7 +6,7 @@ import {BaseTest, BaseTestInit} from "test/utils/BaseTest.t.sol";
 contract MaxReedemCollateralMaxSafeBorderTest is BaseTest {
     address internal user;
 
-    function test_maxRedeemCollateralAtMaxSafeLTVBorder(uint256 collateralAssets) public {
+    function test_maxRedeemCollateralAtmaxSafeLtvBorder(uint256 collateralAssets) public {
         uint256 min = uint256((100 * (10 ** 19)) / uint256(42));
 
         uint256 checkCollateralAssets = bound(collateralAssets, min, 64 * min);
@@ -26,12 +26,12 @@ contract MaxReedemCollateralMaxSafeBorderTest is BaseTest {
             maxTotalAssetsInUnderlying: type(uint128).max,
             collateralAssets: checkCollateralAssets,
             borrowAssets: 90 * 10 ** 18,
-            maxSafeLTVDividend: 9, // 90%
-            maxSafeLTVDivider: 10,
-            minProfitLTVDividend: 5,
-            minProfitLTVDivider: 10,
-            targetLTVDividend: 75,
-            targetLTVDivider: 100,
+            maxSafeLtvDividend: 9, // 90%
+            maxSafeLtvDivider: 10,
+            minProfitLtvDividend: 5,
+            minProfitLtvDivider: 10,
+            targetLtvDividend: 75,
+            targetLtvDivider: 100,
             maxGrowthFeeDividend: 0,
             maxGrowthFeeDivider: 1,
             collateralPrice: 42 * 10 ** 17,
@@ -56,7 +56,7 @@ contract MaxReedemCollateralMaxSafeBorderTest is BaseTest {
 
         uint256 finalAmountOfAssets = checkCollateralAssets - redeemResult;
 
-        // The first rule must be strictly followed since maxSafeLTV = 90%.
+        // The first rule must be strictly followed since maxSafeLtv = 90%.
         // borrowAssets * collateralPrice / collateralAssets * collateralPrice should be <= 0.9
         assertGe(finalAmountOfAssets, min);
     }

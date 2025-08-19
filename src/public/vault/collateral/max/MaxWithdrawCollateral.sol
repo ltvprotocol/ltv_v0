@@ -19,7 +19,7 @@ abstract contract MaxWithdrawCollateral is PreviewWithdrawCollateral, PreviewRed
     function _maxWithdrawCollateral(MaxWithdrawRedeemCollateralVaultData memory data) internal pure returns (uint256) {
         // round up to assume smaller border
         uint256 maxSafeRealCollateral =
-            uint256(data.realBorrow).mulDivUp(data.maxSafeLTVDivider, data.maxSafeLTVDividend);
+            uint256(data.realBorrow).mulDivUp(data.maxSafeLtvDivider, data.maxSafeLtvDividend);
 
         if (maxSafeRealCollateral >= uint256(data.realCollateral)) {
             return 0;

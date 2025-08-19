@@ -49,8 +49,8 @@ abstract contract ExecuteLowLevelRebalanceBorrow is
             MaxLowLevelRebalanceBorrowStateData({
                 // using withdraw real borrow assets since it overestimates assets, so max value will be smaller
                 realBorrowAssets: state.previewLowLevelRebalanceState.maxGrowthFeeState.withdrawRealBorrowAssets,
-                targetLTVDividend: state.previewLowLevelRebalanceState.targetLTVDividend,
-                targetLTVDivider: state.previewLowLevelRebalanceState.targetLTVDivider,
+                targetLtvDividend: state.previewLowLevelRebalanceState.targetLtvDividend,
+                targetLtvDivider: state.previewLowLevelRebalanceState.targetLtvDivider,
                 borrowPrice: state.previewLowLevelRebalanceState.maxGrowthFeeState.commonTotalAssetsState.borrowPrice,
                 maxTotalAssetsInUnderlying: state.maxTotalAssetsInUnderlying
             })
