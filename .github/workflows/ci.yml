@@ -28,7 +28,7 @@ jobs:
         run: forge build --skip test --sizes
 
       - name: Run lint
-        run: $([ -n $(forge lint) ] && exit 1 || exit 0)
+        run: $([ -n "$(forge lint 2>&1)" ] && exit 1 || exit 0)
 
   test:
     runs-on: ubuntu-latest
