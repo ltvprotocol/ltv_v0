@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {BaseTest, DefaultTestData, Constants} from "../utils/BaseTest.t.sol";
-import {FutureExecutorInvariant, FutureExecutorInvariantState} from "./FutureExecutorInvariant.t.sol";
-import "../../src/utils/MulDiv.sol";
+import {BaseTest} from "test/utils/BaseTest.t.sol";
+import {FutureExecutorInvariant} from "test/auction/FutureExecutorInvariant.t.sol";
+import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
 
 contract AuctionTestCommon is BaseTest, FutureExecutorInvariant {
     using uMulDiv for uint256;
@@ -34,8 +34,8 @@ contract AuctionTestCommon is BaseTest, FutureExecutorInvariant {
         oracle.setAssetPrice(address(collateralToken), collateralPrice);
 
         vm.startPrank(governor);
-        ltv.setMinProfitLTV(0, 1);
-        ltv.setMaxSafeLTV(1, 1);
+        ltv.setMinProfitLtv(0, 1);
+        ltv.setMaxSafeLtv(1, 1);
         vm.stopPrank();
 
         vm.startPrank(user);

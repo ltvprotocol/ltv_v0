@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "src/interfaces/ILendingConnector.sol";
-import "src/interfaces/IOracleConnector.sol";
-import "src/interfaces/ISlippageProvider.sol";
-import "src/interfaces/IModules.sol";
+import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
+import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
+import {ISlippageProvider} from "src/interfaces/ISlippageProvider.sol";
 
 struct StateInitData {
     string name;
@@ -13,12 +12,12 @@ struct StateInitData {
     address collateralToken;
     address borrowToken;
     address feeCollector;
-    uint16 maxSafeLTVDividend;
-    uint16 maxSafeLTVDivider;
-    uint16 minProfitLTVDividend;
-    uint16 minProfitLTVDivider;
-    uint16 targetLTVDividend;
-    uint16 targetLTVDivider;
+    uint16 maxSafeLtvDividend;
+    uint16 maxSafeLtvDivider;
+    uint16 minProfitLtvDividend;
+    uint16 minProfitLtvDivider;
+    uint16 targetLtvDividend;
+    uint16 targetLtvDivider;
     ILendingConnector lendingConnector;
     IOracleConnector oracleConnector;
     uint16 maxGrowthFeeDividend;
@@ -34,4 +33,6 @@ struct StateInitData {
     address emergencyDeleverager;
     uint24 auctionDuration;
     bytes lendingConnectorData;
+    bytes oracleConnectorData;
+    bytes slippageProviderData;
 }

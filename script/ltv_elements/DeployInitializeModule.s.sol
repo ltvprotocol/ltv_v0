@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import "../utils/BaseScript.s.sol";
-import "../../src/elements/InitializeModule.sol";
+import {BaseScript} from "../utils/BaseScript.s.sol";
+import {InitializeModule} from "../../src/elements/InitializeModule.sol";
+import {console} from "forge-std/console.sol";
 
 contract DeployInitializeModule is BaseScript {
     function deploy() internal override {

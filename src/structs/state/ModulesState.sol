@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "src/interfaces/reads/IBorrowVaultModule.sol";
-import "src/interfaces/reads/ICollateralVaultModule.sol";
-import "src/interfaces/reads/ILowLevelRebalanceModule.sol";
-import "src/interfaces/reads/IAuctionModule.sol";
-import "src/interfaces/reads/IAdministrationModule.sol";
-import "src/interfaces/reads/IERC20Module.sol";
-import "src/interfaces/reads/IInitializeModule.sol";
+import {IBorrowVaultModule} from "src/interfaces/reads/IBorrowVaultModule.sol";
+import {ICollateralVaultModule} from "src/interfaces/reads/ICollateralVaultModule.sol";
+import {ILowLevelRebalanceModule} from "src/interfaces/reads/ILowLevelRebalanceModule.sol";
+import {IAuctionModule} from "src/interfaces/reads/IAuctionModule.sol";
+import {IAdministrationModule} from "src/interfaces/reads/IAdministrationModule.sol";
+import {IERC20Module} from "src/interfaces/reads/IERC20Module.sol";
+import {IInitializeModule} from "src/interfaces/reads/IInitializeModule.sol";
 
 struct ModulesState {
     IBorrowVaultModule borrowVaultModule;

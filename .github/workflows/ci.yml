@@ -16,7 +16,7 @@ jobs:
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
         with:
-          version: nightly
+          version: v1.3.1
 
       - name: Print forge version
         run: forge --version
@@ -27,6 +27,9 @@ jobs:
       - name: Check contract sizes
         run: forge build --skip test --sizes
 
+      - name: Run lint
+        run: $([ -n "$(forge lint 2>&1)" ] && exit 1 || exit 0)
+
   test:
     runs-on: ubuntu-latest
     steps:
@@ -35,7 +38,7 @@ jobs:
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
         with:
-          version: nightly
+          version: v1.3.1
 
       - name: Print forge version
         run: forge --version
@@ -51,7 +54,7 @@ jobs:
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
         with:
-          version: nightly
+          version: v1.3.1
 
       - name: Print forge version
         run: forge --version

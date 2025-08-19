@@ -1,8 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../preview/PreviewDeposit.sol";
-import "../preview/PreviewMint.sol";
+import {Constants} from "src/Constants.sol";
+import {MaxDepositMintBorrowVaultState} from "src/structs/state/vault/MaxDepositMintBorrowVaultState.sol";
+import {MaxDepositMintBorrowVaultData} from "src/structs/data/vault/MaxDepositMintBorrowVaultData.sol";
+import {PreviewDeposit} from "src/public/vault/borrow/preview/PreviewDeposit.sol";
+import {PreviewMint} from "src/public/vault/borrow/preview/PreviewMint.sol";
+import {uMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract MaxMint is PreviewMint, PreviewDeposit {
     using uMulDiv for uint256;
@@ -23,7 +27,7 @@ abstract contract MaxMint is PreviewMint, PreviewDeposit {
 
         // round up to assume smaller border
         uint256 minProfitRealBorrow =
-            uint256(data.realCollateral).mulDivUp(data.minProfitLTVDividend, data.minProfitLTVDivider);
+            uint256(data.realCollateral).mulDivUp(data.minProfitLtvDividend, data.minProfitLtvDivider);
         if (uint256(data.realBorrow) <= minProfitRealBorrow) {
             return 0;
         }

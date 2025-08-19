@@ -1,17 +1,22 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "src/Constants.sol";
-import "src/states/LTVState.sol";
-import "src/utils/MulDiv.sol";
-import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
-import "src/state_transition/Lending.sol";
-import "src/modifiers/AdministrationModifiers.sol";
-import "src/modifiers/FunctionStopperModifier.sol";
-import "../state_transition/AdmistrationSetters.sol";
-import "../math/MaxGrowthFee.sol";
-import "../state_reader/MaxGrowthFeeStateReader.sol";
-import "../state_transition/ApplyMaxGrowthFee.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
+import {IWhitelistRegistry} from "src/interfaces/IWhitelistRegistry.sol";
+import {ISlippageProvider} from "src/interfaces/ISlippageProvider.sol";
+import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
+import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
+import {Constants} from "src/Constants.sol";
+import {MaxGrowthFeeState} from "src/structs/state/MaxGrowthFeeState.sol";
+import {MaxGrowthFeeData} from "src/structs/data/MaxGrowthFeeData.sol";
+import {AdministrationModifiers} from "src/modifiers/AdministrationModifiers.sol";
+import {AdmistrationSetters} from "src/state_transition/AdmistrationSetters.sol";
+import {ApplyMaxGrowthFee} from "src/state_transition/ApplyMaxGrowthFee.sol";
+import {Lending} from "src/state_transition/Lending.sol";
+import {MaxGrowthFeeStateReader} from "src/state_reader/MaxGrowthFeeStateReader.sol";
+import {MaxGrowthFee} from "src/math/MaxGrowthFee.sol";
+import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract AdministrationPublic is
     MaxGrowthFee,
@@ -23,17 +28,18 @@ abstract contract AdministrationPublic is
 {
     using uMulDiv for uint256;
     using sMulDiv for int256;
+    using SafeERC20 for IERC20;
 
-    function setTargetLTV(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor {
-        _setTargetLTV(dividend, divider);
+    function setTargetLtv(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor {
+        _setTargetLtv(dividend, divider);
     }
 
-    function setMaxSafeLTV(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor {
-        _setMaxSafeLTV(dividend, divider);
+    function setMaxSafeLtv(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor {
+        _setMaxSafeLtv(dividend, divider);
     }
 
-    function setMinProfitLTV(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor {
-        _setMinProfitLTV(dividend, divider);
+    function setMinProfitLtv(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor {
+        _setMinProfitLtv(dividend, divider);
     }
 
     function setFeeCollector(address _feeCollector) external isFunctionAllowed onlyGovernor {
@@ -60,8 +66,12 @@ abstract contract AdministrationPublic is
         _setWhitelistRegistry(value);
     }
 
-    function setSlippageProvider(ISlippageProvider _slippageProvider) external isFunctionAllowed onlyGovernor {
-        _setSlippageProvider(_slippageProvider);
+    function setSlippageProvider(ISlippageProvider _slippageProvider, bytes memory slippageProviderData)
+        external
+        isFunctionAllowed
+        onlyGovernor
+    {
+        _setSlippageProvider(_slippageProvider, slippageProviderData);
     }
 
     function allowDisableFunctions(bytes4[] memory signatures, bool isDisabled) external onlyGuardian {
@@ -80,12 +90,18 @@ abstract contract AdministrationPublic is
         _setIsWithdrawDisabled(value);
     }
 
-    function setLendingConnector(ILendingConnector _lendingConnector) external onlyOwner {
-        _setLendingConnector(_lendingConnector);
+    function setLendingConnector(ILendingConnector _lendingConnector, bytes memory lendingConnectorData)
+        external
+        onlyOwner
+    {
+        _setLendingConnector(_lendingConnector, lendingConnectorData);
     }
 
-    function setOracleConnector(IOracleConnector _oracleConnector) external onlyOwner {
-        _setOracleConnector(_oracleConnector);
+    function setOracleConnector(IOracleConnector _oracleConnector, bytes memory oracleConnectorData)
+        external
+        onlyOwner
+    {
+        _setOracleConnector(_oracleConnector, oracleConnectorData);
     }
 
     function setVaultBalanceAsLendingConnector(address _vaultBalanceAsLendingConnector) external onlyOwner {
@@ -116,36 +132,40 @@ abstract contract AdministrationPublic is
         futureRewardBorrowAssets = 0;
         futureRewardCollateralAssets = 0;
         startAuction = 0;
-        _setMinProfitLTV(0, 1);
-        _setTargetLTV(0, 1);
-        _setMaxSafeLTV(1, 1);
+        _setMinProfitLtv(0, 1);
+        _setTargetLtv(0, 1);
+        _setMaxSafeLtv(1, 1);
 
         // round up to repay all assets
-        uint256 realBorrowAssets = lendingConnector.getRealBorrowAssets(false, connectorGetterData);
+        bytes memory _lendingConnectorGetterData = lendingConnectorGetterData;
+        uint256 realBorrowAssets = lendingConnector.getRealBorrowAssets(false, _lendingConnectorGetterData);
 
         require(closeAmountBorrow >= realBorrowAssets, ImpossibleToCoverDeleverage(realBorrowAssets, closeAmountBorrow));
 
-        uint256 collateralAssets = lendingConnector.getRealCollateralAssets(false, connectorGetterData);
+        uint256 collateralAssets = lendingConnector.getRealCollateralAssets(false, _lendingConnectorGetterData);
+
+        bytes memory _oracleConnectorGetterData = oracleConnectorGetterData;
 
         uint256 collateralToTransfer = realBorrowAssets.mulDivDown(
-            oracleConnector.getPriceBorrowOracle(), oracleConnector.getPriceCollateralOracle()
+            oracleConnector.getPriceBorrowOracle(_oracleConnectorGetterData),
+            oracleConnector.getPriceCollateralOracle(_oracleConnectorGetterData)
         );
 
         collateralToTransfer +=
             (collateralAssets - collateralToTransfer).mulDivDown(deleverageFeeDividend, deleverageFeeDivider);
 
         if (realBorrowAssets != 0) {
-            borrowToken.transferFrom(msg.sender, address(this), realBorrowAssets);
+            borrowToken.safeTransferFrom(msg.sender, address(this), realBorrowAssets);
             repay(realBorrowAssets);
         }
 
         withdraw(collateralAssets);
 
         if (collateralToTransfer != 0) {
-            collateralToken.transfer(msg.sender, collateralToTransfer);
+            collateralToken.safeTransfer(msg.sender, collateralToTransfer);
         }
-        boolSlot = uint8(boolSlot | (2 ** IS_VAULT_DELEVERAGED_BIT));
-        connectorGetterData = "";
+        setBool(Constants.IS_VAULT_DELEVERAGED_BIT, true);
+        lendingConnectorGetterData = "";
     }
 
     function updateEmergencyDeleverager(address newEmergencyDeleverager) external onlyOwner {

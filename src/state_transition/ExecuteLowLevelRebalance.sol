@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "./ERC20.sol";
-import "./TransferFromProtocol.sol";
-import "./Lending.sol";
-import "src/modifiers/FunctionStopperModifier.sol";
-import "src/events/ILowLevelRebalanceEvent.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
+import {ILowLevelRebalanceEvent} from "src/events/ILowLevelRebalanceEvent.sol";
+import {FunctionStopperModifier} from "src/modifiers/FunctionStopperModifier.sol";
+import {ERC20} from "src/state_transition/ERC20.sol";
+import {TransferFromProtocol} from "src/state_transition/TransferFromProtocol.sol";
+import {Lending} from "src/state_transition/Lending.sol";
 
 abstract contract ExecuteLowLevelRebalance is
     FunctionStopperModifier,
@@ -14,6 +16,8 @@ abstract contract ExecuteLowLevelRebalance is
     Lending,
     ILowLevelRebalanceEvent
 {
+    using SafeERC20 for IERC20;
+
     function executeLowLevelRebalance(
         int256 deltaRealCollateralAsset,
         int256 deltaRealBorrowAssets,
@@ -35,12 +39,12 @@ abstract contract ExecuteLowLevelRebalance is
         }
 
         if (deltaRealCollateralAsset > 0) {
-            collateralToken.transferFrom(msg.sender, address(this), uint256(deltaRealCollateralAsset));
+            collateralToken.safeTransferFrom(msg.sender, address(this), uint256(deltaRealCollateralAsset));
             supply(uint256(deltaRealCollateralAsset));
         }
 
         if (deltaRealBorrowAssets < 0) {
-            borrowToken.transferFrom(msg.sender, address(this), uint256(-deltaRealBorrowAssets));
+            borrowToken.safeTransferFrom(msg.sender, address(this), uint256(-deltaRealBorrowAssets));
             repay(uint256(-deltaRealBorrowAssets));
         }
 
@@ -58,8 +62,6 @@ abstract contract ExecuteLowLevelRebalance is
             _mint(msg.sender, uint256(deltaShares));
         }
 
-        emit LowLevelRebalanceExecuted(
-            msg.sender, deltaRealCollateralAsset, deltaRealBorrowAssets, deltaShares, deltaProtocolFutureRewardShares
-        );
+        emit LowLevelRebalanceExecuted(msg.sender, deltaRealCollateralAsset, deltaRealBorrowAssets, deltaShares);
     }
 }

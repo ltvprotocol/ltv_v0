@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import "../Constants.sol";
-import "../utils/MulDiv.sol";
-import "../errors/ILowLevelRebalanceErrors.sol";
-import "src/structs/data/low_level/LowLevelRebalanceData.sol";
+import {ILowLevelRebalanceErrors} from "src/errors/ILowLevelRebalanceErrors.sol";
+import {Constants} from "src/Constants.sol";
+import {LowLevelRebalanceData} from "src/structs/data/low_level/LowLevelRebalanceData.sol";
+import {sMulDiv} from "src/utils/MulDiv.sol";
 
 library LowLevelRebalanceMath {
     using sMulDiv for int256;
@@ -17,8 +17,8 @@ library LowLevelRebalanceMath {
         int256 realBorrow;
         int256 futureBorrow;
         int256 userFutureRewardBorrow;
-        uint16 targetLTVDividend;
-        uint16 targetLTVDivider;
+        uint16 targetLtvDividend;
+        uint16 targetLtvDivider;
     }
 
     // HODLer <=> depositor/withdrawer conflict, round up to leave more collateral in protocol
@@ -30,12 +30,12 @@ library LowLevelRebalanceMath {
         return (
             data.deltaShares + data.futureCollateral + data.userFutureRewardCollateral
                 + data.realCollateral.mulDivUp(
-                    int256(uint256(data.targetLTVDividend)), int256(uint256(data.targetLTVDivider))
+                    int256(uint256(data.targetLtvDividend)), int256(uint256(data.targetLtvDivider))
                 ) - data.realBorrow - data.futureBorrow - data.userFutureRewardBorrow
         )
             // round up to leave more collateral in protocol
             .mulDivUp(
-            int256(uint256(data.targetLTVDivider)), int256(uint256(data.targetLTVDivider - data.targetLTVDividend))
+            int256(uint256(data.targetLtvDivider)), int256(uint256(data.targetLtvDivider - data.targetLtvDividend))
         );
     }
 
@@ -45,11 +45,11 @@ library LowLevelRebalanceMath {
         int256 deltaCollateral,
         int256 realCollateral,
         int256 realBorrow,
-        uint16 targetLTVDividend,
-        uint16 targetLTVDivider
+        uint16 targetLtvDividend,
+        uint16 targetLtvDivider
     ) private pure returns (int256) {
-        return realCollateral.mulDivDown(int256(uint256(targetLTVDividend)), int256(uint256(targetLTVDivider)))
-            + deltaCollateral.mulDivDown(int256(uint256(targetLTVDividend)), int256(uint256(targetLTVDivider))) - realBorrow;
+        return realCollateral.mulDivDown(int256(uint256(targetLtvDividend)), int256(uint256(targetLtvDivider)))
+            + deltaCollateral.mulDivDown(int256(uint256(targetLtvDividend)), int256(uint256(targetLtvDivider))) - realBorrow;
     }
 
     // Borrow case, no conflict, rounding up to have more collateral in protocol
@@ -57,18 +57,18 @@ library LowLevelRebalanceMath {
         int256 deltaBorrow,
         int256 realBorrow,
         int256 realCollateral,
-        uint16 targetLTVDividend,
-        uint16 targetLTVDivider
+        uint16 targetLtvDividend,
+        uint16 targetLtvDivider
     ) private pure returns (int256) {
         if (realBorrow + deltaBorrow == 0) {
             return -realCollateral;
         }
 
-        if (targetLTVDividend == 0) {
-            revert ILowLevelRebalanceErrors.ZeroTargetLTVDisablesBorrow();
+        if (targetLtvDividend == 0) {
+            revert ILowLevelRebalanceErrors.ZerotargetLtvDisablesBorrow();
         }
         return (realBorrow + deltaBorrow).mulDivUp(
-            int256(uint256(targetLTVDivider)), int256(uint256(targetLTVDividend))
+            int256(uint256(targetLtvDivider)), int256(uint256(targetLtvDividend))
         ) - realCollateral;
     }
 
@@ -111,13 +111,13 @@ library LowLevelRebalanceMath {
                 realBorrow: data.realBorrow,
                 futureBorrow: data.futureBorrow,
                 userFutureRewardBorrow: data.userFutureRewardBorrow,
-                targetLTVDividend: data.targetLTVDividend,
-                targetLTVDivider: data.targetLTVDivider
+                targetLtvDividend: data.targetLtvDividend,
+                targetLtvDivider: data.targetLtvDivider
             })
         );
 
         int256 deltaRealBorrow = calculateDeltaRealBorrowFromDeltaRealCollateral(
-            deltaRealCollateral, data.realCollateral, data.realBorrow, data.targetLTVDividend, data.targetLTVDivider
+            deltaRealCollateral, data.realCollateral, data.realBorrow, data.targetLtvDividend, data.targetLtvDivider
         );
 
         // round up to leave more collateral in protocol
@@ -149,7 +149,7 @@ library LowLevelRebalanceMath {
             int256 deltaRealBorrow =
                 deltaBorrowAssets.mulDivUp(int256(data.borrowPrice), int256(Constants.ORACLE_DIVIDER));
             deltaRealCollateral = calculateDeltaRealCollateralFromDeltaRealBorrow(
-                deltaRealBorrow, data.realBorrow, data.realCollateral, data.targetLTVDividend, data.targetLTVDivider
+                deltaRealBorrow, data.realBorrow, data.realCollateral, data.targetLtvDividend, data.targetLtvDivider
             );
             deltaSharesInUnderlying = calculateDeltaSharesFromDeltaRealCollateralAndDeltaRealBorrow(
                 deltaRealCollateral,
@@ -192,7 +192,7 @@ library LowLevelRebalanceMath {
                 deltaCollateralAssets.mulDivDown(int256(data.collateralPrice), int256(Constants.ORACLE_DIVIDER));
 
             deltaRealBorrow = calculateDeltaRealBorrowFromDeltaRealCollateral(
-                deltaRealCollateral, data.realCollateral, data.realBorrow, data.targetLTVDividend, data.targetLTVDivider
+                deltaRealCollateral, data.realCollateral, data.realBorrow, data.targetLtvDividend, data.targetLtvDivider
             );
 
             deltaSharesInUnderlying = calculateDeltaSharesFromDeltaRealCollateralAndDeltaRealBorrow(

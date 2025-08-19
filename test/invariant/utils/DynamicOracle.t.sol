@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "forge-std/Base.sol";
-import "../../../src/dummy/interfaces/IDummyOracle.sol";
-import "./RateMath.sol";
+import {CommonBase} from "forge-std/Base.sol";
+import {IDummyOracle} from "src/dummy/interfaces/IDummyOracle.sol";
+import {RateMath} from "test/invariant/utils/RateMath.sol";
 
 /**
  * @title DynamicOracle
@@ -16,20 +16,20 @@ import "./RateMath.sol";
  */
 contract DynamicOracle is IDummyOracle, CommonBase {
     // Token addresses for the two assets in the LTV system
-    address private immutable collateralToken;
-    address private immutable borrowToken;
+    address private immutable COLLATERAL_TOKEN;
+    address private immutable BORROW_TOKEN;
 
     // Initial prices set at deployment (in 1e18 precision)
-    uint256 private immutable initialBorrowPrice;
-    uint256 private immutable initialCollateralPrice;
+    uint256 private immutable INITIAL_BORROW_PRICE;
+    uint256 private immutable INITIAL_COLLATERAL_PRICE;
 
     // Rate per block for price increase (in 1e18 precision)
     // This represents the daily rate of increase for collateral price
-    uint256 private immutable ratePerBlock;
+    uint256 private immutable RATE_PER_BLOCK;
 
     // Block number when the oracle was deployed
     // Used as reference point for calculating elapsed time
-    uint256 private immutable deploymentBlock;
+    uint256 private immutable DEPLOYMENT_BLOCK;
 
     // Number of blocks per day (7200 blocks = 12 seconds per block)
     // Used to discretize price updates to daily intervals
@@ -50,12 +50,12 @@ contract DynamicOracle is IDummyOracle, CommonBase {
         uint256 _initialBorrowPrice,
         uint256 _ratePerBlock
     ) {
-        collateralToken = _collateralToken;
-        borrowToken = _borrowToken;
-        initialBorrowPrice = _initialBorrowPrice;
-        initialCollateralPrice = _initialCollateralPrice;
-        ratePerBlock = _ratePerBlock;
-        deploymentBlock = uint56(block.number);
+        COLLATERAL_TOKEN = _collateralToken;
+        BORROW_TOKEN = _borrowToken;
+        INITIAL_BORROW_PRICE = _initialBorrowPrice;
+        INITIAL_COLLATERAL_PRICE = _initialCollateralPrice;
+        RATE_PER_BLOCK = _ratePerBlock;
+        DEPLOYMENT_BLOCK = uint56(block.number);
     }
 
     /**
@@ -64,10 +64,10 @@ contract DynamicOracle is IDummyOracle, CommonBase {
      * @return Current price in 1e18 precision
      */
     function getAssetPrice(address asset) external view returns (uint256) {
-        if (asset == borrowToken) {
+        if (asset == BORROW_TOKEN) {
             // Borrow token (stablecoin) maintains constant price
-            return initialBorrowPrice;
-        } else if (asset == collateralToken) {
+            return INITIAL_BORROW_PRICE;
+        } else if (asset == COLLATERAL_TOKEN) {
             // Collateral token price increases over time
             return _calculateCollateralPrice();
         }
@@ -92,12 +92,12 @@ contract DynamicOracle is IDummyOracle, CommonBase {
     function _calculateCollateralPrice() private view returns (uint256) {
         // Calculate blocks elapsed since deployment, rounded down to nearest day
         // This ensures price only changes once per day, not every block
-        uint256 blocksElapsed = (vm.getBlockNumber() - deploymentBlock) / BLOCKS_PER_DAY * BLOCKS_PER_DAY;
+        uint256 blocksElapsed = (vm.getBlockNumber() - DEPLOYMENT_BLOCK) / BLOCKS_PER_DAY * BLOCKS_PER_DAY;
 
         // Calculate the cumulative price increase factor using RateMath
-        uint256 priceIncrease = RateMath.calculateRatePerBlock(ratePerBlock, blocksElapsed);
+        uint256 priceIncrease = RateMath.calculateRatePerBlock(RATE_PER_BLOCK, blocksElapsed);
 
         // Apply the price increase to the initial price
-        return initialCollateralPrice * priceIncrease / 1e18;
+        return INITIAL_COLLATERAL_PRICE * priceIncrease / 1e18;
     }
 }

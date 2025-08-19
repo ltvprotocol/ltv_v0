@@ -1,10 +1,15 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../utils/BaseTest.t.sol";
-import "../../src/errors/IERC20Errors.sol";
+import {stdError} from "forge-std/StdError.sol";
+import {BaseTest, DefaultTestData} from "test/utils/BaseTest.t.sol";
+import {IERC20Events} from "src/events/IERC20Events.sol";
+import {IERC20Errors} from "src/errors/IERC20Errors.sol";
+import {SafeERC20, IERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract TransferTest is BaseTest {
+    using SafeERC20 for IERC20;
+
     function testFuzz_mintTransferRedeem(
         DefaultTestData memory defaultData,
         address userA,
@@ -21,7 +26,7 @@ contract TransferTest is BaseTest {
         deal(address(borrowToken), userA, type(uint256).max);
 
         vm.startPrank(defaultData.governor);
-        ltv.setMaxSafeLTV(1, 1);
+        ltv.setMaxSafeLtv(1, 1);
         ltv.mintFreeTokens(mintAmount, userA);
         vm.stopPrank();
 
@@ -31,9 +36,8 @@ contract TransferTest is BaseTest {
         emit IERC20Events.Transfer(userA, userB, transferAmount);
 
         vm.prank(userA);
-        bool transferSuccess = ltv.transfer(userB, transferAmount);
+        IERC20(address(ltv)).safeTransfer(userB, transferAmount);
 
-        assertTrue(transferSuccess);
         assertEq(ltv.balanceOf(userB), transferAmount);
         assertEq(ltv.balanceOf(userA), mintAmount - transferAmount);
 
@@ -63,6 +67,7 @@ contract TransferTest is BaseTest {
 
         vm.startPrank(userB);
         vm.expectRevert(stdError.arithmeticError);
+        /// forge-lint: disable-next-line
         ltv.transfer(userA, transferAmount);
         vm.stopPrank();
 
@@ -85,10 +90,9 @@ contract TransferTest is BaseTest {
         emit IERC20Events.Transfer(userA, userB, 0);
 
         vm.startPrank(userA);
-        bool zeroTransferSuccess = ltv.transfer(userB, 0);
+        IERC20(address(ltv)).safeTransfer(userB, 0);
         vm.stopPrank();
 
-        assertTrue(zeroTransferSuccess);
         assertEq(ltv.balanceOf(userA), initialBalanceA);
         assertEq(ltv.balanceOf(userB), initialBalanceB);
     }
@@ -110,10 +114,9 @@ contract TransferTest is BaseTest {
         emit IERC20Events.Transfer(userA, userA, transferAmount);
 
         vm.startPrank(userA);
-        bool selfTransferSuccess = ltv.transfer(userA, transferAmount);
+        IERC20(address(ltv)).safeTransfer(userA, transferAmount);
         vm.stopPrank();
 
-        assertTrue(selfTransferSuccess);
         assertEq(ltv.balanceOf(userA), initialBalance);
     }
 
@@ -133,6 +136,7 @@ contract TransferTest is BaseTest {
 
         vm.startPrank(userA);
         vm.expectRevert(abi.encodeWithSelector(IERC20Errors.TransferToZeroAddress.selector));
+        /// forge-lint: disable-next-line
         ltv.transfer(address(0), transferAmount);
         vm.stopPrank();
 
@@ -156,8 +160,7 @@ contract TransferTest is BaseTest {
         ltv.mintFreeTokens(mintAmount, owner);
 
         vm.startPrank(owner);
-        bool transferSuccess = ltv.transfer(recipient, transferAmount);
-        assertTrue(transferSuccess);
+        IERC20(address(ltv)).safeTransfer(recipient, transferAmount);
         vm.stopPrank();
 
         assertEq(ltv.balanceOf(owner), mintAmount - transferAmount);

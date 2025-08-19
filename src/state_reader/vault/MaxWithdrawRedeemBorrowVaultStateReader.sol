@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "./PreviewWithdrawVaultStateReader.sol";
-import "src/structs/state/vault/MaxWithdrawRedeemBorrowVaultState.sol";
+import {MaxWithdrawRedeemBorrowVaultState} from "src/structs/state/vault/MaxWithdrawRedeemBorrowVaultState.sol";
+import {PreviewWithdrawVaultStateReader} from "src/state_reader/vault/PreviewWithdrawVaultStateReader.sol";
 
 contract MaxWithdrawRedeemBorrowVaultStateReader is PreviewWithdrawVaultStateReader {
     function maxWithdrawRedeemBorrowVaultState(address owner)
@@ -12,8 +12,8 @@ contract MaxWithdrawRedeemBorrowVaultStateReader is PreviewWithdrawVaultStateRea
     {
         return MaxWithdrawRedeemBorrowVaultState({
             previewWithdrawVaultState: previewWithdrawVaultState(),
-            maxSafeLTVDividend: maxSafeLTVDividend,
-            maxSafeLTVDivider: maxSafeLTVDivider,
+            maxSafeLtvDividend: maxSafeLtvDividend,
+            maxSafeLtvDivider: maxSafeLtvDivider,
             ownerBalance: balanceOf[owner]
         });
     }

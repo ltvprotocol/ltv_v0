@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../MaxGrowthFeeState.sol";
+import {MaxGrowthFeeState} from "src/structs/state/MaxGrowthFeeState.sol";
 
 struct PreviewWithdrawVaultState {
     MaxGrowthFeeState maxGrowthFeeState;
-    uint16 targetLTVDividend;
-    uint16 targetLTVDivider;
+    uint16 targetLtvDividend;
+    uint16 targetLtvDivider;
     uint56 startAuction;
     uint24 auctionDuration;
     uint56 blockNumber;

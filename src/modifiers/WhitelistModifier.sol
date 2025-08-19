@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../states/LTVState.sol";
-import "src/errors/IAdministrationErrors.sol";
-import "src/state_reader/GetIsWhitelistActivated.sol";
+import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
+import {LTVState} from "src/states/LTVState.sol";
+import {BoolReader} from "src/state_reader/BoolReader.sol";
 
-abstract contract WhitelistModifier is LTVState, GetIsWhitelistActivated, IAdministrationErrors {
+abstract contract WhitelistModifier is LTVState, BoolReader, IAdministrationErrors {
     modifier isReceiverWhitelisted(address to) {
         _isReceiverWhitelisted(to);
         _;

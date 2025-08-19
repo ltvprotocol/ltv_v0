@@ -2,6 +2,8 @@
 pragma solidity ^0.8.27;
 
 interface IOracleConnector {
-    function getPriceCollateralOracle() external view returns (uint256);
-    function getPriceBorrowOracle() external view returns (uint256);
+    function getPriceCollateralOracle(bytes calldata oracleConnectorGetterData) external view returns (uint256);
+    function getPriceBorrowOracle(bytes calldata oracleConnectorGetterData) external view returns (uint256);
+
+    function initializeOracleConnectorData(bytes calldata oracleConnectorData) external;
 }

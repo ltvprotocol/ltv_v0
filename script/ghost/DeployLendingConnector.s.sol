@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import "../utils/BaseScript.s.sol";
-import "../../src/interfaces/ILendingConnector.sol";
-import "../../src/ghost/connectors/HodlLendingConnector.sol";
-import "forge-std/console.sol";
+import {console} from "forge-std/console.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {IHodlMyBeerLending} from "src/ghost/hodlmybeer/IHodlMyBeerLending.sol";
+import {HodlLendingConnector} from "src/ghost/connectors/HodlLendingConnector.sol";
+import {BaseScript} from "../utils/BaseScript.s.sol";
 
 contract DeployHodlLendingConnector is BaseScript {
     function deploy() internal override {

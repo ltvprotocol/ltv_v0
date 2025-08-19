@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {ILTV} from "../../src/interfaces/ILTV.sol";
 import {Test} from "forge-std/Test.sol";
-import {IOracleConnector} from "../../src/interfaces/IOracleConnector.sol";
+import {ILTV} from "src/interfaces/ILTV.sol";
+import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
 
 struct FutureExecutorInvariantState {
     int256 futureBorrowAssets;
@@ -33,8 +33,11 @@ contract FutureExecutorInvariant is Test {
     }
 
     function _checkFutureExecutorInvariantWithCachedState(ILTV ltv) internal view {
-        int256 collateralPrice = int256(IOracleConnector(address(ltv.oracleConnector())).getPriceCollateralOracle());
-        int256 borrowPrice = int256(IOracleConnector(address(ltv.oracleConnector())).getPriceBorrowOracle());
+        bytes memory oracleConnectorGetterData = ltv.oracleConnectorGetterData();
+        int256 collateralPrice =
+            int256(IOracleConnector(address(ltv.oracleConnector())).getPriceCollateralOracle(oracleConnectorGetterData));
+        int256 borrowPrice =
+            int256(IOracleConnector(address(ltv.oracleConnector())).getPriceBorrowOracle(oracleConnectorGetterData));
 
         FutureExecutorInvariantState memory auctionState = getFutureExecutorInvariantState(ltv);
 

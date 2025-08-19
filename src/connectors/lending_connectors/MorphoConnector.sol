@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "@openzeppelin/contracts/interfaces/IERC20.sol";
-import "../../interfaces/ILendingConnector.sol";
-import "./interfaces/IMorphoBlue.sol";
-import "../../utils/MulDiv.sol";
-import {LTVState} from "../../states/LTVState.sol";
+import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
+import {IMorphoBlue} from "src/connectors/lending_connectors/interfaces/IMorphoBlue.sol";
+import {LTVState} from "src/states/LTVState.sol";
+import {uMulDiv} from "src/utils/MulDiv.sol";
 
 contract MorphoConnector is LTVState, ILendingConnector {
     using uMulDiv for uint128;
@@ -13,7 +12,7 @@ contract MorphoConnector is LTVState, ILendingConnector {
     IMorphoBlue public constant MORPHO = IMorphoBlue(0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb);
 
     // bytes32(uint256(keccak256("ltv.storage.MorphoConnector")) - 1)
-    bytes32 private constant MorhpConnectorStorageLocation =
+    bytes32 private constant MORPHO_CONNECTOR_STORAGE_LOCATION =
         0x3ce092b68bc5f5a93dae5498ed388a510f95f75f908bb65f889a019a5a7397e4;
 
     struct MorphoConnectorStorage {
@@ -25,7 +24,7 @@ contract MorphoConnector is LTVState, ILendingConnector {
 
     function _getMorphoConnectorStorage() private pure returns (MorphoConnectorStorage storage s) {
         assembly {
-            s.slot := MorhpConnectorStorageLocation
+            s.slot := MORPHO_CONNECTOR_STORAGE_LOCATION
         }
     }
 
@@ -76,7 +75,7 @@ contract MorphoConnector is LTVState, ILendingConnector {
         return borrowShares.mulDiv(totalBorrowAssets, totalBorrowShares, isDeposit);
     }
 
-    function initializeProtocol(bytes memory data) external {
+    function initializeLendingConnectorData(bytes memory data) external {
         (address oracle, address irm, uint256 lltv, bytes32 marketId) =
             abi.decode(data, (address, address, uint256, bytes32));
 
@@ -86,6 +85,6 @@ contract MorphoConnector is LTVState, ILendingConnector {
         s.lltv = lltv;
         s.marketId = marketId;
 
-        connectorGetterData = abi.encode(marketId);
+        lendingConnectorGetterData = abi.encode(marketId);
     }
 }

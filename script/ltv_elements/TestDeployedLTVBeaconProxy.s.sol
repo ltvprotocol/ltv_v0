@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.29;
 
-import "../../src/interfaces/ILTV.sol";
-import "forge-std/StdCheats.sol";
-import "forge-std/Script.sol";
-import "forge-std/interfaces/IERC20.sol";
-import "forge-std/StdAssertions.sol";
+import {ILTV} from "../../src/interfaces/ILTV.sol";
+import {StdCheats} from "forge-std/StdCheats.sol";
+import {Script} from "forge-std/Script.sol";
+import {IERC20} from "forge-std/interfaces/IERC20.sol";
+import {StdAssertions} from "forge-std/StdAssertions.sol";
 
 contract TestDeployedOnForkLTVBeaconProxy is Script, StdCheats, StdAssertions {
     function run() public {

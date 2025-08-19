@@ -1,17 +1,26 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../max/MaxMint.sol";
-import "../../../../state_transition/VaultStateTransition.sol";
-import "../../../../state_transition/ERC20.sol";
-import "../../../../state_transition/ApplyMaxGrowthFee.sol";
-import "../../../../state_transition/MintProtocolRewards.sol";
-import "../../../../state_transition/Lending.sol";
-import "src/events/IERC4626Events.sol";
-import "../preview/PreviewMint.sol";
-import "../../../../math/NextStep.sol";
-import "src/errors/IVaultErrors.sol";
-import "src/state_reader/vault/MaxDepositMintBorrowVaultStateReader.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
+import {IERC4626Events} from "src/events/IERC4626Events.sol";
+import {IVaultErrors} from "src/errors/IVaultErrors.sol";
+import {MaxDepositMintBorrowVaultState} from "src/structs/state/vault/MaxDepositMintBorrowVaultState.sol";
+import {MaxDepositMintBorrowVaultStateReader} from "src/state_reader/vault/MaxDepositMintBorrowVaultStateReader.sol";
+import {MaxDepositMintBorrowVaultData} from "src/structs/data/vault/MaxDepositMintBorrowVaultData.sol";
+import {DeltaFuture} from "src/structs/state_transition/DeltaFuture.sol";
+import {NextState} from "src/structs/state_transition/NextState.sol";
+import {NextStateData} from "src/structs/state_transition/NextStateData.sol";
+import {NextStepData} from "src/structs/state_transition/NextStepData.sol";
+import {MintProtocolRewardsData} from "src/structs/data/MintProtocolRewardsData.sol";
+import {VaultStateTransition} from "src/state_transition/VaultStateTransition.sol";
+import {ApplyMaxGrowthFee} from "src/state_transition/ApplyMaxGrowthFee.sol";
+import {MintProtocolRewards} from "src/state_transition/MintProtocolRewards.sol";
+import {Lending} from "src/state_transition/Lending.sol";
+import {MaxMint} from "src/public/vault/borrow/max/MaxMint.sol";
+import {NextStep} from "src/math/NextStep.sol";
+import {CommonMath} from "src/math/CommonMath.sol";
+import {uMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract Mint is
     MaxDepositMintBorrowVaultStateReader,
@@ -24,6 +33,7 @@ abstract contract Mint is
     IVaultErrors
 {
     using uMulDiv for uint256;
+    using SafeERC20 for IERC20;
 
     function mint(uint256 shares, address receiver) external isFunctionAllowed nonReentrant returns (uint256 assets) {
         MaxDepositMintBorrowVaultState memory state = maxDepositMintBorrowVaultState();
@@ -37,7 +47,7 @@ abstract contract Mint is
             return 0;
         }
 
-        borrowToken.transferFrom(msg.sender, address(this), assetsOut);
+        borrowToken.safeTransferFrom(msg.sender, address(this), assetsOut);
 
         applyMaxGrowthFee(
             data.previewDepositBorrowVaultData.supplyAfterFee, data.previewDepositBorrowVaultData.withdrawTotalAssets

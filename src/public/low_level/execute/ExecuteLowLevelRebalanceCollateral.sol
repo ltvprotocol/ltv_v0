@@ -1,13 +1,16 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "src/public/low_level/preview/PreviewLowLevelRebalanceCollateral.sol";
-import "src/public/low_level/max/MaxLowLevelRebalanceCollateral.sol";
-import "src/state_transition/ApplyMaxGrowthFee.sol";
-import "src/math/state_to_data/preview/PreviewLowLevelRebalanceStateToData.sol";
-import "src/state_transition/ExecuteLowLevelRebalance.sol";
-import "src/errors/ILowLevelRebalanceErrors.sol";
-import "src/state_reader/low_level/ExecuteLowLevelRebalanceStateReader.sol";
+import {ExecuteLowLevelRebalanceState} from "src/structs/state/low_level/ExecuteLowLevelRebalanceState.sol";
+import {MaxLowLevelRebalanceCollateralStateData} from
+    "src/structs/state/low_level/MaxLowLevelRebalanceCollateralStateData.sol";
+import {LowLevelRebalanceData} from "src/structs/data/low_level/LowLevelRebalanceData.sol";
+import {ILowLevelRebalanceErrors} from "src/errors/ILowLevelRebalanceErrors.sol";
+import {ApplyMaxGrowthFee} from "src/state_transition/ApplyMaxGrowthFee.sol";
+import {ExecuteLowLevelRebalance} from "src/state_transition/ExecuteLowLevelRebalance.sol";
+import {ExecuteLowLevelRebalanceStateReader} from "src/state_reader/low_level/ExecuteLowLevelRebalanceStateReader.sol";
+import {PreviewLowLevelRebalanceCollateral} from "src/public/low_level/preview/PreviewLowLevelRebalanceCollateral.sol";
+import {MaxLowLevelRebalanceCollateral} from "src/public/low_level/max/MaxLowLevelRebalanceCollateral.sol";
 
 abstract contract ExecuteLowLevelRebalanceCollateral is
     ExecuteLowLevelRebalanceStateReader,
@@ -46,8 +49,8 @@ abstract contract ExecuteLowLevelRebalanceCollateral is
             // using deposit real collateral assets since it overestimate collateral assets, so max value will be smaller
             MaxLowLevelRebalanceCollateralStateData({
                 realCollateralAssets: state.previewLowLevelRebalanceState.depositRealCollateralAssets,
-                targetLTVDividend: state.previewLowLevelRebalanceState.targetLTVDividend,
-                targetLTVDivider: state.previewLowLevelRebalanceState.targetLTVDivider,
+                targetLtvDividend: state.previewLowLevelRebalanceState.targetLtvDividend,
+                targetLtvDivider: state.previewLowLevelRebalanceState.targetLtvDivider,
                 collateralPrice: state
                     .previewLowLevelRebalanceState
                     .maxGrowthFeeState

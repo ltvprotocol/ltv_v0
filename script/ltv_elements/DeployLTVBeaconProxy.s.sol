@@ -1,9 +1,15 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import "../utils/BaseScript.s.sol";
-import "@openzeppelin/contracts/proxy/beacon/BeaconProxy.sol";
-import "../../src/interfaces/ILTV.sol";
+import {BaseScript} from "../utils/BaseScript.s.sol";
+import {StateInitData} from "src/structs/state/StateInitData.sol";
+import {ILTV} from "src/interfaces/ILTV.sol";
+import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
+import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
+import {ISlippageProvider} from "src/interfaces/ISlippageProvider.sol";
+import {IModules} from "src/interfaces/IModules.sol";
+import {BeaconProxy} from "openzeppelin-contracts/contracts/proxy/beacon/BeaconProxy.sol";
+import {console} from "forge-std/console.sol";
 
 contract DeployLTVBeaconProxy is BaseScript {
     function deploy() internal override {
@@ -28,12 +34,12 @@ contract DeployLTVBeaconProxy is BaseScript {
         stateInitData.collateralToken = vm.envAddress("COLLATERAL_ASSET");
         stateInitData.borrowToken = vm.envAddress("BORROW_ASSET");
         stateInitData.feeCollector = vm.envAddress("FEE_COLLECTOR");
-        stateInitData.maxSafeLTVDividend = uint16(vm.envUint("MAX_SAFE_LTV_DIVIDEND"));
-        stateInitData.maxSafeLTVDivider = uint16(vm.envUint("MAX_SAFE_LTV_DIVIDER"));
-        stateInitData.minProfitLTVDividend = uint16(vm.envUint("MIN_PROFIT_LTV_DIVIDEND"));
-        stateInitData.minProfitLTVDivider = uint16(vm.envUint("MIN_PROFIT_LTV_DIVIDER"));
-        stateInitData.targetLTVDividend = uint16(vm.envUint("TARGET_LTV_DIVIDEND"));
-        stateInitData.targetLTVDivider = uint16(vm.envUint("TARGET_LTV_DIVIDER"));
+        stateInitData.maxSafeLtvDividend = uint16(vm.envUint("MAX_SAFE_LTV_DIVIDEND"));
+        stateInitData.maxSafeLtvDivider = uint16(vm.envUint("MAX_SAFE_LTV_DIVIDER"));
+        stateInitData.minProfitLtvDividend = uint16(vm.envUint("MIN_PROFIT_LTV_DIVIDEND"));
+        stateInitData.minProfitLtvDivider = uint16(vm.envUint("MIN_PROFIT_LTV_DIVIDER"));
+        stateInitData.targetLtvDividend = uint16(vm.envUint("TARGET_LTV_DIVIDEND"));
+        stateInitData.targetLtvDivider = uint16(vm.envUint("TARGET_LTV_DIVIDER"));
         stateInitData.lendingConnector = ILendingConnector(vm.envAddress("LENDING_CONNECTOR"));
         stateInitData.oracleConnector = IOracleConnector(vm.envAddress("ORACLE_CONNECTOR"));
         stateInitData.maxGrowthFeeDividend = uint16(vm.envUint("MAX_GROWTH_FEE_DIVIDEND"));

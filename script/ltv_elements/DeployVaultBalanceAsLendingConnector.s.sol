@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import "../utils/BaseScript.s.sol";
-import "../../src/connectors/lending_connectors/VaultBalanceAsLendingConnector.sol";
+import {BaseScript} from "../utils/BaseScript.s.sol";
+import {VaultBalanceAsLendingConnector} from "../../src/connectors/lending_connectors/VaultBalanceAsLendingConnector.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {console} from "forge-std/console.sol";
 
 contract DeployVaultBalanceAsLendingConnector is BaseScript {
     function deploy() internal override {

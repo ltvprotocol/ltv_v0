@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../../../src/dummy/interfaces/IDummyLending.sol";
-import "forge-std/interfaces/IERC20.sol";
-import "forge-std/Test.sol";
-import "./RateMath.sol";
+import {Test} from "forge-std/Test.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {IDummyLending} from "src/dummy/interfaces/IDummyLending.sol";
+import {RateMath} from "test/invariant/utils/RateMath.sol";
+import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 
 /**
  * @title DynamicLending
@@ -17,6 +18,8 @@ import "./RateMath.sol";
  * - Balances are tracked separately for supply and borrow positions
  */
 abstract contract DynamicLending is IDummyLending {
+    using SafeERC20 for IERC20;
+
     // Mapping from asset address to user's supplied balance
     mapping(address => uint256) internal _supplyBalance;
 
@@ -28,14 +31,14 @@ abstract contract DynamicLending is IDummyLending {
     mapping(address => uint256) public lastDebtIncreaseBlock;
 
     // Rate per block for debt increase (interest rate) in 1e18 precision
-    uint256 public immutable ratePerBlock;
+    uint256 public immutable RATE_PER_BLOCK;
 
     /**
      * @dev Constructor sets the interest rate for debt accumulation
      * @param _ratePerBlock Interest rate per block in 1e18 precision
      */
     constructor(uint256 _ratePerBlock) {
-        ratePerBlock = _ratePerBlock;
+        RATE_PER_BLOCK = _ratePerBlock;
     }
 
     /**
@@ -53,7 +56,7 @@ abstract contract DynamicLending is IDummyLending {
         uint256 blocksElapsed = uint56(block.number) - lastBlock;
 
         // Calculate the cumulative interest factor using RateMath
-        uint256 debtIncreaseCoeff = RateMath.calculateRatePerBlock(ratePerBlock, blocksElapsed);
+        uint256 debtIncreaseCoeff = RateMath.calculateRatePerBlock(RATE_PER_BLOCK, blocksElapsed);
 
         // Apply interest to the base borrow balance
         return _borrowBalance[asset] * debtIncreaseCoeff / 10 ** 18;
@@ -86,7 +89,7 @@ abstract contract DynamicLending is IDummyLending {
         }
 
         // Transfer tokens to the borrower
-        IERC20(asset).transfer(msg.sender, amount);
+        IERC20(asset).safeTransfer(msg.sender, amount);
     }
 
     /**
@@ -102,7 +105,7 @@ abstract contract DynamicLending is IDummyLending {
         require(_borrowBalance[asset] >= amount, "Repay amount exceeds borrow balance");
 
         // Transfer tokens from user to protocol
-        IERC20(asset).transferFrom(msg.sender, address(this), amount);
+        IERC20(asset).safeTransferFrom(msg.sender, address(this), amount);
 
         // Reduce the borrow balance
         _borrowBalance[asset] -= amount;
@@ -115,7 +118,7 @@ abstract contract DynamicLending is IDummyLending {
      */
     function supply(address asset, uint256 amount) external {
         // Transfer tokens from user to protocol
-        IERC20(asset).transferFrom(msg.sender, address(this), amount);
+        IERC20(asset).safeTransferFrom(msg.sender, address(this), amount);
 
         // Increase the user's supply balance
         _supplyBalance[asset] += amount;
@@ -136,7 +139,7 @@ abstract contract DynamicLending is IDummyLending {
         }
 
         // Transfer tokens from protocol to user
-        IERC20(asset).transfer(msg.sender, amount);
+        IERC20(asset).safeTransfer(msg.sender, amount);
 
         // Reduce the user's supply balance
         _supplyBalance[asset] -= amount;

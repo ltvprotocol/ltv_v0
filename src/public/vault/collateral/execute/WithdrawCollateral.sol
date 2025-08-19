@@ -1,18 +1,26 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../max/MaxWithdrawCollateral.sol";
-import "../../../../state_transition/VaultStateTransition.sol";
-import "../../../../state_transition/ERC20.sol";
-import "../../../../state_transition/ApplyMaxGrowthFee.sol";
-import "../../../../state_transition/MintProtocolRewards.sol";
-import "../../../../state_transition/Lending.sol";
-import "src/events/IERC4626Events.sol";
-import "src/errors/IVaultErrors.sol";
-import "../preview/PreviewWithdrawCollateral.sol";
-import "../../../../math/NextStep.sol";
-import "src/state_reader/vault/MaxWithdrawRedeemCollateralVaultStateReader.sol";
-import "../../../../state_transition/TransferFromProtocol.sol";
+import {IERC4626Events} from "src/events/IERC4626Events.sol";
+import {IVaultErrors} from "src/errors/IVaultErrors.sol";
+import {NextState} from "src/structs/state_transition/NextState.sol";
+import {NextStateData} from "src/structs/state_transition/NextStateData.sol";
+import {NextStepData} from "src/structs/state_transition/NextStepData.sol";
+import {MaxWithdrawRedeemCollateralVaultData} from "src/structs/data/vault/MaxWithdrawRedeemCollateralVaultData.sol";
+import {MaxWithdrawRedeemCollateralVaultState} from "src/structs/state/vault/MaxWithdrawRedeemCollateralVaultState.sol";
+import {DeltaFuture} from "src/structs/state_transition/DeltaFuture.sol";
+import {MintProtocolRewardsData} from "src/structs/data/MintProtocolRewardsData.sol";
+import {VaultStateTransition} from "src/state_transition/VaultStateTransition.sol";
+import {ApplyMaxGrowthFee} from "src/state_transition/ApplyMaxGrowthFee.sol";
+import {MintProtocolRewards} from "src/state_transition/MintProtocolRewards.sol";
+import {Lending} from "src/state_transition/Lending.sol";
+import {TransferFromProtocol} from "src/state_transition/TransferFromProtocol.sol";
+import {MaxWithdrawRedeemCollateralVaultStateReader} from
+    "src/state_reader/vault/MaxWithdrawRedeemCollateralVaultStateReader.sol";
+import {MaxWithdrawCollateral} from "src/public/vault/collateral/max/MaxWithdrawCollateral.sol";
+import {NextStep} from "src/math/NextStep.sol";
+import {CommonMath} from "src/math/CommonMath.sol";
+import {uMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract WithdrawCollateral is
     MaxWithdrawRedeemCollateralVaultStateReader,
@@ -39,15 +47,15 @@ abstract contract WithdrawCollateral is
         uint256 max = _maxWithdrawCollateral(data);
         require(assets <= max, ExceedsMaxWithdrawCollateral(owner, assets, max));
 
-        (uint256 shares, DeltaFuture memory deltaFuture) =
+        (uint256 sharesOut, DeltaFuture memory deltaFuture) =
             _previewWithdrawCollateral(assets, data.previewCollateralVaultData);
 
-        if (shares == 0) {
+        if (sharesOut == 0) {
             return 0;
         }
 
         if (owner != msg.sender) {
-            _spendAllowance(owner, msg.sender, shares);
+            _spendAllowance(owner, msg.sender, sharesOut);
         }
 
         applyMaxGrowthFee(
@@ -64,7 +72,7 @@ abstract contract WithdrawCollateral is
             })
         );
 
-        _burn(owner, shares);
+        _burn(owner, sharesOut);
 
         NextState memory nextState = NextStep.calculateNextStep(
             NextStepData({
@@ -99,8 +107,8 @@ abstract contract WithdrawCollateral is
 
         transferCollateralToken(receiver, assets);
 
-        emit Withdraw(msg.sender, receiver, owner, assets, shares);
+        emit WithdrawCollateral(msg.sender, receiver, owner, assets, sharesOut);
 
-        return shares;
+        return sharesOut;
     }
 }

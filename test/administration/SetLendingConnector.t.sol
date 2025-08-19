@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../utils/BaseTest.t.sol";
-import "../../src/interfaces/ILendingConnector.sol";
+import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import {BaseTest, DefaultTestData} from "test/utils/BaseTest.t.sol";
+import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
+import {IAdministrationEvents} from "src/events/IAdministrationEvents.sol";
 
 error UnexpectedMockSupply();
 error UnexpectedMockWithdraw();
@@ -36,7 +38,7 @@ contract MockLendingConnector is ILendingConnector {
         revert UnexpectedMockGetRealBorrowAssets();
     }
 
-    function initializeProtocol(bytes memory) external pure {}
+    function initializeLendingConnectorData(bytes memory) external pure {}
 }
 
 contract SetLendingConnectorTest is BaseTest {
@@ -51,8 +53,8 @@ contract SetLendingConnectorTest is BaseTest {
 
         vm.prank(defaultData.owner);
         vm.expectEmit(true, true, true, true, address(ltv));
-        emit IAdministrationEvents.LendingConnectorUpdated(oldLendingConnector, address(mockLendingConnector));
-        ltv.setLendingConnector(address(mockLendingConnector));
+        emit IAdministrationEvents.LendingConnectorUpdated(oldLendingConnector, "", address(mockLendingConnector), "");
+        ltv.setLendingConnector(address(mockLendingConnector), "");
 
         assertEq(address(ltv.getLendingConnector()), address(mockLendingConnector));
     }
@@ -64,7 +66,7 @@ contract SetLendingConnectorTest is BaseTest {
         mockLendingConnector = new MockLendingConnector();
 
         vm.prank(defaultData.owner);
-        ltv.setLendingConnector(address(mockLendingConnector));
+        ltv.setLendingConnector(address(mockLendingConnector), "");
 
         vm.expectRevert(UnexpectedMockGetRealCollateralAssets.selector);
         ltv.deposit(0, address(this));
@@ -82,6 +84,6 @@ contract SetLendingConnectorTest is BaseTest {
 
         vm.prank(user);
         vm.expectRevert(abi.encodeWithSelector(OwnableUpgradeable.OwnableUnauthorizedAccount.selector, user));
-        ltv.setLendingConnector(address(mockLendingConnector));
+        ltv.setLendingConnector(address(mockLendingConnector), "");
     }
 }

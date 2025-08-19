@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import "forge-std/Script.sol";
-import "forge-std/console.sol";
+import {Script} from "forge-std/Script.sol";
+import {console} from "forge-std/console.sol";
 
 abstract contract BaseScript is Script {
     function run() external {

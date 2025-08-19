@@ -1,8 +1,14 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "src/math/Vault.sol";
-import "../../../../math/MintRedeem.sol";
+import {Constants} from "src/Constants.sol";
+import {MintRedeemData} from "src/structs/data/vault/MintRedeemData.sol";
+import {PreviewWithdrawVaultState} from "src/structs/state/vault/PreviewWithdrawVaultState.sol";
+import {PreviewWithdrawBorrowVaultData} from "src/structs/data/vault/PreviewWithdrawBorrowVaultData.sol";
+import {DeltaFuture} from "src/structs/state_transition/DeltaFuture.sol";
+import {MintRedeem} from "src/math/MintRedeem.sol";
+import {Vault} from "src/math/Vault.sol";
+import {uMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract PreviewRedeem is Vault {
     using uMulDiv for uint256;
@@ -37,8 +43,8 @@ abstract contract PreviewRedeem is Vault {
                 protocolFutureRewardCollateral: data.protocolFutureRewardCollateral,
                 collateralSlippage: data.collateralSlippage,
                 borrowSlippage: data.borrowSlippage,
-                targetLTVDividend: data.targetLTVDividend,
-                targetLTVDivider: data.targetLTVDivider,
+                targetLtvDividend: data.targetLtvDividend,
+                targetLtvDivider: data.targetLtvDivider,
                 deltaShares: -1 * int256(sharesInUnderlying),
                 isBorrow: true
             })

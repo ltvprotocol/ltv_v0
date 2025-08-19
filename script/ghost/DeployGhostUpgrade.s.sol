@@ -1,18 +1,23 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "forge-std/Script.sol";
-import "../../src/interfaces/ILTV.sol";
-import "../../src/states/LTVState.sol";
-import "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
-import "openzeppelin-contracts/contracts/access/Ownable.sol";
-import "openzeppelin-contracts/contracts/proxy/transparent/ProxyAdmin.sol";
-import "../../src/events/IERC20Events.sol";
-import "forge-std/Vm.sol";
+import {Script} from "forge-std/Script.sol";
+import {ILTV} from "../../src/interfaces/ILTV.sol";
+import {LTVState} from "../../src/states/LTVState.sol";
+import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
+import {ProxyAdmin} from "openzeppelin-contracts/contracts/proxy/transparent/ProxyAdmin.sol";
+import {Vm} from "forge-std/Vm.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {console} from "forge-std/console.sol";
+import {ITransparentUpgradeableProxy} from "openzeppelin-contracts/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
+import {IModules} from "../../src/interfaces/IModules.sol";
+import {ISlippageProvider} from "../../src/interfaces/ISlippageProvider.sol";
+import {ILendingConnector} from "../../src/interfaces/ILendingConnector.sol";
+import {IOracleConnector} from "../../src/interfaces/IOracleConnector.sol";
 
-import "forge-std/StdCheats.sol";
-import "forge-std/StdAssertions.sol";
-import "../../src/interfaces/ILTV.sol";
+import {StdCheats} from "forge-std/StdCheats.sol";
+import {StdAssertions} from "forge-std/StdAssertions.sol";
+import {ILTV} from "../../src/interfaces/ILTV.sol";
 
 function getHolders() pure returns (address[19] memory) {
     return [
@@ -77,12 +82,12 @@ struct NewFields {
     uint16 maxGrowthFeeDivider;
     uint16 maxDeleverageFeeDividend;
     uint16 maxDeleverageFeeDivider;
-    uint16 maxSafeLTVDividend;
-    uint16 maxSafeLTVDivider;
-    uint16 minProfitLTVDividend;
-    uint16 minProfitLTVDivider;
-    uint16 targetLTVDividend;
-    uint16 targetLTVDivider;
+    uint16 maxSafeLtvDividend;
+    uint16 maxSafeLtvDivider;
+    uint16 minProfitLtvDividend;
+    uint16 minProfitLtvDivider;
+    uint16 targetLtvDividend;
+    uint16 targetLtvDivider;
     uint8 boolSlot;
     ApprovalData[] allowances;
 }
@@ -107,9 +112,9 @@ abstract contract OldState {
     IERC20 public collateralToken;
     IERC20 public borrowToken;
 
-    uint128 public maxSafeLTV;
-    uint128 public minProfitLTV;
-    uint128 public targetLTV;
+    uint128 public maxSafeLtv;
+    uint128 public minProfitLtv;
+    uint128 public targetLtv;
 
     ILendingConnector public lendingConnector;
     IOracleConnector public oracleConnector;
@@ -151,9 +156,9 @@ contract OldStateCleaner is OldState {
         delete collateralToken;
         backup.borrowToken = address(borrowToken);
         delete borrowToken;
-        delete maxSafeLTV;
-        delete minProfitLTV;
-        delete targetLTV;
+        delete maxSafeLtv;
+        delete minProfitLtv;
+        delete targetLtv;
         delete lendingConnector;
         backup.oracleConnector = oracleConnector;
         delete oracleConnector;
@@ -213,12 +218,12 @@ contract NewStateRemapper is LTVState {
         maxGrowthFeeDivider = newFields.maxGrowthFeeDivider;
         maxDeleverageFeeDividend = newFields.maxDeleverageFeeDividend;
         maxDeleverageFeeDivider = newFields.maxDeleverageFeeDivider;
-        maxSafeLTVDividend = newFields.maxSafeLTVDividend;
-        maxSafeLTVDivider = newFields.maxSafeLTVDivider;
-        minProfitLTVDividend = newFields.minProfitLTVDividend;
-        minProfitLTVDivider = newFields.minProfitLTVDivider;
-        targetLTVDividend = newFields.targetLTVDividend;
-        targetLTVDivider = newFields.targetLTVDivider;
+        maxSafeLtvDividend = newFields.maxSafeLtvDividend;
+        maxSafeLtvDivider = newFields.maxSafeLtvDivider;
+        minProfitLtvDividend = newFields.minProfitLtvDividend;
+        minProfitLtvDivider = newFields.minProfitLtvDivider;
+        targetLtvDividend = newFields.targetLtvDividend;
+        targetLtvDivider = newFields.targetLtvDivider;
         boolSlot = newFields.boolSlot;
         for (uint256 i = 0; i < newFields.allowances.length; i++) {
             allowance[newFields.allowances[i].owner][newFields.allowances[i].spender] = newFields.allowances[i].amount;
@@ -292,12 +297,12 @@ contract DeployGhostUpgrade is Script, StdCheats, StdAssertions {
             maxGrowthFeeDivider: 5,
             maxDeleverageFeeDividend: 1,
             maxDeleverageFeeDivider: 50,
-            maxSafeLTVDividend: 9,
-            maxSafeLTVDivider: 10,
-            minProfitLTVDividend: 5,
-            minProfitLTVDivider: 10,
-            targetLTVDividend: 75,
-            targetLTVDivider: 100,
+            maxSafeLtvDividend: 9,
+            maxSafeLtvDivider: 10,
+            minProfitLtvDividend: 5,
+            minProfitLtvDivider: 10,
+            targetLtvDividend: 75,
+            targetLtvDivider: 100,
             boolSlot: 0,
             allowances: allowances
         });

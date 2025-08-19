@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "src/structs/state/vault/PreviewDepositVaultState.sol";
-import "src/structs/data/vault/PreviewDepositBorrowVaultData.sol";
-import "../../CommonMath.sol";
-import "../../MaxGrowthFee.sol";
-import "src/utils/MulDiv.sol";
+import {PreviewDepositVaultState} from "src/structs/state/vault/PreviewDepositVaultState.sol";
+import {PreviewDepositBorrowVaultData} from "src/structs/data/vault/PreviewDepositBorrowVaultData.sol";
+import {TotalAssetsData} from "src/structs/data/vault/TotalAssetsData.sol";
+import {TotalAssetsState} from "src/structs/state/vault/TotalAssetsState.sol";
+import {MaxGrowthFeeData} from "src/structs/data/MaxGrowthFeeData.sol";
+import {MaxGrowthFee} from "src/math/MaxGrowthFee.sol";
+import {CommonMath} from "src/math/CommonMath.sol";
+import {uMulDiv} from "src/utils/MulDiv.sol";
 
 contract PreviewDepositStateToPreviewDepositData is MaxGrowthFee {
     using uMulDiv for uint256;
@@ -89,8 +92,8 @@ contract PreviewDepositStateToPreviewDepositData is MaxGrowthFee {
             })
         );
 
-        data.targetLTVDividend = state.targetLTVDividend;
-        data.targetLTVDivider = state.targetLTVDivider;
+        data.targetLtvDividend = state.targetLtvDividend;
+        data.targetLtvDivider = state.targetLtvDivider;
         data.collateralSlippage = state.collateralSlippage;
         data.borrowSlippage = state.borrowSlippage;
 

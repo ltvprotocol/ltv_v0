@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../../src/dummy/DummyLending.sol";
+import {DummyLending} from "src/dummy/DummyLending.sol";
 
 contract MockDummyLending is DummyLending {
     constructor(address initialOwner) DummyLending(initialOwner) {}

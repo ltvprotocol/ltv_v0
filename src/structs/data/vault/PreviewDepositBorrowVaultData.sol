@@ -12,8 +12,8 @@ struct PreviewDepositBorrowVaultData {
     int256 protocolFutureRewardCollateral;
     uint256 collateralSlippage;
     uint256 borrowSlippage;
-    uint16 targetLTVDividend;
-    uint16 targetLTVDivider;
+    uint16 targetLtvDividend;
+    uint16 targetLtvDivider;
     uint256 borrowPrice;
     uint256 supplyAfterFee;
     uint256 withdrawTotalAssets;

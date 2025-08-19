@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../utils/BaseTest.t.sol";
+import {BaseTest} from "test/utils/BaseTest.t.sol";
 
 contract PrepareEachFunctionSuccessfulExecution is BaseTest {
     function prepareEachFunctionSuccessfulExecution(address user) public {
