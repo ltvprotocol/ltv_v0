@@ -4,22 +4,12 @@ pragma solidity ^0.8.27;
 import {ILowLevelRebalanceErrors} from "src/errors/ILowLevelRebalanceErrors.sol";
 import {Constants} from "src/Constants.sol";
 import {LowLevelRebalanceData} from "src/structs/data/low_level/LowLevelRebalanceData.sol";
+import {DeltaRealCollateralFromDeltaSharesData} from
+    "src/structs/data/low_level/DeltaRealCollateralFromDeltaSharesData.sol";
 import {sMulDiv} from "src/utils/MulDiv.sol";
 
 library LowLevelRebalanceMath {
     using sMulDiv for int256;
-
-    struct DeltaRealCollateralFromDeltaSharesData {
-        int256 deltaShares;
-        int256 futureCollateral;
-        int256 userFutureRewardCollateral;
-        int256 realCollateral;
-        int256 realBorrow;
-        int256 futureBorrow;
-        int256 userFutureRewardBorrow;
-        uint16 targetLTVDividend;
-        uint16 targetLTVDivider;
-    }
 
     // HODLer <=> depositor/withdrawer conflict, round up to leave more collateral in protocol
     function calculateDeltaRealCollateralFromDeltaShares(DeltaRealCollateralFromDeltaSharesData memory data)

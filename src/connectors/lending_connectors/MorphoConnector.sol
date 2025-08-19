@@ -2,6 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
+import {MorphoConnectorStorage} from "src/structs/connectors/MorphoConnectorStorage.sol";
 import {IMorphoBlue} from "src/connectors/lending_connectors/interfaces/IMorphoBlue.sol";
 import {LTVState} from "src/states/LTVState.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
@@ -14,13 +15,6 @@ contract MorphoConnector is LTVState, ILendingConnector {
     // bytes32(uint256(keccak256("ltv.storage.MorphoConnector")) - 1)
     bytes32 private constant MorhpConnectorStorageLocation =
         0x3ce092b68bc5f5a93dae5498ed388a510f95f75f908bb65f889a019a5a7397e4;
-
-    struct MorphoConnectorStorage {
-        address oracle;
-        address irm;
-        uint256 lltv;
-        bytes32 marketId;
-    }
 
     function _getMorphoConnectorStorage() private pure returns (MorphoConnectorStorage storage s) {
         assembly {
