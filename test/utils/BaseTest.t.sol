@@ -106,7 +106,9 @@ contract BaseTest is Test {
             });
             modulesProvider = new ModulesProvider(modulesState);
             oracleConnector = new DummyOracleConnector(oracle);
-            lendingConnector = new DummyLendingConnector(IERC20(address(collateralToken)), IERC20(address(borrowToken)), lendingProtocol);
+            lendingConnector = new DummyLendingConnector(
+                IERC20(address(collateralToken)), IERC20(address(borrowToken)), lendingProtocol
+            );
 
             StateInitData memory initData = StateInitData({
                 name: "Dummy LTV",
