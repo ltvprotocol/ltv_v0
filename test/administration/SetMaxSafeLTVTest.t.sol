@@ -24,7 +24,7 @@ contract SetmaxSafeLtvTest is BaseTest {
                 ltv.minProfitLtvDivider()
             )
         );
-        ltv.setmaxSafeLtv(newmaxSafeLtvDividend, newmaxSafeLtvDivider);
+        ltv.setMaxSafeLtv(newmaxSafeLtvDividend, newmaxSafeLtvDivider);
     }
 
     function test_failIfZero(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
@@ -36,12 +36,12 @@ contract SetmaxSafeLtvTest is BaseTest {
                 IAdministrationErrors.UnexpectedmaxSafeLtv.selector, newmaxSafeLtvDividend, newmaxSafeLtvDivider
             )
         );
-        ltv.setmaxSafeLtv(newmaxSafeLtvDividend, newmaxSafeLtvDivider);
+        ltv.setMaxSafeLtv(newmaxSafeLtvDividend, newmaxSafeLtvDivider);
     }
 
     function test_passIfOne(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
         vm.startPrank(defaultData.governor);
-        ltv.setmaxSafeLtv(1, 1);
+        ltv.setMaxSafeLtv(1, 1);
         assertEq(ltv.maxSafeLtvDividend(), 1);
         assertEq(ltv.maxSafeLtvDivider(), 1);
     }
@@ -55,7 +55,7 @@ contract SetmaxSafeLtvTest is BaseTest {
                 IAdministrationErrors.UnexpectedmaxSafeLtv.selector, newmaxSafeLtvDividend, newmaxSafeLtvDivider
             )
         );
-        ltv.setmaxSafeLtv(newmaxSafeLtvDividend, newmaxSafeLtvDivider);
+        ltv.setMaxSafeLtv(newmaxSafeLtvDividend, newmaxSafeLtvDivider);
     }
 
     function test_setAndCheckStorageSlot(DefaultTestData memory defaultData)
@@ -69,7 +69,7 @@ contract SetmaxSafeLtvTest is BaseTest {
         emit IAdministrationEvents.maxSafeLtvChanged(
             ltv.maxSafeLtvDividend(), ltv.maxSafeLtvDivider(), newmaxSafeLtvDividend, newmaxSafeLtvDivider
         );
-        ltv.setmaxSafeLtv(newmaxSafeLtvDividend, newmaxSafeLtvDivider);
+        ltv.setMaxSafeLtv(newmaxSafeLtvDividend, newmaxSafeLtvDivider);
 
         assertEq(ltv.maxSafeLtvDividend(), newmaxSafeLtvDividend);
         assertEq(ltv.maxSafeLtvDivider(), newmaxSafeLtvDivider);
@@ -84,6 +84,6 @@ contract SetmaxSafeLtvTest is BaseTest {
         uint16 newmaxSafeLtvDivider = ltv.maxSafeLtvDivider();
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
-        ltv.setmaxSafeLtv(newmaxSafeLtvDividend, newmaxSafeLtvDivider);
+        ltv.setMaxSafeLtv(newmaxSafeLtvDividend, newmaxSafeLtvDivider);
     }
 }

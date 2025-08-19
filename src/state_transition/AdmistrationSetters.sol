@@ -12,7 +12,7 @@ import {BoolReader} from "src/state_reader/BoolReader.sol";
 import {BoolWriter} from "src/state_transition/BoolWriter.sol";
 
 contract AdmistrationSetters is BoolWriter, BoolReader, IAdministrationErrors, IAdministrationEvents {
-    function _settargetLtv(uint16 dividend, uint16 divider) internal {
+    function _setTargetLtv(uint16 dividend, uint16 divider) internal {
         require(dividend >= 0 && dividend < divider, UnexpectedtargetLtv(dividend, divider));
         require(
             uint256(dividend) * maxSafeLtvDivider <= uint256(divider) * maxSafeLtvDividend
@@ -28,7 +28,7 @@ contract AdmistrationSetters is BoolWriter, BoolReader, IAdministrationErrors, I
         emit targetLtvChanged(oldValue, oldDivider, dividend, divider);
     }
 
-    function _setmaxSafeLtv(uint16 dividend, uint16 divider) internal {
+    function _setMaxSafeLtv(uint16 dividend, uint16 divider) internal {
         require(dividend > 0 && dividend <= divider, UnexpectedmaxSafeLtv(dividend, divider));
         require(
             uint256(dividend) * targetLtvDivider >= uint256(targetLtvDividend) * divider,
@@ -43,7 +43,7 @@ contract AdmistrationSetters is BoolWriter, BoolReader, IAdministrationErrors, I
         emit maxSafeLtvChanged(oldDividend, oldDivider, dividend, divider);
     }
 
-    function _setminProfitLtv(uint16 dividend, uint16 divider) internal {
+    function _setMinProfitLtv(uint16 dividend, uint16 divider) internal {
         require(dividend >= 0 && dividend < divider, UnexpectedminProfitLtv(dividend, divider));
         require(
             uint256(dividend) * targetLtvDivider <= uint256(divider) * targetLtvDividend,

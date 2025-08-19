@@ -24,7 +24,7 @@ contract SettargetLtvTest is BaseTest {
                 ltv.minProfitLtvDivider()
             )
         );
-        ltv.settargetLtv(targetLtvDividend, targetLtvDivider);
+        ltv.setTargetLtv(targetLtvDividend, targetLtvDivider);
     }
 
     function test_failIfGreaterThanMaxSafe(DefaultTestData memory defaultData)
@@ -45,13 +45,13 @@ contract SettargetLtvTest is BaseTest {
                 ltv.minProfitLtvDivider()
             )
         );
-        ltv.settargetLtv(targetLtvDividend, targetLtvDivider);
+        ltv.setTargetLtv(targetLtvDividend, targetLtvDivider);
     }
 
     function test_failIfZero(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
         vm.startPrank(defaultData.governor);
-        ltv.setminProfitLtv(0, 1);
-        ltv.settargetLtv(0, 1);
+        ltv.setMinProfitLtv(0, 1);
+        ltv.setTargetLtv(0, 1);
         assertEq(ltv.targetLtvDividend(), 0);
         assertEq(ltv.targetLtvDivider(), 1);
     }
@@ -65,7 +65,7 @@ contract SettargetLtvTest is BaseTest {
                 IAdministrationErrors.UnexpectedtargetLtv.selector, targetLtvDividend, targetLtvDivider
             )
         );
-        ltv.settargetLtv(targetLtvDividend, targetLtvDivider);
+        ltv.setTargetLtv(targetLtvDividend, targetLtvDivider);
     }
 
     function test_failIfFortyTwo(DefaultTestData memory defaultData)
@@ -80,7 +80,7 @@ contract SettargetLtvTest is BaseTest {
                 IAdministrationErrors.UnexpectedtargetLtv.selector, targetLtvDividend, targetLtvDivider
             )
         );
-        ltv.settargetLtv(targetLtvDividend, targetLtvDivider);
+        ltv.setTargetLtv(targetLtvDividend, targetLtvDivider);
     }
 
     function test_setAndCheckStorageSlot(DefaultTestData memory defaultData)
@@ -94,7 +94,7 @@ contract SettargetLtvTest is BaseTest {
         emit IAdministrationEvents.targetLtvChanged(
             ltv.targetLtvDividend(), ltv.targetLtvDivider(), targetLtvDividend, targetLtvDivider
         );
-        ltv.settargetLtv(targetLtvDividend, targetLtvDivider);
+        ltv.setTargetLtv(targetLtvDividend, targetLtvDivider);
 
         assertEq(ltv.targetLtvDividend(), targetLtvDividend);
         assertEq(ltv.targetLtvDivider(), targetLtvDivider);
@@ -109,6 +109,6 @@ contract SettargetLtvTest is BaseTest {
         uint16 newtargetLtvDivider = ltv.targetLtvDivider();
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
-        ltv.settargetLtv(newtargetLtvDividend, newtargetLtvDivider);
+        ltv.setTargetLtv(newtargetLtvDividend, newtargetLtvDivider);
     }
 }
