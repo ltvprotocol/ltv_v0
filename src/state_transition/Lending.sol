@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "src/state_reader/GetLendingConnectorReader.sol";
-import "../utils/RevertWithDataIfNeeded.sol";
+import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
+import {GetLendingConnectorReader} from "src/state_reader/GetLendingConnectorReader.sol";
+import {RevertWithDataIfNeeded} from "src/utils/RevertWithDataIfNeeded.sol";
 
 abstract contract Lending is GetLendingConnectorReader, RevertWithDataIfNeeded {
     function borrow(uint256 assets) internal {

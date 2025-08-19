@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../../structs/data/vault/DeltaSharesAndDeltaRealCollateralData.sol";
-import "../../structs/data/vault/Cases.sol";
-import "../../Constants.sol";
-import "src/math/CasesOperator.sol";
-import "../../utils/MulDiv.sol";
-import "src/errors/IVaultErrors.sol";
+import {IVaultErrors} from "src/errors/IVaultErrors.sol";
+import {Constants} from "src/Constants.sol";
+import {Cases} from "src/structs/data/vault/Cases.sol";
+import {DeltaSharesAndDeltaRealCollateralData} from "src/structs/data/vault/DeltaSharesAndDeltaRealCollateralData.sol";
+import {CasesOperator} from "src/math/CasesOperator.sol";
+import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
 
 library DeltaSharesAndDeltaRealCollateral {
     // TODO: make correct round here

@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "src/modifiers/WhitelistModifier.sol";
-import "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
+import {WhitelistModifier} from "src/modifiers/WhitelistModifier.sol";
 
 abstract contract TransferFromProtocol is WhitelistModifier {
     using SafeERC20 for IERC20;

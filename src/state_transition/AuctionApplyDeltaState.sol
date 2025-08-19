@@ -1,13 +1,15 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "./Lending.sol";
-import "./TransferFromProtocol.sol";
-import "src/structs/state_transition/DeltaAuctionState.sol";
-import "src/modifiers/FunctionStopperModifier.sol";
-import "src/events/IAuctionEvent.sol";
-import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
-import "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
+import {ReentrancyGuardUpgradeable} from
+    "openzeppelin-contracts-upgradeable/contracts/utils/ReentrancyGuardUpgradeable.sol";
+import {DeltaAuctionState} from "src/structs/state_transition/DeltaAuctionState.sol";
+import {IAuctionEvent} from "src/events/IAuctionEvent.sol";
+import {FunctionStopperModifier} from "src/modifiers/FunctionStopperModifier.sol";
+import {Lending} from "src/state_transition/Lending.sol";
+import {TransferFromProtocol} from "src/state_transition/TransferFromProtocol.sol";
 
 abstract contract AuctionApplyDeltaState is
     Lending,

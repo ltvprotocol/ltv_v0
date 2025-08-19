@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../Constants.sol";
-import "../utils/MulDiv.sol";
+import {Constants} from "src/Constants.sol";
+import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
 
 library CommonMath {
     using uMulDiv for uint256;

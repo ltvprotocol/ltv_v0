@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../../../src/interfaces/ILTV.sol";
-import "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
-import {BaseInvariantWrapper} from "./BaseInvariantWrapper.t.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {ILTV} from "src/interfaces/ILTV.sol";
+import {BaseInvariantWrapper} from "test/invariant/utils/BaseInvariantWrapper.t.sol";
 
 /**
  * @title LTVVaultWrapper

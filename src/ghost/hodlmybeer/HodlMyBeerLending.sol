@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
-import "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "../spooky/ISpookyOracle.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
+import {Initializable} from "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
+import {ISpookyOracle} from "src/ghost/spooky/ISpookyOracle.sol";
 
 contract HodlMyBeerLending is Initializable {
     using SafeERC20 for IERC20;

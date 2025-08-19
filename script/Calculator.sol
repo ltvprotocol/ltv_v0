@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import "forge-std/Script.sol";
-import "src/interfaces/ILTV.sol";
+import {Script} from "forge-std/Script.sol";
+import {console} from "forge-std/console.sol";
+import {ILTV} from "src/interfaces/ILTV.sol";
 
 // LTV=0xE2A7f267124AC3E4131f27b9159c78C521A44F3c forge script --fork-url $RPC_SEPOLIA script/Calculator.sol
 contract Calculator is Script {

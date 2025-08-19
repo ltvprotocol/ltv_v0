@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
-import "../../interfaces/ILendingConnector.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
 
 contract VaultBalanceAsLendingConnector is ILendingConnector {
     IERC20 public immutable COLLATERAL_TOKEN;

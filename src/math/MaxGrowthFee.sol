@@ -1,10 +1,13 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "src/public/vault/borrow/TotalAssets.sol";
-import "src/public/erc20/TotalSupply.sol";
-import "src/structs/state/MaxGrowthFeeState.sol";
-import "src/structs/data/MaxGrowthFeeData.sol";
+import {Constants} from "src/Constants.sol";
+import {MaxGrowthFeeState} from "src/structs/state/MaxGrowthFeeState.sol";
+import {MaxGrowthFeeData} from "src/structs/data/MaxGrowthFeeData.sol";
+import {TotalAssetsState} from "src/structs/state/vault/TotalAssetsState.sol";
+import {TotalAssets} from "src/public/vault/borrow/TotalAssets.sol";
+import {TotalSupply} from "src/public/erc20/TotalSupply.sol";
+import {uMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract MaxGrowthFee is TotalAssets, TotalSupply {
     using uMulDiv for uint256;

@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "./utils/BalancedTest.t.sol";
-import "../src/elements/WhitelistRegistry.sol";
+import {BalancedTest} from "test/utils/BalancedTest.t.sol";
+import {ILTV} from "src/interfaces/ILTV.sol";
+import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
+import {WhitelistRegistry} from "src/elements/WhitelistRegistry.sol";
 
 contract WhitelistTest is BalancedTest {
     function test_whitelist(address owner, address user, address randUser)

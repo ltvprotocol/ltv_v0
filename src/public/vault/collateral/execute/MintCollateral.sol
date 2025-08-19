@@ -1,18 +1,27 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../max/MaxMintCollateral.sol";
-import "../../../../state_transition/VaultStateTransition.sol";
-import "../../../../state_transition/ERC20.sol";
-import "../../../../state_transition/ApplyMaxGrowthFee.sol";
-import "../../../../state_transition/MintProtocolRewards.sol";
-import "../../../../state_transition/Lending.sol";
-import "src/events/IERC4626Events.sol";
-import "src/errors/IVaultErrors.sol";
-import "../preview/PreviewMintCollateral.sol";
-import "../../../../math/NextStep.sol";
-import "src/state_reader/vault/MaxDepositMintCollateralVaultStateReader.sol";
-import "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
+import {IERC4626Events} from "src/events/IERC4626Events.sol";
+import {IVaultErrors} from "src/errors/IVaultErrors.sol";
+import {NextState} from "src/structs/state_transition/NextState.sol";
+import {NextStateData} from "src/structs/state_transition/NextStateData.sol";
+import {NextStepData} from "src/structs/state_transition/NextStepData.sol";
+import {MaxDepositMintCollateralVaultData} from "src/structs/data/vault/MaxDepositMintCollateralVaultData.sol";
+import {MaxDepositMintCollateralVaultState} from "src/structs/state/vault/MaxDepositMintCollateralVaultState.sol";
+import {DeltaFuture} from "src/structs/state_transition/DeltaFuture.sol";
+import {MintProtocolRewardsData} from "src/structs/data/MintProtocolRewardsData.sol";
+import {VaultStateTransition} from "src/state_transition/VaultStateTransition.sol";
+import {ApplyMaxGrowthFee} from "src/state_transition/ApplyMaxGrowthFee.sol";
+import {MintProtocolRewards} from "src/state_transition/MintProtocolRewards.sol";
+import {Lending} from "src/state_transition/Lending.sol";
+import {MaxDepositMintCollateralVaultStateReader} from
+    "src/state_reader/vault/MaxDepositMintCollateralVaultStateReader.sol";
+import {MaxMintCollateral} from "src/public/vault/collateral/max/MaxMintCollateral.sol";
+import {NextStep} from "src/math/NextStep.sol";
+import {CommonMath} from "src/math/CommonMath.sol";
+import {uMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract MintCollateral is
     MaxDepositMintCollateralVaultStateReader,

@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "forge-std/Test.sol";
-import "./AuctionTestCommon.t.sol";
-import "../../src/errors/IAuctionErrors.sol";
+import {DefaultTestData} from "test/utils/BaseTest.t.sol";
+import {AuctionTestCommon} from "test/auction/AuctionTestCommon.t.sol";
+import {IAuctionErrors} from "src/errors/IAuctionErrors.sol";
 
 contract ExecutionAvailablilityTest is AuctionTestCommon {
     function test_failIfOppositeSignWithdrawAuction(DefaultTestData memory data, address user, uint120 amount)

@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../utils/BaseTest.t.sol";
+import {BaseTest, DefaultTestData} from "test/utils/BaseTest.t.sol";
+import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
+import {IAdministrationEvents} from "src/events/IAdministrationEvents.sol";
 
 contract SetFeeCollectorTest is BaseTest {
     function test_failIfZero(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {

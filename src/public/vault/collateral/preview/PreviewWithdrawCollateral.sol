@@ -1,8 +1,14 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "src/math/VaultCollateral.sol";
-import "../../../../math/DepositWithdraw.sol";
+import {Constants} from "src/Constants.sol";
+import {PreviewWithdrawVaultState} from "src/structs/state/vault/PreviewWithdrawVaultState.sol";
+import {PreviewCollateralVaultData} from "src/structs/data/vault/PreviewCollateralVaultData.sol";
+import {DepositWithdrawData} from "src/structs/data/vault/DepositWithdrawData.sol";
+import {DeltaFuture} from "src/structs/state_transition/DeltaFuture.sol";
+import {VaultCollateral} from "src/math/VaultCollateral.sol";
+import {DepositWithdraw} from "src/math/DepositWithdraw.sol";
+import {uMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract PreviewWithdrawCollateral is VaultCollateral {
     using uMulDiv for uint256;

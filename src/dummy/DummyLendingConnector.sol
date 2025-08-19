@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import "../interfaces/ILendingConnector.sol";
-import "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
-import "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
-import "../dummy/interfaces/IDummyLending.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
+import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
+import {IDummyLending} from "src/dummy/interfaces/IDummyLending.sol";
 
 contract DummyLendingConnector is ILendingConnector {
     using SafeERC20 for IERC20;

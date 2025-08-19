@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../utils/BaseTest.t.sol";
-import "./PrepareEachFunctionSuccessfulExecution.sol";
-import "src/interfaces/ILTV.sol";
-import "src/interfaces/IModules.sol";
+import {DefaultTestData} from "test/utils/BaseTest.t.sol";
+import {IModules} from "src/interfaces/IModules.sol";
+import {ILTV} from "src/interfaces/ILTV.sol";
+import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
+import {PrepareEachFunctionSuccessfulExecution} from "test/administration/PrepareEachFunctionSuccessfulExecution.sol";
 
 contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
     function test_disableRandomSelector(DefaultTestData memory defaultData, bytes4 randomSelector)

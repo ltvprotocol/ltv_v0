@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "./ERC20.sol";
-import "./TransferFromProtocol.sol";
-import "./Lending.sol";
-import "src/modifiers/FunctionStopperModifier.sol";
-import "src/events/ILowLevelRebalanceEvent.sol";
-import "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
+import {ILowLevelRebalanceEvent} from "src/events/ILowLevelRebalanceEvent.sol";
+import {FunctionStopperModifier} from "src/modifiers/FunctionStopperModifier.sol";
+import {ERC20} from "src/state_transition/ERC20.sol";
+import {TransferFromProtocol} from "src/state_transition/TransferFromProtocol.sol";
+import {Lending} from "src/state_transition/Lending.sol";
 
 abstract contract ExecuteLowLevelRebalance is
     FunctionStopperModifier,

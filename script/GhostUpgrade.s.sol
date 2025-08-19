@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-// import {LTV} from '../src/LTV.sol';
-// import {HodlLendingConnector} from '../src/ghost/connectors/HodlLendingConnector.sol';
-// import {SpookyOracleConnector} from '../src/ghost/connectors/SpookyOracleConnector.sol';
-// import {IHodlMyBeerLending} from '../src/ghost/hodlmybeer/IHodlMyBeerLending.sol';
-// import {ConstantSlippageProvider} from '../src/utils/ConstantSlippageProvider.sol';
-// import {ISpookyOracle} from '../src/ghost/spooky/ISpookyOracle.sol';
+// import {Script} from 'forge-std/Script.sol';
+// import {StdAssertions} from 'forge-std/StdAssertions.sol';
+// import {StdCheats} from 'forge-std/StdCheats.sol';
 // import {IERC20} from 'forge-std/interfaces/IERC20.sol';
-// import '@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol';
-// import 'forge-std/StdAssertions.sol';
-// import 'forge-std/StdCheats.sol';
-// import 'forge-std/Script.sol';
+// import {ProxyAdmin} from '@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol';
+// import {HodlLendingConnector} from 'src/ghost/connectors/HodlLendingConnector.sol';
+// import {SpookyOracleConnector} from 'src/ghost/connectors/SpookyOracleConnector.sol';
+// import {IHodlMyBeerLending} from 'src/ghost/hodlmybeer/IHodlMyBeerLending.sol';
+// import {ConstantSlippageProvider} from 'src/utils/ConstantSlippageProvider.sol';
+// import {ISpookyOracle} from 'src/ghost/spooky/ISpookyOracle.sol';
+// import {LTV} from 'src/LTV.sol';
 
 // contract GhostUpgradeCommon is Script {
 //     address internal constant LTV_ADDRESS = 0xE2A7f267124AC3E4131f27b9159c78C521A44F3c;

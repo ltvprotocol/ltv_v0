@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import "forge-std/Script.sol";
-import "openzeppelin-foundry-upgrades/Upgrades.sol";
-import "../../src/ghost/magic/MagicETH.sol";
+import {Script} from "forge-std/Script.sol";
+import {console} from "forge-std/console.sol";
+import {Upgrades} from "openzeppelin-foundry-upgrades/Upgrades.sol";
+import {MagicETH} from "src/ghost/magic/MagicETH.sol";
 
 contract DeployMagicETH is Script {
     function run() public {

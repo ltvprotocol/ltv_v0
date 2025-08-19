@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../GetLendingConnectorReader.sol";
-import "src/interfaces/ILendingConnector.sol";
-import "src/structs/state/vault/TotalAssetsState.sol";
+import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
+import {TotalAssetsState} from "src/structs/state/vault/TotalAssetsState.sol";
+import {CommonTotalAssetsState} from "src/structs/state/vault/CommonTotalAssetsState.sol";
+import {GetLendingConnectorReader} from "src/state_reader/GetLendingConnectorReader.sol";
 
 contract TotalAssetsStateReader is GetLendingConnectorReader {
     function totalAssetsState(bool isDeposit) internal view returns (TotalAssetsState memory) {
