@@ -13,7 +13,7 @@ contract DeployVaultBalanceAsLendingConnector is BaseScript {
         console.log("VaultBalanceAsLendingConnector deployed at: ", address(vaultBalanceAsLendingConnector));
     }
 
-    function hashedCreationCode() internal view override returns (bytes32) {
+    function hashedCreationCode() internal pure override returns (bytes32) {
         return keccak256(abi.encodePacked(type(VaultBalanceAsLendingConnector).creationCode));
     }
 }
