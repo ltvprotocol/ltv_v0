@@ -308,24 +308,24 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         selectors[21] = ILTV.setMaxGrowthFee.selector;
         callers[21] = defaultData.governor;
 
-        calls[22] = abi.encodeCall(ILTV.setmaxSafeLtv, (9, 10));
-        selectors[22] = ILTV.setmaxSafeLtv.selector;
+        calls[22] = abi.encodeCall(ILTV.setMaxSafeLtv, (9, 10));
+        selectors[22] = ILTV.setMaxSafeLtv.selector;
         callers[22] = defaultData.governor;
 
         calls[23] = abi.encodeCall(ILTV.setMaxTotalAssetsInUnderlying, type(uint112).max);
         selectors[23] = ILTV.setMaxTotalAssetsInUnderlying.selector;
         callers[23] = defaultData.governor;
 
-        calls[24] = abi.encodeCall(ILTV.setminProfitLtv, (5, 10));
-        selectors[24] = ILTV.setminProfitLtv.selector;
+        calls[24] = abi.encodeCall(ILTV.setMinProfitLtv, (5, 10));
+        selectors[24] = ILTV.setMinProfitLtv.selector;
         callers[24] = defaultData.governor;
 
         calls[25] = abi.encodeCall(ILTV.setSlippageProvider, address(1));
         selectors[25] = ILTV.setSlippageProvider.selector;
         callers[25] = defaultData.governor;
 
-        calls[26] = abi.encodeCall(ILTV.settargetLtv, (75, 100));
-        selectors[26] = ILTV.settargetLtv.selector;
+        calls[26] = abi.encodeCall(ILTV.setTargetLtv, (75, 100));
+        selectors[26] = ILTV.setTargetLtv.selector;
         callers[26] = defaultData.governor;
 
         calls[27] = abi.encodeCall(ILTV.setWhitelistRegistry, address(1));

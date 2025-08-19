@@ -203,17 +203,17 @@ interface ILTV is
 
     function setMaxGrowthFee(uint16 dividend, uint16 divider) external;
 
-    function setmaxSafeLtv(uint16 dividend, uint16 divider) external;
+    function setMaxSafeLtv(uint16 dividend, uint16 divider) external;
 
     function setMaxTotalAssetsInUnderlying(uint256 _maxTotalAssetsInUnderlying) external;
 
-    function setminProfitLtv(uint16 dividend, uint16 divider) external;
+    function setMinProfitLtv(uint16 dividend, uint16 divider) external;
 
     function setOracleConnector(address _oracleConnector) external;
 
     function setSlippageProvider(address _slippageProvider) external;
 
-    function settargetLtv(uint16 dividend, uint16 divider) external;
+    function setTargetLtv(uint16 dividend, uint16 divider) external;
 
     function setWhitelistRegistry(address value) external;
 

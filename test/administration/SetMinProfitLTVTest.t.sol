@@ -24,12 +24,12 @@ contract SetminProfitLtvTest is BaseTest {
                 newminProfitLtvDivider
             )
         );
-        ltv.setminProfitLtv(newminProfitLtvDividend, newminProfitLtvDivider);
+        ltv.setMinProfitLtv(newminProfitLtvDividend, newminProfitLtvDivider);
     }
 
     function test_passIfZero(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
         vm.startPrank(defaultData.governor);
-        ltv.setminProfitLtv(0, 1);
+        ltv.setMinProfitLtv(0, 1);
         assertEq(ltv.minProfitLtvDividend(), 0);
         assertEq(ltv.minProfitLtvDivider(), 1);
     }
@@ -43,7 +43,7 @@ contract SetminProfitLtvTest is BaseTest {
                 IAdministrationErrors.UnexpectedminProfitLtv.selector, newminProfitLtvDividend, newminProfitLtvDivider
             )
         );
-        ltv.setminProfitLtv(newminProfitLtvDividend, newminProfitLtvDivider);
+        ltv.setMinProfitLtv(newminProfitLtvDividend, newminProfitLtvDivider);
     }
 
     function test_failIf42(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
@@ -55,7 +55,7 @@ contract SetminProfitLtvTest is BaseTest {
                 IAdministrationErrors.UnexpectedminProfitLtv.selector, newminProfitLtvDividend, newminProfitLtvDivider
             )
         );
-        ltv.setminProfitLtv(newminProfitLtvDividend, newminProfitLtvDivider);
+        ltv.setMinProfitLtv(newminProfitLtvDividend, newminProfitLtvDivider);
     }
 
     function test_setAndCheckStorageSlot(DefaultTestData memory defaultData)
@@ -69,7 +69,7 @@ contract SetminProfitLtvTest is BaseTest {
         emit IAdministrationEvents.minProfitLtvChanged(
             ltv.minProfitLtvDividend(), ltv.minProfitLtvDivider(), newminProfitLtvDividend, newminProfitLtvDivider
         );
-        ltv.setminProfitLtv(newminProfitLtvDividend, newminProfitLtvDivider);
+        ltv.setMinProfitLtv(newminProfitLtvDividend, newminProfitLtvDivider);
 
         assertEq(ltv.minProfitLtvDividend(), newminProfitLtvDividend);
         assertEq(ltv.minProfitLtvDivider(), newminProfitLtvDivider);
@@ -84,6 +84,6 @@ contract SetminProfitLtvTest is BaseTest {
         uint16 newminProfitLtvDivider = ltv.minProfitLtvDivider();
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
-        ltv.setminProfitLtv(newminProfitLtvDividend, newminProfitLtvDivider);
+        ltv.setMinProfitLtv(newminProfitLtvDividend, newminProfitLtvDivider);
     }
 }
