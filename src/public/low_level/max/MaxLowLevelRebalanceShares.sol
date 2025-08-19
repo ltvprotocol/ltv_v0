@@ -1,12 +1,15 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.28;
 
-import "src/Constants.sol";
-import "src/utils/MulDiv.sol";
-import "src/math/CommonMath.sol";
-import "src/math/MaxGrowthFee.sol";
-import "src/structs/state/low_level/MaxLowLevelRebalanceSharesState.sol";
-import "src/structs/data/low_level/MaxLowLevelRebalanceSharesData.sol";
+import {Constants} from "src/Constants.sol";
+import {MaxGrowthFeeData} from "src/structs/data/MaxGrowthFeeData.sol";
+import {TotalAssetsData} from "src/structs/data/vault/TotalAssetsData.sol";
+import {TotalAssetsState} from "src/structs/state/vault/TotalAssetsState.sol";
+import {MaxLowLevelRebalanceSharesState} from "src/structs/state/low_level/MaxLowLevelRebalanceSharesState.sol";
+import {MaxLowLevelRebalanceSharesData} from "src/structs/data/low_level/MaxLowLevelRebalanceSharesData.sol";
+import {MaxGrowthFee} from "src/math/MaxGrowthFee.sol";
+import {CommonMath} from "src/math/CommonMath.sol";
+import {sMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract MaxLowLevelRebalanceShares is MaxGrowthFee {
     using sMulDiv for int256;

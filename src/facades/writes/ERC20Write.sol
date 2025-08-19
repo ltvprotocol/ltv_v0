@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../../interfaces/IModules.sol";
-import "../../states/LTVState.sol";
-import "../writes/CommonWrite.sol";
+import {LTVState} from "src/states/LTVState.sol";
+import {CommonWrite} from "src/facades/writes/CommonWrite.sol";
 
 abstract contract ERC20Write is LTVState, CommonWrite {
     function approve(address spender, uint256 amount) external returns (bool) {

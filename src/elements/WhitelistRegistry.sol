@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "../interfaces/IWhitelistRegistry.sol";
+import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
+import {IWhitelistRegistry} from "src/interfaces/IWhitelistRegistry.sol";
 
 contract WhitelistRegistry is IWhitelistRegistry, Ownable {
     mapping(address => bool) public isAddressWhitelisted;

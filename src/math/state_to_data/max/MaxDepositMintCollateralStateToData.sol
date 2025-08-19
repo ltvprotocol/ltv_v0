@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../preview/PreviewDepositVaultStateToCollateralData.sol";
-import "src/structs/state/vault/MaxDepositMintCollateralVaultState.sol";
-import "src/structs/data/vault/MaxDepositMintCollateralVaultData.sol";
+import {MaxDepositMintCollateralVaultState} from "src/structs/state/vault/MaxDepositMintCollateralVaultState.sol";
+import {MaxDepositMintCollateralVaultData} from "src/structs/data/vault/MaxDepositMintCollateralVaultData.sol";
+import {PreviewDepositVaultStateToCollateralData} from
+    "src/math/state_to_data/preview/PreviewDepositVaultStateToCollateralData.sol";
+import {CommonMath} from "src/math/CommonMath.sol";
 
 contract MaxDepositMintCollateralStateToData is PreviewDepositVaultStateToCollateralData {
     function maxDepositMintCollateralVaultStateToMaxDepositMintCollateralVaultData(

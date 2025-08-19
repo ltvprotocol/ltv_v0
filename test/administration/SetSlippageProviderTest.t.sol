@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../utils/BaseTest.t.sol";
-import "../../src/connectors/slippage_providers/ConstantSlippageProvider.sol";
+import {BaseTest, DefaultTestData} from "test/utils/BaseTest.t.sol";
+import {ISlippageProvider} from "src/interfaces/ISlippageProvider.sol";
+import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
+import {ConstantSlippageProvider} from "src/connectors/slippage_providers/ConstantSlippageProvider.sol";
 
 contract SetSlippageProviderTest is BaseTest {
     function test_failIfNotGovernor(DefaultTestData memory defaultData, address user)

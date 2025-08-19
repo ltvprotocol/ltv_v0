@@ -1,25 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../interfaces/ILendingConnector.sol";
-import "../interfaces/IOracleConnector.sol";
-import "../interfaces/IWhitelistRegistry.sol";
-import "../interfaces/ISlippageProvider.sol";
-import "../interfaces/IModules.sol";
-import "forge-std/interfaces/IERC20.sol";
-import "../structs/state/vault/TotalAssetsState.sol";
-import "../structs/state/MaxGrowthFeeState.sol";
-import "../structs/state/vault/PreviewVaultState.sol";
-import "../structs/state/vault/MaxDepositMintBorrowVaultState.sol";
-import "../structs/state/vault/MaxWithdrawRedeemBorrowVaultState.sol";
-import "../structs/state/vault/MaxDepositMintCollateralVaultState.sol";
-import "../structs/state/vault/MaxWithdrawRedeemCollateralVaultState.sol";
-import "../structs/state/AuctionState.sol";
-import "../structs/state/low_level/PreviewLowLevelRebalanceState.sol";
-import "../structs/state/low_level/MaxLowLevelRebalanceSharesState.sol";
-import "../structs/state/low_level/MaxLowLevelRebalanceBorrowStateData.sol";
-import "../structs/state/low_level/MaxLowLevelRebalanceCollateralStateData.sol";
-import "../structs/state/low_level/ExecuteLowLevelRebalanceState.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
+import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
+import {IWhitelistRegistry} from "src/interfaces/IWhitelistRegistry.sol";
+import {ISlippageProvider} from "src/interfaces/ISlippageProvider.sol";
+import {IModules} from "src/interfaces/IModules.sol";
 
 abstract contract LTVState {
     address public feeCollector;

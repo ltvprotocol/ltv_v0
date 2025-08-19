@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "./DummyModulesBaseTest.t.sol";
+import {BaseTestInit} from "test/utils/BaseTest.t.sol";
+import {DummyModulesBaseTest} from "test/utils/DummyModulesBaseTest.t.sol";
 
 contract GeneratedBaseTest is DummyModulesBaseTest {
     modifier initializeGeneratedTest(

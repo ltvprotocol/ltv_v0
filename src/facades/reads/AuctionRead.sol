@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../../interfaces/IModules.sol";
-import "src/state_reader/GetAuctionStateReader.sol";
+import {GetAuctionStateReader} from "src/state_reader/GetAuctionStateReader.sol";
 
 abstract contract AuctionRead is GetAuctionStateReader {
     function previewExecuteAuctionBorrow(int256 deltaUserBorrowAssets) external view returns (int256) {

@@ -1,17 +1,22 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "src/Constants.sol";
-import "src/states/LTVState.sol";
-import "src/utils/MulDiv.sol";
-import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
-import "src/state_transition/Lending.sol";
-import "src/modifiers/AdministrationModifiers.sol";
-import "src/modifiers/FunctionStopperModifier.sol";
-import "../state_transition/AdmistrationSetters.sol";
-import "../math/MaxGrowthFee.sol";
-import "../state_reader/MaxGrowthFeeStateReader.sol";
-import "../state_transition/ApplyMaxGrowthFee.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
+import {IWhitelistRegistry} from "src/interfaces/IWhitelistRegistry.sol";
+import {ISlippageProvider} from "src/interfaces/ISlippageProvider.sol";
+import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
+import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
+import {Constants} from "src/Constants.sol";
+import {MaxGrowthFeeState} from "src/structs/state/MaxGrowthFeeState.sol";
+import {MaxGrowthFeeData} from "src/structs/data/MaxGrowthFeeData.sol";
+import {AdministrationModifiers} from "src/modifiers/AdministrationModifiers.sol";
+import {AdmistrationSetters} from "src/state_transition/AdmistrationSetters.sol";
+import {ApplyMaxGrowthFee} from "src/state_transition/ApplyMaxGrowthFee.sol";
+import {Lending} from "src/state_transition/Lending.sol";
+import {MaxGrowthFeeStateReader} from "src/state_reader/MaxGrowthFeeStateReader.sol";
+import {MaxGrowthFee} from "src/math/MaxGrowthFee.sol";
+import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract AdministrationPublic is
     MaxGrowthFee,
@@ -23,6 +28,7 @@ abstract contract AdministrationPublic is
 {
     using uMulDiv for uint256;
     using sMulDiv for int256;
+    using SafeERC20 for IERC20;
 
     function setTargetLTV(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor {
         _setTargetLTV(dividend, divider);
@@ -149,14 +155,14 @@ abstract contract AdministrationPublic is
             (collateralAssets - collateralToTransfer).mulDivDown(deleverageFeeDividend, deleverageFeeDivider);
 
         if (realBorrowAssets != 0) {
-            borrowToken.transferFrom(msg.sender, address(this), realBorrowAssets);
+            borrowToken.safeTransferFrom(msg.sender, address(this), realBorrowAssets);
             repay(realBorrowAssets);
         }
 
         withdraw(collateralAssets);
 
         if (collateralToTransfer != 0) {
-            collateralToken.transfer(msg.sender, collateralToTransfer);
+            collateralToken.safeTransfer(msg.sender, collateralToTransfer);
         }
         setBool(Constants.IS_VAULT_DELEVERAGED_BIT, true);
         lendingConnectorGetterData = "";

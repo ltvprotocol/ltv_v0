@@ -1,11 +1,16 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "src/structs/state/ModulesState.sol";
-import "src/interfaces/IModules.sol";
-import "src/interfaces/reads/IBorrowVaultModule.sol";
-import "src/interfaces/reads/IInitializeModule.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
+import {IModules} from "src/interfaces/IModules.sol";
+import {IAuctionModule} from "src/interfaces/reads/IAuctionModule.sol";
+import {IERC20Module} from "src/interfaces/reads/IERC20Module.sol";
+import {ICollateralVaultModule} from "src/interfaces/reads/ICollateralVaultModule.sol";
+import {IBorrowVaultModule} from "src/interfaces/reads/IBorrowVaultModule.sol";
+import {ILowLevelRebalanceModule} from "src/interfaces/reads/ILowLevelRebalanceModule.sol";
+import {IAdministrationModule} from "src/interfaces/reads/IAdministrationModule.sol";
+import {IInitializeModule} from "src/interfaces/reads/IInitializeModule.sol";
+import {ModulesState} from "src/structs/state/ModulesState.sol";
 
 contract ModulesProvider is IModules, Ownable {
     // Module slot constants

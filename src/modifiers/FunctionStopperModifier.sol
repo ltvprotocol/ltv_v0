@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../states/LTVState.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "src/errors/IAdministrationErrors.sol";
+import {OwnableUpgradeable} from "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
+import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
+import {LTVState} from "src/states/LTVState.sol";
 
 abstract contract FunctionStopperModifier is LTVState, OwnableUpgradeable, IAdministrationErrors {
     modifier isFunctionAllowed() {

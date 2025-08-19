@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import "../../interfaces/ISlippageProvider.sol";
-import "../../states/LTVState.sol";
+import {ISlippageProvider} from "src/interfaces/ISlippageProvider.sol";
+import {LTVState} from "src/states/LTVState.sol";
 
 contract ConstantSlippageProvider is LTVState, ISlippageProvider {
     function collateralSlippage(bytes calldata slippageProviderGetterData) external pure returns (uint256) {

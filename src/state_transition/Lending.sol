@@ -1,20 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "src/state_reader/GetLendingConnectorReader.sol";
+import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
+import {GetLendingConnectorReader} from "src/state_reader/GetLendingConnectorReader.sol";
+import {RevertWithDataIfNeeded} from "src/utils/RevertWithDataIfNeeded.sol";
 
-abstract contract Lending is GetLendingConnectorReader {
-    // In case of delegatecall revert, the revert reason is stored in the data parameter.
-    // We need to forward it further saving the revert message. Since revert only accepts a string
-    // or custom error, we need to use assembly to forward the revert reason
-    function revertWithDataIfNeeded(bool isSuccess, bytes memory data) internal pure {
-        if (!isSuccess) {
-            assembly {
-                revert(add(data, 32), mload(data))
-            }
-        }
-    }
-
+abstract contract Lending is GetLendingConnectorReader, RevertWithDataIfNeeded {
     function borrow(uint256 assets) internal {
         (bool isSuccess, bytes memory data) =
             address(getLendingConnector()).delegatecall(abi.encodeCall(ILendingConnector.borrow, (assets)));

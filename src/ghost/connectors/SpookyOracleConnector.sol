@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import "../../interfaces/IOracleConnector.sol";
-import "../../states/LTVState.sol";
-import "../spooky/ISpookyOracle.sol";
+import {LTVState} from "../../states/LTVState.sol";
+import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
+import {ISpookyOracle} from "src/ghost/spooky/ISpookyOracle.sol";
 
 contract SpookyOracleConnector is LTVState, IOracleConnector {
     ISpookyOracle public immutable ORACLE;

@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "forge-std/Test.sol";
-import "./utils/BalancedTest.t.sol";
+import {BalancedTest} from "test/utils/BalancedTest.t.sol";
 
 contract AuctionTest is BalancedTest {
     function test_executeDepositAuctionBorrow(address owner, address user)

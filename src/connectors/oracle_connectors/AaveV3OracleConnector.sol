@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "./interfaces/IAaveOracle.sol";
-import "../../interfaces/IOracleConnector.sol";
-import "../../states/LTVState.sol";
+import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
+import {IAaveOracle} from "src/connectors/oracle_connectors/interfaces/IAaveOracle.sol";
+import {LTVState} from "src/states/LTVState.sol";
 
 contract AaveV3OracleConnector is LTVState, IOracleConnector {
     IAaveOracle public constant ORACLE = IAaveOracle(0x54586bE62E3c3580375aE3723C145253060Ca0C2);

@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../../../src/interfaces/ILTV.sol";
-import "forge-std/interfaces/IERC20.sol";
-import "forge-std/Test.sol";
-import "../../../src/Constants.sol";
-import "../../../src/dummy/DummyOracleConnector.sol";
+import {Test} from "forge-std/Test.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {ILTV} from "src/interfaces/ILTV.sol";
+import {Constants} from "src/Constants.sol";
+import {DummyOracleConnector} from "src/dummy/DummyOracleConnector.sol";
 
 /**
  * @title BaseInvariantWrapper

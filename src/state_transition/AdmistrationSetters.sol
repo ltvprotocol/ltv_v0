@@ -1,11 +1,15 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../errors/IAdministrationErrors.sol";
-import "../events/IAdministrationEvents.sol";
-import "../state_reader/BoolReader.sol";
-import "../state_transition/BoolWriter.sol";
-import "../Constants.sol";
+import {IWhitelistRegistry} from "src/interfaces/IWhitelistRegistry.sol";
+import {ISlippageProvider} from "src/interfaces/ISlippageProvider.sol";
+import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
+import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
+import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
+import {IAdministrationEvents} from "src/events/IAdministrationEvents.sol";
+import {Constants} from "src/Constants.sol";
+import {BoolReader} from "src/state_reader/BoolReader.sol";
+import {BoolWriter} from "src/state_transition/BoolWriter.sol";
 
 contract AdmistrationSetters is BoolWriter, BoolReader, IAdministrationErrors, IAdministrationEvents {
     function _setTargetLTV(uint16 dividend, uint16 divider) internal {

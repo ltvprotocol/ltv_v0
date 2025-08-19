@@ -1,13 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "forge-std/Script.sol";
-
-import "src/interfaces/ILTV.sol";
-
+import {Script} from "forge-std/Script.sol";
+import {console} from "forge-std/console.sol";
 import {IERC20} from "forge-std/interfaces/IERC20.sol";
-// LTV=0x8A791620dd6260079BF849Dc5567aDC3F2FdC318 COLLATERAL_TOKEN=0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9 BORROW_TOKEN=0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512 forge script --fork-url localhost:8545 script/ExecuteAuction.sol --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 --broadcast
+import {ILTV} from "src/interfaces/ILTV.sol";
 
+// LTV=0x8A791620dd6260079BF849Dc5567aDC3F2FdC318 COLLATERAL_TOKEN=0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9 BORROW_TOKEN=0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512 forge script --fork-url localhost:8545 script/ExecuteAuction.sol --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 --broadcast
 contract ExecuteAuction is Script {
     function setUp() public {}
 

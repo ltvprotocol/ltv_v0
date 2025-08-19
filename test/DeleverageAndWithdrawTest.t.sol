@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "./utils/BalancedTest.t.sol";
+import {BalancedTest} from "test/utils/BalancedTest.t.sol";
+import {ILTV} from "src/interfaces/ILTV.sol";
+import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
 
 contract DeleverageAndWithdrawTest is BalancedTest {
     function test_leave_lending(address owner, address user)

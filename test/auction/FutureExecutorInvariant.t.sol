@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {ILTV} from "../../src/interfaces/ILTV.sol";
 import {Test} from "forge-std/Test.sol";
-import {IOracleConnector} from "../../src/interfaces/IOracleConnector.sol";
+import {ILTV} from "src/interfaces/ILTV.sol";
+import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
 
 struct FutureExecutorInvariantState {
     int256 futureBorrowAssets;

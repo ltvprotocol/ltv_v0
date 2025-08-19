@@ -1,12 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "@openzeppelin/contracts/interfaces/IERC20.sol";
-import "../../interfaces/ILendingConnector.sol";
-import "./interfaces/IAaveV3Pool.sol";
-import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
-import {LTVState} from "../../states/LTVState.sol";
-import "forge-std/console.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
+import {IAaveV3Pool} from "src/connectors/lending_connectors/interfaces/IAaveV3Pool.sol";
+import {LTVState} from "src/states/LTVState.sol";
 
 contract AaveV3Connector is LTVState, ILendingConnector {
     IAaveV3Pool public constant POOL = IAaveV3Pool(0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2);

@@ -1,9 +1,14 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../MaxGrowthFee.sol";
-import "src/structs/data/vault/ConvertCollateralData.sol";
-import "src/public/vault/collateral/TotalAssetsCollateral.sol";
+import {ConvertCollateralData} from "src/structs/data/vault/ConvertCollateralData.sol";
+import {MaxGrowthFeeState} from "src/structs/state/MaxGrowthFeeState.sol";
+import {MaxGrowthFeeData} from "src/structs/data/MaxGrowthFeeData.sol";
+import {TotalAssetsState} from "src/structs/state/vault/TotalAssetsState.sol";
+import {TotalAssetsCollateralData} from "src/structs/data/vault/TotalAssetsCollateralData.sol";
+import {TotalAssetsCollateral} from "src/public/vault/collateral/TotalAssetsCollateral.sol";
+import {MaxGrowthFee} from "src/math/MaxGrowthFee.sol";
+import {uMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract MaxGrowthFeeStateToConvertCollateralData is TotalAssetsCollateral, MaxGrowthFee {
     using uMulDiv for uint256;
