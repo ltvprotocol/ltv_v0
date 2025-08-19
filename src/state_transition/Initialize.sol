@@ -17,9 +17,9 @@ abstract contract Initialize is AdmistrationSetters, OwnableUpgradeable {
         collateralToken = IERC20(initData.collateralToken);
         borrowToken = IERC20(initData.borrowToken);
 
-        _setMaxSafeLTV(initData.maxSafeLTVDividend, initData.maxSafeLTVDivider);
-        _setTargetLTV(initData.targetLTVDividend, initData.targetLTVDivider);
-        _setMinProfitLTV(initData.minProfitLTVDividend, initData.minProfitLTVDivider);
+        _setmaxSafeLtv(initData.maxSafeLtvDividend, initData.maxSafeLtvDivider);
+        _settargetLtv(initData.targetLtvDividend, initData.targetLtvDivider);
+        _setminProfitLtv(initData.minProfitLtvDividend, initData.minProfitLtvDivider);
 
         _setFeeCollector(initData.feeCollector);
         _setMaxGrowthFee(initData.maxGrowthFeeDividend, initData.maxGrowthFeeDivider);

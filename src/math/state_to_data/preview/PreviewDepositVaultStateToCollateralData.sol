@@ -108,8 +108,8 @@ abstract contract PreviewDepositVaultStateToCollateralData is TotalAssetsCollate
             })
         );
 
-        data.targetLTVDividend = state.targetLTVDividend;
-        data.targetLTVDivider = state.targetLTVDivider;
+        data.targetLtvDividend = state.targetLtvDividend;
+        data.targetLtvDivider = state.targetLtvDivider;
         data.collateralSlippage = state.collateralSlippage;
         data.borrowSlippage = state.borrowSlippage;
 

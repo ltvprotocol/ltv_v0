@@ -42,12 +42,12 @@ abstract contract LTVState {
     uint16 public maxDeleverageFeeDividend;
     uint16 public maxDeleverageFeeDivider;
 
-    uint16 public maxSafeLTVDividend;
-    uint16 public maxSafeLTVDivider;
-    uint16 public minProfitLTVDividend;
-    uint16 public minProfitLTVDivider;
-    uint16 public targetLTVDividend;
-    uint16 public targetLTVDivider;
+    uint16 public maxSafeLtvDividend;
+    uint16 public maxSafeLtvDivider;
+    uint16 public minProfitLtvDividend;
+    uint16 public minProfitLtvDivider;
+    uint16 public targetLtvDividend;
+    uint16 public targetLtvDivider;
 
     uint8 public decimals;
     uint8 public boolSlot;

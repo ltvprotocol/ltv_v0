@@ -5,7 +5,7 @@ import {PreviewWithdrawVaultState} from "src/structs/state/vault/PreviewWithdraw
 
 struct MaxWithdrawRedeemCollateralVaultState {
     PreviewWithdrawVaultState previewWithdrawVaultState;
-    uint16 maxSafeLTVDividend;
-    uint16 maxSafeLTVDivider;
+    uint16 maxSafeLtvDividend;
+    uint16 maxSafeLtvDivider;
     uint256 ownerBalance;
 }

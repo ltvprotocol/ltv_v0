@@ -34,8 +34,8 @@ contract AuctionTestCommon is BaseTest, FutureExecutorInvariant {
         oracle.setAssetPrice(address(collateralToken), collateralPrice);
 
         vm.startPrank(governor);
-        ltv.setMinProfitLTV(0, 1);
-        ltv.setMaxSafeLTV(1, 1);
+        ltv.setminProfitLtv(0, 1);
+        ltv.setmaxSafeLtv(1, 1);
         vm.stopPrank();
 
         vm.startPrank(user);

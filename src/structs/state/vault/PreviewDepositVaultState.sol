@@ -7,8 +7,8 @@ struct PreviewDepositVaultState {
     MaxGrowthFeeState maxGrowthFeeState;
     uint256 depositRealBorrowAssets;
     uint256 depositRealCollateralAssets;
-    uint16 targetLTVDividend;
-    uint16 targetLTVDivider;
+    uint16 targetLtvDividend;
+    uint16 targetLtvDivider;
     uint56 startAuction;
     uint24 auctionDuration;
     uint56 blockNumber;

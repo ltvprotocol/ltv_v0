@@ -6,6 +6,6 @@ import {PreviewDepositVaultState} from "src/structs/state/vault/PreviewDepositVa
 struct MaxDepositMintBorrowVaultState {
     PreviewDepositVaultState previewDepositVaultState;
     uint256 maxTotalAssetsInUnderlying;
-    uint16 minProfitLTVDividend;
-    uint16 minProfitLTVDivider;
+    uint16 minProfitLtvDividend;
+    uint16 minProfitLtvDivider;
 }

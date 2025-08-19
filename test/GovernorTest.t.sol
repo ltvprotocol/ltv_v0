@@ -33,20 +33,20 @@ contract GovernorTest is BalancedTest {
 
         Timelock controller = new Timelock(owner, guardian, payloadsManager, delay);
 
-        dummyLTV.updateGovernor(address(controller));
+        dummyLtv.updateGovernor(address(controller));
 
         vm.startPrank(user);
 
         bytes[] memory actions = new bytes[](1);
-        actions[0] = abi.encodeCall(dummyLTV.setTargetLTV, (6, 10));
+        actions[0] = abi.encodeCall(dummyLtv.settargetLtv, (6, 10));
 
         vm.expectRevert(
             abi.encodeWithSelector(IWithPayloadsManager.OnlyPayloadsManagerOrOwnerInvalidCaller.selector, user)
         );
-        controller.createPayload(address(dummyLTV), new bytes[](0));
+        controller.createPayload(address(dummyLtv), new bytes[](0));
 
         vm.startPrank(payloadsManager);
-        uint40 payloadId = controller.createPayload(address(dummyLTV), actions);
+        uint40 payloadId = controller.createPayload(address(dummyLtv), actions);
 
         vm.startPrank(user);
         vm.expectPartialRevert(TimelockCommon.DelayNotPassed.selector);
@@ -60,141 +60,141 @@ contract GovernorTest is BalancedTest {
         require(controller.getPayload(payloadId).state == PayloadState.Cancelled);
 
         vm.startPrank(payloadsManager);
-        payloadId = controller.createPayload(address(dummyLTV), actions);
+        payloadId = controller.createPayload(address(dummyLtv), actions);
         vm.warp(block.timestamp + delay + 1);
 
         vm.startPrank(user);
         controller.executePayload(payloadId);
 
-        assertEq(dummyLTV.targetLTVDividend(), 6);
-        assertEq(dummyLTV.targetLTVDivider(), 10);
+        assertEq(dummyLtv.targetLtvDividend(), 6);
+        assertEq(dummyLtv.targetLtvDivider(), 10);
     }
 
-    function test_setTargetLTV(address owner, address user)
+    function test_settargetLtv(address owner, address user)
         public
         initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
     {
         uint16 newValueDividend = 7;
         uint16 newValueDivider = 10;
-        address governor = ILTV(address(dummyLTV)).governor();
+        address governor = ILTV(address(dummyLtv)).governor();
         vm.assume(user != governor);
 
         vm.startPrank(governor);
-        dummyLTV.setTargetLTV(newValueDividend, newValueDivider);
-        assertEq(dummyLTV.targetLTVDividend(), newValueDividend);
-        assertEq(dummyLTV.targetLTVDivider(), newValueDivider);
+        dummyLtv.settargetLtv(newValueDividend, newValueDivider);
+        assertEq(dummyLtv.targetLtvDividend(), newValueDividend);
+        assertEq(dummyLtv.targetLtvDivider(), newValueDivider);
 
         // Should revert if not governor
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
-        dummyLTV.setTargetLTV(newValueDividend, newValueDivider);
+        dummyLtv.settargetLtv(newValueDividend, newValueDivider);
 
         // Should revert if outside bounds
         vm.startPrank(governor);
-        uint16 tooHighValue = dummyLTV.maxSafeLTVDividend() + 1;
-        uint16 tooHighDivider = dummyLTV.maxSafeLTVDivider() + 1;
+        uint16 tooHighValue = dummyLtv.maxSafeLtvDividend() + 1;
+        uint16 tooHighDivider = dummyLtv.maxSafeLtvDivider() + 1;
         vm.expectRevert(
             abi.encodeWithSelector(
                 IAdministrationErrors.InvalidLTVSet.selector,
                 tooHighValue,
                 tooHighDivider,
-                dummyLTV.maxSafeLTVDividend(),
-                dummyLTV.maxSafeLTVDivider(),
-                dummyLTV.minProfitLTVDividend(),
-                dummyLTV.minProfitLTVDivider()
+                dummyLtv.maxSafeLtvDividend(),
+                dummyLtv.maxSafeLtvDivider(),
+                dummyLtv.minProfitLtvDividend(),
+                dummyLtv.minProfitLtvDivider()
             )
         );
-        dummyLTV.setTargetLTV(tooHighValue, tooHighDivider);
+        dummyLtv.settargetLtv(tooHighValue, tooHighDivider);
 
-        uint16 tooLowValue = dummyLTV.minProfitLTVDividend() - 1;
-        uint16 tooLowDivider = dummyLTV.minProfitLTVDivider();
+        uint16 tooLowValue = dummyLtv.minProfitLtvDividend() - 1;
+        uint16 tooLowDivider = dummyLtv.minProfitLtvDivider();
         vm.expectRevert(
             abi.encodeWithSelector(
                 IAdministrationErrors.InvalidLTVSet.selector,
                 tooLowValue,
                 tooLowDivider,
-                dummyLTV.maxSafeLTVDividend(),
-                dummyLTV.maxSafeLTVDivider(),
-                dummyLTV.minProfitLTVDividend(),
-                dummyLTV.minProfitLTVDivider()
+                dummyLtv.maxSafeLtvDividend(),
+                dummyLtv.maxSafeLtvDivider(),
+                dummyLtv.minProfitLtvDividend(),
+                dummyLtv.minProfitLtvDivider()
             )
         );
-        dummyLTV.setTargetLTV(tooLowValue, tooLowDivider);
+        dummyLtv.settargetLtv(tooLowValue, tooLowDivider);
     }
 
-    function test_setMaxSafeLTV(address owner, address user)
+    function test_setmaxSafeLtv(address owner, address user)
         public
         initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
     {
         uint16 newValueDividend = 95;
         uint16 newValueDivider = 100;
-        address governor = ILTV(address(dummyLTV)).governor();
+        address governor = ILTV(address(dummyLtv)).governor();
         vm.assume(user != governor);
         vm.startPrank(governor);
-        dummyLTV.setMaxSafeLTV(newValueDividend, newValueDivider);
-        assertEq(dummyLTV.maxSafeLTVDividend(), newValueDividend);
-        assertEq(dummyLTV.maxSafeLTVDivider(), newValueDivider);
+        dummyLtv.setmaxSafeLtv(newValueDividend, newValueDivider);
+        assertEq(dummyLtv.maxSafeLtvDividend(), newValueDividend);
+        assertEq(dummyLtv.maxSafeLtvDivider(), newValueDivider);
 
         // Should revert if not governor
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
-        dummyLTV.setMaxSafeLTV(newValueDividend, newValueDivider);
+        dummyLtv.setmaxSafeLtv(newValueDividend, newValueDivider);
 
         // Should revert if below target
         vm.startPrank(governor);
-        uint16 tooLowValue = dummyLTV.targetLTVDividend() - 1;
-        uint16 tooLowDivider = dummyLTV.targetLTVDivider();
+        uint16 tooLowValue = dummyLtv.targetLtvDividend() - 1;
+        uint16 tooLowDivider = dummyLtv.targetLtvDivider();
         vm.expectRevert(
             abi.encodeWithSelector(
                 IAdministrationErrors.InvalidLTVSet.selector,
-                dummyLTV.targetLTVDividend(),
-                dummyLTV.targetLTVDivider(),
+                dummyLtv.targetLtvDividend(),
+                dummyLtv.targetLtvDivider(),
                 tooLowValue,
                 tooLowDivider,
-                dummyLTV.minProfitLTVDividend(),
-                dummyLTV.minProfitLTVDivider()
+                dummyLtv.minProfitLtvDividend(),
+                dummyLtv.minProfitLtvDivider()
             )
         );
-        dummyLTV.setMaxSafeLTV(tooLowValue, tooLowDivider);
+        dummyLtv.setmaxSafeLtv(tooLowValue, tooLowDivider);
 
-        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.UnexpectedMaxSafeLTV.selector, 2, 1));
-        dummyLTV.setMaxSafeLTV(2, 1);
+        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.UnexpectedmaxSafeLtv.selector, 2, 1));
+        dummyLtv.setmaxSafeLtv(2, 1);
     }
 
-    function test_setMinProfitLTV(address owner, address user)
+    function test_setminProfitLtv(address owner, address user)
         public
         initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
     {
         uint16 newValueDividend = 6;
         uint16 newValueDivider = 10;
-        address governor = ILTV(address(dummyLTV)).governor();
+        address governor = ILTV(address(dummyLtv)).governor();
         vm.assume(user != governor);
         vm.startPrank(governor);
-        dummyLTV.setMinProfitLTV(newValueDividend, newValueDivider);
-        assertEq(dummyLTV.minProfitLTVDividend(), newValueDividend);
-        assertEq(dummyLTV.minProfitLTVDivider(), newValueDivider);
+        dummyLtv.setminProfitLtv(newValueDividend, newValueDivider);
+        assertEq(dummyLtv.minProfitLtvDividend(), newValueDividend);
+        assertEq(dummyLtv.minProfitLtvDivider(), newValueDivider);
 
         // Should revert if not governor
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
-        dummyLTV.setMinProfitLTV(newValueDividend, newValueDivider);
+        dummyLtv.setminProfitLtv(newValueDividend, newValueDivider);
 
         // Should revert if above target
         vm.startPrank(governor);
-        uint16 tooHighValue = dummyLTV.targetLTVDividend() + 1;
-        uint16 tooHighDivider = dummyLTV.targetLTVDivider();
+        uint16 tooHighValue = dummyLtv.targetLtvDividend() + 1;
+        uint16 tooHighDivider = dummyLtv.targetLtvDivider();
         vm.expectRevert(
             abi.encodeWithSelector(
                 IAdministrationErrors.InvalidLTVSet.selector,
-                dummyLTV.targetLTVDividend(),
-                dummyLTV.targetLTVDivider(),
-                dummyLTV.maxSafeLTVDividend(),
-                dummyLTV.maxSafeLTVDivider(),
+                dummyLtv.targetLtvDividend(),
+                dummyLtv.targetLtvDivider(),
+                dummyLtv.maxSafeLtvDividend(),
+                dummyLtv.maxSafeLtvDivider(),
                 tooHighValue,
                 tooHighDivider
             )
         );
-        dummyLTV.setMinProfitLTV(tooHighValue, tooHighDivider);
+        dummyLtv.setminProfitLtv(tooHighValue, tooHighDivider);
     }
 
     function test_setFeeCollector(address owner, address user)
@@ -202,16 +202,16 @@ contract GovernorTest is BalancedTest {
         initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
     {
         address newCollector = address(0x1234);
-        address governor = ILTV(address(dummyLTV)).governor();
+        address governor = ILTV(address(dummyLtv)).governor();
         vm.assume(user != governor);
         vm.startPrank(governor);
-        dummyLTV.setFeeCollector(newCollector);
-        assertEq(dummyLTV.feeCollector(), newCollector);
+        dummyLtv.setFeeCollector(newCollector);
+        assertEq(dummyLtv.feeCollector(), newCollector);
 
         // Should revert if not governor
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
-        dummyLTV.setFeeCollector(newCollector);
+        dummyLtv.setFeeCollector(newCollector);
     }
 
     function test_setMaxTotalAssetsInUnderlying(address owner, address user)
@@ -219,16 +219,16 @@ contract GovernorTest is BalancedTest {
         initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
     {
         uint256 newValue = 1000000 * 10 ** 18;
-        address governor = ILTV(address(dummyLTV)).governor();
+        address governor = ILTV(address(dummyLtv)).governor();
         vm.assume(user != governor);
         vm.startPrank(governor);
-        dummyLTV.setMaxTotalAssetsInUnderlying(newValue);
-        assertEq(dummyLTV.maxTotalAssetsInUnderlying(), newValue);
+        dummyLtv.setMaxTotalAssetsInUnderlying(newValue);
+        assertEq(dummyLtv.maxTotalAssetsInUnderlying(), newValue);
 
         // Should revert if not governor
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
-        dummyLTV.setMaxTotalAssetsInUnderlying(newValue);
+        dummyLtv.setMaxTotalAssetsInUnderlying(newValue);
     }
 
     function test_setMaxDeleverageFee(address owner, address user)
@@ -237,17 +237,17 @@ contract GovernorTest is BalancedTest {
     {
         uint16 newValueDividend = 1; // 10%
         uint16 newValueDivider = 10;
-        address governor = ILTV(address(dummyLTV)).governor();
+        address governor = ILTV(address(dummyLtv)).governor();
         vm.assume(user != governor);
         vm.startPrank(governor);
-        dummyLTV.setMaxDeleverageFee(newValueDividend, newValueDivider);
-        assertEq(dummyLTV.maxDeleverageFeeDividend(), newValueDividend);
-        assertEq(dummyLTV.maxDeleverageFeeDivider(), newValueDivider);
+        dummyLtv.setMaxDeleverageFee(newValueDividend, newValueDivider);
+        assertEq(dummyLtv.maxDeleverageFeeDividend(), newValueDividend);
+        assertEq(dummyLtv.maxDeleverageFeeDivider(), newValueDivider);
 
         // Should revert if not governor
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
-        dummyLTV.setMaxDeleverageFee(newValueDividend, newValueDivider);
+        dummyLtv.setMaxDeleverageFee(newValueDividend, newValueDivider);
 
         // Should revert if dividend > divider
         vm.startPrank(governor);
@@ -258,66 +258,66 @@ contract GovernorTest is BalancedTest {
                 IAdministrationErrors.InvalidMaxDeleverageFee.selector, tooHighDividend, tooLowDivider
             )
         );
-        dummyLTV.setMaxDeleverageFee(tooHighDividend, tooLowDivider);
+        dummyLtv.setMaxDeleverageFee(tooHighDividend, tooLowDivider);
     }
 
     function test_setIsWhitelistActivated(address owner, address user)
         public
         initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
     {
-        address governor = ILTV(address(dummyLTV)).governor();
+        address governor = ILTV(address(dummyLtv)).governor();
         vm.assume(user != governor);
         vm.startPrank(governor);
-        dummyLTV.setWhitelistRegistry(address(new WhitelistRegistry(owner)));
+        dummyLtv.setWhitelistRegistry(address(new WhitelistRegistry(owner)));
 
-        dummyLTV.setIsWhitelistActivated(true);
-        assertEq(dummyLTV.isWhitelistActivated(), true);
+        dummyLtv.setIsWhitelistActivated(true);
+        assertEq(dummyLtv.isWhitelistActivated(), true);
 
-        dummyLTV.setIsWhitelistActivated(false);
-        assertEq(dummyLTV.isWhitelistActivated(), false);
+        dummyLtv.setIsWhitelistActivated(false);
+        assertEq(dummyLtv.isWhitelistActivated(), false);
 
         // Should revert if not governor
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
-        dummyLTV.setIsWhitelistActivated(true);
+        dummyLtv.setIsWhitelistActivated(true);
     }
 
     function test_setWhitelistRegistry(address owner, address user)
         public
         initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
     {
-        address governor = ILTV(address(dummyLTV)).governor();
+        address governor = ILTV(address(dummyLtv)).governor();
         vm.assume(user != governor);
         vm.startPrank(governor);
         WhitelistRegistry registry = new WhitelistRegistry(owner);
 
-        dummyLTV.setWhitelistRegistry(address(registry));
-        assertEq(address(dummyLTV.whitelistRegistry()), address(registry));
+        dummyLtv.setWhitelistRegistry(address(registry));
+        assertEq(address(dummyLtv.whitelistRegistry()), address(registry));
 
         // Should revert if not governor
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
-        dummyLTV.setWhitelistRegistry(address(0));
+        dummyLtv.setWhitelistRegistry(address(0));
     }
 
     function test_setSlippageProvider(address owner, address user)
         public
         initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
     {
-        address governor = ILTV(address(dummyLTV)).governor();
+        address governor = ILTV(address(dummyLtv)).governor();
         vm.assume(user != governor);
         vm.startPrank(governor);
         ConstantSlippageProvider provider = new ConstantSlippageProvider();
 
         bytes memory slippageProviderData = abi.encode(10 ** 16, 10 ** 16);
-        dummyLTV.setSlippageProvider(address(provider), slippageProviderData);
-        assertEq(address(dummyLTV.slippageProvider()), address(provider));
-        assertEq(keccak256(dummyLTV.slippageProviderGetterData()), keccak256(slippageProviderData));
+        dummyLtv.setSlippageProvider(address(provider), slippageProviderData);
+        assertEq(address(dummyLtv.slippageProvider()), address(provider));
+        assertEq(keccak256(dummyLtv.slippageProviderGetterData()), keccak256(slippageProviderData));
 
         // Should revert if not governor
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
-        dummyLTV.setSlippageProvider(address(0), slippageProviderData);
+        dummyLtv.setSlippageProvider(address(0), slippageProviderData);
     }
 
     function test_setMaxGrowthFee(address owner, address user)
@@ -326,16 +326,16 @@ contract GovernorTest is BalancedTest {
     {
         uint16 newValueDividend = 1; // 1%
         uint16 newValueDivider = 100;
-        address governor = ILTV(address(dummyLTV)).governor();
+        address governor = ILTV(address(dummyLtv)).governor();
         vm.assume(user != governor);
         vm.startPrank(governor);
-        ILTV(address(dummyLTV)).setMaxGrowthFee(newValueDividend, newValueDivider);
-        assertEq(ILTV(address(dummyLTV)).maxGrowthFeeDividend(), newValueDividend);
-        assertEq(ILTV(address(dummyLTV)).maxGrowthFeeDivider(), newValueDivider);
+        ILTV(address(dummyLtv)).setMaxGrowthFee(newValueDividend, newValueDivider);
+        assertEq(ILTV(address(dummyLtv)).maxGrowthFeeDividend(), newValueDividend);
+        assertEq(ILTV(address(dummyLtv)).maxGrowthFeeDivider(), newValueDivider);
 
         // Should revert if not governor
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
-        ILTV(address(dummyLTV)).setMaxGrowthFee(newValueDividend, newValueDivider);
+        ILTV(address(dummyLtv)).setMaxGrowthFee(newValueDividend, newValueDivider);
     }
 }
