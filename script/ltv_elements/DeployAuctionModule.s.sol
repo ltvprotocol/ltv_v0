@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import "../utils/BaseScript.s.sol";
-import "../../src/elements/AuctionModule.sol";
+import {BaseScript} from "../utils/BaseScript.s.sol";
+import {AuctionModule} from "../../src/elements/AuctionModule.sol";
+import {console} from "forge-std/console.sol";
 
 contract DeployAuctionModule is BaseScript {
     function deploy() internal override {

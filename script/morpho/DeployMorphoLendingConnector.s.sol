@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../utils/BaseScript.s.sol";
-import "../../src/connectors/lending_connectors/MorphoConnector.sol";
+import {BaseScript} from "../utils/BaseScript.s.sol";
+import {MorphoConnector} from "../../src/connectors/lending_connectors/MorphoConnector.sol";
+import {console} from "forge-std/console.sol";
 
 contract DeployMorphoLendingConnector is BaseScript {
     function deploy() internal override {

@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../utils/BaseScript.s.sol";
-import "../../src/connectors/oracle_connectors/AaveV3OracleConnector.sol";
+import {BaseScript} from "../utils/BaseScript.s.sol";
+import {AaveV3OracleConnector} from "../../src/connectors/oracle_connectors/AaveV3OracleConnector.sol";
+import {console} from "forge-std/console.sol";
 
 contract DeployAaveOracleConnector is BaseScript {
     function deploy() internal override {

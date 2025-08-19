@@ -1,8 +1,17 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import "../utils/BaseScript.s.sol";
-import "../../src/elements/ModulesProvider.sol";
+import {BaseScript} from "../utils/BaseScript.s.sol";
+import {ModulesProvider} from "../../src/elements/ModulesProvider.sol";
+import {console} from "forge-std/console.sol";
+import {ModulesState} from "../../src/structs/state/ModulesState.sol";
+import {IERC20Module} from "../../src/interfaces/reads/IERC20Module.sol";
+import {IBorrowVaultModule} from "../../src/interfaces/reads/IBorrowVaultModule.sol";
+import {ICollateralVaultModule} from "../../src/interfaces/reads/ICollateralVaultModule.sol";
+import {ILowLevelRebalanceModule} from "../../src/interfaces/reads/ILowLevelRebalanceModule.sol";
+import {IAuctionModule} from "../../src/interfaces/reads/IAuctionModule.sol";
+import {IAdministrationModule} from "../../src/interfaces/reads/IAdministrationModule.sol";
+import {IInitializeModule} from "../../src/interfaces/reads/IInitializeModule.sol";
 
 contract DeployModulesProvider is BaseScript {
     function deploy() internal override {

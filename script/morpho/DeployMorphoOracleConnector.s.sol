@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../utils/BaseScript.s.sol";
-import "../../src/connectors/oracle_connectors/MorphoOracleConnector.sol";
+import {BaseScript} from "../utils/BaseScript.s.sol";
+import {MorphoOracleConnector} from "../../src/connectors/oracle_connectors/MorphoOracleConnector.sol";
+import {IMorphoOracle} from "../../src/connectors/oracle_connectors/interfaces/IMorphoOracle.sol";
+import {console} from "forge-std/console.sol";
 
 contract DeployMorphoOracleConnector is BaseScript {
     function deploy() internal override {
