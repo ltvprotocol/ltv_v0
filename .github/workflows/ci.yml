@@ -40,6 +40,9 @@ jobs:
       - name: Print forge version
         run: forge --version
 
+      - name: Run lint
+        run: $([ -n $(forge lint) ] && exit 1 || exit 0)
+
       - name: Run tests
         run: forge build && forge test -vvv --no-match-path "test/integration/**"
 
