@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "./utils/BalancedTest.t.sol";
+import {BalancedTest} from "test/utils/BalancedTest.t.sol";
+import {ILTV} from "src/interfaces/ILTV.sol";
 
 contract StateTest is BalancedTest {
     function test_baseTotalSupply(address owner, address user)

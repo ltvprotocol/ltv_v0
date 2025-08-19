@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import {OwnableWithGuardian} from "./OwnableWithGuardian.sol";
-import {IWithPayloadsManager} from "./interfaces/IWithPayloadsManager.sol";
+import {OwnableWithGuardian} from "src/timelock/utils/OwnableWithGuardian.sol";
+import {IWithPayloadsManager} from "src/timelock/utils/interfaces/IWithPayloadsManager.sol";
 
 abstract contract WithPayloadsManager is OwnableWithGuardian, IWithPayloadsManager {
     address private _payloadsManager;

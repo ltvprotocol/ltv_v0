@@ -1,28 +1,30 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "forge-std/Test.sol";
-import "@openzeppelin/contracts/interfaces/IERC20.sol";
-
-import {ILendingConnector} from "../../src/interfaces/ILendingConnector.sol";
-import {IOracleConnector} from "../../src/interfaces/IOracleConnector.sol";
-import {IAaveOracle} from "../../src/connectors/oracle_connectors/interfaces/IAaveOracle.sol";
-import {AaveV3Connector} from "../../src/connectors/lending_connectors/AaveV3Connector.sol";
-import {AaveV3OracleConnector} from "../../src/connectors/oracle_connectors/AaveV3OracleConnector.sol";
-
-import {ModulesProvider, ModulesState} from "../../src/elements/ModulesProvider.sol";
-import {AuctionModule, IAuctionModule} from "../../src/elements/AuctionModule.sol";
-import {ERC20Module, IERC20Module} from "../../src/elements/ERC20Module.sol";
-import {CollateralVaultModule, ICollateralVaultModule} from "../../src/elements/CollateralVaultModule.sol";
-import {BorrowVaultModule, IBorrowVaultModule} from "../../src/elements/BorrowVaultModule.sol";
-import {LowLevelRebalanceModule, ILowLevelRebalanceModule} from "../../src/elements/LowLevelRebalanceModule.sol";
-import {AdministrationModule, IAdministrationModule} from "../../src/elements/AdministrationModule.sol";
-import {IInitializeModule} from "../../src/interfaces/reads/IInitializeModule.sol";
-import {InitializeModule} from "../../src/elements/InitializeModule.sol";
-
-import {StateInitData} from "../../src/structs/state/StateInitData.sol";
-import {ConstantSlippageProvider} from "../../src/connectors/slippage_providers/ConstantSlippageProvider.sol";
-import {LTV} from "../../src/elements/LTV.sol";
+import {Test} from "forge-std/Test.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
+import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
+import {IAuctionModule} from "src/interfaces/reads/IAuctionModule.sol";
+import {IERC20Module} from "src/interfaces/reads/IERC20Module.sol";
+import {ICollateralVaultModule} from "src/interfaces/reads/ICollateralVaultModule.sol";
+import {IBorrowVaultModule} from "src/interfaces/reads/IBorrowVaultModule.sol";
+import {ILowLevelRebalanceModule} from "src/interfaces/reads/ILowLevelRebalanceModule.sol";
+import {IAdministrationModule} from "src/interfaces/reads/IAdministrationModule.sol";
+import {IInitializeModule} from "src/interfaces/reads/IInitializeModule.sol";
+import {StateInitData} from "src/structs/state/StateInitData.sol";
+import {AaveV3Connector} from "src/connectors/lending_connectors/AaveV3Connector.sol";
+import {AaveV3OracleConnector} from "src/connectors/oracle_connectors/AaveV3OracleConnector.sol";
+import {ConstantSlippageProvider} from "src/connectors/slippage_providers/ConstantSlippageProvider.sol";
+import {InitializeModule} from "src/elements/InitializeModule.sol";
+import {ModulesProvider, ModulesState} from "src/elements/ModulesProvider.sol";
+import {AuctionModule} from "src/elements/AuctionModule.sol";
+import {ERC20Module} from "src/elements/ERC20Module.sol";
+import {CollateralVaultModule} from "src/elements/CollateralVaultModule.sol";
+import {BorrowVaultModule} from "src/elements/BorrowVaultModule.sol";
+import {LowLevelRebalanceModule} from "src/elements/LowLevelRebalanceModule.sol";
+import {AdministrationModule} from "src/elements/AdministrationModule.sol";
+import {LTV} from "src/elements/LTV.sol";
 
 contract AaveV3ConnectorTest is Test {
     address constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
@@ -45,8 +47,8 @@ contract AaveV3ConnectorTest is Test {
         wsteth = IERC20(WSTETH);
 
         aaveLendingConnector = new AaveV3Connector();
-        aaveV3OracleConnector = new AaveV3OracleConnector(WSTETH, WETH);
-        slippageProvider = new ConstantSlippageProvider(10 ** 16, 10 ** 16);
+        aaveV3OracleConnector = new AaveV3OracleConnector();
+        slippageProvider = new ConstantSlippageProvider();
 
         ModulesState memory modulesState = ModulesState({
             administrationModule: IAdministrationModule(address(new AdministrationModule())),
@@ -87,7 +89,9 @@ contract AaveV3ConnectorTest is Test {
             governor: address(this),
             emergencyDeleverager: address(this),
             auctionDuration: 1000,
-            lendingConnectorData: abi.encode(1)
+            lendingConnectorData: abi.encode(1),
+            oracleConnectorData: "",
+            slippageProviderData: abi.encode(10 ** 16, 10 ** 16)
         });
 
         ltv = new LTV();
@@ -221,18 +225,18 @@ contract AaveV3ConnectorTest is Test {
 
         vm.stopPrank();
 
-        assertEq(shares, 961165048539872840);
+        assertEq(shares, 961165048543689319);
     }
 
     function test_AaveV3ConnectorMint() public {
         vm.startPrank(user);
 
-        weth.approve(address(ltv), 1040404040411684729);
+        weth.approve(address(ltv), 1040404040404040406);
         uint256 givenBorrowTokens = ltv.mint(1 ether, user);
 
         vm.stopPrank();
 
-        assertEq(givenBorrowTokens, 1040404040411684729);
+        assertEq(givenBorrowTokens, 1040404040404040406);
     }
 
     function test_AaveV3ConnectorWithdraw() public {
@@ -247,7 +251,7 @@ contract AaveV3ConnectorTest is Test {
 
         vm.stopPrank();
 
-        assertEq(shares, 999999999999830446);
+        assertEq(shares, 1000000000000000001);
     }
 
     function test_AaveV3ConnectorRedeem() public {
@@ -262,7 +266,7 @@ contract AaveV3ConnectorTest is Test {
 
         vm.stopPrank();
 
-        assertEq(assetsReceived, 1000000000000000000);
+        assertEq(assetsReceived, 999999999999999999);
     }
 
     function test_AaveV3ConnectorDepositCollateral() public {
@@ -273,7 +277,7 @@ contract AaveV3ConnectorTest is Test {
 
         vm.stopPrank();
 
-        assertEq(shares, 1171155094622822850);
+        assertEq(shares, 1171155094624127041);
     }
 
     function test_AaveV3ConnectorMintCollateral() public {
@@ -284,7 +288,7 @@ contract AaveV3ConnectorTest is Test {
 
         vm.stopPrank();
 
-        assertEq(givenCollateralToken, 853857874673156914);
+        assertEq(givenCollateralToken, 853857874665986989);
     }
 
     function test_AaveV3ConnectorWithdrawCollateral() public {
@@ -299,7 +303,7 @@ contract AaveV3ConnectorTest is Test {
 
         vm.stopPrank();
 
-        assertEq(shares, 1206289747462433525);
+        assertEq(shares, 1206289747462850855);
     }
 
     function test_AaveV3ConnectorRedeemCollateral() public {
@@ -314,6 +318,6 @@ contract AaveV3ConnectorTest is Test {
 
         vm.stopPrank();
 
-        assertEq(assetsReceived, 828988227831055328);
+        assertEq(assetsReceived, 828988227831055327);
     }
 }

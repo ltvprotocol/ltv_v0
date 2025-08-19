@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import "./TimelockCommon.sol";
+import {TimelockCommon} from "src/timelock/TimelockCommon.sol";
+import {WithPayloadsManager} from "src/timelock/utils/WithPayloadsManager.sol";
 
 contract FixedDelayTimelock is TimelockCommon {
     uint40 private immutable DELAY;

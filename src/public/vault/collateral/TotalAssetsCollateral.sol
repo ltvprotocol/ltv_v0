@@ -1,13 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../../../Constants.sol";
-import "../../../utils/MulDiv.sol";
-import "../../../math/CommonMath.sol";
-import "../borrow/TotalAssets.sol";
-import "../../../structs/data/vault/TotalAssetsData.sol";
-import "../../../structs/state/vault/TotalAssetsState.sol";
-import "../../../structs/data/vault/TotalAssetsCollateralData.sol";
+import {TotalAssetsData} from "src/structs/data/vault/TotalAssetsData.sol";
+import {TotalAssetsState} from "src/structs/state/vault/TotalAssetsState.sol";
+import {TotalAssetsCollateralData} from "src/structs/data/vault/TotalAssetsCollateralData.sol";
+import {TotalAssets} from "src/public/vault/borrow/TotalAssets.sol";
+import {CommonMath} from "src/math/CommonMath.sol";
+import {uMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract TotalAssetsCollateral is TotalAssets {
     using uMulDiv for uint256;

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "forge-std/Test.sol";
-import "./utils/BalancedTest.t.sol";
+import {BalancedTest} from "test/utils/BalancedTest.t.sol";
+import {ILTV} from "src/interfaces/ILTV.sol";
 
 contract VaultTest is BalancedTest {
     function test_totalAssets(address owner, address user, uint160 amount)
@@ -132,8 +132,8 @@ contract VaultTest is BalancedTest {
         initializeBalancedTest(owner, user, 100000, 9500, 9500, -1000)
     {
         vm.stopPrank();
-        vm.startPrank(ILTV(address(dummyLTV)).governor());
-        dummyLTV.setSlippageProvider(address(new ConstantSlippageProvider(10 ** 16, 10 ** 16)));
+        vm.startPrank(owner);
+        ltv.setCollateralSlippage(10 ** 16);
 
         vm.startPrank(user);
         assertEq(dummyLTV.maxMint(user), 956118);
@@ -161,8 +161,7 @@ contract VaultTest is BalancedTest {
         vm.stopPrank();
         vm.startPrank(owner);
         dummyLTV.transfer(user, dummyLTV.balanceOf(owner));
-        vm.startPrank(ILTV(address(dummyLTV)).governor());
-        dummyLTV.setSlippageProvider(address(new ConstantSlippageProvider(10 ** 16, 10 ** 16)));
+        ltv.setBorrowSlippage(10 ** 16);
 
         assertEq(dummyLTV.maxRedeem(user), 625049);
         vm.startPrank(user);

@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "./PrepareEachFunctionSuccessfulExecution.sol";
-import "../../src/errors/IAuctionErrors.sol";
-import "../../src/errors/ILowLevelRebalanceErrors.sol";
-import "../../src/errors/IVaultErrors.sol";
-import "../../src/connectors/lending_connectors/VaultBalanceAsLendingConnector.sol";
+import {DefaultTestData} from "test/utils/BaseTest.t.sol";
+import {PrepareEachFunctionSuccessfulExecution} from "test/administration/PrepareEachFunctionSuccessfulExecution.sol";
+import {IAuctionErrors} from "src/errors/IAuctionErrors.sol";
+import {ILowLevelRebalanceErrors} from "src/errors/ILowLevelRebalanceErrors.sol";
+import {IVaultErrors} from "src/errors/IVaultErrors.sol";
+import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
+import {VaultBalanceAsLendingConnector} from "src/connectors/lending_connectors/VaultBalanceAsLendingConnector.sol";
 
 contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
     function test_normalData(DefaultTestData memory data) public testWithPredefinedDefaultValues(data) {

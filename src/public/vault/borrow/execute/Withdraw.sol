@@ -1,18 +1,26 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../max/MaxWithdraw.sol";
-import "../../../../state_transition/VaultStateTransition.sol";
-import "../../../../state_transition/ERC20.sol";
-import "../../../../state_transition/ApplyMaxGrowthFee.sol";
-import "../../../../state_transition/MintProtocolRewards.sol";
-import "../../../../state_transition/Lending.sol";
-import "src/events/IERC4626Events.sol";
-import "../preview/PreviewWithdraw.sol";
-import "../../../../math/NextStep.sol";
-import "../../../../state_transition/TransferFromProtocol.sol";
-import "src/errors/IVaultErrors.sol";
-import "src/state_reader/vault/MaxWithdrawRedeemBorrowVaultStateReader.sol";
+import {IERC4626Events} from "src/events/IERC4626Events.sol";
+import {IVaultErrors} from "src/errors/IVaultErrors.sol";
+import {MaxWithdrawRedeemBorrowVaultState} from "src/structs/state/vault/MaxWithdrawRedeemBorrowVaultState.sol";
+import {MaxWithdrawRedeemBorrowVaultStateReader} from
+    "src/state_reader/vault/MaxWithdrawRedeemBorrowVaultStateReader.sol";
+import {MaxWithdrawRedeemBorrowVaultData} from "src/structs/data/vault/MaxWithdrawRedeemBorrowVaultData.sol";
+import {DeltaFuture} from "src/structs/state_transition/DeltaFuture.sol";
+import {NextState} from "src/structs/state_transition/NextState.sol";
+import {NextStateData} from "src/structs/state_transition/NextStateData.sol";
+import {NextStepData} from "src/structs/state_transition/NextStepData.sol";
+import {MintProtocolRewardsData} from "src/structs/data/MintProtocolRewardsData.sol";
+import {VaultStateTransition} from "src/state_transition/VaultStateTransition.sol";
+import {ApplyMaxGrowthFee} from "src/state_transition/ApplyMaxGrowthFee.sol";
+import {MintProtocolRewards} from "src/state_transition/MintProtocolRewards.sol";
+import {Lending} from "src/state_transition/Lending.sol";
+import {TransferFromProtocol} from "src/state_transition/TransferFromProtocol.sol";
+import {MaxWithdraw} from "src/public/vault/borrow/max/MaxWithdraw.sol";
+import {NextStep} from "src/math/NextStep.sol";
+import {CommonMath} from "src/math/CommonMath.sol";
+import {uMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract Withdraw is
     MaxWithdrawRedeemBorrowVaultStateReader,
@@ -38,14 +46,15 @@ abstract contract Withdraw is
         uint256 max = _maxWithdraw(data);
         require(assets <= max, ExceedsMaxWithdraw(owner, assets, max));
 
-        (uint256 shares, DeltaFuture memory deltaFuture) = _previewWithdraw(assets, data.previewWithdrawBorrowVaultData);
+        (uint256 sharesOut, DeltaFuture memory deltaFuture) =
+            _previewWithdraw(assets, data.previewWithdrawBorrowVaultData);
 
-        if (shares == 0) {
+        if (sharesOut == 0) {
             return 0;
         }
 
         if (owner != msg.sender) {
-            _spendAllowance(owner, msg.sender, shares);
+            _spendAllowance(owner, msg.sender, sharesOut);
         }
 
         applyMaxGrowthFee(
@@ -62,7 +71,7 @@ abstract contract Withdraw is
             })
         );
 
-        _burn(owner, shares);
+        _burn(owner, sharesOut);
 
         NextState memory nextState = NextStep.calculateNextStep(
             NextStepData({
@@ -97,8 +106,8 @@ abstract contract Withdraw is
 
         transferBorrowToken(receiver, assets);
 
-        emit Withdraw(msg.sender, receiver, owner, assets, shares);
+        emit Withdraw(msg.sender, receiver, owner, assets, sharesOut);
 
-        return shares;
+        return sharesOut;
     }
 }

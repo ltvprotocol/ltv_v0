@@ -1,18 +1,17 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "src/errors/IAdministrationErrors.sol";
-import "src/errors/IVaultErrors.sol";
-import "src/errors/ILowLevelRebalanceErrors.sol";
-import "src/errors/IAuctionErrors.sol";
-
-import "src/events/IAdministrationEvents.sol";
-import "src/events/IAuctionEvent.sol";
-import "src/events/IERC4626Events.sol";
-import "src/events/IERC20Events.sol";
-import "src/events/ILowLevelRebalanceEvent.sol";
-import "src/events/IStateUpdateEvent.sol";
-import "src/interfaces/IModules.sol";
+import {IModules} from "src/interfaces/IModules.sol";
+import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
+import {IVaultErrors} from "src/errors/IVaultErrors.sol";
+import {ILowLevelRebalanceErrors} from "src/errors/ILowLevelRebalanceErrors.sol";
+import {IAuctionErrors} from "src/errors/IAuctionErrors.sol";
+import {IAdministrationEvents} from "src/events/IAdministrationEvents.sol";
+import {IAuctionEvent} from "src/events/IAuctionEvent.sol";
+import {IERC4626Events} from "src/events/IERC4626Events.sol";
+import {IERC20Events} from "src/events/IERC20Events.sol";
+import {ILowLevelRebalanceEvent} from "src/events/ILowLevelRebalanceEvent.sol";
+import {StateInitData} from "src/structs/state/StateInitData.sol";
 
 interface ILTV is
     IAdministrationErrors,
@@ -23,8 +22,7 @@ interface ILTV is
     ILowLevelRebalanceEvent,
     IAuctionEvent,
     IERC4626Events,
-    IERC20Events,
-    IStateUpdateEvent
+    IERC20Events
 {
     function _isFunctionDisabled(bytes4) external view returns (bool);
 
@@ -199,7 +197,7 @@ interface ILTV is
 
     function setIsWithdrawDisabled(bool value) external;
 
-    function setLendingConnector(address _lendingConnector) external;
+    function setLendingConnector(address _lendingConnector, bytes memory lendingConnectorData) external;
 
     function setMaxDeleverageFee(uint16 dividend, uint16 divider) external;
 
@@ -211,9 +209,9 @@ interface ILTV is
 
     function setMinProfitLTV(uint16 dividend, uint16 divider) external;
 
-    function setOracleConnector(address _oracleConnector) external;
+    function setOracleConnector(address _oracleConnector, bytes memory oracleConnectorData) external;
 
-    function setSlippageProvider(address _slippageProvider) external;
+    function setSlippageProvider(address _slippageProvider, bytes memory slippageProviderData) external;
 
     function setTargetLTV(uint16 dividend, uint16 divider) external;
 
@@ -272,6 +270,12 @@ interface ILTV is
     function lendingConnector() external view returns (address);
 
     function lastSeenTokenPrice() external view returns (uint256);
+
+    function lendingConnectorGetterData() external view returns (bytes memory);
+
+    function oracleConnectorGetterData() external view returns (bytes memory);
+
+    function slippageProviderGetterData() external view returns (bytes memory);
 
     event Initialized(uint64 version);
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);

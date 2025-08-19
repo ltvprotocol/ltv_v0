@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "./utils/BalancedTest.t.sol";
+import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import {BalancedTest} from "test/utils/BalancedTest.t.sol";
+import {ILTV} from "src/interfaces/ILTV.sol";
 
 contract OwnerTest is BalancedTest {
     function test_setLendingConnector(address owner, address user)
@@ -11,13 +13,13 @@ contract OwnerTest is BalancedTest {
         vm.startPrank(owner);
         address mockConnector = address(0x9876);
 
-        dummyLTV.setLendingConnector(mockConnector);
+        dummyLTV.setLendingConnector(mockConnector, "");
         assertEq(address(ILTV(address(dummyLTV)).lendingConnector()), mockConnector);
 
         // Should revert if not owner
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(OwnableUpgradeable.OwnableUnauthorizedAccount.selector, user));
-        dummyLTV.setLendingConnector(address(0));
+        dummyLTV.setLendingConnector(address(0), "");
     }
 
     function test_setOracleConnector(address owner, address user)
@@ -27,13 +29,13 @@ contract OwnerTest is BalancedTest {
         vm.startPrank(owner);
         address mockConnector = address(0x9876);
 
-        dummyLTV.setOracleConnector(mockConnector);
+        dummyLTV.setOracleConnector(mockConnector, "");
         assertEq(address(dummyLTV.oracleConnector()), mockConnector);
 
         // Should revert if not owner
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(OwnableUpgradeable.OwnableUnauthorizedAccount.selector, user));
-        dummyLTV.setOracleConnector(address(0));
+        dummyLTV.setOracleConnector(address(0), "");
     }
 
     function test_updateEmergencyDeleverager(address owner, address user)

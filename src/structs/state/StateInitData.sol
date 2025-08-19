@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "src/interfaces/ILendingConnector.sol";
-import "src/interfaces/IOracleConnector.sol";
-import "src/interfaces/ISlippageProvider.sol";
-import "src/interfaces/IModules.sol";
+import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
+import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
+import {ISlippageProvider} from "src/interfaces/ISlippageProvider.sol";
 
 struct StateInitData {
     string name;
@@ -34,4 +33,6 @@ struct StateInitData {
     address emergencyDeleverager;
     uint24 auctionDuration;
     bytes lendingConnectorData;
+    bytes oracleConnectorData;
+    bytes slippageProviderData;
 }

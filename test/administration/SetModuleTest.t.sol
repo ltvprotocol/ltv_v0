@@ -1,27 +1,30 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../utils/BaseTest.t.sol";
-import "./PrepareEachFunctionSuccessfulExecution.sol";
-import "../../src/events/IAdministrationEvents.sol";
-import "../../src/errors/IAdministrationErrors.sol";
-import "../../src/elements/ModulesProvider.sol";
-import "../../src/structs/state/ModulesState.sol";
-import "../../src/interfaces/IModules.sol";
-import "../../src/interfaces/reads/IAdministrationModule.sol";
-import "../../src/interfaces/reads/IAuctionModule.sol";
-import "../../src/interfaces/reads/IERC20Module.sol";
-import "../../src/interfaces/reads/ICollateralVaultModule.sol";
-import "../../src/interfaces/reads/IBorrowVaultModule.sol";
-import "../../src/interfaces/reads/ILowLevelRebalanceModule.sol";
-import {AuctionModule} from "../../src/elements/AuctionModule.sol";
-import {ERC20Module} from "../../src/elements/ERC20Module.sol";
-import {CollateralVaultModule} from "../../src/elements/CollateralVaultModule.sol";
-import {BorrowVaultModule} from "../../src/elements/BorrowVaultModule.sol";
-import {LowLevelRebalanceModule} from "../../src/elements/LowLevelRebalanceModule.sol";
-import {AdministrationModule} from "../../src/elements/AdministrationModule.sol";
-import {InitializeModule} from "../../src/elements/InitializeModule.sol";
-import "../../src/elements/WhitelistRegistry.sol";
+import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
+import {DefaultTestData} from "test/utils/BaseTest.t.sol";
+import {PrepareEachFunctionSuccessfulExecution} from "test/administration/PrepareEachFunctionSuccessfulExecution.sol";
+import {ILTV} from "src/interfaces/ILTV.sol";
+import {IModules} from "src/interfaces/IModules.sol";
+import {IInitializeModule} from "src/interfaces/reads/IInitializeModule.sol";
+import {IAdministrationModule} from "src/interfaces/reads/IAdministrationModule.sol";
+import {IAuctionModule} from "src/interfaces/reads/IAuctionModule.sol";
+import {IERC20Module} from "src/interfaces/reads/IERC20Module.sol";
+import {ICollateralVaultModule} from "src/interfaces/reads/ICollateralVaultModule.sol";
+import {IBorrowVaultModule} from "src/interfaces/reads/IBorrowVaultModule.sol";
+import {ILowLevelRebalanceModule} from "src/interfaces/reads/ILowLevelRebalanceModule.sol";
+import {IAdministrationEvents} from "src/events/IAdministrationEvents.sol";
+import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
+import {ModulesState} from "src/structs/state/ModulesState.sol";
+import {ModulesProvider} from "src/elements/ModulesProvider.sol";
+import {AuctionModule} from "src/elements/AuctionModule.sol";
+import {ERC20Module} from "src/elements/ERC20Module.sol";
+import {CollateralVaultModule} from "src/elements/CollateralVaultModule.sol";
+import {BorrowVaultModule} from "src/elements/BorrowVaultModule.sol";
+import {LowLevelRebalanceModule} from "src/elements/LowLevelRebalanceModule.sol";
+import {AdministrationModule} from "src/elements/AdministrationModule.sol";
+import {InitializeModule} from "src/elements/InitializeModule.sol";
+import {WhitelistRegistry} from "src/elements/WhitelistRegistry.sol";
 
 address constant EOA_ADDRESS = address(1);
 
@@ -169,12 +172,13 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setMaxSafeLTV, (9, 10)), governor);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setMaxTotalAssetsInUnderlying, (type(uint128).max)), governor);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setTargetLTV, (75, 100)), governor);
-        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setSlippageProvider, (user)), governor);
+        calls[i++] =
+            CallWithCaller(abi.encodeCall(ILTV.setSlippageProvider, (user, abi.encode(10 ** 16, 10 ** 16))), governor);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setMinProfitLTV, (5, 10)), governor);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setWhitelistRegistry, (user)), governor);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.updateGovernor, (user)), owner);
-        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setLendingConnector, (user)), owner);
-        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setOracleConnector, (user)), owner);
+        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setLendingConnector, (user, "")), owner);
+        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setOracleConnector, (user, "")), owner);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.updateGuardian, (user)), owner);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.updateEmergencyDeleverager, (user)), owner);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.totalSupply, ()), user);

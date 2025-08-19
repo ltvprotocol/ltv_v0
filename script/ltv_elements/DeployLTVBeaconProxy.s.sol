@@ -1,9 +1,15 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import "../utils/BaseScript.s.sol";
-import "@openzeppelin/contracts/proxy/beacon/BeaconProxy.sol";
-import "../../src/interfaces/ILTV.sol";
+import {BaseScript} from "../utils/BaseScript.s.sol";
+import {StateInitData} from "src/structs/state/StateInitData.sol";
+import {ILTV} from "src/interfaces/ILTV.sol";
+import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
+import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
+import {ISlippageProvider} from "src/interfaces/ISlippageProvider.sol";
+import {IModules} from "src/interfaces/IModules.sol";
+import {BeaconProxy} from "openzeppelin-contracts/contracts/proxy/beacon/BeaconProxy.sol";
+import {console} from "forge-std/console.sol";
 
 contract DeployLTVBeaconProxy is BaseScript {
     function deploy() internal override {

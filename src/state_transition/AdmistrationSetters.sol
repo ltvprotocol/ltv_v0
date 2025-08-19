@@ -1,11 +1,15 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../errors/IAdministrationErrors.sol";
-import "../events/IAdministrationEvents.sol";
-import "../state_reader/BoolReader.sol";
-import "../state_transition/BoolWriter.sol";
-import "../Constants.sol";
+import {IWhitelistRegistry} from "src/interfaces/IWhitelistRegistry.sol";
+import {ISlippageProvider} from "src/interfaces/ISlippageProvider.sol";
+import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
+import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
+import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
+import {IAdministrationEvents} from "src/events/IAdministrationEvents.sol";
+import {Constants} from "src/Constants.sol";
+import {BoolReader} from "src/state_reader/BoolReader.sol";
+import {BoolWriter} from "src/state_transition/BoolWriter.sol";
 
 contract AdmistrationSetters is BoolWriter, BoolReader, IAdministrationErrors, IAdministrationEvents {
     function _setTargetLTV(uint16 dividend, uint16 divider) internal {
@@ -88,11 +92,15 @@ contract AdmistrationSetters is BoolWriter, BoolReader, IAdministrationErrors, I
         emit WhitelistRegistryUpdated(oldAddress, address(value));
     }
 
-    function _setSlippageProvider(ISlippageProvider _slippageProvider) internal {
+    function _setSlippageProvider(ISlippageProvider _slippageProvider, bytes memory slippageProviderData) internal {
         require(address(_slippageProvider) != address(0), ZeroSlippageProvider());
         address oldAddress = address(slippageProvider);
         slippageProvider = _slippageProvider;
-        emit SlippageProviderUpdated(oldAddress, address(_slippageProvider));
+        (bool success,) = address(slippageProvider).delegatecall(
+            abi.encodeCall(ISlippageProvider.initializeSlippageProviderData, (slippageProviderData))
+        );
+        require(success, FailedToSetSlippageProvider(address(_slippageProvider), slippageProviderData));
+        emit SlippageProviderUpdated(oldAddress, slippageProviderData, address(_slippageProvider), slippageProviderData);
     }
 
     function _allowDisableFunctions(bytes4[] memory signatures, bool isDisabled) internal {
@@ -128,16 +136,24 @@ contract AdmistrationSetters is BoolWriter, BoolReader, IAdministrationErrors, I
         emit IsWithdrawDisabledChanged(oldValue, value);
     }
 
-    function _setLendingConnector(ILendingConnector _lendingConnector) internal {
+    function _setLendingConnector(ILendingConnector _lendingConnector, bytes memory lendingConnectorData) internal {
         address oldAddress = address(lendingConnector);
         lendingConnector = _lendingConnector;
-        emit LendingConnectorUpdated(oldAddress, address(_lendingConnector));
+        (bool success,) = address(lendingConnector).delegatecall(
+            abi.encodeCall(ILendingConnector.initializeLendingConnectorData, (lendingConnectorData))
+        );
+        require(success, FailedToSetLendingConnector(address(_lendingConnector), lendingConnectorData));
+        emit LendingConnectorUpdated(oldAddress, lendingConnectorData, address(_lendingConnector), lendingConnectorData);
     }
 
-    function _setOracleConnector(IOracleConnector _oracleConnector) internal {
+    function _setOracleConnector(IOracleConnector _oracleConnector, bytes memory oracleConnectorData) internal {
         address oldAddress = address(oracleConnector);
         oracleConnector = _oracleConnector;
-        emit OracleConnectorUpdated(oldAddress, address(_oracleConnector));
+        (bool success,) = address(oracleConnector).delegatecall(
+            abi.encodeCall(IOracleConnector.initializeOracleConnectorData, (oracleConnectorData))
+        );
+        require(success, FailedToSetOracleConnector(address(_oracleConnector), oracleConnectorData));
+        emit OracleConnectorUpdated(oldAddress, oracleConnectorData, address(_oracleConnector), oracleConnectorData);
     }
 
     function _updateEmergencyDeleverager(address newEmergencyDeleverager) internal {

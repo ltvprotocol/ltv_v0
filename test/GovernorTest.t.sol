@@ -1,9 +1,16 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../src/elements/WhitelistRegistry.sol";
-import "./utils/BalancedTest.t.sol";
-import "../src/timelock/utils/interfaces/IWithGuardian.sol";
+import {BalancedTest} from "test/utils/BalancedTest.t.sol";
+import {ILTV} from "src/interfaces/ILTV.sol";
+import {ConstantSlippageProvider} from "src/connectors/slippage_providers/ConstantSlippageProvider.sol";
+import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
+import {WhitelistRegistry} from "src/elements/WhitelistRegistry.sol";
+import {IWithGuardian} from "src/timelock/utils/interfaces/IWithGuardian.sol";
+import {IWithPayloadsManager} from "src/timelock/utils/interfaces/IWithPayloadsManager.sol";
+import {PayloadState} from "src/timelock/TimelockCommon.sol";
+import {TimelockCommon} from "src/timelock/TimelockCommon.sol";
+import {Timelock} from "src/timelock/Timelock.sol";
 
 contract GovernorTest is BalancedTest {
     function test_governor(
@@ -300,15 +307,17 @@ contract GovernorTest is BalancedTest {
         address governor = ILTV(address(dummyLTV)).governor();
         vm.assume(user != governor);
         vm.startPrank(governor);
-        ConstantSlippageProvider provider = new ConstantSlippageProvider(0, 0);
+        ConstantSlippageProvider provider = new ConstantSlippageProvider();
 
-        dummyLTV.setSlippageProvider(address(provider));
+        bytes memory slippageProviderData = abi.encode(10 ** 16, 10 ** 16);
+        dummyLTV.setSlippageProvider(address(provider), slippageProviderData);
         assertEq(address(dummyLTV.slippageProvider()), address(provider));
+        assertEq(keccak256(dummyLTV.slippageProviderGetterData()), keccak256(slippageProviderData));
 
         // Should revert if not governor
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
-        dummyLTV.setSlippageProvider(address(0));
+        dummyLTV.setSlippageProvider(address(0), slippageProviderData);
     }
 
     function test_setMaxGrowthFee(address owner, address user)

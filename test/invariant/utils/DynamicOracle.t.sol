@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "forge-std/Base.sol";
-import "../../../src/dummy/interfaces/IDummyOracle.sol";
-import "./RateMath.sol";
+import {CommonBase} from "forge-std/Base.sol";
+import {IDummyOracle} from "src/dummy/interfaces/IDummyOracle.sol";
+import {RateMath} from "test/invariant/utils/RateMath.sol";
 
 /**
  * @title DynamicOracle

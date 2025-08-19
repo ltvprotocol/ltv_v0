@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {BaseTest, BaseTestInit, DummyLendingConnector, DummyOracleConnector} from "../../utils/BaseTest.t.sol";
-import "./BaseInvariantWrapper.t.sol";
-import "./DynamicLending.t.sol";
-import "./DynamicOracle.t.sol";
+import {BaseTest, BaseTestInit} from "test/utils/BaseTest.t.sol";
+import {BaseInvariantWrapper} from "test/invariant/utils/BaseInvariantWrapper.t.sol";
+import {DynamicLending, MockDynamicLending} from "test/invariant/utils/DynamicLending.t.sol";
+import {DynamicOracle} from "test/invariant/utils/DynamicOracle.t.sol";
 
 /**
  * @title BaseInvariantTest

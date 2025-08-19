@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../../interfaces/IModules.sol";
-import "src/state_reader/vault/PreviewDepositVaultStateReader.sol";
-import "src/state_reader/vault/MaxDepositMintBorrowVaultStateReader.sol";
-import "src/state_reader/vault/MaxWithdrawRedeemBorrowVaultStateReader.sol";
-import "src/state_reader/vault/PreviewWithdrawVaultStateReader.sol";
+import {PreviewDepositVaultStateReader} from "src/state_reader/vault/PreviewDepositVaultStateReader.sol";
+import {PreviewWithdrawVaultStateReader} from "src/state_reader/vault/PreviewWithdrawVaultStateReader.sol";
+import {MaxDepositMintBorrowVaultStateReader} from "src/state_reader/vault/MaxDepositMintBorrowVaultStateReader.sol";
+import {MaxWithdrawRedeemBorrowVaultStateReader} from
+    "src/state_reader/vault/MaxWithdrawRedeemBorrowVaultStateReader.sol";
 
 abstract contract BorrowVaultRead is
     PreviewDepositVaultStateReader,
