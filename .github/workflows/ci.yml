@@ -27,6 +27,9 @@ jobs:
       - name: Check contract sizes
         run: forge build --skip test --sizes
 
+      - name: Run lint
+        run: $([ -n $(forge lint) ] && exit 1 || exit 0)
+
   test:
     runs-on: ubuntu-latest
     steps:
@@ -39,9 +42,6 @@ jobs:
 
       - name: Print forge version
         run: forge --version
-
-      - name: Run lint
-        run: $([ -n $(forge lint) ] && exit 1 || exit 0)
 
       - name: Run tests
         run: forge build && forge test -vvv --no-match-path "test/integration/**"
