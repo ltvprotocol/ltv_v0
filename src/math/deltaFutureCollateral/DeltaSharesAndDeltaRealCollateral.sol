@@ -4,7 +4,11 @@ pragma solidity ^0.8.28;
 import {IVaultErrors} from "src/errors/IVaultErrors.sol";
 import {Constants} from "src/Constants.sol";
 import {Cases} from "src/structs/data/vault/Cases.sol";
-import {DeltaSharesAndDeltaRealCollateralData, DividendData, DividerData} from "src/structs/data/vault/DeltaSharesAndDeltaRealCollateralData.sol";
+import {
+    DeltaSharesAndDeltaRealCollateralData,
+    DividendData,
+    DividerData
+} from "src/structs/data/vault/DeltaSharesAndDeltaRealCollateralData.sol";
 import {CasesOperator} from "src/math/CasesOperator.sol";
 import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
 
