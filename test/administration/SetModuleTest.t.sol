@@ -85,10 +85,11 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
         });
     }
 
-    function getEOAError() public returns (bytes memory) {
+    function getEoaError() public returns (bytes memory) {
         HighLevelCallToEOAError h = new HighLevelCallToEOAError();
 
-        (, bytes memory data) = address(h).call(abi.encodeCall(HighLevelCallToEOAError.get, ()));
+        (bool success, bytes memory data) = address(h).call(abi.encodeCall(HighLevelCallToEOAError.get, ()));
+        require(!success);
         return data;
     }
 
@@ -243,8 +244,8 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
         CallWithCaller[] memory calls =
             modulesCallsWithCallers(data.owner, data.owner, data.governor, data.guardian, data.emergencyDeleverager);
 
-        bytes memory expectedEOAError = abi.encodeWithSelector(IAdministrationErrors.EOADelegateCall.selector);
-        bytes memory expectedNonContractError = getEOAError();
+        bytes memory expectedEoaError = abi.encodeWithSelector(IAdministrationErrors.EOADelegateCall.selector);
+        bytes memory expectedNonContractError = getEoaError();
 
         for (uint256 i = 0; i < calls.length; i++) {
             vm.prank(calls[i].caller);
@@ -253,7 +254,7 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
             assertFalse(success);
 
             bool expectedError =
-                equalBytes(returnData, expectedEOAError) || equalBytes(returnData, expectedNonContractError);
+                equalBytes(returnData, expectedEoaError) || equalBytes(returnData, expectedNonContractError);
 
             assertTrue(expectedError);
         }

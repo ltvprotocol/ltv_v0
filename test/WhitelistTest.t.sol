@@ -14,22 +14,22 @@ contract WhitelistTest is BalancedTest {
         vm.assume(user != randUser);
         vm.assume(user != ltv.feeCollector());
         vm.stopPrank();
-        address governor = ILTV(address(dummyLTV)).governor();
+        address governor = ILTV(address(dummyLtv)).governor();
         vm.startPrank(governor);
         deal(address(borrowToken), randUser, type(uint112).max);
 
         WhitelistRegistry whitelistRegistry = new WhitelistRegistry(governor);
-        dummyLTV.setWhitelistRegistry(address(whitelistRegistry));
+        dummyLtv.setWhitelistRegistry(address(whitelistRegistry));
 
-        dummyLTV.setIsWhitelistActivated(true);
+        dummyLtv.setIsWhitelistActivated(true);
         whitelistRegistry.addAddressToWhitelist(randUser);
 
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.ReceiverNotWhitelisted.selector, user));
-        dummyLTV.deposit(10 ** 17, user);
+        dummyLtv.deposit(10 ** 17, user);
 
         vm.startPrank(randUser);
-        borrowToken.approve(address(dummyLTV), 10 ** 17);
-        dummyLTV.deposit(10 ** 17, randUser);
+        borrowToken.approve(address(dummyLtv), 10 ** 17);
+        dummyLtv.deposit(10 ** 17, randUser);
     }
 }

@@ -2,8 +2,12 @@
 pragma solidity ^0.8.28;
 
 import {BaseTest, BaseTestInit} from "test/utils/BaseTest.t.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract MaxReedemMaxSafeBorderTest is BaseTest {
+    using SafeERC20 for IERC20;
+
     address internal user;
 
     function test_maxRedeemAtmaxSafeLtvBorder(uint256 borrowAssets) public {
@@ -43,7 +47,7 @@ contract MaxReedemMaxSafeBorderTest is BaseTest {
 
         user = address(6);
         vm.prank(address(0));
-        ltv.transfer(user, 25 * 10 ** 18);
+        IERC20(address(ltv)).safeTransfer(user, 25 * 10 ** 18);
 
         user = address(6);
         vm.startPrank(user);
