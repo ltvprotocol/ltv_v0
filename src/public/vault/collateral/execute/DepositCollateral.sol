@@ -39,10 +39,10 @@ abstract contract DepositCollateral is
         uint256 max = _maxDepositCollateral(data);
         require(assets <= max, ExceedsMaxDepositCollateral(receiver, assets, max));
 
-        (uint256 shares, DeltaFuture memory deltaFuture) =
+        (uint256 sharesOut, DeltaFuture memory deltaFuture) =
             _previewDepositCollateral(assets, data.previewCollateralVaultData);
 
-        if (shares == 0) {
+        if (sharesOut == 0) {
             return 0;
         }
 
@@ -93,10 +93,10 @@ abstract contract DepositCollateral is
             })
         );
 
-        emit DepositCollateral(msg.sender, receiver, assets, shares);
+        emit DepositCollateral(msg.sender, receiver, assets, sharesOut);
 
-        _mint(receiver, shares);
+        _mint(receiver, sharesOut);
 
-        return shares;
+        return sharesOut;
     }
 }
