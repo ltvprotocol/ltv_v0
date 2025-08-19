@@ -2,28 +2,18 @@
 pragma solidity ^0.8.27;
 
 import {BaseScript} from "../utils/BaseScript.s.sol";
-import {VaultBalanceAsLendingConnector} from "../../src/connectors/lending_connectors/VaultBalanceAsLendingConnector.sol";
-import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {VaultBalanceAsLendingConnector} from
+    "../../src/connectors/lending_connectors/VaultBalanceAsLendingConnector.sol";
 import {console} from "forge-std/console.sol";
 
 contract DeployVaultBalanceAsLendingConnector is BaseScript {
     function deploy() internal override {
-        address collateralToken = vm.envAddress("COLLATERAL_ASSET");
-        address borrowToken = vm.envAddress("BORROW_ASSET");
-
         VaultBalanceAsLendingConnector vaultBalanceAsLendingConnector =
-            new VaultBalanceAsLendingConnector{salt: bytes32(0)}(IERC20(collateralToken), IERC20(borrowToken));
+            new VaultBalanceAsLendingConnector{salt: bytes32(0)}();
         console.log("VaultBalanceAsLendingConnector deployed at: ", address(vaultBalanceAsLendingConnector));
     }
 
     function hashedCreationCode() internal view override returns (bytes32) {
-        address collateralToken = vm.envAddress("COLLATERAL_ASSET");
-        address borrowToken = vm.envAddress("BORROW_ASSET");
-
-        return keccak256(
-            abi.encodePacked(
-                type(VaultBalanceAsLendingConnector).creationCode, abi.encode(collateralToken, borrowToken)
-            )
-        );
+        return keccak256(abi.encodePacked(type(VaultBalanceAsLendingConnector).creationCode));
     }
 }
