@@ -38,7 +38,8 @@ abstract contract Withdraw is
         uint256 max = _maxWithdraw(data);
         require(assets <= max, ExceedsMaxWithdraw(owner, assets, max));
 
-        (uint256 sharesOut, DeltaFuture memory deltaFuture) = _previewWithdraw(assets, data.previewWithdrawBorrowVaultData);
+        (uint256 sharesOut, DeltaFuture memory deltaFuture) =
+            _previewWithdraw(assets, data.previewWithdrawBorrowVaultData);
 
         if (sharesOut == 0) {
             return 0;

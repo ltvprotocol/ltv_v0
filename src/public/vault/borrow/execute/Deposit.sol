@@ -33,7 +33,8 @@ abstract contract Deposit is
         uint256 max = _maxDeposit(data);
         require(assets <= max, ExceedsMaxDeposit(receiver, assets, max));
 
-        (uint256 sharesOut, DeltaFuture memory deltaFuture) = _previewDeposit(assets, data.previewDepositBorrowVaultData);
+        (uint256 sharesOut, DeltaFuture memory deltaFuture) =
+            _previewDeposit(assets, data.previewDepositBorrowVaultData);
 
         if (sharesOut == 0) {
             return 0;
