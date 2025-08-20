@@ -6,7 +6,8 @@ import {MaxGrowthFeeStateReader} from "src/state_reader/MaxGrowthFeeStateReader.
 
 contract PreviewDepositVaultStateReader is MaxGrowthFeeStateReader {
     function previewDepositVaultState() internal view returns (PreviewDepositVaultState memory) {
-        (uint256 depositRealCollateralAssets, uint256 depositRealBorrowAssets) = getRealCollateralAndRealBorrowAssets(true);
+        (uint256 depositRealCollateralAssets, uint256 depositRealBorrowAssets) =
+            getRealCollateralAndRealBorrowAssets(true);
         bytes memory _slippageProviderGetterData = slippageProviderGetterData;
         return PreviewDepositVaultState({
             maxGrowthFeeState: maxGrowthFeeState(),

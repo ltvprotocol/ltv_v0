@@ -8,7 +8,8 @@ import {MaxGrowthFeeStateReader} from "src/state_reader/MaxGrowthFeeStateReader.
 contract PreviewLowLevelRebalanceStateReader is MaxGrowthFeeStateReader {
     function previewLowLevelRebalanceState() internal view returns (PreviewLowLevelRebalanceState memory) {
         MaxGrowthFeeState memory maxGrowthFeeState = maxGrowthFeeState();
-        (uint256 depositRealCollateralAssets, uint256 depositRealBorrowAssets) = getRealCollateralAndRealBorrowAssets(true);
+        (uint256 depositRealCollateralAssets, uint256 depositRealBorrowAssets) =
+            getRealCollateralAndRealBorrowAssets(true);
         return PreviewLowLevelRebalanceState({
             maxGrowthFeeState: maxGrowthFeeState,
             depositRealBorrowAssets: depositRealBorrowAssets,

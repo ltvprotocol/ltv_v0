@@ -16,7 +16,7 @@ contract VaultBalanceAsLendingConnector is LTVState, ILendingConnector {
     }
 
     function getRealBorrowAssets(bool, bytes calldata data) external view returns (uint256) {
-        (,address borrowToken) = abi.decode(data, (address, address));
+        (, address borrowToken) = abi.decode(data, (address, address));
         return IERC20(borrowToken).balanceOf(msg.sender);
     }
 
