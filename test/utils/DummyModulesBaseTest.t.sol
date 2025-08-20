@@ -18,7 +18,7 @@ import {DummyERC20Module} from "test/utils/modules/DummyERC20Module.t.sol";
 import {DummyLowLevelRebalanceModule} from "test/utils/modules/DummyLowLevelRebalanceModule.t.sol";
 
 contract DummyModulesBaseTest is BaseTest {
-    DummyLTV public dummyLTV;
+    DummyLTV public dummyLtv;
 
     function replaceWithDummyModules() internal {
         DummyBorrowVaultModule borrowVaultModule = new DummyBorrowVaultModule();
@@ -46,6 +46,6 @@ contract DummyModulesBaseTest is BaseTest {
 
         replaceWithDummyModules();
 
-        dummyLTV = ltv;
+        dummyLtv = ltv;
     }
 }

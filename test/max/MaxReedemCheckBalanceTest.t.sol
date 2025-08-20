@@ -2,8 +2,12 @@
 pragma solidity ^0.8.28;
 
 import {BaseTest, BaseTestInit} from "test/utils/BaseTest.t.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract MaxReedemCheckBalanceTest is BaseTest {
+    using SafeERC20 for IERC20;
+
     address internal user;
 
     function setUp() public {
@@ -22,12 +26,12 @@ contract MaxReedemCheckBalanceTest is BaseTest {
             maxTotalAssetsInUnderlying: type(uint128).max,
             collateralAssets: uint256((100 * (10 ** 19)) / uint256(42)),
             borrowAssets: 75 * 10 ** 18,
-            maxSafeLTVDividend: 9,
-            maxSafeLTVDivider: 10,
-            minProfitLTVDividend: 5,
-            minProfitLTVDivider: 10,
-            targetLTVDividend: 75,
-            targetLTVDivider: 100,
+            maxSafeLtvDividend: 9,
+            maxSafeLtvDivider: 10,
+            minProfitLtvDividend: 5,
+            minProfitLtvDivider: 10,
+            targetLtvDividend: 75,
+            targetLtvDivider: 100,
             maxGrowthFeeDividend: 0,
             maxGrowthFeeDivider: 1,
             collateralPrice: 42 * 10 ** 17,
@@ -45,7 +49,7 @@ contract MaxReedemCheckBalanceTest is BaseTest {
 
         user = address(6);
         vm.prank(address(0));
-        ltv.transfer(user, checkAmount);
+        IERC20(address(ltv)).safeTransfer(user, checkAmount);
 
         vm.startPrank(user);
         uint256 maxRedeem = ltv.maxRedeem(user);

@@ -12,12 +12,12 @@ struct StateInitData {
     address collateralToken;
     address borrowToken;
     address feeCollector;
-    uint16 maxSafeLTVDividend;
-    uint16 maxSafeLTVDivider;
-    uint16 minProfitLTVDividend;
-    uint16 minProfitLTVDivider;
-    uint16 targetLTVDividend;
-    uint16 targetLTVDivider;
+    uint16 maxSafeLtvDividend;
+    uint16 maxSafeLtvDivider;
+    uint16 minProfitLtvDividend;
+    uint16 minProfitLtvDivider;
+    uint16 targetLtvDividend;
+    uint16 targetLtvDivider;
     ILendingConnector lendingConnector;
     IOracleConnector oracleConnector;
     uint16 maxGrowthFeeDividend;

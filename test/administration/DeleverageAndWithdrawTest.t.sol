@@ -8,8 +8,12 @@ import {ILowLevelRebalanceErrors} from "src/errors/ILowLevelRebalanceErrors.sol"
 import {IVaultErrors} from "src/errors/IVaultErrors.sol";
 import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
 import {VaultBalanceAsLendingConnector} from "src/connectors/lending_connectors/VaultBalanceAsLendingConnector.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
+    using SafeERC20 for IERC20;
+
     function test_normalData(DefaultTestData memory data) public testWithPredefinedDefaultValues(data) {
         uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false, "");
 
@@ -85,7 +89,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         ltv.deleverageAndWithdraw(borrowAssets, 0, 1);
 
         vm.startPrank(address(0));
-        ltv.transfer(address(user), ltv.balanceOf(address(0)));
+        IERC20(address(ltv)).safeTransfer(address(user), ltv.balanceOf(address(0)));
         vm.stopPrank();
 
         vm.startPrank(user);
@@ -163,7 +167,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         assertEq(ltv.maxLowLevelRebalanceBorrow(), 0);
 
         int256 amount = 10 ** 10;
-        vm.expectRevert(abi.encodeWithSelector(ILowLevelRebalanceErrors.ZeroTargetLTVDisablesBorrow.selector));
+        vm.expectRevert(abi.encodeWithSelector(ILowLevelRebalanceErrors.ZerotargetLtvDisablesBorrow.selector));
         ltv.executeLowLevelRebalanceBorrow(-amount);
 
         vm.expectRevert(

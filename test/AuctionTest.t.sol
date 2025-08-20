@@ -8,9 +8,9 @@ contract AuctionTest is BalancedTest {
         public
         initializeBalancedTest(owner, user, 100000, 10000, 10000, -1000)
     {
-        collateralToken.approve(address(dummyLTV), type(uint112).max);
-        int256 expectedDeltaCollateral = dummyLTV.previewExecuteAuctionBorrow(-1000);
-        int256 deltaCollateral = dummyLTV.executeAuctionBorrow(-1000);
+        collateralToken.approve(address(dummyLtv), type(uint112).max);
+        int256 expectedDeltaCollateral = dummyLtv.previewExecuteAuctionBorrow(-1000);
+        int256 deltaCollateral = dummyLtv.executeAuctionBorrow(-1000);
 
         assertEq(deltaCollateral, -475);
         assertEq(expectedDeltaCollateral, deltaCollateral);
@@ -20,9 +20,9 @@ contract AuctionTest is BalancedTest {
         public
         initializeBalancedTest(owner, user, 100000, 10000, 10000, -1000)
     {
-        collateralToken.approve(address(dummyLTV), type(uint112).max);
-        int256 expectedDeltaBorrow = dummyLTV.previewExecuteAuctionCollateral(-475);
-        int256 deltaBorrow = dummyLTV.executeAuctionCollateral(-475);
+        collateralToken.approve(address(dummyLtv), type(uint112).max);
+        int256 expectedDeltaBorrow = dummyLtv.previewExecuteAuctionCollateral(-475);
+        int256 deltaBorrow = dummyLtv.executeAuctionCollateral(-475);
 
         assertEq(deltaBorrow, -1000);
         assertEq(expectedDeltaBorrow, deltaBorrow);
@@ -32,8 +32,8 @@ contract AuctionTest is BalancedTest {
         public
         initializeBalancedTest(owner, user, 100000, -10000, -10000, 1000)
     {
-        borrowToken.approve(address(dummyLTV), type(uint112).max);
-        int256 deltaCollateral = dummyLTV.executeAuctionBorrow(950);
+        borrowToken.approve(address(dummyLtv), type(uint112).max);
+        int256 deltaCollateral = dummyLtv.executeAuctionBorrow(950);
 
         assertEq(deltaCollateral, 500);
     }
@@ -42,9 +42,9 @@ contract AuctionTest is BalancedTest {
         public
         initializeBalancedTest(owner, user, 100000, -10000, -10000, 1000)
     {
-        borrowToken.approve(address(dummyLTV), type(uint112).max);
-        int256 expectedDeltaBorrow = dummyLTV.previewExecuteAuctionCollateral(500);
-        int256 deltaBorrow = dummyLTV.executeAuctionCollateral(500);
+        borrowToken.approve(address(dummyLtv), type(uint112).max);
+        int256 expectedDeltaBorrow = dummyLtv.previewExecuteAuctionCollateral(500);
+        int256 deltaBorrow = dummyLtv.executeAuctionCollateral(500);
 
         assertEq(deltaBorrow, 950);
         assertEq(expectedDeltaBorrow, deltaBorrow);

@@ -14,10 +14,10 @@ contract MaxGrowthFeeTest is BalancedTest {
         oracle.setAssetPrice(address(collateralToken), 250 * 10 ** 18);
 
         // check that price grown not for 100% but for 80%. Precision tricks because of virtual assets
-        assertEq(dummyLTV.convertToAssets(10 ** 18), 18 * 10 ** 17);
+        assertEq(dummyLtv.convertToAssets(10 ** 18), 18 * 10 ** 17);
         vm.startPrank(user);
-        borrowToken.approve(address(dummyLTV), 1000);
-        dummyLTV.deposit(1000, user);
-        assertEq(dummyLTV.convertToAssets(10 ** 18), 18 * 10 ** 17);
+        borrowToken.approve(address(dummyLtv), 1000);
+        dummyLtv.deposit(1000, user);
+        assertEq(dummyLtv.convertToAssets(10 ** 18), 18 * 10 ** 17);
     }
 }

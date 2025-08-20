@@ -8,8 +8,8 @@ contract MaxDepositMintCollateralVaultStateReader is PreviewDepositVaultStateRea
     function maxDepositMintCollateralVaultState() internal view returns (MaxDepositMintCollateralVaultState memory) {
         return MaxDepositMintCollateralVaultState({
             previewDepositVaultState: previewDepositVaultState(),
-            minProfitLTVDividend: minProfitLTVDividend,
-            minProfitLTVDivider: minProfitLTVDivider,
+            minProfitLtvDividend: minProfitLtvDividend,
+            minProfitLtvDivider: minProfitLtvDivider,
             maxTotalAssetsInUnderlying: maxTotalAssetsInUnderlying
         });
     }

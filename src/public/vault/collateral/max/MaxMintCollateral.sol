@@ -26,9 +26,9 @@ abstract contract MaxMintCollateral is PreviewMintCollateral, PreviewDepositColl
         );
 
         // round down to assume smaller border
-        uint256 minProfitRealCollateral = data.minProfitLTVDividend == 0
+        uint256 minProfitRealCollateral = data.minProfitLtvDividend == 0
             ? type(uint128).max
-            : uint256(data.realBorrow).mulDivDown(data.minProfitLTVDivider, data.minProfitLTVDividend);
+            : uint256(data.realBorrow).mulDivDown(data.minProfitLtvDivider, data.minProfitLtvDividend);
 
         if (uint256(data.realCollateral) >= minProfitRealCollateral) {
             return 0;

@@ -4,8 +4,12 @@ pragma solidity ^0.8.28;
 import {BaseTest, DefaultTestData} from "test/utils/BaseTest.t.sol";
 import {IERC20Errors} from "src/errors/IERC20Errors.sol";
 import {IERC20Events} from "src/events/IERC20Events.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract TransferFromTest is BaseTest, IERC20Errors, IERC20Events {
+    using SafeERC20 for IERC20;
+
     function test_notTransferWithoutApprove(DefaultTestData memory defaultData, address user, uint256 transferAmount)
         public
         testWithPredefinedDefaultValues(defaultData)
@@ -21,10 +25,12 @@ contract TransferFromTest is BaseTest, IERC20Errors, IERC20Events {
 
         vm.prank(owner);
         vm.expectRevert(abi.encodeWithSelector(ERC20InsufficientAllowance.selector, owner, 0, transferAmount));
+        /// forge-lint: disable-next-line
         ltv.transferFrom(user, owner, transferAmount);
 
         vm.prank(user);
         vm.expectRevert(abi.encodeWithSelector(ERC20InsufficientAllowance.selector, user, 0, transferAmount));
+        /// forge-lint: disable-next-line
         ltv.transferFrom(owner, user, transferAmount);
     }
 
@@ -47,8 +53,7 @@ contract TransferFromTest is BaseTest, IERC20Errors, IERC20Events {
         vm.prank(user);
         vm.expectEmit(true, true, false, true);
         emit Transfer(owner, user, transferAmount);
-        bool success = ltv.transferFrom(owner, user, transferAmount);
-        assertTrue(success);
+        IERC20(address(ltv)).safeTransferFrom(owner, user, transferAmount);
 
         assertEq(ltv.allowance(owner, user), 0);
     }
@@ -75,6 +80,7 @@ contract TransferFromTest is BaseTest, IERC20Errors, IERC20Events {
         vm.expectRevert(
             abi.encodeWithSelector(ERC20InsufficientAllowance.selector, user, approveAmount, transferAmount)
         );
+        /// forge-lint: disable-next-line
         ltv.transferFrom(owner, user, transferAmount);
 
         assertEq(ltv.allowance(owner, user), approveAmount);
@@ -94,12 +100,14 @@ contract TransferFromTest is BaseTest, IERC20Errors, IERC20Events {
         vm.startPrank(user);
 
         vm.expectRevert(abi.encodeWithSelector(ERC20InsufficientAllowance.selector, user, 0, transferAmount));
+        /// forge-lint: disable-next-line
         ltv.transferFrom(user, user, transferAmount);
 
         ltv.approve(user, transferAmount);
 
         vm.expectEmit(true, true, false, true);
         emit Transfer(user, user, transferAmount);
+        /// forge-lint: disable-next-line
         ltv.transferFrom(user, user, transferAmount);
 
         vm.stopPrank();
@@ -126,8 +134,7 @@ contract TransferFromTest is BaseTest, IERC20Errors, IERC20Events {
 
         vm.prank(user);
         transferAmount = transferAmount % approveAmount;
-        bool success = ltv.transferFrom(owner, user, transferAmount);
-        assertTrue(success);
+        IERC20(address(ltv)).safeTransferFrom(owner, user, transferAmount);
 
         uint256 remainingAllowance = approveAmount - transferAmount;
         assertEq(ltv.allowance(owner, user), remainingAllowance);
@@ -150,8 +157,7 @@ contract TransferFromTest is BaseTest, IERC20Errors, IERC20Events {
         vm.prank(user);
         vm.expectEmit(true, true, false, true);
         emit Transfer(owner, user, 0);
-        bool success = ltv.transferFrom(owner, user, 0);
-        assertTrue(success);
+        IERC20(address(ltv)).safeTransferFrom(owner, user, 0);
 
         assertEq(ltv.allowance(owner, user), approveAmount);
 
@@ -178,6 +184,7 @@ contract TransferFromTest is BaseTest, IERC20Errors, IERC20Events {
 
         vm.prank(user);
         vm.expectRevert(abi.encodeWithSelector(ERC20InsufficientAllowance.selector, user, 0, transferAmount));
+        /// forge-lint: disable-next-line
         ltv.transferFrom(owner, user, transferAmount);
     }
 
@@ -186,6 +193,7 @@ contract TransferFromTest is BaseTest, IERC20Errors, IERC20Events {
         testWithPredefinedDefaultValues(defaultData)
     {
         vm.expectRevert(abi.encodeWithSelector(TransferToZeroAddress.selector));
+        /// forge-lint: disable-next-line
         ltv.transferFrom(defaultData.owner, address(0), transferAmount);
     }
 }

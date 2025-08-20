@@ -27,6 +27,9 @@ jobs:
       - name: Check contract sizes
         run: forge build --skip test --sizes
 
+      - name: Run lint
+        run: $([ -n "$(forge lint 2>&1)" ] && exit 1 || exit 0)
+
   test:
     runs-on: ubuntu-latest
     steps:

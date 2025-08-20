@@ -9,15 +9,15 @@ import {LTVState} from "src/states/LTVState.sol";
 import {CommonWrite} from "src/facades/writes/CommonWrite.sol";
 
 abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeable, IAdministrationEvents {
-    function setTargetLTV(uint16 dividend, uint16 divider) external {
+    function setTargetLtv(uint16 dividend, uint16 divider) external {
         _delegate(address(modules.administrationModule()), abi.encode(dividend, divider));
     }
 
-    function setMaxSafeLTV(uint16 dividend, uint16 divider) external {
+    function setMaxSafeLtv(uint16 dividend, uint16 divider) external {
         _delegate(address(modules.administrationModule()), abi.encode(dividend, divider));
     }
 
-    function setMinProfitLTV(uint16 dividend, uint16 divider) external {
+    function setMinProfitLtv(uint16 dividend, uint16 divider) external {
         _delegate(address(modules.administrationModule()), abi.encode(dividend, divider));
     }
 

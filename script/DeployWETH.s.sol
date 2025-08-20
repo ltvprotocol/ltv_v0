@@ -15,12 +15,10 @@ contract DeployWETH is Script {
 
         vm.startBroadcast(); // Start broadcasting transactions
 
-        //WETH weth = new WETH();
-
-        address proxyWETH =
+        address proxyWeth =
             Upgrades.deployTransparentProxy("WETH.sol", proxyOwner, abi.encodeCall(WETH.initialize, wethOwner));
 
-        console.log("Proxy WETH at: ", proxyWETH);
+        console.log("Proxy WETH at: ", proxyWeth);
 
         vm.stopBroadcast();
     }

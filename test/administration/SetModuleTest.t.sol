@@ -85,10 +85,11 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
         });
     }
 
-    function getEOAError() public returns (bytes memory) {
+    function getEoaError() public returns (bytes memory) {
         HighLevelCallToEOAError h = new HighLevelCallToEOAError();
 
-        (, bytes memory data) = address(h).call(abi.encodeCall(HighLevelCallToEOAError.get, ()));
+        (bool success, bytes memory data) = address(h).call(abi.encodeCall(HighLevelCallToEOAError.get, ()));
+        require(!success);
         return data;
     }
 
@@ -169,12 +170,12 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setIsWhitelistActivated, (true)), governor);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setMaxDeleverageFee, (uint16(1), uint16(20))), governor); // 5% fee
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setMaxGrowthFee, (uint16(1), uint16(5))), governor); // 20% fee
-        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setMaxSafeLTV, (9, 10)), governor);
+        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setMaxSafeLtv, (9, 10)), governor);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setMaxTotalAssetsInUnderlying, (type(uint128).max)), governor);
-        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setTargetLTV, (75, 100)), governor);
+        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setTargetLtv, (75, 100)), governor);
         calls[i++] =
             CallWithCaller(abi.encodeCall(ILTV.setSlippageProvider, (user, abi.encode(10 ** 16, 10 ** 16))), governor);
-        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setMinProfitLTV, (5, 10)), governor);
+        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setMinProfitLtv, (5, 10)), governor);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setWhitelistRegistry, (user)), governor);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.updateGovernor, (user)), owner);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setLendingConnector, (user, "")), owner);
@@ -244,8 +245,8 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
         CallWithCaller[] memory calls =
             modulesCallsWithCallers(data.owner, data.owner, data.governor, data.guardian, data.emergencyDeleverager);
 
-        bytes memory expectedEOAError = abi.encodeWithSelector(IAdministrationErrors.EOADelegateCall.selector);
-        bytes memory expectedNonContractError = getEOAError();
+        bytes memory expectedEoaError = abi.encodeWithSelector(IAdministrationErrors.EOADelegateCall.selector);
+        bytes memory expectedNonContractError = getEoaError();
 
         for (uint256 i = 0; i < calls.length; i++) {
             vm.prank(calls[i].caller);
@@ -254,7 +255,7 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
             assertFalse(success);
 
             bool expectedError =
-                equalBytes(returnData, expectedEOAError) || equalBytes(returnData, expectedNonContractError);
+                equalBytes(returnData, expectedEoaError) || equalBytes(returnData, expectedNonContractError);
 
             assertTrue(expectedError);
         }

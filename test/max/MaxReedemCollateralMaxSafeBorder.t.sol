@@ -2,11 +2,15 @@
 pragma solidity ^0.8.28;
 
 import {BaseTest, BaseTestInit} from "test/utils/BaseTest.t.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract MaxReedemCollateralMaxSafeBorderTest is BaseTest {
+    using SafeERC20 for IERC20;
+
     address internal user;
 
-    function test_maxRedeemCollateralAtMaxSafeLTVBorder(uint256 collateralAssets) public {
+    function test_maxRedeemCollateralAtmaxSafeLtvBorder(uint256 collateralAssets) public {
         uint256 min = uint256((100 * (10 ** 19)) / uint256(42));
 
         uint256 checkCollateralAssets = bound(collateralAssets, min, 64 * min);
@@ -26,12 +30,12 @@ contract MaxReedemCollateralMaxSafeBorderTest is BaseTest {
             maxTotalAssetsInUnderlying: type(uint128).max,
             collateralAssets: checkCollateralAssets,
             borrowAssets: 90 * 10 ** 18,
-            maxSafeLTVDividend: 9, // 90%
-            maxSafeLTVDivider: 10,
-            minProfitLTVDividend: 5,
-            minProfitLTVDivider: 10,
-            targetLTVDividend: 75,
-            targetLTVDivider: 100,
+            maxSafeLtvDividend: 9, // 90%
+            maxSafeLtvDivider: 10,
+            minProfitLtvDividend: 5,
+            minProfitLtvDivider: 10,
+            targetLtvDividend: 75,
+            targetLtvDivider: 100,
             maxGrowthFeeDividend: 0,
             maxGrowthFeeDivider: 1,
             collateralPrice: 42 * 10 ** 17,
@@ -45,7 +49,7 @@ contract MaxReedemCollateralMaxSafeBorderTest is BaseTest {
 
         user = address(6);
         vm.prank(address(0));
-        ltv.transfer(user, 25 * 10 ** 18);
+        IERC20(address(ltv)).safeTransfer(user, 25 * 10 ** 18);
 
         user = address(6);
         vm.startPrank(user);
@@ -56,7 +60,7 @@ contract MaxReedemCollateralMaxSafeBorderTest is BaseTest {
 
         uint256 finalAmountOfAssets = checkCollateralAssets - redeemResult;
 
-        // The first rule must be strictly followed since maxSafeLTV = 90%.
+        // The first rule must be strictly followed since maxSafeLtv = 90%.
         // borrowAssets * collateralPrice / collateralAssets * collateralPrice should be <= 0.9
         assertGe(finalAmountOfAssets, min);
     }
