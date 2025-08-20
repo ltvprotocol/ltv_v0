@@ -3,19 +3,26 @@ pragma solidity ^0.8.27;
 
 import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
-import {LTVState} from "../../states/LTVState.sol";
 
-contract VaultBalanceAsLendingConnector is LTVState, ILendingConnector {
+contract VaultBalanceAsLendingConnector is ILendingConnector {
+    IERC20 public immutable COLLATERAL_TOKEN;
+    IERC20 public immutable BORROW_TOKEN;
+
     error UnexpectedBorrowCall();
     error UnexpectedRepayCall();
     error UnexpectedSupplyCall();
 
+    constructor(IERC20 _collateralToken, IERC20 _borrowToken) {
+        COLLATERAL_TOKEN = _collateralToken;
+        BORROW_TOKEN = _borrowToken;
+    }
+
     function getRealCollateralAssets(bool, bytes calldata) external view returns (uint256) {
-        return collateralToken.balanceOf(msg.sender);
+        return COLLATERAL_TOKEN.balanceOf(msg.sender);
     }
 
     function getRealBorrowAssets(bool, bytes calldata) external view returns (uint256) {
-        return borrowToken.balanceOf(msg.sender);
+        return BORROW_TOKEN.balanceOf(msg.sender);
     }
 
     function withdraw(uint256) external {}

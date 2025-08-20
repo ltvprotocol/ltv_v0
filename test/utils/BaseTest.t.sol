@@ -131,7 +131,9 @@ contract BaseTest is Test {
                 slippageProvider: slippageProvider,
                 maxDeleverageFeeDividend: init.maxDeleverageFeeDividend,
                 maxDeleverageFeeDivider: init.maxDeleverageFeeDivider,
-                vaultBalanceAsLendingConnector: new VaultBalanceAsLendingConnector(),
+                vaultBalanceAsLendingConnector: new VaultBalanceAsLendingConnector(
+                    IERC20(address(collateralToken)), IERC20(address(borrowToken))
+                ),
                 owner: init.owner,
                 guardian: init.guardian,
                 governor: init.governor,
