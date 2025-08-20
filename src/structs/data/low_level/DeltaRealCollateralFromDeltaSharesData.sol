@@ -9,6 +9,6 @@ struct DeltaRealCollateralFromDeltaSharesData {
     int256 realBorrow;
     int256 futureBorrow;
     int256 userFutureRewardBorrow;
-    uint16 targetLTVDividend;
-    uint16 targetLTVDivider;
+    uint16 targetLtvDividend;
+    uint16 targetLtvDivider;
 }

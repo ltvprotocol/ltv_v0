@@ -45,12 +45,12 @@ struct BaseTestInit {
     uint256 maxTotalAssetsInUnderlying;
     uint256 collateralAssets;
     uint256 borrowAssets;
-    uint16 maxSafeLTVDividend;
-    uint16 maxSafeLTVDivider;
-    uint16 minProfitLTVDividend;
-    uint16 minProfitLTVDivider;
-    uint16 targetLTVDividend;
-    uint16 targetLTVDivider;
+    uint16 maxSafeLtvDividend;
+    uint16 maxSafeLtvDivider;
+    uint16 minProfitLtvDividend;
+    uint16 minProfitLtvDivider;
+    uint16 targetLtvDividend;
+    uint16 targetLtvDivider;
     uint16 maxGrowthFeeDividend;
     uint16 maxGrowthFeeDivider;
     uint256 collateralPrice;
@@ -118,12 +118,12 @@ contract BaseTest is Test {
                 collateralToken: address(collateralToken),
                 borrowToken: address(borrowToken),
                 feeCollector: init.feeCollector,
-                maxSafeLTVDividend: init.maxSafeLTVDividend,
-                maxSafeLTVDivider: init.maxSafeLTVDivider,
-                minProfitLTVDividend: init.minProfitLTVDividend,
-                minProfitLTVDivider: init.minProfitLTVDivider,
-                targetLTVDividend: init.targetLTVDividend,
-                targetLTVDivider: init.targetLTVDivider,
+                maxSafeLtvDividend: init.maxSafeLtvDividend,
+                maxSafeLtvDivider: init.maxSafeLtvDivider,
+                minProfitLtvDividend: init.minProfitLtvDividend,
+                minProfitLtvDivider: init.minProfitLtvDivider,
+                targetLtvDividend: init.targetLtvDividend,
+                targetLtvDivider: init.targetLtvDivider,
                 lendingConnector: lendingConnector,
                 oracleConnector: oracleConnector,
                 maxGrowthFeeDividend: init.maxGrowthFeeDividend,
@@ -189,12 +189,12 @@ contract BaseTest is Test {
             maxTotalAssetsInUnderlying: type(uint128).max,
             collateralAssets: 2 * 10 ** 18,
             borrowAssets: 3 * 10 ** 18,
-            maxSafeLTVDividend: 9,
-            maxSafeLTVDivider: 10,
-            minProfitLTVDividend: 5,
-            minProfitLTVDivider: 10,
-            targetLTVDividend: 75,
-            targetLTVDivider: 100,
+            maxSafeLtvDividend: 9,
+            maxSafeLtvDivider: 10,
+            minProfitLtvDividend: 5,
+            minProfitLtvDivider: 10,
+            targetLtvDividend: 75,
+            targetLtvDivider: 100,
             maxGrowthFeeDividend: 1,
             maxGrowthFeeDivider: 5,
             collateralPrice: 2 * 10 ** 18,

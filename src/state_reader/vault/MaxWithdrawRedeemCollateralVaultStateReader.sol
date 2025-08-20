@@ -12,8 +12,8 @@ contract MaxWithdrawRedeemCollateralVaultStateReader is PreviewWithdrawVaultStat
     {
         return MaxWithdrawRedeemCollateralVaultState({
             previewWithdrawVaultState: previewWithdrawVaultState(),
-            maxSafeLTVDividend: maxSafeLTVDividend,
-            maxSafeLTVDivider: maxSafeLTVDivider,
+            maxSafeLtvDividend: maxSafeLtvDividend,
+            maxSafeLtvDivider: maxSafeLtvDivider,
             ownerBalance: balanceOf[owner]
         });
     }

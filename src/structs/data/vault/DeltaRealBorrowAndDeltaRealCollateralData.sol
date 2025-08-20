@@ -6,8 +6,8 @@ import {Cases} from "src/structs/data/vault/Cases.sol";
 struct DeltaRealBorrowAndDeltaRealCollateralData {
     int256 deltaRealCollateral;
     int256 deltaRealBorrow;
-    uint16 targetLTVDividend;
-    uint16 targetLTVDivider;
+    uint16 targetLtvDividend;
+    uint16 targetLtvDivider;
     uint256 collateralSlippage;
     uint256 borrowSlippage;
     int256 collateral;
@@ -35,8 +35,8 @@ struct DividendData {
     int256 protocolFutureRewardCollateral;
     int256 collateral;
     int256 deltaRealCollateral;
-    uint16 targetLTVDividend;
-    uint16 targetLTVDivider;
+    uint16 targetLtvDividend;
+    uint16 targetLtvDivider;
 }
 
 struct DividerData {
@@ -48,8 +48,8 @@ struct DividerData {
     int256 collateral;
     int256 protocolFutureRewardBorrow;
     int256 protocolFutureRewardCollateral;
-    uint16 targetLTVDividend;
-    uint16 targetLTVDivider;
+    uint16 targetLtvDividend;
+    uint16 targetLtvDivider;
     int256 userFutureRewardBorrow;
     int256 userFutureRewardCollateral;
 }

@@ -29,8 +29,8 @@ contract MaxWithdrawRedeemStateToData is PreviewWithdrawStateToPreviewWithdrawDa
         data.previewWithdrawBorrowVaultData = _previewWithdrawStateToPreviewWithdrawData(
             data.realBorrow, data.realCollateral, state.previewWithdrawVaultState
         );
-        data.maxSafeLTVDividend = state.maxSafeLTVDividend;
-        data.maxSafeLTVDivider = state.maxSafeLTVDivider;
+        data.maxSafeLtvDividend = state.maxSafeLtvDividend;
+        data.maxSafeLtvDivider = state.maxSafeLtvDivider;
         data.ownerBalance = state.ownerBalance;
         return data;
     }

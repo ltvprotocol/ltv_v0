@@ -92,8 +92,8 @@ contract PreviewDepositStateToPreviewDepositData is MaxGrowthFee {
             })
         );
 
-        data.targetLTVDividend = state.targetLTVDividend;
-        data.targetLTVDivider = state.targetLTVDivider;
+        data.targetLtvDividend = state.targetLtvDividend;
+        data.targetLtvDivider = state.targetLtvDivider;
         data.collateralSlippage = state.collateralSlippage;
         data.borrowSlippage = state.borrowSlippage;
 

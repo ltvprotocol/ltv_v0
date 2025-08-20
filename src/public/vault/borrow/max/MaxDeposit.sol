@@ -28,7 +28,7 @@ abstract contract MaxDeposit is PreviewMint, PreviewDeposit {
 
         // round up to assume smaller border
         uint256 minProfitRealBorrow =
-            uint256(data.realCollateral).mulDivUp(uint256(data.minProfitLTVDividend), uint256(data.minProfitLTVDivider));
+            uint256(data.realCollateral).mulDivUp(uint256(data.minProfitLtvDividend), uint256(data.minProfitLtvDivider));
         if (uint256(data.realBorrow) <= minProfitRealBorrow) {
             return 0;
         }

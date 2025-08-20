@@ -4,8 +4,8 @@ pragma solidity ^0.8.28;
 import {Cases} from "src/structs/data/vault/Cases.sol";
 
 struct DeltaSharesAndDeltaRealBorrowData {
-    uint16 targetLTVDividend;
-    uint16 targetLTVDivider;
+    uint16 targetLtvDividend;
+    uint16 targetLtvDivider;
     int256 borrow;
     int256 collateral;
     int256 protocolFutureRewardBorrow;
@@ -28,14 +28,14 @@ struct DividendData {
     uint256 borrowSlippage;
     int256 deltaRealBorrow;
     int256 deltaShares;
-    uint16 targetLTVDividend;
-    uint16 targetLTVDivider;
+    uint16 targetLtvDividend;
+    uint16 targetLtvDivider;
     Cases cases;
 }
 
 struct DividerData {
-    uint16 targetLTVDividend;
-    uint16 targetLTVDivider;
+    uint16 targetLtvDividend;
+    uint16 targetLtvDivider;
     int256 userFutureRewardBorrow;
     int256 futureBorrow;
     uint256 borrowSlippage;

@@ -13,12 +13,12 @@ contract MorphoConnector is LTVState, ILendingConnector {
     IMorphoBlue public constant MORPHO = IMorphoBlue(0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb);
 
     // bytes32(uint256(keccak256("ltv.storage.MorphoConnector")) - 1)
-    bytes32 private constant MorhpConnectorStorageLocation =
+    bytes32 private constant MORPHO_CONNECTOR_STORAGE_LOCATION =
         0x3ce092b68bc5f5a93dae5498ed388a510f95f75f908bb65f889a019a5a7397e4;
 
     function _getMorphoConnectorStorage() private pure returns (MorphoConnectorStorage storage s) {
         assembly {
-            s.slot := MorhpConnectorStorageLocation
+            s.slot := MORPHO_CONNECTOR_STORAGE_LOCATION
         }
     }
 

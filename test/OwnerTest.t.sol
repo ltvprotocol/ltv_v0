@@ -13,13 +13,13 @@ contract OwnerTest is BalancedTest {
         vm.startPrank(owner);
         address mockConnector = address(0x9876);
 
-        dummyLTV.setLendingConnector(mockConnector);
-        assertEq(address(ILTV(address(dummyLTV)).lendingConnector()), mockConnector);
+        dummyLtv.setLendingConnector(mockConnector);
+        assertEq(address(ILTV(address(dummyLtv)).lendingConnector()), mockConnector);
 
         // Should revert if not owner
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(OwnableUpgradeable.OwnableUnauthorizedAccount.selector, user));
-        dummyLTV.setLendingConnector(address(0));
+        dummyLtv.setLendingConnector(address(0));
     }
 
     function test_setOracleConnector(address owner, address user)
@@ -29,13 +29,13 @@ contract OwnerTest is BalancedTest {
         vm.startPrank(owner);
         address mockConnector = address(0x9876);
 
-        dummyLTV.setOracleConnector(mockConnector);
-        assertEq(address(dummyLTV.oracleConnector()), mockConnector);
+        dummyLtv.setOracleConnector(mockConnector);
+        assertEq(address(dummyLtv.oracleConnector()), mockConnector);
 
         // Should revert if not owner
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(OwnableUpgradeable.OwnableUnauthorizedAccount.selector, user));
-        dummyLTV.setOracleConnector(address(0));
+        dummyLtv.setOracleConnector(address(0));
     }
 
     function test_updateEmergencyDeleverager(address owner, address user)
@@ -45,13 +45,13 @@ contract OwnerTest is BalancedTest {
         vm.startPrank(owner);
         address newDeleverager = address(0x5678);
 
-        dummyLTV.updateEmergencyDeleverager(newDeleverager);
-        assertEq(dummyLTV.emergencyDeleverager(), newDeleverager);
+        dummyLtv.updateEmergencyDeleverager(newDeleverager);
+        assertEq(dummyLtv.emergencyDeleverager(), newDeleverager);
 
         // Should revert if not owner
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(OwnableUpgradeable.OwnableUnauthorizedAccount.selector, user));
-        dummyLTV.updateEmergencyDeleverager(address(0));
+        dummyLtv.updateEmergencyDeleverager(address(0));
     }
 
     function test_transferOwnership(address owner, address user, address newOwner)
@@ -62,13 +62,13 @@ contract OwnerTest is BalancedTest {
         vm.assume(newOwner != address(0));
         vm.startPrank(owner);
 
-        ILTV(address(dummyLTV)).transferOwnership(newOwner);
-        assertEq(ILTV(address(dummyLTV)).owner(), newOwner);
+        ILTV(address(dummyLtv)).transferOwnership(newOwner);
+        assertEq(ILTV(address(dummyLtv)).owner(), newOwner);
 
         // Should revert if not owner
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(OwnableUpgradeable.OwnableUnauthorizedAccount.selector, user));
-        ILTV(address(dummyLTV)).transferOwnership(address(0));
+        ILTV(address(dummyLtv)).transferOwnership(address(0));
     }
 
     function test_updateGuardian(address owner, address user)
@@ -78,13 +78,13 @@ contract OwnerTest is BalancedTest {
         vm.startPrank(owner);
         address newGuardian = address(0x5678);
 
-        ILTV(address(dummyLTV)).updateGuardian(newGuardian);
-        assertEq(ILTV(address(dummyLTV)).guardian(), newGuardian);
+        ILTV(address(dummyLtv)).updateGuardian(newGuardian);
+        assertEq(ILTV(address(dummyLtv)).guardian(), newGuardian);
 
         // Should revert if not owner
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(OwnableUpgradeable.OwnableUnauthorizedAccount.selector, user));
-        ILTV(address(dummyLTV)).updateGuardian(address(0));
+        ILTV(address(dummyLtv)).updateGuardian(address(0));
     }
 
     function test_updateGovernor(address owner, address user)
@@ -94,13 +94,13 @@ contract OwnerTest is BalancedTest {
         vm.startPrank(owner);
         address newGovernor = address(0x5678);
 
-        ILTV(address(dummyLTV)).updateGovernor(newGovernor);
-        assertEq(ILTV(address(dummyLTV)).governor(), newGovernor);
+        ILTV(address(dummyLtv)).updateGovernor(newGovernor);
+        assertEq(ILTV(address(dummyLtv)).governor(), newGovernor);
 
         // Should revert if not owner
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(OwnableUpgradeable.OwnableUnauthorizedAccount.selector, user));
-        ILTV(address(dummyLTV)).updateGovernor(address(0));
+        ILTV(address(dummyLtv)).updateGovernor(address(0));
     }
 
     function test_renounceOwnership(address owner, address user)
@@ -108,11 +108,11 @@ contract OwnerTest is BalancedTest {
         initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
     {
         vm.expectRevert(abi.encodeWithSelector(OwnableUpgradeable.OwnableUnauthorizedAccount.selector, user));
-        dummyLTV.renounceOwnership();
+        dummyLtv.renounceOwnership();
 
         vm.startPrank(owner);
-        dummyLTV.renounceOwnership();
-        assertEq(ILTV(address(dummyLTV)).owner(), address(0));
+        dummyLtv.renounceOwnership();
+        assertEq(ILTV(address(dummyLtv)).owner(), address(0));
 
         vm.startPrank(owner);
     }

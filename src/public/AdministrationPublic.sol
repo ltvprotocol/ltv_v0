@@ -30,16 +30,16 @@ abstract contract AdministrationPublic is
     using sMulDiv for int256;
     using SafeERC20 for IERC20;
 
-    function setTargetLTV(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor {
-        _setTargetLTV(dividend, divider);
+    function setTargetLtv(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor {
+        _setTargetLtv(dividend, divider);
     }
 
-    function setMaxSafeLTV(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor {
-        _setMaxSafeLTV(dividend, divider);
+    function setMaxSafeLtv(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor {
+        _setMaxSafeLtv(dividend, divider);
     }
 
-    function setMinProfitLTV(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor {
-        _setMinProfitLTV(dividend, divider);
+    function setMinProfitLtv(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor {
+        _setMinProfitLtv(dividend, divider);
     }
 
     function setFeeCollector(address _feeCollector) external isFunctionAllowed onlyGovernor {
@@ -122,9 +122,9 @@ abstract contract AdministrationPublic is
         futureRewardBorrowAssets = 0;
         futureRewardCollateralAssets = 0;
         startAuction = 0;
-        _setMinProfitLTV(0, 1);
-        _setTargetLTV(0, 1);
-        _setMaxSafeLTV(1, 1);
+        _setMinProfitLtv(0, 1);
+        _setTargetLtv(0, 1);
+        _setMaxSafeLtv(1, 1);
 
         // round up to repay all assets
         uint256 realBorrowAssets = lendingConnector.getRealBorrowAssets(false, connectorGetterData);

@@ -5,74 +5,74 @@ import {BaseTest, DefaultTestData} from "test/utils/BaseTest.t.sol";
 import {IAdministrationEvents} from "src/events/IAdministrationEvents.sol";
 import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
 
-contract SetMaxSafeLTVTest is BaseTest {
-    function test_failIfLessThanTargetLTV(DefaultTestData memory defaultData)
+contract SetmaxSafeLtvTest is BaseTest {
+    function test_failIfLessThantargetLtv(DefaultTestData memory defaultData)
         public
         testWithPredefinedDefaultValues(defaultData)
     {
-        uint16 newMaxSafeLTVDividend = ltv.targetLTVDividend() - 1;
-        uint16 newMaxSafeLTVDivider = ltv.targetLTVDivider();
+        uint16 newmaxSafeLtvDividend = ltv.targetLtvDividend() - 1;
+        uint16 newmaxSafeLtvDivider = ltv.targetLtvDivider();
         vm.startPrank(defaultData.governor);
         vm.expectRevert(
             abi.encodeWithSelector(
                 IAdministrationErrors.InvalidLTVSet.selector,
-                ltv.targetLTVDividend(),
-                ltv.targetLTVDivider(),
-                newMaxSafeLTVDividend,
-                newMaxSafeLTVDivider,
-                ltv.minProfitLTVDividend(),
-                ltv.minProfitLTVDivider()
+                ltv.targetLtvDividend(),
+                ltv.targetLtvDivider(),
+                newmaxSafeLtvDividend,
+                newmaxSafeLtvDivider,
+                ltv.minProfitLtvDividend(),
+                ltv.minProfitLtvDivider()
             )
         );
-        ltv.setMaxSafeLTV(newMaxSafeLTVDividend, newMaxSafeLTVDivider);
+        ltv.setMaxSafeLtv(newmaxSafeLtvDividend, newmaxSafeLtvDivider);
     }
 
     function test_failIfZero(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
-        uint16 newMaxSafeLTVDividend = 0;
-        uint16 newMaxSafeLTVDivider = 1;
+        uint16 newmaxSafeLtvDividend = 0;
+        uint16 newmaxSafeLtvDivider = 1;
         vm.startPrank(defaultData.governor);
         vm.expectRevert(
             abi.encodeWithSelector(
-                IAdministrationErrors.UnexpectedMaxSafeLTV.selector, newMaxSafeLTVDividend, newMaxSafeLTVDivider
+                IAdministrationErrors.UnexpectedmaxSafeLtv.selector, newmaxSafeLtvDividend, newmaxSafeLtvDivider
             )
         );
-        ltv.setMaxSafeLTV(newMaxSafeLTVDividend, newMaxSafeLTVDivider);
+        ltv.setMaxSafeLtv(newmaxSafeLtvDividend, newmaxSafeLtvDivider);
     }
 
     function test_passIfOne(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
         vm.startPrank(defaultData.governor);
-        ltv.setMaxSafeLTV(1, 1);
-        assertEq(ltv.maxSafeLTVDividend(), 1);
-        assertEq(ltv.maxSafeLTVDivider(), 1);
+        ltv.setMaxSafeLtv(1, 1);
+        assertEq(ltv.maxSafeLtvDividend(), 1);
+        assertEq(ltv.maxSafeLtvDivider(), 1);
     }
 
     function test_failIf42(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
-        uint16 newMaxSafeLTVDividend = 42;
-        uint16 newMaxSafeLTVDivider = 1;
+        uint16 newmaxSafeLtvDividend = 42;
+        uint16 newmaxSafeLtvDivider = 1;
         vm.startPrank(defaultData.governor);
         vm.expectRevert(
             abi.encodeWithSelector(
-                IAdministrationErrors.UnexpectedMaxSafeLTV.selector, newMaxSafeLTVDividend, newMaxSafeLTVDivider
+                IAdministrationErrors.UnexpectedmaxSafeLtv.selector, newmaxSafeLtvDividend, newmaxSafeLtvDivider
             )
         );
-        ltv.setMaxSafeLTV(newMaxSafeLTVDividend, newMaxSafeLTVDivider);
+        ltv.setMaxSafeLtv(newmaxSafeLtvDividend, newmaxSafeLtvDivider);
     }
 
     function test_setAndCheckStorageSlot(DefaultTestData memory defaultData)
         public
         testWithPredefinedDefaultValues(defaultData)
     {
-        uint16 newMaxSafeLTVDividend = 85;
-        uint16 newMaxSafeLTVDivider = 100;
+        uint16 newmaxSafeLtvDividend = 85;
+        uint16 newmaxSafeLtvDivider = 100;
         vm.startPrank(defaultData.governor);
         vm.expectEmit(true, true, true, true, address(ltv));
-        emit IAdministrationEvents.MaxSafeLTVChanged(
-            ltv.maxSafeLTVDividend(), ltv.maxSafeLTVDivider(), newMaxSafeLTVDividend, newMaxSafeLTVDivider
+        emit IAdministrationEvents.maxSafeLtvChanged(
+            ltv.maxSafeLtvDividend(), ltv.maxSafeLtvDivider(), newmaxSafeLtvDividend, newmaxSafeLtvDivider
         );
-        ltv.setMaxSafeLTV(newMaxSafeLTVDividend, newMaxSafeLTVDivider);
+        ltv.setMaxSafeLtv(newmaxSafeLtvDividend, newmaxSafeLtvDivider);
 
-        assertEq(ltv.maxSafeLTVDividend(), newMaxSafeLTVDividend);
-        assertEq(ltv.maxSafeLTVDivider(), newMaxSafeLTVDivider);
+        assertEq(ltv.maxSafeLtvDividend(), newmaxSafeLtvDividend);
+        assertEq(ltv.maxSafeLtvDivider(), newmaxSafeLtvDivider);
     }
 
     function test_failIfNotGovernor(DefaultTestData memory defaultData, address user)
@@ -80,10 +80,10 @@ contract SetMaxSafeLTVTest is BaseTest {
         testWithPredefinedDefaultValues(defaultData)
     {
         vm.assume(user != defaultData.governor);
-        uint16 newMaxSafeLTVDividend = ltv.maxSafeLTVDividend();
-        uint16 newMaxSafeLTVDivider = ltv.maxSafeLTVDivider();
+        uint16 newmaxSafeLtvDividend = ltv.maxSafeLtvDividend();
+        uint16 newmaxSafeLtvDivider = ltv.maxSafeLtvDivider();
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
-        ltv.setMaxSafeLTV(newMaxSafeLTVDividend, newMaxSafeLTVDivider);
+        ltv.setMaxSafeLtv(newmaxSafeLtvDividend, newmaxSafeLtvDivider);
     }
 }
