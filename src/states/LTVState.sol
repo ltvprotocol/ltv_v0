@@ -61,4 +61,5 @@ abstract contract LTVState {
     bytes public lendingConnectorGetterData;
     bytes public oracleConnectorGetterData;
     bytes public slippageProviderGetterData;
+    bytes public vaultBalanceAsLendingConnectorGetterData;
 }

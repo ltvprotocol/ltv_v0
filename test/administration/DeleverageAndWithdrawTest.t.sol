@@ -31,7 +31,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         assertEq(ltv.futureCollateralAssets(), 0);
         assertEq(ltv.futureRewardBorrowAssets(), 0);
         assertEq(ltv.futureRewardCollateralAssets(), 0);
-        assertEq(ltv.getLendingConnector().getRealBorrowAssets(false, ""), 0);
+        assertEq(ltv.getRealBorrowAssets(false), 0);
         assertEq(ltv.lendingConnector().getRealCollateralAssets(false, ""), 0);
         assertEq(ltv.lendingConnector().getRealBorrowAssets(false, ""), 0);
 
@@ -310,7 +310,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         testWithPredefinedDefaultValues(data)
     {
         vm.prank(data.owner);
-        ltv.setVaultBalanceAsLendingConnector(address(0));
+        ltv.setVaultBalanceAsLendingConnector(address(0), "");
         vm.startPrank(data.emergencyDeleverager);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.VaultBalanceAsLendingConnectorNotSet.selector));
         ltv.deleverageAndWithdraw(0, 0, 1);

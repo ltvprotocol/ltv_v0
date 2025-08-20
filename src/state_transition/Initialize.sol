@@ -27,8 +27,6 @@ abstract contract Initialize is AdmistrationSetters, OwnableUpgradeable {
 
         _setMaxTotalAssetsInUnderlying(initData.maxTotalAssetsInUnderlying);
 
-        vaultBalanceAsLendingConnector = initData.vaultBalanceAsLendingConnector;
-
         _updateGovernor(initData.governor);
         _updateGuardian(initData.guardian);
         _updateEmergencyDeleverager(initData.emergencyDeleverager);
@@ -39,5 +37,8 @@ abstract contract Initialize is AdmistrationSetters, OwnableUpgradeable {
         _setLendingConnector(initData.lendingConnector, initData.lendingConnectorData);
         _setOracleConnector(initData.oracleConnector, initData.oracleConnectorData);
         _setSlippageProvider(initData.slippageProvider, initData.slippageProviderData);
+        _setVaultBalanceAsLendingConnector(
+            initData.vaultBalanceAsLendingConnector, initData.vaultBalanceAsLendingConnectorData
+        );
     }
 }

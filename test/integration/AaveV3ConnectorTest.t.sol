@@ -91,7 +91,8 @@ contract AaveV3ConnectorTest is Test {
             auctionDuration: 1000,
             lendingConnectorData: abi.encode(""),
             oracleConnectorData: "",
-            slippageProviderData: abi.encode(10 ** 16, 10 ** 16)
+            slippageProviderData: abi.encode(10 ** 16, 10 ** 16),
+            vaultBalanceAsLendingConnectorData: ""
         });
 
         ltv = new LTV();

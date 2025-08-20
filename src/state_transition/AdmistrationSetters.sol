@@ -118,10 +118,22 @@ contract AdmistrationSetters is BoolWriter, BoolReader, IAdministrationErrors, I
         emit MaxGrowthFeeChanged(oldDividend, oldDivider, dividend, divider);
     }
 
-    function _setVaultBalanceAsLendingConnector(address _vaultBalanceAsLendingConnector) internal {
+    function _setVaultBalanceAsLendingConnector(
+        ILendingConnector _vaultBalanceAsLendingConnector,
+        bytes memory vaultBalanceAsLendingConnectorGetterData
+    ) internal {
         address oldAddress = address(vaultBalanceAsLendingConnector);
         vaultBalanceAsLendingConnector = ILendingConnector(_vaultBalanceAsLendingConnector);
-        emit VaultBalanceAsLendingConnectorUpdated(oldAddress, _vaultBalanceAsLendingConnector);
+        (bool success,) = address(vaultBalanceAsLendingConnector).delegatecall(
+            abi.encodeCall(ILendingConnector.initializeLendingConnectorData, (vaultBalanceAsLendingConnectorGetterData))
+        );
+        require(
+            success,
+            FailedToSetVaultBalanceAsLendingConnector(
+                address(_vaultBalanceAsLendingConnector), vaultBalanceAsLendingConnectorGetterData
+            )
+        );
+        emit VaultBalanceAsLendingConnectorUpdated(oldAddress, address(_vaultBalanceAsLendingConnector));
     }
 
     function _setIsDepositDisabled(bool value) internal {

@@ -131,9 +131,7 @@ contract BaseTest is Test {
                 slippageProvider: slippageProvider,
                 maxDeleverageFeeDividend: init.maxDeleverageFeeDividend,
                 maxDeleverageFeeDivider: init.maxDeleverageFeeDivider,
-                vaultBalanceAsLendingConnector: new VaultBalanceAsLendingConnector(
-                    IERC20(address(collateralToken)), IERC20(address(borrowToken))
-                ),
+                vaultBalanceAsLendingConnector: new VaultBalanceAsLendingConnector(),
                 owner: init.owner,
                 guardian: init.guardian,
                 governor: init.governor,
@@ -141,7 +139,8 @@ contract BaseTest is Test {
                 auctionDuration: 1000,
                 lendingConnectorData: "",
                 oracleConnectorData: "",
-                slippageProviderData: abi.encode(init.collateralSlippage, init.borrowSlippage)
+                slippageProviderData: abi.encode(init.collateralSlippage, init.borrowSlippage),
+                vaultBalanceAsLendingConnectorData: ""
             });
 
             ltv = new DummyLTV();
