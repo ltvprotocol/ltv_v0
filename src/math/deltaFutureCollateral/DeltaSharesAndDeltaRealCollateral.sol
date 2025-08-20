@@ -26,14 +26,14 @@ library DeltaSharesAndDeltaRealCollateral {
         int256 protocolFutureRewardCollateral;
         int256 deltaShares;
         int256 collateral;
-        uint16 targetLTVDividend;
-        uint16 targetLTVDivider;
+        uint16 targetLtvDividend;
+        uint16 targetLtvDivider;
     }
 
     struct DividerData {
         Cases cases;
-        uint16 targetLTVDividend;
-        uint16 targetLTVDivider;
+        uint16 targetLtvDividend;
+        uint16 targetLtvDivider;
         int256 userFutureRewardCollateral;
         int256 futureCollateral;
         uint256 collateralSlippage;
@@ -43,13 +43,13 @@ library DeltaSharesAndDeltaRealCollateral {
 
     function calculateDividentByDeltaSharesAndRealCollateral(DividendData memory data) private pure returns (int256) {
         // borrow
-        // (1 - targetLTV) x deltaRealCollateral
-        // (1 - targetLTV) x ceccb x -userFutureRewardCollateral
-        // (1 - targetLTV) x cecbc x -futureCollateral x collateralSlippage
+        // (1 - targetLtv) x deltaRealCollateral
+        // (1 - targetLtv) x ceccb x -userFutureRewardCollateral
+        // (1 - targetLtv) x cecbc x -futureCollateral x collateralSlippage
         // cecbc x - protocolFutureRewardBorrow
         // -shares
-        // -targetLTV x collateral
-        // targetLTV x ceccb x protocolFutureRewardCollateral
+        // -targetLtv x collateral
+        // targetLtv x ceccb x protocolFutureRewardCollateral
 
         bool needToRoundUp = (data.cases.cmcb + data.cases.ceccb + data.cases.cebc != 0);
 
@@ -57,22 +57,22 @@ library DeltaSharesAndDeltaRealCollateral {
         dividend -= int256(int8(data.cases.cecbc)) * data.protocolFutureRewardBorrow;
         dividend -= data.deltaShares;
 
-        int256 dividendWithTargetLTV = -int256(data.collateral);
-        dividendWithTargetLTV += int256(int8(data.cases.ceccb)) * data.protocolFutureRewardCollateral;
+        int256 dividendWithtargetLtv = -int256(data.collateral);
+        dividendWithtargetLtv += int256(int8(data.cases.ceccb)) * data.protocolFutureRewardCollateral;
 
-        int256 dividendWithOneMinusTargetLTV = data.deltaRealCollateral;
-        dividendWithOneMinusTargetLTV -= int256(int8(data.cases.ceccb)) * int256(data.userFutureRewardCollateral);
+        int256 dividendWithOneMinustargetLtv = data.deltaRealCollateral;
+        dividendWithOneMinustargetLtv -= int256(int8(data.cases.ceccb)) * int256(data.userFutureRewardCollateral);
 
-        dividendWithOneMinusTargetLTV += int256(int8(data.cases.cecbc))
+        dividendWithOneMinustargetLtv += int256(int8(data.cases.cecbc))
             * (-data.futureCollateral).mulDiv(int256(data.collateralSlippage), Constants.SLIPPAGE_PRECISION, needToRoundUp);
 
-        dividend += dividendWithOneMinusTargetLTV.mulDiv(
-            int256(uint256(data.targetLTVDivider) - uint256(data.targetLTVDividend)),
-            int256(uint256(data.targetLTVDivider)),
+        dividend += dividendWithOneMinustargetLtv.mulDiv(
+            int256(uint256(data.targetLtvDivider) - uint256(data.targetLtvDividend)),
+            int256(uint256(data.targetLtvDivider)),
             needToRoundUp
         );
-        dividend += dividendWithTargetLTV.mulDiv(
-            int256(uint256(data.targetLTVDividend)), int256(uint256(data.targetLTVDivider)), needToRoundUp
+        dividend += dividendWithtargetLtv.mulDiv(
+            int256(uint256(data.targetLtvDividend)), int256(uint256(data.targetLtvDivider)), needToRoundUp
         );
 
         return dividend;
@@ -84,40 +84,42 @@ library DeltaSharesAndDeltaRealCollateral {
         pure
         returns (int256)
     {
-        // (1 - targetLTV) x -1
-        // (1 - targetLTV) x cecb x (userFutureRewardCollateral / futureCollateral) x -1
-        // (1 - targetLTV) x cmbc x collateralSlippage
-        // (1 - targetLTV) x cecbc x collateralSlippage
+        // (1 - targetLtv) x -1
+        // (1 - targetLtv) x cecb x (userFutureRewardCollateral / futureCollateral) x -1
+        // (1 - targetLtv) x cmbc x collateralSlippage
+        // (1 - targetLtv) x cecbc x collateralSlippage
         // cebc x (protocolFutureRewardBorrow / futureCollateral) x -1
-        // targetLTV x cecb x (protocolFutureRewardCollateral / futureCollateral)
+        // targetLtv x cecb x (protocolFutureRewardCollateral / futureCollateral)
 
         bool needToRoundUp = (data.cases.cebc + data.cases.cecb == 0);
 
-        int256 DIVIDER = 10 ** 18;
-
-        int256 dividerWithOneMinusTargetLTV = -DIVIDER;
+        int256 dividerWithOneMinustargetLtv = -Constants.DIVIDER_PRECISION;
         int256 divider;
         if (data.futureCollateral != 0) {
-            dividerWithOneMinusTargetLTV += int256(int8(data.cases.cecb))
-                * (-data.userFutureRewardCollateral).mulDiv(DIVIDER, data.futureCollateral, needToRoundUp);
+            dividerWithOneMinustargetLtv += int256(int8(data.cases.cecb))
+                * (-data.userFutureRewardCollateral).mulDiv(
+                    Constants.DIVIDER_PRECISION, data.futureCollateral, needToRoundUp
+                );
 
             divider += int256(int8(data.cases.cebc))
-                * (-data.protocolFutureRewardBorrow).mulDiv(DIVIDER, data.futureCollateral, needToRoundUp);
+                * (-data.protocolFutureRewardBorrow).mulDiv(
+                    Constants.DIVIDER_PRECISION, data.futureCollateral, needToRoundUp
+                );
 
             divider += int256(int8(data.cases.cecb))
                 * (data.protocolFutureRewardCollateral).mulDiv(
-                    (DIVIDER * int256(uint256(data.targetLTVDividend))),
-                    (data.futureCollateral * int256(uint256(data.targetLTVDivider))),
+                    (Constants.DIVIDER_PRECISION * int256(uint256(data.targetLtvDividend))),
+                    (data.futureCollateral * int256(uint256(data.targetLtvDivider))),
                     needToRoundUp
                 );
         }
 
-        dividerWithOneMinusTargetLTV += int256(int8(data.cases.cecbc)) * int256(data.collateralSlippage);
-        dividerWithOneMinusTargetLTV += int256(int8(data.cases.cmbc)) * int256(data.collateralSlippage);
+        dividerWithOneMinustargetLtv += int256(int8(data.cases.cecbc)) * int256(data.collateralSlippage);
+        dividerWithOneMinustargetLtv += int256(int8(data.cases.cmbc)) * int256(data.collateralSlippage);
 
-        divider += dividerWithOneMinusTargetLTV.mulDiv(
-            int256(uint256(data.targetLTVDivider - data.targetLTVDividend)),
-            int256(uint256(data.targetLTVDivider)),
+        divider += dividerWithOneMinustargetLtv.mulDiv(
+            int256(uint256(data.targetLtvDivider - data.targetLtvDividend)),
+            int256(uint256(data.targetLtvDivider)),
             needToRoundUp
         );
 
@@ -173,16 +175,16 @@ library DeltaSharesAndDeltaRealCollateral {
                     protocolFutureRewardCollateral: data.protocolFutureRewardCollateral,
                     deltaShares: data.deltaShares,
                     collateral: data.collateral,
-                    targetLTVDividend: data.targetLTVDividend,
-                    targetLTVDivider: data.targetLTVDivider
+                    targetLtvDividend: data.targetLtvDividend,
+                    targetLtvDivider: data.targetLtvDivider
                 })
             );
 
             int256 divider = calculateDividerByDeltaSharesAndDeltaRealCollateral(
                 DividerData({
                     cases: data.cases,
-                    targetLTVDividend: data.targetLTVDividend,
-                    targetLTVDivider: data.targetLTVDivider,
+                    targetLtvDividend: data.targetLtvDividend,
+                    targetLtvDivider: data.targetLtvDivider,
                     userFutureRewardCollateral: data.userFutureRewardCollateral,
                     futureCollateral: data.futureCollateral,
                     collateralSlippage: data.collateralSlippage,
@@ -195,8 +197,6 @@ library DeltaSharesAndDeltaRealCollateral {
                 return (0, CasesOperator.generateCase(6));
             }
 
-            int256 DIVIDER = 10 ** 18;
-
             if (divider == 0) {
                 if (data.cases.ncase >= 5) {
                     revert IVaultErrors.DeltaSharesAndDeltaRealCollateralUnexpectedError(data);
@@ -206,7 +206,7 @@ library DeltaSharesAndDeltaRealCollateral {
             }
 
             bool needToRoundUp = (data.cases.cmcb + data.cases.ceccb + data.cases.cebc == 0);
-            deltaFutureCollateral = dividend.mulDiv(DIVIDER, divider, needToRoundUp);
+            deltaFutureCollateral = dividend.mulDiv(Constants.DIVIDER_PRECISION, divider, needToRoundUp);
 
             bool validity =
                 CasesOperator.checkCaseDeltaFutureCollateral(data.cases, data.futureCollateral, deltaFutureCollateral);

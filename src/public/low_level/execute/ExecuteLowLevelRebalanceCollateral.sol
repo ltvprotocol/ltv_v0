@@ -49,8 +49,8 @@ abstract contract ExecuteLowLevelRebalanceCollateral is
             // using deposit real collateral assets since it overestimate collateral assets, so max value will be smaller
             MaxLowLevelRebalanceCollateralStateData({
                 realCollateralAssets: state.previewLowLevelRebalanceState.depositRealCollateralAssets,
-                targetLTVDividend: state.previewLowLevelRebalanceState.targetLTVDividend,
-                targetLTVDivider: state.previewLowLevelRebalanceState.targetLTVDivider,
+                targetLtvDividend: state.previewLowLevelRebalanceState.targetLtvDividend,
+                targetLtvDivider: state.previewLowLevelRebalanceState.targetLtvDivider,
                 collateralPrice: state
                     .previewLowLevelRebalanceState
                     .maxGrowthFeeState

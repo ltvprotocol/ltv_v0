@@ -37,8 +37,8 @@ library DepositWithdraw {
                 futureCollateral: data.futureCollateral,
                 borrowSlippage: data.borrowSlippage,
                 collateralSlippage: data.collateralSlippage,
-                targetLTVDividend: data.targetLTVDividend,
-                targetLTVDivider: data.targetLTVDivider,
+                targetLtvDividend: data.targetLtvDividend,
+                targetLtvDivider: data.targetLtvDivider,
                 deltaRealCollateral: data.deltaRealCollateral,
                 deltaRealBorrow: data.deltaRealBorrow
             })

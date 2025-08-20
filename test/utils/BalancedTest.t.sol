@@ -3,8 +3,12 @@ pragma solidity ^0.8.28;
 
 import {BaseTestInit} from "test/utils/BaseTest.t.sol";
 import {DummyModulesBaseTest} from "test/utils/DummyModulesBaseTest.t.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract BalancedTest is DummyModulesBaseTest {
+    using SafeERC20 for IERC20;
+
     modifier initializeBalancedTest(
         address owner,
         address user,
@@ -45,12 +49,12 @@ contract BalancedTest is DummyModulesBaseTest {
                 maxTotalAssetsInUnderlying: type(uint128).max,
                 collateralAssets: supplyBalance,
                 borrowAssets: borrowBalance,
-                maxSafeLTVDividend: 9,
-                maxSafeLTVDivider: 10,
-                minProfitLTVDividend: 5,
-                minProfitLTVDivider: 10,
-                targetLTVDividend: 75,
-                targetLTVDivider: 100,
+                maxSafeLtvDividend: 9,
+                maxSafeLtvDivider: 10,
+                minProfitLtvDividend: 5,
+                minProfitLtvDivider: 10,
+                targetLtvDividend: 75,
+                targetLtvDivider: 100,
                 maxGrowthFeeDividend: 1,
                 maxGrowthFeeDivider: 5,
                 collateralPrice: 2 * 10 ** 20,
@@ -64,7 +68,7 @@ contract BalancedTest is DummyModulesBaseTest {
 
             // transfer preminted tokens to owner
             vm.startPrank(address(0));
-            ltv.transfer(address(owner), ltv.balanceOf(address(0)));
+            IERC20(address(ltv)).safeTransfer(address(owner), ltv.balanceOf(address(0)));
             vm.stopPrank();
         }
 

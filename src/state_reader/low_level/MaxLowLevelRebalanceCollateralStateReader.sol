@@ -15,8 +15,8 @@ contract MaxLowLevelRebalanceCollateralStateReader is GetLendingConnectorReader 
             // round up to assume smaller border
             realCollateralAssets: getLendingConnector().getRealCollateralAssets(true, connectorGetterData),
             maxTotalAssetsInUnderlying: maxTotalAssetsInUnderlying,
-            targetLTVDividend: targetLTVDividend,
-            targetLTVDivider: targetLTVDivider,
+            targetLtvDividend: targetLtvDividend,
+            targetLtvDivider: targetLtvDivider,
             collateralPrice: oracleConnector.getPriceCollateralOracle()
         });
     }

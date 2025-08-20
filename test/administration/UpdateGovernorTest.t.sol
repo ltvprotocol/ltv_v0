@@ -40,7 +40,7 @@ contract UpdateGovernorTest is BaseTest {
         vm.stopPrank();
 
         vm.startPrank(newAddress);
-        ltv.setTargetLTV(74, 100);
+        ltv.setTargetLtv(74, 100);
         vm.stopPrank();
 
         vm.startPrank(data.owner);
@@ -49,11 +49,11 @@ contract UpdateGovernorTest is BaseTest {
 
         vm.startPrank(newAddress);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, newAddress));
-        ltv.setTargetLTV(75, 100);
+        ltv.setTargetLtv(75, 100);
         vm.stopPrank();
 
         vm.startPrank(anotherNewAddress);
-        ltv.setTargetLTV(75, 100);
+        ltv.setTargetLtv(75, 100);
         vm.stopPrank();
     }
 }

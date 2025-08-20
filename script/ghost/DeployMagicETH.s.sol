@@ -9,14 +9,14 @@ import {MagicETH} from "src/ghost/magic/MagicETH.sol";
 contract DeployMagicETH is Script {
     function run() public {
         address proxyOwner = vm.envAddress("PROXY_OWNER");
-        address magicETHOwner = vm.envAddress("MAGIC_ETH_OWNER");
+        address magicEthOwner = vm.envAddress("MAGIC_ETH_OWNER");
 
         vm.startBroadcast();
-        address magicETHProxy = Upgrades.deployTransparentProxy(
-            "MagicETH.sol", proxyOwner, abi.encodeCall(MagicETH.initialize, (magicETHOwner))
+        address magicEthProxy = Upgrades.deployTransparentProxy(
+            "MagicETH.sol", proxyOwner, abi.encodeCall(MagicETH.initialize, (magicEthOwner))
         );
         vm.stopBroadcast();
 
-        console.log("MagicETH deployed at: ", magicETHProxy);
+        console.log("MagicETH deployed at: ", magicEthProxy);
     }
 }

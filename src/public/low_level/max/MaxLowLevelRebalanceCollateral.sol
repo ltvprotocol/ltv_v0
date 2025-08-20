@@ -28,7 +28,7 @@ abstract contract MaxLowLevelRebalanceCollateral is MaxGrowthFee {
             data.maxTotalAssetsInUnderlying.mulDivDown(Constants.ORACLE_DIVIDER, data.collateralPrice);
         // rounding down assuming smaller border
         uint256 maxCollateral = maxTotalAssetsInCollateral.mulDivDown(
-            uint256(data.targetLTVDivider), uint256(data.targetLTVDivider - data.targetLTVDividend)
+            uint256(data.targetLtvDivider), uint256(data.targetLtvDivider - data.targetLtvDividend)
         );
         return int256(maxCollateral) - int256(data.realCollateralAssets);
     }

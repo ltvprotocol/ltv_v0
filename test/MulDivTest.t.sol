@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "forge-std/console.sol";
-import "forge-std/Test.sol";
-import "../src/utils/MulDiv.sol";
+import {Test} from "forge-std/Test.sol";
+import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
 import {EuclidianMod} from "./utils/math/EuclidianMod.sol";
 import {UnsignedHelpers} from "./helpers/UnsignedHelpers.sol";
 import {SignedHelpers} from "./helpers/SignedHelpers.sol";

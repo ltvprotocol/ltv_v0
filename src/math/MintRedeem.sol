@@ -33,8 +33,8 @@ library MintRedeem {
             (deltaFuture.deltaFutureCollateral, cases) = DeltaSharesAndDeltaRealCollateral
                 .calculateDeltaFutureCollateralByDeltaSharesAndDeltaRealCollateral(
                 DeltaSharesAndDeltaRealCollateralData({
-                    targetLTVDividend: data.targetLTVDividend,
-                    targetLTVDivider: data.targetLTVDivider,
+                    targetLtvDividend: data.targetLtvDividend,
+                    targetLtvDivider: data.targetLtvDivider,
                     borrow: data.borrow,
                     collateral: data.collateral,
                     protocolFutureRewardBorrow: data.protocolFutureRewardBorrow,
@@ -55,8 +55,8 @@ library MintRedeem {
             (deltaFuture.deltaFutureBorrow, cases) = DeltaSharesAndDeltaRealBorrow
                 .calculateDeltaFutureBorrowByDeltaSharesAndDeltaRealBorrow(
                 DeltaSharesAndDeltaRealBorrowData({
-                    targetLTVDividend: data.targetLTVDividend,
-                    targetLTVDivider: data.targetLTVDivider,
+                    targetLtvDividend: data.targetLtvDividend,
+                    targetLtvDivider: data.targetLtvDivider,
                     borrow: data.borrow,
                     collateral: data.collateral,
                     protocolFutureRewardBorrow: data.protocolFutureRewardBorrow,

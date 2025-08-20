@@ -26,8 +26,8 @@ contract MaxDepositMintCollateralStateToData is PreviewDepositVaultStateToCollat
             data.realCollateral, data.realBorrow, state.previewDepositVaultState
         );
         data.maxTotalAssetsInUnderlying = state.maxTotalAssetsInUnderlying;
-        data.minProfitLTVDividend = state.minProfitLTVDividend;
-        data.minProfitLTVDivider = state.minProfitLTVDivider;
+        data.minProfitLtvDividend = state.minProfitLtvDividend;
+        data.minProfitLtvDivider = state.minProfitLtvDivider;
         return data;
     }
 }

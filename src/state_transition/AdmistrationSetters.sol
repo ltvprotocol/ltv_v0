@@ -12,48 +12,48 @@ import {BoolReader} from "src/state_reader/BoolReader.sol";
 import {BoolWriter} from "src/state_transition/BoolWriter.sol";
 
 contract AdmistrationSetters is BoolWriter, BoolReader, IAdministrationErrors, IAdministrationEvents {
-    function _setTargetLTV(uint16 dividend, uint16 divider) internal {
-        require(dividend >= 0 && dividend < divider, UnexpectedTargetLTV(dividend, divider));
+    function _setTargetLtv(uint16 dividend, uint16 divider) internal {
+        require(dividend >= 0 && dividend < divider, UnexpectedtargetLtv(dividend, divider));
         require(
-            dividend * maxSafeLTVDivider <= divider * maxSafeLTVDividend
-                && dividend * minProfitLTVDivider >= minProfitLTVDividend * divider,
+            dividend * maxSafeLtvDivider <= divider * maxSafeLtvDividend
+                && dividend * minProfitLtvDivider >= minProfitLtvDividend * divider,
             InvalidLTVSet(
-                dividend, divider, maxSafeLTVDividend, maxSafeLTVDivider, minProfitLTVDividend, minProfitLTVDivider
+                dividend, divider, maxSafeLtvDividend, maxSafeLtvDivider, minProfitLtvDividend, minProfitLtvDivider
             )
         );
-        uint16 oldValue = targetLTVDividend;
-        uint16 oldDivider = targetLTVDivider;
-        targetLTVDividend = dividend;
-        targetLTVDivider = divider;
-        emit TargetLTVChanged(oldValue, oldDivider, dividend, divider);
+        uint16 oldValue = targetLtvDividend;
+        uint16 oldDivider = targetLtvDivider;
+        targetLtvDividend = dividend;
+        targetLtvDivider = divider;
+        emit targetLtvChanged(oldValue, oldDivider, dividend, divider);
     }
 
-    function _setMaxSafeLTV(uint16 dividend, uint16 divider) internal {
-        require(dividend > 0 && dividend <= divider, UnexpectedMaxSafeLTV(dividend, divider));
+    function _setMaxSafeLtv(uint16 dividend, uint16 divider) internal {
+        require(dividend > 0 && dividend <= divider, UnexpectedmaxSafeLtv(dividend, divider));
         require(
-            dividend * targetLTVDivider >= targetLTVDividend * divider,
+            dividend * targetLtvDivider >= targetLtvDividend * divider,
             InvalidLTVSet(
-                targetLTVDividend, targetLTVDivider, dividend, divider, minProfitLTVDividend, minProfitLTVDivider
+                targetLtvDividend, targetLtvDivider, dividend, divider, minProfitLtvDividend, minProfitLtvDivider
             )
         );
-        uint16 oldDividend = maxSafeLTVDividend;
-        uint16 oldDivider = maxSafeLTVDivider;
-        maxSafeLTVDividend = dividend;
-        maxSafeLTVDivider = divider;
-        emit MaxSafeLTVChanged(oldDividend, oldDivider, dividend, divider);
+        uint16 oldDividend = maxSafeLtvDividend;
+        uint16 oldDivider = maxSafeLtvDivider;
+        maxSafeLtvDividend = dividend;
+        maxSafeLtvDivider = divider;
+        emit maxSafeLtvChanged(oldDividend, oldDivider, dividend, divider);
     }
 
-    function _setMinProfitLTV(uint16 dividend, uint16 divider) internal {
-        require(dividend >= 0 && dividend < divider, UnexpectedMinProfitLTV(dividend, divider));
+    function _setMinProfitLtv(uint16 dividend, uint16 divider) internal {
+        require(dividend >= 0 && dividend < divider, UnexpectedminProfitLtv(dividend, divider));
         require(
-            dividend * targetLTVDivider <= divider * targetLTVDividend,
-            InvalidLTVSet(targetLTVDividend, targetLTVDivider, maxSafeLTVDividend, maxSafeLTVDivider, dividend, divider)
+            dividend * targetLtvDivider <= divider * targetLtvDividend,
+            InvalidLTVSet(targetLtvDividend, targetLtvDivider, maxSafeLtvDividend, maxSafeLtvDivider, dividend, divider)
         );
-        uint16 oldDividend = minProfitLTVDividend;
-        uint16 oldDivider = minProfitLTVDivider;
-        minProfitLTVDividend = dividend;
-        minProfitLTVDivider = divider;
-        emit MinProfitLTVChanged(oldDividend, oldDivider, dividend, divider);
+        uint16 oldDividend = minProfitLtvDividend;
+        uint16 oldDivider = minProfitLtvDivider;
+        minProfitLtvDividend = dividend;
+        minProfitLtvDivider = divider;
+        emit minProfitLtvChanged(oldDividend, oldDivider, dividend, divider);
     }
 
     function _setFeeCollector(address _feeCollector) internal {
