@@ -12,9 +12,7 @@ contract DeployAaveOracleConnector is BaseScript {
     }
 
     function hashedCreationCode() internal view override returns (bytes32) {
-        return keccak256(
-            abi.encodePacked(type(AaveV3OracleConnector).creationCode, abi.encode(getAaveV3Oracle()))
-        );
+        return keccak256(abi.encodePacked(type(AaveV3OracleConnector).creationCode, abi.encode(getAaveV3Oracle())));
     }
 
     function getAaveV3Oracle() internal view returns (address) {
