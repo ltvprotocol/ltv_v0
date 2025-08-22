@@ -46,8 +46,8 @@ contract AaveV3ConnectorTest is Test {
         weth = IERC20(WETH);
         wsteth = IERC20(WSTETH);
 
-        aaveLendingConnector = new AaveV3Connector();
-        aaveV3OracleConnector = new AaveV3OracleConnector();
+        aaveLendingConnector = new AaveV3Connector(0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2);
+        aaveV3OracleConnector = new AaveV3OracleConnector(0x54586bE62E3c3580375aE3723C145253060Ca0C2);
         slippageProvider = new ConstantSlippageProvider();
 
         ModulesState memory modulesState = ModulesState({
@@ -89,7 +89,7 @@ contract AaveV3ConnectorTest is Test {
             governor: address(this),
             emergencyDeleverager: address(this),
             auctionDuration: 1000,
-            lendingConnectorData: abi.encode(""),
+            lendingConnectorData: abi.encode(1),
             oracleConnectorData: "",
             slippageProviderData: abi.encode(10 ** 16, 10 ** 16),
             vaultBalanceAsLendingConnectorData: ""

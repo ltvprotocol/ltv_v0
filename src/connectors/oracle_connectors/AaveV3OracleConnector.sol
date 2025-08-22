@@ -6,7 +6,11 @@ import {IAaveOracle} from "src/connectors/oracle_connectors/interfaces/IAaveOrac
 import {LTVState} from "src/states/LTVState.sol";
 
 contract AaveV3OracleConnector is LTVState, IOracleConnector {
-    IAaveOracle public constant ORACLE = IAaveOracle(0x54586bE62E3c3580375aE3723C145253060Ca0C2);
+    IAaveOracle public immutable ORACLE;
+
+    constructor(address _oracle) {
+        ORACLE = IAaveOracle(_oracle);
+    }
 
     function getPriceCollateralOracle(bytes calldata oracleConnectorGetterData) external view returns (uint256) {
         (address collateralAsset,) = abi.decode(oracleConnectorGetterData, (address, address));

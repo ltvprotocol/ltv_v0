@@ -1,24 +1,19 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
 import {IHodlMyBeerLending} from "src/ghost/hodlmybeer/IHodlMyBeerLending.sol";
+import {LTVState} from "../../states/LTVState.sol";
 
-contract HodlLendingConnector is ILendingConnector {
+contract HodlLendingConnector is LTVState, ILendingConnector {
     IHodlMyBeerLending public immutable LENDING_PROTOCOL;
 
-    IERC20 public immutable COLLATERAL_TOKEN;
-    IERC20 public immutable BORROW_TOKEN;
-
-    constructor(IERC20 _collateralToken, IERC20 _borrowToken, IHodlMyBeerLending _lendingProtocol) {
-        COLLATERAL_TOKEN = _collateralToken;
-        BORROW_TOKEN = _borrowToken;
+    constructor(IHodlMyBeerLending _lendingProtocol) {
         LENDING_PROTOCOL = _lendingProtocol;
     }
 
     function supply(uint256 assets) external {
-        COLLATERAL_TOKEN.approve(address(LENDING_PROTOCOL), assets);
+        collateralToken.approve(address(LENDING_PROTOCOL), assets);
         LENDING_PROTOCOL.supplyCollateral(assets);
     }
 
@@ -31,7 +26,7 @@ contract HodlLendingConnector is ILendingConnector {
     }
 
     function repay(uint256 assets) external {
-        BORROW_TOKEN.approve(address(LENDING_PROTOCOL), assets);
+        borrowToken.approve(address(LENDING_PROTOCOL), assets);
         LENDING_PROTOCOL.repay(assets);
     }
 

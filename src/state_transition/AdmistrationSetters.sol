@@ -15,7 +15,7 @@ contract AdmistrationSetters is BoolWriter, BoolReader, IAdministrationErrors, I
     function _setTargetLtv(uint16 dividend, uint16 divider) internal {
         require(dividend >= 0 && dividend < divider, UnexpectedtargetLtv(dividend, divider));
         require(
-            dividend * maxSafeLtvDivider <= divider * maxSafeLtvDividend
+            uint256(dividend) * maxSafeLtvDivider <= uint256(divider) * maxSafeLtvDividend
                 && dividend * minProfitLtvDivider >= minProfitLtvDividend * divider,
             InvalidLTVSet(
                 dividend, divider, maxSafeLtvDividend, maxSafeLtvDivider, minProfitLtvDividend, minProfitLtvDivider
@@ -31,7 +31,7 @@ contract AdmistrationSetters is BoolWriter, BoolReader, IAdministrationErrors, I
     function _setMaxSafeLtv(uint16 dividend, uint16 divider) internal {
         require(dividend > 0 && dividend <= divider, UnexpectedmaxSafeLtv(dividend, divider));
         require(
-            dividend * targetLtvDivider >= targetLtvDividend * divider,
+            uint256(dividend) * targetLtvDivider >= uint256(targetLtvDividend) * divider,
             InvalidLTVSet(
                 targetLtvDividend, targetLtvDivider, dividend, divider, minProfitLtvDividend, minProfitLtvDivider
             )
@@ -46,7 +46,7 @@ contract AdmistrationSetters is BoolWriter, BoolReader, IAdministrationErrors, I
     function _setMinProfitLtv(uint16 dividend, uint16 divider) internal {
         require(dividend >= 0 && dividend < divider, UnexpectedminProfitLtv(dividend, divider));
         require(
-            dividend * targetLtvDivider <= divider * targetLtvDividend,
+            uint256(dividend) * targetLtvDivider <= uint256(divider) * targetLtvDividend,
             InvalidLTVSet(targetLtvDividend, targetLtvDivider, maxSafeLtvDividend, maxSafeLtvDivider, dividend, divider)
         );
         uint16 oldDividend = minProfitLtvDividend;

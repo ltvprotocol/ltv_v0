@@ -7,7 +7,11 @@ import {IAaveV3Pool} from "src/connectors/lending_connectors/interfaces/IAaveV3P
 import {LTVState} from "src/states/LTVState.sol";
 
 contract AaveV3Connector is LTVState, ILendingConnector {
-    IAaveV3Pool public constant POOL = IAaveV3Pool(0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2);
+    IAaveV3Pool public immutable POOL;
+
+    constructor(address _pool) {
+        POOL = IAaveV3Pool(_pool);
+    }
 
     function supply(uint256 amount) external {
         collateralToken.approve(address(POOL), amount);
@@ -37,10 +41,11 @@ contract AaveV3Connector is LTVState, ILendingConnector {
         return IERC20(borrowAToken).balanceOf(msg.sender);
     }
 
-    function initializeLendingConnectorData(bytes memory) external {
+    function initializeLendingConnectorData(bytes memory emode) external {
         address collateralAToken = POOL.getReserveData(address(collateralToken)).aTokenAddress;
         address borrowAToken = POOL.getReserveData(address(borrowToken)).variableDebtTokenAddress;
 
         lendingConnectorGetterData = abi.encode(collateralAToken, borrowAToken);
+        POOL.setUserEMode(uint8(abi.decode(emode, (uint256))));
     }
 }

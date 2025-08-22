@@ -59,7 +59,7 @@ contract MorphoIntegrationTest is Test {
             lltv: 945000000000000000
         });
 
-        morphoLendingConnector = new MorphoConnector();
+        morphoLendingConnector = new MorphoConnector(0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb);
         morphoOracleConnector = new MorphoOracleConnector(IMorphoOracle(MORPHO_ORACLE));
         slippageProvider = new ConstantSlippageProvider();
 
