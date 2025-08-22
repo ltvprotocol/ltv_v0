@@ -3,6 +3,7 @@ pragma solidity ^0.8.28;
 
 import {NextState} from "src/structs/state_transition/NextState.sol";
 import {NextStepData} from "src/structs/state_transition/NextStepData.sol";
+import {MergeAuctionData} from "src/structs/data/MergeAuctionData.sol";
 import {sMulDiv, uMulDiv} from "src/utils/MulDiv.sol";
 
 library NextStep {
@@ -16,19 +17,6 @@ library NextStep {
     // futureRewardCollateral i+1 = futureRewardCollateral i + ∆futurePaymentCollateral +
     //                                                       + ∆userFutureRewardCollateral +
     //                                                       + ∆protocolFutureRewardCollateral
-
-    struct MergeAuctionData {
-        int256 futureBorrow;
-        int256 futureCollateral;
-        int256 futureRewardBorrow;
-        int256 futureRewardCollateral;
-        int256 deltaFutureBorrow;
-        int256 deltaFutureCollateral;
-        uint24 auctionStep;
-        int256 deltaFuturePaymentBorrow;
-        int256 deltaFuturePaymentCollateral;
-        uint56 blockNumber;
-    }
 
     function calculateNextFutureRewardBorrow(
         int256 futureRewardBorrow,
