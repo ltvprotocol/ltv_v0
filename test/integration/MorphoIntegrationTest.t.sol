@@ -107,7 +107,8 @@ contract MorphoIntegrationTest is Test {
             auctionDuration: 1000,
             lendingConnectorData: abi.encode(MORPHO_ORACLE, IRM, 945000000000000000, keccak256(abi.encode(marketParams))),
             oracleConnectorData: "",
-            slippageProviderData: abi.encode(10 ** 16, 10 ** 16)
+            slippageProviderData: abi.encode(10 ** 16, 10 ** 16),
+            vaultBalanceAsLendingConnectorData: ""
         });
 
         ltv = new LTV();

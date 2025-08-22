@@ -35,4 +35,5 @@ struct StateInitData {
     bytes lendingConnectorData;
     bytes oracleConnectorData;
     bytes slippageProviderData;
+    bytes vaultBalanceAsLendingConnectorData;
 }

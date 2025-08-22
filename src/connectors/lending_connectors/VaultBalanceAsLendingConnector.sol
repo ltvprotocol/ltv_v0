@@ -10,12 +10,14 @@ contract VaultBalanceAsLendingConnector is LTVState, ILendingConnector {
     error UnexpectedRepayCall();
     error UnexpectedSupplyCall();
 
-    function getRealCollateralAssets(bool, bytes calldata) external view returns (uint256) {
-        return collateralToken.balanceOf(msg.sender);
+    function getRealCollateralAssets(bool, bytes calldata data) external view returns (uint256) {
+        (address collateralToken,) = abi.decode(data, (address, address));
+        return IERC20(collateralToken).balanceOf(msg.sender);
     }
 
-    function getRealBorrowAssets(bool, bytes calldata) external view returns (uint256) {
-        return borrowToken.balanceOf(msg.sender);
+    function getRealBorrowAssets(bool, bytes calldata data) external view returns (uint256) {
+        (, address borrowToken) = abi.decode(data, (address, address));
+        return IERC20(borrowToken).balanceOf(msg.sender);
     }
 
     function withdraw(uint256) external {}
@@ -32,5 +34,7 @@ contract VaultBalanceAsLendingConnector is LTVState, ILendingConnector {
         revert UnexpectedSupplyCall();
     }
 
-    function initializeLendingConnectorData(bytes memory) external pure {}
+    function initializeLendingConnectorData(bytes memory) external {
+        vaultBalanceAsLendingConnectorGetterData = abi.encode(address(collateralToken), address(borrowToken));
+    }
 }

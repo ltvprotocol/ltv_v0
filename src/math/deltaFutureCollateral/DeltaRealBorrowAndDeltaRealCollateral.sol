@@ -4,47 +4,17 @@ pragma solidity ^0.8.28;
 import {Constants} from "src/Constants.sol";
 import {IVaultErrors} from "src/errors/IVaultErrors.sol";
 import {Cases} from "src/structs/data/vault/Cases.sol";
-import {DeltaRealBorrowAndDeltaRealCollateralData} from
-    "src/structs/data/vault/DeltaRealBorrowAndDeltaRealCollateralData.sol";
+import {
+    DeltaRealBorrowAndDeltaRealCollateralData,
+    DividendData,
+    DividerData
+} from "src/structs/data/vault/DeltaRealBorrowAndDeltaRealCollateralData.sol";
 import {CasesOperator} from "src/math/CasesOperator.sol";
 import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
 
 library DeltaRealBorrowAndDeltaRealCollateral {
     using uMulDiv for uint256;
     using sMulDiv for int256;
-
-    struct DividendData {
-        Cases cases;
-        int256 borrow;
-        int256 deltaRealBorrow;
-        int256 futureCollateral;
-        int256 futureBorrow;
-        int256 userFutureRewardBorrow;
-        int256 userFutureRewardCollateral;
-        uint256 borrowSlippage;
-        uint256 collateralSlippage;
-        int256 protocolFutureRewardBorrow;
-        int256 protocolFutureRewardCollateral;
-        int256 collateral;
-        int256 deltaRealCollateral;
-        uint16 targetLtvDividend;
-        uint16 targetLtvDivider;
-    }
-
-    struct DividerData {
-        Cases cases;
-        int256 futureCollateral;
-        int256 futureBorrow;
-        uint256 collateralSlippage;
-        uint256 borrowSlippage;
-        int256 collateral;
-        int256 protocolFutureRewardBorrow;
-        int256 protocolFutureRewardCollateral;
-        uint16 targetLtvDividend;
-        uint16 targetLtvDivider;
-        int256 userFutureRewardBorrow;
-        int256 userFutureRewardCollateral;
-    }
 
     // needs to be rounded down in any case
     function calculateDividendByDeltaRealBorrowAndDeltaRealCollateral(DividendData memory data)

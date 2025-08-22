@@ -17,3 +17,29 @@ struct DeltaSharesAndDeltaRealCollateralData {
     uint256 collateralSlippage;
     Cases cases;
 }
+
+struct DividendData {
+    Cases cases;
+    int256 borrow;
+    int256 deltaRealCollateral;
+    int256 userFutureRewardCollateral;
+    int256 futureCollateral;
+    uint256 collateralSlippage;
+    int256 protocolFutureRewardBorrow;
+    int256 protocolFutureRewardCollateral;
+    int256 deltaShares;
+    int256 collateral;
+    uint16 targetLtvDividend;
+    uint16 targetLtvDivider;
+}
+
+struct DividerData {
+    Cases cases;
+    uint16 targetLtvDividend;
+    uint16 targetLtvDivider;
+    int256 userFutureRewardCollateral;
+    int256 futureCollateral;
+    uint256 collateralSlippage;
+    int256 protocolFutureRewardBorrow;
+    int256 protocolFutureRewardCollateral;
+}

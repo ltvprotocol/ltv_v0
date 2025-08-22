@@ -104,8 +104,11 @@ abstract contract AdministrationPublic is
         _setOracleConnector(_oracleConnector, oracleConnectorData);
     }
 
-    function setVaultBalanceAsLendingConnector(address _vaultBalanceAsLendingConnector) external onlyOwner {
-        _setVaultBalanceAsLendingConnector(_vaultBalanceAsLendingConnector);
+    function setVaultBalanceAsLendingConnector(
+        ILendingConnector _vaultBalanceAsLendingConnector,
+        bytes memory vaultBalanceAsLendingConnectorGetterData
+    ) external onlyOwner {
+        _setVaultBalanceAsLendingConnector(_vaultBalanceAsLendingConnector, vaultBalanceAsLendingConnectorGetterData);
     }
 
     function deleverageAndWithdraw(uint256 closeAmountBorrow, uint16 deleverageFeeDividend, uint16 deleverageFeeDivider)

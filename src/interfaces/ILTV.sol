@@ -199,6 +199,11 @@ interface ILTV is
 
     function setLendingConnector(address _lendingConnector, bytes memory lendingConnectorData) external;
 
+    function setVaultBalanceAsLendingConnector(
+        address _vaultBalanceAsLendingConnector,
+        bytes memory vaultBalanceAsLendingConnectorGetterData
+    ) external;
+
     function setMaxDeleverageFee(uint16 dividend, uint16 divider) external;
 
     function setMaxGrowthFee(uint16 dividend, uint16 divider) external;

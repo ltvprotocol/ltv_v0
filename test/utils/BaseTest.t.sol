@@ -139,7 +139,8 @@ contract BaseTest is Test {
                 auctionDuration: 1000,
                 lendingConnectorData: "",
                 oracleConnectorData: "",
-                slippageProviderData: abi.encode(init.collateralSlippage, init.borrowSlippage)
+                slippageProviderData: abi.encode(init.collateralSlippage, init.borrowSlippage),
+                vaultBalanceAsLendingConnectorData: ""
             });
 
             ltv = new DummyLTV();

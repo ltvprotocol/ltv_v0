@@ -4,39 +4,17 @@ pragma solidity ^0.8.28;
 import {IVaultErrors} from "src/errors/IVaultErrors.sol";
 import {Constants} from "src/Constants.sol";
 import {Cases} from "src/structs/data/vault/Cases.sol";
-import {DeltaSharesAndDeltaRealBorrowData} from "src/structs/data/vault/DeltaSharesAndDeltaRealBorrowData.sol";
+import {
+    DeltaSharesAndDeltaRealBorrowData,
+    DividendData,
+    DividerData
+} from "src/structs/data/vault/DeltaSharesAndDeltaRealBorrowData.sol";
 import {CasesOperator} from "src/math/CasesOperator.sol";
 import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
 
 library DeltaSharesAndDeltaRealBorrow {
     using uMulDiv for uint256;
     using sMulDiv for int256;
-
-    struct DividendData {
-        int256 borrow;
-        int256 collateral;
-        int256 protocolFutureRewardBorrow;
-        int256 protocolFutureRewardCollateral;
-        int256 userFutureRewardBorrow;
-        int256 futureBorrow;
-        uint256 borrowSlippage;
-        int256 deltaRealBorrow;
-        int256 deltaShares;
-        uint16 targetLtvDividend;
-        uint16 targetLtvDivider;
-        Cases cases;
-    }
-
-    struct DividerData {
-        uint16 targetLtvDividend;
-        uint16 targetLtvDivider;
-        int256 userFutureRewardBorrow;
-        int256 futureBorrow;
-        uint256 borrowSlippage;
-        int256 protocolFutureRewardBorrow;
-        int256 protocolFutureRewardCollateral;
-        Cases cases;
-    }
 
     function calculateDividentByDeltaSharesAndDeltaRealBorrow(DividendData memory data) private pure returns (int256) {
         // borrow

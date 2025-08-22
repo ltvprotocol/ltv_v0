@@ -1,20 +1,18 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
 import {TotalAssetsState} from "src/structs/state/vault/TotalAssetsState.sol";
 import {CommonTotalAssetsState} from "src/structs/state/vault/CommonTotalAssetsState.sol";
-import {GetLendingConnectorReader} from "src/state_reader/GetLendingConnectorReader.sol";
+import {GetRealCollateralAndRealBorrowAssetsReader} from "../GetRealCollateralAndRealBorrowAssetsReader.sol";
 
-contract TotalAssetsStateReader is GetLendingConnectorReader {
+contract TotalAssetsStateReader is GetRealCollateralAndRealBorrowAssetsReader {
     function totalAssetsState(bool isDeposit) internal view returns (TotalAssetsState memory) {
-        ILendingConnector _lendingConnector = getLendingConnector();
-        bytes memory _lendingConnectorGetterData = lendingConnectorGetterData;
+        (uint256 realCollateralAssets, uint256 realBorrowAssets) = getRealCollateralAndRealBorrowAssets(isDeposit);
         bytes memory _oracleConnectorGetterData = oracleConnectorGetterData;
         return TotalAssetsState({
             // default behavior - don't overestimate our assets
-            realCollateralAssets: _lendingConnector.getRealCollateralAssets(isDeposit, _lendingConnectorGetterData),
-            realBorrowAssets: _lendingConnector.getRealBorrowAssets(isDeposit, _lendingConnectorGetterData),
+            realCollateralAssets: realCollateralAssets,
+            realBorrowAssets: realBorrowAssets,
             commonTotalAssetsState: CommonTotalAssetsState({
                 futureBorrowAssets: futureBorrowAssets,
                 futureCollateralAssets: futureCollateralAssets,
