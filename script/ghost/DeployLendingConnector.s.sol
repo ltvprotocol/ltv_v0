@@ -2,7 +2,6 @@
 pragma solidity ^0.8.27;
 
 import {console} from "forge-std/console.sol";
-import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {IHodlMyBeerLending} from "src/ghost/hodlmybeer/IHodlMyBeerLending.sol";
 import {HodlLendingConnector} from "src/ghost/connectors/HodlLendingConnector.sol";
 import {BaseScript} from "../utils/BaseScript.s.sol";
