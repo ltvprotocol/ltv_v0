@@ -53,8 +53,10 @@ contract SetMaxDeleverageFeeTest is BaseTest {
 
         ltv.deleverageAndWithdraw(borrowAssets, deleverageFeeDividend, deleverageFeeDivider);
 
-        uint256 zeroFeeAssets = borrowAssets * ltv.oracleConnector().getPriceBorrowOracle()
-            / ltv.oracleConnector().getPriceCollateralOracle();
+        bytes memory oracleConnectorGetterData = ltv.oracleConnectorGetterData();
+
+        uint256 zeroFeeAssets = borrowAssets * ltv.oracleConnector().getPriceBorrowOracle(oracleConnectorGetterData)
+            / ltv.oracleConnector().getPriceCollateralOracle(oracleConnectorGetterData);
         // 2% fee with 3/4 ltv gives 6% of total assets as fee
         assertEq(collateralToken.balanceOf(defaultData.emergencyDeleverager), zeroFeeAssets + 10 ** 16);
     }
@@ -97,10 +99,13 @@ contract SetMaxDeleverageFeeTest is BaseTest {
 
         // Should be able to deleverage with 0 fee
         ltv.deleverageAndWithdraw(borrowAssets, 0, 1);
+
+        bytes memory oracleConnectorGetterData = abi.encode(address(collateralToken), address(borrowToken));
+
         assertEq(
             collateralToken.balanceOf(defaultData.emergencyDeleverager),
-            (borrowAssets * ltv.oracleConnector().getPriceBorrowOracle())
-                / ltv.oracleConnector().getPriceCollateralOracle()
+            (borrowAssets * ltv.oracleConnector().getPriceBorrowOracle(oracleConnectorGetterData))
+                / ltv.oracleConnector().getPriceCollateralOracle(oracleConnectorGetterData)
         );
     }
 

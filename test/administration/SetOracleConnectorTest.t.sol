@@ -9,13 +9,15 @@ import {IAdministrationEvents} from "src/events/IAdministrationEvents.sol";
 contract SimpleMockOracleConnector is IOracleConnector {
     error MockOracleError();
 
-    function getPriceCollateralOracle() external pure override returns (uint256) {
+    function getPriceCollateralOracle(bytes calldata) external pure override returns (uint256) {
         revert MockOracleError();
     }
 
-    function getPriceBorrowOracle() external pure override returns (uint256) {
+    function getPriceBorrowOracle(bytes calldata) external pure override returns (uint256) {
         revert MockOracleError();
     }
+
+    function initializeOracleConnectorData(bytes calldata) external {}
 }
 
 contract SetOracleConnectorTest is BaseTest {
@@ -30,8 +32,8 @@ contract SetOracleConnectorTest is BaseTest {
 
         vm.prank(defaultData.owner);
         vm.expectEmit(true, true, true, true, address(ltv));
-        emit IAdministrationEvents.OracleConnectorUpdated(oldOracleConnector, address(mockOracleConnector));
-        ltv.setOracleConnector(address(mockOracleConnector));
+        emit IAdministrationEvents.OracleConnectorUpdated(oldOracleConnector, "", address(mockOracleConnector), "");
+        ltv.setOracleConnector(address(mockOracleConnector), "");
 
         assertEq(address(ltv.oracleConnector()), address(mockOracleConnector));
     }
@@ -43,7 +45,7 @@ contract SetOracleConnectorTest is BaseTest {
         mockOracleConnector = new SimpleMockOracleConnector();
 
         vm.prank(defaultData.owner);
-        ltv.setOracleConnector(address(mockOracleConnector));
+        ltv.setOracleConnector(address(mockOracleConnector), "");
 
         assertEq(address(ltv.oracleConnector()), address(mockOracleConnector));
 
@@ -71,6 +73,6 @@ contract SetOracleConnectorTest is BaseTest {
 
         vm.prank(user);
         vm.expectRevert(abi.encodeWithSelector(OwnableUpgradeable.OwnableUnauthorizedAccount.selector, user));
-        ltv.setOracleConnector(address(mockOracleConnector));
+        ltv.setOracleConnector(address(mockOracleConnector), "");
     }
 }

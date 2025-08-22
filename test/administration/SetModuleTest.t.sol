@@ -173,12 +173,13 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setMaxSafeLtv, (9, 10)), governor);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setMaxTotalAssetsInUnderlying, (type(uint128).max)), governor);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setTargetLtv, (75, 100)), governor);
-        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setSlippageProvider, (user)), governor);
+        calls[i++] =
+            CallWithCaller(abi.encodeCall(ILTV.setSlippageProvider, (user, abi.encode(10 ** 16, 10 ** 16))), governor);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setMinProfitLtv, (5, 10)), governor);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setWhitelistRegistry, (user)), governor);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.updateGovernor, (user)), owner);
-        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setLendingConnector, (user)), owner);
-        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setOracleConnector, (user)), owner);
+        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setLendingConnector, (user, "")), owner);
+        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setOracleConnector, (user, "")), owner);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.updateGuardian, (user)), owner);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.updateEmergencyDeleverager, (user)), owner);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.totalSupply, ()), user);

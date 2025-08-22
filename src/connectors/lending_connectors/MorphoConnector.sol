@@ -69,7 +69,7 @@ contract MorphoConnector is LTVState, ILendingConnector {
         return borrowShares.mulDiv(totalBorrowAssets, totalBorrowShares, isDeposit);
     }
 
-    function initializeProtocol(bytes memory data) external {
+    function initializeLendingConnectorData(bytes memory data) external {
         (address oracle, address irm, uint256 lltv, bytes32 marketId) =
             abi.decode(data, (address, address, uint256, bytes32));
 
@@ -79,6 +79,6 @@ contract MorphoConnector is LTVState, ILendingConnector {
         s.lltv = lltv;
         s.marketId = marketId;
 
-        connectorGetterData = abi.encode(marketId);
+        lendingConnectorGetterData = abi.encode(marketId);
     }
 }

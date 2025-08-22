@@ -43,5 +43,5 @@ contract HodlLendingConnector is ILendingConnector {
         return LENDING_PROTOCOL.supplyCollateralBalance(msg.sender);
     }
 
-    function initializeProtocol(bytes memory) external pure {}
+    function initializeLendingConnectorData(bytes memory) external pure {}
 }

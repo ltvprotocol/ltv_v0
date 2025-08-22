@@ -3,7 +3,6 @@ pragma solidity ^0.8.27;
 
 import {Script} from "forge-std/Script.sol";
 import {console} from "forge-std/console.sol";
-import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {ISpookyOracle} from "src/ghost/spooky/ISpookyOracle.sol";
 import {SpookyOracleConnector} from "src/ghost/connectors/SpookyOracleConnector.sol";
 
@@ -11,12 +10,9 @@ import {SpookyOracleConnector} from "src/ghost/connectors/SpookyOracleConnector.
 contract DeploySpookyOracleConnector is Script {
     function run() external {
         address spookyOracle = vm.envAddress("SPOOKY_ORACLE");
-        address collateralToken = vm.envAddress("COLLATERAL_TOKEN");
-        address borrowToken = vm.envAddress("BORROW_TOKEN");
 
         vm.startBroadcast();
-        SpookyOracleConnector connector =
-            new SpookyOracleConnector(IERC20(collateralToken), IERC20(borrowToken), ISpookyOracle(spookyOracle));
+        SpookyOracleConnector connector = new SpookyOracleConnector(ISpookyOracle(spookyOracle));
         vm.stopBroadcast();
 
         console.log("Spooky oracle connector address: ", address(connector));

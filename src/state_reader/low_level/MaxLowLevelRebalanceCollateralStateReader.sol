@@ -3,9 +3,9 @@ pragma solidity ^0.8.28;
 
 import {MaxLowLevelRebalanceCollateralStateData} from
     "src/structs/state/low_level/MaxLowLevelRebalanceCollateralStateData.sol";
-import {GetLendingConnectorReader} from "src/state_reader/GetLendingConnectorReader.sol";
+import {GetRealCollateralAssetsReader} from "../GetRealCollateralAssetsReader.sol";
 
-contract MaxLowLevelRebalanceCollateralStateReader is GetLendingConnectorReader {
+contract MaxLowLevelRebalanceCollateralStateReader is GetRealCollateralAssetsReader {
     function maxLowLevelRebalanceCollateralState()
         internal
         view
@@ -13,11 +13,11 @@ contract MaxLowLevelRebalanceCollateralStateReader is GetLendingConnectorReader 
     {
         return MaxLowLevelRebalanceCollateralStateData({
             // round up to assume smaller border
-            realCollateralAssets: getLendingConnector().getRealCollateralAssets(true, connectorGetterData),
+            realCollateralAssets: getRealCollateralAssets(true),
             maxTotalAssetsInUnderlying: maxTotalAssetsInUnderlying,
             targetLtvDividend: targetLtvDividend,
             targetLtvDivider: targetLtvDivider,
-            collateralPrice: oracleConnector.getPriceCollateralOracle()
+            collateralPrice: oracleConnector.getPriceCollateralOracle(oracleConnectorGetterData)
         });
     }
 }

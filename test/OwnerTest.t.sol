@@ -13,13 +13,13 @@ contract OwnerTest is BalancedTest {
         vm.startPrank(owner);
         address mockConnector = address(0x9876);
 
-        dummyLtv.setLendingConnector(mockConnector);
+        dummyLtv.setLendingConnector(mockConnector, "");
         assertEq(address(ILTV(address(dummyLtv)).lendingConnector()), mockConnector);
 
         // Should revert if not owner
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(OwnableUpgradeable.OwnableUnauthorizedAccount.selector, user));
-        dummyLtv.setLendingConnector(address(0));
+        dummyLtv.setLendingConnector(address(0), "");
     }
 
     function test_setOracleConnector(address owner, address user)
@@ -29,13 +29,13 @@ contract OwnerTest is BalancedTest {
         vm.startPrank(owner);
         address mockConnector = address(0x9876);
 
-        dummyLtv.setOracleConnector(mockConnector);
+        dummyLtv.setOracleConnector(mockConnector, "");
         assertEq(address(dummyLtv.oracleConnector()), mockConnector);
 
         // Should revert if not owner
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(OwnableUpgradeable.OwnableUnauthorizedAccount.selector, user));
-        dummyLtv.setOracleConnector(address(0));
+        dummyLtv.setOracleConnector(address(0), "");
     }
 
     function test_updateEmergencyDeleverager(address owner, address user)

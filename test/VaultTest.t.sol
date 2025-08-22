@@ -137,7 +137,7 @@ contract VaultTest is BalancedTest {
     {
         vm.stopPrank();
         vm.startPrank(owner);
-        slippageProvider.setCollateralSlippage(10 ** 16);
+        ltv.setCollateralSlippage(10 ** 16);
 
         vm.startPrank(user);
         assertEq(dummyLtv.maxMint(user), 956118);
@@ -165,7 +165,7 @@ contract VaultTest is BalancedTest {
         vm.stopPrank();
         vm.startPrank(owner);
         IERC20(address(dummyLtv)).safeTransfer(user, dummyLtv.balanceOf(owner));
-        slippageProvider.setBorrowSlippage(10 ** 16);
+        ltv.setBorrowSlippage(10 ** 16);
 
         assertEq(dummyLtv.maxRedeem(user), 625049);
         vm.startPrank(user);

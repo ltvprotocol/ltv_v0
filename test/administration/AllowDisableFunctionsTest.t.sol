@@ -190,11 +190,11 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         selectors[8] = ILTV.setIsWithdrawDisabled.selector;
         callers[8] = defaultData.guardian;
 
-        calls[9] = abi.encodeCall(ILTV.setLendingConnector, address(1));
+        calls[9] = abi.encodeCall(ILTV.setLendingConnector, (address(1), ""));
         selectors[9] = ILTV.setLendingConnector.selector;
         callers[9] = defaultData.owner;
 
-        calls[10] = abi.encodeCall(ILTV.setOracleConnector, address(1));
+        calls[10] = abi.encodeCall(ILTV.setOracleConnector, (address(1), ""));
         selectors[10] = ILTV.setOracleConnector.selector;
         callers[10] = defaultData.owner;
 
@@ -320,7 +320,7 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         selectors[24] = ILTV.setMinProfitLtv.selector;
         callers[24] = defaultData.governor;
 
-        calls[25] = abi.encodeCall(ILTV.setSlippageProvider, address(1));
+        calls[25] = abi.encodeCall(ILTV.setSlippageProvider, (address(1), abi.encode(10 ** 16, 10 ** 16)));
         selectors[25] = ILTV.setSlippageProvider.selector;
         callers[25] = defaultData.governor;
 

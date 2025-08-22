@@ -37,4 +37,10 @@ interface IAdministrationErrors {
     error EOADelegateCall();
     error VaultBalanceAsLendingConnectorNotSet();
     error ZeroModulesProvider();
+    error FailedToSetLendingConnector(address lendingConnector, bytes lendingConnectorData);
+    error FailedToSetOracleConnector(address oracleConnector, bytes oracleConnectorData);
+    error FailedToSetSlippageProvider(address slippageProvider, bytes slippageProviderData);
+    error FailedToSetVaultBalanceAsLendingConnector(
+        address vaultBalanceAsLendingConnector, bytes vaultBalanceAsLendingConnectorGetterData
+    );
 }

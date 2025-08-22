@@ -307,15 +307,17 @@ contract GovernorTest is BalancedTest {
         address governor = ILTV(address(dummyLtv)).governor();
         vm.assume(user != governor);
         vm.startPrank(governor);
-        ConstantSlippageProvider provider = new ConstantSlippageProvider(0, 0, owner);
+        ConstantSlippageProvider provider = new ConstantSlippageProvider();
 
-        dummyLtv.setSlippageProvider(address(provider));
+        bytes memory slippageProviderData = abi.encode(10 ** 16, 10 ** 16);
+        dummyLtv.setSlippageProvider(address(provider), slippageProviderData);
         assertEq(address(dummyLtv.slippageProvider()), address(provider));
+        assertEq(keccak256(dummyLtv.slippageProviderGetterData()), keccak256(slippageProviderData));
 
         // Should revert if not governor
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
-        dummyLtv.setSlippageProvider(address(0));
+        dummyLtv.setSlippageProvider(address(0), slippageProviderData);
     }
 
     function test_setMaxGrowthFee(address owner, address user)

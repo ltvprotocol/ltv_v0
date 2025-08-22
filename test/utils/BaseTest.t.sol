@@ -93,7 +93,7 @@ contract BaseTest is Test {
 
         lendingProtocol = new MockDummyLending(init.owner);
         oracle = IDummyOracle(new DummyOracle());
-        slippageProvider = new ConstantSlippageProvider(init.collateralSlippage, init.borrowSlippage, init.owner);
+        slippageProvider = new ConstantSlippageProvider();
         {
             ModulesState memory modulesState = ModulesState({
                 administrationModule: IAdministrationModule(address(new AdministrationModule())),
@@ -105,8 +105,7 @@ contract BaseTest is Test {
                 initializeModule: IInitializeModule(address(new InitializeModule()))
             });
             modulesProvider = new ModulesProvider(modulesState);
-            oracleConnector =
-                new DummyOracleConnector(IERC20(address(collateralToken)), IERC20(address(borrowToken)), oracle);
+            oracleConnector = new DummyOracleConnector(oracle);
             lendingConnector = new DummyLendingConnector(
                 IERC20(address(collateralToken)), IERC20(address(borrowToken)), lendingProtocol
             );
@@ -132,15 +131,16 @@ contract BaseTest is Test {
                 slippageProvider: slippageProvider,
                 maxDeleverageFeeDividend: init.maxDeleverageFeeDividend,
                 maxDeleverageFeeDivider: init.maxDeleverageFeeDivider,
-                vaultBalanceAsLendingConnector: new VaultBalanceAsLendingConnector(
-                    IERC20(address(collateralToken)), IERC20(address(borrowToken))
-                ),
+                vaultBalanceAsLendingConnector: new VaultBalanceAsLendingConnector(),
                 owner: init.owner,
                 guardian: init.guardian,
                 governor: init.governor,
                 emergencyDeleverager: init.emergencyDeleverager,
                 auctionDuration: 1000,
-                lendingConnectorData: ""
+                lendingConnectorData: "",
+                oracleConnectorData: "",
+                slippageProviderData: abi.encode(init.collateralSlippage, init.borrowSlippage),
+                vaultBalanceAsLendingConnectorData: ""
             });
 
             ltv = new DummyLTV();

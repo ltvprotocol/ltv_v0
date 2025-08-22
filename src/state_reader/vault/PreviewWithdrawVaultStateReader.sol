@@ -6,6 +6,7 @@ import {MaxGrowthFeeStateReader} from "src/state_reader/MaxGrowthFeeStateReader.
 
 contract PreviewWithdrawVaultStateReader is MaxGrowthFeeStateReader {
     function previewWithdrawVaultState() internal view returns (PreviewWithdrawVaultState memory) {
+        bytes memory _slippageProviderGetterData = slippageProviderGetterData;
         return PreviewWithdrawVaultState({
             maxGrowthFeeState: maxGrowthFeeState(),
             targetLtvDividend: targetLtvDividend,
@@ -13,8 +14,8 @@ contract PreviewWithdrawVaultStateReader is MaxGrowthFeeStateReader {
             startAuction: startAuction,
             auctionDuration: auctionDuration,
             blockNumber: uint56(block.number),
-            collateralSlippage: slippageProvider.collateralSlippage(),
-            borrowSlippage: slippageProvider.borrowSlippage()
+            collateralSlippage: slippageProvider.collateralSlippage(_slippageProviderGetterData),
+            borrowSlippage: slippageProvider.borrowSlippage(_slippageProviderGetterData)
         });
     }
 }
