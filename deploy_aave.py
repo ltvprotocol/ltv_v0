@@ -64,6 +64,8 @@ def get_contract_to_deploy_file(lending_protocol, contract):
             return "script/aave/DeployAaveOracleConnector.s.sol"
         elif lending_protocol == "morpho":
             return "script/morpho/DeployMorphoOracleConnector.s.sol"
+        elif lending_protocol == "ghost":
+            return "script/ghost/DeployOracleConnector.s.sol"
         else:
             print(f"ERROR Unsupported lending protocol: {lending_protocol}")
             print("Supported protocols: aave, morpho")
@@ -196,7 +198,7 @@ def write_to_deploy_file(contract, chain, lending_protocol, deployed_address, ar
     if not deployed_address.lower() == expected_address.lower():
         print(f"ERROR Deployed address {deployed_address} does not match expected address {expected_address}")
         sys.exit(1)
- 
+
 
 def deploy_erc20_module(chain, lending_protocol, private_key, args_filename):
     if get_contract_is_deployed(chain, CONTRACTS.ERC20_MODULE, lending_protocol, args_filename):
@@ -391,15 +393,15 @@ def deploy_constant_slippage_connector(chain, lending_protocol, private_key, arg
     write_to_deploy_file(CONTRACTS.SLIPPAGE_CONNECTOR, chain, lending_protocol, deployed_address, args_filename, data)
     print(f"SUCCESS Constant slippage connector deployed at {deployed_address}")
 
-def deploy_oracle_connector(chain, lending_protocol, private_key, args_filename):
+def deploy_oracle_connector(chain, lending_protocol, private_key, args_filename, contract = CONTRACTS.BEACON):
     with open(get_args_file_path(chain, lending_protocol, args_filename), "r") as f:
         data = json.load(f)
     
     with open(get_deployed_contracts_file_path(chain, lending_protocol, args_filename), "r") as f:
         data.update(json.load(f))
     
-    if not get_contract_is_deployed(chain, CONTRACTS.BEACON, lending_protocol, args_filename, data):
-        print(f"ERROR Beacon must be deployed first")
+    if not get_contract_is_deployed(chain, contract, lending_protocol, args_filename, data):
+        print(f"ERROR {contract} must be deployed first")
         sys.exit(1) 
 
     if get_contract_is_deployed(chain, CONTRACTS.ORACLE_CONNECTOR, lending_protocol, args_filename, data):
@@ -594,7 +596,8 @@ def main():
         deploy_whitelist_registry(args.chain, args.lending_protocol, args.private_key, args.args_filename, CONTRACTS.LTV)
         deploy_vault_balance_as_lending_connector(args.chain, args.lending_protocol, args.private_key, args.args_filename)
         deploy_constant_slippage_connector(args.chain, args.lending_protocol, args.private_key, args.args_filename)
-        deploy_lending_connector(args.chain, args.lending_protocol, args.private_key, args.args_filename, CONTRACTS.SLIPPAGE_CONNECTOR)
+        deploy_oracle_connector(args.chain, args.lending_protocol, args.private_key, args.args_filename, CONTRACTS.SLIPPAGE_CONNECTOR)
+        deploy_lending_connector(args.chain, args.lending_protocol, args.private_key, args.args_filename)
         upgrade_ghost(args.chain, args.lending_protocol, args.private_key, args.args_filename)
 
     

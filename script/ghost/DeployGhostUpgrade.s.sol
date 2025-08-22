@@ -48,7 +48,6 @@ struct OldStateBackup {
     uint8 decimals;
     address collateralToken;
     address borrowToken;
-    IOracleConnector oracleConnector;
     uint256 lastSeenTokenPrice;
     uint256 maxTotalAssetsInUnderlying;
     address[] holders;
@@ -63,6 +62,7 @@ struct NewFields {
     address emergencyDeleverager;
     address modules;
     address lendingConnector;
+    address oracleConnector;
     uint24 auctionDuration;
     uint16 maxGrowthFeeDividend;
     uint16 maxGrowthFeeDivider;
@@ -149,7 +149,6 @@ contract OldStateCleaner is OldState {
         delete minProfitLtv;
         delete targetLtv;
         delete lendingConnector;
-        backup.oracleConnector = oracleConnector;
         delete oracleConnector;
         backup.lastSeenTokenPrice = lastSeenTokenPrice;
         delete lastSeenTokenPrice;
@@ -187,7 +186,6 @@ contract NewStateRemapper is LTVState {
         collateralToken = IERC20(oldState.collateralToken);
         borrowToken = IERC20(oldState.borrowToken);
         lendingConnector = ILendingConnector(newFields.lendingConnector);
-        oracleConnector = oldState.oracleConnector;
         lastSeenTokenPrice = oldState.lastSeenTokenPrice;
         maxTotalAssetsInUnderlying = oldState.maxTotalAssetsInUnderlying;
         uint256 holdersBalance;
@@ -197,7 +195,19 @@ contract NewStateRemapper is LTVState {
         }
         require(baseTotalSupply == holdersBalance, Mismatch(baseTotalSupply, holdersBalance));
         vaultBalanceAsLendingConnector = ILendingConnector(newFields.vaultBalanceAsLendingConnector);
+        oracleConnector = IOracleConnector(newFields.oracleConnector);
+        (bool success,) = address(oracleConnector).delegatecall(
+            abi.encodeCall(IOracleConnector.initializeOracleConnectorData, (bytes("")))
+        );
+        require(success);
         slippageProvider = ISlippageProvider(newFields.slippageProvider);
+        (success,) = address(slippageProvider).delegatecall(
+            abi.encodeCall(
+                ISlippageProvider.initializeSlippageProviderData, (abi.encode(uint256(10 ** 16), uint256(10 ** 16)))
+            )
+        );
+        require(success);
+
         modules = IModules(newFields.modules);
         governor = newFields.governor;
         guardian = newFields.guardian;
@@ -301,6 +311,7 @@ contract DeployGhostUpgrade is Script, StdCheats, StdAssertions {
             emergencyDeleverager: vm.envAddress("EMERGENCY_DELEVERAGER"),
             modules: vm.envAddress("MODULES_PROVIDER"),
             lendingConnector: vm.envAddress("LENDING_CONNECTOR"),
+            oracleConnector: vm.envAddress("ORACLE_CONNECTOR"),
             auctionDuration: 1000,
             maxGrowthFeeDividend: 1,
             maxGrowthFeeDivider: 5,
