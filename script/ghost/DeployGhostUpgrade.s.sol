@@ -9,7 +9,8 @@ import {ProxyAdmin} from "openzeppelin-contracts/contracts/proxy/transparent/Pro
 import {Vm} from "forge-std/Vm.sol";
 import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {console} from "forge-std/console.sol";
-import {ITransparentUpgradeableProxy} from "openzeppelin-contracts/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
+import {ITransparentUpgradeableProxy} from
+    "openzeppelin-contracts/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 import {IModules} from "../../src/interfaces/IModules.sol";
 import {ISlippageProvider} from "../../src/interfaces/ISlippageProvider.sol";
 import {ILendingConnector} from "../../src/interfaces/ILendingConnector.sol";
@@ -18,15 +19,18 @@ import {IOracleConnector} from "../../src/interfaces/IOracleConnector.sol";
 import {StdCheats} from "forge-std/StdCheats.sol";
 import {StdAssertions} from "forge-std/StdAssertions.sol";
 import {ILTV} from "../../src/interfaces/ILTV.sol";
+import {stdJson} from "forge-std/StdJson.sol";
 
-function getHolders() pure returns (address[19] memory) {
+function getHolders() pure returns (address[21] memory) {
     return [
         0xC185CDED750dc34D1b289355Fe62d10e86BEDDee,
         0x9Cf35beA12F0bA72528C43Ba96aE6979D5A63e75,
         0x16A69E7BD9000D5E8EF128D5D5A803f8F4F94980,
+        0x97d34c151214875fa2c42e6a7D54ff8E967FA208,
         0x3d2fDf8375e5BCDf2491fE34d80c462931144D4c,
         0xC35EcD12416db6c227C47b8218F8745abB35B421,
         0x6cA89411A3737402df1B2FF44Eda7Fb23226F42f,
+        0x1360eDa247bF2fEfeCc5FD5926aC1EF628b19733,
         0xa95584c820B5BC990A0572dF4FAbA7FB9F4E210b,
         0xdE3ad03873Db3eEC89cdEAB5b9D72317c6a4F410,
         0x82c0BD9c20379ae7d08Bd74BD7Afb2a18c6dBd43,
@@ -66,7 +70,7 @@ struct OldStateBackup {
     IOracleConnector oracleConnector;
     uint256 lastSeenTokenPrice;
     uint256 maxTotalAssetsInUnderlying;
-    uint256[19] balances;
+    uint256[21] balances;
 }
 
 struct NewFields {
@@ -167,9 +171,9 @@ contract OldStateCleaner is OldState {
         delete maxGrowthFee;
         backup.maxTotalAssetsInUnderlying = maxTotalAssetsInUnderlying;
         delete maxTotalAssetsInUnderlying;
-        address[19] memory holders = getHolders();
+        address[21] memory holders = getHolders();
         uint256 holdersBalance;
-        for (uint256 i = 0; i < 19; i++) {
+        for (uint256 i = 0; i < 21; i++) {
             backup.balances[i] = balanceOf[holders[i]];
             delete balanceOf[holders[i]];
             holdersBalance += backup.balances[i];
@@ -200,9 +204,9 @@ contract NewStateRemapper is LTVState {
         oracleConnector = oldState.oracleConnector;
         lastSeenTokenPrice = oldState.lastSeenTokenPrice;
         maxTotalAssetsInUnderlying = oldState.maxTotalAssetsInUnderlying;
-        address[19] memory holders = getHolders();
+        address[21] memory holders = getHolders();
         uint256 holdersBalance;
-        for (uint256 i = 0; i < 19; i++) {
+        for (uint256 i = 0; i < 21; i++) {
             balanceOf[holders[i]] = oldState.balances[i];
             holdersBalance += oldState.balances[i];
         }
@@ -263,17 +267,35 @@ contract Upgrader is Ownable {
     }
 }
 
+struct JsonStruct {
+    address address_;
+    bytes32 blockHash;
+    bytes blockNumber;
+    bytes32 data;
+    bytes logIndex;
+    bool removed;
+    bytes32[] topics;
+    bytes32 transactionHash;
+    bytes transactionIndex;
+}
+
 contract DeployGhostUpgrade is Script, StdCheats, StdAssertions {
-    function getApprovalLogs(address proxy) internal returns (ApprovalData[] memory) {
-        bytes32[] memory topics = new bytes32[](1);
-        topics[0] = keccak256("Approval(address,address,uint256)");
-        Vm.EthGetLogs[] memory logs = vm.eth_getLogs(0, block.number, proxy, topics);
-        ApprovalData[] memory approvals = new ApprovalData[](logs.length);
-        for (uint256 i = 0; i < logs.length; i++) {
+    using stdJson for string;
+    function getApprovalLogs() internal view returns (ApprovalData[] memory) {
+        string memory json = vm.readFile("script/ghost/data/allowance_logs.json");
+        // Count number of entries
+        JsonStruct[] memory jsonStructs = abi.decode(vm.parseJson(json), (JsonStruct[]));
+        ApprovalData[] memory approvals = new ApprovalData[](jsonStructs.length);
+
+        for (uint256 i = 0; i < jsonStructs.length; i++) {
+            // Parse topics
+            bytes32 ownerTopic = jsonStructs[i].topics[1];
+            bytes32 spenderTopic = jsonStructs[i].topics[2];
+            bytes32 data = jsonStructs[i].data;
             approvals[i] = ApprovalData({
-                owner: address(uint160(uint256(logs[i].topics[1]))),
-                spender: address(uint160(uint256(logs[i].topics[2]))),
-                amount: abi.decode(logs[i].data, (uint256))
+                owner: address(uint160(uint256(ownerTopic))),
+                spender: address(uint160(uint256(spenderTopic))),
+                amount: uint256(data)
             });
         }
         return approvals;
@@ -283,7 +305,7 @@ contract DeployGhostUpgrade is Script, StdCheats, StdAssertions {
         address proxy = vm.envAddress("PROXY");
         address proxyAdmin = vm.envAddress("PROXY_ADMIN");
         address ltv = vm.envAddress("LTV");
-        ApprovalData[] memory allowances = getApprovalLogs(proxy);
+        ApprovalData[] memory allowances = getApprovalLogs();
         NewFields memory newFields = NewFields({
             vaultBalanceAsLendingConnector: vm.envAddress("VAULT_BALANCE_AS_LENDING_CONNECTOR"),
             slippageProvider: vm.envAddress("SLIPPAGE_CONNECTOR"),
