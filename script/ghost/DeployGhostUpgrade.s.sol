@@ -6,7 +6,6 @@ import {ILTV} from "../../src/interfaces/ILTV.sol";
 import {LTVState} from "../../src/states/LTVState.sol";
 import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
 import {ProxyAdmin} from "openzeppelin-contracts/contracts/proxy/transparent/ProxyAdmin.sol";
-import {Vm} from "forge-std/Vm.sol";
 import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {console} from "forge-std/console.sol";
 import {ITransparentUpgradeableProxy} from
@@ -20,31 +19,14 @@ import {StdCheats} from "forge-std/StdCheats.sol";
 import {StdAssertions} from "forge-std/StdAssertions.sol";
 import {ILTV} from "../../src/interfaces/ILTV.sol";
 import {stdJson} from "forge-std/StdJson.sol";
+import {Vm} from "forge-std/Vm.sol";
 
-function getHolders() pure returns (address[21] memory) {
-    return [
-        0xC185CDED750dc34D1b289355Fe62d10e86BEDDee,
-        0x9Cf35beA12F0bA72528C43Ba96aE6979D5A63e75,
-        0x16A69E7BD9000D5E8EF128D5D5A803f8F4F94980,
-        0x97d34c151214875fa2c42e6a7D54ff8E967FA208,
-        0x3d2fDf8375e5BCDf2491fE34d80c462931144D4c,
-        0xC35EcD12416db6c227C47b8218F8745abB35B421,
-        0x6cA89411A3737402df1B2FF44Eda7Fb23226F42f,
-        0x1360eDa247bF2fEfeCc5FD5926aC1EF628b19733,
-        0xa95584c820B5BC990A0572dF4FAbA7FB9F4E210b,
-        0xdE3ad03873Db3eEC89cdEAB5b9D72317c6a4F410,
-        0x82c0BD9c20379ae7d08Bd74BD7Afb2a18c6dBd43,
-        0x6E5019C712827b5e7D30e1AdA52B871582ca4349,
-        0x567Ed3AA2886a8859A62C88b3F9b35d2c9991cf6,
-        0xbd6158Bc84546E235dc8CB62fD6a98De2f7B17bF,
-        0x55db83794dc824145b196da043B3e74979Fb4F11,
-        0xdaa1AfB876F226fd95e54a75C1218459E13A951A,
-        0x83ea7E989E46cBbc08e05745297aBFFb18Df2820,
-        0x87B3C9726f150f0B8f3b9fEEc5ACbE28eb5160bB,
-        0xDec0de987DB64aDbE297daC3762178A1b103014E,
-        0xA9FbD3dea591433624F29D01FE47Ad1E6F25ad48,
-        0x4d0072045BFaE4A76Fe16F4e1F3c6ca6Ac8709Ab
-    ];
+function getHolders(Vm vm) view returns (address[] memory) {
+    // Reads holders from data/holders.json using stdJson
+    string memory path = "script/ghost/data/holders.json";
+    string memory json = vm.readFile(path);
+    address[] memory holders = abi.decode(vm.parseJson(json), (address[]));
+    return holders;
 }
 
 struct ApprovalData {
@@ -70,7 +52,8 @@ struct OldStateBackup {
     IOracleConnector oracleConnector;
     uint256 lastSeenTokenPrice;
     uint256 maxTotalAssetsInUnderlying;
-    uint256[21] balances;
+    address[] holders;
+    uint256[] balances;
 }
 
 struct NewFields {
@@ -134,7 +117,10 @@ abstract contract OldState {
 error Mismatch(uint256, uint256);
 
 contract OldStateCleaner is OldState {
-    function cleanAndBackup(ApprovalData[] memory allowances) public returns (OldStateBackup memory) {
+    function cleanAndBackup(ApprovalData[] memory allowances, address[] memory holders)
+        public
+        returns (OldStateBackup memory)
+    {
         OldStateBackup memory backup;
         backup.feeCollector = feeCollector;
         delete feeCollector;
@@ -171,11 +157,12 @@ contract OldStateCleaner is OldState {
         delete maxGrowthFee;
         backup.maxTotalAssetsInUnderlying = maxTotalAssetsInUnderlying;
         delete maxTotalAssetsInUnderlying;
-        address[21] memory holders = getHolders();
+        backup.balances = new uint256[](holders.length);
+        backup.holders = holders;
         uint256 holdersBalance;
-        for (uint256 i = 0; i < 21; i++) {
+        for (uint256 i = 0; i < holders.length; i++) {
             backup.balances[i] = balanceOf[holders[i]];
-            delete balanceOf[holders[i]];
+            delete balanceOf[holders[i]]; // TODO: check if this is correct
             holdersBalance += backup.balances[i];
         }
         for (uint256 i = 0; i < allowances.length; i++) {
@@ -204,10 +191,9 @@ contract NewStateRemapper is LTVState {
         oracleConnector = oldState.oracleConnector;
         lastSeenTokenPrice = oldState.lastSeenTokenPrice;
         maxTotalAssetsInUnderlying = oldState.maxTotalAssetsInUnderlying;
-        address[21] memory holders = getHolders();
         uint256 holdersBalance;
-        for (uint256 i = 0; i < 21; i++) {
-            balanceOf[holders[i]] = oldState.balances[i];
+        for (uint256 i = 0; i < oldState.holders.length; i++) {
+            balanceOf[oldState.holders[i]] = oldState.balances[i];
             holdersBalance += oldState.balances[i];
         }
         require(baseTotalSupply == holdersBalance, Mismatch(baseTotalSupply, holdersBalance));
@@ -253,12 +239,13 @@ contract Upgrader is Ownable {
         address _proxyAdmin,
         address newImplementation,
         address newProxyAdminOwner,
-        NewFields calldata newFields
+        NewFields calldata newFields,
+        address[] calldata holders
     ) public {
         ProxyAdmin proxyAdmin = ProxyAdmin(_proxyAdmin);
         OldStateCleaner oldStateCleaner = new OldStateCleaner();
         proxyAdmin.upgradeAndCall(ITransparentUpgradeableProxy(proxy), address(oldStateCleaner), "");
-        OldStateBackup memory oldState = OldStateCleaner(proxy).cleanAndBackup(newFields.allowances);
+        OldStateBackup memory oldState = OldStateCleaner(proxy).cleanAndBackup(newFields.allowances, holders);
         NewStateRemapper newStateRemapper = new NewStateRemapper();
         proxyAdmin.upgradeAndCall(ITransparentUpgradeableProxy(proxy), address(newStateRemapper), "");
         NewStateRemapper(proxy).remapState(oldState, newFields);
@@ -281,6 +268,7 @@ struct JsonStruct {
 
 contract DeployGhostUpgrade is Script, StdCheats, StdAssertions {
     using stdJson for string;
+
     function getApprovalLogs() internal view returns (ApprovalData[] memory) {
         string memory json = vm.readFile("script/ghost/data/allowance_logs.json");
         // Count number of entries
@@ -328,18 +316,15 @@ contract DeployGhostUpgrade is Script, StdCheats, StdAssertions {
             boolSlot: 0,
             allowances: allowances
         });
+        address[] memory holders = getHolders(vm);
         // vm.startBroadcast();
         vm.startPrank(msg.sender);
         Upgrader upgrader = new Upgrader{salt: bytes32(0)}(msg.sender);
 
         vm.store(proxyAdmin, 0, bytes32(uint256(uint160(msg.sender))));
 
-        console.log("proxyAdmin", proxyAdmin);
-        console.log("proxyAdmin admin", address(uint160(uint256(vm.load(proxyAdmin, 0)))));
-        console.log("msg.sender", msg.sender);
-
         ProxyAdmin(proxyAdmin).transferOwnership(address(upgrader));
-        upgrader.upgrade(proxy, proxyAdmin, ltv, msg.sender, newFields);
+        upgrader.upgrade(proxy, proxyAdmin, ltv, msg.sender, newFields, holders);
         // vm.stopBroadcast();
         vm.stopPrank();
 
