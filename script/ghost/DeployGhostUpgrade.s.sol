@@ -75,6 +75,8 @@ struct NewFields {
     uint16 targetLtvDividend;
     uint16 targetLtvDivider;
     uint8 boolSlot;
+    uint256 collateralSlippage;
+    uint256 borrowSlippage;
     ApprovalData[] allowances;
 }
 
@@ -203,7 +205,8 @@ contract NewStateRemapper is LTVState {
         slippageProvider = ISlippageProvider(newFields.slippageProvider);
         (success,) = address(slippageProvider).delegatecall(
             abi.encodeCall(
-                ISlippageProvider.initializeSlippageProviderData, (abi.encode(uint256(10 ** 16), uint256(10 ** 16)))
+                ISlippageProvider.initializeSlippageProviderData,
+                (abi.encode(newFields.collateralSlippage, newFields.borrowSlippage))
             )
         );
         require(success);
@@ -324,6 +327,8 @@ contract DeployGhostUpgrade is Script, StdCheats, StdAssertions {
             targetLtvDividend: 75,
             targetLtvDivider: 100,
             boolSlot: 0,
+            collateralSlippage: vm.envUint("COLLATERAL_SLIPPAGE"),
+            borrowSlippage: vm.envUint("BORROW_SLIPPAGE"),
             allowances: allowances
         });
         address[] memory holders = getHolders(vm);
