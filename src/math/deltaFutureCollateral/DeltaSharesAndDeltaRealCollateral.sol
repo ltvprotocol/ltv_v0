@@ -4,11 +4,11 @@ pragma solidity ^0.8.28;
 import {IVaultErrors} from "src/errors/IVaultErrors.sol";
 import {Constants} from "src/Constants.sol";
 import {Cases} from "src/structs/data/vault/Cases.sol";
-import {
-    DeltaSharesAndDeltaRealCollateralData,
-    DividendData,
-    DividerData
-} from "src/structs/data/vault/DeltaSharesAndDeltaRealCollateralData.sol";
+import {DeltaSharesAndDeltaRealCollateralData} from "src/structs/data/vault/DeltaSharesAndDeltaRealCollateralData.sol";
+import {DeltaSharesAndDeltaRealCollateralDividendData} from
+    "src/structs/data/vault/DeltaSharesAndDeltaRealCollateralDividendData.sol";
+import {DeltaSharesAndDeltaRealCollateralDividerData} from
+    "src/structs/data/vault/DeltaSharesAndDeltaRealCollateralDividerData.sol";
 import {CasesOperator} from "src/math/CasesOperator.sol";
 import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
 
@@ -19,7 +19,11 @@ library DeltaSharesAndDeltaRealCollateral {
     using uMulDiv for uint256;
     using sMulDiv for int256;
 
-    function calculateDividentByDeltaSharesAndRealCollateral(DividendData memory data) private pure returns (int256) {
+    function calculateDividentByDeltaSharesAndRealCollateral(DeltaSharesAndDeltaRealCollateralDividendData memory data)
+        private
+        pure
+        returns (int256)
+    {
         // borrow
         // (1 - targetLtv) x deltaRealCollateral
         // (1 - targetLtv) x ceccb x -userFutureRewardCollateral
@@ -57,11 +61,9 @@ library DeltaSharesAndDeltaRealCollateral {
     }
 
     // divider is always negative
-    function calculateDividerByDeltaSharesAndDeltaRealCollateral(DividerData memory data)
-        private
-        pure
-        returns (int256)
-    {
+    function calculateDividerByDeltaSharesAndDeltaRealCollateral(
+        DeltaSharesAndDeltaRealCollateralDividerData memory data
+    ) private pure returns (int256) {
         // (1 - targetLtv) x -1
         // (1 - targetLtv) x cecb x (userFutureRewardCollateral / futureCollateral) x -1
         // (1 - targetLtv) x cmbc x collateralSlippage
@@ -142,7 +144,7 @@ library DeltaSharesAndDeltaRealCollateral {
 
         while (true) {
             int256 dividend = calculateDividentByDeltaSharesAndRealCollateral(
-                DividendData({
+                DeltaSharesAndDeltaRealCollateralDividendData({
                     cases: data.cases,
                     borrow: data.borrow,
                     deltaRealCollateral: data.deltaRealCollateral,
@@ -159,7 +161,7 @@ library DeltaSharesAndDeltaRealCollateral {
             );
 
             int256 divider = calculateDividerByDeltaSharesAndDeltaRealCollateral(
-                DividerData({
+                DeltaSharesAndDeltaRealCollateralDividerData({
                     cases: data.cases,
                     targetLtvDividend: data.targetLtvDividend,
                     targetLtvDivider: data.targetLtvDivider,

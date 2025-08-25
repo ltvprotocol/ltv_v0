@@ -17,29 +17,3 @@ struct DeltaSharesAndDeltaRealBorrowData {
     uint256 borrowSlippage;
     Cases cases;
 }
-
-struct DividendData {
-    int256 borrow;
-    int256 collateral;
-    int256 protocolFutureRewardBorrow;
-    int256 protocolFutureRewardCollateral;
-    int256 userFutureRewardBorrow;
-    int256 futureBorrow;
-    uint256 borrowSlippage;
-    int256 deltaRealBorrow;
-    int256 deltaShares;
-    uint16 targetLtvDividend;
-    uint16 targetLtvDivider;
-    Cases cases;
-}
-
-struct DividerData {
-    uint16 targetLtvDividend;
-    uint16 targetLtvDivider;
-    int256 userFutureRewardBorrow;
-    int256 futureBorrow;
-    uint256 borrowSlippage;
-    int256 protocolFutureRewardBorrow;
-    int256 protocolFutureRewardCollateral;
-    Cases cases;
-}
