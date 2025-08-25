@@ -9,4 +9,8 @@ contract LowLevelRebalanceModule is
     ExecuteLowLevelRebalanceCollateral,
     ExecuteLowLevelRebalanceBorrow,
     ExecuteLowLevelRebalanceShares
-{}
+{
+    constructor() {
+        _disableInitializers();
+    }
+}

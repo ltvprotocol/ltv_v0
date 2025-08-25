@@ -15,4 +15,8 @@ contract CollateralVaultModule is
     WithdrawCollateral,
     ConvertToAssetsCollateral,
     ConvertToSharesCollateral
-{}
+{
+    constructor() {
+        _disableInitializers();
+    }
+}
