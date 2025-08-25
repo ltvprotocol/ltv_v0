@@ -4,11 +4,11 @@ pragma solidity ^0.8.28;
 import {IVaultErrors} from "src/errors/IVaultErrors.sol";
 import {Constants} from "src/Constants.sol";
 import {Cases} from "src/structs/data/vault/Cases.sol";
-import {
-    DeltaSharesAndDeltaRealBorrowData,
-    DividendData,
-    DividerData
-} from "src/structs/data/vault/DeltaSharesAndDeltaRealBorrowData.sol";
+import {DeltaSharesAndDeltaRealBorrowData} from "src/structs/data/vault/DeltaSharesAndDeltaRealBorrowData.sol";
+import {DeltaSharesAndDeltaRealBorrowDividendData} from
+    "src/structs/data/vault/DeltaSharesAndDeltaRealBorrowDividendData.sol";
+import {DeltaSharesAndDeltaRealBorrowDividerData} from
+    "src/structs/data/vault/DeltaSharesAndDeltaRealBorrowDividerData.sol";
 import {CasesOperator} from "src/math/CasesOperator.sol";
 import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
 
@@ -16,7 +16,11 @@ library DeltaSharesAndDeltaRealBorrow {
     using uMulDiv for uint256;
     using sMulDiv for int256;
 
-    function calculateDividentByDeltaSharesAndDeltaRealBorrow(DividendData memory data) private pure returns (int256) {
+    function calculateDividentByDeltaSharesAndDeltaRealBorrow(DeltaSharesAndDeltaRealBorrowDividendData memory data)
+        private
+        pure
+        returns (int256)
+    {
         // borrow
         // (1 - targetLtv) x deltaRealBorrow
         // (1 - targetLtv) x cecbc x -userFutureRewardBorrow
@@ -52,7 +56,11 @@ library DeltaSharesAndDeltaRealBorrow {
     }
 
     // divider always < 0
-    function calculateDividerByDeltaSharesAndDeltaRealBorrow(DividerData memory data) private pure returns (int256) {
+    function calculateDividerByDeltaSharesAndDeltaRealBorrow(DeltaSharesAndDeltaRealBorrowDividerData memory data)
+        private
+        pure
+        returns (int256)
+    {
         // (1 - targetLtv) x -1
         // (1 - targetLtv) x cebc x -(userFutureRewardBorrow / futureBorrow)
         // (1 - targetLtv) x cmcb x borrowSlippage
@@ -130,7 +138,7 @@ library DeltaSharesAndDeltaRealBorrow {
 
         while (true) {
             int256 dividend = calculateDividentByDeltaSharesAndDeltaRealBorrow(
-                DividendData({
+                DeltaSharesAndDeltaRealBorrowDividendData({
                     borrow: data.borrow,
                     collateral: data.collateral,
                     protocolFutureRewardBorrow: data.protocolFutureRewardBorrow,
@@ -151,7 +159,7 @@ library DeltaSharesAndDeltaRealBorrow {
             }
 
             int256 divider = calculateDividerByDeltaSharesAndDeltaRealBorrow(
-                DividerData({
+                DeltaSharesAndDeltaRealBorrowDividerData({
                     targetLtvDividend: data.targetLtvDividend,
                     targetLtvDivider: data.targetLtvDivider,
                     userFutureRewardBorrow: data.userFutureRewardBorrow,

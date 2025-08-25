@@ -4,11 +4,12 @@ pragma solidity ^0.8.28;
 import {Constants} from "src/Constants.sol";
 import {IVaultErrors} from "src/errors/IVaultErrors.sol";
 import {Cases} from "src/structs/data/vault/Cases.sol";
-import {
-    DeltaRealBorrowAndDeltaRealCollateralData,
-    DividendData,
-    DividerData
-} from "src/structs/data/vault/DeltaRealBorrowAndDeltaRealCollateralData.sol";
+import {DeltaRealBorrowAndDeltaRealCollateralData} from
+    "src/structs/data/vault/DeltaRealBorrowAndDeltaRealCollateralData.sol";
+import {DeltaRealBorrowAndDeltaRealCollateralDividendData} from
+    "src/structs/data/vault/DeltaRealBorrowAndDeltaRealCollateralDividendData.sol";
+import {DeltaRealBorrowAndDeltaRealCollateralDividerData} from
+    "src/structs/data/vault/DeltaRealBorrowAndDeltaRealCollateralDividerData.sol";
 import {CasesOperator} from "src/math/CasesOperator.sol";
 import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
 
@@ -17,7 +18,9 @@ library DeltaRealBorrowAndDeltaRealCollateral {
     using sMulDiv for int256;
 
     // needs to be rounded down in any case
-    function calculateDividendByDeltaRealBorrowAndDeltaRealCollateral(DividendData memory data)
+    function calculateDividendByDeltaRealBorrowAndDeltaRealCollateral(
+        DeltaRealBorrowAndDeltaRealCollateralDividendData memory data
+    )
         private
         pure
         returns (
@@ -69,11 +72,9 @@ library DeltaRealBorrowAndDeltaRealCollateral {
     }
 
     // divider always positive
-    function calculateDividerByDeltaRealBorrowAndDeltaRealCollateral(DividerData memory data)
-        private
-        pure
-        returns (int256)
-    {
+    function calculateDividerByDeltaRealBorrowAndDeltaRealCollateral(
+        DeltaRealBorrowAndDeltaRealCollateralDividerData memory data
+    ) private pure returns (int256) {
         // divider
         //
         // (cna + cmcb + cmbc + ceccb + cecbc) x 1
@@ -207,7 +208,7 @@ library DeltaRealBorrowAndDeltaRealCollateral {
         int256 deltaFutureCollateral = 0;
         while (true) {
             int256 dividend = calculateDividendByDeltaRealBorrowAndDeltaRealCollateral(
-                DividendData({
+                DeltaRealBorrowAndDeltaRealCollateralDividendData({
                     cases: data.cases,
                     borrow: data.borrow,
                     deltaRealBorrow: data.deltaRealBorrow,
@@ -231,7 +232,7 @@ library DeltaRealBorrowAndDeltaRealCollateral {
             }
 
             int256 divider = calculateDividerByDeltaRealBorrowAndDeltaRealCollateral(
-                DividerData({
+                DeltaRealBorrowAndDeltaRealCollateralDividerData({
                     cases: data.cases,
                     futureCollateral: data.futureCollateral,
                     futureBorrow: data.futureBorrow,
