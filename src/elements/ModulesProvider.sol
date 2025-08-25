@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
 import {IModules} from "src/interfaces/IModules.sol";
 import {IAuctionModule} from "src/interfaces/reads/IAuctionModule.sol";
 import {IERC20Module} from "src/interfaces/reads/IERC20Module.sol";
@@ -12,7 +11,7 @@ import {IAdministrationModule} from "src/interfaces/reads/IAdministrationModule.
 import {IInitializeModule} from "src/interfaces/reads/IInitializeModule.sol";
 import {ModulesState} from "src/structs/state/ModulesState.sol";
 
-contract ModulesProvider is IModules, Ownable {
+contract ModulesProvider is IModules {
     // Module slot constants
     bytes32 public constant BORROW_VAULT_MODULE_SLOT = keccak256("BORROW_VAULT_MODULE");
     bytes32 public constant COLLATERAL_VAULT_MODULE_SLOT = keccak256("COLLATERAL_VAULT_MODULE");
@@ -22,7 +21,7 @@ contract ModulesProvider is IModules, Ownable {
     bytes32 public constant ADMINISTRATION_MODULE_SLOT = keccak256("ADMINISTRATION_MODULE");
     bytes32 public constant INITIALIZE_MODULE_SLOT = keccak256("INITIALIZE_MODULE");
 
-    constructor(ModulesState memory state) Ownable(msg.sender) {
+    constructor(ModulesState memory state) {
         _setModule(BORROW_VAULT_MODULE_SLOT, address(state.borrowVaultModule));
         _setModule(COLLATERAL_VAULT_MODULE_SLOT, address(state.collateralVaultModule));
         _setModule(LOW_LEVEL_REBALANCE_MODULE_SLOT, address(state.lowLevelRebalanceModule));
@@ -34,10 +33,6 @@ contract ModulesProvider is IModules, Ownable {
 
     // Storage for modules
     mapping(bytes32 => address) private _modules;
-
-    function setModule(bytes32 slot, address module) external onlyOwner {
-        _setModule(slot, module);
-    }
 
     function _setModule(bytes32 slot, address module) internal {
         _modules[slot] = module;
