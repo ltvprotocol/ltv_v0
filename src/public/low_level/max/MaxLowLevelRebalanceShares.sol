@@ -18,7 +18,7 @@ abstract contract MaxLowLevelRebalanceShares is MaxGrowthFee {
         return _maxLowLevelRebalanceShares(maxLowLevelRebalanceSharesStateToData(state));
     }
 
-    function _maxLowLevelRebalanceShares(MaxLowLevelRebalanceSharesData memory data) public pure returns (int256) {
+    function _maxLowLevelRebalanceShares(MaxLowLevelRebalanceSharesData memory data) internal pure returns (int256) {
         int256 maxDeltaSharesInUnderlying =
             int256(data.maxTotalAssetsInUnderlying + data.depositRealBorrow) - int256(data.depositRealCollateral);
 
@@ -28,7 +28,7 @@ abstract contract MaxLowLevelRebalanceShares is MaxGrowthFee {
     }
 
     function maxLowLevelRebalanceSharesStateToData(MaxLowLevelRebalanceSharesState memory state)
-        public
+        internal
         pure
         returns (MaxLowLevelRebalanceSharesData memory data)
     {

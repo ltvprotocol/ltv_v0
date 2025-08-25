@@ -19,7 +19,7 @@ abstract contract MaxLowLevelRebalanceCollateral is MaxGrowthFee {
     }
 
     function _maxLowLevelRebalanceCollateral(MaxLowLevelRebalanceCollateralStateData memory data)
-        public
+        internal
         pure
         returns (int256)
     {
