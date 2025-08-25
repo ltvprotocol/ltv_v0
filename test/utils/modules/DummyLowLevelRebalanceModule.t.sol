@@ -10,7 +10,7 @@ import {DummyTotalSupplyModule} from "test/utils/modules/DummyTotalSupplyModule.
 
 contract DummyLowLevelRebalanceModule is LowLevelRebalanceModule, DummyTotalAssetsModule, DummyTotalSupplyModule {
     function _totalAssets(bool isDeposit, TotalAssetsData memory data)
-        public
+        internal
         pure
         override(TotalAssets, DummyTotalAssetsModule)
         returns (uint256)

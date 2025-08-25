@@ -30,19 +30,19 @@ abstract contract AdministrationPublic is
     using sMulDiv for int256;
     using SafeERC20 for IERC20;
 
-    function setTargetLtv(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor {
+    function setTargetLtv(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor nonReentrant {
         _setTargetLtv(dividend, divider);
     }
 
-    function setMaxSafeLtv(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor {
+    function setMaxSafeLtv(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor nonReentrant {
         _setMaxSafeLtv(dividend, divider);
     }
 
-    function setMinProfitLtv(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor {
+    function setMinProfitLtv(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor nonReentrant {
         _setMinProfitLtv(dividend, divider);
     }
 
-    function setFeeCollector(address _feeCollector) external isFunctionAllowed onlyGovernor {
+    function setFeeCollector(address _feeCollector) external isFunctionAllowed onlyGovernor nonReentrant {
         _setFeeCollector(_feeCollector);
     }
 
@@ -50,19 +50,25 @@ abstract contract AdministrationPublic is
         external
         isFunctionAllowed
         onlyGovernor
+        nonReentrant
     {
         _setMaxTotalAssetsInUnderlying(_maxTotalAssetsInUnderlying);
     }
 
-    function setMaxDeleverageFee(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor {
+    function setMaxDeleverageFee(uint16 dividend, uint16 divider)
+        external
+        isFunctionAllowed
+        onlyGovernor
+        nonReentrant
+    {
         _setMaxDeleverageFee(dividend, divider);
     }
 
-    function setIsWhitelistActivated(bool activate) external isFunctionAllowed onlyGovernor {
+    function setIsWhitelistActivated(bool activate) external isFunctionAllowed onlyGovernor nonReentrant {
         _setIsWhitelistActivated(activate);
     }
 
-    function setWhitelistRegistry(IWhitelistRegistry value) external isFunctionAllowed onlyGovernor {
+    function setWhitelistRegistry(IWhitelistRegistry value) external isFunctionAllowed onlyGovernor nonReentrant {
         _setWhitelistRegistry(value);
     }
 
@@ -70,29 +76,31 @@ abstract contract AdministrationPublic is
         external
         isFunctionAllowed
         onlyGovernor
+        nonReentrant
     {
         _setSlippageProvider(_slippageProvider, slippageProviderData);
     }
 
-    function allowDisableFunctions(bytes4[] memory signatures, bool isDisabled) external onlyGuardian {
+    function allowDisableFunctions(bytes4[] memory signatures, bool isDisabled) external onlyGuardian nonReentrant {
         _allowDisableFunctions(signatures, isDisabled);
     }
 
-    function setMaxGrowthFee(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor {
+    function setMaxGrowthFee(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor nonReentrant {
         _setMaxGrowthFee(dividend, divider);
     }
 
-    function setIsDepositDisabled(bool value) external onlyGuardian {
+    function setIsDepositDisabled(bool value) external onlyGuardian nonReentrant {
         _setIsDepositDisabled(value);
     }
 
-    function setIsWithdrawDisabled(bool value) external onlyGuardian {
+    function setIsWithdrawDisabled(bool value) external onlyGuardian nonReentrant {
         _setIsWithdrawDisabled(value);
     }
 
     function setLendingConnector(ILendingConnector _lendingConnector, bytes memory lendingConnectorData)
         external
         onlyOwner
+        nonReentrant
     {
         _setLendingConnector(_lendingConnector, lendingConnectorData);
     }
@@ -100,6 +108,7 @@ abstract contract AdministrationPublic is
     function setOracleConnector(IOracleConnector _oracleConnector, bytes memory oracleConnectorData)
         external
         onlyOwner
+        nonReentrant
     {
         _setOracleConnector(_oracleConnector, oracleConnectorData);
     }
@@ -107,7 +116,7 @@ abstract contract AdministrationPublic is
     function setVaultBalanceAsLendingConnector(
         ILendingConnector _vaultBalanceAsLendingConnector,
         bytes memory vaultBalanceAsLendingConnectorGetterData
-    ) external onlyOwner {
+    ) external onlyOwner nonReentrant {
         _setVaultBalanceAsLendingConnector(_vaultBalanceAsLendingConnector, vaultBalanceAsLendingConnectorGetterData);
     }
 
@@ -171,15 +180,15 @@ abstract contract AdministrationPublic is
         lendingConnectorGetterData = "";
     }
 
-    function updateEmergencyDeleverager(address newEmergencyDeleverager) external onlyOwner {
+    function updateEmergencyDeleverager(address newEmergencyDeleverager) external onlyOwner nonReentrant {
         _updateEmergencyDeleverager(newEmergencyDeleverager);
     }
 
-    function updateGovernor(address newGovernor) external onlyOwner {
+    function updateGovernor(address newGovernor) external onlyOwner nonReentrant {
         _updateGovernor(newGovernor);
     }
 
-    function updateGuardian(address newGuardian) external onlyOwner {
+    function updateGuardian(address newGuardian) external onlyOwner nonReentrant {
         _updateGuardian(newGuardian);
     }
 }

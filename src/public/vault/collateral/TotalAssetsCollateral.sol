@@ -26,7 +26,7 @@ abstract contract TotalAssetsCollateral is TotalAssets {
     }
 
     function _totalAssetsCollateral(bool isDeposit, TotalAssetsCollateralData memory data)
-        public
+        internal
         pure
         returns (uint256)
     {
