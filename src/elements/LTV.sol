@@ -27,4 +27,8 @@ contract LTV is
     CollateralVaultWrite,
     AdministrationWrite,
     InitializeWrite
-{}
+{
+    constructor() {
+        _disableInitializers();
+    }
+}
