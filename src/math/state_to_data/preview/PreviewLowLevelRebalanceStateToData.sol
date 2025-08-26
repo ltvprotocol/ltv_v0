@@ -14,7 +14,7 @@ abstract contract PreviewLowLevelRebalanceStateToData is MaxGrowthFee {
     using uMulDiv for uint256;
 
     function previewLowLevelRebalanceStateToData(PreviewLowLevelRebalanceState memory state, bool isDeposit)
-        public
+        internal
         pure
         returns (LowLevelRebalanceData memory data)
     {

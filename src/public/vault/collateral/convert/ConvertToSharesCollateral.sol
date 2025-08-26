@@ -18,7 +18,7 @@ abstract contract ConvertToSharesCollateral is VaultCollateral {
     }
 
     function _convertToSharesCollateral(uint256 assets, ConvertCollateralData memory data)
-        public
+        internal
         pure
         returns (uint256)
     {

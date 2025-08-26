@@ -32,9 +32,13 @@ interface ILTV is
 
     function approve(address spender, uint256 amount) external returns (bool);
 
+    function auctionDuration() external view returns (uint24);
+
     function balanceOf(address) external view returns (uint256);
 
     function baseTotalSupply() external view returns (uint256);
+
+    function boolSlot() external view returns (uint256);
 
     function borrowToken() external view returns (address);
 
@@ -44,13 +48,7 @@ interface ILTV is
 
     function convertToShares(uint256 assets) external view returns (uint256);
 
-    function getLendingConnector() external view returns (address);
-
     function decimals() external view returns (uint8);
-
-    function maxGrowthFeeDividend() external view returns (uint16);
-
-    function maxGrowthFeeDivider() external view returns (uint16);
 
     function deleverageAndWithdraw(uint256 closeAmountBorrow, uint16 deleverageFeeDividend, uint16 deleverageFeeDivider)
         external;
@@ -58,6 +56,8 @@ interface ILTV is
     function deposit(uint256 assets, address receiver) external returns (uint256);
 
     function depositCollateral(uint256 collateralAssets, address receiver) external returns (uint256);
+
+    function emergencyDeleverager() external view returns (address);
 
     function executeAuctionBorrow(int256 deltaUserBorrowAssets) external returns (int256);
 
@@ -87,17 +87,31 @@ interface ILTV is
 
     function futureRewardCollateralAssets() external view returns (int256);
 
+    function getLendingConnector() external view returns (address);
+
     function getRealBorrowAssets(bool isDeposit) external view returns (uint256);
 
     function getRealCollateralAssets(bool isDeposit) external view returns (uint256);
+
+    function governor() external view returns (address);
+
+    function guardian() external view returns (address);
 
     function initialize(StateInitData memory stateInitData, IModules modules) external;
 
     function isDepositDisabled() external view returns (bool);
 
+    function isVaultDeleveraged() external view returns (bool);
+
     function isWhitelistActivated() external view returns (bool);
 
     function isWithdrawDisabled() external view returns (bool);
+
+    function lastSeenTokenPrice() external view returns (uint256);
+
+    function lendingConnector() external view returns (address);
+
+    function lendingConnectorGetterData() external view returns (bytes memory);
 
     function maxDeleverageFeeDividend() external view returns (uint16);
 
@@ -106,6 +120,10 @@ interface ILTV is
     function maxDeposit(address) external view returns (uint256);
 
     function maxDepositCollateral(address) external view returns (uint256);
+
+    function maxGrowthFeeDividend() external view returns (uint16);
+
+    function maxGrowthFeeDivider() external view returns (uint16);
 
     function maxLowLevelRebalanceBorrow() external view returns (int256);
 
@@ -139,9 +157,13 @@ interface ILTV is
 
     function mintCollateral(uint256 shares, address receiver) external returns (uint256 collateralAssets);
 
+    function modules() external view returns (IModules);
+
     function name() external view returns (string memory);
 
     function oracleConnector() external view returns (address);
+
+    function oracleConnectorGetterData() external view returns (bytes memory);
 
     function owner() external view returns (address);
 
@@ -199,11 +221,6 @@ interface ILTV is
 
     function setLendingConnector(address _lendingConnector, bytes memory lendingConnectorData) external;
 
-    function setVaultBalanceAsLendingConnector(
-        address _vaultBalanceAsLendingConnector,
-        bytes memory vaultBalanceAsLendingConnectorGetterData
-    ) external;
-
     function setMaxDeleverageFee(uint16 dividend, uint16 divider) external;
 
     function setMaxGrowthFee(uint16 dividend, uint16 divider) external;
@@ -214,21 +231,26 @@ interface ILTV is
 
     function setMinProfitLtv(uint16 dividend, uint16 divider) external;
 
+    function setModules(IModules _modules) external;
+
     function setOracleConnector(address _oracleConnector, bytes memory oracleConnectorData) external;
 
     function setSlippageProvider(address _slippageProvider, bytes memory slippageProviderData) external;
 
     function setTargetLtv(uint16 dividend, uint16 divider) external;
 
-    function setWhitelistRegistry(address value) external;
+    function setVaultBalanceAsLendingConnector(
+        address _vaultBalanceAsLendingConnector,
+        bytes memory vaultBalanceAsLendingConnectorGetterData
+    ) external;
 
-    function setModules(IModules _modules) external;
+    function setWhitelistRegistry(address value) external;
 
     function slippageProvider() external view returns (address);
 
-    function startAuction() external view returns (uint56);
+    function slippageProviderGetterData() external view returns (bytes memory);
 
-    function auctionDuration() external view returns (uint24);
+    function startAuction() external view returns (uint56);
 
     function symbol() external view returns (string memory);
 
@@ -250,37 +272,23 @@ interface ILTV is
 
     function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
 
+    function transferOwnership(address newOwner) external;
+
+    function updateEmergencyDeleverager(address newEmergencyDeleverager) external;
+
+    function updateGovernor(address newGovernor) external;
+
+    function updateGuardian(address newGuardian) external;
+
     function vaultBalanceAsLendingConnector() external view returns (address);
+
+    function vaultBalanceAsLendingConnectorGetterData() external view returns (bytes memory);
 
     function whitelistRegistry() external view returns (address);
 
     function withdraw(uint256 assets, address receiver, address owner) external returns (uint256);
 
     function withdrawCollateral(uint256 collateralAssets, address receiver, address owner) external returns (uint256);
-
-    function governor() external view returns (address);
-
-    function guardian() external view returns (address);
-
-    function emergencyDeleverager() external view returns (address);
-
-    function transferOwnership(address newOwner) external;
-
-    function updateGuardian(address newGuardian) external;
-
-    function updateGovernor(address newGovernor) external;
-
-    function updateEmergencyDeleverager(address newEmergencyDeleverager) external;
-
-    function lendingConnector() external view returns (address);
-
-    function lastSeenTokenPrice() external view returns (uint256);
-
-    function lendingConnectorGetterData() external view returns (bytes memory);
-
-    function oracleConnectorGetterData() external view returns (bytes memory);
-
-    function slippageProviderGetterData() external view returns (bytes memory);
 
     event Initialized(uint64 version);
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
