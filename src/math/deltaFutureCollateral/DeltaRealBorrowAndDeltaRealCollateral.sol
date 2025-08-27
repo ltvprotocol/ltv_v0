@@ -171,11 +171,9 @@ library DeltaRealBorrowAndDeltaRealCollateral {
         return divider;
     }
 
-    function calculateSingleCase(DeltaRealBorrowAndDeltaRealCollateralData memory data)
-        internal
-        pure
-        returns (int256)
-    {
+    function calculateSingleCaseDeltaRealBorrowAndDeltaRealCollateral(
+        DeltaRealBorrowAndDeltaRealCollateralData memory data
+    ) internal pure returns (int256) {
         int256 deltaFutureCollateral;
 
         int256 dividend = calculateDividendByDeltaRealBorrowAndDeltaRealCollateral(
@@ -238,91 +236,75 @@ library DeltaRealBorrowAndDeltaRealCollateral {
 
     // HERE 7 FUNC
 
-    function calculateCaseCmcb(DeltaRealBorrowAndDeltaRealCollateralData memory data)
-        internal
-        pure
-        returns (int256, Cases memory)
-    {
+    function calculateCaseCmcbDeltaRealBorrowAndDeltaRealCollateral(
+        DeltaRealBorrowAndDeltaRealCollateralData memory data
+    ) internal pure returns (int256, Cases memory) {
         data.cases = CasesOperator.generateCase(0); // cmcb case
-        int256 deltaFutureCollateral = calculateSingleCase(data);
+        int256 deltaFutureCollateral = calculateSingleCaseDeltaRealBorrowAndDeltaRealCollateral(data);
         return (deltaFutureCollateral, data.cases);
     }
 
-    function calculateCaseCmbc(DeltaRealBorrowAndDeltaRealCollateralData memory data)
-        internal
-        pure
-        returns (int256, Cases memory)
-    {
+    function calculateCaseCmbcDeltaRealBorrowAndDeltaRealCollateral(
+        DeltaRealBorrowAndDeltaRealCollateralData memory data
+    ) internal pure returns (int256, Cases memory) {
         data.cases = CasesOperator.generateCase(1); // cmbc case
-        int256 deltaFutureCollateral = calculateSingleCase(data);
+        int256 deltaFutureCollateral = calculateSingleCaseDeltaRealBorrowAndDeltaRealCollateral(data);
         return (deltaFutureCollateral, data.cases);
     }
 
-    function calculateCaseCecb(DeltaRealBorrowAndDeltaRealCollateralData memory data)
-        internal
-        pure
-        returns (int256, Cases memory)
-    {
+    function calculateCaseCecbDeltaRealBorrowAndDeltaRealCollateral(
+        DeltaRealBorrowAndDeltaRealCollateralData memory data
+    ) internal pure returns (int256, Cases memory) {
         data.cases = CasesOperator.generateCase(2); // cecb case
-        int256 deltaFutureCollateral = calculateSingleCase(data);
+        int256 deltaFutureCollateral = calculateSingleCaseDeltaRealBorrowAndDeltaRealCollateral(data);
         return (deltaFutureCollateral, data.cases);
     }
 
-    function calculateCaseCebc(DeltaRealBorrowAndDeltaRealCollateralData memory data)
-        internal
-        pure
-        returns (int256, Cases memory)
-    {
+    function calculateCaseCebcDeltaRealBorrowAndDeltaRealCollateral(
+        DeltaRealBorrowAndDeltaRealCollateralData memory data
+    ) internal pure returns (int256, Cases memory) {
         data.cases = CasesOperator.generateCase(3); // cebc case
-        int256 deltaFutureCollateral = calculateSingleCase(data);
+        int256 deltaFutureCollateral = calculateSingleCaseDeltaRealBorrowAndDeltaRealCollateral(data);
         return (deltaFutureCollateral, data.cases);
     }
 
-    function calculateCaseCeccb(DeltaRealBorrowAndDeltaRealCollateralData memory data)
-        internal
-        pure
-        returns (int256, Cases memory)
-    {
+    function calculateCaseCeccbDeltaRealBorrowAndDeltaRealCollateral(
+        DeltaRealBorrowAndDeltaRealCollateralData memory data
+    ) internal pure returns (int256, Cases memory) {
         data.cases = CasesOperator.generateCase(4); // ceccb case
-        int256 deltaFutureCollateral = calculateSingleCase(data);
+        int256 deltaFutureCollateral = calculateSingleCaseDeltaRealBorrowAndDeltaRealCollateral(data);
         return (deltaFutureCollateral, data.cases);
     }
 
-    function calculateCaseCecbc(DeltaRealBorrowAndDeltaRealCollateralData memory data)
-        internal
-        pure
-        returns (int256, Cases memory)
-    {
+    function calculateCaseCecbcDeltaRealBorrowAndDeltaRealCollateral(
+        DeltaRealBorrowAndDeltaRealCollateralData memory data
+    ) internal pure returns (int256, Cases memory) {
         data.cases = CasesOperator.generateCase(5); // cecbc case
-        int256 deltaFutureCollateral = calculateSingleCase(data);
+        int256 deltaFutureCollateral = calculateSingleCaseDeltaRealBorrowAndDeltaRealCollateral(data);
         return (deltaFutureCollateral, data.cases);
     }
 
-    function calculateCaseCna(DeltaRealBorrowAndDeltaRealCollateralData memory data)
-        internal
-        pure
-        returns (int256, Cases memory)
-    {
+    function calculateCaseCnaDeltaRealBorrowAndDeltaRealCollateral(
+        DeltaRealBorrowAndDeltaRealCollateralData memory data
+    ) internal pure returns (int256, Cases memory) {
         data.cases = CasesOperator.generateCase(6); // cna case
-        int256 deltaFutureCollateral = calculateSingleCase(data);
+        int256 deltaFutureCollateral = calculateSingleCaseDeltaRealBorrowAndDeltaRealCollateral(data);
         return (deltaFutureCollateral, data.cases);
     }
 
-    function positiveFutureCollateralBranch(DeltaRealBorrowAndDeltaRealCollateralData memory data)
-        internal
-        pure
-        returns (int256, Cases memory)
-    {
+    function positiveFutureCollateralBranchDeltaRealBorrowAndDeltaRealCollateral(
+        DeltaRealBorrowAndDeltaRealCollateralData memory data
+    ) internal pure returns (int256, Cases memory) {
         int256 deltaFutureCollateral;
         Cases memory cases;
 
-        (deltaFutureCollateral, cases) = calculateCaseCmbc(data);
+        (deltaFutureCollateral, cases) = calculateCaseCmbcDeltaRealBorrowAndDeltaRealCollateral(data);
 
         if (deltaFutureCollateral > 0) {
             return (deltaFutureCollateral, cases);
         }
 
-        (deltaFutureCollateral, cases) = calculateCaseCna(data);
+        (deltaFutureCollateral, cases) = calculateCaseCnaDeltaRealBorrowAndDeltaRealCollateral(data);
 
         if (deltaFutureCollateral == 0) {
             return (deltaFutureCollateral, cases);
@@ -330,7 +312,7 @@ library DeltaRealBorrowAndDeltaRealCollateral {
 
         // mb revert
 
-        (deltaFutureCollateral, cases) = calculateCaseCeccb(data);
+        (deltaFutureCollateral, cases) = calculateCaseCeccbDeltaRealBorrowAndDeltaRealCollateral(data);
 
         if (deltaFutureCollateral + data.futureCollateral < 0) {
             return (deltaFutureCollateral, cases);
@@ -338,7 +320,7 @@ library DeltaRealBorrowAndDeltaRealCollateral {
 
         // mb revert
 
-        (deltaFutureCollateral, cases) = calculateCaseCecb(data);
+        (deltaFutureCollateral, cases) = calculateCaseCecbDeltaRealBorrowAndDeltaRealCollateral(data);
 
         if (deltaFutureCollateral + data.futureCollateral < 0) {
             deltaFutureCollateral = -data.futureCollateral;
@@ -347,33 +329,31 @@ library DeltaRealBorrowAndDeltaRealCollateral {
         return (deltaFutureCollateral, cases);
     }
 
-    function negativeFutureCollateralBranch(DeltaRealBorrowAndDeltaRealCollateralData memory data)
-        internal
-        pure
-        returns (int256, Cases memory)
-    {
+    function negativeFutureCollateralBranchDeltaRealBorrowAndDeltaRealCollateral(
+        DeltaRealBorrowAndDeltaRealCollateralData memory data
+    ) internal pure returns (int256, Cases memory) {
         int256 deltaFutureCollateral;
         Cases memory cases;
 
-        (deltaFutureCollateral, cases) = calculateCaseCmcb(data);
+        (deltaFutureCollateral, cases) = calculateCaseCmcbDeltaRealBorrowAndDeltaRealCollateral(data);
 
         if (deltaFutureCollateral < 0) {
             return (deltaFutureCollateral, cases);
         }
 
-        (deltaFutureCollateral, cases) = calculateCaseCna(data);
+        (deltaFutureCollateral, cases) = calculateCaseCnaDeltaRealBorrowAndDeltaRealCollateral(data);
 
         if (deltaFutureCollateral == 0) {
             return (deltaFutureCollateral, cases);
         }
 
-        (deltaFutureCollateral, cases) = calculateCaseCecbc(data);
+        (deltaFutureCollateral, cases) = calculateCaseCecbcDeltaRealBorrowAndDeltaRealCollateral(data);
 
         if (deltaFutureCollateral + data.futureCollateral > 0) {
             return (deltaFutureCollateral, cases);
         }
 
-        (deltaFutureCollateral, cases) = calculateCaseCebc(data);
+        (deltaFutureCollateral, cases) = calculateCaseCebcDeltaRealBorrowAndDeltaRealCollateral(data);
 
         if (deltaFutureCollateral + data.futureCollateral > 0) {
             deltaFutureCollateral = -data.futureCollateral;
@@ -382,22 +362,20 @@ library DeltaRealBorrowAndDeltaRealCollateral {
         return (deltaFutureCollateral, cases);
     }
 
-    function zeroFutureCollateralBranch(DeltaRealBorrowAndDeltaRealCollateralData memory data)
-        internal
-        pure
-        returns (int256, Cases memory)
-    {
+    function zeroFutureCollateralBranchDeltaRealBorrowAndDeltaRealCollateral(
+        DeltaRealBorrowAndDeltaRealCollateralData memory data
+    ) internal pure returns (int256, Cases memory) {
         int256 deltaFutureCollateral;
         Cases memory cases;
 
         // calc(cmbc)
-        (deltaFutureCollateral, cases) = calculateCaseCmbc(data);
+        (deltaFutureCollateral, cases) = calculateCaseCmbcDeltaRealBorrowAndDeltaRealCollateral(data);
 
         if (deltaFutureCollateral > 0) {
             return (deltaFutureCollateral, cases);
         }
 
-        (deltaFutureCollateral, cases) = calculateCaseCmcb(data);
+        (deltaFutureCollateral, cases) = calculateCaseCmcbDeltaRealBorrowAndDeltaRealCollateral(data);
 
         if (deltaFutureCollateral < 0) {
             return (deltaFutureCollateral, cases);
@@ -442,11 +420,11 @@ library DeltaRealBorrowAndDeltaRealCollateral {
         DeltaRealBorrowAndDeltaRealCollateralData memory data
     ) external pure returns (int256, Cases memory) {
         if (data.futureCollateral > 0) {
-            return positiveFutureCollateralBranch(data);
+            return positiveFutureCollateralBranchDeltaRealBorrowAndDeltaRealCollateral(data);
         } else if (data.futureCollateral < 0) {
-            return negativeFutureCollateralBranch(data);
+            return negativeFutureCollateralBranchDeltaRealBorrowAndDeltaRealCollateral(data);
         } else {
-            return zeroFutureCollateralBranch(data);
+            return zeroFutureCollateralBranchDeltaRealBorrowAndDeltaRealCollateral(data);
         }
     }
 }
