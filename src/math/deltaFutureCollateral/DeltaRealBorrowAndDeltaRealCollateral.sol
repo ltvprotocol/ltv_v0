@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {Constants} from "src/Constants.sol";
-import {IVaultErrors} from "src/errors/IVaultErrors.sol";
+//import {IVaultErrors} from "src/errors/IVaultErrors.sol";
 import {Cases} from "src/structs/data/vault/Cases.sol";
 import {DeltaRealBorrowAndDeltaRealCollateralData} from
     "src/structs/data/vault/DeltaRealBorrowAndDeltaRealCollateralData.sol";
@@ -12,8 +12,6 @@ import {DeltaRealBorrowAndDeltaRealCollateralDividerData} from
     "src/structs/data/vault/DeltaRealBorrowAndDeltaRealCollateralDividerData.sol";
 import {CasesOperator} from "src/math/CasesOperator.sol";
 import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
-
-import {console} from "forge-std/console.sol";
 
 library DeltaRealBorrowAndDeltaRealCollateral {
     using uMulDiv for uint256;
@@ -181,7 +179,7 @@ library DeltaRealBorrowAndDeltaRealCollateral {
         int256 deltaFutureCollateral;
 
         int256 dividend = calculateDividendByDeltaRealBorrowAndDeltaRealCollateral(
-            DividendData({
+            DeltaRealBorrowAndDeltaRealCollateralDividendData({
                 cases: data.cases,
                 borrow: data.borrow,
                 deltaRealBorrow: data.deltaRealBorrow,
@@ -195,8 +193,8 @@ library DeltaRealBorrowAndDeltaRealCollateral {
                 protocolFutureRewardCollateral: data.protocolFutureRewardCollateral,
                 collateral: data.collateral,
                 deltaRealCollateral: data.deltaRealCollateral,
-                targetLTVDividend: data.targetLTVDividend,
-                targetLTVDivider: data.targetLTVDivider
+                targetLtvDividend: data.targetLtvDividend,
+                targetLtvDivider: data.targetLtvDivider
             })
         );
 
@@ -206,7 +204,7 @@ library DeltaRealBorrowAndDeltaRealCollateral {
         // }
 
         int256 divider = calculateDividerByDeltaRealBorrowAndDeltaRealCollateral(
-            DividerData({
+            DeltaRealBorrowAndDeltaRealCollateralDividerData({
                 cases: data.cases,
                 futureCollateral: data.futureCollateral,
                 futureBorrow: data.futureBorrow,
@@ -215,14 +213,12 @@ library DeltaRealBorrowAndDeltaRealCollateral {
                 collateral: data.collateral,
                 protocolFutureRewardBorrow: data.protocolFutureRewardBorrow,
                 protocolFutureRewardCollateral: data.protocolFutureRewardCollateral,
-                targetLTVDividend: data.targetLTVDividend,
-                targetLTVDivider: data.targetLTVDivider,
+                targetLtvDividend: data.targetLtvDividend,
+                targetLtvDivider: data.targetLtvDivider,
                 userFutureRewardBorrow: data.userFutureRewardBorrow,
                 userFutureRewardCollateral: data.userFutureRewardCollateral
             })
         );
-
-        int256 DIVIDER = 10 ** 18;
 
         // TODO: aplly this also
         // if (divider == 0) {
@@ -235,7 +231,7 @@ library DeltaRealBorrowAndDeltaRealCollateral {
 
         bool needToRoundUp = (data.cases.cecb + data.cases.cecbc + data.cases.cmbc != 0);
 
-        deltaFutureCollateral = dividend.mulDiv(DIVIDER, divider, needToRoundUp);
+        deltaFutureCollateral = dividend.mulDiv(Constants.DIVIDER_PRECISION, divider, needToRoundUp);
 
         return deltaFutureCollateral;
     }
