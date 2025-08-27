@@ -395,7 +395,7 @@ library DeltaRealBorrowAndDeltaRealCollateral {
 
         if (deltaFutureCollateral > 0) {
             return (deltaFutureCollateral, cases);
-        } 
+        }
 
         (deltaFutureCollateral, cases) = calculateCaseCmcb(data);
 
