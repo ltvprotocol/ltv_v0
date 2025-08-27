@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity ^0.8.27;
+pragma solidity ^0.8.28;
 
 import {BaseTest, BaseTestInit} from "test/utils/BaseTest.t.sol";
 import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";

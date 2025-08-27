@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity ^0.8.27;
+pragma solidity ^0.8.28;
 
 import {OwnableWithGuardian} from "src/timelock/utils/OwnableWithGuardian.sol";
 import {IWithPayloadsManager} from "src/timelock/utils/interfaces/IWithPayloadsManager.sol";
