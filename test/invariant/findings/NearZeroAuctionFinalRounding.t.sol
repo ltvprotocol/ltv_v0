@@ -51,6 +51,7 @@ contract NearZeroAuctionFinalRoundingTest is BaseTest {
         vm.startPrank(user);
         ltv.deposit(0, user);
 
+        // TODO: Investigate why the future assets are set to 1 instead of 0
         assertEq(ltv.futureCollateralAssets(), 1);
         assertEq(ltv.futureBorrowAssets(), 1);
         assertGe(
