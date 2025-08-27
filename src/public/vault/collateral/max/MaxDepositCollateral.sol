@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../../../../Constants.sol";
-import "../../../../utils/MulDiv.sol";
-import "../preview/PreviewMintCollateral.sol";
-import "../preview/PreviewDepositCollateral.sol";
+import {Constants} from "src/Constants.sol";
+import {MaxDepositMintCollateralVaultState} from "src/structs/state/vault/MaxDepositMintCollateralVaultState.sol";
+import {MaxDepositMintCollateralVaultData} from "src/structs/data/vault/MaxDepositMintCollateralVaultData.sol";
+import {PreviewMintCollateral} from "src/public/vault/collateral/preview/PreviewMintCollateral.sol";
+import {PreviewDepositCollateral} from "src/public/vault/collateral/preview/PreviewDepositCollateral.sol";
+import {uMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract MaxDepositCollateral is PreviewMintCollateral, PreviewDepositCollateral {
     using uMulDiv for uint256;
@@ -26,9 +28,9 @@ abstract contract MaxDepositCollateral is PreviewMintCollateral, PreviewDepositC
             _previewMintCollateral(availableSpaceInShares, data.previewCollateralVaultData);
 
         // round down to assume smaller border
-        uint256 minProfitRealCollateral = data.minProfitLTVDividend == 0
+        uint256 minProfitRealCollateral = data.minProfitLtvDividend == 0
             ? type(uint128).max
-            : uint256(data.realBorrow).mulDivDown(data.minProfitLTVDivider, data.minProfitLTVDividend);
+            : uint256(data.realBorrow).mulDivDown(data.minProfitLtvDivider, data.minProfitLtvDividend);
 
         if (uint256(data.realCollateral) >= minProfitRealCollateral) {
             return 0;

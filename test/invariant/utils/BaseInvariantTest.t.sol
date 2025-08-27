@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {BaseTest, BaseTestInit, DummyLendingConnector, DummyOracleConnector} from "../../utils/BaseTest.t.sol";
-import "./BaseInvariantWrapper.t.sol";
-import "./DynamicLending.t.sol";
-import "./DynamicOracle.t.sol";
+import {BaseTest, BaseTestInit} from "test/utils/BaseTest.t.sol";
+import {BaseInvariantWrapper} from "test/invariant/utils/BaseInvariantWrapper.t.sol";
+import {DynamicLending, MockDynamicLending} from "test/invariant/utils/DynamicLending.t.sol";
+import {DynamicOracle} from "test/invariant/utils/DynamicOracle.t.sol";
 
 /**
  * @title BaseInvariantTest
@@ -48,12 +48,12 @@ abstract contract BaseInvariantTest is BaseTest {
             maxTotalAssetsInUnderlying: type(uint128).max,
             collateralAssets: 2 * 10 ** 19, // 20 collateral tokens
             borrowAssets: 35 * 10 ** 18, // 35 borrow tokens
-            maxSafeLTVDividend: 9, // 90% max safe LTV
-            maxSafeLTVDivider: 10, // 90% max safe LTV
-            minProfitLTVDividend: 5, // 50% min profit LTV
-            minProfitLTVDivider: 10, // 50% min profit LTV
-            targetLTVDividend: 75, // 75% target LTV
-            targetLTVDivider: 100, // 75% target LTV
+            maxSafeLtvDividend: 9, // 90% max safe LTV
+            maxSafeLtvDivider: 10, // 90% max safe LTV
+            minProfitLtvDividend: 5, // 50% min profit LTV
+            minProfitLtvDivider: 10, // 50% min profit LTV
+            targetLtvDividend: 75, // 75% target LTV
+            targetLtvDivider: 100, // 75% target LTV
             maxGrowthFeeDividend: 1, // 20% max growth fee
             maxGrowthFeeDivider: 5,
             collateralPrice: 2 * 10 ** 18, // 2 collateral price

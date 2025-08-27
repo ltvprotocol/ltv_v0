@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {AuctionTestCommon, DefaultTestData} from "./AuctionTestCommon.t.sol";
+import {DefaultTestData} from "test/utils/BaseTest.t.sol";
+import {AuctionTestCommon} from "test/auction/AuctionTestCommon.t.sol";
 
 contract AuctionCertainNumbersTest is AuctionTestCommon {
     struct AuctionCertainNumbersTestData {

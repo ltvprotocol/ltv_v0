@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "src/errors/IAdministrationErrors.sol";
-import "src/states/LTVState.sol";
+import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
+import {LTVState} from "src/states/LTVState.sol";
 
 abstract contract AdministrationModifiers is LTVState, IAdministrationErrors {
     modifier onlyGovernor() {

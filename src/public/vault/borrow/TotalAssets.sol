@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../../../Constants.sol";
-import "../../../utils/MulDiv.sol";
-import "../../../math/CommonMath.sol";
-import "../../../structs/data/vault/TotalAssetsData.sol";
-import "../../../structs/state/vault/TotalAssetsState.sol";
+import {Constants} from "src/Constants.sol";
+import {TotalAssetsData} from "src/structs/data/vault/TotalAssetsData.sol";
+import {TotalAssetsState} from "src/structs/state/vault/TotalAssetsState.sol";
+import {CommonMath} from "src/math/CommonMath.sol";
+import {uMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract TotalAssets {
     using uMulDiv for uint256;
@@ -19,7 +19,7 @@ abstract contract TotalAssets {
         return _totalAssets(isDeposit, totalAssetsStateToData(state, isDeposit));
     }
 
-    function _totalAssets(bool isDeposit, TotalAssetsData memory data) public pure virtual returns (uint256) {
+    function _totalAssets(bool isDeposit, TotalAssetsData memory data) internal pure virtual returns (uint256) {
         // Add 100 to avoid vault attack
         // in case of deposit need to overestimate our assets
         return uint256(data.collateral - data.borrow).mulDiv(Constants.ORACLE_DIVIDER, data.borrowPrice, isDeposit)

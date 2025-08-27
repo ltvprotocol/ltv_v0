@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../utils/BaseTest.t.sol";
-import "../../src/connectors/slippage_providers/ConstantSlippageProvider.sol";
+import {BaseTest, DefaultTestData} from "test/utils/BaseTest.t.sol";
+import {ISlippageProvider} from "src/interfaces/ISlippageProvider.sol";
+import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
+import {ConstantSlippageProvider} from "src/connectors/slippage_providers/ConstantSlippageProvider.sol";
 
 contract SetSlippageProviderTest is BaseTest {
     function test_failIfNotGovernor(DefaultTestData memory defaultData, address user)
@@ -12,13 +14,13 @@ contract SetSlippageProviderTest is BaseTest {
         vm.assume(user != defaultData.governor);
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
-        ltv.setSlippageProvider(address(0));
+        ltv.setSlippageProvider(address(0), abi.encode(10 ** 16, 10 ** 16));
     }
 
     function test_checkSlot(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
         vm.startPrank(defaultData.governor);
-        ConstantSlippageProvider provider = new ConstantSlippageProvider(2 * 10 ** 16, 2 * 10 ** 16, defaultData.owner);
-        ltv.setSlippageProvider(address(provider));
+        ConstantSlippageProvider provider = new ConstantSlippageProvider();
+        ltv.setSlippageProvider(address(provider), abi.encode(10 ** 16, 10 ** 16));
         vm.stopPrank();
 
         assertEq(address(ltv.slippageProvider()), address(provider));
@@ -28,21 +30,34 @@ contract SetSlippageProviderTest is BaseTest {
         public
         testWithPredefinedDefaultValues(defaultData)
     {
-        uint256 initialCollateralSlippage = ISlippageProvider(ltv.slippageProvider()).collateralSlippage();
-        uint256 initialBorrowSlippage = ISlippageProvider(ltv.slippageProvider()).borrowSlippage();
+        uint256 initialCollateralSlippage =
+            ISlippageProvider(ltv.slippageProvider()).collateralSlippage(ltv.slippageProviderGetterData());
+        uint256 initialBorrowSlippage =
+            ISlippageProvider(ltv.slippageProvider()).borrowSlippage(ltv.slippageProviderGetterData());
 
         vm.startPrank(defaultData.governor);
         uint256 newCollateralSlippage = 3 * 10 ** 16;
         uint256 newBorrowSlippage = 25 * 10 ** 15;
-        ConstantSlippageProvider provider =
-            new ConstantSlippageProvider(newCollateralSlippage, newBorrowSlippage, defaultData.owner);
-        ltv.setSlippageProvider(address(provider));
+        ConstantSlippageProvider provider = new ConstantSlippageProvider();
+        ltv.setSlippageProvider(address(provider), abi.encode(newCollateralSlippage, newBorrowSlippage));
         vm.stopPrank();
 
-        assertNotEq(ISlippageProvider(ltv.slippageProvider()).collateralSlippage(), initialCollateralSlippage);
-        assertNotEq(ISlippageProvider(ltv.slippageProvider()).borrowSlippage(), initialBorrowSlippage);
-        assertEq(ISlippageProvider(ltv.slippageProvider()).collateralSlippage(), newCollateralSlippage);
-        assertEq(ISlippageProvider(ltv.slippageProvider()).borrowSlippage(), newBorrowSlippage);
+        assertNotEq(
+            ISlippageProvider(ltv.slippageProvider()).collateralSlippage(ltv.slippageProviderGetterData()),
+            initialCollateralSlippage
+        );
+        assertNotEq(
+            ISlippageProvider(ltv.slippageProvider()).borrowSlippage(ltv.slippageProviderGetterData()),
+            initialBorrowSlippage
+        );
+        assertEq(
+            ISlippageProvider(ltv.slippageProvider()).collateralSlippage(ltv.slippageProviderGetterData()),
+            newCollateralSlippage
+        );
+        assertEq(
+            ISlippageProvider(ltv.slippageProvider()).borrowSlippage(ltv.slippageProviderGetterData()),
+            newBorrowSlippage
+        );
     }
 
     function test_failIfZeroSlippageProvider(DefaultTestData memory defaultData)
@@ -51,6 +66,6 @@ contract SetSlippageProviderTest is BaseTest {
     {
         vm.startPrank(defaultData.governor);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.ZeroSlippageProvider.selector));
-        ltv.setSlippageProvider(address(0));
+        ltv.setSlippageProvider(address(0), abi.encode(10 ** 16, 10 ** 16));
     }
 }

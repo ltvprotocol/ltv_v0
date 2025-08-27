@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../utils/BaseTest.t.sol";
+import {BaseTest, DefaultTestData} from "test/utils/BaseTest.t.sol";
 
 contract ApproveTest is BaseTest {
     function test_approveAllowance(DefaultTestData memory defaultData, address user, uint256 approveAmount)
@@ -18,8 +18,7 @@ contract ApproveTest is BaseTest {
 
         assertEq(ltv.allowance(owner, user), 0);
 
-        bool success = ltv.approve(user, approveAmount);
-        assertTrue(success);
+        ltv.approve(user, approveAmount);
         assertEq(ltv.allowance(owner, user), approveAmount);
     }
 
@@ -36,13 +35,11 @@ contract ApproveTest is BaseTest {
 
         uint256 maxValue = type(uint256).max;
 
-        bool success = ltv.approve(user, maxValue);
-        assertTrue(success);
+        ltv.approve(user, maxValue);
         assertEq(ltv.allowance(owner, user), maxValue);
 
         uint256 bigNumber = 2 ** 200;
-        success = ltv.approve(user, bigNumber);
-        assertTrue(success);
+        ltv.approve(user, bigNumber);
         assertEq(ltv.allowance(owner, user), bigNumber);
     }
 
@@ -58,18 +55,15 @@ contract ApproveTest is BaseTest {
 
         vm.startPrank(owner);
 
-        bool success = ltv.approve(user, smallAmount);
-        assertTrue(success);
+        ltv.approve(user, smallAmount);
         assertEq(ltv.allowance(owner, user), smallAmount);
 
         uint256 oneWei = 1;
-        success = ltv.approve(user, oneWei);
-        assertTrue(success);
+        ltv.approve(user, oneWei);
         assertEq(ltv.allowance(owner, user), oneWei);
 
         uint256 oneGwei = 10 ** 9;
-        success = ltv.approve(user, oneGwei);
-        assertTrue(success);
+        ltv.approve(user, oneGwei);
         assertEq(ltv.allowance(owner, user), oneGwei);
     }
 
@@ -88,8 +82,7 @@ contract ApproveTest is BaseTest {
         ltv.approve(user, initialAmount);
         assertEq(ltv.allowance(owner, user), initialAmount);
 
-        bool success = ltv.approve(user, 0);
-        assertTrue(success);
+        ltv.approve(user, 0);
         assertEq(ltv.allowance(owner, user), 0);
     }
 

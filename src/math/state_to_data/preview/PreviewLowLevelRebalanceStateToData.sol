@@ -1,16 +1,20 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "src/math/CommonMath.sol";
-import "src/math/MaxGrowthFee.sol";
-import "src/math/LowLevelRebalanceMath.sol";
-import "src/structs/state/low_level/PreviewLowLevelRebalanceState.sol";
+import {PreviewLowLevelRebalanceState} from "src/structs/state/low_level/PreviewLowLevelRebalanceState.sol";
+import {LowLevelRebalanceData} from "src/structs/data/low_level/LowLevelRebalanceData.sol";
+import {TotalAssetsData} from "src/structs/data/vault/TotalAssetsData.sol";
+import {TotalAssetsState} from "src/structs/state/vault/TotalAssetsState.sol";
+import {MaxGrowthFeeData} from "src/structs/data/MaxGrowthFeeData.sol";
+import {MaxGrowthFee} from "src/math/MaxGrowthFee.sol";
+import {CommonMath} from "src/math/CommonMath.sol";
+import {uMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract PreviewLowLevelRebalanceStateToData is MaxGrowthFee {
     using uMulDiv for uint256;
 
     function previewLowLevelRebalanceStateToData(PreviewLowLevelRebalanceState memory state, bool isDeposit)
-        public
+        internal
         pure
         returns (LowLevelRebalanceData memory data)
     {
@@ -94,7 +98,7 @@ abstract contract PreviewLowLevelRebalanceStateToData is MaxGrowthFee {
             })
         );
 
-        data.targetLTVDividend = state.targetLTVDividend;
-        data.targetLTVDivider = state.targetLTVDivider;
+        data.targetLtvDividend = state.targetLtvDividend;
+        data.targetLtvDivider = state.targetLtvDivider;
     }
 }

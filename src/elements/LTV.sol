@@ -1,20 +1,18 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../facades/reads/AuctionRead.sol";
-import "../facades/writes/AuctionWrite.sol";
-import "../facades/reads/ERC20Read.sol";
-import "../facades/writes/ERC20Write.sol";
-import "../facades/reads/LowLevelRebalanceRead.sol";
-import "../facades/writes/LowLevelRebalanceWrite.sol";
-import "../facades/reads/BorrowVaultRead.sol";
-import "../facades/writes/BorrowVaultWrite.sol";
-import "../facades/reads/CollateralVaultRead.sol";
-import "../facades/writes/CollateralVaultWrite.sol";
-import "../facades/writes/AdministrationWrite.sol";
-import "../facades/writes/InitializeWrite.sol";
-import "src/state_reader/GetRealBorrowAssetsReader.sol";
-import "src/state_reader/GetRealCollateralAssetsReader.sol";
+import {AuctionRead} from "src/facades/reads/AuctionRead.sol";
+import {AuctionWrite} from "src/facades/writes/AuctionWrite.sol";
+import {ERC20Read} from "src/facades/reads/ERC20Read.sol";
+import {ERC20Write} from "src/facades/writes/ERC20Write.sol";
+import {LowLevelRebalanceRead} from "src/facades/reads/LowLevelRebalanceRead.sol";
+import {LowLevelRebalanceWrite} from "src/facades/writes/LowLevelRebalanceWrite.sol";
+import {BorrowVaultRead} from "src/facades/reads/BorrowVaultRead.sol";
+import {BorrowVaultWrite} from "src/facades/writes/BorrowVaultWrite.sol";
+import {CollateralVaultRead} from "src/facades/reads/CollateralVaultRead.sol";
+import {CollateralVaultWrite} from "src/facades/writes/CollateralVaultWrite.sol";
+import {AdministrationWrite} from "src/facades/writes/AdministrationWrite.sol";
+import {InitializeWrite} from "src/facades/writes/InitializeWrite.sol";
 
 contract LTV is
     AuctionRead,
@@ -28,7 +26,9 @@ contract LTV is
     CollateralVaultRead,
     CollateralVaultWrite,
     AdministrationWrite,
-    InitializeWrite,
-    GetRealBorrowAssetsReader,
-    GetRealCollateralAssetsReader
-{}
+    InitializeWrite
+{
+    constructor() {
+        _disableInitializers();
+    }
+}

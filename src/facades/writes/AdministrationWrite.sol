@@ -1,23 +1,23 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../../interfaces/IModules.sol";
-import "../../states/LTVState.sol";
-import "../writes/CommonWrite.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "../../events/IAdministrationEvents.sol";
-import "../../errors/IAdministrationErrors.sol";
+import {OwnableUpgradeable} from "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
+import {IModules} from "src/interfaces/IModules.sol";
+import {IAdministrationEvents} from "src/events/IAdministrationEvents.sol";
+import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
+import {LTVState} from "src/states/LTVState.sol";
+import {CommonWrite} from "src/facades/writes/CommonWrite.sol";
 
 abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeable, IAdministrationEvents {
-    function setTargetLTV(uint16 dividend, uint16 divider) external {
+    function setTargetLtv(uint16 dividend, uint16 divider) external {
         _delegate(address(modules.administrationModule()), abi.encode(dividend, divider));
     }
 
-    function setMaxSafeLTV(uint16 dividend, uint16 divider) external {
+    function setMaxSafeLtv(uint16 dividend, uint16 divider) external {
         _delegate(address(modules.administrationModule()), abi.encode(dividend, divider));
     }
 
-    function setMinProfitLTV(uint16 dividend, uint16 divider) external {
+    function setMinProfitLtv(uint16 dividend, uint16 divider) external {
         _delegate(address(modules.administrationModule()), abi.encode(dividend, divider));
     }
 
@@ -41,8 +41,8 @@ abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeab
         _delegate(address(modules.administrationModule()), abi.encode(value));
     }
 
-    function setSlippageProvider(address _slippageProvider) external {
-        _delegate(address(modules.administrationModule()), abi.encode(_slippageProvider));
+    function setSlippageProvider(address _slippageProvider, bytes memory slippageProviderData) external {
+        _delegate(address(modules.administrationModule()), abi.encode(_slippageProvider, slippageProviderData));
     }
 
     function allowDisableFunctions(bytes4[] memory signatures, bool isDisabled) external {
@@ -57,12 +57,12 @@ abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeab
         _delegate(address(modules.administrationModule()), abi.encode(value));
     }
 
-    function setLendingConnector(address _lendingConnector) external {
-        _delegate(address(modules.administrationModule()), abi.encode(_lendingConnector));
+    function setLendingConnector(address _lendingConnector, bytes memory lendingConnectorData) external {
+        _delegate(address(modules.administrationModule()), abi.encode(_lendingConnector, lendingConnectorData));
     }
 
-    function setOracleConnector(address _oracleConnector) external {
-        _delegate(address(modules.administrationModule()), abi.encode(_oracleConnector));
+    function setOracleConnector(address _oracleConnector, bytes memory oracleConnectorData) external {
+        _delegate(address(modules.administrationModule()), abi.encode(_oracleConnector, oracleConnectorData));
     }
 
     function deleverageAndWithdraw(uint256 closeAmountBorrow, uint16 deleverageFeeDividend, uint16 deleverageFeeDivider)
@@ -90,8 +90,14 @@ abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeab
         _delegate(address(modules.administrationModule()), abi.encode(dividend, divider));
     }
 
-    function setVaultBalanceAsLendingConnector(address _vaultBalanceAsLendingConnector) external {
-        _delegate(address(modules.administrationModule()), abi.encode(_vaultBalanceAsLendingConnector));
+    function setVaultBalanceAsLendingConnector(
+        address _vaultBalanceAsLendingConnector,
+        bytes memory vaultBalanceAsLendingConnectorGetterData
+    ) external {
+        _delegate(
+            address(modules.administrationModule()),
+            abi.encode(_vaultBalanceAsLendingConnector, vaultBalanceAsLendingConnectorGetterData)
+        );
     }
 
     function setModules(IModules _modules) external onlyOwner {

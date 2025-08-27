@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "src/Constants.sol";
-import "src/utils/MulDiv.sol";
-import "src/math/MaxGrowthFee.sol";
-import "src/utils/MulDiv.sol";
-import "src/structs/state/low_level/MaxLowLevelRebalanceCollateralStateData.sol";
+import {Constants} from "src/Constants.sol";
+import {MaxLowLevelRebalanceCollateralStateData} from
+    "src/structs/state/low_level/MaxLowLevelRebalanceCollateralStateData.sol";
+import {MaxGrowthFee} from "src/math/MaxGrowthFee.sol";
+import {uMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract MaxLowLevelRebalanceCollateral is MaxGrowthFee {
     using uMulDiv for uint256;
@@ -19,7 +19,7 @@ abstract contract MaxLowLevelRebalanceCollateral is MaxGrowthFee {
     }
 
     function _maxLowLevelRebalanceCollateral(MaxLowLevelRebalanceCollateralStateData memory data)
-        public
+        internal
         pure
         returns (int256)
     {
@@ -28,7 +28,7 @@ abstract contract MaxLowLevelRebalanceCollateral is MaxGrowthFee {
             data.maxTotalAssetsInUnderlying.mulDivDown(Constants.ORACLE_DIVIDER, data.collateralPrice);
         // rounding down assuming smaller border
         uint256 maxCollateral = maxTotalAssetsInCollateral.mulDivDown(
-            uint256(data.targetLTVDivider), uint256(data.targetLTVDivider - data.targetLTVDividend)
+            uint256(data.targetLtvDivider), uint256(data.targetLtvDivider - data.targetLtvDividend)
         );
         return int256(maxCollateral) - int256(data.realCollateralAssets);
     }

@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "src/public/auction/read/PreviewExecuteAuctionBorrow.sol";
-import "src/state_transition/AuctionApplyDeltaState.sol";
-import "src/state_reader/GetAuctionStateReader.sol";
+import {DeltaAuctionState} from "src/structs/state_transition/DeltaAuctionState.sol";
+import {AuctionApplyDeltaState} from "src/state_transition/AuctionApplyDeltaState.sol";
+import {GetAuctionStateReader} from "src/state_reader/GetAuctionStateReader.sol";
+import {PreviewExecuteAuctionBorrow} from "src/public/auction/read/PreviewExecuteAuctionBorrow.sol";
 
 abstract contract ExecuteAuctionBorrow is PreviewExecuteAuctionBorrow, GetAuctionStateReader, AuctionApplyDeltaState {
     function executeAuctionBorrow(int256 deltaUserBorrowAssets)

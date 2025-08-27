@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../../../src/interfaces/ILTV.sol";
-import "forge-std/interfaces/IERC20.sol";
-import "forge-std/Test.sol";
-import "../../../src/Constants.sol";
-import "../../../src/dummy/DummyOracleConnector.sol";
+import {Test} from "forge-std/Test.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {ILTV} from "src/interfaces/ILTV.sol";
+import {Constants} from "src/Constants.sol";
+import {DummyOracleConnector} from "src/dummy/DummyOracleConnector.sol";
 
 /**
  * @title BaseInvariantWrapper
@@ -141,8 +141,11 @@ contract BaseInvariantWrapper is Test {
         _initialRealCollateral = int256(ltv.getRealCollateralAssets(false));
 
         // Calculate current rewards value in underlying asset terms
-        int256 borrowPrice = int256(DummyOracleConnector(ltv.oracleConnector()).getPriceBorrowOracle());
-        int256 collateralPrice = int256(DummyOracleConnector(ltv.oracleConnector()).getPriceCollateralOracle());
+        int256 borrowPrice =
+            int256(DummyOracleConnector(ltv.oracleConnector()).getPriceBorrowOracle(ltv.oracleConnectorGetterData()));
+        int256 collateralPrice = int256(
+            DummyOracleConnector(ltv.oracleConnector()).getPriceCollateralOracle(ltv.oracleConnectorGetterData())
+        );
         _initialRewardsValue = (
             ltv.futureRewardBorrowAssets() * borrowPrice - ltv.futureRewardCollateralAssets() * collateralPrice
         ) / int256(Constants.ORACLE_DIVIDER);
@@ -214,8 +217,11 @@ contract BaseInvariantWrapper is Test {
 
         // Invariant 3: Check for auction rewards distribution
         // Calculate current rewards value
-        int256 borrowPrice = int256(DummyOracleConnector(ltv.oracleConnector()).getPriceBorrowOracle());
-        int256 collateralPrice = int256(DummyOracleConnector(ltv.oracleConnector()).getPriceCollateralOracle());
+        int256 borrowPrice =
+            int256(DummyOracleConnector(ltv.oracleConnector()).getPriceBorrowOracle(ltv.oracleConnectorGetterData()));
+        int256 collateralPrice = int256(
+            DummyOracleConnector(ltv.oracleConnector()).getPriceCollateralOracle(ltv.oracleConnectorGetterData())
+        );
         int256 rewardsAfter = (
             ltv.futureRewardBorrowAssets() * borrowPrice - ltv.futureRewardCollateralAssets() * collateralPrice
         ) / int256(Constants.ORACLE_DIVIDER);

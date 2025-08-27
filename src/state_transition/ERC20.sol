@@ -1,13 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "src/modifiers/WhitelistModifier.sol";
-import "src/modifiers/FunctionStopperModifier.sol";
-import "../events/IERC20Events.sol";
-import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
-import "src/errors/IAdministrationErrors.sol";
-import "src/errors/IERC20Errors.sol";
-import "src/state_reader/BoolReader.sol";
+import {ReentrancyGuardUpgradeable} from
+    "openzeppelin-contracts-upgradeable/contracts/utils/ReentrancyGuardUpgradeable.sol";
+import {IERC20Events} from "src/events/IERC20Events.sol";
+import {IERC20Errors} from "src/errors/IERC20Errors.sol";
+import {WhitelistModifier} from "src/modifiers/WhitelistModifier.sol";
+import {FunctionStopperModifier} from "src/modifiers/FunctionStopperModifier.sol";
 
 abstract contract ERC20 is
     WhitelistModifier,

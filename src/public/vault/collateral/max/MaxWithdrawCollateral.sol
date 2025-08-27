@@ -1,8 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../preview/PreviewWithdrawCollateral.sol";
-import "../preview/PreviewRedeemCollateral.sol";
+import {Constants} from "src/Constants.sol";
+import {MaxWithdrawRedeemCollateralVaultState} from "src/structs/state/vault/MaxWithdrawRedeemCollateralVaultState.sol";
+import {MaxWithdrawRedeemCollateralVaultData} from "src/structs/data/vault/MaxWithdrawRedeemCollateralVaultData.sol";
+import {PreviewWithdrawCollateral} from "src/public/vault/collateral/preview/PreviewWithdrawCollateral.sol";
+import {PreviewRedeemCollateral} from "src/public/vault/collateral/preview/PreviewRedeemCollateral.sol";
+import {uMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract MaxWithdrawCollateral is PreviewWithdrawCollateral, PreviewRedeemCollateral {
     using uMulDiv for uint256;
@@ -15,7 +19,7 @@ abstract contract MaxWithdrawCollateral is PreviewWithdrawCollateral, PreviewRed
     function _maxWithdrawCollateral(MaxWithdrawRedeemCollateralVaultData memory data) internal pure returns (uint256) {
         // round up to assume smaller border
         uint256 maxSafeRealCollateral =
-            uint256(data.realBorrow).mulDivUp(data.maxSafeLTVDivider, data.maxSafeLTVDividend);
+            uint256(data.realBorrow).mulDivUp(data.maxSafeLtvDivider, data.maxSafeLtvDividend);
 
         if (maxSafeRealCollateral >= uint256(data.realCollateral)) {
             return 0;

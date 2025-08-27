@@ -1,13 +1,16 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "src/elements/BorrowVaultModule.sol";
-import "./DummyTotalAssetsModule.t.sol";
-import "./DummyTotalSupplyModule.t.sol";
+import {TotalAssetsData} from "src/structs/data/vault/TotalAssetsData.sol";
+import {TotalAssets} from "src/public/vault/borrow/TotalAssets.sol";
+import {TotalSupply} from "src/public/erc20/TotalSupply.sol";
+import {BorrowVaultModule} from "src/elements/BorrowVaultModule.sol";
+import {DummyTotalAssetsModule} from "test/utils/modules/DummyTotalAssetsModule.t.sol";
+import {DummyTotalSupplyModule} from "test/utils/modules/DummyTotalSupplyModule.t.sol";
 
 contract DummyBorrowVaultModule is BorrowVaultModule, DummyTotalAssetsModule, DummyTotalSupplyModule {
     function _totalAssets(bool isDeposit, TotalAssetsData memory data)
-        public
+        internal
         pure
         override(TotalAssets, DummyTotalAssetsModule)
         returns (uint256)

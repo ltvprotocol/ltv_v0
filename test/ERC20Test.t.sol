@@ -1,15 +1,18 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "forge-std/Test.sol";
-import "./utils/BalancedTest.t.sol";
+import {BalancedTest} from "test/utils/BalancedTest.t.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract ERC20Test is BalancedTest {
+    using SafeERC20 for IERC20;
+
     function test_totalSupply(address owner, address user)
         public
         initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
     {
-        assertEq(dummyLTV.totalSupply(), 10 ** 18);
+        assertEq(dummyLtv.totalSupply(), 10 ** 18);
     }
 
     function test_transferFrom(address owner, address user)
@@ -18,31 +21,30 @@ contract ERC20Test is BalancedTest {
     {
         vm.stopPrank();
         vm.startPrank(owner);
-        dummyLTV.approve(user, 10 ** 17);
+        dummyLtv.approve(user, 10 ** 17);
         vm.startPrank(user);
-        dummyLTV.transferFrom(owner, user, 10 ** 17);
-        assertEq(dummyLTV.balanceOf(user), 10 ** 17);
+        IERC20(address(dummyLtv)).safeTransferFrom(owner, user, 10 ** 17);
+        assertEq(dummyLtv.balanceOf(user), 10 ** 17);
     }
 
     function test_decimals(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
-        assertEq(dummyLTV.decimals(), 18);
+        assertEq(dummyLtv.decimals(), 18);
     }
 
     function test_name(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
-        assertEq(dummyLTV.name(), "Dummy LTV");
+        assertEq(dummyLtv.name(), "Dummy LTV");
     }
 
     function test_symbol(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
-        assertEq(dummyLTV.symbol(), "DLTV");
+        assertEq(dummyLtv.symbol(), "DLTV");
     }
 
     function test_approve(address owner, address user) public initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0) {
         vm.stopPrank();
         vm.startPrank(owner);
 
-        bool success = dummyLTV.approve(user, 10 ** 18);
+        dummyLtv.approve(user, 10 ** 18);
 
-        assertTrue(success);
-        assertEq(dummyLTV.allowance(owner, user), 10 ** 18);
+        assertEq(dummyLtv.allowance(owner, user), 10 ** 18);
     }
 }

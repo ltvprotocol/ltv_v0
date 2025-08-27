@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "./interfaces/IDummyOracle.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import {IDummyOracle} from "src/dummy/interfaces/IDummyOracle.sol";
 
 contract DummyOracle is IDummyOracle {
     mapping(address => uint256) private prices;

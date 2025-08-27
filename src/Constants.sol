@@ -6,6 +6,7 @@ library Constants {
     int256 public constant SLIPPAGE_PRECISION = 10 ** 18;
     uint256 public constant LAST_SEEN_PRICE_PRECISION = 10 ** 18;
     uint256 public constant VIRTUAL_ASSETS_AMOUNT = 10 ** 4;
+    int256 public constant DIVIDER_PRECISION = 10 ** 18;
 
     uint8 public constant IS_DEPOSIT_DISABLED_BIT = 0;
     uint8 public constant IS_WITHDRAW_DISABLED_BIT = 1;

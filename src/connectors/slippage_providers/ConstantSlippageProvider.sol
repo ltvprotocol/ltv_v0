@@ -1,23 +1,21 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.27;
 
-import "../../interfaces/ISlippageProvider.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import {ISlippageProvider} from "src/interfaces/ISlippageProvider.sol";
+import {LTVState} from "src/states/LTVState.sol";
 
-contract ConstantSlippageProvider is ISlippageProvider, Ownable {
-    uint256 public override collateralSlippage;
-    uint256 public override borrowSlippage;
-
-    constructor(uint256 _collateralSlippage, uint256 _borrowSlippage, address initialOwner) Ownable(initialOwner) {
-        collateralSlippage = _collateralSlippage;
-        borrowSlippage = _borrowSlippage;
+contract ConstantSlippageProvider is LTVState, ISlippageProvider {
+    function collateralSlippage(bytes calldata slippageProviderGetterData) external pure returns (uint256) {
+        (uint256 collateralSlippageValue,) = abi.decode(slippageProviderGetterData, (uint256, uint256));
+        return collateralSlippageValue;
     }
 
-    function setCollateralSlippage(uint256 _collateralSlippage) external onlyOwner {
-        collateralSlippage = _collateralSlippage;
+    function borrowSlippage(bytes calldata slippageProviderGetterData) external pure returns (uint256) {
+        (, uint256 borrowSlippageValue) = abi.decode(slippageProviderGetterData, (uint256, uint256));
+        return borrowSlippageValue;
     }
 
-    function setBorrowSlippage(uint256 _borrowSlippage) external onlyOwner {
-        borrowSlippage = _borrowSlippage;
+    function initializeSlippageProviderData(bytes calldata slippageProviderData) external {
+        slippageProviderGetterData = slippageProviderData;
     }
 }

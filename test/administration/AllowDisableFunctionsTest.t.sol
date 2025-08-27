@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../utils/BaseTest.t.sol";
-import "./PrepareEachFunctionSuccessfulExecution.sol";
-import "src/interfaces/ILTV.sol";
-import "src/interfaces/IModules.sol";
+import {DefaultTestData} from "test/utils/BaseTest.t.sol";
+import {IModules} from "src/interfaces/IModules.sol";
+import {ILTV} from "src/interfaces/ILTV.sol";
+import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
+import {PrepareEachFunctionSuccessfulExecution} from "test/administration/PrepareEachFunctionSuccessfulExecution.sol";
 
 contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
     function test_disableRandomSelector(DefaultTestData memory defaultData, bytes4 randomSelector)
@@ -189,11 +190,11 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         selectors[8] = ILTV.setIsWithdrawDisabled.selector;
         callers[8] = defaultData.guardian;
 
-        calls[9] = abi.encodeCall(ILTV.setLendingConnector, address(1));
+        calls[9] = abi.encodeCall(ILTV.setLendingConnector, (address(1), ""));
         selectors[9] = ILTV.setLendingConnector.selector;
         callers[9] = defaultData.owner;
 
-        calls[10] = abi.encodeCall(ILTV.setOracleConnector, address(1));
+        calls[10] = abi.encodeCall(ILTV.setOracleConnector, (address(1), ""));
         selectors[10] = ILTV.setOracleConnector.selector;
         callers[10] = defaultData.owner;
 
@@ -307,24 +308,24 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         selectors[21] = ILTV.setMaxGrowthFee.selector;
         callers[21] = defaultData.governor;
 
-        calls[22] = abi.encodeCall(ILTV.setMaxSafeLTV, (9, 10));
-        selectors[22] = ILTV.setMaxSafeLTV.selector;
+        calls[22] = abi.encodeCall(ILTV.setMaxSafeLtv, (9, 10));
+        selectors[22] = ILTV.setMaxSafeLtv.selector;
         callers[22] = defaultData.governor;
 
         calls[23] = abi.encodeCall(ILTV.setMaxTotalAssetsInUnderlying, type(uint112).max);
         selectors[23] = ILTV.setMaxTotalAssetsInUnderlying.selector;
         callers[23] = defaultData.governor;
 
-        calls[24] = abi.encodeCall(ILTV.setMinProfitLTV, (5, 10));
-        selectors[24] = ILTV.setMinProfitLTV.selector;
+        calls[24] = abi.encodeCall(ILTV.setMinProfitLtv, (5, 10));
+        selectors[24] = ILTV.setMinProfitLtv.selector;
         callers[24] = defaultData.governor;
 
-        calls[25] = abi.encodeCall(ILTV.setSlippageProvider, address(1));
+        calls[25] = abi.encodeCall(ILTV.setSlippageProvider, (address(1), abi.encode(10 ** 16, 10 ** 16)));
         selectors[25] = ILTV.setSlippageProvider.selector;
         callers[25] = defaultData.governor;
 
-        calls[26] = abi.encodeCall(ILTV.setTargetLTV, (75, 100));
-        selectors[26] = ILTV.setTargetLTV.selector;
+        calls[26] = abi.encodeCall(ILTV.setTargetLtv, (75, 100));
+        selectors[26] = ILTV.setTargetLtv.selector;
         callers[26] = defaultData.governor;
 
         calls[27] = abi.encodeCall(ILTV.setWhitelistRegistry, address(1));

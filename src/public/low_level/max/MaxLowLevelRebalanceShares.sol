@@ -1,12 +1,15 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.28;
 
-import "src/Constants.sol";
-import "src/utils/MulDiv.sol";
-import "src/math/CommonMath.sol";
-import "src/math/MaxGrowthFee.sol";
-import "src/structs/state/low_level/MaxLowLevelRebalanceSharesState.sol";
-import "src/structs/data/low_level/MaxLowLevelRebalanceSharesData.sol";
+import {Constants} from "src/Constants.sol";
+import {MaxGrowthFeeData} from "src/structs/data/MaxGrowthFeeData.sol";
+import {TotalAssetsData} from "src/structs/data/vault/TotalAssetsData.sol";
+import {TotalAssetsState} from "src/structs/state/vault/TotalAssetsState.sol";
+import {MaxLowLevelRebalanceSharesState} from "src/structs/state/low_level/MaxLowLevelRebalanceSharesState.sol";
+import {MaxLowLevelRebalanceSharesData} from "src/structs/data/low_level/MaxLowLevelRebalanceSharesData.sol";
+import {MaxGrowthFee} from "src/math/MaxGrowthFee.sol";
+import {CommonMath} from "src/math/CommonMath.sol";
+import {sMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract MaxLowLevelRebalanceShares is MaxGrowthFee {
     using sMulDiv for int256;
@@ -15,7 +18,7 @@ abstract contract MaxLowLevelRebalanceShares is MaxGrowthFee {
         return _maxLowLevelRebalanceShares(maxLowLevelRebalanceSharesStateToData(state));
     }
 
-    function _maxLowLevelRebalanceShares(MaxLowLevelRebalanceSharesData memory data) public pure returns (int256) {
+    function _maxLowLevelRebalanceShares(MaxLowLevelRebalanceSharesData memory data) internal pure returns (int256) {
         int256 maxDeltaSharesInUnderlying =
             int256(data.maxTotalAssetsInUnderlying + data.depositRealBorrow) - int256(data.depositRealCollateral);
 
@@ -25,7 +28,7 @@ abstract contract MaxLowLevelRebalanceShares is MaxGrowthFee {
     }
 
     function maxLowLevelRebalanceSharesStateToData(MaxLowLevelRebalanceSharesState memory state)
-        public
+        internal
         pure
         returns (MaxLowLevelRebalanceSharesData memory data)
     {

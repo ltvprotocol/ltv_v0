@@ -1,8 +1,14 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "src/math/Vault.sol";
-import "../../../../math/DepositWithdraw.sol";
+import {Constants} from "src/Constants.sol";
+import {DepositWithdrawData} from "src/structs/data/vault/DepositWithdrawData.sol";
+import {PreviewDepositVaultState} from "src/structs/state/vault/PreviewDepositVaultState.sol";
+import {PreviewDepositBorrowVaultData} from "src/structs/data/vault/PreviewDepositBorrowVaultData.sol";
+import {DeltaFuture} from "src/structs/state_transition/DeltaFuture.sol";
+import {DepositWithdraw} from "src/math/DepositWithdraw.sol";
+import {Vault} from "src/math/Vault.sol";
+import {uMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract PreviewDeposit is Vault {
     using uMulDiv for uint256;
@@ -35,8 +41,8 @@ abstract contract PreviewDeposit is Vault {
                 protocolFutureRewardCollateral: data.protocolFutureRewardCollateral,
                 collateralSlippage: data.collateralSlippage,
                 borrowSlippage: data.borrowSlippage,
-                targetLTVDividend: data.targetLTVDividend,
-                targetLTVDivider: data.targetLTVDivider,
+                targetLtvDividend: data.targetLtvDividend,
+                targetLtvDivider: data.targetLtvDivider,
                 deltaRealCollateral: 0,
                 deltaRealBorrow: -1 * int256(assetsInUnderlying)
             })

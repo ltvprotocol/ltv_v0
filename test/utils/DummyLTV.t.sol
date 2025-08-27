@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "src/elements/LTV.sol";
-import "src/state_transition/ERC20.sol";
-import "src/interfaces/IModules.sol";
+import {LTV} from "src/elements/LTV.sol";
 
 contract DummyLTV is LTV {
     function setFutureBorrowAssets(int256 value) public {
@@ -38,5 +36,19 @@ contract DummyLTV is LTV {
     function burnTokens(uint256 amount, address owner) public {
         balanceOf[owner] -= amount;
         baseTotalSupply -= amount;
+    }
+
+    function setCollateralSlippage(uint256 value) public {
+        (uint256 collateralSlippage, uint256 borrowSlippage) =
+            abi.decode(slippageProviderGetterData, (uint256, uint256));
+        collateralSlippage = value;
+        slippageProviderGetterData = abi.encode(collateralSlippage, borrowSlippage);
+    }
+
+    function setBorrowSlippage(uint256 value) public {
+        (uint256 collateralSlippage, uint256 borrowSlippage) =
+            abi.decode(slippageProviderGetterData, (uint256, uint256));
+        borrowSlippage = value;
+        slippageProviderGetterData = abi.encode(collateralSlippage, borrowSlippage);
     }
 }

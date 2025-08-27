@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../preview/PreviewWithdrawVaultStateToCollateralData.sol";
-import "src/structs/state/vault/MaxWithdrawRedeemCollateralVaultState.sol";
-import "src/structs/data/vault/MaxWithdrawRedeemCollateralVaultData.sol";
+import {MaxWithdrawRedeemCollateralVaultState} from "src/structs/state/vault/MaxWithdrawRedeemCollateralVaultState.sol";
+import {MaxWithdrawRedeemCollateralVaultData} from "src/structs/data/vault/MaxWithdrawRedeemCollateralVaultData.sol";
+import {PreviewWithdrawVaultStateToCollateralData} from
+    "src/math/state_to_data/preview/PreviewWithdrawVaultStateToCollateralData.sol";
+import {CommonMath} from "src/math/CommonMath.sol";
 
 contract MaxWithdrawRedeemCollateralStateToData is PreviewWithdrawVaultStateToCollateralData {
     function maxWithdrawRedeemCollateralVaultStateToMaxWithdrawRedeemCollateralVaultData(
@@ -23,8 +25,8 @@ contract MaxWithdrawRedeemCollateralStateToData is PreviewWithdrawVaultStateToCo
         data.previewCollateralVaultData = _previewWithdrawVaultStateToPreviewCollateralVaultData(
             data.realCollateral, data.realBorrow, state.previewWithdrawVaultState
         );
-        data.maxSafeLTVDividend = state.maxSafeLTVDividend;
-        data.maxSafeLTVDivider = state.maxSafeLTVDivider;
+        data.maxSafeLtvDividend = state.maxSafeLtvDividend;
+        data.maxSafeLtvDivider = state.maxSafeLtvDivider;
         data.ownerBalance = state.ownerBalance;
         return data;
     }

@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../GetLendingConnectorReader.sol";
-import "src/structs/state/low_level/MaxLowLevelRebalanceCollateralStateData.sol";
+import {MaxLowLevelRebalanceCollateralStateData} from
+    "src/structs/state/low_level/MaxLowLevelRebalanceCollateralStateData.sol";
+import {GetRealCollateralAssetsReader} from "../GetRealCollateralAssetsReader.sol";
 
-contract MaxLowLevelRebalanceCollateralStateReader is GetLendingConnectorReader {
+contract MaxLowLevelRebalanceCollateralStateReader is GetRealCollateralAssetsReader {
     function maxLowLevelRebalanceCollateralState()
         internal
         view
@@ -12,11 +13,11 @@ contract MaxLowLevelRebalanceCollateralStateReader is GetLendingConnectorReader 
     {
         return MaxLowLevelRebalanceCollateralStateData({
             // round up to assume smaller border
-            realCollateralAssets: getLendingConnector().getRealCollateralAssets(true, connectorGetterData),
+            realCollateralAssets: getRealCollateralAssets(true),
             maxTotalAssetsInUnderlying: maxTotalAssetsInUnderlying,
-            targetLTVDividend: targetLTVDividend,
-            targetLTVDivider: targetLTVDivider,
-            collateralPrice: oracleConnector.getPriceCollateralOracle()
+            targetLtvDividend: targetLtvDividend,
+            targetLtvDivider: targetLtvDivider,
+            collateralPrice: oracleConnector.getPriceCollateralOracle(oracleConnectorGetterData)
         });
     }
 }

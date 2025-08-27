@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "./utils/BaseTest.t.sol";
+import {BaseTest, BaseTestInit} from "test/utils/BaseTest.t.sol";
 
 /**
  * @title SharePriceOnStaticVaultTest
@@ -45,12 +45,12 @@ contract SharePriceOnStaticVaultTestPositiveAuction is BaseTest {
             maxTotalAssetsInUnderlying: type(uint128).max,
             collateralAssets: 984_016_000,
             borrowAssets: 734_000_000,
-            maxSafeLTVDividend: 9,
-            maxSafeLTVDivider: 10,
-            minProfitLTVDividend: 5,
-            minProfitLTVDivider: 10,
-            targetLTVDividend: 75,
-            targetLTVDivider: 100,
+            maxSafeLtvDividend: 9,
+            maxSafeLtvDivider: 10,
+            minProfitLtvDividend: 5,
+            minProfitLtvDivider: 10,
+            targetLtvDividend: 75,
+            targetLtvDivider: 100,
             maxGrowthFeeDividend: 1,
             maxGrowthFeeDivider: 5,
             collateralPrice: 10 ** 18,

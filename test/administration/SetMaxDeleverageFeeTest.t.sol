@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../utils/BaseTest.t.sol";
+import {BaseTest, DefaultTestData} from "test/utils/BaseTest.t.sol";
+import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
+import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
+import {IAdministrationEvents} from "src/events/IAdministrationEvents.sol";
 
 contract SetMaxDeleverageFeeTest is BaseTest {
     function test_failIfNotEmergencyDeleverager(DefaultTestData memory defaultData, address user)
@@ -50,8 +53,10 @@ contract SetMaxDeleverageFeeTest is BaseTest {
 
         ltv.deleverageAndWithdraw(borrowAssets, deleverageFeeDividend, deleverageFeeDivider);
 
-        uint256 zeroFeeAssets = borrowAssets * ltv.oracleConnector().getPriceBorrowOracle()
-            / ltv.oracleConnector().getPriceCollateralOracle();
+        bytes memory oracleConnectorGetterData = ltv.oracleConnectorGetterData();
+
+        uint256 zeroFeeAssets = borrowAssets * ltv.oracleConnector().getPriceBorrowOracle(oracleConnectorGetterData)
+            / ltv.oracleConnector().getPriceCollateralOracle(oracleConnectorGetterData);
         // 2% fee with 3/4 ltv gives 6% of total assets as fee
         assertEq(collateralToken.balanceOf(defaultData.emergencyDeleverager), zeroFeeAssets + 10 ** 16);
     }
@@ -94,10 +99,13 @@ contract SetMaxDeleverageFeeTest is BaseTest {
 
         // Should be able to deleverage with 0 fee
         ltv.deleverageAndWithdraw(borrowAssets, 0, 1);
+
+        bytes memory oracleConnectorGetterData = abi.encode(address(collateralToken), address(borrowToken));
+
         assertEq(
             collateralToken.balanceOf(defaultData.emergencyDeleverager),
-            (borrowAssets * ltv.oracleConnector().getPriceBorrowOracle())
-                / ltv.oracleConnector().getPriceCollateralOracle()
+            (borrowAssets * ltv.oracleConnector().getPriceBorrowOracle(oracleConnectorGetterData))
+                / ltv.oracleConnector().getPriceCollateralOracle(oracleConnectorGetterData)
         );
     }
 

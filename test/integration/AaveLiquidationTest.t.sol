@@ -2,14 +2,14 @@
 pragma solidity ^0.8.28;
 
 import {Test} from "forge-std/Test.sol";
-import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
-import "./interfaces/IAaveV3Pool.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {IAaveV3Pool} from "test/integration/interfaces/IAaveV3Pool.sol";
 
 contract AaveLiquidationTest is Test {
-    IAaveV3Pool public AAVE_POOL = IAaveV3Pool(0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2);
-    IERC20 public WETH = IERC20(0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2);
-    IERC20 public USDC = IERC20(0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48);
-    IERC20 public WETH_A_TOKEN = IERC20(0x4d5F47FA6A74757f35C14fD3a6Ef8E3C9BC514E8);
+    IAaveV3Pool public constant AAVE_POOL = IAaveV3Pool(0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2);
+    IERC20 public constant WETH = IERC20(0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2);
+    IERC20 public constant USDC = IERC20(0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48);
+    IERC20 public constant WETH_A_TOKEN = IERC20(0x4d5F47FA6A74757f35C14fD3a6Ef8E3C9BC514E8);
 
     uint256 public constant PENALTY_PERCENT = 5;
 

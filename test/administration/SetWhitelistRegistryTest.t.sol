@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "../utils/BaseTest.t.sol";
-import "../../src/elements/WhitelistRegistry.sol";
-import "../../src/interfaces/IWhitelistRegistry.sol";
+import {BaseTest, DefaultTestData} from "test/utils/BaseTest.t.sol";
+import {IWhitelistRegistry} from "src/interfaces/IWhitelistRegistry.sol";
+import {WhitelistRegistry} from "src/elements/WhitelistRegistry.sol";
+import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
 
 contract SetWhitelistRegistryTest is BaseTest {
     function test_failIfZeroDuringActivatedWhitelist(DefaultTestData memory defaultData)
