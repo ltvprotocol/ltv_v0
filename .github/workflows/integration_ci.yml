@@ -8,6 +8,7 @@ on:
 
 jobs:
   integration_test:
+    if: github.repository == 'ltvprotocol/ltv_v0'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
