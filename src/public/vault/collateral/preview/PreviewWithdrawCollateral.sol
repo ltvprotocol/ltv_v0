@@ -43,6 +43,8 @@ abstract contract PreviewWithdrawCollateral is VaultCollateral {
                 borrowSlippage: data.borrowSlippage,
                 targetLtvDividend: data.targetLtvDividend,
                 targetLtvDivider: data.targetLtvDivider,
+                // casting to int256 is safe because assetsInUnderlying are considered to be greater than type(int256).min
+                // forge-lint: disable-next-line(unsafe-typecast)
                 deltaRealCollateral: -int256(assetsInUnderlying),
                 deltaRealBorrow: 0
             })
@@ -54,6 +56,9 @@ abstract contract PreviewWithdrawCollateral is VaultCollateral {
 
         // HODLer <=> withdrawer conflict, round in favor of HODLer, round up to burn more shares
         return (
+            // casting to uint256 is safe because sharesInUnderlying is checked to be negative
+            // and therefore it is smaller than type(uint256).max
+            // forge-lint: disable-next-line(unsafe-typecast)
             uint256(-sharesInUnderlying).mulDivUp(Constants.ORACLE_DIVIDER, data.collateralPrice).mulDivUp(
                 data.supplyAfterFee, data.totalAssetsCollateral
             ),

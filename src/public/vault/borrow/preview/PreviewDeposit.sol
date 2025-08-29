@@ -44,6 +44,8 @@ abstract contract PreviewDeposit is Vault {
                 targetLtvDividend: data.targetLtvDividend,
                 targetLtvDivider: data.targetLtvDivider,
                 deltaRealCollateral: 0,
+                // casting to int256 is safe because assetsInUnderlying is considered to be smaller than type(int256).max
+                // forge-lint: disable-next-line(unsafe-typecast)
                 deltaRealBorrow: -1 * int256(assetsInUnderlying)
             })
         );
@@ -54,6 +56,9 @@ abstract contract PreviewDeposit is Vault {
 
         // HODLer <=> depositor conflict, resolve in favor of HODLer, round down to mint less shares
         return (
+            // casting to uint256 is safe because sharesInUnderlying is checked to be non negative
+            // and therefore it is smaller than type(uint256).max
+            // forge-lint: disable-next-line(unsafe-typecast)
             uint256(sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, data.borrowPrice).mulDivDown(
                 data.supplyAfterFee, data.depositTotalAssets
             ),

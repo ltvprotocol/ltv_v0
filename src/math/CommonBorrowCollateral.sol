@@ -103,11 +103,13 @@ library CommonBorrowCollateral {
         // cmbc × −∆futureCollateral × collateralSlippage +
         // + cecbc × −(∆futureCollateral + futureCollateral) × collateralSlippage
 
+        // casting to int256 is safe because collateralSlippage are considered to be smaller than type(int256).max
+        // forge-lint: disable-start(unsafe-typecast)
         int256 deltaFuturePaymentCollateral = -int256(int8(ncase.cmbc))
             * deltaFutureCollateral.mulDivUp(int256(collateralSlippage), Constants.SLIPPAGE_PRECISION);
         deltaFuturePaymentCollateral -= int256(int8(ncase.cecbc))
             * (deltaFutureCollateral + futureCollateral).mulDivUp(int256(collateralSlippage), Constants.SLIPPAGE_PRECISION);
-
+        // forge-lint: disable-end(unsafe-typecast)
         return deltaFuturePaymentCollateral;
     }
 
@@ -160,10 +162,13 @@ library CommonBorrowCollateral {
         // cmcb × −∆futureBorrow × borrowSlippage +
         // + ceccb × −(∆futureBorrow + futureBorrow) × borrowSlippage
 
+        // casting to int256 is safe because borrowSlippage are considered to be smaller than type(int256).max
+        // forge-lint: disable-start(unsafe-typecast)
         int256 deltaFuturePaymentBorrow = -int256(int8(ncase.cmcb))
             * deltaFutureBorrow.mulDivDown(int256(borrowSlippage), Constants.SLIPPAGE_PRECISION);
         deltaFuturePaymentBorrow -= int256(int8(ncase.ceccb))
             * (deltaFutureBorrow + futureBorrow).mulDivDown(int256(borrowSlippage), Constants.SLIPPAGE_PRECISION);
+        // forge-lint: disable-end(unsafe-typecast)
 
         return deltaFuturePaymentBorrow;
     }

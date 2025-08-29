@@ -5,6 +5,8 @@ import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {ILTV} from "src/interfaces/ILTV.sol";
 import {BaseInvariantWrapper} from "test/invariant/utils/BaseInvariantWrapper.t.sol";
 
+// forge-lint: disable-start(unsafe-typecast)
+
 abstract contract BaseAuctionInvariantWrapper is BaseInvariantWrapper {
     function maxAuctionDeltaUserBorrowAssets() public view returns (int256) {
         if (ltv.futureBorrowAssets() == 0) {
@@ -113,6 +115,8 @@ abstract contract BaseAuctionInvariantWrapper is BaseInvariantWrapper {
         _auctionExecuted = true;
     }
 }
+
+// forge-lint: disable-end(unsafe-typecast)
 
 contract AuctionInvariantWrapper is BaseAuctionInvariantWrapper {
     constructor(ILTV _ltv, address[10] memory _actors) BaseInvariantWrapper(_ltv, _actors) {}

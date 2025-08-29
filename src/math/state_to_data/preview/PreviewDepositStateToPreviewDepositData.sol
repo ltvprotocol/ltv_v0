@@ -54,7 +54,11 @@ contract PreviewDepositStateToPreviewDepositData is MaxGrowthFee {
             true
         );
 
+        // casting to int256 is safe because realCollateral is considered to be smaller than type(int256).max
+        // forge-lint: disable-next-line(unsafe-typecast)
         data.collateral = int256(realCollateral) + data.futureCollateral + futureRewardCollateral;
+        // casting to int256 is safe because realBorrow is considered to be smaller than type(int256).max
+        // forge-lint: disable-next-line(unsafe-typecast)
         data.borrow = int256(realBorrow) + data.futureBorrow + futureRewardBorrow;
         data.borrowPrice = state.maxGrowthFeeState.commonTotalAssetsState.borrowPrice;
 

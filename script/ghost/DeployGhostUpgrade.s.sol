@@ -23,6 +23,7 @@ import {Vm} from "forge-std/Vm.sol";
 function getHolders(Vm vm) view returns (address[] memory) {
     // Reads holders from data/holders.json using stdJson
     string memory path = "script/ghost/data/holders.json";
+    // forge-lint: disable-next-line
     string memory json = vm.readFile(path);
     address[] memory holders = abi.decode(vm.parseJson(json), (address[]));
     return holders;
@@ -282,6 +283,7 @@ contract DeployGhostUpgrade is Script, StdCheats, StdAssertions {
     using stdJson for string;
 
     function getApprovalLogs() internal view returns (ApprovalData[] memory) {
+        // forge-lint: disable-next-line
         string memory json = vm.readFile("script/ghost/data/allowance_logs.json");
         // Count number of entries
         JsonStruct[] memory jsonStructs = abi.decode(vm.parseJson(json), (JsonStruct[]));

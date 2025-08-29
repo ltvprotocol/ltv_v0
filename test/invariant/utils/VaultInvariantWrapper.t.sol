@@ -19,6 +19,7 @@ import {BaseInvariantWrapper} from "test/invariant/utils/BaseInvariantWrapper.t.
  * The wrapper simulates realistic user interactions with the LTV vault,
  * including both borrow token and collateral token operations.
  */
+// forge-lint: disable-start(unsafe-typecast)
 abstract contract BaseVaultInvariantWrapper is BaseInvariantWrapper {
     /**
      * @dev Allows a user to deposit borrow tokens and receive LTV tokens
@@ -353,6 +354,7 @@ abstract contract BaseVaultInvariantWrapper is BaseInvariantWrapper {
         );
     }
 }
+// forge-lint: disable-end(unsafe-typecast)
 
 contract VaultInvariantWrapper is BaseVaultInvariantWrapper {
     constructor(ILTV _ltv, address[10] memory _actors) BaseInvariantWrapper(_ltv, _actors) {}

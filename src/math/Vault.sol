@@ -17,6 +17,8 @@ abstract contract Vault is MaxDepositMintStateToData, MaxWithdrawRedeemStateToDa
         uint256 totalAssets,
         uint256 borrowPrice
     ) internal pure returns (uint256) {
+        // casting to uint256 is safe because collateral is considered to be greater than borrow
+        // forge-lint: disable-next-line(unsafe-typecast)
         uint256 totalAssetsInUnderlying = uint256(collateral - borrow);
 
         if (totalAssetsInUnderlying >= maxTotalAssetsInUnderlying) {

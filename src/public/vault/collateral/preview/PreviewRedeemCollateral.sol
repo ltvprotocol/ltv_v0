@@ -45,6 +45,8 @@ abstract contract PreviewRedeemCollateral is VaultCollateral {
                 borrowSlippage: data.borrowSlippage,
                 targetLtvDividend: data.targetLtvDividend,
                 targetLtvDivider: data.targetLtvDivider,
+                // casting to int256 is safe because sharesInUnderlying are considered to be smaller than type(int256).max
+                // forge-lint: disable-next-line(unsafe-typecast)
                 deltaShares: -1 * int256(sharesInUnderlying),
                 isBorrow: false
             })
@@ -55,6 +57,9 @@ abstract contract PreviewRedeemCollateral is VaultCollateral {
         }
 
         // HODLer <=> withdrawer conflict, round in favor of HODLer, round down to give less collateral
+        // casting to uint256 is safe because assetsInUnderlying is checked to be negative
+        // and therefore it is smaller than type(uint256).max
+        // forge-lint: disable-next-line(unsafe-typecast)
         return (uint256(-assetsInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, data.collateralPrice), deltaFuture);
     }
 }
