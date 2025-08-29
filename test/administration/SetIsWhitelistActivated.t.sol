@@ -32,6 +32,7 @@ contract SetIsWhitelistActivatedTest is PrepareEachFunctionSuccessfulExecution {
         );
     }
 
+    // forge-lint: disable-start(unsafe-typecast)
     function whitelistCalls(address user) public pure returns (bytes[] memory) {
         bytes[] memory selectors = new bytes[](15);
         uint256 amount = 1000;
@@ -52,6 +53,7 @@ contract SetIsWhitelistActivatedTest is PrepareEachFunctionSuccessfulExecution {
         selectors[14] = abi.encodeCall(ILTV.executeLowLevelRebalanceShares, (int256(amount)));
         return selectors;
     }
+    // forge-lint: disable-end(unsafe-typecast)
 
     function prepareWhitelistDepositWithdrawTest(address user, address governor, address owner) public {
         registry = new WhitelistRegistry(owner);

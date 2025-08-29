@@ -31,6 +31,7 @@ contract SetIsDepositDisabledTest is PrepareEachFunctionSuccessfulExecution {
     function depositDisabledCalls(address user) public pure returns (bytes[] memory) {
         bytes[] memory selectors = new bytes[](9);
         uint256 amount = 1000;
+        // forge-lint: disable-start(unsafe-typecast)
         selectors[0] = abi.encodeCall(ILTV.executeLowLevelRebalanceShares, (int256(amount)));
         selectors[1] = abi.encodeCall(ILTV.executeLowLevelRebalanceBorrow, (int256(amount)));
         selectors[2] = abi.encodeCall(ILTV.executeLowLevelRebalanceBorrowHint, (int256(amount), true));
@@ -40,6 +41,7 @@ contract SetIsDepositDisabledTest is PrepareEachFunctionSuccessfulExecution {
         selectors[6] = abi.encodeCall(ILTV.depositCollateral, (amount, user));
         selectors[7] = abi.encodeCall(ILTV.mint, (amount, user));
         selectors[8] = abi.encodeCall(ILTV.mintCollateral, (amount, user));
+        // forge-lint: disable-end(unsafe-typecast)
         return selectors;
     }
 

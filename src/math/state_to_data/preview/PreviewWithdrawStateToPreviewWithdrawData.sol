@@ -58,8 +58,11 @@ contract PreviewWithdrawStateToPreviewWithdrawData is MaxGrowthFee {
             false
         );
 
+        // casting to int256 is safe because realCollateral and realBorrow are considered to be smaller than type(int256).max
+        // forge-lint: disable-start(unsafe-typecast)
         data.collateral = int256(realCollateral) + data.futureCollateral + futureRewardCollateral;
         data.borrow = int256(realBorrow) + data.futureBorrow + futureRewardBorrow;
+        // forge-lint: disable-end(unsafe-typecast)
         data.borrowPrice = state.maxGrowthFeeState.commonTotalAssetsState.borrowPrice;
 
         uint256 auctionStep =

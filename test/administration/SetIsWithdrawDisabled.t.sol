@@ -33,6 +33,7 @@ contract SetIsWithdrawDisabledTest is PrepareEachFunctionSuccessfulExecution {
         bytes[] memory selectors = new bytes[](9);
         uint256 amount = 1000;
 
+        // forge-lint: disable-start(unsafe-typecast)
         selectors[0] = abi.encodeCall(ILTV.executeLowLevelRebalanceShares, (-int256(amount)));
         selectors[1] = abi.encodeCall(ILTV.redeem, (amount, user, user));
         selectors[2] = abi.encodeCall(ILTV.withdraw, (amount, user, user));
@@ -42,6 +43,7 @@ contract SetIsWithdrawDisabledTest is PrepareEachFunctionSuccessfulExecution {
         selectors[6] = abi.encodeCall(ILTV.executeLowLevelRebalanceBorrowHint, (-int256(amount), false));
         selectors[7] = abi.encodeCall(ILTV.executeLowLevelRebalanceCollateral, (-int256(amount)));
         selectors[8] = abi.encodeCall(ILTV.executeLowLevelRebalanceCollateralHint, (-int256(amount), false));
+        // forge-lint: disable-end(unsafe-typecast)
         return selectors;
     }
 

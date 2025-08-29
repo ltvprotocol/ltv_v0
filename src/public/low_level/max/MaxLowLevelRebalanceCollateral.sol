@@ -30,6 +30,8 @@ abstract contract MaxLowLevelRebalanceCollateral is MaxGrowthFee {
         uint256 maxCollateral = maxTotalAssetsInCollateral.mulDivDown(
             uint256(data.targetLtvDivider), uint256(data.targetLtvDivider - data.targetLtvDividend)
         );
+        // casting to int256 is safe because maxCollateral and realCollateralAssets are considered to be smaller than type(int256).max
+        // forge-lint: disable-next-line(unsafe-typecast)
         return int256(maxCollateral) - int256(data.realCollateralAssets);
     }
 }

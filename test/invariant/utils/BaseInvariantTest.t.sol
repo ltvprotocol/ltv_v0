@@ -135,6 +135,7 @@ abstract contract BaseInvariantTest is BaseTest {
     function actors() internal virtual returns (address[10] memory) {
         address[10] memory _testActors;
         for (uint256 i = 0; i < 10; i++) {
+            // forge-lint: disable-next-line(unsafe-typecast)
             _testActors[i] = address(uint160(i + 1));
         }
         return _testActors;

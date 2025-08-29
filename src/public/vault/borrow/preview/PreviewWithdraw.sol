@@ -43,6 +43,8 @@ abstract contract PreviewWithdraw is Vault {
                 targetLtvDividend: data.targetLtvDividend,
                 targetLtvDivider: data.targetLtvDivider,
                 deltaRealCollateral: 0,
+                // casting to int256 is safe because assetsInUnderlying is considered to be smaller than type(int256).max
+                // forge-lint: disable-next-line(unsafe-typecast)
                 deltaRealBorrow: int256(assetsInUnderlying)
             })
         );
@@ -53,6 +55,8 @@ abstract contract PreviewWithdraw is Vault {
 
         // HODLer <=> withdrawer conflict, round in favor of HODLer, round up to burn more shares
         return (
+            // casting to uint256 is safe because sharesInUnderlying is checked to be negative
+            // forge-lint: disable-next-line(unsafe-typecast)
             uint256(-sharesInUnderlying).mulDivUp(Constants.ORACLE_DIVIDER, data.borrowPrice).mulDivUp(
                 data.supplyAfterFee, data.withdrawTotalAssets
             ),

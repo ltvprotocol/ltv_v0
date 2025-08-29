@@ -30,6 +30,8 @@ abstract contract MaxLowLevelRebalanceBorrow is MaxGrowthFee {
             uint256(data.targetLtvDivider) * uint256(data.targetLtvDividend),
             uint256(data.targetLtvDivider - data.targetLtvDividend) * uint256(data.targetLtvDivider)
         );
+        // casting to int256 is safe because maxBorrow and realBorrowAssets are considered to be smaller than type(int256).max
+        // forge-lint: disable-next-line(unsafe-typecast)
         return int256(maxBorrow) - int256(data.realBorrowAssets);
     }
 }
