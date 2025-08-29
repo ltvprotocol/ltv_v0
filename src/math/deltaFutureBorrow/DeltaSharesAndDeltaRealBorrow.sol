@@ -248,7 +248,7 @@ library DeltaSharesAndDeltaRealBorrow {
 
         // TODO: mb check deltaFutureBorrow + data.futureBorrow - DELTA < 0
 
-        if (deltaFutureBorrow + data.futureBorrow < 0 && success) {
+        if (deltaFutureBorrow + data.futureBorrow < 0) {
             deltaFutureBorrow = -data.futureBorrow;
         }
 
@@ -290,7 +290,7 @@ library DeltaSharesAndDeltaRealBorrow {
 
         // TODO: mb check deltaFutureBorrow + data.futureBorrow + DELTA > 0
 
-        if (deltaFutureBorrow + data.futureBorrow > 0 && success) {
+        if (deltaFutureBorrow + data.futureBorrow > 0) {
             deltaFutureBorrow = -data.futureBorrow;
         }
 
