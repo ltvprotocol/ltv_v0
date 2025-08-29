@@ -304,7 +304,7 @@ library DeltaSharesAndDeltaRealBorrow {
 
             if (
                 deltaFutureBorrow
-                    + data.futureBorrow.mulDivUp(
+                    + data.futureBorrow.mulDivDown(
                         Constants.FUTURE_ADJUSTMENT_NUMERATOR, Constants.FUTURE_ADJUSTMENT_DENOMINATOR
                     ) < 0
             ) {
