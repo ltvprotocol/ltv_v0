@@ -311,6 +311,8 @@ library DeltaRealBorrowAndDeltaRealCollateral {
             revert IVaultErrors.DeltaRealBorrowAndDeltaRealCollateralUnexpectedError(data);
         }
 
+        // TODO: mb check deltaFutureCollateral + data.futureCollateral - DELTA < 0
+
         if (deltaFutureCollateral + data.futureCollateral < 0) {
             deltaFutureCollateral = -data.futureCollateral;
         }
@@ -348,6 +350,8 @@ library DeltaRealBorrowAndDeltaRealCollateral {
         if (!success) {
             revert IVaultErrors.DeltaRealBorrowAndDeltaRealCollateralUnexpectedError(data);
         }
+
+        // TODO: mb check deltaFutureCollateral + data.futureCollateral + DELTA > 0
 
         if (deltaFutureCollateral + data.futureCollateral > 0) {
             deltaFutureCollateral = -data.futureCollateral;
