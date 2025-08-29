@@ -246,10 +246,20 @@ library DeltaSharesAndDeltaRealBorrow {
             revert IVaultErrors.DeltaSharesAndDeltaRealBorrowUnexpectedError(data);
         }
 
-        // TODO: mb check deltaFutureBorrow + data.futureBorrow - DELTA < 0
-
         if (deltaFutureBorrow + data.futureBorrow < 0) {
-            deltaFutureBorrow = -data.futureBorrow;
+            // we know data.futureBorrow > 0
+            // mulDivUp
+
+            if (
+                deltaFutureBorrow
+                    + data.futureBorrow.mulDivUp(
+                        Constants.FUTURE_ADJUSTMENT_NUMERATOR, Constants.FUTURE_ADJUSTMENT_DENOMINATOR
+                    ) > 0
+            ) {
+                deltaFutureBorrow = -data.futureBorrow;
+            } else {
+                revert IVaultErrors.DeltaSharesAndDeltaRealBorrowUnexpectedError(data);
+            }
         }
 
         return (deltaFutureBorrow, cases);
@@ -288,10 +298,20 @@ library DeltaSharesAndDeltaRealBorrow {
             revert IVaultErrors.DeltaSharesAndDeltaRealBorrowUnexpectedError(data);
         }
 
-        // TODO: mb check deltaFutureBorrow + data.futureBorrow + DELTA > 0
-
         if (deltaFutureBorrow + data.futureBorrow > 0) {
-            deltaFutureBorrow = -data.futureBorrow;
+            // we know data.futureBorrow < 0
+            // mulDivDown
+
+            if (
+                deltaFutureBorrow
+                    + data.futureBorrow.mulDivUp(
+                        Constants.FUTURE_ADJUSTMENT_NUMERATOR, Constants.FUTURE_ADJUSTMENT_DENOMINATOR
+                    ) < 0
+            ) {
+                deltaFutureBorrow = -data.futureBorrow;
+            } else {
+                revert IVaultErrors.DeltaSharesAndDeltaRealBorrowUnexpectedError(data);
+            }
         }
 
         return (deltaFutureBorrow, cases);
