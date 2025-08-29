@@ -5,6 +5,7 @@ import {BaseTest} from "test/utils/BaseTest.t.sol";
 import {FutureExecutorInvariant} from "test/auction/FutureExecutorInvariant.t.sol";
 import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
 
+// forge-lint: disable-start(unsafe-typecast)
 contract AuctionTestCommon is BaseTest, FutureExecutorInvariant {
     using uMulDiv for uint256;
     using sMulDiv for int256;
@@ -84,3 +85,4 @@ contract AuctionTestCommon is BaseTest, FutureExecutorInvariant {
         prepareDepositAuctionWithCustomCollateralPrice(amount, oracle.getAssetPrice(address(collateralToken)), owner);
     }
 }
+// forge-lint: disable-end(unsafe-typecast)

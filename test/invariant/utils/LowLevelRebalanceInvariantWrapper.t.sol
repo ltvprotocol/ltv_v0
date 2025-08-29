@@ -5,6 +5,8 @@ import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {ILTV} from "src/interfaces/ILTV.sol";
 import {BaseInvariantWrapper} from "test/invariant/utils/BaseInvariantWrapper.t.sol";
 
+// forge-lint: disable-start(unsafe-typecast)
+
 /**
  * @title LTVLowLevelWrapper
  * @dev Wrapper contract for testing LTV low-level rebalance operations
@@ -325,6 +327,8 @@ abstract contract BaseLowLevelRebalanceInvariantWrapper is BaseInvariantWrapper 
         ltv.executeLowLevelRebalanceShares(amount);
     }
 }
+
+// forge-lint: disable-end(unsafe-typecast)
 
 contract LowLevelRebalanceInvariantWrapper is BaseLowLevelRebalanceInvariantWrapper {
     constructor(ILTV _ltv, address[10] memory _actors) BaseInvariantWrapper(_ltv, _actors) {}

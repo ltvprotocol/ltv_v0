@@ -24,6 +24,8 @@ abstract contract VaultCollateral is
         uint256 totalAssetsCollateral,
         uint256 collateralPrice
     ) internal pure returns (uint256) {
+        // casting to uint256 is safe because collateral is considered to be greater than borrow
+        // forge-lint: disable-next-line(unsafe-typecast)
         uint256 totalAssetsInUnderlying = uint256(collateral - borrow);
 
         if (totalAssetsInUnderlying >= maxTotalAssetsInUnderlying) {

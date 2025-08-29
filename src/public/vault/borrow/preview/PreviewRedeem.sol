@@ -45,6 +45,8 @@ abstract contract PreviewRedeem is Vault {
                 borrowSlippage: data.borrowSlippage,
                 targetLtvDividend: data.targetLtvDividend,
                 targetLtvDivider: data.targetLtvDivider,
+                // casting to int256 is safe because sharesInUnderlying is considered to be smaller than type(int256).max
+                // forge-lint: disable-next-line(unsafe-typecast)
                 deltaShares: -1 * int256(sharesInUnderlying),
                 isBorrow: true
             })
@@ -55,6 +57,8 @@ abstract contract PreviewRedeem is Vault {
         }
 
         // HODLer <=> withdrawer conflict, round in favor of HODLer, give less assets
+        // casting to uint256 is safe because assetsInUnderlying is checked to be non negative
+        // forge-lint: disable-next-line(unsafe-typecast)
         return (uint256(assetsInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, data.borrowPrice), deltaFuture);
     }
 }

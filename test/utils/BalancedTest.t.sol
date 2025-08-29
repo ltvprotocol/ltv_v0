@@ -9,6 +9,7 @@ import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/Safe
 contract BalancedTest is DummyModulesBaseTest {
     using SafeERC20 for IERC20;
 
+    // forge-lint: disable-start(unsafe-typecast)
     modifier initializeBalancedTest(
         address owner,
         address user,
@@ -80,4 +81,5 @@ contract BalancedTest is DummyModulesBaseTest {
         borrowToken.approve(address(ltv), type(uint112).max);
         _;
     }
+    // forge-lint: disable-end(unsafe-typecast)
 }

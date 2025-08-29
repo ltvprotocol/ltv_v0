@@ -14,16 +14,24 @@ abstract contract WithPayloadsManager is OwnableWithGuardian, IWithPayloadsManag
     }
 
     modifier onlyPayloadsManager() {
-        require(_msgSender() == payloadsManager(), OnlyPayloadsManagerInvalidCaller(_msgSender()));
+        _onlyPayloadsManager();
         _;
     }
 
     modifier onlyPayloadsManagerOrGuardian() {
+        _onlyPayloadsManagerOrGuardian();
+        _;
+    }
+
+    function _onlyPayloadsManager() internal view {
+        require(_msgSender() == payloadsManager(), OnlyPayloadsManagerInvalidCaller(_msgSender()));
+    }
+
+    function _onlyPayloadsManagerOrGuardian() internal view {
         require(
             _msgSender() == payloadsManager() || _msgSender() == guardian(),
             OnlyPayloadsManagerOrOwnerInvalidCaller(_msgSender())
         );
-        _;
     }
 
     function payloadsManager() public view override returns (address) {

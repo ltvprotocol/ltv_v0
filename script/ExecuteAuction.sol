@@ -25,6 +25,8 @@ contract ExecuteAuction is Script {
 
             uint256 collateralBalance = collateral.balanceOf(msg.sender);
 
+            // casting to uint256 is safe because futureCollateralAssets is checked to be non negative
+            // forge-lint: disable-next-line(unsafe-typecast)
             if (collateralBalance < uint256(futureCollateralAssets)) {
                 console.log("Collateral balance is too low");
                 return;
@@ -49,6 +51,8 @@ contract ExecuteAuction is Script {
 
                 int256 futureCollateralAssets = ltv.futureCollateralAssets();
 
+                // casting to uint256 is safe because futureBorrowAssets is checked to be negative
+                // forge-lint: disable-next-line(unsafe-typecast)
                 if (borrowBalance < uint256(-futureBorrowAssets)) {
                     console.log("Borrow balance is too low");
                     return;
@@ -56,6 +60,8 @@ contract ExecuteAuction is Script {
 
                 vm.startBroadcast(); // Start broadcasting transactions
 
+                // casting to uint256 is safe because futureBorrowAssets is checked to be negative
+                // forge-lint: disable-next-line(unsafe-typecast)
                 borrow.approve(address(ltv), uint256(-futureBorrowAssets));
 
                 ltv.executeAuctionCollateral(-futureCollateralAssets);

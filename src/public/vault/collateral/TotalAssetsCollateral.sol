@@ -59,8 +59,12 @@ abstract contract TotalAssetsCollateral is TotalAssets {
             state.commonTotalAssetsState.futureRewardBorrowAssets, state.commonTotalAssetsState.borrowPrice, isDeposit
         );
 
+        // casting to int256 is safe because realCollateral and
+        // realBorrow are considered to be smaller than type(int256).max
+        // forge-lint: disable-start(unsafe-typecast)
         int256 collateral = int256(realCollateral) + futureCollateral + futureRewardCollateral;
         int256 borrow = int256(realBorrow) + futureBorrow + futureRewardBorrow;
+        // forge-lint: disable-end(unsafe-typecast)
 
         data.totalAssets = _totalAssets(
             isDeposit,

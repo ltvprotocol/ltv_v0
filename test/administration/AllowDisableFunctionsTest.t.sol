@@ -262,6 +262,8 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         callers[10] = user;
 
         // Auction functions
+        // casting to int256 is safe because amount is small
+        // forge-lint: disable-start(unsafe-typecast)
         calls[11] = abi.encodeCall(ILTV.executeAuctionBorrow, (int256(amount)));
         selectors[11] = ILTV.executeAuctionBorrow.selector;
         callers[11] = user;
@@ -290,6 +292,7 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         calls[17] = abi.encodeCall(ILTV.executeLowLevelRebalanceShares, (int256(amount)));
         selectors[17] = ILTV.executeLowLevelRebalanceShares.selector;
         callers[17] = user;
+        // forge-lint: disable-end(unsafe-typecast)
 
         // Setting functions
         calls[18] = abi.encodeCall(ILTV.setFeeCollector, address(1));

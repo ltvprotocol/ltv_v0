@@ -138,6 +138,8 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
         calls[i++] = CallWithCaller(abi.encodeWithSignature("totalAssetsCollateral(bool)", true), user);
         calls[i++] = CallWithCaller(abi.encodeWithSignature("totalAssets()"), user);
         calls[i++] = CallWithCaller(abi.encodeWithSignature("totalAssets(bool)", true), user);
+        // casting to int256 is safe because amount is small
+        // forge-lint: disable-start(unsafe-typecast)
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.previewExecuteAuctionBorrow, (-int256(amount))), user);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.previewExecuteAuctionCollateral, (-int256(amount))), user);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.executeAuctionBorrow, (-int256(amount))), user);
@@ -156,6 +158,7 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
         calls[i++] =
             CallWithCaller(abi.encodeCall(ILTV.previewLowLevelRebalanceCollateralHint, (int256(amount), true)), user);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.previewLowLevelRebalanceShares, (int256(amount))), user);
+        // forge-lint: disable-end(unsafe-typecast)
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.maxLowLevelRebalanceBorrow, ()), user);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.maxLowLevelRebalanceCollateral, ()), user);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.maxLowLevelRebalanceShares, ()), user);

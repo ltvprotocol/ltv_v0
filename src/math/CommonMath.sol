@@ -32,6 +32,8 @@ library CommonMath {
         returns (int256)
     {
         // in case of deposit we need to assume more assets in the protocol, so round collateral up
+        // casting to int256 is safe because collateralPrice is considered to be smaller than type(int256).max
+        // forge-lint: disable-next-line(unsafe-typecast)
         return futureCollateralAssets.mulDiv(int256(collateralPrice), int256(Constants.ORACLE_DIVIDER), isDeposit);
     }
 
@@ -41,6 +43,8 @@ library CommonMath {
         returns (int256)
     {
         // in case of deposit we need to assume more assets in the protocol, so round borrow down
+        // casting to int256 is safe because borrowPrice is considered to be smaller than type(int256).max
+        // forge-lint: disable-next-line(unsafe-typecast)
         return futureBorrowAssets.mulDiv(int256(borrowPrice), int256(Constants.ORACLE_DIVIDER), !isDeposit);
     }
 
@@ -50,6 +54,8 @@ library CommonMath {
         returns (int256)
     {
         // in case of deposit we need to assume more assets in the protocol, so round collateral up
+        // casting to int256 is safe because collateralPrice is considered to be smaller than type(int256).max
+        // forge-lint: disable-next-line(unsafe-typecast)
         return futureRewardCollateralAssets.mulDiv(int256(collateralPrice), int256(Constants.ORACLE_DIVIDER), isDeposit);
     }
 
@@ -59,6 +65,8 @@ library CommonMath {
         returns (int256)
     {
         // in case of deposit we need to assume more assets in the protocol, so round borrow down
+        // casting to int256 is safe because borrowPrice is considered to be smaller than type(int256).max
+        // forge-lint: disable-next-line(unsafe-typecast)
         return futureRewardBorrowAssets.mulDiv(int256(borrowPrice), int256(Constants.ORACLE_DIVIDER), !isDeposit);
     }
 
@@ -75,6 +83,8 @@ library CommonMath {
             return auctionDuration;
         }
 
+        // casting to uint24 is safe because auctionStep is considered to be smaller or equal to auction duration
+        // forge-lint: disable-next-line(unsafe-typecast)
         return uint24(auctionStep);
     }
 
@@ -84,6 +94,8 @@ library CommonMath {
         uint256 auctionStep,
         uint24 auctionDuration
     ) internal pure returns (int256) {
+        // casting to int256 is safe because futureRewardBorrowAssets is considered to be smaller than type(int256).max
+        // forge-lint: disable-next-line(unsafe-typecast)
         return futureRewardBorrowAssets.mulDivUp(int256(auctionStep), int256(uint256(auctionDuration)));
     }
 
@@ -93,6 +105,9 @@ library CommonMath {
         uint256 auctionStep,
         uint24 auctionDuration
     ) internal pure returns (int256) {
+        // casting to int256 is safe because auction step is considered to be smaller than type(int256).max,
+        // and uint24 is smaller than type(uint256).max
+        // forge-lint: disable-next-line(unsafe-typecast)
         return futureRewardCollateralAssets.mulDivDown(int256(auctionStep), int256(uint256(auctionDuration)));
     }
 }
