@@ -43,7 +43,7 @@ contract WhitelistRegistry is IWhitelistRegistry, Ownable {
         emit SignerUpdated(signer);
     }
 
-    function whitelistBySignature(address account, uint8 v, bytes32 r, bytes32 s) external {
+    function addAddressToWhitelistBySignature(address account, uint8 v, bytes32 r, bytes32 s) external {
         // forge-lint: disable-next-line(asm-keccak256)
         bytes32 digest = keccak256(abi.encodePacked(account));
         require(ECDSA.recover(digest, v, r, s) == signer, InvalidSignature());

@@ -32,4 +32,55 @@ contract WhitelistTest is BalancedTest {
         borrowToken.approve(address(dummyLtv), 10 ** 17);
         dummyLtv.deposit(10 ** 17, randUser);
     }
+
+    function test_whitelistSignature(address owner, uint256 signerPrivateKey, address user)
+        public
+        initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
+    {
+        signerPrivateKey = signerPrivateKey % SECP256K1_ORDER + 1;
+        vm.stopPrank();
+        address signer = vm.addr(signerPrivateKey);
+        WhitelistRegistry whitelistRegistry = new WhitelistRegistry(owner, signer);
+
+        bytes32 hash = keccak256(abi.encodePacked(user));
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(signerPrivateKey, hash);
+
+        assertEq(whitelistRegistry.isAddressWhitelisted(user), false);
+        vm.startPrank(user);
+        whitelistRegistry.addAddressToWhitelistBySignature(user, v, r, s);
+
+        assertEq(whitelistRegistry.isAddressWhitelisted(user), true);
+    }
+
+    function test_whitelistImpossibleDoubleApproval(address owner, uint256 signerPrivateKey, address user)
+        public
+        initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
+    {
+        signerPrivateKey = signerPrivateKey % SECP256K1_ORDER + 1;
+        vm.stopPrank();
+        address signer = vm.addr(signerPrivateKey);
+        WhitelistRegistry whitelistRegistry = new WhitelistRegistry(owner, signer);
+
+        uint8 v;
+        bytes32 r;
+        bytes32 s;
+
+        {
+            bytes32 digest = keccak256(abi.encodePacked(user));
+            (v, r, s) = vm.sign(signerPrivateKey, digest);
+        }
+        assertEq(whitelistRegistry.isAddressWhitelisted(user), false);
+        vm.startPrank(user);
+        whitelistRegistry.addAddressToWhitelistBySignature(user, v, r, s);
+        vm.stopPrank();
+
+        assertEq(whitelistRegistry.isAddressWhitelisted(user), true);
+
+        vm.prank(owner);
+        whitelistRegistry.removeAddressFromWhitelist(user);
+        assertEq(whitelistRegistry.isAddressWhitelisted(user), false);
+
+        vm.expectRevert(abi.encodeWithSelector(WhitelistRegistry.DoubleSignatureUse.selector));
+        whitelistRegistry.addAddressToWhitelistBySignature(user, v, r, s);
+    }
 }
