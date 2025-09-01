@@ -83,4 +83,28 @@ contract WhitelistTest is BalancedTest {
         vm.expectRevert(abi.encodeWithSelector(WhitelistRegistry.DoubleSignatureUse.selector));
         whitelistRegistry.addAddressToWhitelistBySignature(user, v, r, s);
     }
+
+    function test_incorrectSignature(address owner, uint256 signerPrivateKey, address user)
+        public
+        initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
+    {
+        signerPrivateKey = signerPrivateKey % SECP256K1_ORDER + 1;
+        vm.stopPrank();
+
+        address signer = vm.addr(signerPrivateKey);
+        WhitelistRegistry whitelistRegistry = new WhitelistRegistry(owner, signer);
+
+        uint8 v;
+        bytes32 r;
+        bytes32 s;
+
+        {
+            bytes32 digest = keccak256(abi.encodePacked(owner));
+            (v, r, s) = vm.sign(signerPrivateKey, digest);
+        }
+        assertEq(whitelistRegistry.isAddressWhitelisted(user), false);
+        vm.startPrank(user);
+        vm.expectRevert(abi.encodeWithSelector(WhitelistRegistry.InvalidSignature.selector));
+        whitelistRegistry.addAddressToWhitelistBySignature(user, v, r, s);
+    }
 }
