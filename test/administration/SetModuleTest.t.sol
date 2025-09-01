@@ -313,7 +313,7 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
         collateralToken.approve(address(ltv), type(uint112).max);
         vm.stopPrank();
 
-        WhitelistRegistry registry = new WhitelistRegistry(data.owner);
+        WhitelistRegistry registry = new WhitelistRegistry(data.owner, address(0));
         vm.prank(data.governor);
         ltv.setWhitelistRegistry(address(registry));
 

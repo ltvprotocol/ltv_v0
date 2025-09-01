@@ -18,7 +18,7 @@ contract WhitelistTest is BalancedTest {
         vm.startPrank(governor);
         deal(address(borrowToken), randUser, type(uint112).max);
 
-        WhitelistRegistry whitelistRegistry = new WhitelistRegistry(governor);
+        WhitelistRegistry whitelistRegistry = new WhitelistRegistry(governor, address(0));
         dummyLtv.setWhitelistRegistry(address(whitelistRegistry));
 
         dummyLtv.setIsWhitelistActivated(true);

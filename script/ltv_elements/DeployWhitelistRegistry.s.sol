@@ -8,8 +8,9 @@ import {console} from "forge-std/console.sol";
 contract DeployWhitelistRegistry is BaseScript {
     function deploy() internal override {
         address owner = vm.envAddress("WHITELIST_OWNER");
+        address whitelistSigner = vm.envAddress("WHITELIST_SIGNER");
 
-        WhitelistRegistry whitelistRegistry = new WhitelistRegistry{salt: bytes32(0)}(owner);
+        WhitelistRegistry whitelistRegistry = new WhitelistRegistry{salt: bytes32(0)}(owner, whitelistSigner);
         console.log("WhitelistRegistry deployed at: ", address(whitelistRegistry));
     }
 

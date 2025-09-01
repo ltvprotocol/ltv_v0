@@ -56,7 +56,7 @@ contract SetIsWhitelistActivatedTest is PrepareEachFunctionSuccessfulExecution {
     // forge-lint: disable-end(unsafe-typecast)
 
     function prepareWhitelistDepositWithdrawTest(address user, address governor, address owner) public {
-        registry = new WhitelistRegistry(owner);
+        registry = new WhitelistRegistry(owner, address(0));
         vm.prank(governor);
         ltv.setWhitelistRegistry(address(registry));
 
@@ -65,7 +65,7 @@ contract SetIsWhitelistActivatedTest is PrepareEachFunctionSuccessfulExecution {
 
     function test_checkSlot(DefaultTestData memory data) public testWithPredefinedDefaultValues(data) {
         vm.startPrank(data.governor);
-        ltv.setWhitelistRegistry(address(new WhitelistRegistry(data.owner)));
+        ltv.setWhitelistRegistry(address(new WhitelistRegistry(data.owner, address(0))));
 
         bool isActivated = ltv.isWhitelistActivated();
 
@@ -172,7 +172,7 @@ contract SetIsWhitelistActivatedTest is PrepareEachFunctionSuccessfulExecution {
         vm.assume(user != data.governor);
 
         vm.startPrank(data.governor);
-        ltv.setWhitelistRegistry(address(new WhitelistRegistry(data.owner)));
+        ltv.setWhitelistRegistry(address(new WhitelistRegistry(data.owner, address(0))));
 
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
