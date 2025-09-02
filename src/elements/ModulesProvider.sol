@@ -11,7 +11,6 @@ import {IAdministrationModule} from "src/interfaces/reads/IAdministrationModule.
 import {IInitializeModule} from "src/interfaces/reads/IInitializeModule.sol";
 import {ModulesState} from "src/structs/state/ModulesState.sol";
 
-
 /**
  * @title ModulesProvider
  * @notice This contract is used to provide access to the modules of the LTV protocol.
