@@ -8,6 +8,12 @@ import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
 import {LTVState} from "src/states/LTVState.sol";
 import {CommonWrite} from "src/facades/writes/CommonWrite.sol";
 
+/**
+ * @title AdministrationWrite
+ * @notice This contract contains all the write functions for the administration part of the LTV protocol.
+ * Since signature and return data of the module and facade are the same, this contract easily delegates
+ * calls to the administration module.
+ */
 abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeable, IAdministrationEvents {
     function setTargetLtv(uint16 dividend, uint16 divider) external {
         _delegate(address(modules.administrationModule()), abi.encode(dividend, divider));

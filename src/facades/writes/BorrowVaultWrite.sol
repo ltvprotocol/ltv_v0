@@ -4,6 +4,12 @@ pragma solidity ^0.8.28;
 import {LTVState} from "src/states/LTVState.sol";
 import {CommonWrite} from "src/facades/writes/CommonWrite.sol";
 
+/**
+ * @title BorrowVaultWrite
+ * @notice This contract contains all the write functions for the borrow vault part of the LTV protocol.
+ * Since signature and return data of the module and facade are the same, this contract easily delegates
+ * calls to the borrow vault module.
+ */
 abstract contract BorrowVaultWrite is LTVState, CommonWrite {
     function deposit(uint256 assets, address receiver) external returns (uint256) {
         _delegate(address(modules.borrowVaultModule()), abi.encode(assets, receiver));
