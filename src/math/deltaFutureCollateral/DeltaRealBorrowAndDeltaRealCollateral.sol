@@ -13,6 +13,16 @@ import {DeltaRealBorrowAndDeltaRealCollateralDividerData} from
 import {CasesOperator} from "src/math/CasesOperator.sol";
 import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
 
+/**
+ * @title DeltaRealBorrowAndDeltaRealCollateral
+ * @notice This library contains functions to calculate deltaFutureCollateral by deltaRealBorrow and deltaRealCollateral.
+ *
+ * @dev These calculations are derived from the ltv protocol paper. This function calculates deltaFutureCollateral
+ * when deltaRealBorrow and deltaRealCollateral are provided. It goes through all the possible cases to find the valid deltaFutureCollateral.
+ * Depending on the current auction direction only some cases are possible. Since you can't execute collateral to borrow auction when
+ * borrow to collateral auction is in progress, and vice versa.
+ *
+ */
 library DeltaRealBorrowAndDeltaRealCollateral {
     using uMulDiv for uint256;
     using sMulDiv for int256;
@@ -385,7 +395,7 @@ library DeltaRealBorrowAndDeltaRealCollateral {
     }
 
     /**
-     *
+     * ROUNDING:
      * For every single case we need to round deltaFutureCollateral in the way to help case to
      * be valid
      * cmcb: For this case deltaFutureCollateral < 0. To help it be indeed negative we need to round deltaFutureCollateral to the bottom
