@@ -12,7 +12,7 @@ contract SetWhitelistRegistryTest is BaseTest {
         testWithPredefinedDefaultValues(defaultData)
     {
         vm.startPrank(defaultData.governor);
-        ltv.setWhitelistRegistry(address(new WhitelistRegistry(defaultData.owner)));
+        ltv.setWhitelistRegistry(address(new WhitelistRegistry(defaultData.owner, address(0))));
         ltv.setIsWhitelistActivated(true);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.WhitelistIsActivated.selector));
         ltv.setWhitelistRegistry(address(0));
@@ -28,7 +28,7 @@ contract SetWhitelistRegistryTest is BaseTest {
         borrowToken.approve(address(ltv), type(uint112).max);
 
         vm.startPrank(defaultData.governor);
-        WhitelistRegistry registry = new WhitelistRegistry(defaultData.owner);
+        WhitelistRegistry registry = new WhitelistRegistry(defaultData.owner, address(0));
         ltv.setWhitelistRegistry(address(registry));
         ltv.setIsWhitelistActivated(true);
 
@@ -42,7 +42,7 @@ contract SetWhitelistRegistryTest is BaseTest {
         ltv.deposit(10 ** 10, user);
 
         vm.startPrank(defaultData.governor);
-        ltv.setWhitelistRegistry(address(new WhitelistRegistry(defaultData.owner)));
+        ltv.setWhitelistRegistry(address(new WhitelistRegistry(defaultData.owner, address(0))));
         vm.stopPrank();
 
         // check user is not whitelisted
@@ -54,7 +54,7 @@ contract SetWhitelistRegistryTest is BaseTest {
 
     function test_checkSlot(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
         vm.startPrank(defaultData.governor);
-        WhitelistRegistry registry = new WhitelistRegistry(defaultData.owner);
+        WhitelistRegistry registry = new WhitelistRegistry(defaultData.owner, address(0));
         ltv.setWhitelistRegistry(address(registry));
         vm.stopPrank();
 
