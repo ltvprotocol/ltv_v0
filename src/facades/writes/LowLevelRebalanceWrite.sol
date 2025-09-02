@@ -4,6 +4,12 @@ pragma solidity ^0.8.28;
 import {LTVState} from "src/states/LTVState.sol";
 import {CommonWrite} from "src/facades/writes/CommonWrite.sol";
 
+/**
+ * @title LowLevelRebalanceWrite
+ * @notice This contract contains all the write functions for the low level rebalance part of the LTV protocol.
+ * Since signature and return data of the module and facade are the same, this contract easily delegates
+ * calls to the low level rebalance module.
+ */
 abstract contract LowLevelRebalanceWrite is LTVState, CommonWrite {
     function executeLowLevelRebalanceShares(int256 deltaShares) external returns (int256, int256) {
         _delegate(address(modules.lowLevelRebalanceModule()), abi.encode(deltaShares));

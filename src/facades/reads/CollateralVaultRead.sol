@@ -6,6 +6,11 @@ import {MaxDepositMintCollateralVaultStateReader} from
 import {MaxWithdrawRedeemCollateralVaultStateReader} from
     "src/state_reader/vault/MaxWithdrawRedeemCollateralVaultStateReader.sol";
 
+/**
+ * @title CollateralVaultRead
+ * @notice This contract contains all the read functions for the collateral vault part of the LTV protocol.
+ * It retrieves appropriate function state and delegates all the calculations to the collateral vault module.
+ */
 abstract contract CollateralVaultRead is
     MaxDepositMintCollateralVaultStateReader,
     MaxWithdrawRedeemCollateralVaultStateReader

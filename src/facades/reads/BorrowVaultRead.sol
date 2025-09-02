@@ -7,6 +7,11 @@ import {MaxDepositMintBorrowVaultStateReader} from "src/state_reader/vault/MaxDe
 import {MaxWithdrawRedeemBorrowVaultStateReader} from
     "src/state_reader/vault/MaxWithdrawRedeemBorrowVaultStateReader.sol";
 
+/**
+ * @title BorrowVaultRead
+ * @notice This contract contains all the read functions for the borrow vault part of the LTV protocol.
+ * It retrieves appropriate function state and delegates all the calculations to the borrow vault module.
+ */
 abstract contract BorrowVaultRead is
     PreviewDepositVaultStateReader,
     PreviewWithdrawVaultStateReader,

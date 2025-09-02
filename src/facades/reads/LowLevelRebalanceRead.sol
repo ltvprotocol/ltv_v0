@@ -9,6 +9,11 @@ import {MaxLowLevelRebalanceBorrowStateReader} from
 import {MaxLowLevelRebalanceCollateralStateReader} from
     "src/state_reader/low_level/MaxLowLevelRebalanceCollateralStateReader.sol";
 
+/**
+ * @title LowLevelRebalanceRead
+ * @notice This contract contains all the read functions for the low level rebalance part of the LTV protocol.
+ * It retrieves appropriate function state and delegates all the calculations to the low level rebalance module.
+ */
 abstract contract LowLevelRebalanceRead is
     PreviewLowLevelRebalanceStateReader,
     MaxLowLevelRebalanceSharesStateReader,
