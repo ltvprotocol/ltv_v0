@@ -321,10 +321,20 @@ library DeltaRealBorrowAndDeltaRealCollateral {
             revert IVaultErrors.DeltaRealBorrowAndDeltaRealCollateralUnexpectedError(data);
         }
 
-        // TODO: mb check deltaFutureCollateral + data.futureCollateral - DELTA < 0
-
         if (deltaFutureCollateral + data.futureCollateral < 0) {
-            deltaFutureCollateral = -data.futureCollateral;
+            // we know data.futureCollateral > 0
+            // mulDivUp
+
+            if (
+                deltaFutureCollateral
+                    + data.futureCollateral.mulDivUp(
+                        Constants.FUTURE_ADJUSTMENT_NUMERATOR, Constants.FUTURE_ADJUSTMENT_DENOMINATOR
+                    ) > 0
+            ) {
+                deltaFutureCollateral = -data.futureCollateral;
+            } else {
+                revert IVaultErrors.DeltaRealBorrowAndDeltaRealCollateralUnexpectedError(data);
+            }
         }
 
         return (deltaFutureCollateral, cases);
@@ -361,10 +371,20 @@ library DeltaRealBorrowAndDeltaRealCollateral {
             revert IVaultErrors.DeltaRealBorrowAndDeltaRealCollateralUnexpectedError(data);
         }
 
-        // TODO: mb check deltaFutureCollateral + data.futureCollateral + DELTA > 0
-
         if (deltaFutureCollateral + data.futureCollateral > 0) {
-            deltaFutureCollateral = -data.futureCollateral;
+            // we know data.futureCollateral < 0
+            // mulDivDown
+
+            if (
+                deltaFutureCollateral
+                    + data.futureCollateral.mulDivDown(
+                        Constants.FUTURE_ADJUSTMENT_NUMERATOR, Constants.FUTURE_ADJUSTMENT_DENOMINATOR
+                    ) < 0
+            ) {
+                deltaFutureCollateral = -data.futureCollateral;
+            } else {
+                revert IVaultErrors.DeltaRealBorrowAndDeltaRealCollateralUnexpectedError(data);
+            }
         }
 
         return (deltaFutureCollateral, cases);
