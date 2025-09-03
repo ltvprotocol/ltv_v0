@@ -18,6 +18,12 @@ library NextStep {
     //                                                       + ∆userFutureRewardCollateral +
     //                                                       + ∆protocolFutureRewardCollateral
 
+    /**
+     * @notice Calculates next future reward borrow.
+     *
+     * @dev Calculations are derived from the ltv protocol paper. 
+     * Hint: simple sum of all the changes.
+     */
     function calculateNextFutureRewardBorrow(
         int256 futureRewardBorrow,
         int256 deltaFuturePaymentBorrow,
@@ -28,6 +34,12 @@ library NextStep {
             + deltaProtocolFutureRewardBorrow;
     }
 
+    /**
+     * @notice Calculates next future reward collateral.
+     *
+     * @dev Calculations are derived from the ltv protocol paper. 
+     * Hint: simple sum of all the changes.
+     */
     function calculateNextFutureRewardCollateral(
         int256 futureRewardCollateral,
         int256 deltaFuturePaymentCollateral,
@@ -38,6 +50,12 @@ library NextStep {
             + deltaProtocolFutureRewardCollateral;
     }
 
+    /**
+     * @notice Calculates next future borrow.
+     *
+     * @dev Calculations are derived from the ltv protocol paper. 
+     * Hint: simple sum of all the changes.
+     */
     function calculateNextFutureBorrow(int256 futureBorrow, int256 deltaFutureBorrow)
         private
         pure
@@ -46,6 +64,12 @@ library NextStep {
         return futureBorrow + deltaFutureBorrow;
     }
 
+    /**
+     * @notice Calculates next future collateral.
+     *
+     * @dev Calculations are derived from the ltv protocol paper. 
+     * Hint: simple sum of all the changes.
+     */
     function calculateNextFutureCollateral(int256 futureCollateral, int256 deltaFutureCollateral)
         private
         pure
@@ -54,6 +78,12 @@ library NextStep {
         return futureCollateral + deltaFutureCollateral;
     }
 
+    /**
+     * @notice Calculates next auction start point.
+     *
+     * @dev In case of auction merging, recalculates auction start point and returns true.
+     * Otherwise returns 0 and false.
+     */
     function mergingAuction(MergeAuctionData memory data) private pure returns (uint56 startAuction, bool merge) {
         merge =
             data.futureBorrow * data.deltaFutureBorrow >= 0 && data.futureCollateral * data.deltaFutureCollateral >= 0;
@@ -90,6 +120,9 @@ library NextStep {
         }
     }
 
+    /**
+     * @notice Calculates next state using functions from this library.
+     */
     function calculateNextStep(NextStepData memory data) internal pure returns (NextState memory nextState) {
         nextState.futureBorrow = calculateNextFutureBorrow(data.futureBorrow, data.deltaFutureBorrow);
         nextState.futureCollateral = calculateNextFutureCollateral(data.futureCollateral, data.deltaFutureCollateral);

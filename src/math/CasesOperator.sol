@@ -3,6 +3,10 @@ pragma solidity ^0.8.28;
 
 import {Cases} from "src/structs/data/vault/Cases.sol";
 
+/**
+ * @title CasesOperator
+ * @notice This library contains function to generate a specific case.
+ */
 library CasesOperator {
     function generateCase(uint8 ncase) internal pure returns (Cases memory) {
         return Cases({

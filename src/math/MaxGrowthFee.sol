@@ -12,6 +12,15 @@ import {uMulDiv} from "src/utils/MulDiv.sol";
 abstract contract MaxGrowthFee is TotalAssets, TotalSupply {
     using uMulDiv for uint256;
 
+    /**
+     * @notice Calculates supply after applying max growth fee.
+     *
+     * @dev Calculations are derived from the ltv protocol paper.
+     * Makes sure fee collector receives fee by minting tokens untill
+     * the deviation of current token price from last seen token
+     * price will be equal to (100 - maxGrowthFee)%
+     *
+     */
     function _previewSupplyAfterFee(MaxGrowthFeeData memory data) internal pure returns (uint256) {
         // underestimate current price
         if (
@@ -37,6 +46,10 @@ abstract contract MaxGrowthFee is TotalAssets, TotalSupply {
         );
     }
 
+    /**
+     * 
+     * @notice Precalculates bare state needed to calculate max growth fee.
+     */
     function maxGrowthFeeStateToData(MaxGrowthFeeState memory state) internal pure returns (MaxGrowthFeeData memory) {
         return MaxGrowthFeeData({
             withdrawTotalAssets: totalAssets(
