@@ -12,6 +12,13 @@ import {CommonBorrowCollateral} from "src/math/CommonBorrowCollateral.sol";
 import {CasesOperator} from "src/math/CasesOperator.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 
+/**
+ * @title MintRedeem
+ * @notice This library contains function to calculate full state transition in underlying assets
+ * for mint, redeem and mint collateral, redeem collateral vault operations.
+ *
+ * @dev These calculations are derived from the ltv protocol paper.
+ */
 library MintRedeem {
     using uMulDiv for uint256;
 

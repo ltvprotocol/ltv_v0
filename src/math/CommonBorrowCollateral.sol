@@ -5,11 +5,26 @@ import {Constants} from "src/Constants.sol";
 import {Cases} from "src/structs/data/vault/Cases.sol";
 import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
 
+/**
+ * @title CommonBorrowCollateral
+ * @notice This library contains functions to calculate state transitions during vault operations.
+ *
+ * @dev These calculations are derived from the ltv protocol paper.
+ */
 library CommonBorrowCollateral {
     using uMulDiv for uint256;
     using sMulDiv for int256;
 
-    // Future executor <=> executor conflict, round up to make auction more profitable
+    /**
+     * @notice This function calculates deltaFutureBorrow from deltaFutureCollateral.
+     *
+     * @dev This function calculates deltaFutureBorrow from deltaFutureCollateral.
+     * Calculations are derived from the ltv protocol paper.
+     *
+     * ROUNDING:
+     *
+     * Future executor <=> executor conflict, round up to make auction more profitable
+     */
     function calculateDeltaFutureBorrowFromDeltaFutureCollateral(
         Cases memory ncase,
         int256 futureCollateral,
@@ -33,7 +48,15 @@ library CommonBorrowCollateral {
         return deltaFutureBorrow;
     }
 
-    // Future executor <=> executor conflict, round down to make auction more profitable
+    /**
+     * @notice This function calculates deltaFutureCollateral from deltaFutureBorrow.
+     *
+     * @dev This function calculates deltaFutureCollateral from deltaFutureBorrow.
+     * Calculations are derived from the ltv protocol paper.
+     *
+     * ROUNDING:
+     * Future executor <=> executor conflict, round down to make auction more profitable
+     */
     function calculateDeltaFutureCollateralFromDeltaFutureBorrow(
         Cases memory ncase,
         int256 futureCollateral,
@@ -53,7 +76,15 @@ library CommonBorrowCollateral {
         return deltaFutureCollateral;
     }
 
-    // Future executor <=> executor conflict, round down to make auction more profitable
+    /**
+     * @notice This function calculates deltaUserFutureRewardCollateral from deltaFutureCollateral.
+     *
+     * @dev This function calculates deltaUserFutureRewardCollateral from deltaFutureCollateral.
+     * Calculations are derived from the ltv protocol paper.
+     *
+     * ROUNDING:
+     * Future executor <=> executor conflict, round down to make auction more profitable
+     */
     function calculateDeltaUserFutureRewardCollateral(
         Cases memory ncase,
         int256 futureCollateral,
@@ -73,7 +104,15 @@ library CommonBorrowCollateral {
         return deltaUserFutureRewardCollateral;
     }
 
-    //  Fee collector <=> future executor conflict, round down to leave a bit more future reward collateral in the protocol
+    /**
+     * @notice This function calculates deltaProtocolFutureRewardCollateral from deltaFutureCollateral.
+     *
+     * @dev This function calculates deltaProtocolFutureRewardCollateral from deltaFutureCollateral.
+     * Calculations are derived from the ltv protocol paper.
+     *
+     * ROUNDING:
+     * Fee collector <=> future executor conflict, round down to leave a bit more future reward collateral in the protocol
+     */
     function calculateDeltaProtocolFutureRewardCollateral(
         Cases memory ncase,
         int256 futureCollateral,
@@ -93,7 +132,15 @@ library CommonBorrowCollateral {
         return deltaProtocolFutureRewardCollateral;
     }
 
-    // auction creator <=> future executor conflict, resolve in favor of future executor, round down to leave more rewards in protocol
+    /**
+     * @notice This function calculates deltaFuturePaymentCollateral from deltaFutureCollateral.
+     *
+     * @dev This function calculates deltaFuturePaymentCollateral from deltaFutureCollateral.
+     * Calculations are derived from the ltv protocol paper.
+     *
+     * ROUNDING:
+     * auction creator <=> future executor conflict, resolve in favor of future executor, round down to leave more rewards in protocol
+     */
     function calculateDeltaFuturePaymentCollateral(
         Cases memory ncase,
         int256 futureCollateral,
@@ -113,7 +160,15 @@ library CommonBorrowCollateral {
         return deltaFuturePaymentCollateral;
     }
 
-    // auction executor <=> future auction executor conflict, resolve in favor of future executor, round up to leave more rewards in protocol
+    /**
+     * @notice This function calculates deltaUserFutureRewardBorrow from deltaFutureBorrow.
+     *
+     * @dev This function calculates deltaUserFutureRewardBorrow from deltaFutureBorrow.
+     * Calculations are derived from the ltv protocol paper.
+     *
+     * ROUNDING:
+     * auction executor <=> future auction executor conflict, resolve in favor of future executor, round up to leave more rewards in protocol
+     */
     function calculateDeltaUserFutureRewardBorrow(
         Cases memory ncase,
         int256 futureBorrow,
@@ -134,7 +189,15 @@ library CommonBorrowCollateral {
         return deltaUserFutureRewardBorrow;
     }
 
-    // Fee collector <=> future executor conflict, round up to leave a bit more future reward borrow in the protocol
+    /**
+     * @notice This function calculates deltaProtocolFutureRewardBorrow from deltaFutureBorrow.
+     *
+     * @dev This function calculates deltaProtocolFutureRewardBorrow from deltaFutureBorrow.
+     * Calculations are derived from the ltv protocol paper.
+     *
+     * ROUNDING:
+     * Fee collector <=> future executor conflict, round up to leave a bit more future reward borrow in the protocol
+     */
     function calculateDeltaProtocolFutureRewardBorrow(
         Cases memory ncase,
         int256 futureBorrow,
@@ -152,7 +215,15 @@ library CommonBorrowCollateral {
         return deltaProtocolFutureRewardBorrow;
     }
 
-    // auction creator <=> future executor conflict, resolve in favor of future executor, round up to leave more rewards in protocol
+    /**
+     * @notice This function calculates deltaFuturePaymentBorrow from deltaFutureBorrow.
+     *
+     * @dev This function calculates deltaFuturePaymentBorrow from deltaFutureBorrow.
+     * Calculations are derived from the ltv protocol paper.
+     *
+     * ROUNDING:
+     * auction creator <=> future executor conflict, resolve in favor of future executor, round up to leave more rewards in protocol
+     */
     function calculateDeltaFuturePaymentBorrow(
         Cases memory ncase,
         int256 futureBorrow,

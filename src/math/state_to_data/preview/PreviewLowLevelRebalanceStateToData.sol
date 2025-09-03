@@ -10,9 +10,17 @@ import {MaxGrowthFee} from "src/math/MaxGrowthFee.sol";
 import {CommonMath} from "src/math/CommonMath.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 
+/**
+ * @title PreviewLowLevelRebalanceStateToData
+ * @notice Contract contains functionality to precalculate pure preview low level rebalance state to
+ * data needed for low level rebalance calculations.
+ */
 abstract contract PreviewLowLevelRebalanceStateToData is MaxGrowthFee {
     using uMulDiv for uint256;
 
+    /**
+     * @notice Precalculates pure preview low level rebalance state to data needed for low level rebalance calculations.
+     */
     function previewLowLevelRebalanceStateToData(PreviewLowLevelRebalanceState memory state, bool isDeposit)
         internal
         pure

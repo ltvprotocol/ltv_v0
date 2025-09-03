@@ -6,13 +6,28 @@ import {AuctionData} from "src/structs/data/AuctionData.sol";
 import {DeltaAuctionState} from "src/structs/state_transition/DeltaAuctionState.sol";
 import {sMulDiv} from "src/utils/MulDiv.sol";
 
-// since auction execution doesn't affect totalAssets we have only two conflicts here,
-// executor <=> future executor,
-// executor <=> fee collector
+/**
+ * @title AuctionMath
+ * @notice This library contains functions to calculate deltaFutureBorrowAssets and deltaFutureCollateralAssets.
+ *
+ * @dev These calculations are derived from the ltv protocol paper.
+ * ROUNDING:
+ * since auction execution doesn't affect totalAssets we have only two conflicts here,
+ * executor <=> future executor,
+ * executor <=> fee collector
+ */
 library AuctionMath {
     using sMulDiv for int256;
 
-    // delta future borrow needs to be rounded down to make auction reward bigger for future executor
+    /**
+     * @notice This function calculates deltaFutureBorrowAssets from deltaUserBorrowAssets.
+     *
+     * @dev This function calculates deltaFutureBorrowAssets from deltaUserBorrowAssets.
+     * Calculations are derived from the ltv protocol paper.
+     *
+     * ROUNDING:
+     * delta future borrow needs to be rounded down to make auction reward bigger for future executor
+     */
     function calculateDeltaFutureBorrowAssetsFromDeltaUserBorrowAssets(
         int256 deltaUserBorrowAssets,
         int256 futureBorrowAssets,
@@ -29,7 +44,15 @@ library AuctionMath {
         return (deltaUserBorrowAssets).mulDivDown(futureBorrowAssets, divider);
     }
 
-    // delta future collateral needs to be rounded up to make rewards bigger for future executor
+    /**
+     * @notice This function calculates deltaFutureCollateralAssets from deltaUserCollateralAssets.
+     *
+     * @dev This function calculates deltaFutureCollateralAssets from deltaUserCollateralAssets.
+     * Calculations are derived from the ltv protocol paper.
+     *
+     * ROUNDING:
+     * delta future collateral needs to be rounded up to make rewards bigger for future executor
+     */
     function calculateDeltaFutureCollateralAssetsFromDeltaUserCollateralAssets(
         int256 deltaUserCollateralAssets,
         int256 futureCollateralAssets,
@@ -46,7 +69,16 @@ library AuctionMath {
         return (deltaUserCollateralAssets).mulDivUp(futureCollateralAssets, divider);
     }
 
-    // delta future borrow needs to be rounded up to make auction more profitable for future executor
+    /**
+     * @notice This function calculates deltaFutureBorrowAssets from deltaFutureCollateralAssets.
+     *
+     * @dev This function calculates deltaFutureBorrowAssets from deltaFutureCollateralAssets.
+     * Calculations are derived from the ltv protocol paper. Hint: auction execution
+     * has to be proportional
+     *
+     * ROUNDING:
+     * delta future borrow needs to be rounded up to make auction more profitable for future executor
+     */
     function calculateDeltaFutureBorrowAssetsFromDeltaFutureCollateralAssets(
         int256 deltaFutureCollateralAssets,
         int256 futureBorrowAssets,
@@ -55,7 +87,16 @@ library AuctionMath {
         return deltaFutureCollateralAssets.mulDivUp(futureBorrowAssets, futureCollateralAssets);
     }
 
-    // delta future collateral needs to be rounded down to make auction more profitable for future executor
+    /**
+     * @notice This function calculates deltaFutureCollateralAssets from deltaFutureBorrowAssets.
+     *
+     * @dev This function calculates deltaFutureCollateralAssets from deltaFutureBorrowAssets.
+     * Calculations are derived from the ltv protocol paper. Hint: auction execution
+     * has to be proportional
+     *
+     * ROUNDING:
+     * delta future collateral needs to be rounded down to make auction more profitable for future executor
+     */
     function calculateDeltaFutureCollateralAssetsFromDeltaFutureBorrowAssets(
         int256 deltaFutureBorrowAssets,
         int256 futureCollateralAssets,
@@ -64,7 +105,16 @@ library AuctionMath {
         return deltaFutureBorrowAssets.mulDivDown(futureCollateralAssets, futureBorrowAssets);
     }
 
-    // needs to be rounded up to make auction more profitable for future executor
+    /**
+     * @notice This function calculates deltaFutureRewardBorrowAssets from deltaFutureBorrowAssets.
+     *
+     * @dev This function calculates deltaFutureRewardBorrowAssets from deltaFutureBorrowAssets.
+     * Calculations are derived from the ltv protocol paper. Hint: substracted rewards also
+     * need to be proportional to the auction execution size.
+     *
+     * ROUNDING:
+     * needs to be rounded up to make auction more profitable for future executor
+     */
     function calculateDeltaFutureRewardBorrowAssetsFromDeltaFutureBorrowAssets(
         int256 deltaFutureBorrowAssets,
         int256 futureBorrowAssets,
@@ -73,7 +123,16 @@ library AuctionMath {
         return futureRewardBorrowAssets.mulDivUp(deltaFutureBorrowAssets, futureBorrowAssets);
     }
 
-    // needs to be rounded down to make auction more profitable for future executor
+    /**
+     * @notice This function calculates deltaFutureRewardCollateralAssets from deltaFutureCollateralAssets.
+     *
+     * @dev This function calculates deltaFutureRewardCollateralAssets from deltaFutureCollateralAssets.
+     * Calculations are derived from the ltv protocol paper. Hint: substracted rewards also
+     * need to be proportional to the auction execution size.
+     *
+     * ROUNDING:
+     * needs to be rounded down to make auction more profitable for future executor
+     */
     function calculateDeltaFutureRewardCollateralAssetsFromDeltaFutureCollateralAssets(
         int256 deltaFutureCollateralAssets,
         int256 futureCollateralAssets,
@@ -82,7 +141,16 @@ library AuctionMath {
         return futureRewardCollateralAssets.mulDivDown(deltaFutureCollateralAssets, futureCollateralAssets);
     }
 
-    // Fee collector and auction executor conflict. Resolve to give more to auction executor
+    /**
+     * @notice This function calculates deltaUserFutureRewardBorrowAssets from deltaFutureRewardBorrowAssets.
+     *
+     * @dev This function calculates deltaUserFutureRewardBorrowAssets from deltaFutureRewardBorrowAssets.
+     * Calculations are derived from the ltv protocol paper. Hint: user has only part of the distributed rewards.
+     * It depends on the auction size and current auction step.
+     *
+     * ROUNDING:
+     * Fee collector and auction executor conflict. Resolve to give more to auction executor
+     */
     function calculateDeltaUserFutureRewardBorrowAssetsFromDeltaFutureRewardBorrowAssets(
         int256 deltaFutureRewardBorrowAssets,
         uint24 auctionStep,
@@ -91,7 +159,16 @@ library AuctionMath {
         return deltaFutureRewardBorrowAssets.mulDivDown(int256(uint256(auctionStep)), int256(uint256(auctionDuration)));
     }
 
-    // Fee collector and auction executor conflict. Resolve to give more to auction executor
+    /**
+     * @notice This function calculates deltaUserFutureRewardCollateralAssets from deltaFutureRewardCollateralAssets.
+     *
+     * @dev This function calculates deltaUserFutureRewardCollateralAssets from deltaFutureRewardCollateralAssets.
+     * Calculations are derived from the ltv protocol paper. Hint: user has only part of the distributed rewards.
+     * It depends on the auction size and current auction step.
+     *
+     * ROUNDING:
+     * Fee collector and auction executor conflict. Resolve to give more to auction executor
+     */
     function calculateDeltaUserFutureRewardCollateralAssetsFromDeltaFutureRewardCollateralAssets(
         int256 deltaFutureRewardCollateralAssets,
         uint24 auctionStep,
@@ -101,6 +178,14 @@ library AuctionMath {
             deltaFutureRewardCollateralAssets.mulDivUp(int256(uint256(auctionStep)), int256(uint256(auctionDuration)));
     }
 
+    /**
+     * @notice This function calculates maximum possible deltaUserBorrowAssets for current auction state.
+     *
+     * @dev This function calculates availableDeltaUserBorrowAssets.
+     * Calculations are derived from the ltv protocol paper. Hint: user can calculate an entire auction, but
+     * rewards can reduce amount user will need to pay.
+     *
+     */
     function availableDeltaUserBorrowAssets(
         int256 futureRewardBorrowAssets,
         uint24 auctionStep,
@@ -113,6 +198,13 @@ library AuctionMath {
         return futureBorrowAssets - deltaUserRewardBorrowAssets;
     }
 
+    /**
+     * @notice This function calculates maximum possible deltaUserCollateralAssets for current auction state.
+     *
+     * @dev This function calculates availableDeltaUserCollateralAssets.
+     * Calculations are derived from the ltv protocol paper. Hint: user can calculate an entire auction, but
+     * rewards can reduce amount user will need to pay.
+     */
     function availableDeltaUserCollateralAssets(
         int256 futureRewardCollateralAssets,
         uint24 auctionStep,
@@ -127,6 +219,19 @@ library AuctionMath {
         return futureCollateralAssets - userRewardCollateralAssets;
     }
 
+    /**
+     * @notice This function calculates full protocol state transition when executing auction providing
+     * collateral assets.
+     *
+     * @dev Calculation checks if provided deltaUserCollateralAssets is valid for current auction state. After,
+     * calculation uses functions described above to sequentially calculate an entire state change.
+     * Depending on the direction of the auction, rewards are in borrow or collateral. It splits calculation
+     * into two branches. Calculation also handles case where because of roundings, auction can request full
+     * execution of borrow part in exchange for just part of the collateral part. It can make resulting state
+     * invalid, since, for instance, futureBorrow will be 1, when futureCollateral will be 0. Function handles
+     * this case and makes sure that either futureBorrow or futureCollateral are not 0 or both 0.
+     *
+     */
     function calculateExecuteAuctionCollateral(int256 deltaUserCollateralAssets, AuctionData memory data)
         internal
         pure
@@ -239,6 +344,19 @@ library AuctionMath {
         return deltaState;
     }
 
+    /**
+     * @notice This function calculates full protocol state transition when executing auction providing
+     * borrow assets.
+     *
+     * @dev Calculation checks if provided deltaUserBorrowAssets is valid for current auction state. After,
+     * calculation uses functions described above to sequentially calculate an entire state change.
+     * Depending on the direction of the auction, rewards are in borrow or collateral. It splits calculation
+     * into two branches. Calculation also handles case where because of roundings, auction can request full
+     * execution of collateral part in exchange for just part of the borrow part. It can make resulting state
+     * invalid, since, for instance, futureBorrow will be 1, when futureCollateral will be 0. Function handles
+     * this case and makes sure that either futureBorrow or futureCollateral are not 0 or both 0.
+     *
+     */
     function calculateExecuteAuctionBorrow(int256 deltaUserBorrowAssets, AuctionData memory data)
         internal
         pure

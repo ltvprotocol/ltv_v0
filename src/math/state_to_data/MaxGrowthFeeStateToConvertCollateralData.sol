@@ -10,9 +10,17 @@ import {TotalAssetsCollateral} from "src/public/vault/collateral/TotalAssetsColl
 import {MaxGrowthFee} from "src/math/MaxGrowthFee.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 
+/**
+ * @title MaxGrowthFeeStateToConvertCollateralData
+ * @notice Contract contains functionality to precalculate max growth fee state to
+ * data needed for convert to assets/shares collateral calculations.
+ */
 abstract contract MaxGrowthFeeStateToConvertCollateralData is TotalAssetsCollateral, MaxGrowthFee {
     using uMulDiv for uint256;
 
+    /**
+     * @notice Precalculates max growth fee state to data needed for convert to assets/shares collateral calculations.
+     */
     function maxGrowthFeeStateToConvertCollateralData(MaxGrowthFeeState memory state)
         internal
         pure
