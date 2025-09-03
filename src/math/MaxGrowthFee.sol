@@ -47,7 +47,7 @@ abstract contract MaxGrowthFee is TotalAssets, TotalSupply {
     }
 
     /**
-     * 
+     *
      * @notice Precalculates bare state needed to calculate max growth fee.
      */
     function maxGrowthFeeStateToData(MaxGrowthFeeState memory state) internal pure returns (MaxGrowthFeeData memory) {

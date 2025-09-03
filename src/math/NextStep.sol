@@ -21,7 +21,7 @@ library NextStep {
     /**
      * @notice Calculates next future reward borrow.
      *
-     * @dev Calculations are derived from the ltv protocol paper. 
+     * @dev Calculations are derived from the ltv protocol paper.
      * Hint: simple sum of all the changes.
      */
     function calculateNextFutureRewardBorrow(
@@ -37,7 +37,7 @@ library NextStep {
     /**
      * @notice Calculates next future reward collateral.
      *
-     * @dev Calculations are derived from the ltv protocol paper. 
+     * @dev Calculations are derived from the ltv protocol paper.
      * Hint: simple sum of all the changes.
      */
     function calculateNextFutureRewardCollateral(
@@ -53,7 +53,7 @@ library NextStep {
     /**
      * @notice Calculates next future borrow.
      *
-     * @dev Calculations are derived from the ltv protocol paper. 
+     * @dev Calculations are derived from the ltv protocol paper.
      * Hint: simple sum of all the changes.
      */
     function calculateNextFutureBorrow(int256 futureBorrow, int256 deltaFutureBorrow)
@@ -67,7 +67,7 @@ library NextStep {
     /**
      * @notice Calculates next future collateral.
      *
-     * @dev Calculations are derived from the ltv protocol paper. 
+     * @dev Calculations are derived from the ltv protocol paper.
      * Hint: simple sum of all the changes.
      */
     function calculateNextFutureCollateral(int256 futureCollateral, int256 deltaFutureCollateral)

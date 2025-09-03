@@ -12,7 +12,7 @@ import {uMulDiv} from "src/utils/MulDiv.sol";
 
 /**
  * @title MaxGrowthFeeStateToConvertCollateralData
- * @notice Contract contains functionality to precalculate max growth fee state to 
+ * @notice Contract contains functionality to precalculate max growth fee state to
  * data needed for convert to assets/shares collateral calculations.
  */
 abstract contract MaxGrowthFeeStateToConvertCollateralData is TotalAssetsCollateral, MaxGrowthFee {
