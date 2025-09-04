@@ -23,13 +23,13 @@ import {InitializeModule} from "src/elements/InitializeModule.sol";
 import {ModulesProvider} from "src/elements/ModulesProvider.sol";
 import {WhitelistRegistry} from "src/elements/WhitelistRegistry.sol";
 
-contract EIP4626CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
+contract ERC4626CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
     struct CallWithCaller {
         bytes callData;
         address caller;
     }
 
-    function eip4626CallsWithCaller(address user) public pure returns (CallWithCaller[] memory) {
+    function erc4626CallsWithCaller(address user) public pure returns (CallWithCaller[] memory) {
         CallWithCaller[] memory calls = new CallWithCaller[](16);
         uint256 amount = 100;
         uint256 i = 0;
@@ -92,7 +92,7 @@ contract EIP4626CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
         vm.prank(data.governor);
         ltv.setWhitelistRegistry(address(registry));
 
-        CallWithCaller[] memory calls = eip4626CallsWithCaller(testUser);
+        CallWithCaller[] memory calls = erc4626CallsWithCaller(testUser);
 
         for (uint256 i = 0; i < calls.length; i++) {
             vm.prank(calls[i].caller);
