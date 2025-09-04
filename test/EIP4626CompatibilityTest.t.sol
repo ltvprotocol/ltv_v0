@@ -54,10 +54,7 @@ contract EIP4626CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
         return calls;
     }
 
-    function test_everyFunctionExecutes(DefaultTestData memory data)
-        public
-        testWithPredefinedDefaultValues(data)
-    {
+    function test_everyFunctionExecutes(DefaultTestData memory data) public testWithPredefinedDefaultValues(data) {
         ModulesState memory newModulesState = ModulesState({
             borrowVaultModule: IBorrowVaultModule(address(new BorrowVaultModule())),
             collateralVaultModule: ICollateralVaultModule(address(new CollateralVaultModule())),
