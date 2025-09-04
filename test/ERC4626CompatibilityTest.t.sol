@@ -2,6 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {IERC4626} from "openzeppelin-contracts/contracts/interfaces/IERC4626.sol";
+import {IERC4626Collateral} from "test/interfaces/IERC4626Collateral.sol";
 import {DefaultTestData} from "test/utils/BaseTest.t.sol";
 import {PrepareEachFunctionSuccessfulExecution} from "test/administration/PrepareEachFunctionSuccessfulExecution.sol";
 import {IModules} from "src/interfaces/IModules.sol";
@@ -30,7 +31,7 @@ contract ERC4626CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
     }
 
     function erc4626CallsWithCaller(address user) public pure returns (CallWithCaller[] memory) {
-        CallWithCaller[] memory calls = new CallWithCaller[](16);
+        CallWithCaller[] memory calls = new CallWithCaller[](28);
         uint256 amount = 100;
         uint256 i = 0;
 
@@ -50,6 +51,18 @@ contract ERC4626CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
         calls[i++] = CallWithCaller(abi.encodeCall(IERC4626.maxRedeem, (user)), user);
         calls[i++] = CallWithCaller(abi.encodeCall(IERC4626.previewRedeem, (amount)), user);
         calls[i++] = CallWithCaller(abi.encodeCall(IERC4626.redeem, (amount, user, user)), user);
+        calls[i++] = CallWithCaller(abi.encodeCall(IERC4626Collateral.maxDepositCollateral, (user)), user);
+        calls[i++] = CallWithCaller(abi.encodeCall(IERC4626Collateral.previewDepositCollateral, (amount)), user);
+        calls[i++] = CallWithCaller(abi.encodeCall(IERC4626Collateral.depositCollateral, (amount, user)), user);
+        calls[i++] = CallWithCaller(abi.encodeCall(IERC4626Collateral.maxMintCollateral, (user)), user);
+        calls[i++] = CallWithCaller(abi.encodeCall(IERC4626Collateral.previewMintCollateral, (amount)), user);
+        calls[i++] = CallWithCaller(abi.encodeCall(IERC4626Collateral.mintCollateral, (amount, user)), user);
+        calls[i++] = CallWithCaller(abi.encodeCall(IERC4626Collateral.maxWithdrawCollateral, (user)), user);
+        calls[i++] = CallWithCaller(abi.encodeCall(IERC4626Collateral.previewWithdrawCollateral, (amount)), user);
+        calls[i++] = CallWithCaller(abi.encodeCall(IERC4626Collateral.withdrawCollateral, (amount, user, user)), user);
+        calls[i++] = CallWithCaller(abi.encodeCall(IERC4626Collateral.maxRedeemCollateral, (user)), user);
+        calls[i++] = CallWithCaller(abi.encodeCall(IERC4626Collateral.previewRedeemCollateral, (amount)), user);
+        calls[i++] = CallWithCaller(abi.encodeCall(IERC4626Collateral.redeemCollateral, (amount, user, user)), user);
 
         return calls;
     }
