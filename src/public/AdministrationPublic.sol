@@ -18,6 +18,10 @@ import {MaxGrowthFeeStateReader} from "src/state_reader/MaxGrowthFeeStateReader.
 import {MaxGrowthFee} from "src/math/MaxGrowthFee.sol";
 import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
 
+/**
+ * @title AdministrationPublic
+ * @notice This contract contains administration public function implementation.
+ */
 abstract contract AdministrationPublic is
     MaxGrowthFee,
     ApplyMaxGrowthFee,
@@ -30,22 +34,37 @@ abstract contract AdministrationPublic is
     using sMulDiv for int256;
     using SafeERC20 for IERC20;
 
+    /**
+     * @dev see ILTV.setTargetLtv
+     */
     function setTargetLtv(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor nonReentrant {
         _setTargetLtv(dividend, divider);
     }
 
+    /**
+     * @dev see ILTV.setMaxSafeLtv
+     */
     function setMaxSafeLtv(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor nonReentrant {
         _setMaxSafeLtv(dividend, divider);
     }
 
+    /**
+     * @dev see ILTV.setMinProfitLtv
+     */
     function setMinProfitLtv(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor nonReentrant {
         _setMinProfitLtv(dividend, divider);
     }
 
+    /**
+     * @dev see ILTV.setFeeCollector
+     */
     function setFeeCollector(address _feeCollector) external isFunctionAllowed onlyGovernor nonReentrant {
         _setFeeCollector(_feeCollector);
     }
 
+    /**
+     * @dev see ILTV.setMaxTotalAssetsInUnderlying
+     */
     function setMaxTotalAssetsInUnderlying(uint256 _maxTotalAssetsInUnderlying)
         external
         isFunctionAllowed
@@ -55,6 +74,9 @@ abstract contract AdministrationPublic is
         _setMaxTotalAssetsInUnderlying(_maxTotalAssetsInUnderlying);
     }
 
+    /**
+     * @dev see ILTV.setMaxDeleverageFee
+     */
     function setMaxDeleverageFee(uint16 dividend, uint16 divider)
         external
         isFunctionAllowed
@@ -64,14 +86,23 @@ abstract contract AdministrationPublic is
         _setMaxDeleverageFee(dividend, divider);
     }
 
+    /**
+     * @dev see ILTV.setIsWhitelistActivated
+     */
     function setIsWhitelistActivated(bool activate) external isFunctionAllowed onlyGovernor nonReentrant {
         _setIsWhitelistActivated(activate);
     }
 
+    /**
+     * @dev see ILTV.setWhitelistRegistry
+     */
     function setWhitelistRegistry(IWhitelistRegistry value) external isFunctionAllowed onlyGovernor nonReentrant {
         _setWhitelistRegistry(value);
     }
 
+    /**
+     * @dev see ILTV.setSlippageProvider
+     */
     function setSlippageProvider(ISlippageProvider _slippageProvider, bytes memory slippageProviderData)
         external
         isFunctionAllowed
@@ -81,22 +112,37 @@ abstract contract AdministrationPublic is
         _setSlippageProvider(_slippageProvider, slippageProviderData);
     }
 
+    /**
+     * @dev see ILTV.allowDisableFunctions
+     */
     function allowDisableFunctions(bytes4[] memory signatures, bool isDisabled) external onlyGuardian nonReentrant {
         _allowDisableFunctions(signatures, isDisabled);
     }
 
+    /**
+     * @dev see ILTV.setMaxGrowthFee
+     */
     function setMaxGrowthFee(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor nonReentrant {
         _setMaxGrowthFee(dividend, divider);
     }
 
+    /**
+     * @dev see ILTV.setIsDepositDisabled
+     */
     function setIsDepositDisabled(bool value) external onlyGuardian nonReentrant {
         _setIsDepositDisabled(value);
     }
 
+    /**
+     * @dev see ILTV.setIsWithdrawDisabled
+     */
     function setIsWithdrawDisabled(bool value) external onlyGuardian nonReentrant {
         _setIsWithdrawDisabled(value);
     }
 
+    /**
+     * @dev see ILTV.setLendingConnector
+     */
     function setLendingConnector(ILendingConnector _lendingConnector, bytes memory lendingConnectorData)
         external
         onlyOwner
@@ -105,6 +151,9 @@ abstract contract AdministrationPublic is
         _setLendingConnector(_lendingConnector, lendingConnectorData);
     }
 
+    /**
+     * @dev see ILTV.setOracleConnector
+     */
     function setOracleConnector(IOracleConnector _oracleConnector, bytes memory oracleConnectorData)
         external
         onlyOwner
@@ -113,6 +162,9 @@ abstract contract AdministrationPublic is
         _setOracleConnector(_oracleConnector, oracleConnectorData);
     }
 
+    /**
+     * @dev see ILTV.setVaultBalanceAsLendingConnector
+     */
     function setVaultBalanceAsLendingConnector(
         ILendingConnector _vaultBalanceAsLendingConnector,
         bytes memory vaultBalanceAsLendingConnectorGetterData
@@ -120,6 +172,9 @@ abstract contract AdministrationPublic is
         _setVaultBalanceAsLendingConnector(_vaultBalanceAsLendingConnector, vaultBalanceAsLendingConnectorGetterData);
     }
 
+    /**
+     * @dev see ILTV.deleverageAndWithdraw
+     */
     function deleverageAndWithdraw(uint256 closeAmountBorrow, uint16 deleverageFeeDividend, uint16 deleverageFeeDivider)
         external
         onlyEmergencyDeleverager
@@ -180,14 +235,23 @@ abstract contract AdministrationPublic is
         lendingConnectorGetterData = "";
     }
 
+    /**
+     * @dev see ILTV.updateEmergencyDeleverager
+     */
     function updateEmergencyDeleverager(address newEmergencyDeleverager) external onlyOwner nonReentrant {
         _updateEmergencyDeleverager(newEmergencyDeleverager);
     }
 
+    /**
+     * @dev see ILTV.updateGovernor
+     */
     function updateGovernor(address newGovernor) external onlyOwner nonReentrant {
         _updateGovernor(newGovernor);
     }
 
+    /**
+     * @dev see ILTV.updateGuardian
+     */
     function updateGuardian(address newGuardian) external onlyOwner nonReentrant {
         _updateGuardian(newGuardian);
     }

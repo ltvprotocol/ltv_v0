@@ -9,6 +9,11 @@ import {ERC20} from "src/state_transition/ERC20.sol";
 import {TransferFromProtocol} from "src/state_transition/TransferFromProtocol.sol";
 import {Lending} from "src/state_transition/Lending.sol";
 
+/**
+ * @title ExecuteLowLevelRebalance
+ * @notice contract contains functionality to execute
+ * state changes after low level rebalance calculations
+ */
 abstract contract ExecuteLowLevelRebalance is
     FunctionStopperModifier,
     ERC20,
@@ -18,6 +23,9 @@ abstract contract ExecuteLowLevelRebalance is
 {
     using SafeERC20 for IERC20;
 
+    /**
+     * @dev Executes state changes after low level rebalance calculations
+     */
     function executeLowLevelRebalance(
         int256 deltaRealCollateralAsset,
         int256 deltaRealBorrowAssets,

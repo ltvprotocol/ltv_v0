@@ -23,6 +23,10 @@ import {NextStep} from "src/math/NextStep.sol";
 import {CommonMath} from "src/math/CommonMath.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 
+/**
+ * @title MintCollateral
+ * @notice This contract contains mint collateral function implementation.
+ */
 abstract contract MintCollateral is
     MaxDepositMintCollateralVaultStateReader,
     MaxMintCollateral,
@@ -36,6 +40,9 @@ abstract contract MintCollateral is
     using uMulDiv for uint256;
     using SafeERC20 for IERC20;
 
+    /**
+     * @dev see ILTV.mintCollateral
+     */
     function mintCollateral(uint256 shares, address receiver)
         external
         isFunctionAllowed

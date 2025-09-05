@@ -39,39 +39,65 @@ contract ModulesProvider is IModules {
     // Storage for modules
     mapping(bytes32 => address) private _modules;
 
+    /**
+     * @dev Set the module at the given slot
+     */
     function _setModule(bytes32 slot, address module) internal {
         _modules[slot] = module;
     }
 
+    /**
+     * @dev Get the module at the given slot
+     */
     function getModule(bytes32 slot) public view returns (address) {
         return _modules[slot];
     }
 
-    // IModules interface implementation
+    /**
+     * @inheritdoc IModules
+     */
     function borrowVaultModule() external view override returns (IBorrowVaultModule) {
         return IBorrowVaultModule(getModule(BORROW_VAULT_MODULE_SLOT));
     }
 
+    /**
+     * @inheritdoc IModules
+     */
     function collateralVaultModule() external view override returns (ICollateralVaultModule) {
         return ICollateralVaultModule(getModule(COLLATERAL_VAULT_MODULE_SLOT));
     }
 
+    /**
+     * @inheritdoc IModules
+     */
     function lowLevelRebalanceModule() external view override returns (ILowLevelRebalanceModule) {
         return ILowLevelRebalanceModule(getModule(LOW_LEVEL_REBALANCE_MODULE_SLOT));
     }
 
+    /**
+     * @inheritdoc IModules
+     */
     function auctionModule() external view override returns (IAuctionModule) {
         return IAuctionModule(getModule(AUCTION_MODULE_SLOT));
     }
 
+    /**
+     * @inheritdoc IModules
+     */
     function erc20Module() external view override returns (IERC20Module) {
         return IERC20Module(getModule(ERC20_MODULE_SLOT));
     }
 
+    /**
+     * @inheritdoc IModules
+     */
     function administrationModule() external view override returns (IAdministrationModule) {
         return IAdministrationModule(getModule(ADMINISTRATION_MODULE_SLOT));
     }
 
+    /**
+     * @inheritdoc IModules
+     */
     function initializeModule() external view override returns (IInitializeModule) {
         return IInitializeModule(getModule(INITIALIZE_MODULE_SLOT));
     }

@@ -15,6 +15,9 @@ import {RevertWithDataIfNeeded} from "src/utils/RevertWithDataIfNeeded.sol";
  * via initialize module.
  */
 abstract contract InitializeWrite is AdministrationWrite, RevertWithDataIfNeeded {
+    /**
+     * @dev see ILTV.initialize
+     */
     function initialize(StateInitData memory initData, IModules modules) external initializer {
         _setModules(modules);
         (bool isSuccess, bytes memory data) =

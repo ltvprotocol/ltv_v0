@@ -4,7 +4,16 @@ pragma solidity ^0.8.28;
 import {ILendingConnector} from "../interfaces/ILendingConnector.sol";
 import {GetLendingConnectorReader} from "../state_reader/GetLendingConnectorReader.sol";
 
+/**
+ * @title GetRealCollateralAndRealBorrowAssetsReader
+ * @notice contract contains functionality to retrieve both real collateral and borrow assets
+ * from the appropriate lending connector based on vault state
+ */
 contract GetRealCollateralAndRealBorrowAssetsReader is GetLendingConnectorReader {
+    /**
+     * @dev function to retrieve both real collateral and borrow assets from the appropriate lending connector
+     * Needed for optimizing isVaultDeleveraged and lendingConnectorGetterData reads
+     */
     function getRealCollateralAndRealBorrowAssets(bool isDeposit) internal view returns (uint256, uint256) {
         if (isVaultDeleveraged()) {
             return (
@@ -15,7 +24,7 @@ contract GetRealCollateralAndRealBorrowAssetsReader is GetLendingConnectorReader
             );
         }
         bytes memory _lendingConnectorGetterData = lendingConnectorGetterData;
-        ILendingConnector _lendingConnector = getLendingConnector();
+        ILendingConnector _lendingConnector = lendingConnector;
         return (
             _lendingConnector.getRealCollateralAssets(isDeposit, _lendingConnectorGetterData),
             _lendingConnector.getRealBorrowAssets(isDeposit, _lendingConnectorGetterData)

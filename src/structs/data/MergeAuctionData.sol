@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
+/**
+ * @title MergeAuctionData
+ * @notice This struct needed for merge auction calculations
+ */
 struct MergeAuctionData {
     int256 futureBorrow;
     int256 futureCollateral;

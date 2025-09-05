@@ -11,6 +11,10 @@ import {ExecuteLowLevelRebalanceStateReader} from "src/state_reader/low_level/Ex
 import {PreviewLowLevelRebalanceBorrow} from "src/public/low_level/preview/PreviewLowLevelRebalanceBorrow.sol";
 import {MaxLowLevelRebalanceBorrow} from "src/public/low_level/max/MaxLowLevelRebalanceBorrow.sol";
 
+/**
+ * @title ExecuteLowLevelRebalanceBorrow
+ * @notice This contract contains execute low level rebalance borrow function implementation.
+ */
 abstract contract ExecuteLowLevelRebalanceBorrow is
     ExecuteLowLevelRebalanceStateReader,
     ExecuteLowLevelRebalance,
@@ -19,6 +23,9 @@ abstract contract ExecuteLowLevelRebalanceBorrow is
     ApplyMaxGrowthFee,
     ILowLevelRebalanceErrors
 {
+    /**
+     * @dev see ILTV.executeLowLevelRebalanceBorrow
+     */
     function executeLowLevelRebalanceBorrow(int256 deltaBorrow)
         external
         isFunctionAllowed
@@ -28,6 +35,9 @@ abstract contract ExecuteLowLevelRebalanceBorrow is
         return _executeLowLevelRebalanceBorrowHint(deltaBorrow, true);
     }
 
+    /**
+     * @dev see ILTV.executeLowLevelRebalanceBorrowHint
+     */
     function executeLowLevelRebalanceBorrowHint(int256 deltaBorrow, bool isSharesPositive)
         external
         isFunctionAllowed
@@ -37,6 +47,11 @@ abstract contract ExecuteLowLevelRebalanceBorrow is
         return _executeLowLevelRebalanceBorrowHint(deltaBorrow, isSharesPositive);
     }
 
+    /**
+     * @dev base function to calculate execute low level rebalance borrow with hint.
+     * Hint is used to understand if user expects to receive or burn shares. Depending
+     * on that different rounding will be used. If hint is incorrect, recalculation will be performed.
+     */
     function _executeLowLevelRebalanceBorrowHint(int256 deltaBorrow, bool isSharesPositive)
         internal
         returns (int256, int256)

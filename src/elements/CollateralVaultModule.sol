@@ -8,6 +8,10 @@ import {WithdrawCollateral} from "src/public/vault/collateral/execute/WithdrawCo
 import {ConvertToAssetsCollateral} from "src/public/vault/collateral/convert/ConvertToAssetsCollateral.sol";
 import {ConvertToSharesCollateral} from "src/public/vault/collateral/convert/ConvertToSharesCollateral.sol";
 
+/**
+ * @title CollateralVaultModule
+ * @notice Collateral vault module for LTV protocol
+ */
 contract CollateralVaultModule is
     DepositCollateral,
     MintCollateral,

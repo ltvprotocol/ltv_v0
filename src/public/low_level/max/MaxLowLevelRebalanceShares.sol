@@ -14,10 +14,16 @@ import {sMulDiv} from "src/utils/MulDiv.sol";
 abstract contract MaxLowLevelRebalanceShares is MaxGrowthFee {
     using sMulDiv for int256;
 
+    /**
+     * @dev see ILowLevelRebalanceModule.maxLowLevelRebalanceShares
+     */
     function maxLowLevelRebalanceShares(MaxLowLevelRebalanceSharesState memory state) public pure returns (int256) {
         return _maxLowLevelRebalanceShares(maxLowLevelRebalanceSharesStateToData(state));
     }
 
+    /**
+     * @dev main function to calculate max low level rebalance shares
+     */
     function _maxLowLevelRebalanceShares(MaxLowLevelRebalanceSharesData memory data) internal pure returns (int256) {
         int256 maxDeltaSharesInUnderlying =
             int256(data.maxTotalAssetsInUnderlying + data.depositRealBorrow) - int256(data.depositRealCollateral);
@@ -27,6 +33,10 @@ abstract contract MaxLowLevelRebalanceShares is MaxGrowthFee {
             .mulDivDown(int256(data.supplyAfterFee), int256(data.depositTotalAssets));
     }
 
+    /**
+     * @dev contains logic to precalculate pure max low level rebalance shares
+     * state to data, needed for max low level rebalance shares calculation
+     */
     function maxLowLevelRebalanceSharesStateToData(MaxLowLevelRebalanceSharesState memory state)
         internal
         pure

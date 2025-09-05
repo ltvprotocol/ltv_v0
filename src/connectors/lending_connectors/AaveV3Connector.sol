@@ -6,6 +6,10 @@ import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
 import {IAaveV3Pool} from "src/connectors/lending_connectors/interfaces/IAaveV3Pool.sol";
 import {LTVState} from "src/states/LTVState.sol";
 
+/**
+ * @title AaveV3Connector
+ * @notice Connector for Aave V3 Pool
+ */
 contract AaveV3Connector is LTVState, ILendingConnector {
     IAaveV3Pool public immutable POOL;
 
@@ -13,34 +17,55 @@ contract AaveV3Connector is LTVState, ILendingConnector {
         POOL = IAaveV3Pool(_pool);
     }
 
+    /**
+     * @inheritdoc ILendingConnector
+     */
     function supply(uint256 amount) external {
         collateralToken.approve(address(POOL), amount);
         POOL.supply(address(collateralToken), amount, address(this), 0);
     }
 
+    /**
+     * @inheritdoc ILendingConnector
+     */
     function withdraw(uint256 amount) external {
         POOL.withdraw(address(collateralToken), amount, address(this));
     }
 
+    /**
+     * @inheritdoc ILendingConnector
+     */
     function borrow(uint256 amount) external {
         POOL.borrow(address(borrowToken), amount, 2, 0, address(this));
     }
 
+    /**
+     * @inheritdoc ILendingConnector
+     */
     function repay(uint256 amount) external {
         borrowToken.approve(address(POOL), amount);
         POOL.repay(address(borrowToken), amount, 2, address(this));
     }
 
+    /**
+     * @inheritdoc ILendingConnector
+     */
     function getRealCollateralAssets(bool, bytes calldata data) external view returns (uint256) {
         (address collateralAToken,) = abi.decode(data, (address, address));
         return IERC20(collateralAToken).balanceOf(msg.sender);
     }
 
+    /**
+     * @inheritdoc ILendingConnector
+     */
     function getRealBorrowAssets(bool, bytes calldata data) external view returns (uint256) {
         (, address borrowAToken) = abi.decode(data, (address, address));
         return IERC20(borrowAToken).balanceOf(msg.sender);
     }
 
+    /**
+     * @inheritdoc ILendingConnector
+     */
     function initializeLendingConnectorData(bytes memory emode) external {
         address collateralAToken = POOL.getReserveData(address(collateralToken)).aTokenAddress;
         address borrowAToken = POOL.getReserveData(address(borrowToken)).variableDebtTokenAddress;

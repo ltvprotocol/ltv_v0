@@ -11,10 +11,16 @@ import {CommonWrite} from "src/facades/writes/CommonWrite.sol";
  * calls to the auction module.
  */
 abstract contract AuctionWrite is LTVState, CommonWrite {
+    /**
+     * @dev see ILTV.executeAuctionBorrow
+     */
     function executeAuctionBorrow(int256 deltaFutureBorrowAssets) external returns (int256) {
         _delegate(address(modules.auctionModule()), abi.encode(deltaFutureBorrowAssets));
     }
 
+    /**
+     * @dev see ILTV.executeAuctionCollateral
+     */
     function executeAuctionCollateral(int256 deltaFutureCollateralAssets) external returns (int256) {
         _delegate(address(modules.auctionModule()), abi.encode(deltaFutureCollateralAssets));
     }

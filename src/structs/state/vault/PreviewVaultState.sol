@@ -3,6 +3,10 @@ pragma solidity ^0.8.28;
 
 import {MaxGrowthFeeState} from "src/structs/state/MaxGrowthFeeState.sol";
 
+/**
+ * @title PreviewVaultState
+ * @notice This struct needed for preview vault calculations
+ */
 struct PreviewVaultState {
     MaxGrowthFeeState maxGrowthFeeState;
     uint16 targetLtvDividend;

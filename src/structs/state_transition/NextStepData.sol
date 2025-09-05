@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
+/**
+ * @title NextStepData
+ * @notice This struct contains data to calculate next state in underlying assets
+ */
 struct NextStepData {
     int256 futureBorrow;
     int256 futureCollateral;

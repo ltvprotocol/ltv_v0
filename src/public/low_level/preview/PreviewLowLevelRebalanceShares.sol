@@ -8,9 +8,16 @@ import {PreviewLowLevelRebalanceStateToData} from
 import {LowLevelRebalanceMath} from "src/math/LowLevelRebalanceMath.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 
+/**
+ * @title PreviewLowLevelRebalanceShares
+ * @notice This contract contains preview low level rebalance shares function implementation.
+ */
 abstract contract PreviewLowLevelRebalanceShares is PreviewLowLevelRebalanceStateToData {
     using uMulDiv for uint256;
 
+    /**
+     * @dev see ILowLevelRebalanceModule.previewLowLevelRebalanceShares
+     */
     function previewLowLevelRebalanceShares(int256 deltaShares, PreviewLowLevelRebalanceState memory state)
         public
         pure
@@ -21,6 +28,9 @@ abstract contract PreviewLowLevelRebalanceShares is PreviewLowLevelRebalanceStat
         return (deltaRealCollateral, deltaRealBorrow);
     }
 
+    /**
+     * @dev base function to calculate preview low level rebalance shares
+     */
     function _previewLowLevelRebalanceShares(int256 deltaShares, LowLevelRebalanceData memory data)
         internal
         pure

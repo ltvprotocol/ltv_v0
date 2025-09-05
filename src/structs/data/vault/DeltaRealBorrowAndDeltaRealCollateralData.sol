@@ -3,6 +3,10 @@ pragma solidity ^0.8.28;
 
 import {Cases} from "src/structs/data/vault/Cases.sol";
 
+/**
+ * @title DeltaRealBorrowAndDeltaRealCollateralData
+ * @notice This struct needed for delta real borrow and delta real collateral calculations
+ */
 struct DeltaRealBorrowAndDeltaRealCollateralData {
     int256 deltaRealCollateral;
     int256 deltaRealBorrow;

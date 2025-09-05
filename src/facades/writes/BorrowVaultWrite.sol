@@ -11,18 +11,30 @@ import {CommonWrite} from "src/facades/writes/CommonWrite.sol";
  * calls to the borrow vault module.
  */
 abstract contract BorrowVaultWrite is LTVState, CommonWrite {
+    /**
+     * @dev see ILTV.deposit
+     */
     function deposit(uint256 assets, address receiver) external returns (uint256) {
         _delegate(address(modules.borrowVaultModule()), abi.encode(assets, receiver));
     }
 
+    /**
+     * @dev see ILTV.withdraw
+     */
     function withdraw(uint256 assets, address receiver, address owner) external returns (uint256) {
         _delegate(address(modules.borrowVaultModule()), abi.encode(assets, receiver, owner));
     }
 
+    /**
+     * @dev see ILTV.mint
+     */
     function mint(uint256 shares, address receiver) external returns (uint256) {
         _delegate(address(modules.borrowVaultModule()), abi.encode(shares, receiver));
     }
 
+    /**
+     * @dev see ILTV.redeem
+     */
     function redeem(uint256 shares, address receiver, address owner) external returns (uint256) {
         _delegate(address(modules.borrowVaultModule()), abi.encode(shares, receiver, owner));
     }

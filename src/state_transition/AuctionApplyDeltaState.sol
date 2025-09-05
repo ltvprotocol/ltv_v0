@@ -11,6 +11,10 @@ import {FunctionStopperModifier} from "src/modifiers/FunctionStopperModifier.sol
 import {Lending} from "src/state_transition/Lending.sol";
 import {TransferFromProtocol} from "src/state_transition/TransferFromProtocol.sol";
 
+/**
+ * @title AuctionApplyDeltaState
+ * @notice contract contains functionality to apply state changes after auction calculations
+ */
 abstract contract AuctionApplyDeltaState is
     Lending,
     TransferFromProtocol,
@@ -20,6 +24,9 @@ abstract contract AuctionApplyDeltaState is
 {
     using SafeERC20 for IERC20;
 
+    /**
+     * @dev function applies state changes after auction calculations
+     */
     function applyDeltaState(DeltaAuctionState memory deltaState) internal {
         futureBorrowAssets += deltaState.deltaFutureBorrowAssets;
         futureCollateralAssets += deltaState.deltaFutureCollateralAssets;

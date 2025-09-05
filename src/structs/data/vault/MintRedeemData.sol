@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
+/**
+ * @title MintRedeemData
+ * @notice This struct needed for mint and redeem calculations
+ */
 struct MintRedeemData {
     int256 collateral;
     int256 borrow;

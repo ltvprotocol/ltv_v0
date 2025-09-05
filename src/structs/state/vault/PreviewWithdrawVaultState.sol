@@ -3,6 +3,10 @@ pragma solidity ^0.8.28;
 
 import {MaxGrowthFeeState} from "src/structs/state/MaxGrowthFeeState.sol";
 
+/**
+ * @title PreviewWithdrawVaultState
+ * @notice This struct needed for preview withdraw vault calculations
+ */
 struct PreviewWithdrawVaultState {
     MaxGrowthFeeState maxGrowthFeeState;
     uint16 targetLtvDividend;

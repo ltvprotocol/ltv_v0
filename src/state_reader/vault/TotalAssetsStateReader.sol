@@ -5,7 +5,15 @@ import {TotalAssetsState} from "src/structs/state/vault/TotalAssetsState.sol";
 import {CommonTotalAssetsState} from "src/structs/state/vault/CommonTotalAssetsState.sol";
 import {GetRealCollateralAndRealBorrowAssetsReader} from "../GetRealCollateralAndRealBorrowAssetsReader.sol";
 
+/**
+ * @title TotalAssetsStateReader
+ * @notice contract contains functionality to retrieve total assets згку state
+ * needed for total assets calculation
+ */
 contract TotalAssetsStateReader is GetRealCollateralAndRealBorrowAssetsReader {
+    /**
+     * @dev function to retrieve total assets state for total assets calculation
+     */
     function totalAssetsState(bool isDeposit) internal view returns (TotalAssetsState memory) {
         (uint256 realCollateralAssets, uint256 realBorrowAssets) = getRealCollateralAndRealBorrowAssets(isDeposit);
         bytes memory _oracleConnectorGetterData = oracleConnectorGetterData;

@@ -20,24 +20,36 @@ abstract contract LowLevelRebalanceRead is
     MaxLowLevelRebalanceBorrowStateReader,
     MaxLowLevelRebalanceCollateralStateReader
 {
+    /**
+     * @dev see ILTV.previewLowLevelRebalanceShares
+     */
     function previewLowLevelRebalanceShares(int256 deltaShares) public view returns (int256, int256) {
         return modules.lowLevelRebalanceModule().previewLowLevelRebalanceShares(
             deltaShares, previewLowLevelRebalanceState()
         );
     }
 
+    /**
+     * @dev see ILTV.previewLowLevelRebalanceBorrow
+     */
     function previewLowLevelRebalanceBorrow(int256 deltaBorrowAssets) external view returns (int256, int256) {
         return modules.lowLevelRebalanceModule().previewLowLevelRebalanceBorrow(
             deltaBorrowAssets, previewLowLevelRebalanceState()
         );
     }
 
+    /**
+     * @dev see ILTV.previewLowLevelRebalanceCollateral
+     */
     function previewLowLevelRebalanceCollateral(int256 deltaCollateralAssets) external view returns (int256, int256) {
         return modules.lowLevelRebalanceModule().previewLowLevelRebalanceCollateral(
             deltaCollateralAssets, previewLowLevelRebalanceState()
         );
     }
 
+    /**
+     * @dev see ILTV.previewLowLevelRebalanceBorrowHint
+     */
     function previewLowLevelRebalanceBorrowHint(int256 deltaBorrowAssets, bool isSharesPositiveHint)
         external
         view
@@ -48,6 +60,9 @@ abstract contract LowLevelRebalanceRead is
         );
     }
 
+    /**
+     * @dev see ILTV.previewLowLevelRebalanceCollateralHint
+     */
     function previewLowLevelRebalanceCollateralHint(int256 deltaCollateralAssets, bool isSharesPositiveHint)
         external
         view
@@ -58,14 +73,23 @@ abstract contract LowLevelRebalanceRead is
         );
     }
 
+    /**
+     * @dev see ILTV.maxLowLevelRebalanceShares
+     */
     function maxLowLevelRebalanceShares() external view returns (int256) {
         return modules.lowLevelRebalanceModule().maxLowLevelRebalanceShares(maxLowLevelRebalanceSharesState());
     }
 
+    /**
+     * @dev see ILTV.maxLowLevelRebalanceBorrow
+     */
     function maxLowLevelRebalanceBorrow() external view returns (int256) {
         return modules.lowLevelRebalanceModule().maxLowLevelRebalanceBorrow(maxLowLevelRebalanceBorrowState());
     }
 
+    /**
+     * @dev see ILTV.maxLowLevelRebalanceCollateral
+     */
     function maxLowLevelRebalanceCollateral() external view returns (int256) {
         return modules.lowLevelRebalanceModule().maxLowLevelRebalanceCollateral(maxLowLevelRebalanceCollateralState());
     }

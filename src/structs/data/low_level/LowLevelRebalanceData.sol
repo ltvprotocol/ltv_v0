@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
+/**
+ * @title LowLevelRebalanceData
+ * @notice This struct needed for low level rebalance calculations
+ */
 struct LowLevelRebalanceData {
     int256 futureCollateral;
     int256 futureBorrow;
