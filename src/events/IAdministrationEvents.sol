@@ -6,9 +6,9 @@ interface IAdministrationEvents {
     event GuardianUpdated(address oldValue, address newValue);
     event GovernorUpdated(address oldValue, address newValue);
 
-    event targetLtvChanged(uint16 oldDividend, uint16 oldDivider, uint16 newDividend, uint16 newDivider);
-    event maxSafeLtvChanged(uint16 oldDividend, uint16 oldDivider, uint16 newDividend, uint16 newDivider);
-    event minProfitLtvChanged(uint16 oldDividend, uint16 oldDivider, uint16 newDividend, uint16 newDivider);
+    event TargetLtvChanged(uint16 oldDividend, uint16 oldDivider, uint16 newDividend, uint16 newDivider);
+    event MaxSafeLtvChanged(uint16 oldDividend, uint16 oldDivider, uint16 newDividend, uint16 newDivider);
+    event MinProfitLtvChanged(uint16 oldDividend, uint16 oldDivider, uint16 newDividend, uint16 newDivider);
 
     event WhitelistRegistryUpdated(address oldValue, address newValue);
     event MaxTotalAssetsInUnderlyingChanged(uint256 oldValue, uint256 newValue);

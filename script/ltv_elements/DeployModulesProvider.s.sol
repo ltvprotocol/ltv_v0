@@ -10,8 +10,7 @@ import {IBorrowVaultModule} from "../../src/interfaces/reads/IBorrowVaultModule.
 import {ICollateralVaultModule} from "../../src/interfaces/reads/ICollateralVaultModule.sol";
 import {ILowLevelRebalanceModule} from "../../src/interfaces/reads/ILowLevelRebalanceModule.sol";
 import {IAuctionModule} from "../../src/interfaces/reads/IAuctionModule.sol";
-import {IAdministrationModule} from "../../src/interfaces/reads/IAdministrationModule.sol";
-import {IInitializeModule} from "../../src/interfaces/reads/IInitializeModule.sol";
+import {IInitializeModule} from "../../src/interfaces/writes/IInitializeModule.sol";
 
 contract DeployModulesProvider is BaseScript {
     function deploy() internal override {
@@ -38,7 +37,7 @@ contract DeployModulesProvider is BaseScript {
             collateralVaultModule: ICollateralVaultModule(collateralVaultModule),
             lowLevelRebalanceModule: ILowLevelRebalanceModule(lowLevelRebalanceModule),
             auctionModule: IAuctionModule(auctionModule),
-            administrationModule: IAdministrationModule(administrationModule),
+            administrationModule: administrationModule,
             initializeModule: IInitializeModule(initializeModule)
         });
     }
