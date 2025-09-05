@@ -10,7 +10,7 @@ import {IERC20Module} from "src/interfaces/reads/IERC20Module.sol";
 import {ICollateralVaultModule} from "src/interfaces/reads/ICollateralVaultModule.sol";
 import {IBorrowVaultModule} from "src/interfaces/reads/IBorrowVaultModule.sol";
 import {ILowLevelRebalanceModule} from "src/interfaces/reads/ILowLevelRebalanceModule.sol";
-import {IInitializeModule} from "src/interfaces/reads/IInitializeModule.sol";
+import {IInitializeModule} from "src/interfaces/writes/IInitializeModule.sol";
 import {StateInitData} from "src/structs/state/StateInitData.sol";
 import {ModulesState} from "src/structs/state/ModulesState.sol";
 import {DummyLTV} from "test/utils/DummyLTV.t.sol";

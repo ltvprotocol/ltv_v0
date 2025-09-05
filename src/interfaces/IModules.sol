@@ -6,7 +6,7 @@ import {IAuctionModule} from "src/interfaces/reads/IAuctionModule.sol";
 import {ILowLevelRebalanceModule} from "src/interfaces/reads/ILowLevelRebalanceModule.sol";
 import {IBorrowVaultModule} from "src/interfaces/reads/IBorrowVaultModule.sol";
 import {ICollateralVaultModule} from "src/interfaces/reads/ICollateralVaultModule.sol";
-import {IInitializeModule} from "src/interfaces/reads/IInitializeModule.sol";
+import {IInitializeModule} from "src/interfaces/writes/IInitializeModule.sol";
 
 interface IModules {
     function auctionModule() external view returns (IAuctionModule);

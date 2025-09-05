@@ -6,7 +6,7 @@ import {ICollateralVaultModule} from "src/interfaces/reads/ICollateralVaultModul
 import {ILowLevelRebalanceModule} from "src/interfaces/reads/ILowLevelRebalanceModule.sol";
 import {IAuctionModule} from "src/interfaces/reads/IAuctionModule.sol";
 import {IERC20Module} from "src/interfaces/reads/IERC20Module.sol";
-import {IInitializeModule} from "src/interfaces/reads/IInitializeModule.sol";
+import {IInitializeModule} from "src/interfaces/writes/IInitializeModule.sol";
 
 struct ModulesState {
     IBorrowVaultModule borrowVaultModule;

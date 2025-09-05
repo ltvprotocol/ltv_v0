@@ -6,7 +6,7 @@ import {DefaultTestData} from "test/utils/BaseTest.t.sol";
 import {PrepareEachFunctionSuccessfulExecution} from "test/administration/PrepareEachFunctionSuccessfulExecution.sol";
 import {ILTV} from "src/interfaces/ILTV.sol";
 import {IModules} from "src/interfaces/IModules.sol";
-import {IInitializeModule} from "src/interfaces/reads/IInitializeModule.sol";
+import {IInitializeModule} from "src/interfaces/writes/IInitializeModule.sol";
 import {IAuctionModule} from "src/interfaces/reads/IAuctionModule.sol";
 import {IERC20Module} from "src/interfaces/reads/IERC20Module.sol";
 import {ICollateralVaultModule} from "src/interfaces/reads/ICollateralVaultModule.sol";
