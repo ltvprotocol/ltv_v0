@@ -6,7 +6,6 @@ import {IAuctionModule} from "src/interfaces/reads/IAuctionModule.sol";
 import {ILowLevelRebalanceModule} from "src/interfaces/reads/ILowLevelRebalanceModule.sol";
 import {IBorrowVaultModule} from "src/interfaces/reads/IBorrowVaultModule.sol";
 import {ICollateralVaultModule} from "src/interfaces/reads/ICollateralVaultModule.sol";
-import {IAdministrationModule} from "src/interfaces/reads/IAdministrationModule.sol";
 import {IInitializeModule} from "src/interfaces/reads/IInitializeModule.sol";
 
 interface IModules {
@@ -15,6 +14,6 @@ interface IModules {
     function collateralVaultModule() external view returns (ICollateralVaultModule);
     function erc20Module() external view returns (IERC20Module);
     function lowLevelRebalanceModule() external view returns (ILowLevelRebalanceModule);
-    function administrationModule() external view returns (IAdministrationModule);
+    function administrationModule() external view returns (address);
     function initializeModule() external view returns (IInitializeModule);
 }

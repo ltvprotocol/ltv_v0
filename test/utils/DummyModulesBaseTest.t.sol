@@ -3,7 +3,6 @@ pragma solidity ^0.8.28;
 
 import {BaseTest, BaseTestInit} from "test/utils/BaseTest.t.sol";
 import {DummyLTV} from "test/utils/DummyLTV.t.sol";
-import {IAdministrationModule} from "src/interfaces/reads/IAdministrationModule.sol";
 import {IAuctionModule} from "src/interfaces/reads/IAuctionModule.sol";
 import {IERC20Module} from "src/interfaces/reads/IERC20Module.sol";
 import {ICollateralVaultModule} from "src/interfaces/reads/ICollateralVaultModule.sol";
@@ -27,7 +26,7 @@ contract DummyModulesBaseTest is BaseTest {
         DummyLowLevelRebalanceModule lowLevelRebalanceModule = new DummyLowLevelRebalanceModule();
 
         ModulesState memory modulesState = ModulesState({
-            administrationModule: IAdministrationModule(address(ltv.modules().administrationModule())),
+            administrationModule: address(ltv.modules().administrationModule()),
             auctionModule: IAuctionModule(address(ltv.modules().auctionModule())),
             borrowVaultModule: IBorrowVaultModule(address(borrowVaultModule)),
             collateralVaultModule: ICollateralVaultModule(address(collateralVaultModule)),

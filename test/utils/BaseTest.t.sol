@@ -5,7 +5,6 @@ import {Test} from "forge-std/Test.sol";
 import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {MockERC20} from "forge-std/mocks/MockERC20.sol";
 import {IDummyOracle} from "src/dummy/interfaces/IDummyOracle.sol";
-import {IAdministrationModule} from "src/interfaces/reads/IAdministrationModule.sol";
 import {IAuctionModule} from "src/interfaces/reads/IAuctionModule.sol";
 import {IERC20Module} from "src/interfaces/reads/IERC20Module.sol";
 import {ICollateralVaultModule} from "src/interfaces/reads/ICollateralVaultModule.sol";
@@ -96,7 +95,7 @@ contract BaseTest is Test {
         slippageProvider = new ConstantSlippageProvider();
         {
             ModulesState memory modulesState = ModulesState({
-                administrationModule: IAdministrationModule(address(new AdministrationModule())),
+                administrationModule: address(new AdministrationModule()),
                 auctionModule: IAuctionModule(address(new AuctionModule())),
                 erc20Module: IERC20Module(address(new ERC20Module())),
                 collateralVaultModule: ICollateralVaultModule(address(new CollateralVaultModule())),

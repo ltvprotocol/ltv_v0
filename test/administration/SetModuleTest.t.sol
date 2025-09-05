@@ -7,7 +7,6 @@ import {PrepareEachFunctionSuccessfulExecution} from "test/administration/Prepar
 import {ILTV} from "src/interfaces/ILTV.sol";
 import {IModules} from "src/interfaces/IModules.sol";
 import {IInitializeModule} from "src/interfaces/reads/IInitializeModule.sol";
-import {IAdministrationModule} from "src/interfaces/reads/IAdministrationModule.sol";
 import {IAuctionModule} from "src/interfaces/reads/IAuctionModule.sol";
 import {IERC20Module} from "src/interfaces/reads/IERC20Module.sol";
 import {ICollateralVaultModule} from "src/interfaces/reads/ICollateralVaultModule.sol";
@@ -45,8 +44,8 @@ contract DummyModulesProvider is IModules {
         return IAuctionModule(EOA_ADDRESS);
     }
 
-    function administrationModule() external pure override returns (IAdministrationModule) {
-        return IAdministrationModule(EOA_ADDRESS);
+    function administrationModule() external pure override returns (address) {
+        return EOA_ADDRESS;
     }
 
     function erc20Module() external pure override returns (IERC20Module) {
@@ -198,7 +197,7 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
             collateralVaultModule: ICollateralVaultModule(address(new CollateralVaultModule())),
             lowLevelRebalanceModule: ILowLevelRebalanceModule(address(new LowLevelRebalanceModule())),
             auctionModule: IAuctionModule(address(new AuctionModule())),
-            administrationModule: IAdministrationModule(address(new AdministrationModule())),
+            administrationModule: address(new AdministrationModule()),
             erc20Module: IERC20Module(address(new ERC20Module())),
             initializeModule: IInitializeModule(address(new InitializeModule()))
         });
@@ -285,7 +284,7 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
             collateralVaultModule: ICollateralVaultModule(address(new CollateralVaultModule())),
             lowLevelRebalanceModule: ILowLevelRebalanceModule(address(new LowLevelRebalanceModule())),
             auctionModule: IAuctionModule(address(new AuctionModule())),
-            administrationModule: IAdministrationModule(address(new AdministrationModule())),
+            administrationModule: address(new AdministrationModule()),
             erc20Module: IERC20Module(address(new ERC20Module())),
             initializeModule: IInitializeModule(address(new InitializeModule()))
         });
