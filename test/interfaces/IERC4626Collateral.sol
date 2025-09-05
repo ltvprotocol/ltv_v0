@@ -8,6 +8,8 @@ interface IERC4626Collateral {
         address indexed sender, address indexed receiver, address indexed owner, uint256 assets, uint256 shares
     );
 
+    function assetCollateral() external view returns (address assetTokenAddress);
+
     function maxDepositCollateral(address receiver) external view returns (uint256 maxAssets);
     function previewDepositCollateral(uint256 assets) external view returns (uint256 shares);
     function depositCollateral(uint256 assets, address receiver) external returns (uint256 shares);

@@ -51,6 +51,7 @@ contract ERC4626CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
         calls[i++] = CallWithCaller(abi.encodeCall(IERC4626.maxRedeem, (user)), user);
         calls[i++] = CallWithCaller(abi.encodeCall(IERC4626.previewRedeem, (amount)), user);
         calls[i++] = CallWithCaller(abi.encodeCall(IERC4626.redeem, (amount, user, user)), user);
+        calls[i++] = CallWithCaller(abi.encodeCall(IERC4626Collateral.assetCollateral, ()), user); // <= unrecognized function selector 0x6c4beeb4
         calls[i++] = CallWithCaller(abi.encodeCall(IERC4626Collateral.maxDepositCollateral, (user)), user);
         calls[i++] = CallWithCaller(abi.encodeCall(IERC4626Collateral.previewDepositCollateral, (amount)), user);
         calls[i++] = CallWithCaller(abi.encodeCall(IERC4626Collateral.depositCollateral, (amount, user)), user);
