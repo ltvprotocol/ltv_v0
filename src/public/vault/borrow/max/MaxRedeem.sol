@@ -8,13 +8,23 @@ import {PreviewWithdraw} from "src/public/vault/borrow/preview/PreviewWithdraw.s
 import {PreviewRedeem} from "src/public/vault/borrow/preview/PreviewRedeem.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 
+/**
+ * @title MaxRedeem
+ * @notice This contract contains max redeem function implementation.
+ */
 abstract contract MaxRedeem is PreviewWithdraw, PreviewRedeem {
     using uMulDiv for uint256;
 
+    /**
+     * @dev see IBorrowVaultModule.maxRedeem
+     */
     function maxRedeem(MaxWithdrawRedeemBorrowVaultState memory state) public pure returns (uint256 max) {
         return _maxRedeem(maxWithdrawRedeemStateToData(state));
     }
 
+    /**
+     * @dev base function to calculate max redeem
+     */
     function _maxRedeem(MaxWithdrawRedeemBorrowVaultData memory data) internal pure returns (uint256 max) {
         // round down to assume smaller border
         uint256 maxSafeRealBorrow =

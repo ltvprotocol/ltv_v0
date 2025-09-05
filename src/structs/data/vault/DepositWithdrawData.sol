@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
+/**
+ * @title DepositWithdrawData
+ * @notice This struct needed for deposit and withdraw calculations
+ */
 struct DepositWithdrawData {
     int256 collateral;
     int256 borrow;

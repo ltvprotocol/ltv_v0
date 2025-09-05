@@ -4,7 +4,15 @@ pragma solidity ^0.8.28;
 import {PreviewDepositVaultState} from "src/structs/state/vault/PreviewDepositVaultState.sol";
 import {MaxGrowthFeeStateReader} from "src/state_reader/MaxGrowthFeeStateReader.sol";
 
+/**
+ * @title PreviewDepositVaultStateReader
+ * @notice contract contains functionality to retrieve pure state needed for
+ * preview deposit vault calculations
+ */
 contract PreviewDepositVaultStateReader is MaxGrowthFeeStateReader {
+    /**
+     * @dev function to retrieve pure state needed for preview deposit vault
+     */
     function previewDepositVaultState() internal view returns (PreviewDepositVaultState memory) {
         (uint256 depositRealCollateralAssets, uint256 depositRealBorrowAssets) =
             getRealCollateralAndRealBorrowAssets(true);

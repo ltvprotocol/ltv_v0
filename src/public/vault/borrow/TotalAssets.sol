@@ -7,18 +7,31 @@ import {TotalAssetsState} from "src/structs/state/vault/TotalAssetsState.sol";
 import {CommonMath} from "src/math/CommonMath.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 
+/**
+ * @title TotalAssets
+ * @notice This contract contains total assets function implementation.
+ */
 abstract contract TotalAssets {
     using uMulDiv for uint256;
 
+    /**
+     * @dev see IBorrowVaultModule.totalAssets
+     */
     function totalAssets(TotalAssetsState memory state) public pure virtual returns (uint256) {
         // default behavior - don't overestimate our assets
         return totalAssets(false, state);
     }
 
+    /**
+     * @dev see IBorrowVaultModule.totalAssets
+     */
     function totalAssets(bool isDeposit, TotalAssetsState memory state) public pure virtual returns (uint256) {
         return _totalAssets(isDeposit, totalAssetsStateToData(state, isDeposit));
     }
 
+    /**
+     * @dev base function to calculate total assets
+     */
     function _totalAssets(bool isDeposit, TotalAssetsData memory data) internal pure virtual returns (uint256) {
         // Add 100 to avoid vault attack
         // in case of deposit need to overestimate our assets
@@ -26,6 +39,9 @@ abstract contract TotalAssets {
             + Constants.VIRTUAL_ASSETS_AMOUNT;
     }
 
+    /**
+     * @dev base function to calculate pure total assets state to data needed to calculate total assets
+     */
     function totalAssetsStateToData(TotalAssetsState memory state, bool isDeposit)
         internal
         pure

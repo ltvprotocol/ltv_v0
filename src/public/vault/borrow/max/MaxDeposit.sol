@@ -8,13 +8,23 @@ import {PreviewMint} from "src/public/vault/borrow/preview/PreviewMint.sol";
 import {PreviewDeposit} from "src/public/vault/borrow/preview/PreviewDeposit.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 
+/**
+ * @title MaxDeposit
+ * @notice This contract contains max deposit function implementation.
+ */
 abstract contract MaxDeposit is PreviewMint, PreviewDeposit {
     using uMulDiv for uint256;
 
+    /**
+     * @dev see IBorrowVaultModule.maxDeposit
+     */
     function maxDeposit(MaxDepositMintBorrowVaultState memory state) public pure returns (uint256) {
         return _maxDeposit(maxDepositMintStateToData(state));
     }
 
+    /**
+     * @dev base function to calculate max deposit
+     */
     function _maxDeposit(MaxDepositMintBorrowVaultData memory data) internal pure returns (uint256) {
         uint256 availableSpaceInShares = getAvailableSpaceInShares(
             data.previewDepositBorrowVaultData.collateral,

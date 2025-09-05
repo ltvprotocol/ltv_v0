@@ -3,6 +3,10 @@ pragma solidity ^0.8.28;
 
 import {Cases} from "src/structs/data/vault/Cases.sol";
 
+/**
+ * @title DeltaSharesAndDeltaRealBorrowData
+ * @notice This struct needed for delta shares and delta real borrow calculations
+ */
 struct DeltaSharesAndDeltaRealBorrowData {
     uint16 targetLtvDividend;
     uint16 targetLtvDivider;

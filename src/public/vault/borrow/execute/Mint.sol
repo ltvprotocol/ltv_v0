@@ -22,6 +22,10 @@ import {NextStep} from "src/math/NextStep.sol";
 import {CommonMath} from "src/math/CommonMath.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 
+/**
+ * @title Mint
+ * @notice This contract contains mint function implementation.
+ */
 abstract contract Mint is
     MaxDepositMintBorrowVaultStateReader,
     MaxMint,
@@ -35,6 +39,9 @@ abstract contract Mint is
     using uMulDiv for uint256;
     using SafeERC20 for IERC20;
 
+    /**
+     * @dev see ILTV.mint
+     */
     function mint(uint256 shares, address receiver) external isFunctionAllowed nonReentrant returns (uint256 assets) {
         MaxDepositMintBorrowVaultState memory state = maxDepositMintBorrowVaultState();
         MaxDepositMintBorrowVaultData memory data = maxDepositMintStateToData(state);

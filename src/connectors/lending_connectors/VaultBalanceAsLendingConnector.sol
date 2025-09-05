@@ -5,6 +5,14 @@ import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
 import {LTVState} from "../../states/LTVState.sol";
 
+/**
+ * @title VaultBalanceAsLendingConnector
+ * @notice Connector to switch to after deleverage and withdrawal event.
+ *
+ * @dev Current connector expects only collateral assets left in the vault.
+ * It makes protocol balance interpreted as lending connector. Borrow, supply and
+ * repay operations are not allowed in this case.
+ */
 contract VaultBalanceAsLendingConnector is LTVState, ILendingConnector {
     error UnexpectedBorrowCall();
     error UnexpectedRepayCall();
