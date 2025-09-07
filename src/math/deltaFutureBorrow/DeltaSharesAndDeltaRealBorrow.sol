@@ -276,19 +276,6 @@ library DeltaSharesAndDeltaRealBorrow {
         return (deltaFutureBorrow, data.cases, success);
     }
 
-    function calculateCaseCnaDeltaSharesAndDeltaRealBorrow(
-        DeltaSharesAndDeltaRealBorrowData memory data,
-        bool needToRoundUpDividend,
-        int256 cacheDividend,
-        int256 cacheDivider
-    ) internal pure returns (int256, Cases memory, bool) {
-        data.cases = CasesOperator.generateCase(6); // cna case
-        (int256 deltaFutureBorrow, bool success) = calculateSingleCaseDoubleCacheDeltaSharesAndDeltaRealBorrow(
-            needToRoundUpDividend, cacheDividend, cacheDivider
-        );
-        return (deltaFutureBorrow, data.cases, success);
-    }
-
     /**
      * Calculates the neutral (case 6) dividend for delta shares and delta real borrow
      * @param data The input data for the calculation
@@ -366,11 +353,9 @@ library DeltaSharesAndDeltaRealBorrow {
             return (deltaFutureBorrow, cases);
         }
 
-        (deltaFutureBorrow, cases, success) =
-            calculateCaseCnaDeltaSharesAndDeltaRealBorrow(data, false, cacheDividend, cacheDivider);
-
         if (deltaFutureBorrow == 0 && success) {
-            return (deltaFutureBorrow, cases);
+            cases = CasesOperator.generateCase(6); // cna
+            return (0, cases);
         }
 
         (deltaFutureBorrow, cases, success) = calculateCaseCeccbDeltaSharesAndDeltaRealBorrow(data);
@@ -422,14 +407,9 @@ library DeltaSharesAndDeltaRealBorrow {
         if (deltaFutureBorrow < 0 && success) {
             return (deltaFutureBorrow, cases);
         }
-
-        int256 cacheDivider = neutralDividerDeltaSharesAndDeltaRealBorrow(data);
-
-        (deltaFutureBorrow, cases, success) =
-            calculateCaseCnaDeltaSharesAndDeltaRealBorrow(data, true, cacheDividend, cacheDivider);
-
         if (deltaFutureBorrow == 0 && success) {
-            return (deltaFutureBorrow, cases);
+            cases = CasesOperator.generateCase(6); // cna
+            return (0, cases);
         }
 
         (deltaFutureBorrow, cases, success) = calculateCaseCecbcDeltaSharesAndDeltaRealBorrow(data);
