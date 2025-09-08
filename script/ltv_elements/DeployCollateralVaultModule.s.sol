@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {BaseScript} from "../utils/BaseScript.s.sol";
-import {CollateralVaultModule} from "../../src/elements/CollateralVaultModule.sol";
+import {CollateralVaultModule} from "../../src/elements/modules/CollateralVaultModule.sol";
 import {console} from "forge-std/console.sol";
 
 contract DeployCollateralVaultModule is BaseScript {

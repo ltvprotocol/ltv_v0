@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {ERC20Module} from "src/elements/ERC20Module.sol";
+import {ERC20Module} from "src/elements/modules/ERC20Module.sol";
 import {TotalSupply} from "src/public/erc20/TotalSupply.sol";
 import {DummyTotalSupplyModule} from "test/utils/modules/DummyTotalSupplyModule.t.sol";
 

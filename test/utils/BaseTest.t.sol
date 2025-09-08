@@ -21,13 +21,13 @@ import {DummyLendingConnector} from "src/dummy/DummyLendingConnector.sol";
 import {DummyOracleConnector} from "src/dummy/DummyOracleConnector.sol";
 import {ConstantSlippageConnector} from "src/connectors/slippage_connectors/ConstantSlippageConnector.sol";
 import {VaultBalanceAsLendingConnector} from "src/connectors/lending_connectors/VaultBalanceAsLendingConnector.sol";
-import {AuctionModule} from "src/elements/AuctionModule.sol";
-import {ERC20Module} from "src/elements/ERC20Module.sol";
-import {CollateralVaultModule} from "src/elements/CollateralVaultModule.sol";
-import {BorrowVaultModule} from "src/elements/BorrowVaultModule.sol";
-import {LowLevelRebalanceModule} from "src/elements/LowLevelRebalanceModule.sol";
-import {AdministrationModule} from "src/elements/AdministrationModule.sol";
-import {InitializeModule} from "src/elements/InitializeModule.sol";
+import {AuctionModule} from "src/elements/modules/AuctionModule.sol";
+import {ERC20Module} from "src/elements/modules/ERC20Module.sol";
+import {CollateralVaultModule} from "src/elements/modules/CollateralVaultModule.sol";
+import {BorrowVaultModule} from "src/elements/modules/BorrowVaultModule.sol";
+import {LowLevelRebalanceModule} from "src/elements/modules/LowLevelRebalanceModule.sol";
+import {AdministrationModule} from "src/elements/modules/AdministrationModule.sol";
+import {InitializeModule} from "src/elements/modules/InitializeModule.sol";
 import {ModulesProvider} from "src/elements/ModulesProvider.sol";
 
 struct BaseTestInit {

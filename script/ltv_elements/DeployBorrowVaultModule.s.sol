@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {BaseScript} from "../utils/BaseScript.s.sol";
-import {BorrowVaultModule} from "../../src/elements/BorrowVaultModule.sol";
+import {BorrowVaultModule} from "../../src/elements/modules/BorrowVaultModule.sol";
 import {console} from "forge-std/console.sol";
 
 contract DeployBorrowVaultModule is BaseScript {

@@ -17,15 +17,15 @@ import {IMorphoOracle} from "src/connectors/oracle_connectors/interfaces/IMorpho
 import {MorphoConnector} from "src/connectors/lending_connectors/MorphoConnector.sol";
 import {MorphoOracleConnector} from "src/connectors/oracle_connectors/MorphoOracleConnector.sol";
 import {ConstantSlippageConnector} from "src/connectors/slippage_connectors/ConstantSlippageConnector.sol";
-import {InitializeModule} from "src/elements/InitializeModule.sol";
+import {InitializeModule} from "src/elements/modules/InitializeModule.sol";
 import {StateInitData} from "src/structs/state/StateInitData.sol";
 import {ModulesProvider, ModulesState} from "src/elements/ModulesProvider.sol";
-import {AuctionModule} from "src/elements/AuctionModule.sol";
-import {ERC20Module} from "src/elements/ERC20Module.sol";
-import {CollateralVaultModule} from "src/elements/CollateralVaultModule.sol";
-import {BorrowVaultModule} from "src/elements/BorrowVaultModule.sol";
-import {LowLevelRebalanceModule} from "src/elements/LowLevelRebalanceModule.sol";
-import {AdministrationModule} from "src/elements/AdministrationModule.sol";
+import {AuctionModule} from "src/elements/modules/AuctionModule.sol";
+import {ERC20Module} from "src/elements/modules/ERC20Module.sol";
+import {CollateralVaultModule} from "src/elements/modules/CollateralVaultModule.sol";
+import {BorrowVaultModule} from "src/elements/modules/BorrowVaultModule.sol";
+import {LowLevelRebalanceModule} from "src/elements/modules/LowLevelRebalanceModule.sol";
+import {AdministrationModule} from "src/elements/modules/AdministrationModule.sol";
 import {LTV} from "src/elements/LTV.sol";
 
 contract MorphoIntegrationTest is Test {

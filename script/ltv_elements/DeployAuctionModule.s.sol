@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {BaseScript} from "../utils/BaseScript.s.sol";
-import {AuctionModule} from "../../src/elements/AuctionModule.sol";
+import {AuctionModule} from "../../src/elements/modules/AuctionModule.sol";
 import {console} from "forge-std/console.sol";
 
 contract DeployAuctionModule is BaseScript {
