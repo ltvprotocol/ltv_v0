@@ -29,6 +29,9 @@ contract ERC20CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
         address caller;
     }
 
+    address testUser = makeAddr("testUser");
+    address testUser2 = makeAddr("testUser2");
+
     function erc20CallsWithCaller(address user, address user2) public pure returns (CallWithCaller[] memory) {
         CallWithCaller[] memory calls = new CallWithCaller[](6);
         uint256 amount = 100;
@@ -44,7 +47,7 @@ contract ERC20CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
         return calls;
     }
 
-    function test_everyFunctionExecutes(DefaultTestData memory data) public testWithPredefinedDefaultValues(data) {
+    function initExecutionEnvironment(DefaultTestData memory data) public {
         ModulesState memory newModulesState = ModulesState({
             borrowVaultModule: IBorrowVaultModule(address(new BorrowVaultModule())),
             collateralVaultModule: ICollateralVaultModule(address(new CollateralVaultModule())),
@@ -66,9 +69,6 @@ contract ERC20CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
 
         assertEq(address(ltv.modules()), address(newModules));
 
-        address testUser = makeAddr("testUser");
-        address testUser2 = makeAddr("testUser2");
-
         prepareEachFunctionSuccessfulExecution(testUser);
 
         deal(address(borrowToken), data.emergencyDeleverager, type(uint112).max);
@@ -82,6 +82,10 @@ contract ERC20CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
         WhitelistRegistry registry = new WhitelistRegistry(data.owner, address(0));
         vm.prank(data.governor);
         ltv.setWhitelistRegistry(address(registry));
+    }
+
+    function test_everyFunctionExecutes(DefaultTestData memory data) public testWithPredefinedDefaultValues(data) {
+        initExecutionEnvironment(data);
 
         CallWithCaller[] memory calls = erc20CallsWithCaller(testUser, testUser2);
 
@@ -91,5 +95,58 @@ contract ERC20CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
 
             require(success);
         }
+    }
+
+    function test_transferExecutesAndEmitsEvent(DefaultTestData memory data)
+        public
+        testWithPredefinedDefaultValues(data)
+    {
+        initExecutionEnvironment(data);
+
+        uint256 amount = 1000;
+        deal(address(ltv), testUser, amount);
+
+        vm.prank(testUser);
+        vm.expectEmit(true, true, false, true);
+        emit IERC20.Transfer(testUser, testUser2, amount);
+        bool success = ltv.transfer(testUser2, amount);
+
+        require(success);
+    }
+
+    function test_approveExecutesAndEmitsEvent(DefaultTestData memory data)
+        public
+        testWithPredefinedDefaultValues(data)
+    {
+        initExecutionEnvironment(data);
+
+        uint256 amount = 1000;
+
+        vm.prank(testUser);
+        vm.expectEmit(true, true, false, true);
+        emit IERC20.Approval(testUser, testUser2, amount);
+        bool success = ltv.approve(testUser2, amount);
+
+        require(success);
+    }
+
+    function test_transferFromExecutesAndEmitsEvent(DefaultTestData memory data)
+        public
+        testWithPredefinedDefaultValues(data)
+    {
+        initExecutionEnvironment(data);
+
+        uint256 amount = 1000;
+        deal(address(ltv), testUser, amount);
+
+        vm.prank(testUser);
+        ltv.approve(testUser2, amount);
+
+        vm.prank(testUser2);
+        vm.expectEmit(true, true, false, true);
+        emit IERC20.Transfer(testUser, testUser2, amount);
+        bool success = ltv.transferFrom(testUser, testUser2, amount);
+
+        require(success);
     }
 }
