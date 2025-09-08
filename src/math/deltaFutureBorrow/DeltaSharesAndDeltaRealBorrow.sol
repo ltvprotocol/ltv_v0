@@ -180,21 +180,6 @@ library DeltaSharesAndDeltaRealBorrow {
         return (deltaFutureBorrow, true);
     }
 
-    function calculateSingleCaseDoubleCacheDeltaSharesAndDeltaRealBorrow(
-        bool needToRoundUpDividend,
-        int256 dividend,
-        int256 divider
-    ) internal pure returns (int256, bool) {
-        if (divider == 0) {
-            return (0, false);
-        }
-
-        bool needToRoundUp = !needToRoundUpDividend;
-        int256 deltaFutureBorrow = dividend.mulDiv(Constants.DIVIDER_PRECISION, divider, needToRoundUp);
-
-        return (deltaFutureBorrow, true);
-    }
-
     function calculateCaseCmcbDeltaSharesAndDeltaRealBorrow(
         DeltaSharesAndDeltaRealBorrowData memory data,
         int256 cacheDividend,
@@ -218,7 +203,6 @@ library DeltaSharesAndDeltaRealBorrow {
     function calculateCaseCmbcDeltaSharesAndDeltaRealBorrow(
         DeltaSharesAndDeltaRealBorrowData memory data,
         int256 cacheDividend,
-        int256 cacheDivider,
         bool cache
     ) internal pure returns (int256, Cases memory, bool) {
         data.cases = CasesOperator.generateCase(1); // cmbc case
@@ -228,7 +212,7 @@ library DeltaSharesAndDeltaRealBorrow {
 
         if (cache) {
             (deltaFutureBorrow, success) =
-                calculateSingleCaseDoubleCacheDeltaSharesAndDeltaRealBorrow(false, cacheDividend, cacheDivider);
+                calculateSingleCaseCacheDividendDeltaSharesAndDeltaRealBorrow(data, false, true, cacheDividend);
         } else {
             (deltaFutureBorrow, success) = calculateSingleCaseDeltaSharesAndDeltaRealBorrow(data, false, true);
         }
@@ -307,33 +291,6 @@ library DeltaSharesAndDeltaRealBorrow {
         );
     }
 
-    /**
-     * Calculates the neutral (case 6) divider for delta shares and delta real borrow
-     * @param data The input data for the calculation
-     * @return divider The calculated divider value
-     */
-    function neutralDividerDeltaSharesAndDeltaRealBorrow(DeltaSharesAndDeltaRealBorrowData memory data)
-        internal
-        pure
-        returns (int256 divider)
-    {
-        data.cases = CasesOperator.generateCase(6); // cna case - neutral case
-
-        divider = calculateDividerByDeltaSharesAndDeltaRealBorrow(
-            DeltaSharesAndDeltaRealBorrowDividerData({
-                targetLtvDividend: data.targetLtvDividend,
-                targetLtvDivider: data.targetLtvDivider,
-                userFutureRewardBorrow: data.userFutureRewardBorrow,
-                futureBorrow: data.futureBorrow,
-                borrowSlippage: data.borrowSlippage,
-                protocolFutureRewardBorrow: data.protocolFutureRewardBorrow,
-                protocolFutureRewardCollateral: data.protocolFutureRewardCollateral,
-                cases: data.cases
-            }),
-            true
-        );
-    }
-
     function positiveFutureBorrowBranchDeltaSharesAndDeltaRealBorrow(DeltaSharesAndDeltaRealBorrowData memory data)
         internal
         pure
@@ -344,10 +301,8 @@ library DeltaSharesAndDeltaRealBorrow {
         bool success;
 
         int256 cacheDividend = neutralDividendDeltaSharesAndDeltaRealBorrow(data, false);
-        int256 cacheDivider = neutralDividerDeltaSharesAndDeltaRealBorrow(data);
 
-        (deltaFutureBorrow, cases, success) =
-            calculateCaseCmbcDeltaSharesAndDeltaRealBorrow(data, cacheDividend, cacheDivider, true);
+        (deltaFutureBorrow, cases, success) = calculateCaseCmbcDeltaSharesAndDeltaRealBorrow(data, cacheDividend, true);
 
         if (deltaFutureBorrow > 0 && success) {
             return (deltaFutureBorrow, cases);
@@ -454,7 +409,7 @@ library DeltaSharesAndDeltaRealBorrow {
         Cases memory cases;
         bool success;
 
-        (deltaFutureBorrow, cases, success) = calculateCaseCmbcDeltaSharesAndDeltaRealBorrow(data, 0, 0, false);
+        (deltaFutureBorrow, cases, success) = calculateCaseCmbcDeltaSharesAndDeltaRealBorrow(data, 0, false);
 
         if (deltaFutureBorrow > 0 && success) {
             return (deltaFutureBorrow, cases);
