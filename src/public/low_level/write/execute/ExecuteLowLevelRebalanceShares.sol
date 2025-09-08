@@ -9,8 +9,8 @@ import {ILowLevelRebalanceErrors} from "src/errors/ILowLevelRebalanceErrors.sol"
 import {ApplyMaxGrowthFee} from "src/state_transition/ApplyMaxGrowthFee.sol";
 import {ExecuteLowLevelRebalance} from "src/state_transition/ExecuteLowLevelRebalance.sol";
 import {ExecuteLowLevelRebalanceStateReader} from "src/state_reader/low_level/ExecuteLowLevelRebalanceStateReader.sol";
-import {PreviewLowLevelRebalanceShares} from "src/public/low_level/preview/PreviewLowLevelRebalanceShares.sol";
-import {MaxLowLevelRebalanceShares} from "src/public/low_level/max/MaxLowLevelRebalanceShares.sol";
+import {PreviewLowLevelRebalanceShares} from "src/public/low_level/read/preview/PreviewLowLevelRebalanceShares.sol";
+import {MaxLowLevelRebalanceShares} from "src/public/low_level/read/max/MaxLowLevelRebalanceShares.sol";
 import {CommonMath} from "src/math/libraries/CommonMath.sol";
 
 abstract contract ExecuteLowLevelRebalanceShares is

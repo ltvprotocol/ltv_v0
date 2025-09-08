@@ -8,8 +8,8 @@ import {ILowLevelRebalanceErrors} from "src/errors/ILowLevelRebalanceErrors.sol"
 import {ApplyMaxGrowthFee} from "src/state_transition/ApplyMaxGrowthFee.sol";
 import {ExecuteLowLevelRebalance} from "src/state_transition/ExecuteLowLevelRebalance.sol";
 import {ExecuteLowLevelRebalanceStateReader} from "src/state_reader/low_level/ExecuteLowLevelRebalanceStateReader.sol";
-import {PreviewLowLevelRebalanceBorrow} from "src/public/low_level/preview/PreviewLowLevelRebalanceBorrow.sol";
-import {MaxLowLevelRebalanceBorrow} from "src/public/low_level/max/MaxLowLevelRebalanceBorrow.sol";
+import {PreviewLowLevelRebalanceBorrow} from "src/public/low_level/read/preview/PreviewLowLevelRebalanceBorrow.sol";
+import {MaxLowLevelRebalanceBorrow} from "src/public/low_level/read/max/MaxLowLevelRebalanceBorrow.sol";
 
 abstract contract ExecuteLowLevelRebalanceBorrow is
     ExecuteLowLevelRebalanceStateReader,
