@@ -430,7 +430,7 @@ library DeltaSharesAndDeltaRealCollateral {
                         + data.futureCollateral.mulDivDown(
                             Constants.FUTURE_ADJUSTMENT_NUMERATOR, Constants.FUTURE_ADJUSTMENT_DENOMINATOR
                         ) < 0
-                ) && (deltaFutureCollateral < 0)
+                ) && (deltaFutureCollateral > 0)
             ) {
                 deltaFutureCollateral = -data.futureCollateral;
             } else {
