@@ -19,7 +19,7 @@ import {MockDummyLending} from "test/utils/MockDummyLending.t.sol";
 import {DummyOracle} from "src/dummy/DummyOracle.sol";
 import {DummyLendingConnector} from "src/dummy/DummyLendingConnector.sol";
 import {DummyOracleConnector} from "src/dummy/DummyOracleConnector.sol";
-import {ConstantSlippageProvider} from "src/connectors/slippage_providers/ConstantSlippageProvider.sol";
+import {ConstantSlippageConnector} from "src/connectors/slippage_connectors/ConstantSlippageConnector.sol";
 import {VaultBalanceAsLendingConnector} from "src/connectors/lending_connectors/VaultBalanceAsLendingConnector.sol";
 import {AuctionModule} from "src/elements/AuctionModule.sol";
 import {ERC20Module} from "src/elements/ERC20Module.sol";
@@ -75,7 +75,7 @@ contract BaseTest is Test {
     MockDummyLending public lendingProtocol;
     IDummyOracle public oracle;
     ModulesProvider public modulesProvider;
-    ConstantSlippageProvider public slippageProvider;
+    ConstantSlippageConnector public slippageConnector;
     DummyOracleConnector public oracleConnector;
     DummyLendingConnector public lendingConnector;
 
@@ -93,7 +93,7 @@ contract BaseTest is Test {
 
         lendingProtocol = new MockDummyLending(init.owner);
         oracle = IDummyOracle(new DummyOracle());
-        slippageProvider = new ConstantSlippageProvider();
+        slippageConnector = new ConstantSlippageConnector();
         {
             ModulesState memory modulesState = ModulesState({
                 administrationModule: IAdministrationModule(address(new AdministrationModule())),
@@ -128,7 +128,7 @@ contract BaseTest is Test {
                 maxGrowthFeeDividend: init.maxGrowthFeeDividend,
                 maxGrowthFeeDivider: init.maxGrowthFeeDivider,
                 maxTotalAssetsInUnderlying: init.maxTotalAssetsInUnderlying,
-                slippageProvider: slippageProvider,
+                slippageConnector: slippageConnector,
                 maxDeleverageFeeDividend: init.maxDeleverageFeeDividend,
                 maxDeleverageFeeDivider: init.maxDeleverageFeeDivider,
                 vaultBalanceAsLendingConnector: new VaultBalanceAsLendingConnector(),
@@ -139,7 +139,7 @@ contract BaseTest is Test {
                 auctionDuration: 1000,
                 lendingConnectorData: "",
                 oracleConnectorData: "",
-                slippageProviderData: abi.encode(init.collateralSlippage, init.borrowSlippage),
+                slippageConnectorData: abi.encode(init.collateralSlippage, init.borrowSlippage),
                 vaultBalanceAsLendingConnectorData: ""
             });
 

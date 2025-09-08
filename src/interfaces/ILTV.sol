@@ -235,7 +235,7 @@ interface ILTV is
 
     function setOracleConnector(address _oracleConnector, bytes memory oracleConnectorData) external;
 
-    function setSlippageProvider(address _slippageProvider, bytes memory slippageProviderData) external;
+    function setSlippageConnector(address _slippageConnector, bytes memory slippageConnectorData) external;
 
     function setTargetLtv(uint16 dividend, uint16 divider) external;
 
@@ -246,9 +246,9 @@ interface ILTV is
 
     function setWhitelistRegistry(address value) external;
 
-    function slippageProvider() external view returns (address);
+    function slippageConnector() external view returns (address);
 
-    function slippageProviderGetterData() external view returns (bytes memory);
+    function slippageConnectorGetterData() external view returns (bytes memory);
 
     function startAuction() external view returns (uint56);
 

@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 import {BalancedTest} from "test/utils/BalancedTest.t.sol";
 import {ILTV} from "src/interfaces/ILTV.sol";
-import {ConstantSlippageProvider} from "src/connectors/slippage_providers/ConstantSlippageProvider.sol";
+import {ConstantSlippageConnector} from "src/connectors/slippage_connectors/ConstantSlippageConnector.sol";
 import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
 import {WhitelistRegistry} from "src/elements/WhitelistRegistry.sol";
 import {IWithGuardian} from "src/timelock/utils/interfaces/IWithGuardian.sol";
@@ -300,24 +300,24 @@ contract GovernorTest is BalancedTest {
         dummyLtv.setWhitelistRegistry(address(0));
     }
 
-    function test_setSlippageProvider(address owner, address user)
+    function test_setSlippageConnector(address owner, address user)
         public
         initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
     {
         address governor = ILTV(address(dummyLtv)).governor();
         vm.assume(user != governor);
         vm.startPrank(governor);
-        ConstantSlippageProvider provider = new ConstantSlippageProvider();
+        ConstantSlippageConnector provider = new ConstantSlippageConnector();
 
-        bytes memory slippageProviderData = abi.encode(10 ** 16, 10 ** 16);
-        dummyLtv.setSlippageProvider(address(provider), slippageProviderData);
-        assertEq(address(dummyLtv.slippageProvider()), address(provider));
-        assertEq(keccak256(dummyLtv.slippageProviderGetterData()), keccak256(slippageProviderData));
+        bytes memory slippageConnectorData = abi.encode(10 ** 16, 10 ** 16);
+        dummyLtv.setSlippageConnector(address(provider), slippageConnectorData);
+        assertEq(address(dummyLtv.slippageConnector()), address(provider));
+        assertEq(keccak256(dummyLtv.slippageConnectorGetterData()), keccak256(slippageConnectorData));
 
         // Should revert if not governor
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
-        dummyLtv.setSlippageProvider(address(0), slippageProviderData);
+        dummyLtv.setSlippageConnector(address(0), slippageConnectorData);
     }
 
     function test_setMaxGrowthFee(address owner, address user)

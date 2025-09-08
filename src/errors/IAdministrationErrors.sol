@@ -33,13 +33,13 @@ interface IAdministrationErrors {
     error ReceiverNotWhitelisted(address receiver);
     error WhitelistRegistryNotSet();
     error WhitelistIsActivated();
-    error ZeroSlippageProvider();
+    error ZeroSlippageConnector();
     error EOADelegateCall();
     error VaultBalanceAsLendingConnectorNotSet();
     error ZeroModulesProvider();
     error FailedToSetLendingConnector(address lendingConnector, bytes lendingConnectorData);
     error FailedToSetOracleConnector(address oracleConnector, bytes oracleConnectorData);
-    error FailedToSetSlippageProvider(address slippageProvider, bytes slippageProviderData);
+    error FailedToSetSlippageConnector(address slippageConnector, bytes slippageConnectorData);
     error FailedToSetVaultBalanceAsLendingConnector(
         address vaultBalanceAsLendingConnector, bytes vaultBalanceAsLendingConnectorGetterData
     );

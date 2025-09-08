@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
 import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
-import {ISlippageProvider} from "src/interfaces/ISlippageProvider.sol";
+import {ISlippageConnector} from "src/interfaces/ISlippageConnector.sol";
 
 struct StateInitData {
     string name;
@@ -23,7 +23,7 @@ struct StateInitData {
     uint16 maxGrowthFeeDividend;
     uint16 maxGrowthFeeDivider;
     uint256 maxTotalAssetsInUnderlying;
-    ISlippageProvider slippageProvider;
+    ISlippageConnector slippageConnector;
     uint16 maxDeleverageFeeDividend;
     uint16 maxDeleverageFeeDivider;
     ILendingConnector vaultBalanceAsLendingConnector;
@@ -34,6 +34,6 @@ struct StateInitData {
     uint24 auctionDuration;
     bytes lendingConnectorData;
     bytes oracleConnectorData;
-    bytes slippageProviderData;
+    bytes slippageConnectorData;
     bytes vaultBalanceAsLendingConnectorData;
 }

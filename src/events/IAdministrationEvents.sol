@@ -23,8 +23,8 @@ interface IAdministrationEvents {
     event OracleConnectorUpdated(
         address oldValue, bytes oldOracleConnectorData, address newValue, bytes newOracleConnectorData
     );
-    event SlippageProviderUpdated(
-        address oldValue, bytes oldSlippageProviderData, address newValue, bytes newSlippageProviderData
+    event SlippageConnectorUpdated(
+        address oldValue, bytes oldSlippageConnectorData, address newValue, bytes newSlippageConnectorData
     );
     event FeeCollectorUpdated(address oldValue, address newValue);
     event ModulesUpdated(address oldValue, address newValue);

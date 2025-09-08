@@ -2,17 +2,17 @@
 pragma solidity ^0.8.28;
 
 import {BaseScript} from "../utils/BaseScript.s.sol";
-import {ConstantSlippageProvider} from "../../src/connectors/slippage_providers/ConstantSlippageProvider.sol";
+import {ConstantSlippageConnector} from "../../src/connectors/slippage_connectors/ConstantSlippageConnector.sol";
 import {console} from "forge-std/console.sol";
 
 contract DeployConstantSlippageConnector is BaseScript {
     function deploy() internal override {
-        ConstantSlippageProvider slippageProvider = new ConstantSlippageProvider{salt: bytes32(0)}();
+        ConstantSlippageConnector slippageConnector = new ConstantSlippageConnector{salt: bytes32(0)}();
 
-        console.log("ConstantSlippageProvider deployed at: ", address(slippageProvider));
+        console.log("ConstantSlippageConnector deployed at: ", address(slippageConnector));
     }
 
     function hashedCreationCode() internal pure override returns (bytes32) {
-        return keccak256(type(ConstantSlippageProvider).creationCode);
+        return keccak256(type(ConstantSlippageConnector).creationCode);
     }
 }

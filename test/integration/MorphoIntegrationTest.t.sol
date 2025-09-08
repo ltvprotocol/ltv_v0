@@ -16,7 +16,7 @@ import {IMorphoBlue} from "src/connectors/lending_connectors/interfaces/IMorphoB
 import {IMorphoOracle} from "src/connectors/oracle_connectors/interfaces/IMorphoOracle.sol";
 import {MorphoConnector} from "src/connectors/lending_connectors/MorphoConnector.sol";
 import {MorphoOracleConnector} from "src/connectors/oracle_connectors/MorphoOracleConnector.sol";
-import {ConstantSlippageProvider} from "src/connectors/slippage_providers/ConstantSlippageProvider.sol";
+import {ConstantSlippageConnector} from "src/connectors/slippage_connectors/ConstantSlippageConnector.sol";
 import {InitializeModule} from "src/elements/InitializeModule.sol";
 import {StateInitData} from "src/structs/state/StateInitData.sol";
 import {ModulesProvider, ModulesState} from "src/elements/ModulesProvider.sol";
@@ -41,7 +41,7 @@ contract MorphoIntegrationTest is Test {
     LTV public ltv;
     IERC20 public weth;
     IERC20 public wsteth;
-    ConstantSlippageProvider public slippageProvider;
+    ConstantSlippageConnector public slippageConnector;
     ModulesProvider public modulesProvider;
 
     address public user;
@@ -61,7 +61,7 @@ contract MorphoIntegrationTest is Test {
 
         morphoLendingConnector = new MorphoConnector(0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb);
         morphoOracleConnector = new MorphoOracleConnector(IMorphoOracle(MORPHO_ORACLE));
-        slippageProvider = new ConstantSlippageProvider();
+        slippageConnector = new ConstantSlippageConnector();
 
         weth = IERC20(WETH);
         wsteth = IERC20(WSTETH);
@@ -96,7 +96,7 @@ contract MorphoIntegrationTest is Test {
             maxGrowthFeeDividend: 1,
             maxGrowthFeeDivider: 5,
             maxTotalAssetsInUnderlying: type(uint128).max,
-            slippageProvider: slippageProvider,
+            slippageConnector: slippageConnector,
             maxDeleverageFeeDividend: 1,
             maxDeleverageFeeDivider: 20,
             vaultBalanceAsLendingConnector: ILendingConnector(address(0)),
@@ -107,7 +107,7 @@ contract MorphoIntegrationTest is Test {
             auctionDuration: 1000,
             lendingConnectorData: abi.encode(MORPHO_ORACLE, IRM, 945000000000000000, keccak256(abi.encode(marketParams))),
             oracleConnectorData: "",
-            slippageProviderData: abi.encode(10 ** 16, 10 ** 16),
+            slippageConnectorData: abi.encode(10 ** 16, 10 ** 16),
             vaultBalanceAsLendingConnectorData: ""
         });
 

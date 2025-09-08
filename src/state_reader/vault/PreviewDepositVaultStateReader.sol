@@ -8,7 +8,7 @@ contract PreviewDepositVaultStateReader is MaxGrowthFeeStateReader {
     function previewDepositVaultState() internal view returns (PreviewDepositVaultState memory) {
         (uint256 depositRealCollateralAssets, uint256 depositRealBorrowAssets) =
             getRealCollateralAndRealBorrowAssets(true);
-        bytes memory _slippageProviderGetterData = slippageProviderGetterData;
+        bytes memory _slippageConnectorGetterData = slippageConnectorGetterData;
         return PreviewDepositVaultState({
             maxGrowthFeeState: maxGrowthFeeState(),
             depositRealBorrowAssets: depositRealBorrowAssets,
@@ -18,8 +18,8 @@ contract PreviewDepositVaultStateReader is MaxGrowthFeeStateReader {
             startAuction: startAuction,
             auctionDuration: auctionDuration,
             blockNumber: uint56(block.number),
-            collateralSlippage: slippageProvider.collateralSlippage(_slippageProviderGetterData),
-            borrowSlippage: slippageProvider.borrowSlippage(_slippageProviderGetterData)
+            collateralSlippage: slippageConnector.collateralSlippage(_slippageConnectorGetterData),
+            borrowSlippage: slippageConnector.borrowSlippage(_slippageConnectorGetterData)
         });
     }
 }

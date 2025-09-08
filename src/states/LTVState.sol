@@ -5,7 +5,7 @@ import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
 import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
 import {IWhitelistRegistry} from "src/interfaces/IWhitelistRegistry.sol";
-import {ISlippageProvider} from "src/interfaces/ISlippageProvider.sol";
+import {ISlippageConnector} from "src/interfaces/ISlippageConnector.sol";
 import {IModules} from "src/interfaces/IModules.sol";
 
 abstract contract LTVState {
@@ -16,7 +16,7 @@ abstract contract LTVState {
     ILendingConnector public lendingConnector;
     ILendingConnector public vaultBalanceAsLendingConnector;
     IOracleConnector public oracleConnector;
-    ISlippageProvider public slippageProvider;
+    ISlippageConnector public slippageConnector;
 
     address public governor;
     address public guardian;
@@ -60,6 +60,6 @@ abstract contract LTVState {
 
     bytes public lendingConnectorGetterData;
     bytes public oracleConnectorGetterData;
-    bytes public slippageProviderGetterData;
+    bytes public slippageConnectorGetterData;
     bytes public vaultBalanceAsLendingConnectorGetterData;
 }

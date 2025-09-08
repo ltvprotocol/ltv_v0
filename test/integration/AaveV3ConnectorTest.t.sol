@@ -15,7 +15,7 @@ import {IInitializeModule} from "src/interfaces/reads/IInitializeModule.sol";
 import {StateInitData} from "src/structs/state/StateInitData.sol";
 import {AaveV3Connector} from "src/connectors/lending_connectors/AaveV3Connector.sol";
 import {AaveV3OracleConnector} from "src/connectors/oracle_connectors/AaveV3OracleConnector.sol";
-import {ConstantSlippageProvider} from "src/connectors/slippage_providers/ConstantSlippageProvider.sol";
+import {ConstantSlippageConnector} from "src/connectors/slippage_connectors/ConstantSlippageConnector.sol";
 import {InitializeModule} from "src/elements/InitializeModule.sol";
 import {ModulesProvider, ModulesState} from "src/elements/ModulesProvider.sol";
 import {AuctionModule} from "src/elements/AuctionModule.sol";
@@ -32,7 +32,7 @@ contract AaveV3ConnectorTest is Test {
 
     AaveV3Connector aaveLendingConnector;
     AaveV3OracleConnector aaveV3OracleConnector;
-    ConstantSlippageProvider slippageProvider;
+    ConstantSlippageConnector slippageConnector;
     ModulesProvider modulesProvider;
     IERC20 weth;
     IERC20 wsteth;
@@ -48,7 +48,7 @@ contract AaveV3ConnectorTest is Test {
 
         aaveLendingConnector = new AaveV3Connector(0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2);
         aaveV3OracleConnector = new AaveV3OracleConnector(0x54586bE62E3c3580375aE3723C145253060Ca0C2);
-        slippageProvider = new ConstantSlippageProvider();
+        slippageConnector = new ConstantSlippageConnector();
 
         ModulesState memory modulesState = ModulesState({
             administrationModule: IAdministrationModule(address(new AdministrationModule())),
@@ -80,7 +80,7 @@ contract AaveV3ConnectorTest is Test {
             maxGrowthFeeDividend: 1,
             maxGrowthFeeDivider: 5,
             maxTotalAssetsInUnderlying: type(uint128).max,
-            slippageProvider: slippageProvider,
+            slippageConnector: slippageConnector,
             maxDeleverageFeeDividend: 1,
             maxDeleverageFeeDivider: 20,
             vaultBalanceAsLendingConnector: ILendingConnector(address(0)),
@@ -91,7 +91,7 @@ contract AaveV3ConnectorTest is Test {
             auctionDuration: 1000,
             lendingConnectorData: abi.encode(1),
             oracleConnectorData: "",
-            slippageProviderData: abi.encode(10 ** 16, 10 ** 16),
+            slippageConnectorData: abi.encode(10 ** 16, 10 ** 16),
             vaultBalanceAsLendingConnectorData: ""
         });
 

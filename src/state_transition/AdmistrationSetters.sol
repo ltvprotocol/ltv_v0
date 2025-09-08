@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {IWhitelistRegistry} from "src/interfaces/IWhitelistRegistry.sol";
-import {ISlippageProvider} from "src/interfaces/ISlippageProvider.sol";
+import {ISlippageConnector} from "src/interfaces/ISlippageConnector.sol";
 import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
 import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
 import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
@@ -92,15 +92,15 @@ contract AdmistrationSetters is BoolWriter, BoolReader, IAdministrationErrors, I
         emit WhitelistRegistryUpdated(oldAddress, address(value));
     }
 
-    function _setSlippageProvider(ISlippageProvider _slippageProvider, bytes memory slippageProviderData) internal {
-        require(address(_slippageProvider) != address(0), ZeroSlippageProvider());
-        address oldAddress = address(slippageProvider);
-        slippageProvider = _slippageProvider;
-        (bool success,) = address(slippageProvider).delegatecall(
-            abi.encodeCall(ISlippageProvider.initializeSlippageProviderData, (slippageProviderData))
+    function _setSlippageConnector(ISlippageConnector _slippageConnector, bytes memory slippageConnectorData) internal {
+        require(address(_slippageConnector) != address(0), ZeroSlippageConnector());
+        address oldAddress = address(slippageConnector);
+        slippageConnector = _slippageConnector;
+        (bool success,) = address(slippageConnector).delegatecall(
+            abi.encodeCall(ISlippageConnector.initializeSlippageConnectorData, (slippageConnectorData))
         );
-        require(success, FailedToSetSlippageProvider(address(_slippageProvider), slippageProviderData));
-        emit SlippageProviderUpdated(oldAddress, slippageProviderData, address(_slippageProvider), slippageProviderData);
+        require(success, FailedToSetSlippageConnector(address(_slippageConnector), slippageConnectorData));
+        emit SlippageConnectorUpdated(oldAddress, slippageConnectorData, address(_slippageConnector), slippageConnectorData);
     }
 
     function _allowDisableFunctions(bytes4[] memory signatures, bool isDisabled) internal {

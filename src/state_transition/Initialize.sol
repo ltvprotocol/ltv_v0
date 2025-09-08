@@ -36,7 +36,7 @@ abstract contract Initialize is AdmistrationSetters, OwnableUpgradeable {
 
         _setLendingConnector(initData.lendingConnector, initData.lendingConnectorData);
         _setOracleConnector(initData.oracleConnector, initData.oracleConnectorData);
-        _setSlippageProvider(initData.slippageProvider, initData.slippageProviderData);
+        _setSlippageConnector(initData.slippageConnector, initData.slippageConnectorData);
         _setVaultBalanceAsLendingConnector(
             initData.vaultBalanceAsLendingConnector, initData.vaultBalanceAsLendingConnectorData
         );

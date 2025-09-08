@@ -4,7 +4,7 @@ pragma solidity ^0.8.28;
 import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 import {IWhitelistRegistry} from "src/interfaces/IWhitelistRegistry.sol";
-import {ISlippageProvider} from "src/interfaces/ISlippageProvider.sol";
+import {ISlippageConnector} from "src/interfaces/ISlippageConnector.sol";
 import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
 import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
 import {Constants} from "src/Constants.sol";
@@ -72,13 +72,13 @@ abstract contract AdministrationPublic is
         _setWhitelistRegistry(value);
     }
 
-    function setSlippageProvider(ISlippageProvider _slippageProvider, bytes memory slippageProviderData)
+    function setSlippageConnector(ISlippageConnector _slippageConnector, bytes memory slippageConnectorData)
         external
         isFunctionAllowed
         onlyGovernor
         nonReentrant
     {
-        _setSlippageProvider(_slippageProvider, slippageProviderData);
+        _setSlippageConnector(_slippageConnector, slippageConnectorData);
     }
 
     function allowDisableFunctions(bytes4[] memory signatures, bool isDisabled) external onlyGuardian nonReentrant {
