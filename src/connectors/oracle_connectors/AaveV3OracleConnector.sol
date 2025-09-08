@@ -2,14 +2,14 @@
 pragma solidity ^0.8.28;
 
 import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
-import {IAaveOracle} from "src/connectors/oracle_connectors/interfaces/IAaveOracle.sol";
+import {IAaveV3Oracle} from "src/connectors/oracle_connectors/interfaces/IAaveV3Oracle.sol";
 import {LTVState} from "src/states/LTVState.sol";
 
 contract AaveV3OracleConnector is LTVState, IOracleConnector {
-    IAaveOracle public immutable ORACLE;
+    IAaveV3Oracle public immutable ORACLE;
 
     constructor(address _oracle) {
-        ORACLE = IAaveOracle(_oracle);
+        ORACLE = IAaveV3Oracle(_oracle);
     }
 
     function getPriceCollateralOracle(bytes calldata oracleConnectorGetterData) external view returns (uint256) {
