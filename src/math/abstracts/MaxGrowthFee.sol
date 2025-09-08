@@ -6,7 +6,7 @@ import {MaxGrowthFeeState} from "src/structs/state/MaxGrowthFeeState.sol";
 import {MaxGrowthFeeData} from "src/structs/data/MaxGrowthFeeData.sol";
 import {TotalAssetsState} from "src/structs/state/vault/TotalAssetsState.sol";
 import {TotalAssets} from "src/public/vault/borrow/TotalAssets.sol";
-import {TotalSupply} from "src/public/erc20/TotalSupply.sol";
+import {TotalSupply} from "src/public/erc20/read/TotalSupply.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract MaxGrowthFee is TotalAssets, TotalSupply {

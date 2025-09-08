@@ -9,7 +9,7 @@ import {WhitelistModifier} from "src/modifiers/WhitelistModifier.sol";
 import {FunctionStopperModifier} from "src/modifiers/FunctionStopperModifier.sol";
 import {ERC20} from "src/state_transition/ERC20.sol";
 
-abstract contract ERC20WriteImpl is
+abstract contract TransferFrom is
     WhitelistModifier,
     FunctionStopperModifier,
     ReentrancyGuardUpgradeable,
@@ -31,28 +31,6 @@ abstract contract ERC20WriteImpl is
         balanceOf[sender] -= amount;
         balanceOf[recipient] += amount;
         emit Transfer(sender, recipient, amount);
-        return true;
-    }
-
-    function transfer(address recipient, uint256 amount)
-        external
-        isFunctionAllowed
-        isReceiverWhitelisted(recipient)
-        nonReentrant
-        returns (bool)
-    {
-        if (recipient == address(0)) {
-            revert TransferToZeroAddress();
-        }
-        balanceOf[msg.sender] -= amount;
-        balanceOf[recipient] += amount;
-        emit Transfer(msg.sender, recipient, amount);
-        return true;
-    }
-
-    function approve(address spender, uint256 amount) external isFunctionAllowed nonReentrant returns (bool) {
-        allowance[msg.sender][spender] = amount;
-        emit Approval(msg.sender, spender, amount);
         return true;
     }
 }

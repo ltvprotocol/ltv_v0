@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {ERC20WriteImpl} from "src/public/erc20/ERC20WriteImpl.sol";
-import {TotalSupply} from "src/public/erc20/TotalSupply.sol";
+import {Approve} from "../../public/erc20/write/Approve.sol";
+import {Transfer} from "../../public/erc20/write/Transfer.sol";
+import {TransferFrom} from "../../public/erc20/write/TransferFrom.sol";
+import {TotalSupply} from "../../public/erc20/read/TotalSupply.sol";
 
-contract ERC20Module is ERC20WriteImpl, TotalSupply {
+contract ERC20Module is Approve, Transfer, TransferFrom, TotalSupply {
     constructor() {
         _disableInitializers();
     }

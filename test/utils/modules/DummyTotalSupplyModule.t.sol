@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {Constants} from "src/Constants.sol";
-import {TotalSupply} from "src/public/erc20/TotalSupply.sol";
+import {TotalSupply} from "src/public/erc20/read/TotalSupply.sol";
 
 contract DummyTotalSupplyModule is TotalSupply {
     function totalSupply(uint256 supply) public pure virtual override returns (uint256) {
