@@ -369,10 +369,12 @@ library DeltaSharesAndDeltaRealCollateral {
             // mulDivUp
 
             if (
-                deltaFutureCollateral
-                    + data.futureCollateral.mulDivUp(
-                        Constants.FUTURE_ADJUSTMENT_NUMERATOR, Constants.FUTURE_ADJUSTMENT_DENOMINATOR
-                    ) > 0
+                (
+                    deltaFutureCollateral
+                        + data.futureCollateral.mulDivUp(
+                            Constants.FUTURE_ADJUSTMENT_NUMERATOR, Constants.FUTURE_ADJUSTMENT_DENOMINATOR
+                        ) > 0
+                ) && (deltaFutureCollateral < 0)
             ) {
                 deltaFutureCollateral = -data.futureCollateral;
             } else {
@@ -423,10 +425,12 @@ library DeltaSharesAndDeltaRealCollateral {
             // mulDivDown
 
             if (
-                deltaFutureCollateral
-                    + data.futureCollateral.mulDivDown(
-                        Constants.FUTURE_ADJUSTMENT_NUMERATOR, Constants.FUTURE_ADJUSTMENT_DENOMINATOR
-                    ) < 0
+                (
+                    deltaFutureCollateral
+                        + data.futureCollateral.mulDivDown(
+                            Constants.FUTURE_ADJUSTMENT_NUMERATOR, Constants.FUTURE_ADJUSTMENT_DENOMINATOR
+                        ) < 0
+                ) && (deltaFutureCollateral < 0)
             ) {
                 deltaFutureCollateral = -data.futureCollateral;
             } else {
