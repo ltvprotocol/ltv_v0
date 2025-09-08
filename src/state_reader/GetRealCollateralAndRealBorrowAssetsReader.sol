@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {ILendingConnector} from "../interfaces/ILendingConnector.sol";
+import {ILendingConnector} from "../interfaces/connectors/ILendingConnector.sol";
 import {GetLendingConnectorReader} from "../state_reader/GetLendingConnectorReader.sol";
 
 contract GetRealCollateralAndRealBorrowAssetsReader is GetLendingConnectorReader {

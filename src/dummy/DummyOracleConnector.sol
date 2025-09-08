@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
+import {IOracleConnector} from "src/interfaces/connectors/IOracleConnector.sol";
 import {IDummyOracle} from "src/dummy/interfaces/IDummyOracle.sol";
 import {LTVState} from "src/states/LTVState.sol";
 

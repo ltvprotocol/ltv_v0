@@ -2,9 +2,9 @@
 pragma solidity ^0.8.28;
 
 import {IWhitelistRegistry} from "src/interfaces/IWhitelistRegistry.sol";
-import {ISlippageConnector} from "src/interfaces/ISlippageConnector.sol";
-import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
-import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
+import {ISlippageConnector} from "src/interfaces/connectors/ISlippageConnector.sol";
+import {ILendingConnector} from "src/interfaces/connectors/ILendingConnector.sol";
+import {IOracleConnector} from "src/interfaces/connectors/IOracleConnector.sol";
 import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
 import {IAdministrationEvents} from "src/events/IAdministrationEvents.sol";
 import {Constants} from "src/Constants.sol";

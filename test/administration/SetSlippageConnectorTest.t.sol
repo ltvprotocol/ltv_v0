@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {BaseTest, DefaultTestData} from "test/utils/BaseTest.t.sol";
-import {ISlippageConnector} from "src/interfaces/ISlippageConnector.sol";
+import {ISlippageConnector} from "src/interfaces/connectors/ISlippageConnector.sol";
 import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
 import {ConstantSlippageConnector} from "src/connectors/slippage_connectors/ConstantSlippageConnector.sol";
 

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {LTVState} from "../../states/LTVState.sol";
-import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
+import {IOracleConnector} from "src/interfaces/connectors/IOracleConnector.sol";
 import {ISpookyOracle} from "src/ghost/spooky/ISpookyOracle.sol";
 
 contract SpookyOracleConnector is LTVState, IOracleConnector {

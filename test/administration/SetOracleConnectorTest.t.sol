@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import {BaseTest, DefaultTestData} from "test/utils/BaseTest.t.sol";
-import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
+import {IOracleConnector} from "src/interfaces/connectors/IOracleConnector.sol";
 import {IAdministrationEvents} from "src/events/IAdministrationEvents.sol";
 
 contract SimpleMockOracleConnector is IOracleConnector {

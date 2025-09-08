@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {BaseTest, DefaultTestData} from "test/utils/BaseTest.t.sol";
-import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
+import {ILendingConnector} from "src/interfaces/connectors/ILendingConnector.sol";
 import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
 import {IAdministrationEvents} from "src/events/IAdministrationEvents.sol";
 

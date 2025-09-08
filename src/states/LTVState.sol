@@ -2,10 +2,10 @@
 pragma solidity ^0.8.28;
 
 import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
-import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
-import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
+import {ILendingConnector} from "src/interfaces/connectors/ILendingConnector.sol";
+import {IOracleConnector} from "src/interfaces/connectors/IOracleConnector.sol";
 import {IWhitelistRegistry} from "src/interfaces/IWhitelistRegistry.sol";
-import {ISlippageConnector} from "src/interfaces/ISlippageConnector.sol";
+import {ISlippageConnector} from "src/interfaces/connectors/ISlippageConnector.sol";
 import {IModules} from "src/interfaces/IModules.sol";
 
 abstract contract LTVState {
