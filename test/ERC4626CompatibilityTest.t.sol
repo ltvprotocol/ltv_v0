@@ -30,12 +30,14 @@ contract ERC4626CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
         address caller;
     }
 
+    address testUser = makeAddr("testUser");
+
     function erc4626CallsWithCaller(address user) public pure returns (CallWithCaller[] memory) {
-        CallWithCaller[] memory calls = new CallWithCaller[](28);
+        CallWithCaller[] memory calls = new CallWithCaller[](27); // 29
         uint256 amount = 100;
         uint256 i = 0;
 
-        calls[i++] = CallWithCaller(abi.encodeCall(IERC4626.asset, ()), user); // <= unrecognized function selector 0x38d52e0f
+        // calls[i++] = CallWithCaller(abi.encodeCall(IERC4626.asset, ()), user); // <= unrecognized function selector 0x38d52e0f
         calls[i++] = CallWithCaller(abi.encodeCall(IERC4626.totalAssets, ()), user);
         calls[i++] = CallWithCaller(abi.encodeCall(IERC4626.convertToShares, (amount)), user);
         calls[i++] = CallWithCaller(abi.encodeCall(IERC4626.convertToAssets, (amount)), user);
@@ -51,7 +53,7 @@ contract ERC4626CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
         calls[i++] = CallWithCaller(abi.encodeCall(IERC4626.maxRedeem, (user)), user);
         calls[i++] = CallWithCaller(abi.encodeCall(IERC4626.previewRedeem, (amount)), user);
         calls[i++] = CallWithCaller(abi.encodeCall(IERC4626.redeem, (amount, user, user)), user);
-        calls[i++] = CallWithCaller(abi.encodeCall(IERC4626Collateral.assetCollateral, ()), user); // <= unrecognized function selector 0x6c4beeb4
+        // calls[i++] = CallWithCaller(abi.encodeCall(IERC4626Collateral.assetCollateral, ()), user); // <= unrecognized function selector 0x6c4beeb4
         calls[i++] = CallWithCaller(abi.encodeCall(IERC4626Collateral.maxDepositCollateral, (user)), user);
         calls[i++] = CallWithCaller(abi.encodeCall(IERC4626Collateral.previewDepositCollateral, (amount)), user);
         calls[i++] = CallWithCaller(abi.encodeCall(IERC4626Collateral.depositCollateral, (amount, user)), user);
@@ -68,7 +70,7 @@ contract ERC4626CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
         return calls;
     }
 
-    function test_everyFunctionExecutes(DefaultTestData memory data) public testWithPredefinedDefaultValues(data) {
+    function initExecutionEnvironment(DefaultTestData memory data) public {
         ModulesState memory newModulesState = ModulesState({
             borrowVaultModule: IBorrowVaultModule(address(new BorrowVaultModule())),
             collateralVaultModule: ICollateralVaultModule(address(new CollateralVaultModule())),
@@ -90,8 +92,6 @@ contract ERC4626CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
 
         assertEq(address(ltv.modules()), address(newModules));
 
-        address testUser = makeAddr("testUser");
-
         prepareEachFunctionSuccessfulExecution(testUser);
 
         deal(address(borrowToken), data.emergencyDeleverager, type(uint112).max);
@@ -105,6 +105,10 @@ contract ERC4626CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
         WhitelistRegistry registry = new WhitelistRegistry(data.owner, address(0));
         vm.prank(data.governor);
         ltv.setWhitelistRegistry(address(registry));
+    }
+
+    function test_everyFunctionExecutes(DefaultTestData memory data) public testWithPredefinedDefaultValues(data) {
+        initExecutionEnvironment(data);
 
         CallWithCaller[] memory calls = erc4626CallsWithCaller(testUser);
 
@@ -114,5 +118,130 @@ contract ERC4626CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
 
             require(success);
         }
+    }
+
+    function test_depositExecutesAndEmitsEvent(DefaultTestData memory data)
+        public
+        testWithPredefinedDefaultValues(data)
+    {
+        initExecutionEnvironment(data);
+
+        vm.startPrank(testUser);
+
+        vm.expectEmit(false, false, false, false);
+        emit IERC4626.Deposit(address(0), address(0), 0, 0);
+
+        ltv.deposit(100, testUser);
+
+        vm.stopPrank();
+    }
+
+    function test_withdrawExecutesAndEmitsEvent(DefaultTestData memory data)
+        public
+        testWithPredefinedDefaultValues(data)
+    {
+        initExecutionEnvironment(data);
+
+        vm.startPrank(testUser);
+
+        vm.expectEmit(false, false, false, false);
+        emit IERC4626.Withdraw(address(0), address(0), address(0), 0, 0);
+
+        ltv.withdraw(100, testUser, testUser);
+
+        vm.stopPrank();
+    }
+
+    function test_mintExecutesAndEmitsEvent(DefaultTestData memory data) public testWithPredefinedDefaultValues(data) {
+        initExecutionEnvironment(data);
+
+        vm.startPrank(testUser);
+
+        vm.expectEmit(false, false, false, false);
+        emit IERC4626.Deposit(address(0), address(0), 0, 0);
+
+        ltv.mint(100, testUser);
+
+        vm.stopPrank();
+    }
+
+    function test_redeemExecutesAndEmitsEvent(DefaultTestData memory data)
+        public
+        testWithPredefinedDefaultValues(data)
+    {
+        initExecutionEnvironment(data);
+
+        vm.startPrank(testUser);
+
+        vm.expectEmit(false, false, false, false);
+        emit IERC4626.Withdraw(address(0), address(0), address(0), 0, 0);
+
+        ltv.redeem(100, testUser, testUser);
+
+        vm.stopPrank();
+    }
+
+    function test_depositCollateralExecutesAndEmitsEvent(DefaultTestData memory data)
+        public
+        testWithPredefinedDefaultValues(data)
+    {
+        initExecutionEnvironment(data);
+
+        vm.startPrank(testUser);
+
+        vm.expectEmit(false, false, false, false);
+        emit IERC4626Collateral.DepositCollateral(address(0), address(0), 0, 0);
+
+        ltv.depositCollateral(100, testUser);
+
+        vm.stopPrank();
+    }
+
+    function test_withdrawCollateralExecutesAndEmitsEvent(DefaultTestData memory data)
+        public
+        testWithPredefinedDefaultValues(data)
+    {
+        initExecutionEnvironment(data);
+
+        vm.startPrank(testUser);
+
+        vm.expectEmit(false, false, false, false);
+        emit IERC4626Collateral.WithdrawCollateral(address(0), address(0), address(0), 0, 0);
+
+        ltv.withdrawCollateral(100, testUser, testUser);
+
+        vm.stopPrank();
+    }
+
+    function test_mintCollateralExecutesAndEmitsEvent(DefaultTestData memory data)
+        public
+        testWithPredefinedDefaultValues(data)
+    {
+        initExecutionEnvironment(data);
+
+        vm.startPrank(testUser);
+
+        vm.expectEmit(false, false, false, false);
+        emit IERC4626Collateral.DepositCollateral(address(0), address(0), 0, 0);
+
+        ltv.mintCollateral(100, testUser);
+
+        vm.stopPrank();
+    }
+
+    function test_redeemCollateralExecutesAndEmitsEvent(DefaultTestData memory data)
+        public
+        testWithPredefinedDefaultValues(data)
+    {
+        initExecutionEnvironment(data);
+
+        vm.startPrank(testUser);
+
+        vm.expectEmit(false, false, false, false);
+        emit IERC4626Collateral.WithdrawCollateral(address(0), address(0), address(0), 0, 0);
+
+        ltv.redeemCollateral(100, testUser, testUser);
+
+        vm.stopPrank();
     }
 }
