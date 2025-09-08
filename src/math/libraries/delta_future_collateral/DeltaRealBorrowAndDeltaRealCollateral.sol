@@ -10,7 +10,7 @@ import {DeltaRealBorrowAndDeltaRealCollateralDividendData} from
     "src/structs/data/vault/DeltaRealBorrowAndDeltaRealCollateralDividendData.sol";
 import {DeltaRealBorrowAndDeltaRealCollateralDividerData} from
     "src/structs/data/vault/DeltaRealBorrowAndDeltaRealCollateralDividerData.sol";
-import {CasesOperator} from "src/math/CasesOperator.sol";
+import {CasesOperator} from "src/math/libraries/CasesOperator.sol";
 import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
 
 /**

@@ -4,8 +4,8 @@ pragma solidity ^0.8.28;
 import {PreviewLowLevelRebalanceState} from "src/structs/state/low_level/PreviewLowLevelRebalanceState.sol";
 import {LowLevelRebalanceData} from "src/structs/data/low_level/LowLevelRebalanceData.sol";
 import {PreviewLowLevelRebalanceStateToData} from
-    "src/math/state_to_data/preview/PreviewLowLevelRebalanceStateToData.sol";
-import {LowLevelRebalanceMath} from "src/math/LowLevelRebalanceMath.sol";
+    "src/math/abstracts/state_to_data/preview/PreviewLowLevelRebalanceStateToData.sol";
+import {LowLevelRebalanceMath} from "src/math/libraries/LowLevelRebalanceMath.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract PreviewLowLevelRebalanceShares is PreviewLowLevelRebalanceStateToData {

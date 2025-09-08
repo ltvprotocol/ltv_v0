@@ -6,8 +6,8 @@ import {PreviewDepositVaultState} from "src/structs/state/vault/PreviewDepositVa
 import {PreviewDepositBorrowVaultData} from "src/structs/data/vault/PreviewDepositBorrowVaultData.sol";
 import {DeltaFuture} from "src/structs/state_transition/DeltaFuture.sol";
 import {MintRedeemData} from "src/structs/data/vault/MintRedeemData.sol";
-import {MintRedeem} from "src/math/MintRedeem.sol";
-import {Vault} from "src/math/Vault.sol";
+import {MintRedeem} from "src/math/libraries/MintRedeem.sol";
+import {Vault} from "src/math/abstracts/Vault.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract PreviewMint is Vault {

@@ -5,8 +5,8 @@ import {PreviewWithdrawVaultState} from "src/structs/state/vault/PreviewWithdraw
 import {PreviewWithdrawBorrowVaultData} from "src/structs/data/vault/PreviewWithdrawBorrowVaultData.sol";
 import {TotalAssetsData} from "src/structs/data/vault/TotalAssetsData.sol";
 import {MaxGrowthFeeData} from "src/structs/data/MaxGrowthFeeData.sol";
-import {MaxGrowthFee} from "src/math/MaxGrowthFee.sol";
-import {CommonMath} from "src/math/CommonMath.sol";
+import {MaxGrowthFee} from "src/math/abstracts/MaxGrowthFee.sol";
+import {CommonMath} from "src/math/libraries/CommonMath.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 
 contract PreviewWithdrawStateToPreviewWithdrawData is MaxGrowthFee {

@@ -18,8 +18,8 @@ import {MintProtocolRewards} from "src/state_transition/MintProtocolRewards.sol"
 import {Lending} from "src/state_transition/Lending.sol";
 import {TransferFromProtocol} from "src/state_transition/TransferFromProtocol.sol";
 import {MaxRedeem} from "src/public/vault/borrow/max/MaxRedeem.sol";
-import {NextStep} from "src/math/NextStep.sol";
-import {CommonMath} from "src/math/CommonMath.sol";
+import {NextStep} from "src/math/libraries/NextStep.sol";
+import {CommonMath} from "src/math/libraries/CommonMath.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract Redeem is

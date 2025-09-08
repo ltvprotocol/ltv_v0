@@ -19,8 +19,8 @@ import {Lending} from "src/state_transition/Lending.sol";
 import {MaxDepositMintCollateralVaultStateReader} from
     "src/state_reader/vault/MaxDepositMintCollateralVaultStateReader.sol";
 import {MaxMintCollateral} from "src/public/vault/collateral/max/MaxMintCollateral.sol";
-import {NextStep} from "src/math/NextStep.sol";
-import {CommonMath} from "src/math/CommonMath.sol";
+import {NextStep} from "src/math/libraries/NextStep.sol";
+import {CommonMath} from "src/math/libraries/CommonMath.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract MintCollateral is

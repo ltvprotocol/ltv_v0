@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 import {AuctionState} from "src/structs/state/AuctionState.sol";
 import {AuctionData} from "src/structs/data/AuctionData.sol";
-import {CommonMath} from "src/math/CommonMath.sol";
+import {CommonMath} from "src/math/libraries/CommonMath.sol";
 
 abstract contract AuctionStateToData {
     function auctionStateToData(AuctionState memory auctionState) internal view returns (AuctionData memory) {

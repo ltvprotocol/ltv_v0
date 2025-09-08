@@ -5,7 +5,7 @@ import {TotalAssetsData} from "src/structs/data/vault/TotalAssetsData.sol";
 import {TotalAssetsState} from "src/structs/state/vault/TotalAssetsState.sol";
 import {TotalAssetsCollateralData} from "src/structs/data/vault/TotalAssetsCollateralData.sol";
 import {TotalAssets} from "src/public/vault/borrow/TotalAssets.sol";
-import {CommonMath} from "src/math/CommonMath.sol";
+import {CommonMath} from "src/math/libraries/CommonMath.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract TotalAssetsCollateral is TotalAssets {

@@ -2,11 +2,18 @@
 pragma solidity ^0.8.28;
 
 import {Constants} from "src/Constants.sol";
-import {MaxDepositMintStateToData} from "src/math/state_to_data/max/MaxDepositMintStateToData.sol";
-import {MaxWithdrawRedeemStateToData} from "src/math/state_to_data/max/MaxWithdrawRedeemStateToData.sol";
+import {MaxDepositMintCollateralStateToData} from "src/math/abstracts/state_to_data/max/MaxDepositMintCollateralStateToData.sol";
+import {MaxWithdrawRedeemCollateralStateToData} from
+    "src/math/abstracts/state_to_data/max/MaxWithdrawRedeemCollateralStateToData.sol";
+import {MaxGrowthFeeStateToConvertCollateralData} from
+    "src/math/abstracts/state_to_data/MaxGrowthFeeStateToConvertCollateralData.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 
-abstract contract Vault is MaxDepositMintStateToData, MaxWithdrawRedeemStateToData {
+abstract contract VaultCollateral is
+    MaxDepositMintCollateralStateToData,
+    MaxWithdrawRedeemCollateralStateToData,
+    MaxGrowthFeeStateToConvertCollateralData
+{
     using uMulDiv for uint256;
 
     function getAvailableSpaceInShares(
@@ -14,8 +21,8 @@ abstract contract Vault is MaxDepositMintStateToData, MaxWithdrawRedeemStateToDa
         int256 borrow,
         uint256 maxTotalAssetsInUnderlying,
         uint256 supplyAfterFee,
-        uint256 totalAssets,
-        uint256 borrowPrice
+        uint256 totalAssetsCollateral,
+        uint256 collateralPrice
     ) internal pure returns (uint256) {
         // casting to uint256 is safe because collateral is considered to be greater than borrow
         // forge-lint: disable-next-line(unsafe-typecast)
@@ -27,8 +34,8 @@ abstract contract Vault is MaxDepositMintStateToData, MaxWithdrawRedeemStateToDa
 
         // round down to assume less available space
         uint256 availableSpaceInShares = (maxTotalAssetsInUnderlying - totalAssetsInUnderlying).mulDivDown(
-            Constants.ORACLE_DIVIDER, borrowPrice
-        ).mulDivDown(supplyAfterFee, totalAssets);
+            Constants.ORACLE_DIVIDER, collateralPrice
+        ).mulDivDown(supplyAfterFee, totalAssetsCollateral);
 
         return availableSpaceInShares;
     }

@@ -15,7 +15,7 @@ import {AdmistrationSetters} from "src/state_transition/AdmistrationSetters.sol"
 import {ApplyMaxGrowthFee} from "src/state_transition/ApplyMaxGrowthFee.sol";
 import {Lending} from "src/state_transition/Lending.sol";
 import {MaxGrowthFeeStateReader} from "src/state_reader/MaxGrowthFeeStateReader.sol";
-import {MaxGrowthFee} from "src/math/MaxGrowthFee.sol";
+import {MaxGrowthFee} from "src/math/abstracts/MaxGrowthFee.sol";
 import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract AdministrationPublic is

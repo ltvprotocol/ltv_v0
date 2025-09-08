@@ -18,8 +18,8 @@ import {TransferFromProtocol} from "src/state_transition/TransferFromProtocol.so
 import {MaxWithdrawRedeemCollateralVaultStateReader} from
     "src/state_reader/vault/MaxWithdrawRedeemCollateralVaultStateReader.sol";
 import {MaxWithdrawCollateral} from "src/public/vault/collateral/max/MaxWithdrawCollateral.sol";
-import {NextStep} from "src/math/NextStep.sol";
-import {CommonMath} from "src/math/CommonMath.sol";
+import {NextStep} from "src/math/libraries/NextStep.sol";
+import {CommonMath} from "src/math/libraries/CommonMath.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract WithdrawCollateral is

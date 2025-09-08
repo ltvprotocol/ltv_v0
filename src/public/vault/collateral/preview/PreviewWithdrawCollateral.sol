@@ -6,8 +6,8 @@ import {PreviewWithdrawVaultState} from "src/structs/state/vault/PreviewWithdraw
 import {PreviewCollateralVaultData} from "src/structs/data/vault/PreviewCollateralVaultData.sol";
 import {DepositWithdrawData} from "src/structs/data/vault/DepositWithdrawData.sol";
 import {DeltaFuture} from "src/structs/state_transition/DeltaFuture.sol";
-import {VaultCollateral} from "src/math/VaultCollateral.sol";
-import {DepositWithdraw} from "src/math/DepositWithdraw.sol";
+import {VaultCollateral} from "src/math/abstracts/VaultCollateral.sol";
+import {DepositWithdraw} from "src/math/libraries/DepositWithdraw.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract PreviewWithdrawCollateral is VaultCollateral {

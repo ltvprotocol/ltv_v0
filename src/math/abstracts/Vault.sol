@@ -2,18 +2,11 @@
 pragma solidity ^0.8.28;
 
 import {Constants} from "src/Constants.sol";
-import {MaxDepositMintCollateralStateToData} from "src/math/state_to_data/max/MaxDepositMintCollateralStateToData.sol";
-import {MaxWithdrawRedeemCollateralStateToData} from
-    "src/math/state_to_data/max/MaxWithdrawRedeemCollateralStateToData.sol";
-import {MaxGrowthFeeStateToConvertCollateralData} from
-    "src/math/state_to_data/MaxGrowthFeeStateToConvertCollateralData.sol";
+import {MaxDepositMintStateToData} from "src/math/abstracts/state_to_data/max/MaxDepositMintStateToData.sol";
+import {MaxWithdrawRedeemStateToData} from "src/math/abstracts/state_to_data/max/MaxWithdrawRedeemStateToData.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 
-abstract contract VaultCollateral is
-    MaxDepositMintCollateralStateToData,
-    MaxWithdrawRedeemCollateralStateToData,
-    MaxGrowthFeeStateToConvertCollateralData
-{
+abstract contract Vault is MaxDepositMintStateToData, MaxWithdrawRedeemStateToData {
     using uMulDiv for uint256;
 
     function getAvailableSpaceInShares(
@@ -21,8 +14,8 @@ abstract contract VaultCollateral is
         int256 borrow,
         uint256 maxTotalAssetsInUnderlying,
         uint256 supplyAfterFee,
-        uint256 totalAssetsCollateral,
-        uint256 collateralPrice
+        uint256 totalAssets,
+        uint256 borrowPrice
     ) internal pure returns (uint256) {
         // casting to uint256 is safe because collateral is considered to be greater than borrow
         // forge-lint: disable-next-line(unsafe-typecast)
@@ -34,8 +27,8 @@ abstract contract VaultCollateral is
 
         // round down to assume less available space
         uint256 availableSpaceInShares = (maxTotalAssetsInUnderlying - totalAssetsInUnderlying).mulDivDown(
-            Constants.ORACLE_DIVIDER, collateralPrice
-        ).mulDivDown(supplyAfterFee, totalAssetsCollateral);
+            Constants.ORACLE_DIVIDER, borrowPrice
+        ).mulDivDown(supplyAfterFee, totalAssets);
 
         return availableSpaceInShares;
     }

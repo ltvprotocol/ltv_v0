@@ -4,8 +4,8 @@ pragma solidity ^0.8.28;
 import {MaxDepositMintCollateralVaultState} from "src/structs/state/vault/MaxDepositMintCollateralVaultState.sol";
 import {MaxDepositMintCollateralVaultData} from "src/structs/data/vault/MaxDepositMintCollateralVaultData.sol";
 import {PreviewDepositVaultStateToCollateralData} from
-    "src/math/state_to_data/preview/PreviewDepositVaultStateToCollateralData.sol";
-import {CommonMath} from "src/math/CommonMath.sol";
+    "src/math/abstracts/state_to_data/preview/PreviewDepositVaultStateToCollateralData.sol";
+import {CommonMath} from "src/math/libraries/CommonMath.sol";
 
 contract MaxDepositMintCollateralStateToData is PreviewDepositVaultStateToCollateralData {
     function maxDepositMintCollateralVaultStateToMaxDepositMintCollateralVaultData(

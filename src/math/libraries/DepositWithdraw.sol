@@ -7,9 +7,9 @@ import {DepositWithdrawData} from "src/structs/data/vault/DepositWithdrawData.so
 import {DeltaFuture} from "src/structs/state_transition/DeltaFuture.sol";
 import {Cases} from "src/structs/data/vault/Cases.sol";
 import {DeltaRealBorrowAndDeltaRealCollateral} from
-    "src/math/delta_future_collateral/DeltaRealBorrowAndDeltaRealCollateral.sol";
-import {CommonBorrowCollateral} from "src/math/CommonBorrowCollateral.sol";
-import {CasesOperator} from "src/math/CasesOperator.sol";
+    "src/math/libraries/delta_future_collateral/DeltaRealBorrowAndDeltaRealCollateral.sol";
+import {CommonBorrowCollateral} from "src/math/libraries/CommonBorrowCollateral.sol";
+import {CasesOperator} from "src/math/libraries/CasesOperator.sol";
 import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
 
 library DepositWithdraw {

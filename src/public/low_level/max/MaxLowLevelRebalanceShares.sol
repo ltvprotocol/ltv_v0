@@ -7,8 +7,8 @@ import {TotalAssetsData} from "src/structs/data/vault/TotalAssetsData.sol";
 import {TotalAssetsState} from "src/structs/state/vault/TotalAssetsState.sol";
 import {MaxLowLevelRebalanceSharesState} from "src/structs/state/low_level/MaxLowLevelRebalanceSharesState.sol";
 import {MaxLowLevelRebalanceSharesData} from "src/structs/data/low_level/MaxLowLevelRebalanceSharesData.sol";
-import {MaxGrowthFee} from "src/math/MaxGrowthFee.sol";
-import {CommonMath} from "src/math/CommonMath.sol";
+import {MaxGrowthFee} from "src/math/abstracts/MaxGrowthFee.sol";
+import {CommonMath} from "src/math/libraries/CommonMath.sol";
 import {sMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract MaxLowLevelRebalanceShares is MaxGrowthFee {

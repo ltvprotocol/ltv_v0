@@ -6,10 +6,10 @@ import {DeltaFuture} from "src/structs/state_transition/DeltaFuture.sol";
 import {Cases} from "src/structs/data/vault/Cases.sol";
 import {DeltaSharesAndDeltaRealCollateralData} from "src/structs/data/vault/DeltaSharesAndDeltaRealCollateralData.sol";
 import {DeltaSharesAndDeltaRealBorrowData} from "src/structs/data/vault/DeltaSharesAndDeltaRealBorrowData.sol";
-import {DeltaSharesAndDeltaRealCollateral} from "src/math/delta_future_collateral/DeltaSharesAndDeltaRealCollateral.sol";
-import {DeltaSharesAndDeltaRealBorrow} from "src/math/delta_future_borrow/DeltaSharesAndDeltaRealBorrow.sol";
-import {CommonBorrowCollateral} from "src/math/CommonBorrowCollateral.sol";
-import {CasesOperator} from "src/math/CasesOperator.sol";
+import {DeltaSharesAndDeltaRealCollateral} from "src/math/libraries/delta_future_collateral/DeltaSharesAndDeltaRealCollateral.sol";
+import {DeltaSharesAndDeltaRealBorrow} from "src/math/libraries/delta_future_borrow/DeltaSharesAndDeltaRealBorrow.sol";
+import {CommonBorrowCollateral} from "src/math/libraries/CommonBorrowCollateral.sol";
+import {CasesOperator} from "src/math/libraries/CasesOperator.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 
 library MintRedeem {

@@ -18,8 +18,8 @@ import {ApplyMaxGrowthFee} from "src/state_transition/ApplyMaxGrowthFee.sol";
 import {MintProtocolRewards} from "src/state_transition/MintProtocolRewards.sol";
 import {Lending} from "src/state_transition/Lending.sol";
 import {MaxMint} from "src/public/vault/borrow/max/MaxMint.sol";
-import {NextStep} from "src/math/NextStep.sol";
-import {CommonMath} from "src/math/CommonMath.sol";
+import {NextStep} from "src/math/libraries/NextStep.sol";
+import {CommonMath} from "src/math/libraries/CommonMath.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract Mint is
