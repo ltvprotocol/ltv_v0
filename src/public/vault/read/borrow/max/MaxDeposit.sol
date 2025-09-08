@@ -4,8 +4,8 @@ pragma solidity ^0.8.28;
 import {Constants} from "src/Constants.sol";
 import {MaxDepositMintBorrowVaultState} from "src/structs/state/vault/MaxDepositMintBorrowVaultState.sol";
 import {MaxDepositMintBorrowVaultData} from "src/structs/data/vault/MaxDepositMintBorrowVaultData.sol";
-import {PreviewMint} from "src/public/vault/borrow/preview/PreviewMint.sol";
-import {PreviewDeposit} from "src/public/vault/borrow/preview/PreviewDeposit.sol";
+import {PreviewMint} from "src/public/vault/read/borrow/preview/PreviewMint.sol";
+import {PreviewDeposit} from "src/public/vault/read/borrow/preview/PreviewDeposit.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract MaxDeposit is PreviewMint, PreviewDeposit {

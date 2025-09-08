@@ -17,7 +17,7 @@ import {VaultStateTransition} from "src/state_transition/VaultStateTransition.so
 import {ApplyMaxGrowthFee} from "src/state_transition/ApplyMaxGrowthFee.sol";
 import {MintProtocolRewards} from "src/state_transition/MintProtocolRewards.sol";
 import {Lending} from "src/state_transition/Lending.sol";
-import {MaxDeposit} from "src/public/vault/borrow/max/MaxDeposit.sol";
+import {MaxDeposit} from "src/public/vault/read/borrow/max/MaxDeposit.sol";
 import {NextStep} from "src/math/libraries/NextStep.sol";
 import {CommonMath} from "src/math/libraries/CommonMath.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";

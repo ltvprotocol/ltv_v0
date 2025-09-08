@@ -3,28 +3,28 @@ pragma solidity ^0.8.28;
 
 import {IERC4626Events} from "src/events/IERC4626Events.sol";
 import {IVaultErrors} from "src/errors/IVaultErrors.sol";
+import {MaxWithdrawRedeemBorrowVaultState} from "src/structs/state/vault/MaxWithdrawRedeemBorrowVaultState.sol";
+import {MaxWithdrawRedeemBorrowVaultStateReader} from
+    "src/state_reader/vault/MaxWithdrawRedeemBorrowVaultStateReader.sol";
+import {MaxWithdrawRedeemBorrowVaultData} from "src/structs/data/vault/MaxWithdrawRedeemBorrowVaultData.sol";
+import {DeltaFuture} from "src/structs/state_transition/DeltaFuture.sol";
 import {NextState} from "src/structs/state_transition/NextState.sol";
 import {NextStateData} from "src/structs/state_transition/NextStateData.sol";
-import {NextStepData} from "src/structs/state_transition/NextStepData.sol";
-import {MaxWithdrawRedeemCollateralVaultData} from "src/structs/data/vault/MaxWithdrawRedeemCollateralVaultData.sol";
-import {MaxWithdrawRedeemCollateralVaultState} from "src/structs/state/vault/MaxWithdrawRedeemCollateralVaultState.sol";
-import {DeltaFuture} from "src/structs/state_transition/DeltaFuture.sol";
 import {MintProtocolRewardsData} from "src/structs/data/MintProtocolRewardsData.sol";
+import {NextStepData} from "src/structs/state_transition/NextStepData.sol";
 import {VaultStateTransition} from "src/state_transition/VaultStateTransition.sol";
 import {ApplyMaxGrowthFee} from "src/state_transition/ApplyMaxGrowthFee.sol";
 import {MintProtocolRewards} from "src/state_transition/MintProtocolRewards.sol";
 import {Lending} from "src/state_transition/Lending.sol";
 import {TransferFromProtocol} from "src/state_transition/TransferFromProtocol.sol";
-import {MaxWithdrawRedeemCollateralVaultStateReader} from
-    "src/state_reader/vault/MaxWithdrawRedeemCollateralVaultStateReader.sol";
-import {MaxRedeemCollateral} from "src/public/vault/collateral/max/MaxRedeemCollateral.sol";
+import {MaxRedeem} from "src/public/vault/read/borrow/max/MaxRedeem.sol";
 import {NextStep} from "src/math/libraries/NextStep.sol";
 import {CommonMath} from "src/math/libraries/CommonMath.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 
-abstract contract RedeemCollateral is
-    MaxWithdrawRedeemCollateralVaultStateReader,
-    MaxRedeemCollateral,
+abstract contract Redeem is
+    MaxWithdrawRedeemBorrowVaultStateReader,
+    MaxRedeem,
     ApplyMaxGrowthFee,
     MintProtocolRewards,
     Lending,
@@ -35,40 +35,39 @@ abstract contract RedeemCollateral is
 {
     using uMulDiv for uint256;
 
-    function redeemCollateral(uint256 shares, address receiver, address owner)
+    function redeem(uint256 shares, address receiver, address owner)
         external
         isFunctionAllowed
         nonReentrant
-        returns (uint256)
+        returns (uint256 assets)
     {
-        MaxWithdrawRedeemCollateralVaultState memory state = maxWithdrawRedeemCollateralVaultState(owner);
-        MaxWithdrawRedeemCollateralVaultData memory data =
-            maxWithdrawRedeemCollateralVaultStateToMaxWithdrawRedeemCollateralVaultData(state);
-        uint256 max = _maxRedeemCollateral(data);
-        require(shares <= max, ExceedsMaxRedeemCollateral(owner, shares, max));
+        MaxWithdrawRedeemBorrowVaultState memory state = maxWithdrawRedeemBorrowVaultState(owner);
+        MaxWithdrawRedeemBorrowVaultData memory data = maxWithdrawRedeemStateToData(state);
+        uint256 max = _maxRedeem(data);
+        require(shares <= max, ExceedsMaxRedeem(owner, shares, max));
 
         if (owner != msg.sender) {
             _spendAllowance(owner, msg.sender, shares);
         }
 
         (uint256 assetsOut, DeltaFuture memory deltaFuture) =
-            _previewRedeemCollateral(shares, data.previewCollateralVaultData);
+            _previewRedeem(shares, data.previewWithdrawBorrowVaultData);
 
         if (assetsOut == 0) {
             return 0;
         }
 
         applyMaxGrowthFee(
-            data.previewCollateralVaultData.supplyAfterFee, data.previewCollateralVaultData.withdrawTotalAssets
+            data.previewWithdrawBorrowVaultData.supplyAfterFee, data.previewWithdrawBorrowVaultData.withdrawTotalAssets
         );
 
         _mintProtocolRewards(
             MintProtocolRewardsData({
                 deltaProtocolFutureRewardBorrow: deltaFuture.deltaProtocolFutureRewardBorrow,
                 deltaProtocolFutureRewardCollateral: deltaFuture.deltaProtocolFutureRewardCollateral,
-                supply: data.previewCollateralVaultData.supplyAfterFee,
-                totalAppropriateAssets: data.previewCollateralVaultData.totalAssetsCollateral,
-                assetPrice: data.previewCollateralVaultData.collateralPrice
+                supply: data.previewWithdrawBorrowVaultData.supplyAfterFee,
+                totalAppropriateAssets: data.previewWithdrawBorrowVaultData.withdrawTotalAssets,
+                assetPrice: data.previewWithdrawBorrowVaultData.borrowPrice
             })
         );
 
@@ -76,12 +75,12 @@ abstract contract RedeemCollateral is
 
         NextState memory nextState = NextStep.calculateNextStep(
             NextStepData({
-                futureBorrow: data.previewCollateralVaultData.futureBorrow,
-                futureCollateral: data.previewCollateralVaultData.futureCollateral,
-                futureRewardBorrow: data.previewCollateralVaultData.userFutureRewardBorrow
-                    + data.previewCollateralVaultData.protocolFutureRewardBorrow,
-                futureRewardCollateral: data.previewCollateralVaultData.userFutureRewardCollateral
-                    + data.previewCollateralVaultData.protocolFutureRewardCollateral,
+                futureBorrow: data.previewWithdrawBorrowVaultData.futureBorrow,
+                futureCollateral: data.previewWithdrawBorrowVaultData.futureCollateral,
+                futureRewardBorrow: data.previewWithdrawBorrowVaultData.userFutureRewardBorrow
+                    + data.previewWithdrawBorrowVaultData.protocolFutureRewardBorrow,
+                futureRewardCollateral: data.previewWithdrawBorrowVaultData.userFutureRewardCollateral
+                    + data.previewWithdrawBorrowVaultData.protocolFutureRewardCollateral,
                 deltaFutureBorrow: deltaFuture.deltaFutureBorrow,
                 deltaFutureCollateral: deltaFuture.deltaFutureCollateral,
                 deltaFuturePaymentBorrow: deltaFuture.deltaFuturePaymentBorrow,
@@ -98,16 +97,16 @@ abstract contract RedeemCollateral is
         applyStateTransition(
             NextStateData({
                 nextState: nextState,
-                borrowPrice: state.previewWithdrawVaultState.maxGrowthFeeState.commonTotalAssetsState.borrowPrice,
-                collateralPrice: data.previewCollateralVaultData.collateralPrice
+                borrowPrice: data.previewWithdrawBorrowVaultData.borrowPrice,
+                collateralPrice: state.previewWithdrawVaultState.maxGrowthFeeState.commonTotalAssetsState.collateralPrice
             })
         );
 
-        withdraw(assetsOut);
+        borrow(assetsOut);
 
-        transferCollateralToken(receiver, assetsOut);
+        transferBorrowToken(receiver, assetsOut);
 
-        emit WithdrawCollateral(msg.sender, receiver, owner, assetsOut, shares);
+        emit Withdraw(msg.sender, receiver, owner, assetsOut, shares);
 
         return assetsOut;
     }

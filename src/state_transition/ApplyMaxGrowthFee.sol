@@ -4,7 +4,7 @@ pragma solidity ^0.8.28;
 import {Constants} from "src/Constants.sol";
 import {ERC20} from "src/state_transition/ERC20.sol";
 import {TotalSupply} from "src/public/erc20/read/TotalSupply.sol";
-import {TotalAssets} from "src/public/vault/borrow/TotalAssets.sol";
+import {TotalAssets} from "src/public/vault/read/borrow/TotalAssets.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract ApplyMaxGrowthFee is TotalAssets, TotalSupply, ERC20 {

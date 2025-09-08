@@ -6,7 +6,7 @@ import {PreviewCollateralVaultData} from "src/structs/data/vault/PreviewCollater
 import {MaxGrowthFeeData} from "src/structs/data/MaxGrowthFeeData.sol";
 import {TotalAssetsData} from "src/structs/data/vault/TotalAssetsData.sol";
 import {TotalAssetsCollateralData} from "src/structs/data/vault/TotalAssetsCollateralData.sol";
-import {TotalAssetsCollateral} from "src/public/vault/collateral/TotalAssetsCollateral.sol";
+import {TotalAssetsCollateral} from "src/public/vault/read/collateral/TotalAssetsCollateral.sol";
 import {MaxGrowthFee} from "src/math/abstracts/MaxGrowthFee.sol";
 import {CommonMath} from "src/math/libraries/CommonMath.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";

@@ -18,7 +18,7 @@ import {MintProtocolRewards} from "src/state_transition/MintProtocolRewards.sol"
 import {Lending} from "src/state_transition/Lending.sol";
 import {MaxDepositMintCollateralVaultStateReader} from
     "src/state_reader/vault/MaxDepositMintCollateralVaultStateReader.sol";
-import {MaxDepositCollateral} from "src/public/vault/collateral/max/MaxDepositCollateral.sol";
+import {MaxDepositCollateral} from "src/public/vault/read/collateral/max/MaxDepositCollateral.sol";
 import {NextStep} from "src/math/libraries/NextStep.sol";
 import {CommonMath} from "src/math/libraries/CommonMath.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";

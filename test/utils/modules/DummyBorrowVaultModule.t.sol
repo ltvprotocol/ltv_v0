@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {TotalAssetsData} from "src/structs/data/vault/TotalAssetsData.sol";
-import {TotalAssets} from "src/public/vault/borrow/TotalAssets.sol";
+import {TotalAssets} from "src/public/vault/read/borrow/TotalAssets.sol";
 import {TotalSupply} from "src/public/erc20/read/TotalSupply.sol";
 import {BorrowVaultModule} from "src/elements/modules/BorrowVaultModule.sol";
 import {DummyTotalAssetsModule} from "test/utils/modules/DummyTotalAssetsModule.t.sol";

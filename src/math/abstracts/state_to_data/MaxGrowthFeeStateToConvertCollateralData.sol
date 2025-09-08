@@ -6,7 +6,7 @@ import {MaxGrowthFeeState} from "src/structs/state/MaxGrowthFeeState.sol";
 import {MaxGrowthFeeData} from "src/structs/data/MaxGrowthFeeData.sol";
 import {TotalAssetsState} from "src/structs/state/vault/TotalAssetsState.sol";
 import {TotalAssetsCollateralData} from "src/structs/data/vault/TotalAssetsCollateralData.sol";
-import {TotalAssetsCollateral} from "src/public/vault/collateral/TotalAssetsCollateral.sol";
+import {TotalAssetsCollateral} from "src/public/vault/read/collateral/TotalAssetsCollateral.sol";
 import {MaxGrowthFee} from "src/math/abstracts/MaxGrowthFee.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 
