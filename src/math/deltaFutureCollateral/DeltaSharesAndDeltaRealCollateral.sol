@@ -25,11 +25,10 @@ library DeltaSharesAndDeltaRealCollateral {
     using uMulDiv for uint256;
     using sMulDiv for int256;
 
-    function calculateDividentByDeltaSharesAndRealCollateral(DeltaSharesAndDeltaRealCollateralDividendData memory data)
-        private
-        pure
-        returns (int256)
-    {
+    function calculateDividentByDeltaSharesAndRealCollateral(
+        DeltaSharesAndDeltaRealCollateralDividendData memory data,
+        bool needToRoundUp
+    ) private pure returns (int256) {
         // borrow
         // (1 - targetLtv) x deltaRealCollateral
         // (1 - targetLtv) x ceccb x -userFutureRewardCollateral
@@ -38,8 +37,6 @@ library DeltaSharesAndDeltaRealCollateral {
         // -shares
         // -targetLtv x collateral
         // targetLtv x ceccb x protocolFutureRewardCollateral
-
-        bool needToRoundUp = (data.cases.cmcb + data.cases.ceccb + data.cases.cebc != 0);
 
         int256 dividend = int256(data.borrow);
         dividend -= int256(int8(data.cases.cecbc)) * data.protocolFutureRewardBorrow;
@@ -68,7 +65,8 @@ library DeltaSharesAndDeltaRealCollateral {
 
     // divider is always negative
     function calculateDividerByDeltaSharesAndDeltaRealCollateral(
-        DeltaSharesAndDeltaRealCollateralDividerData memory data
+        DeltaSharesAndDeltaRealCollateralDividerData memory data,
+        bool needToRoundUp
     ) private pure returns (int256) {
         // (1 - targetLtv) x -1
         // (1 - targetLtv) x cecb x (userFutureRewardCollateral / futureCollateral) x -1
@@ -76,8 +74,6 @@ library DeltaSharesAndDeltaRealCollateral {
         // (1 - targetLtv) x cecbc x collateralSlippage
         // cebc x (protocolFutureRewardBorrow / futureCollateral) x -1
         // targetLtv x cecb x (protocolFutureRewardCollateral / futureCollateral)
-
-        bool needToRoundUp = (data.cases.cebc + data.cases.cecb == 0);
 
         int256 dividerWithOneMinustargetLtv = -Constants.DIVIDER_PRECISION;
         int256 divider;
@@ -112,11 +108,11 @@ library DeltaSharesAndDeltaRealCollateral {
         return divider;
     }
 
-    function calculateSingleCaseDeltaSharesAndDeltaRealCollateral(DeltaSharesAndDeltaRealCollateralData memory data)
-        internal
-        pure
-        returns (int256, bool)
-    {
+    function calculateSingleCaseDeltaSharesAndDeltaRealCollateral(
+        DeltaSharesAndDeltaRealCollateralData memory data,
+        bool needToRoundUpDividend,
+        bool needToRoundUpDivider
+    ) internal pure returns (int256, bool) {
         int256 dividend = calculateDividentByDeltaSharesAndRealCollateral(
             DeltaSharesAndDeltaRealCollateralDividendData({
                 cases: data.cases,
@@ -131,7 +127,8 @@ library DeltaSharesAndDeltaRealCollateral {
                 collateral: data.collateral,
                 targetLtvDividend: data.targetLtvDividend,
                 targetLtvDivider: data.targetLtvDivider
-            })
+            }),
+            needToRoundUpDividend
         );
 
         int256 divider = calculateDividerByDeltaSharesAndDeltaRealCollateral(
@@ -144,56 +141,123 @@ library DeltaSharesAndDeltaRealCollateral {
                 collateralSlippage: data.collateralSlippage,
                 protocolFutureRewardBorrow: data.protocolFutureRewardBorrow,
                 protocolFutureRewardCollateral: data.protocolFutureRewardCollateral
-            })
+            }),
+            needToRoundUpDivider
         );
 
         if (divider == 0) {
             return (0, false);
         }
 
-        bool needToRoundUp = (data.cases.cmcb + data.cases.ceccb + data.cases.cebc == 0);
+        bool needToRoundUp = !needToRoundUpDividend;
         int256 deltaFutureCollateral = dividend.mulDiv(Constants.DIVIDER_PRECISION, divider, needToRoundUp);
 
         return (deltaFutureCollateral, true);
     }
 
-    function calculateCaseCmcbDeltaSharesAndDeltaRealCollateral(DeltaSharesAndDeltaRealCollateralData memory data)
-        internal
-        pure
-        returns (int256, Cases memory, bool)
-    {
+    function calculateSingleCaseCacheDividendDeltaSharesAndDeltaRealCollateral(
+        DeltaSharesAndDeltaRealCollateralData memory data,
+        bool needToRoundUpDividend,
+        bool needToRoundUpDivider,
+        int256 dividend
+    ) internal pure returns (int256, bool) {
+        int256 divider = calculateDividerByDeltaSharesAndDeltaRealCollateral(
+            DeltaSharesAndDeltaRealCollateralDividerData({
+                cases: data.cases,
+                targetLtvDividend: data.targetLtvDividend,
+                targetLtvDivider: data.targetLtvDivider,
+                userFutureRewardCollateral: data.userFutureRewardCollateral,
+                futureCollateral: data.futureCollateral,
+                collateralSlippage: data.collateralSlippage,
+                protocolFutureRewardBorrow: data.protocolFutureRewardBorrow,
+                protocolFutureRewardCollateral: data.protocolFutureRewardCollateral
+            }),
+            needToRoundUpDivider
+        );
+
+        if (divider == 0) {
+            return (0, false);
+        }
+
+        bool needToRoundUp = !needToRoundUpDividend;
+        int256 deltaFutureCollateral = dividend.mulDiv(Constants.DIVIDER_PRECISION, divider, needToRoundUp);
+
+        return (deltaFutureCollateral, true);
+    }
+
+    function calculateSingleCaseDoubleCacheDeltaSharesAndDeltaRealCollateral(
+        bool needToRoundUpDividend,
+        int256 dividend,
+        int256 divider
+    ) internal pure returns (int256, bool) {
+        if (divider == 0) {
+            return (0, false);
+        }
+
+        bool needToRoundUp = !needToRoundUpDividend;
+        int256 deltaFutureBorrow = dividend.mulDiv(Constants.DIVIDER_PRECISION, divider, needToRoundUp);
+
+        return (deltaFutureBorrow, true);
+    }
+
+    function calculateCaseCmcbDeltaSharesAndDeltaRealCollateral(
+        DeltaSharesAndDeltaRealCollateralData memory data,
+        int256 cacheDividend,
+        int256 cacheDivider,
+        bool cache
+    ) internal pure returns (int256, Cases memory, bool) {
         data.cases = CasesOperator.generateCase(0); // cmcb case
-        (int256 deltaFutureCollateral, bool success) = calculateSingleCaseDeltaSharesAndDeltaRealCollateral(data);
+
+        int256 deltaFutureCollateral;
+        bool success;
+
+        if (cache) {
+            (deltaFutureCollateral, success) =
+                calculateSingleCaseDoubleCacheDeltaSharesAndDeltaRealCollateral(true, cacheDividend, cacheDivider);
+        } else {
+            (deltaFutureCollateral, success) = calculateSingleCaseDeltaSharesAndDeltaRealCollateral(data, true, true);
+        }
+
         return (deltaFutureCollateral, data.cases, success);
     }
 
-    function calculateCaseCmbcDeltaSharesAndDeltaRealCollateral(DeltaSharesAndDeltaRealCollateralData memory data)
-        internal
-        pure
-        returns (int256, Cases memory, bool)
-    {
+    function calculateCaseCmbcDeltaSharesAndDeltaRealCollateral(
+        DeltaSharesAndDeltaRealCollateralData memory data,
+        int256 cacheDividend,
+        bool cache
+    ) internal pure returns (int256, Cases memory, bool) {
         data.cases = CasesOperator.generateCase(1); // cmbc case
-        (int256 deltaFutureCollateral, bool success) = calculateSingleCaseDeltaSharesAndDeltaRealCollateral(data);
+
+        int256 deltaFutureCollateral;
+        bool success;
+
+        if (cache) {
+            (deltaFutureCollateral, success) =
+                calculateSingleCaseCacheDividendDeltaSharesAndDeltaRealCollateral(data, false, true, cacheDividend);
+        } else {
+            (deltaFutureCollateral, success) = calculateSingleCaseDeltaSharesAndDeltaRealCollateral(data, false, true);
+        }
+
         return (deltaFutureCollateral, data.cases, success);
     }
 
-    function calculateCaseCecbDeltaSharesAndDeltaRealCollateral(DeltaSharesAndDeltaRealCollateralData memory data)
-        internal
-        pure
-        returns (int256, Cases memory, bool)
-    {
+    function calculateCaseCecbDeltaSharesAndDeltaRealCollateral(
+        DeltaSharesAndDeltaRealCollateralData memory data,
+        int256 cacheDividend
+    ) internal pure returns (int256, Cases memory, bool) {
         data.cases = CasesOperator.generateCase(2); // cecb case
-        (int256 deltaFutureCollateral, bool success) = calculateSingleCaseDeltaSharesAndDeltaRealCollateral(data);
+        (int256 deltaFutureCollateral, bool success) =
+            calculateSingleCaseCacheDividendDeltaSharesAndDeltaRealCollateral(data, false, false, cacheDividend);
         return (deltaFutureCollateral, data.cases, success);
     }
 
-    function calculateCaseCebcDeltaSharesAndDeltaRealCollateral(DeltaSharesAndDeltaRealCollateralData memory data)
-        internal
-        pure
-        returns (int256, Cases memory, bool)
-    {
+    function calculateCaseCebcDeltaSharesAndDeltaRealCollateral(
+        DeltaSharesAndDeltaRealCollateralData memory data,
+        int256 cacheDividend
+    ) internal pure returns (int256, Cases memory, bool) {
         data.cases = CasesOperator.generateCase(3); // cebc case
-        (int256 deltaFutureCollateral, bool success) = calculateSingleCaseDeltaSharesAndDeltaRealCollateral(data);
+        (int256 deltaFutureCollateral, bool success) =
+            calculateSingleCaseCacheDividendDeltaSharesAndDeltaRealCollateral(data, true, false, cacheDividend);
         return (deltaFutureCollateral, data.cases, success);
     }
 
@@ -203,7 +267,8 @@ library DeltaSharesAndDeltaRealCollateral {
         returns (int256, Cases memory, bool)
     {
         data.cases = CasesOperator.generateCase(4); // ceccb case
-        (int256 deltaFutureCollateral, bool success) = calculateSingleCaseDeltaSharesAndDeltaRealCollateral(data);
+        (int256 deltaFutureCollateral, bool success) =
+            calculateSingleCaseDeltaSharesAndDeltaRealCollateral(data, true, true);
         return (deltaFutureCollateral, data.cases, success);
     }
 
@@ -213,18 +278,56 @@ library DeltaSharesAndDeltaRealCollateral {
         returns (int256, Cases memory, bool)
     {
         data.cases = CasesOperator.generateCase(5); // cecbc case
-        (int256 deltaFutureCollateral, bool success) = calculateSingleCaseDeltaSharesAndDeltaRealCollateral(data);
+        (int256 deltaFutureCollateral, bool success) =
+            calculateSingleCaseDeltaSharesAndDeltaRealCollateral(data, false, true);
         return (deltaFutureCollateral, data.cases, success);
     }
 
-    function calculateCaseCnaDeltaSharesAndDeltaRealCollateral(DeltaSharesAndDeltaRealCollateralData memory data)
+    function neutralDividendDeltaSharesAndDeltaRealCollateral(
+        DeltaSharesAndDeltaRealCollateralData memory data,
+        bool needToRoundUpDividend
+    ) internal pure returns (int256 dividend) {
+        data.cases = CasesOperator.generateCase(6); // cna case - neutral case
+
+        dividend = calculateDividentByDeltaSharesAndRealCollateral(
+            DeltaSharesAndDeltaRealCollateralDividendData({
+                cases: data.cases,
+                borrow: data.borrow,
+                deltaRealCollateral: data.deltaRealCollateral,
+                userFutureRewardCollateral: data.userFutureRewardCollateral,
+                futureCollateral: data.futureCollateral,
+                collateralSlippage: data.collateralSlippage,
+                protocolFutureRewardBorrow: data.protocolFutureRewardBorrow,
+                protocolFutureRewardCollateral: data.protocolFutureRewardCollateral,
+                deltaShares: data.deltaShares,
+                collateral: data.collateral,
+                targetLtvDividend: data.targetLtvDividend,
+                targetLtvDivider: data.targetLtvDivider
+            }),
+            needToRoundUpDividend
+        );
+    }
+
+    function neutralDividerDeltaSharesAndDeltaRealCollateral(DeltaSharesAndDeltaRealCollateralData memory data)
         internal
         pure
-        returns (int256, Cases memory, bool)
+        returns (int256 divider)
     {
-        data.cases = CasesOperator.generateCase(6); // cna case
-        (int256 deltaFutureCollateral, bool success) = calculateSingleCaseDeltaSharesAndDeltaRealCollateral(data);
-        return (deltaFutureCollateral, data.cases, success);
+        data.cases = CasesOperator.generateCase(6); // cna case - neutral case
+
+        divider = calculateDividerByDeltaSharesAndDeltaRealCollateral(
+            DeltaSharesAndDeltaRealCollateralDividerData({
+                cases: data.cases,
+                targetLtvDividend: data.targetLtvDividend,
+                targetLtvDivider: data.targetLtvDivider,
+                userFutureRewardCollateral: data.userFutureRewardCollateral,
+                futureCollateral: data.futureCollateral,
+                collateralSlippage: data.collateralSlippage,
+                protocolFutureRewardBorrow: data.protocolFutureRewardBorrow,
+                protocolFutureRewardCollateral: data.protocolFutureRewardCollateral
+            }),
+            true
+        );
     }
 
     function positiveFutureCollateralBranchDeltaSharesAndDeltaRealCollateral(
@@ -234,16 +337,18 @@ library DeltaSharesAndDeltaRealCollateral {
         Cases memory cases;
         bool success;
 
-        (deltaFutureCollateral, cases, success) = calculateCaseCmbcDeltaSharesAndDeltaRealCollateral(data);
+        int256 cacheDividend = neutralDividendDeltaSharesAndDeltaRealCollateral(data, false);
+
+        (deltaFutureCollateral, cases, success) =
+            calculateCaseCmbcDeltaSharesAndDeltaRealCollateral(data, cacheDividend, true);
 
         if (deltaFutureCollateral > 0 && success) {
             return (deltaFutureCollateral, cases);
         }
 
-        (deltaFutureCollateral, cases, success) = calculateCaseCnaDeltaSharesAndDeltaRealCollateral(data);
-
         if (deltaFutureCollateral == 0 && success) {
-            return (deltaFutureCollateral, cases);
+            cases = CasesOperator.generateCase(6); // cna
+            return (0, cases);
         }
 
         (deltaFutureCollateral, cases, success) = calculateCaseCeccbDeltaSharesAndDeltaRealCollateral(data);
@@ -252,7 +357,8 @@ library DeltaSharesAndDeltaRealCollateral {
             return (deltaFutureCollateral, cases);
         }
 
-        (deltaFutureCollateral, cases, success) = calculateCaseCecbDeltaSharesAndDeltaRealCollateral(data);
+        (deltaFutureCollateral, cases, success) =
+            calculateCaseCecbDeltaSharesAndDeltaRealCollateral(data, cacheDividend);
 
         if (!success) {
             revert IVaultErrors.DeltaSharesAndDeltaRealCollateralUnexpectedError(data);
@@ -284,16 +390,19 @@ library DeltaSharesAndDeltaRealCollateral {
         Cases memory cases;
         bool success;
 
-        (deltaFutureCollateral, cases, success) = calculateCaseCmcbDeltaSharesAndDeltaRealCollateral(data);
+        int256 cacheDividend = neutralDividendDeltaSharesAndDeltaRealCollateral(data, false);
+        int256 cacheDivider = neutralDividerDeltaSharesAndDeltaRealCollateral(data);
+
+        (deltaFutureCollateral, cases, success) =
+            calculateCaseCmcbDeltaSharesAndDeltaRealCollateral(data, cacheDividend, cacheDivider, true);
 
         if (deltaFutureCollateral < 0 && success) {
             return (deltaFutureCollateral, cases);
         }
 
-        (deltaFutureCollateral, cases, success) = calculateCaseCnaDeltaSharesAndDeltaRealCollateral(data);
-
         if (deltaFutureCollateral == 0 && success) {
-            return (deltaFutureCollateral, cases);
+            cases = CasesOperator.generateCase(6); // cna
+            return (0, cases);
         }
 
         (deltaFutureCollateral, cases, success) = calculateCaseCecbcDeltaSharesAndDeltaRealCollateral(data);
@@ -302,7 +411,8 @@ library DeltaSharesAndDeltaRealCollateral {
             return (deltaFutureCollateral, cases);
         }
 
-        (deltaFutureCollateral, cases, success) = calculateCaseCebcDeltaSharesAndDeltaRealCollateral(data);
+        (deltaFutureCollateral, cases, success) =
+            calculateCaseCebcDeltaSharesAndDeltaRealCollateral(data, cacheDividend);
 
         if (!success) {
             revert IVaultErrors.DeltaSharesAndDeltaRealCollateralUnexpectedError(data);
@@ -334,13 +444,13 @@ library DeltaSharesAndDeltaRealCollateral {
         Cases memory cases;
         bool success;
 
-        (deltaFutureCollateral, cases, success) = calculateCaseCmbcDeltaSharesAndDeltaRealCollateral(data);
+        (deltaFutureCollateral, cases, success) = calculateCaseCmbcDeltaSharesAndDeltaRealCollateral(data, 0, false);
 
         if (deltaFutureCollateral > 0 && success) {
             return (deltaFutureCollateral, cases);
         }
 
-        (deltaFutureCollateral, cases, success) = calculateCaseCmcbDeltaSharesAndDeltaRealCollateral(data);
+        (deltaFutureCollateral, cases, success) = calculateCaseCmcbDeltaSharesAndDeltaRealCollateral(data, 0, 0, false);
 
         if (deltaFutureCollateral < 0 && success) {
             return (deltaFutureCollateral, cases);
