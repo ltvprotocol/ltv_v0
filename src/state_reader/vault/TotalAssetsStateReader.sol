@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 import {TotalAssetsState} from "src/structs/state/vault/TotalAssetsState.sol";
 import {CommonTotalAssetsState} from "src/structs/state/vault/CommonTotalAssetsState.sol";
-import {GetRealCollateralAndRealBorrowAssetsReader} from "../GetRealCollateralAndRealBorrowAssetsReader.sol";
+import {GetRealCollateralAndRealBorrowAssetsReader} from "../common/GetRealCollateralAndRealBorrowAssetsReader.sol";
 
 contract TotalAssetsStateReader is GetRealCollateralAndRealBorrowAssetsReader {
     function totalAssetsState(bool isDeposit) internal view returns (TotalAssetsState memory) {

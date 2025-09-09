@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {MaxLowLevelRebalanceBorrowStateData} from "src/structs/state/low_level/MaxLowLevelRebalanceBorrowStateData.sol";
-import {GetRealBorrowAssetsReader} from "../GetRealBorrowAssetsReader.sol";
+import {GetRealBorrowAssetsReader} from "../common/GetRealBorrowAssetsReader.sol";
 
 contract MaxLowLevelRebalanceBorrowStateReader is GetRealBorrowAssetsReader {
     function maxLowLevelRebalanceBorrowState() internal view returns (MaxLowLevelRebalanceBorrowStateData memory) {

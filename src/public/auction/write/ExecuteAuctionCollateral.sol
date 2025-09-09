@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 import {DeltaAuctionState} from "src/structs/state_transition/DeltaAuctionState.sol";
 import {AuctionApplyDeltaState} from "src/state_transition/AuctionApplyDeltaState.sol";
-import {GetAuctionStateReader} from "src/state_reader/GetAuctionStateReader.sol";
+import {GetAuctionStateReader} from "src/state_reader/common/GetAuctionStateReader.sol";
 import {PreviewExecuteAuctionCollateral} from "src/public/auction/read/PreviewExecuteAuctionCollateral.sol";
 
 abstract contract ExecuteAuctionCollateral is

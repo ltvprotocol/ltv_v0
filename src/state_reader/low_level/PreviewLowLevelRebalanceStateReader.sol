@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 import {MaxGrowthFeeState} from "src/structs/state/MaxGrowthFeeState.sol";
 import {PreviewLowLevelRebalanceState} from "src/structs/state/low_level/PreviewLowLevelRebalanceState.sol";
-import {MaxGrowthFeeStateReader} from "src/state_reader/MaxGrowthFeeStateReader.sol";
+import {MaxGrowthFeeStateReader} from "src/state_reader/common/MaxGrowthFeeStateReader.sol";
 
 contract PreviewLowLevelRebalanceStateReader is MaxGrowthFeeStateReader {
     function previewLowLevelRebalanceState() internal view returns (PreviewLowLevelRebalanceState memory) {

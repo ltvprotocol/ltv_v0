@@ -8,7 +8,7 @@ import {AdministrationModifiers} from "../../../modifiers/AdministrationModifier
 import {AdmistrationSetters} from "../../../state_transition/AdmistrationSetters.sol";
 import {ApplyMaxGrowthFee} from "../../../state_transition/ApplyMaxGrowthFee.sol";
 import {Lending} from "../../../state_transition/Lending.sol";
-import {MaxGrowthFeeStateReader} from "../../../state_reader/MaxGrowthFeeStateReader.sol";
+import {MaxGrowthFeeStateReader} from "../../../state_reader/common/MaxGrowthFeeStateReader.sol";
 import {MaxGrowthFee} from "../../../math/abstracts/MaxGrowthFee.sol";
 import {uMulDiv, sMulDiv} from "../../../utils/MulDiv.sol";
 import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";

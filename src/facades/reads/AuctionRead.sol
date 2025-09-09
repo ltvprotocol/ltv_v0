@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {GetAuctionStateReader} from "src/state_reader/GetAuctionStateReader.sol";
+import {GetAuctionStateReader} from "src/state_reader/common/GetAuctionStateReader.sol";
 
 /**
  * @title AuctionRead

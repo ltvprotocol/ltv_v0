@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {PreviewDepositVaultState} from "src/structs/state/vault/PreviewDepositVaultState.sol";
-import {MaxGrowthFeeStateReader} from "src/state_reader/MaxGrowthFeeStateReader.sol";
+import {MaxGrowthFeeStateReader} from "src/state_reader/common/MaxGrowthFeeStateReader.sol";
 
 contract PreviewDepositVaultStateReader is MaxGrowthFeeStateReader {
     function previewDepositVaultState() internal view returns (PreviewDepositVaultState memory) {
