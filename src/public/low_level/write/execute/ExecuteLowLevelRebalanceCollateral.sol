@@ -9,7 +9,8 @@ import {ILowLevelRebalanceErrors} from "src/errors/ILowLevelRebalanceErrors.sol"
 import {ApplyMaxGrowthFee} from "src/state_transition/ApplyMaxGrowthFee.sol";
 import {ExecuteLowLevelRebalance} from "src/state_transition/ExecuteLowLevelRebalance.sol";
 import {ExecuteLowLevelRebalanceStateReader} from "src/state_reader/low_level/ExecuteLowLevelRebalanceStateReader.sol";
-import {PreviewLowLevelRebalanceCollateral} from "src/public/low_level/read/preview/PreviewLowLevelRebalanceCollateral.sol";
+import {PreviewLowLevelRebalanceCollateral} from
+    "src/public/low_level/read/preview/PreviewLowLevelRebalanceCollateral.sol";
 import {MaxLowLevelRebalanceCollateral} from "src/public/low_level/read/max/MaxLowLevelRebalanceCollateral.sol";
 
 abstract contract ExecuteLowLevelRebalanceCollateral is
