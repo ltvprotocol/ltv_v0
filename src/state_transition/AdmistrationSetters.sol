@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {IWhitelistRegistry} from "src/interfaces/IWhitelistRegistry.sol";
-import {ISlippageConnector} from "src/interfaces/connectors/ISlippageConnector.sol";
-import {ILendingConnector} from "src/interfaces/connectors/ILendingConnector.sol";
-import {IOracleConnector} from "src/interfaces/connectors/IOracleConnector.sol";
-import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
-import {IAdministrationEvents} from "src/events/IAdministrationEvents.sol";
-import {Constants} from "src/Constants.sol";
-import {BoolReader} from "src/state_reader/BoolReader.sol";
-import {BoolWriter} from "src/state_transition/BoolWriter.sol";
+import {IWhitelistRegistry} from "../interfaces/IWhitelistRegistry.sol";
+import {ISlippageConnector} from "../interfaces/connectors/ISlippageConnector.sol";
+import {ILendingConnector} from "../interfaces/connectors/ILendingConnector.sol";
+import {IOracleConnector} from "../interfaces/connectors/IOracleConnector.sol";
+import {IAdministrationErrors} from "../errors/IAdministrationErrors.sol";
+import {IAdministrationEvents} from "../events/IAdministrationEvents.sol";
+import {Constants} from "../Constants.sol";
+import {BoolReader} from "../math/abstracts/BoolReader.sol";
+import {BoolWriter} from "../state_transition/BoolWriter.sol";
 
 contract AdmistrationSetters is BoolWriter, BoolReader, IAdministrationErrors, IAdministrationEvents {
     function _setTargetLtv(uint16 dividend, uint16 divider) internal {
@@ -80,19 +80,21 @@ contract AdmistrationSetters is BoolWriter, BoolReader, IAdministrationErrors, I
 
     function _setIsWhitelistActivated(bool activate) internal {
         require(!activate || address(whitelistRegistry) != address(0), WhitelistRegistryNotSet());
-        bool oldValue = isWhitelistActivated();
+        bool oldValue = _isWhitelistActivated(boolSlot);
         setBool(Constants.IS_WHITELIST_ACTIVATED_BIT, activate);
         emit IsWhitelistActivatedChanged(oldValue, activate);
     }
 
     function _setWhitelistRegistry(IWhitelistRegistry value) internal {
-        require(address(value) != address(0) || !isWhitelistActivated(), WhitelistIsActivated());
+        require(address(value) != address(0) || !_isWhitelistActivated(boolSlot), WhitelistIsActivated());
         address oldAddress = address(whitelistRegistry);
         whitelistRegistry = value;
         emit WhitelistRegistryUpdated(oldAddress, address(value));
     }
 
-    function _setSlippageConnector(ISlippageConnector _slippageConnector, bytes memory slippageConnectorData) internal {
+    function _setSlippageConnector(ISlippageConnector _slippageConnector, bytes memory slippageConnectorData)
+        internal
+    {
         require(address(_slippageConnector) != address(0), ZeroSlippageConnector());
         address oldAddress = address(slippageConnector);
         slippageConnector = _slippageConnector;
@@ -100,7 +102,9 @@ contract AdmistrationSetters is BoolWriter, BoolReader, IAdministrationErrors, I
             abi.encodeCall(ISlippageConnector.initializeSlippageConnectorData, (slippageConnectorData))
         );
         require(success, FailedToSetSlippageConnector(address(_slippageConnector), slippageConnectorData));
-        emit SlippageConnectorUpdated(oldAddress, slippageConnectorData, address(_slippageConnector), slippageConnectorData);
+        emit SlippageConnectorUpdated(
+            oldAddress, slippageConnectorData, address(_slippageConnector), slippageConnectorData
+        );
     }
 
     function _allowDisableFunctions(bytes4[] memory signatures, bool isDisabled) internal {
@@ -137,13 +141,13 @@ contract AdmistrationSetters is BoolWriter, BoolReader, IAdministrationErrors, I
     }
 
     function _setIsDepositDisabled(bool value) internal {
-        bool oldValue = isDepositDisabled();
+        bool oldValue = _isDepositDisabled(boolSlot);
         setBool(Constants.IS_DEPOSIT_DISABLED_BIT, value);
         emit IsDepositDisabledChanged(oldValue, value);
     }
 
     function _setIsWithdrawDisabled(bool value) internal {
-        bool oldValue = isWithdrawDisabled();
+        bool oldValue = _isWithdrawDisabled(boolSlot);
         setBool(Constants.IS_WITHDRAW_DISABLED_BIT, value);
         emit IsWithdrawDisabledChanged(oldValue, value);
     }

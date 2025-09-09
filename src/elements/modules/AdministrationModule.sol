@@ -5,8 +5,15 @@ import {OnlyEmergencyDeleverager} from "../../public/administration/write/OnlyEm
 import {OnlyOwner} from "../../public/administration/write/OnlyOwner.sol";
 import {OnlyGuardian} from "../../public/administration/write/OnlyGuardian.sol";
 import {OnlyGovernor} from "../../public/administration/write/OnlyGovernor.sol";
+import {GetVaultBoolState} from "../../public/administration/read/GetVaultBoolState.sol";
 
-contract AdministrationModule is OnlyEmergencyDeleverager, OnlyOwner, OnlyGuardian, OnlyGovernor {
+contract AdministrationModule is
+    OnlyEmergencyDeleverager,
+    OnlyOwner,
+    OnlyGuardian,
+    OnlyGovernor,
+    GetVaultBoolState
+{
     constructor() {
         _disableInitializers();
     }

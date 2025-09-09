@@ -37,7 +37,7 @@ abstract contract OnlyEmergencyDeleverager is
                 deleverageFeeDividend, deleverageFeeDivider, maxDeleverageFeeDividend, maxDeleverageFeeDivider
             )
         );
-        require(!isVaultDeleveraged(), VaultAlreadyDeleveraged());
+        require(!_isVaultDeleveraged(boolSlot), VaultAlreadyDeleveraged());
         require(address(vaultBalanceAsLendingConnector) != address(0), VaultBalanceAsLendingConnectorNotSet());
 
         MaxGrowthFeeState memory state = maxGrowthFeeState();

@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {BoolReader} from "../state_reader/BoolReader.sol";
+import {BoolReader} from "../math/abstracts/BoolReader.sol";
+import {LTVState} from "../states/LTVState.sol";
 
-contract GetRealBorrowAssetsReader is BoolReader {
+contract GetRealBorrowAssetsReader is LTVState, BoolReader {
     function getRealBorrowAssets(bool isDeposit) public view returns (uint256) {
-        if (isVaultDeleveraged()) {
+        if (_isVaultDeleveraged(boolSlot)) {
             return
                 vaultBalanceAsLendingConnector.getRealBorrowAssets(isDeposit, vaultBalanceAsLendingConnectorGetterData);
         }

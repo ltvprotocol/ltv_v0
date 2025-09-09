@@ -9,6 +9,7 @@ import {ICollateralVaultModule} from "src/interfaces/reads/ICollateralVaultModul
 import {IBorrowVaultModule} from "src/interfaces/reads/IBorrowVaultModule.sol";
 import {ILowLevelRebalanceModule} from "src/interfaces/reads/ILowLevelRebalanceModule.sol";
 import {IInitializeModule} from "src/interfaces/writes/IInitializeModule.sol";
+import {IAdministrationModule} from "src/interfaces/reads/IAdministrationModule.sol";
 import {ModulesState} from "src/structs/state/ModulesState.sol";
 import {ModulesProvider} from "src/elements/ModulesProvider.sol";
 import {DummyBorrowVaultModule} from "test/utils/modules/DummyBorrowVaultModule.t.sol";
@@ -26,7 +27,7 @@ contract DummyModulesBaseTest is BaseTest {
         DummyLowLevelRebalanceModule lowLevelRebalanceModule = new DummyLowLevelRebalanceModule();
 
         ModulesState memory modulesState = ModulesState({
-            administrationModule: address(ltv.modules().administrationModule()),
+            administrationModule: IAdministrationModule(address(ltv.modules().administrationModule())),
             auctionModule: IAuctionModule(address(ltv.modules().auctionModule())),
             borrowVaultModule: IBorrowVaultModule(address(borrowVaultModule)),
             collateralVaultModule: ICollateralVaultModule(address(collateralVaultModule)),

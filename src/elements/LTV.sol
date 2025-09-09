@@ -1,18 +1,19 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {AuctionRead} from "src/facades/reads/AuctionRead.sol";
-import {AuctionWrite} from "src/facades/writes/AuctionWrite.sol";
-import {ERC20Read} from "src/facades/reads/ERC20Read.sol";
-import {ERC20Write} from "src/facades/writes/ERC20Write.sol";
-import {LowLevelRebalanceRead} from "src/facades/reads/LowLevelRebalanceRead.sol";
-import {LowLevelRebalanceWrite} from "src/facades/writes/LowLevelRebalanceWrite.sol";
-import {BorrowVaultRead} from "src/facades/reads/BorrowVaultRead.sol";
-import {BorrowVaultWrite} from "src/facades/writes/BorrowVaultWrite.sol";
-import {CollateralVaultRead} from "src/facades/reads/CollateralVaultRead.sol";
-import {CollateralVaultWrite} from "src/facades/writes/CollateralVaultWrite.sol";
-import {AdministrationWrite} from "src/facades/writes/AdministrationWrite.sol";
-import {InitializeWrite} from "src/facades/writes/InitializeWrite.sol";
+import {AuctionRead} from "../facades/reads/AuctionRead.sol";
+import {AuctionWrite} from "../facades/writes/AuctionWrite.sol";
+import {ERC20Read} from "../facades/reads/ERC20Read.sol";
+import {ERC20Write} from "../facades/writes/ERC20Write.sol";
+import {LowLevelRebalanceRead} from "../facades/reads/LowLevelRebalanceRead.sol";
+import {LowLevelRebalanceWrite} from "../facades/writes/LowLevelRebalanceWrite.sol";
+import {BorrowVaultRead} from "../facades/reads/BorrowVaultRead.sol";
+import {BorrowVaultWrite} from "../facades/writes/BorrowVaultWrite.sol";
+import {CollateralVaultRead} from "../facades/reads/CollateralVaultRead.sol";
+import {CollateralVaultWrite} from "../facades/writes/CollateralVaultWrite.sol";
+import {AdministrationWrite} from "../facades/writes/AdministrationWrite.sol";
+import {AdministrationRead} from "../facades/reads/AdministrationRead.sol";
+import {InitializeWrite} from "../facades/writes/InitializeWrite.sol";
 
 /**
  * @title LTV
@@ -47,6 +48,7 @@ contract LTV is
     CollateralVaultRead,
     CollateralVaultWrite,
     AdministrationWrite,
+    AdministrationRead,
     InitializeWrite
 {
     constructor() {

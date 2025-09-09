@@ -12,6 +12,7 @@ import {ILowLevelRebalanceModule} from "src/interfaces/reads/ILowLevelRebalanceM
 import {IAuctionModule} from "src/interfaces/reads/IAuctionModule.sol";
 import {IERC20Module} from "src/interfaces/reads/IERC20Module.sol";
 import {IInitializeModule} from "src/interfaces/writes/IInitializeModule.sol";
+import {IAdministrationModule} from "src/interfaces/reads/IAdministrationModule.sol";
 import {BorrowVaultModule} from "src/elements/modules/BorrowVaultModule.sol";
 import {CollateralVaultModule} from "src/elements/modules/CollateralVaultModule.sol";
 import {LowLevelRebalanceModule} from "src/elements/modules/LowLevelRebalanceModule.sol";
@@ -52,7 +53,7 @@ contract ERC20CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
             collateralVaultModule: ICollateralVaultModule(address(new CollateralVaultModule())),
             lowLevelRebalanceModule: ILowLevelRebalanceModule(address(new LowLevelRebalanceModule())),
             auctionModule: IAuctionModule(address(new AuctionModule())),
-            administrationModule: address(new AdministrationModule()),
+            administrationModule: IAdministrationModule(address(new AdministrationModule())),
             erc20Module: IERC20Module(address(new ERC20Module())),
             initializeModule: IInitializeModule(address(new InitializeModule()))
         });
