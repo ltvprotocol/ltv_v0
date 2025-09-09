@@ -5,7 +5,7 @@ import {OwnableUpgradeable} from "openzeppelin-contracts-upgradeable/contracts/a
 import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
 import {LTVState} from "src/states/LTVState.sol";
 
-abstract contract FunctionStopperModifier is LTVState, OwnableUpgradeable, IAdministrationErrors {
+abstract contract FunctionStopperModifier is LTVState, IAdministrationErrors, OwnableUpgradeable {
     modifier isFunctionAllowed() {
         _checkFunctionAllowed();
         _;

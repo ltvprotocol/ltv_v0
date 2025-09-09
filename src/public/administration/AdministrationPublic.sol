@@ -1,28 +1,26 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {IWhitelistRegistry} from "../../interfaces/IWhitelistRegistry.sol";
+import {ISlippageConnector} from "../../interfaces/connectors/ISlippageConnector.sol";
+import {Constants} from "../../Constants.sol";
+import {MaxGrowthFeeState} from "../../structs/state/MaxGrowthFeeState.sol";
+import {MaxGrowthFeeData} from "../../structs/data/MaxGrowthFeeData.sol";
+import {AdministrationModifiers} from "../../modifiers/AdministrationModifiers.sol";
+import {AdmistrationSetters} from "../../state_transition/AdmistrationSetters.sol";
+import {ApplyMaxGrowthFee} from "../../state_transition/ApplyMaxGrowthFee.sol";
+import {Lending} from "../../state_transition/Lending.sol";
+import {MaxGrowthFeeStateReader} from "../../state_reader/MaxGrowthFeeStateReader.sol";
+import {MaxGrowthFee} from "../../math/abstracts/MaxGrowthFee.sol";
+import {uMulDiv, sMulDiv} from "../../utils/MulDiv.sol";
 import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
-import {IWhitelistRegistry} from "src/interfaces/IWhitelistRegistry.sol";
-import {ISlippageConnector} from "src/interfaces/connectors/ISlippageConnector.sol";
-import {ILendingConnector} from "src/interfaces/connectors/ILendingConnector.sol";
-import {IOracleConnector} from "src/interfaces/connectors/IOracleConnector.sol";
-import {Constants} from "src/Constants.sol";
-import {MaxGrowthFeeState} from "src/structs/state/MaxGrowthFeeState.sol";
-import {MaxGrowthFeeData} from "src/structs/data/MaxGrowthFeeData.sol";
-import {AdministrationModifiers} from "src/modifiers/AdministrationModifiers.sol";
-import {AdmistrationSetters} from "src/state_transition/AdmistrationSetters.sol";
-import {ApplyMaxGrowthFee} from "src/state_transition/ApplyMaxGrowthFee.sol";
-import {Lending} from "src/state_transition/Lending.sol";
-import {MaxGrowthFeeStateReader} from "src/state_reader/MaxGrowthFeeStateReader.sol";
-import {MaxGrowthFee} from "src/math/abstracts/MaxGrowthFee.sol";
-import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 
 abstract contract AdministrationPublic is
+    AdmistrationSetters,
     MaxGrowthFee,
     ApplyMaxGrowthFee,
     MaxGrowthFeeStateReader,
-    AdmistrationSetters,
     AdministrationModifiers,
     Lending
 {
@@ -97,29 +95,6 @@ abstract contract AdministrationPublic is
         _setIsWithdrawDisabled(value);
     }
 
-    function setLendingConnector(ILendingConnector _lendingConnector, bytes memory lendingConnectorData)
-        external
-        onlyOwner
-        nonReentrant
-    {
-        _setLendingConnector(_lendingConnector, lendingConnectorData);
-    }
-
-    function setOracleConnector(IOracleConnector _oracleConnector, bytes memory oracleConnectorData)
-        external
-        onlyOwner
-        nonReentrant
-    {
-        _setOracleConnector(_oracleConnector, oracleConnectorData);
-    }
-
-    function setVaultBalanceAsLendingConnector(
-        ILendingConnector _vaultBalanceAsLendingConnector,
-        bytes memory vaultBalanceAsLendingConnectorGetterData
-    ) external onlyOwner nonReentrant {
-        _setVaultBalanceAsLendingConnector(_vaultBalanceAsLendingConnector, vaultBalanceAsLendingConnectorGetterData);
-    }
-
     function deleverageAndWithdraw(uint256 closeAmountBorrow, uint16 deleverageFeeDividend, uint16 deleverageFeeDivider)
         external
         onlyEmergencyDeleverager
@@ -178,17 +153,5 @@ abstract contract AdministrationPublic is
         }
         setBool(Constants.IS_VAULT_DELEVERAGED_BIT, true);
         lendingConnectorGetterData = "";
-    }
-
-    function updateEmergencyDeleverager(address newEmergencyDeleverager) external onlyOwner nonReentrant {
-        _updateEmergencyDeleverager(newEmergencyDeleverager);
-    }
-
-    function updateGovernor(address newGovernor) external onlyOwner nonReentrant {
-        _updateGovernor(newGovernor);
-    }
-
-    function updateGuardian(address newGuardian) external onlyOwner nonReentrant {
-        _updateGuardian(newGuardian);
     }
 }
