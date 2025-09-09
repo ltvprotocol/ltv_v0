@@ -8,7 +8,7 @@ contract MaxLowLevelRebalanceBorrowStateReader is GetRealBorrowAssetsReader {
     function maxLowLevelRebalanceBorrowState() internal view returns (MaxLowLevelRebalanceBorrowStateData memory) {
         return MaxLowLevelRebalanceBorrowStateData({
             // round up to assume smaller border
-            realBorrowAssets: getRealBorrowAssets(false),
+            realBorrowAssets: _getRealBorrowAssets(false),
             maxTotalAssetsInUnderlying: maxTotalAssetsInUnderlying,
             targetLtvDividend: targetLtvDividend,
             targetLtvDivider: targetLtvDivider,

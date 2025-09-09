@@ -5,7 +5,7 @@ import {BoolReader} from "../math/abstracts/BoolReader.sol";
 import {LTVState} from "../states/LTVState.sol";
 
 contract GetRealBorrowAssetsReader is LTVState, BoolReader {
-    function getRealBorrowAssets(bool isDeposit) public view returns (uint256) {
+    function _getRealBorrowAssets(bool isDeposit) internal view returns (uint256) {
         if (_isVaultDeleveraged(boolSlot)) {
             return
                 vaultBalanceAsLendingConnector.getRealBorrowAssets(isDeposit, vaultBalanceAsLendingConnectorGetterData);

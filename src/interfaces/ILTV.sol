@@ -89,10 +89,6 @@ interface ILTV is
 
     function getLendingConnector() external view returns (address);
 
-    function getRealBorrowAssets(bool isDeposit) external view returns (uint256);
-
-    function getRealCollateralAssets(bool isDeposit) external view returns (uint256);
-
     function governor() external view returns (address);
 
     function guardian() external view returns (address);

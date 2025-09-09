@@ -13,7 +13,7 @@ contract MaxLowLevelRebalanceCollateralStateReader is GetRealCollateralAssetsRea
     {
         return MaxLowLevelRebalanceCollateralStateData({
             // round up to assume smaller border
-            realCollateralAssets: getRealCollateralAssets(true),
+            realCollateralAssets: _getRealCollateralAssets(true),
             maxTotalAssetsInUnderlying: maxTotalAssetsInUnderlying,
             targetLtvDividend: targetLtvDividend,
             targetLtvDivider: targetLtvDivider,
