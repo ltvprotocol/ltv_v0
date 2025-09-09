@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {GetLendingConnectorStateReader} from "../../state_reader/GetLendingConnectorStateReader.sol";
+import {GetLendingConnectorStateReader} from "../../state_reader/administration/GetLendingConnectorStateReader.sol";
 import {ILendingConnector} from "../../interfaces/connectors/ILendingConnector.sol";
 
 /**
