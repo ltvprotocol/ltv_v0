@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {IWhitelistRegistry} from "../../interfaces/IWhitelistRegistry.sol";
-import {ISlippageConnector} from "../../interfaces/connectors/ISlippageConnector.sol";
 import {Constants} from "../../Constants.sol";
 import {MaxGrowthFeeState} from "../../structs/state/MaxGrowthFeeState.sol";
 import {MaxGrowthFeeData} from "../../structs/data/MaxGrowthFeeData.sol";
@@ -16,7 +14,7 @@ import {uMulDiv, sMulDiv} from "../../utils/MulDiv.sol";
 import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 
-abstract contract AdministrationPublic is
+abstract contract OnlyEmergencyDeleverager is
     AdmistrationSetters,
     MaxGrowthFee,
     ApplyMaxGrowthFee,
@@ -27,9 +25,6 @@ abstract contract AdministrationPublic is
     using uMulDiv for uint256;
     using sMulDiv for int256;
     using SafeERC20 for IERC20;
-
-    
-
 
     function deleverageAndWithdraw(uint256 closeAmountBorrow, uint16 deleverageFeeDividend, uint16 deleverageFeeDivider)
         external
