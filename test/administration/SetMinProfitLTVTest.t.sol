@@ -66,7 +66,7 @@ contract SetminProfitLtvTest is BaseTest {
         uint16 newminProfitLtvDivider = 100;
         vm.startPrank(defaultData.governor);
         vm.expectEmit(true, true, true, true, address(ltv));
-        emit IAdministrationEvents.minProfitLtvChanged(
+        emit IAdministrationEvents.MinProfitLtvChanged(
             ltv.minProfitLtvDividend(), ltv.minProfitLtvDivider(), newminProfitLtvDividend, newminProfitLtvDivider
         );
         ltv.setMinProfitLtv(newminProfitLtvDividend, newminProfitLtvDivider);

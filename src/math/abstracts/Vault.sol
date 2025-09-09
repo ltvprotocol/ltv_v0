@@ -6,9 +6,18 @@ import {MaxDepositMintStateToData} from "src/math/abstracts/state_to_data/max/Ma
 import {MaxWithdrawRedeemStateToData} from "src/math/abstracts/state_to_data/max/MaxWithdrawRedeemStateToData.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 
+/**
+ * @title Vault
+ * @notice Contract contains common functionality for all max vault functions.
+ */
 abstract contract Vault is MaxDepositMintStateToData, MaxWithdrawRedeemStateToData {
     using uMulDiv for uint256;
 
+    /**
+     * @notice Calculates available space according to maxTotalAssetsInUnderlying
+     * constant. Return value is in shares because shares represent real difference
+     * in total assets after user operation
+     */
     function getAvailableSpaceInShares(
         int256 collateral,
         int256 borrow,

@@ -7,7 +7,15 @@ import {PreviewDepositStateToPreviewDepositData} from
     "src/math/abstracts/state_to_data/preview/PreviewDepositStateToPreviewDepositData.sol";
 import {CommonMath} from "src/math/libraries/CommonMath.sol";
 
+/**
+ * @title MaxDepositMintStateToData
+ * @notice Contract contains functionality to precalculate max deposit/mint vault state to
+ * data needed for max deposit/mint calculations.
+ */
 contract MaxDepositMintStateToData is PreviewDepositStateToPreviewDepositData {
+    /**
+     * @notice Precalculates max deposit/mint vault state to data needed for max deposit/mint calculations.
+     */
     function maxDepositMintStateToData(MaxDepositMintBorrowVaultState memory state)
         internal
         pure

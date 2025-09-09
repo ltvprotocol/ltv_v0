@@ -9,6 +9,10 @@ import {MaxGrowthFeeStateToConvertCollateralData} from
     "src/math/abstracts/state_to_data/MaxGrowthFeeStateToConvertCollateralData.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 
+/**
+ * @title VaultCollateral
+ * @notice Contract contains common functionality for all max collateral vault functions.
+ */
 abstract contract VaultCollateral is
     MaxDepositMintCollateralStateToData,
     MaxWithdrawRedeemCollateralStateToData,
@@ -16,6 +20,11 @@ abstract contract VaultCollateral is
 {
     using uMulDiv for uint256;
 
+    /**
+     * @notice Calculates available space according to maxTotalAssetsInUnderlying
+     * constant. Return value is in shares because shares represent real difference
+     * in total assets after user operation
+     */
     function getAvailableSpaceInShares(
         int256 collateral,
         int256 borrow,

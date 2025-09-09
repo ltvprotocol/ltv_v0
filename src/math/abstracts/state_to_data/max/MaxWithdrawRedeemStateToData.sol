@@ -7,7 +7,15 @@ import {PreviewWithdrawStateToPreviewWithdrawData} from
     "src/math/abstracts/state_to_data/preview/PreviewWithdrawStateToPreviewWithdrawData.sol";
 import {CommonMath} from "src/math/libraries/CommonMath.sol";
 
+/**
+ * @title MaxWithdrawRedeemStateToData
+ * @notice Contract contains functionality to precalculate max withdraw/redeem vault state to
+ * data needed for max withdraw/redeem calculations.
+ */
 contract MaxWithdrawRedeemStateToData is PreviewWithdrawStateToPreviewWithdrawData {
+    /**
+     * @notice Precalculates max withdraw/redeem vault state to data needed for max withdraw/redeem calculations.
+     */
     function maxWithdrawRedeemStateToData(MaxWithdrawRedeemBorrowVaultState memory state)
         internal
         pure

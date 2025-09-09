@@ -7,7 +7,15 @@ import {PreviewWithdrawVaultStateToCollateralData} from
     "src/math/abstracts/state_to_data/preview/PreviewWithdrawVaultStateToCollateralData.sol";
 import {CommonMath} from "src/math/libraries/CommonMath.sol";
 
+/**
+ * @title MaxWithdrawRedeemCollateralStateToData
+ * @notice Contract contains functionality to precalculate max withdraw/redeem collateral vault state to
+ * data needed for max withdraw/redeem collateral calculations.
+ */
 contract MaxWithdrawRedeemCollateralStateToData is PreviewWithdrawVaultStateToCollateralData {
+    /**
+     * @notice Precalculates max withdraw/redeem collateral vault state to data needed for max withdraw/redeem collateral calculations.
+     */
     function maxWithdrawRedeemCollateralVaultStateToMaxWithdrawRedeemCollateralVaultData(
         MaxWithdrawRedeemCollateralVaultState memory state
     ) internal pure returns (MaxWithdrawRedeemCollateralVaultData memory) {

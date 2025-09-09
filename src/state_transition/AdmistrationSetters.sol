@@ -25,7 +25,7 @@ contract AdmistrationSetters is BoolWriter, BoolReader, IAdministrationErrors, I
         uint16 oldDivider = targetLtvDivider;
         targetLtvDividend = dividend;
         targetLtvDivider = divider;
-        emit targetLtvChanged(oldValue, oldDivider, dividend, divider);
+        emit TargetLtvChanged(oldValue, oldDivider, dividend, divider);
     }
 
     function _setMaxSafeLtv(uint16 dividend, uint16 divider) internal {
@@ -40,7 +40,7 @@ contract AdmistrationSetters is BoolWriter, BoolReader, IAdministrationErrors, I
         uint16 oldDivider = maxSafeLtvDivider;
         maxSafeLtvDividend = dividend;
         maxSafeLtvDivider = divider;
-        emit maxSafeLtvChanged(oldDividend, oldDivider, dividend, divider);
+        emit MaxSafeLtvChanged(oldDividend, oldDivider, dividend, divider);
     }
 
     function _setMinProfitLtv(uint16 dividend, uint16 divider) internal {
@@ -53,7 +53,7 @@ contract AdmistrationSetters is BoolWriter, BoolReader, IAdministrationErrors, I
         uint16 oldDivider = minProfitLtvDivider;
         minProfitLtvDividend = dividend;
         minProfitLtvDivider = divider;
-        emit minProfitLtvChanged(oldDividend, oldDivider, dividend, divider);
+        emit MinProfitLtvChanged(oldDividend, oldDivider, dividend, divider);
     }
 
     function _setFeeCollector(address _feeCollector) internal {

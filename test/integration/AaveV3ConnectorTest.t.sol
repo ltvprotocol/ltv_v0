@@ -10,8 +10,7 @@ import {IERC20Module} from "src/interfaces/reads/IERC20Module.sol";
 import {ICollateralVaultModule} from "src/interfaces/reads/ICollateralVaultModule.sol";
 import {IBorrowVaultModule} from "src/interfaces/reads/IBorrowVaultModule.sol";
 import {ILowLevelRebalanceModule} from "src/interfaces/reads/ILowLevelRebalanceModule.sol";
-import {IAdministrationModule} from "src/interfaces/reads/IAdministrationModule.sol";
-import {IInitializeModule} from "src/interfaces/reads/IInitializeModule.sol";
+import {IInitializeModule} from "src/interfaces/writes/IInitializeModule.sol";
 import {StateInitData} from "src/structs/state/StateInitData.sol";
 import {AaveV3Connector} from "src/connectors/lending_connectors/AaveV3Connector.sol";
 import {AaveV3OracleConnector} from "src/connectors/oracle_connectors/AaveV3OracleConnector.sol";
@@ -51,7 +50,7 @@ contract AaveV3ConnectorTest is Test {
         slippageConnector = new ConstantSlippageConnector();
 
         ModulesState memory modulesState = ModulesState({
-            administrationModule: IAdministrationModule(address(new AdministrationModule())),
+            administrationModule: address(new AdministrationModule()),
             auctionModule: IAuctionModule(address(new AuctionModule())),
             erc20Module: IERC20Module(address(new ERC20Module())),
             collateralVaultModule: ICollateralVaultModule(address(new CollateralVaultModule())),

@@ -11,9 +11,17 @@ import {MaxGrowthFee} from "src/math/abstracts/MaxGrowthFee.sol";
 import {CommonMath} from "src/math/libraries/CommonMath.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 
+/**
+ * @title PreviewWithdrawVaultStateToCollateralData
+ * @notice Contract contains functionality to precalculate preview withdraw vault state to
+ * data needed for preview collateral vault data calculations.
+ */
 abstract contract PreviewWithdrawVaultStateToCollateralData is TotalAssetsCollateral, MaxGrowthFee {
     using uMulDiv for uint256;
 
+    /**
+     * @notice Precalculates preview withdraw vault state to data needed for preview collateral vault data calculations.
+     */
     function previewWithdrawVaultStateToPreviewCollateralVaultData(PreviewWithdrawVaultState memory state)
         internal
         pure
@@ -32,6 +40,10 @@ abstract contract PreviewWithdrawVaultStateToCollateralData is TotalAssetsCollat
         return _previewWithdrawVaultStateToPreviewCollateralVaultData(realCollateral, realBorrow, state);
     }
 
+    /**
+     * @notice Precalculates preview withdraw vault state to data needed for preview collateral vault data calculations.
+     * @dev realCollateral and realBorrow are made arguments since it can be needed to cache them in another place
+     */
     function _previewWithdrawVaultStateToPreviewCollateralVaultData(
         uint256 realCollateral,
         uint256 realBorrow,

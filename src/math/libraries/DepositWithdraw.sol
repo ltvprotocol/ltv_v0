@@ -12,6 +12,13 @@ import {CommonBorrowCollateral} from "src/math/libraries/CommonBorrowCollateral.
 import {CasesOperator} from "src/math/libraries/CasesOperator.sol";
 import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
 
+/**
+ * @title DepositWithdraw
+ * @notice This library contains function to calculate full state transition in underlying assets
+ * for deposit, withdraw, deposit collateral and withdraw collateral vault operations.
+ *
+ * @dev These calculations are derived from the ltv protocol paper.
+ */
 library DepositWithdraw {
     using uMulDiv for uint256;
     using sMulDiv for int256;

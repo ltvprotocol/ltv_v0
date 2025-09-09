@@ -91,7 +91,7 @@ contract SettargetLtvTest is BaseTest {
         uint16 targetLtvDivider = 100;
         vm.startPrank(defaultData.governor);
         vm.expectEmit(true, true, true, true, address(ltv));
-        emit IAdministrationEvents.targetLtvChanged(
+        emit IAdministrationEvents.TargetLtvChanged(
             ltv.targetLtvDividend(), ltv.targetLtvDivider(), targetLtvDividend, targetLtvDivider
         );
         ltv.setTargetLtv(targetLtvDividend, targetLtvDivider);

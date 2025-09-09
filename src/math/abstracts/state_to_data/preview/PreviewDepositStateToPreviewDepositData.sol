@@ -10,9 +10,17 @@ import {MaxGrowthFee} from "src/math/abstracts/MaxGrowthFee.sol";
 import {CommonMath} from "src/math/libraries/CommonMath.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 
+/**
+ * @title PreviewDepositStateToPreviewDepositData
+ * @notice Contract contains functionality to precalculate pure preview deposit state to
+ * data needed for preview deposit calculations.
+ */
 contract PreviewDepositStateToPreviewDepositData is MaxGrowthFee {
     using uMulDiv for uint256;
 
+    /**
+     * @notice Precalculates pure preview deposit state to data needed for preview deposit calculations.
+     */
     function previewDepositStateToPreviewDepositData(PreviewDepositVaultState memory state)
         internal
         pure
@@ -27,6 +35,10 @@ contract PreviewDepositStateToPreviewDepositData is MaxGrowthFee {
         return _previewDepositStateToPreviewDepositData(realBorrow, realCollateral, state);
     }
 
+    /**
+     * @notice Precalculates pure preview deposit state to data needed for preview deposit calculations.
+     * @dev realCollateral and realBorrow are made arguments since it can be needed to cache them in another place
+     */
     function _previewDepositStateToPreviewDepositData(
         uint256 realBorrow,
         uint256 realCollateral,
