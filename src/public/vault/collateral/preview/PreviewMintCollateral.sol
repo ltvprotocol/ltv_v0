@@ -10,9 +10,16 @@ import {VaultCollateral} from "src/math/VaultCollateral.sol";
 import {MintRedeem} from "src/math/MintRedeem.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 
+/**
+ * @title PreviewMintCollateral
+ * @notice This contract contains preview mint collateral function implementation.
+ */
 abstract contract PreviewMintCollateral is VaultCollateral {
     using uMulDiv for uint256;
 
+    /**
+     * @dev see ICollateralVaultModule.previewMintCollateral
+     */
     function previewMintCollateral(uint256 shares, PreviewDepositVaultState memory state)
         public
         pure
@@ -21,6 +28,9 @@ abstract contract PreviewMintCollateral is VaultCollateral {
         (assets,) = _previewMintCollateral(shares, previewDepositVaultStateToPreviewCollateralVaultData(state));
     }
 
+    /**
+     * @dev base function to calculate preview mint collateral
+     */
     function _previewMintCollateral(uint256 shares, PreviewCollateralVaultData memory data)
         internal
         pure

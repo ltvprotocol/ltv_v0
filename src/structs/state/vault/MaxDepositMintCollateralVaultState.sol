@@ -3,6 +3,10 @@ pragma solidity ^0.8.28;
 
 import {PreviewDepositVaultState} from "src/structs/state/vault/PreviewDepositVaultState.sol";
 
+/**
+ * @title MaxDepositMintCollateralVaultState
+ * @notice This struct needed for max deposit mint collateral vault calculations
+ */
 struct MaxDepositMintCollateralVaultState {
     PreviewDepositVaultState previewDepositVaultState;
     uint256 maxTotalAssetsInUnderlying;

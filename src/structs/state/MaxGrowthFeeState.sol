@@ -3,6 +3,10 @@ pragma solidity ^0.8.28;
 
 import {CommonTotalAssetsState} from "src/structs/state/vault/CommonTotalAssetsState.sol";
 
+/**
+ * @title MaxGrowthFeeState
+ * @notice This struct needed for max growth fee calculations
+ */
 struct MaxGrowthFeeState {
     CommonTotalAssetsState commonTotalAssetsState;
     uint256 withdrawRealCollateralAssets;

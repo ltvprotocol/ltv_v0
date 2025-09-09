@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
+/**
+ * @title PreviewWithdrawBorrowVaultData
+ * @notice This struct needed for preview withdraw borrow vault calculations
+ */
 struct PreviewWithdrawBorrowVaultData {
     int256 collateral;
     int256 borrow;

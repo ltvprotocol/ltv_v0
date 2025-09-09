@@ -8,6 +8,10 @@ import {IAuctionModule} from "src/interfaces/reads/IAuctionModule.sol";
 import {IERC20Module} from "src/interfaces/reads/IERC20Module.sol";
 import {IInitializeModule} from "src/interfaces/writes/IInitializeModule.sol";
 
+/**
+ * @title ModulesState
+ * @notice This struct needed for module state calculations
+ */
 struct ModulesState {
     IBorrowVaultModule borrowVaultModule;
     ICollateralVaultModule collateralVaultModule;

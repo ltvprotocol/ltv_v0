@@ -36,21 +36,33 @@ contract WhitelistRegistry is IWhitelistRegistry, Ownable {
 
     event SignerUpdated(address indexed signer);
 
+    /**
+     * @notice Add an address to the whitelist
+     */
     function addAddressToWhitelist(address account) external onlyOwner {
         isAddressWhitelisted[account] = true;
         emit AddressWhitelisted(account, true);
     }
 
+    /**
+     * @notice Remove an address from the whitelist
+     */
     function removeAddressFromWhitelist(address account) external onlyOwner {
         isAddressWhitelisted[account] = false;
         emit AddressWhitelisted(account, false);
     }
 
+    /**
+     * @notice Update the signer
+     */
     function updateSigner(address newSigner) external onlyOwner {
         signer = newSigner;
         emit SignerUpdated(signer);
     }
 
+    /**
+     * @notice Add an address to the whitelist by signature(can be called only once per address)
+     */
     function addAddressToWhitelistBySignature(address account, uint8 v, bytes32 r, bytes32 s) external {
         // forge-lint: disable-next-line(asm-keccak256)
         bytes32 digest = keccak256(abi.encodePacked(account));
