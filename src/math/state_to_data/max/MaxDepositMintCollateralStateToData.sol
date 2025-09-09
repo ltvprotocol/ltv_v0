@@ -7,7 +7,15 @@ import {PreviewDepositVaultStateToCollateralData} from
     "src/math/state_to_data/preview/PreviewDepositVaultStateToCollateralData.sol";
 import {CommonMath} from "src/math/CommonMath.sol";
 
+/**
+ * @title MaxDepositMintCollateralStateToData
+ * @notice Contract contains functionality to precalculate max deposit/mint collateral vault state to
+ * data needed for max deposit mint collateral calculations.
+ */
 contract MaxDepositMintCollateralStateToData is PreviewDepositVaultStateToCollateralData {
+    /**
+     * @notice Precalculates max deposit/mint collateral vault state to data needed for max deposit/mint collateral calculations.
+     */
     function maxDepositMintCollateralVaultStateToMaxDepositMintCollateralVaultData(
         MaxDepositMintCollateralVaultState memory state
     ) internal pure returns (MaxDepositMintCollateralVaultData memory) {

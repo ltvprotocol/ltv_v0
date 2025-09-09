@@ -4,10 +4,17 @@ pragma solidity ^0.8.28;
 import {Constants} from "src/Constants.sol";
 import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
 
+/**
+ * @title CommonMath
+ * @notice This library contains functions to precalculate state before vault operations.
+ */
 library CommonMath {
     using uMulDiv for uint256;
     using sMulDiv for int256;
 
+    /**
+     * @notice This function converts real collateral amount from collateral asset to underlying asset.
+     */
     function convertRealCollateral(uint256 realCollateralAssets, uint256 collateralPrice, bool isDeposit)
         internal
         pure
@@ -17,6 +24,9 @@ library CommonMath {
         return realCollateralAssets.mulDiv(collateralPrice, Constants.ORACLE_DIVIDER, isDeposit);
     }
 
+    /**
+     * @notice This function converts real borrow amount from borrow asset to underlying asset.
+     */
     function convertRealBorrow(uint256 realBorrowAssets, uint256 borrowPrice, bool isDeposit)
         internal
         pure
@@ -26,6 +36,9 @@ library CommonMath {
         return realBorrowAssets.mulDiv(borrowPrice, Constants.ORACLE_DIVIDER, !isDeposit);
     }
 
+    /**
+     * @notice This function converts future collateral amount from collateral asset to underlying asset.
+     */
     function convertFutureCollateral(int256 futureCollateralAssets, uint256 collateralPrice, bool isDeposit)
         internal
         pure
@@ -37,6 +50,9 @@ library CommonMath {
         return futureCollateralAssets.mulDiv(int256(collateralPrice), int256(Constants.ORACLE_DIVIDER), isDeposit);
     }
 
+    /**
+     * @notice This function converts future borrow amount from borrow asset to underlying asset.
+     */
     function convertFutureBorrow(int256 futureBorrowAssets, uint256 borrowPrice, bool isDeposit)
         internal
         pure
@@ -48,6 +64,9 @@ library CommonMath {
         return futureBorrowAssets.mulDiv(int256(borrowPrice), int256(Constants.ORACLE_DIVIDER), !isDeposit);
     }
 
+    /**
+     * @notice This function converts future reward collateral amount from collateral asset to underlying asset.
+     */
     function convertFutureRewardCollateral(int256 futureRewardCollateralAssets, uint256 collateralPrice, bool isDeposit)
         internal
         pure
@@ -59,6 +78,9 @@ library CommonMath {
         return futureRewardCollateralAssets.mulDiv(int256(collateralPrice), int256(Constants.ORACLE_DIVIDER), isDeposit);
     }
 
+    /**
+     * @notice This function converts future reward borrow amount from borrow asset to underlying asset.
+     */
     function convertFutureRewardBorrow(int256 futureRewardBorrowAssets, uint256 borrowPrice, bool isDeposit)
         internal
         pure
@@ -70,6 +92,9 @@ library CommonMath {
         return futureRewardBorrowAssets.mulDiv(int256(borrowPrice), int256(Constants.ORACLE_DIVIDER), !isDeposit);
     }
 
+    /**
+     * @notice This function calculates auction step using start auction and block number.
+     */
     function calculateAuctionStep(uint56 startAuction, uint56 blockNumber, uint24 auctionDuration)
         internal
         pure
@@ -88,7 +113,13 @@ library CommonMath {
         return uint24(auctionStep);
     }
 
-    // Fee collector <=> Auction executor conflict. Resolve it in favor of the auction executor.
+    /**
+     * @notice This function calculates user future reward borrow using future reward borrow assets,
+     *  auction step and auction duration.
+     *
+     * ROUNDING:
+     * Fee collector <=> Auction executor conflict. Resolve it in favor of the auction executor.
+     */
     function calculateUserFutureRewardBorrow(
         int256 futureRewardBorrowAssets,
         uint256 auctionStep,
@@ -99,7 +130,13 @@ library CommonMath {
         return futureRewardBorrowAssets.mulDivUp(int256(auctionStep), int256(uint256(auctionDuration)));
     }
 
-    // Fee collector <=> Auction executor conflict. Resolve it in favor of the auction executor.
+    /**
+     * @notice This function calculates user future reward collateral using future reward collateral assets,
+     *  auction step and auction duration.
+     *
+     * ROUNDING:
+     * Fee collector <=> Auction executor conflict. Resolve it in favor of the auction executor.
+     */
     function calculateUserFutureRewardCollateral(
         int256 futureRewardCollateralAssets,
         uint256 auctionStep,
