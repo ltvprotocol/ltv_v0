@@ -3,8 +3,9 @@ pragma solidity ^0.8.28;
 
 import {AdministrationPublic} from "../../public/administration/AdministrationPublic.sol";
 import {OnlyOwner} from "../../public/administration/OnlyOwner.sol";
+import {OnlyGuardian} from "../../public/administration/OnlyGuardian.sol";
 
-contract AdministrationModule is AdministrationPublic, OnlyOwner {
+contract AdministrationModule is AdministrationPublic, OnlyOwner, OnlyGuardian {
     constructor() {
         _disableInitializers();
     }

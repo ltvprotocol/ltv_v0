@@ -8,23 +8,23 @@ import {OwnableUpgradeable} from "openzeppelin-contracts-upgradeable/contracts/a
 import {ReentrancyGuardUpgradeable} from
     "openzeppelin-contracts-upgradeable/contracts/utils/ReentrancyGuardUpgradeable.sol";
 
-abstract contract OnlyOwner is AdmistrationSetters, OwnableUpgradeable,ReentrancyGuardUpgradeable {
-    function updateEmergencyDeleverager(address newEmergencyDeleverager) external onlyOwner  {
+abstract contract OnlyOwner is AdmistrationSetters, OwnableUpgradeable, ReentrancyGuardUpgradeable {
+    function updateEmergencyDeleverager(address newEmergencyDeleverager) external onlyOwner nonReentrant {
         _updateEmergencyDeleverager(newEmergencyDeleverager);
     }
 
-    function updateGovernor(address newGovernor) external onlyOwner  {
+    function updateGovernor(address newGovernor) external onlyOwner nonReentrant {
         _updateGovernor(newGovernor);
     }
 
-    function updateGuardian(address newGuardian) external onlyOwner  {
+    function updateGuardian(address newGuardian) external onlyOwner nonReentrant {
         _updateGuardian(newGuardian);
     }
 
     function setLendingConnector(ILendingConnector _lendingConnector, bytes memory lendingConnectorData)
         external
         onlyOwner
-        
+        nonReentrant
     {
         _setLendingConnector(_lendingConnector, lendingConnectorData);
     }
@@ -32,7 +32,7 @@ abstract contract OnlyOwner is AdmistrationSetters, OwnableUpgradeable,Reentranc
     function setOracleConnector(IOracleConnector _oracleConnector, bytes memory oracleConnectorData)
         external
         onlyOwner
-        
+        nonReentrant
     {
         _setOracleConnector(_oracleConnector, oracleConnectorData);
     }
@@ -40,7 +40,7 @@ abstract contract OnlyOwner is AdmistrationSetters, OwnableUpgradeable,Reentranc
     function setVaultBalanceAsLendingConnector(
         ILendingConnector _vaultBalanceAsLendingConnector,
         bytes memory vaultBalanceAsLendingConnectorGetterData
-    ) external onlyOwner  {
+    ) external onlyOwner nonReentrant {
         _setVaultBalanceAsLendingConnector(_vaultBalanceAsLendingConnector, vaultBalanceAsLendingConnectorGetterData);
     }
 }

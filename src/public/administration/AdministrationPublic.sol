@@ -79,21 +79,11 @@ abstract contract AdministrationPublic is
         _setSlippageConnector(_slippageConnector, slippageConnectorData);
     }
 
-    function allowDisableFunctions(bytes4[] memory signatures, bool isDisabled) external onlyGuardian nonReentrant {
-        _allowDisableFunctions(signatures, isDisabled);
-    }
-
     function setMaxGrowthFee(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor nonReentrant {
         _setMaxGrowthFee(dividend, divider);
     }
 
-    function setIsDepositDisabled(bool value) external onlyGuardian nonReentrant {
-        _setIsDepositDisabled(value);
-    }
 
-    function setIsWithdrawDisabled(bool value) external onlyGuardian nonReentrant {
-        _setIsWithdrawDisabled(value);
-    }
 
     function deleverageAndWithdraw(uint256 closeAmountBorrow, uint16 deleverageFeeDividend, uint16 deleverageFeeDivider)
         external
