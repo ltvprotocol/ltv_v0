@@ -7,8 +7,7 @@ import {IERC20Module} from "src/interfaces/reads/IERC20Module.sol";
 import {ICollateralVaultModule} from "src/interfaces/reads/ICollateralVaultModule.sol";
 import {IBorrowVaultModule} from "src/interfaces/reads/IBorrowVaultModule.sol";
 import {ILowLevelRebalanceModule} from "src/interfaces/reads/ILowLevelRebalanceModule.sol";
-import {IAdministrationModule} from "src/interfaces/reads/IAdministrationModule.sol";
-import {IInitializeModule} from "src/interfaces/reads/IInitializeModule.sol";
+import {IInitializeModule} from "src/interfaces/writes/IInitializeModule.sol";
 import {ModulesState} from "src/structs/state/ModulesState.sol";
 
 /**
@@ -91,8 +90,8 @@ contract ModulesProvider is IModules {
     /**
      * @inheritdoc IModules
      */
-    function administrationModule() external view override returns (IAdministrationModule) {
-        return IAdministrationModule(getModule(ADMINISTRATION_MODULE_SLOT));
+    function administrationModule() external view override returns (address) {
+        return getModule(ADMINISTRATION_MODULE_SLOT);
     }
 
     /**

@@ -32,7 +32,7 @@ contract AdmistrationSetters is BoolWriter, BoolReader, IAdministrationErrors, I
         uint16 oldDivider = targetLtvDivider;
         targetLtvDividend = dividend;
         targetLtvDivider = divider;
-        emit targetLtvChanged(oldValue, oldDivider, dividend, divider);
+        emit TargetLtvChanged(oldValue, oldDivider, dividend, divider);
     }
 
     /**
@@ -50,7 +50,7 @@ contract AdmistrationSetters is BoolWriter, BoolReader, IAdministrationErrors, I
         uint16 oldDivider = maxSafeLtvDivider;
         maxSafeLtvDividend = dividend;
         maxSafeLtvDivider = divider;
-        emit maxSafeLtvChanged(oldDividend, oldDivider, dividend, divider);
+        emit MaxSafeLtvChanged(oldDividend, oldDivider, dividend, divider);
     }
 
     /**
@@ -66,7 +66,7 @@ contract AdmistrationSetters is BoolWriter, BoolReader, IAdministrationErrors, I
         uint16 oldDivider = minProfitLtvDivider;
         minProfitLtvDividend = dividend;
         minProfitLtvDivider = divider;
-        emit minProfitLtvChanged(oldDividend, oldDivider, dividend, divider);
+        emit MinProfitLtvChanged(oldDividend, oldDivider, dividend, divider);
     }
 
     /**

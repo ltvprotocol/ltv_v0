@@ -66,7 +66,7 @@ contract SetmaxSafeLtvTest is BaseTest {
         uint16 newmaxSafeLtvDivider = 100;
         vm.startPrank(defaultData.governor);
         vm.expectEmit(true, true, true, true, address(ltv));
-        emit IAdministrationEvents.maxSafeLtvChanged(
+        emit IAdministrationEvents.MaxSafeLtvChanged(
             ltv.maxSafeLtvDividend(), ltv.maxSafeLtvDivider(), newmaxSafeLtvDividend, newmaxSafeLtvDivider
         );
         ltv.setMaxSafeLtv(newmaxSafeLtvDividend, newmaxSafeLtvDivider);

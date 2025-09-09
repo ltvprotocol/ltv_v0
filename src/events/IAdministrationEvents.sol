@@ -42,7 +42,7 @@ interface IAdministrationEvents {
      * @param newDivider The new target LTV denominator
      * @dev Target LTV represents the optimal borrowing ratio the vault aims to maintain
      */
-    event targetLtvChanged(uint16 oldDividend, uint16 oldDivider, uint16 newDividend, uint16 newDivider);
+    event TargetLtvChanged(uint16 oldDividend, uint16 oldDivider, uint16 newDividend, uint16 newDivider);
 
     /**
      * @notice Emitted when the maximum safe LTV ratio is changed
@@ -52,7 +52,7 @@ interface IAdministrationEvents {
      * @param newDivider The new max safe LTV denominator
      * @dev Max safe LTV represents the highest LTV ratio considered safe for the vault
      */
-    event maxSafeLtvChanged(uint16 oldDividend, uint16 oldDivider, uint16 newDividend, uint16 newDivider);
+    event MaxSafeLtvChanged(uint16 oldDividend, uint16 oldDivider, uint16 newDividend, uint16 newDivider);
 
     /**
      * @notice Emitted when the minimum profit LTV ratio is changed
@@ -62,7 +62,7 @@ interface IAdministrationEvents {
      * @param newDivider The new min profit LTV denominator
      * @dev Min profit LTV represents the lowest LTV ratio where the vault can still generate profits
      */
-    event minProfitLtvChanged(uint16 oldDividend, uint16 oldDivider, uint16 newDividend, uint16 newDivider);
+    event MinProfitLtvChanged(uint16 oldDividend, uint16 oldDivider, uint16 newDividend, uint16 newDivider);
 
     /**
      * @notice Emitted when the whitelist registry address is updated

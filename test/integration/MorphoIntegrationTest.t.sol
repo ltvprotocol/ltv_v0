@@ -8,10 +8,9 @@ import {IERC20Module} from "src/interfaces/reads/IERC20Module.sol";
 import {ICollateralVaultModule} from "src/interfaces/reads/ICollateralVaultModule.sol";
 import {IBorrowVaultModule} from "src/interfaces/reads/IBorrowVaultModule.sol";
 import {ILowLevelRebalanceModule} from "src/interfaces/reads/ILowLevelRebalanceModule.sol";
-import {IAdministrationModule} from "src/interfaces/reads/IAdministrationModule.sol";
 import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
 import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
-import {IInitializeModule} from "src/interfaces/reads/IInitializeModule.sol";
+import {IInitializeModule} from "src/interfaces/writes/IInitializeModule.sol";
 import {IMorphoBlue} from "src/connectors/lending_connectors/interfaces/IMorphoBlue.sol";
 import {IMorphoOracle} from "src/connectors/oracle_connectors/interfaces/IMorphoOracle.sol";
 import {MorphoConnector} from "src/connectors/lending_connectors/MorphoConnector.sol";
@@ -67,7 +66,7 @@ contract MorphoIntegrationTest is Test {
         wsteth = IERC20(WSTETH);
 
         ModulesState memory modulesState = ModulesState({
-            administrationModule: IAdministrationModule(address(new AdministrationModule())),
+            administrationModule: address(new AdministrationModule()),
             auctionModule: IAuctionModule(address(new AuctionModule())),
             erc20Module: IERC20Module(address(new ERC20Module())),
             collateralVaultModule: ICollateralVaultModule(address(new CollateralVaultModule())),

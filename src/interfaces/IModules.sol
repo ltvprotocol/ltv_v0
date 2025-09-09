@@ -7,12 +7,11 @@ import {ILowLevelRebalanceModule} from "src/interfaces/reads/ILowLevelRebalanceM
 import {IBorrowVaultModule} from "src/interfaces/reads/IBorrowVaultModule.sol";
 import {ICollateralVaultModule} from "src/interfaces/reads/ICollateralVaultModule.sol";
 import {IInitializeModule} from "src/interfaces/reads/IInitializeModule.sol";
-import {IAdministrationModule} from "src/interfaces/reads/IAdministrationModule.sol";
+
 /**
  * @title IModules
  * @notice Interface defines modules structure for integration with LTV protocol.
  */
-
 interface IModules {
     /**
      * @dev Get the auction module
@@ -37,8 +36,8 @@ interface IModules {
     /**
      * @dev Get the administration module
      */
-    function administrationModule() external view returns (IAdministrationModule);
-    /**
+    function administrationModule() external view returns (address);
+     /**
      * @dev Get the initialize module
      */
     function initializeModule() external view returns (IInitializeModule);
