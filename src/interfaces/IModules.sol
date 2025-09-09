@@ -37,7 +37,7 @@ interface IModules {
      * @dev Get the administration module
      */
     function administrationModule() external view returns (address);
-     /**
+    /**
      * @dev Get the initialize module
      */
     function initializeModule() external view returns (IInitializeModule);
