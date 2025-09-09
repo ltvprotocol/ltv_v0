@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {ILendingConnector} from "../../interfaces/connectors/ILendingConnector.sol";
-import {IOracleConnector} from "../../interfaces/connectors/IOracleConnector.sol";
-import {AdmistrationSetters} from "../../state_transition/AdmistrationSetters.sol";
+import {ILendingConnector} from "../../../interfaces/connectors/ILendingConnector.sol";
+import {IOracleConnector} from "../../../interfaces/connectors/IOracleConnector.sol";
+import {AdmistrationSetters} from "../../../state_transition/AdmistrationSetters.sol";
 import {OwnableUpgradeable} from "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
 import {ReentrancyGuardUpgradeable} from
     "openzeppelin-contracts-upgradeable/contracts/utils/ReentrancyGuardUpgradeable.sol";

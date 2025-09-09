@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {AdministrationModifiers} from "../../modifiers/AdministrationModifiers.sol";
+import {AdministrationModifiers} from "../../../modifiers/AdministrationModifiers.sol";
 import {ReentrancyGuardUpgradeable} from
     "openzeppelin-contracts-upgradeable/contracts/utils/ReentrancyGuardUpgradeable.sol";
-import {AdmistrationSetters} from "../../state_transition/AdmistrationSetters.sol";
-import {FunctionStopperModifier} from "../../modifiers/FunctionStopperModifier.sol";
-import {IWhitelistRegistry} from "../../interfaces/IWhitelistRegistry.sol";
-import {ISlippageConnector} from "../../interfaces/connectors/ISlippageConnector.sol";
+import {AdmistrationSetters} from "../../../state_transition/AdmistrationSetters.sol";
+import {FunctionStopperModifier} from "../../../modifiers/FunctionStopperModifier.sol";
+import {IWhitelistRegistry} from "../../../interfaces/IWhitelistRegistry.sol";
+import {ISlippageConnector} from "../../../interfaces/connectors/ISlippageConnector.sol";
 
 abstract contract OnlyGovernor is
     AdmistrationSetters,
