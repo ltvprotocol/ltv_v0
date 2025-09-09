@@ -28,61 +28,7 @@ abstract contract AdministrationPublic is
     using sMulDiv for int256;
     using SafeERC20 for IERC20;
 
-    function setTargetLtv(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor nonReentrant {
-        _setTargetLtv(dividend, divider);
-    }
-
-    function setMaxSafeLtv(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor nonReentrant {
-        _setMaxSafeLtv(dividend, divider);
-    }
-
-    function setMinProfitLtv(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor nonReentrant {
-        _setMinProfitLtv(dividend, divider);
-    }
-
-    function setFeeCollector(address _feeCollector) external isFunctionAllowed onlyGovernor nonReentrant {
-        _setFeeCollector(_feeCollector);
-    }
-
-    function setMaxTotalAssetsInUnderlying(uint256 _maxTotalAssetsInUnderlying)
-        external
-        isFunctionAllowed
-        onlyGovernor
-        nonReentrant
-    {
-        _setMaxTotalAssetsInUnderlying(_maxTotalAssetsInUnderlying);
-    }
-
-    function setMaxDeleverageFee(uint16 dividend, uint16 divider)
-        external
-        isFunctionAllowed
-        onlyGovernor
-        nonReentrant
-    {
-        _setMaxDeleverageFee(dividend, divider);
-    }
-
-    function setIsWhitelistActivated(bool activate) external isFunctionAllowed onlyGovernor nonReentrant {
-        _setIsWhitelistActivated(activate);
-    }
-
-    function setWhitelistRegistry(IWhitelistRegistry value) external isFunctionAllowed onlyGovernor nonReentrant {
-        _setWhitelistRegistry(value);
-    }
-
-    function setSlippageConnector(ISlippageConnector _slippageConnector, bytes memory slippageConnectorData)
-        external
-        isFunctionAllowed
-        onlyGovernor
-        nonReentrant
-    {
-        _setSlippageConnector(_slippageConnector, slippageConnectorData);
-    }
-
-    function setMaxGrowthFee(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor nonReentrant {
-        _setMaxGrowthFee(dividend, divider);
-    }
-
+    
 
 
     function deleverageAndWithdraw(uint256 closeAmountBorrow, uint16 deleverageFeeDividend, uint16 deleverageFeeDivider)
