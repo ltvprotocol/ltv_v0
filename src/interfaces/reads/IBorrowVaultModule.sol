@@ -103,4 +103,6 @@ interface IBorrowVaultModule {
      * @dev Module function for ILTV.totalAssets. Also receives cached state for subsequent calculations.
      */
     function totalAssets(bool isDeposit, TotalAssetsState memory totalAssetsState) external view returns (uint256);
+
+    function asset() external view returns (address assetTokenAddress);
 }
