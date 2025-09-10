@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {TotalAssetsState} from "src/structs/state/vault/TotalAssetsState.sol";
-import {CommonTotalAssetsState} from "src/structs/state/vault/CommonTotalAssetsState.sol";
+import {TotalAssetsState} from "src/structs/state/vault/total_assets/TotalAssetsState.sol";
+import {CommonTotalAssetsState} from "src/structs/state/vault/total_assets/CommonTotalAssetsState.sol";
 import {GetRealCollateralAndRealBorrowAssetsReader} from "../common/GetRealCollateralAndRealBorrowAssetsReader.sol";
 
 contract TotalAssetsStateReader is GetRealCollateralAndRealBorrowAssetsReader {

@@ -11,7 +11,7 @@ import {IAuctionEvent} from "src/events/IAuctionEvent.sol";
 import {IERC4626Events} from "src/events/IERC4626Events.sol";
 import {IERC20Events} from "src/events/IERC20Events.sol";
 import {ILowLevelRebalanceEvent} from "src/events/ILowLevelRebalanceEvent.sol";
-import {StateInitData} from "src/structs/state/StateInitData.sol";
+import {StateInitData} from "src/structs/state/initialize/StateInitData.sol";
 
 interface ILTV is
     IAdministrationErrors,

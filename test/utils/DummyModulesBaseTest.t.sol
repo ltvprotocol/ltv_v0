@@ -10,7 +10,7 @@ import {IBorrowVaultModule} from "src/interfaces/reads/IBorrowVaultModule.sol";
 import {ILowLevelRebalanceModule} from "src/interfaces/reads/ILowLevelRebalanceModule.sol";
 import {IInitializeModule} from "src/interfaces/writes/IInitializeModule.sol";
 import {IAdministrationModule} from "src/interfaces/reads/IAdministrationModule.sol";
-import {ModulesState} from "src/structs/state/ModulesState.sol";
+import {ModulesState} from "src/structs/state/common/ModulesState.sol";
 import {ModulesProvider} from "src/elements/ModulesProvider.sol";
 import {DummyBorrowVaultModule} from "test/utils/modules/DummyBorrowVaultModule.t.sol";
 import {DummyCollateralVaultModule} from "test/utils/modules/DummyCollateralVaultModule.t.sol";

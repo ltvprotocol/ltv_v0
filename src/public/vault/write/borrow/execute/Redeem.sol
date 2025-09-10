@@ -3,14 +3,14 @@ pragma solidity ^0.8.28;
 
 import {IERC4626Events} from "src/events/IERC4626Events.sol";
 import {IVaultErrors} from "src/errors/IVaultErrors.sol";
-import {MaxWithdrawRedeemBorrowVaultState} from "src/structs/state/vault/MaxWithdrawRedeemBorrowVaultState.sol";
+import {MaxWithdrawRedeemBorrowVaultState} from "src/structs/state/vault/max/MaxWithdrawRedeemBorrowVaultState.sol";
 import {MaxWithdrawRedeemBorrowVaultStateReader} from
     "src/state_reader/vault/MaxWithdrawRedeemBorrowVaultStateReader.sol";
-import {MaxWithdrawRedeemBorrowVaultData} from "src/structs/data/vault/MaxWithdrawRedeemBorrowVaultData.sol";
+import {MaxWithdrawRedeemBorrowVaultData} from "src/structs/data/vault/max/MaxWithdrawRedeemBorrowVaultData.sol";
 import {DeltaFuture} from "src/structs/state_transition/DeltaFuture.sol";
 import {NextState} from "src/structs/state_transition/NextState.sol";
 import {NextStateData} from "src/structs/state_transition/NextStateData.sol";
-import {MintProtocolRewardsData} from "src/structs/data/MintProtocolRewardsData.sol";
+import {MintProtocolRewardsData} from "src/structs/data/vault/common/MintProtocolRewardsData.sol";
 import {NextStepData} from "src/structs/state_transition/NextStepData.sol";
 import {VaultStateTransition} from "src/state_transition/VaultStateTransition.sol";
 import {ApplyMaxGrowthFee} from "src/state_transition/ApplyMaxGrowthFee.sol";

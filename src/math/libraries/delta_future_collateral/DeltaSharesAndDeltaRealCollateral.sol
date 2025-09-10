@@ -3,12 +3,12 @@ pragma solidity ^0.8.28;
 
 import {IVaultErrors} from "src/errors/IVaultErrors.sol";
 import {Constants} from "src/Constants.sol";
-import {Cases} from "src/structs/data/vault/Cases.sol";
-import {DeltaSharesAndDeltaRealCollateralData} from "src/structs/data/vault/DeltaSharesAndDeltaRealCollateralData.sol";
+import {Cases} from "src/structs/data/vault/common/Cases.sol";
+import {DeltaSharesAndDeltaRealCollateralData} from "src/structs/data/vault/delta_real_collateral/DeltaSharesAndDeltaRealCollateralData.sol";
 import {DeltaSharesAndDeltaRealCollateralDividendData} from
-    "src/structs/data/vault/DeltaSharesAndDeltaRealCollateralDividendData.sol";
+    "src/structs/data/vault/delta_real_collateral/DeltaSharesAndDeltaRealCollateralDividendData.sol";
 import {DeltaSharesAndDeltaRealCollateralDividerData} from
-    "src/structs/data/vault/DeltaSharesAndDeltaRealCollateralDividerData.sol";
+    "src/structs/data/vault/delta_real_collateral/DeltaSharesAndDeltaRealCollateralDividerData.sol";
 import {CasesOperator} from "src/math/libraries/CasesOperator.sol";
 import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
 

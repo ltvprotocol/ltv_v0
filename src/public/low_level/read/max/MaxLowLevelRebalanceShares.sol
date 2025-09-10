@@ -2,10 +2,10 @@
 pragma solidity ^0.8.28;
 
 import {Constants} from "src/Constants.sol";
-import {MaxGrowthFeeData} from "src/structs/data/MaxGrowthFeeData.sol";
-import {TotalAssetsData} from "src/structs/data/vault/TotalAssetsData.sol";
-import {TotalAssetsState} from "src/structs/state/vault/TotalAssetsState.sol";
-import {MaxLowLevelRebalanceSharesState} from "src/structs/state/low_level/MaxLowLevelRebalanceSharesState.sol";
+import {MaxGrowthFeeData} from "src/structs/data/common/MaxGrowthFeeData.sol";
+import {TotalAssetsData} from "src/structs/data/vault/total_assets/TotalAssetsData.sol";
+import {TotalAssetsState} from "src/structs/state/vault/total_assets/TotalAssetsState.sol";
+import {MaxLowLevelRebalanceSharesState} from "src/structs/state/low_level/max/MaxLowLevelRebalanceSharesState.sol";
 import {MaxLowLevelRebalanceSharesData} from "src/structs/data/low_level/MaxLowLevelRebalanceSharesData.sol";
 import {MaxGrowthFee} from "src/math/abstracts/MaxGrowthFee.sol";
 import {CommonMath} from "src/math/libraries/CommonMath.sol";

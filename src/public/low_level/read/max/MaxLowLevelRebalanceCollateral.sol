@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 import {Constants} from "src/Constants.sol";
 import {MaxLowLevelRebalanceCollateralStateData} from
-    "src/structs/state/low_level/MaxLowLevelRebalanceCollateralStateData.sol";
+    "src/structs/state/low_level/max/MaxLowLevelRebalanceCollateralStateData.sol";
 import {MaxGrowthFee} from "src/math/abstracts/MaxGrowthFee.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 

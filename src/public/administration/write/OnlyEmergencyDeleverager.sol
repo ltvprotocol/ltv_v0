@@ -2,8 +2,8 @@
 pragma solidity ^0.8.28;
 
 import {Constants} from "../../../Constants.sol";
-import {MaxGrowthFeeState} from "../../../structs/state/MaxGrowthFeeState.sol";
-import {MaxGrowthFeeData} from "../../../structs/data/MaxGrowthFeeData.sol";
+import {MaxGrowthFeeState} from "../../../structs/state/common/MaxGrowthFeeState.sol";
+import {MaxGrowthFeeData} from "../../../structs/data/common/MaxGrowthFeeData.sol";
 import {AdministrationModifiers} from "../../../modifiers/AdministrationModifiers.sol";
 import {AdmistrationSetters} from "../../../state_transition/AdmistrationSetters.sol";
 import {ApplyMaxGrowthFee} from "../../../state_transition/ApplyMaxGrowthFee.sol";

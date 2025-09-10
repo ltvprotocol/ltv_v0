@@ -2,9 +2,9 @@
 pragma solidity ^0.8.28;
 
 import {Constants} from "src/Constants.sol";
-import {DepositWithdrawData} from "src/structs/data/vault/DepositWithdrawData.sol";
-import {PreviewDepositVaultState} from "src/structs/state/vault/PreviewDepositVaultState.sol";
-import {PreviewCollateralVaultData} from "src/structs/data/vault/PreviewCollateralVaultData.sol";
+import {DepositWithdrawData} from "src/structs/data/vault/common/DepositWithdrawData.sol";
+import {PreviewDepositVaultState} from "src/structs/state/vault/preview/PreviewDepositVaultState.sol";
+import {PreviewCollateralVaultData} from "src/structs/data/vault/preview/PreviewCollateralVaultData.sol";
 import {DeltaFuture} from "src/structs/state_transition/DeltaFuture.sol";
 import {VaultCollateral} from "src/math/abstracts/VaultCollateral.sol";
 import {DepositWithdraw} from "src/math/libraries/DepositWithdraw.sol";

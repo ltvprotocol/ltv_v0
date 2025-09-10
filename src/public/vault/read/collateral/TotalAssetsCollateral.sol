@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {TotalAssetsData} from "src/structs/data/vault/TotalAssetsData.sol";
-import {TotalAssetsState} from "src/structs/state/vault/TotalAssetsState.sol";
-import {TotalAssetsCollateralData} from "src/structs/data/vault/TotalAssetsCollateralData.sol";
+import {TotalAssetsData} from "src/structs/data/vault/total_assets/TotalAssetsData.sol";
+import {TotalAssetsState} from "src/structs/state/vault/total_assets/TotalAssetsState.sol";
+import {TotalAssetsCollateralData} from "src/structs/data/vault/total_assets/TotalAssetsCollateralData.sol";
 import {TotalAssets} from "src/public/vault/read/borrow/TotalAssets.sol";
 import {CommonMath} from "src/math/libraries/CommonMath.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";

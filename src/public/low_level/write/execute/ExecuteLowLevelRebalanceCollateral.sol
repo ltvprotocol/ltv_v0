@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {ExecuteLowLevelRebalanceState} from "src/structs/state/low_level/ExecuteLowLevelRebalanceState.sol";
+import {ExecuteLowLevelRebalanceState} from "src/structs/state/low_level/execute/ExecuteLowLevelRebalanceState.sol";
 import {MaxLowLevelRebalanceCollateralStateData} from
-    "src/structs/state/low_level/MaxLowLevelRebalanceCollateralStateData.sol";
+    "src/structs/state/low_level/max/MaxLowLevelRebalanceCollateralStateData.sol";
 import {LowLevelRebalanceData} from "src/structs/data/low_level/LowLevelRebalanceData.sol";
 import {ILowLevelRebalanceErrors} from "src/errors/ILowLevelRebalanceErrors.sol";
 import {ApplyMaxGrowthFee} from "src/state_transition/ApplyMaxGrowthFee.sol";

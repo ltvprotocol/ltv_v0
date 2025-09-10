@@ -8,7 +8,7 @@ import {ICollateralVaultModule} from "../interfaces/reads/ICollateralVaultModule
 import {IBorrowVaultModule} from "../interfaces/reads/IBorrowVaultModule.sol";
 import {ILowLevelRebalanceModule} from "../interfaces/reads/ILowLevelRebalanceModule.sol";
 import {IInitializeModule} from "../interfaces/writes/IInitializeModule.sol";
-import {ModulesState} from "../structs/state/ModulesState.sol";
+import {ModulesState} from "../structs/state/common/ModulesState.sol";
 import {IAdministrationModule} from "../interfaces/reads/IAdministrationModule.sol";
 
 /**

@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {PreviewWithdrawVaultState} from "src/structs/state/vault/PreviewWithdrawVaultState.sol";
-import {PreviewCollateralVaultData} from "src/structs/data/vault/PreviewCollateralVaultData.sol";
-import {MaxGrowthFeeData} from "src/structs/data/MaxGrowthFeeData.sol";
-import {TotalAssetsData} from "src/structs/data/vault/TotalAssetsData.sol";
-import {TotalAssetsCollateralData} from "src/structs/data/vault/TotalAssetsCollateralData.sol";
+import {PreviewWithdrawVaultState} from "src/structs/state/vault/preview/PreviewWithdrawVaultState.sol";
+import {PreviewCollateralVaultData} from "src/structs/data/vault/preview/PreviewCollateralVaultData.sol";
+import {MaxGrowthFeeData} from "src/structs/data/common/MaxGrowthFeeData.sol";
+import {TotalAssetsData} from "src/structs/data/vault/total_assets/TotalAssetsData.sol";
+import {TotalAssetsCollateralData} from "src/structs/data/vault/total_assets/TotalAssetsCollateralData.sol";
 import {TotalAssetsCollateral} from "src/public/vault/read/collateral/TotalAssetsCollateral.sol";
 import {MaxGrowthFee} from "src/math/abstracts/MaxGrowthFee.sol";
 import {CommonMath} from "src/math/libraries/CommonMath.sol";

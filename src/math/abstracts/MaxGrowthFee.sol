@@ -2,9 +2,9 @@
 pragma solidity ^0.8.28;
 
 import {Constants} from "src/Constants.sol";
-import {MaxGrowthFeeState} from "src/structs/state/MaxGrowthFeeState.sol";
-import {MaxGrowthFeeData} from "src/structs/data/MaxGrowthFeeData.sol";
-import {TotalAssetsState} from "src/structs/state/vault/TotalAssetsState.sol";
+import {MaxGrowthFeeState} from "src/structs/state/common/MaxGrowthFeeState.sol";
+import {MaxGrowthFeeData} from "src/structs/data/common/MaxGrowthFeeData.sol";
+import {TotalAssetsState} from "src/structs/state/vault/total_assets/TotalAssetsState.sol";
 import {TotalAssets} from "src/public/vault/read/borrow/TotalAssets.sol";
 import {TotalSupply} from "src/public/erc20/read/TotalSupply.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";

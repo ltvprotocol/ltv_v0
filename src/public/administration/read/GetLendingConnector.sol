@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {BoolReader} from "../../../math/abstracts/BoolReader.sol";
-import {LendingConnectorState} from "../../../structs/state/LendingConnectorState.sol";
+import {LendingConnectorState} from "../../../structs/state/common/LendingConnectorState.sol";
 
 /**
  * @title GetLendingConnector

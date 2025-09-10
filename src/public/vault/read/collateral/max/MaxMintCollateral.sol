@@ -2,8 +2,8 @@
 pragma solidity ^0.8.28;
 
 import {Constants} from "src/Constants.sol";
-import {MaxDepositMintCollateralVaultState} from "src/structs/state/vault/MaxDepositMintCollateralVaultState.sol";
-import {MaxDepositMintCollateralVaultData} from "src/structs/data/vault/MaxDepositMintCollateralVaultData.sol";
+import {MaxDepositMintCollateralVaultState} from "src/structs/state/vault/max/MaxDepositMintCollateralVaultState.sol";
+import {MaxDepositMintCollateralVaultData} from "src/structs/data/vault/max/MaxDepositMintCollateralVaultData.sol";
 import {PreviewMintCollateral} from "src/public/vault/read/collateral/preview/PreviewMintCollateral.sol";
 import {PreviewDepositCollateral} from "src/public/vault/read/collateral/preview/PreviewDepositCollateral.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";

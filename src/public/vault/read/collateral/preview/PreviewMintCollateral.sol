@@ -2,9 +2,9 @@
 pragma solidity ^0.8.28;
 
 import {Constants} from "src/Constants.sol";
-import {MintRedeemData} from "src/structs/data/vault/MintRedeemData.sol";
-import {PreviewDepositVaultState} from "src/structs/state/vault/PreviewDepositVaultState.sol";
-import {PreviewCollateralVaultData} from "src/structs/data/vault/PreviewCollateralVaultData.sol";
+import {MintRedeemData} from "src/structs/data/vault/common/MintRedeemData.sol";
+import {PreviewDepositVaultState} from "src/structs/state/vault/preview/PreviewDepositVaultState.sol";
+import {PreviewCollateralVaultData} from "src/structs/data/vault/preview/PreviewCollateralVaultData.sol";
 import {DeltaFuture} from "src/structs/state_transition/DeltaFuture.sol";
 import {VaultCollateral} from "src/math/abstracts/VaultCollateral.sol";
 import {MintRedeem} from "src/math/libraries/MintRedeem.sol";

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {BaseScript} from "../utils/BaseScript.s.sol";
-import {StateInitData} from "src/structs/state/StateInitData.sol";
+import {StateInitData} from "src/structs/state/initialize/StateInitData.sol";
 import {ILTV} from "src/interfaces/ILTV.sol";
 import {ILendingConnector} from "src/interfaces/connectors/ILendingConnector.sol";
 import {IOracleConnector} from "src/interfaces/connectors/IOracleConnector.sol";

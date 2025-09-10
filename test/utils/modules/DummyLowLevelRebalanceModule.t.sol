@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {TotalAssetsData} from "src/structs/data/vault/TotalAssetsData.sol";
+import {TotalAssetsData} from "src/structs/data/vault/total_assets/TotalAssetsData.sol";
 import {TotalAssets} from "src/public/vault/read/borrow/TotalAssets.sol";
 import {TotalSupply} from "src/public/erc20/read/TotalSupply.sol";
 import {LowLevelRebalanceModule} from "src/elements/modules/LowLevelRebalanceModule.sol";

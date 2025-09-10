@@ -12,7 +12,7 @@ import {IBorrowVaultModule} from "src/interfaces/reads/IBorrowVaultModule.sol";
 import {ILowLevelRebalanceModule} from "src/interfaces/reads/ILowLevelRebalanceModule.sol";
 import {IInitializeModule} from "src/interfaces/writes/IInitializeModule.sol";
 import {IAdministrationModule} from "src/interfaces/reads/IAdministrationModule.sol";
-import {StateInitData} from "src/structs/state/StateInitData.sol";
+import {StateInitData} from "src/structs/state/initialize/StateInitData.sol";
 import {AaveV3Connector} from "src/connectors/lending_connectors/AaveV3Connector.sol";
 import {AaveV3OracleConnector} from "src/connectors/oracle_connectors/AaveV3OracleConnector.sol";
 import {ConstantSlippageConnector} from "src/connectors/slippage_connectors/ConstantSlippageConnector.sol";

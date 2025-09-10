@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {OwnableUpgradeable} from "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
-import {StateInitData} from "src/structs/state/StateInitData.sol";
+import {StateInitData} from "src/structs/state/initialize/StateInitData.sol";
 import {AdmistrationSetters} from "src/state_transition/AdmistrationSetters.sol";
 
 abstract contract Initialize is AdmistrationSetters, OwnableUpgradeable {

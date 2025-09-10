@@ -15,7 +15,7 @@ import {ILowLevelRebalanceModule} from "src/interfaces/reads/ILowLevelRebalanceM
 import {IAdministrationModule} from "src/interfaces/reads/IAdministrationModule.sol";
 import {IAdministrationEvents} from "src/events/IAdministrationEvents.sol";
 import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
-import {ModulesState} from "src/structs/state/ModulesState.sol";
+import {ModulesState} from "src/structs/state/common/ModulesState.sol";
 import {ModulesProvider} from "src/elements/ModulesProvider.sol";
 import {AuctionModule} from "src/elements/modules/AuctionModule.sol";
 import {ERC20Module} from "src/elements/modules/ERC20Module.sol";

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {Constants} from "src/Constants.sol";
-import {Cases} from "src/structs/data/vault/Cases.sol";
+import {Cases} from "src/structs/data/vault/common/Cases.sol";
 import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
 
 /**

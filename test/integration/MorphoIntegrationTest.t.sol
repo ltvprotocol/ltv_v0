@@ -18,7 +18,7 @@ import {MorphoConnector} from "src/connectors/lending_connectors/MorphoConnector
 import {MorphoOracleConnector} from "src/connectors/oracle_connectors/MorphoOracleConnector.sol";
 import {ConstantSlippageConnector} from "src/connectors/slippage_connectors/ConstantSlippageConnector.sol";
 import {InitializeModule} from "src/elements/modules/InitializeModule.sol";
-import {StateInitData} from "src/structs/state/StateInitData.sol";
+import {StateInitData} from "src/structs/state/initialize/StateInitData.sol";
 import {ModulesProvider, ModulesState} from "src/elements/ModulesProvider.sol";
 import {AuctionModule} from "src/elements/modules/AuctionModule.sol";
 import {ERC20Module} from "src/elements/modules/ERC20Module.sol";

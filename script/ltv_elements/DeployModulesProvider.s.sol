@@ -4,7 +4,7 @@ pragma solidity ^0.8.28;
 import {BaseScript} from "../utils/BaseScript.s.sol";
 import {ModulesProvider} from "../../src/elements/ModulesProvider.sol";
 import {console} from "forge-std/console.sol";
-import {ModulesState} from "../../src/structs/state/ModulesState.sol";
+import {ModulesState} from "../../src/structs/state/common/ModulesState.sol";
 import {IERC20Module} from "../../src/interfaces/reads/IERC20Module.sol";
 import {IBorrowVaultModule} from "../../src/interfaces/reads/IBorrowVaultModule.sol";
 import {ICollateralVaultModule} from "../../src/interfaces/reads/ICollateralVaultModule.sol";

@@ -2,8 +2,8 @@
 pragma solidity ^0.8.28;
 
 import {Constants} from "src/Constants.sol";
-import {TotalAssetsData} from "src/structs/data/vault/TotalAssetsData.sol";
-import {TotalAssetsState} from "src/structs/state/vault/TotalAssetsState.sol";
+import {TotalAssetsData} from "src/structs/data/vault/total_assets/TotalAssetsData.sol";
+import {TotalAssetsState} from "src/structs/state/vault/total_assets/TotalAssetsState.sol";
 import {CommonMath} from "src/math/libraries/CommonMath.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 

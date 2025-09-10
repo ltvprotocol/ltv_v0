@@ -2,8 +2,8 @@
 pragma solidity ^0.8.28;
 
 import {Constants} from "src/Constants.sol";
-import {MaxWithdrawRedeemBorrowVaultState} from "src/structs/state/vault/MaxWithdrawRedeemBorrowVaultState.sol";
-import {MaxWithdrawRedeemBorrowVaultData} from "src/structs/data/vault/MaxWithdrawRedeemBorrowVaultData.sol";
+import {MaxWithdrawRedeemBorrowVaultState} from "src/structs/state/vault/max/MaxWithdrawRedeemBorrowVaultState.sol";
+import {MaxWithdrawRedeemBorrowVaultData} from "src/structs/data/vault/max/MaxWithdrawRedeemBorrowVaultData.sol";
 import {PreviewWithdraw} from "src/public/vault/read/borrow/preview/PreviewWithdraw.sol";
 import {PreviewRedeem} from "src/public/vault/read/borrow/preview/PreviewRedeem.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";

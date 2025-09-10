@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 import {NextState} from "src/structs/state_transition/NextState.sol";
 import {NextStepData} from "src/structs/state_transition/NextStepData.sol";
-import {MergeAuctionData} from "src/structs/data/MergeAuctionData.sol";
+import {MergeAuctionData} from "src/structs/data/vault/common/MergeAuctionData.sol";
 import {sMulDiv, uMulDiv} from "src/utils/MulDiv.sol";
 
 library NextStep {
