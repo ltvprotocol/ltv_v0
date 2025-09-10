@@ -37,7 +37,7 @@ contract ERC4626CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
         uint256 amount = 100;
         uint256 i = 0;
 
-        calls[i++] = CallWithCaller(abi.encodeCall(IERC4626.asset, ()), user); // <= unrecognized function selector 0x38d52e0f
+        calls[i++] = CallWithCaller(abi.encodeCall(IERC4626.asset, ()), user);
         calls[i++] = CallWithCaller(abi.encodeCall(IERC4626.totalAssets, ()), user);
         calls[i++] = CallWithCaller(abi.encodeCall(IERC4626.convertToShares, (amount)), user);
         calls[i++] = CallWithCaller(abi.encodeCall(IERC4626.convertToAssets, (amount)), user);
@@ -53,7 +53,7 @@ contract ERC4626CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
         calls[i++] = CallWithCaller(abi.encodeCall(IERC4626.maxRedeem, (user)), user);
         calls[i++] = CallWithCaller(abi.encodeCall(IERC4626.previewRedeem, (amount)), user);
         calls[i++] = CallWithCaller(abi.encodeCall(IERC4626.redeem, (amount, user, user)), user);
-        calls[i++] = CallWithCaller(abi.encodeCall(IERC4626Collateral.assetCollateral, ()), user); // <= unrecognized function selector 0x6c4beeb4
+        calls[i++] = CallWithCaller(abi.encodeCall(IERC4626Collateral.assetCollateral, ()), user);
         calls[i++] = CallWithCaller(abi.encodeCall(IERC4626Collateral.maxDepositCollateral, (user)), user);
         calls[i++] = CallWithCaller(abi.encodeCall(IERC4626Collateral.previewDepositCollateral, (amount)), user);
         calls[i++] = CallWithCaller(abi.encodeCall(IERC4626Collateral.depositCollateral, (amount, user)), user);

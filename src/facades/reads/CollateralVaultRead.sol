@@ -62,4 +62,8 @@ abstract contract CollateralVaultRead is
     function totalAssetsCollateral(bool isDeposit) external view returns (uint256) {
         return modules.collateralVaultModule().totalAssetsCollateral(isDeposit, totalAssetsState(isDeposit));
     }
+
+    function assetCollateral() external view returns (address) {
+        return modules.collateralVaultModule().assetCollateral();
+    }
 }

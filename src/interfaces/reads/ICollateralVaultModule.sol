@@ -65,4 +65,6 @@ interface ICollateralVaultModule {
         external
         view
         returns (uint256);
+
+    function assetCollateral() external view returns (address assetTokenAddress);
 }

@@ -7,8 +7,9 @@ import {Redeem} from "src/public/vault/borrow/execute/Redeem.sol";
 import {Withdraw} from "src/public/vault/borrow/execute/Withdraw.sol";
 import {ConvertToAssets} from "src/public/vault/borrow/convert/ConvertToAssets.sol";
 import {ConvertToShares} from "src/public/vault/borrow/convert/ConvertToShares.sol";
+import {Asset} from "src/public/vault/borrow/Asset.sol";
 
-contract BorrowVaultModule is Redeem, Withdraw, Deposit, Mint, ConvertToShares, ConvertToAssets {
+contract BorrowVaultModule is Redeem, Withdraw, Deposit, Mint, ConvertToShares, ConvertToAssets, Asset {
     constructor() {
         _disableInitializers();
     }

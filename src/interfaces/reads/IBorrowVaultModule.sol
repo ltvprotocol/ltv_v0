@@ -62,4 +62,6 @@ interface IBorrowVaultModule {
     function totalAssets(TotalAssetsState memory totalAssetsState) external view returns (uint256);
 
     function totalAssets(bool isDeposit, TotalAssetsState memory totalAssetsState) external view returns (uint256);
+
+    function asset() external view returns (address assetTokenAddress);
 }
