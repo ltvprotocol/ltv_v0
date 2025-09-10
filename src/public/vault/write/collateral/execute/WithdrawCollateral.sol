@@ -20,7 +20,7 @@ import {MaxWithdrawRedeemCollateralVaultStateReader} from
 import {MaxWithdrawCollateral} from "src/public/vault/read/collateral/max/MaxWithdrawCollateral.sol";
 import {NextStep} from "src/math/libraries/NextStep.sol";
 import {CommonMath} from "src/math/libraries/CommonMath.sol";
-import {UMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/math/libraries/MulDiv.sol";
 
 abstract contract WithdrawCollateral is
     MaxWithdrawRedeemCollateralVaultStateReader,

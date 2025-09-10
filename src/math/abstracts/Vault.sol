@@ -4,7 +4,7 @@ pragma solidity ^0.8.28;
 import {Constants} from "src/Constants.sol";
 import {MaxDepositMintStateToData} from "src/math/abstracts/state_to_data/max/MaxDepositMintStateToData.sol";
 import {MaxWithdrawRedeemStateToData} from "src/math/abstracts/state_to_data/max/MaxWithdrawRedeemStateToData.sol";
-import {UMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/math/libraries/MulDiv.sol";
 
 /**
  * @title Vault

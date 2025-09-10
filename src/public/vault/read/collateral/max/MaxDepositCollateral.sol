@@ -6,7 +6,7 @@ import {MaxDepositMintCollateralVaultState} from "src/structs/state/vault/max/Ma
 import {MaxDepositMintCollateralVaultData} from "src/structs/data/vault/max/MaxDepositMintCollateralVaultData.sol";
 import {PreviewMintCollateral} from "src/public/vault/read/collateral/preview/PreviewMintCollateral.sol";
 import {PreviewDepositCollateral} from "src/public/vault/read/collateral/preview/PreviewDepositCollateral.sol";
-import {UMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/math/libraries/MulDiv.sol";
 
 abstract contract MaxDepositCollateral is PreviewMintCollateral, PreviewDepositCollateral {
     using UMulDiv for uint256;

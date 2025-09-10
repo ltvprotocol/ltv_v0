@@ -6,7 +6,7 @@ import {LowLevelRebalanceData} from "src/structs/data/low_level/LowLevelRebalanc
 import {PreviewLowLevelRebalanceStateToData} from
     "src/math/abstracts/state_to_data/preview/PreviewLowLevelRebalanceStateToData.sol";
 import {LowLevelRebalanceMath} from "src/math/libraries/LowLevelRebalanceMath.sol";
-import {UMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/math/libraries/MulDiv.sol";
 
 abstract contract PreviewLowLevelRebalanceShares is PreviewLowLevelRebalanceStateToData {
     using UMulDiv for uint256;

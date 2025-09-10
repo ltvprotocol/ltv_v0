@@ -5,7 +5,7 @@ import {ILendingConnector} from "src/interfaces/connectors/ILendingConnector.sol
 import {MorphoConnectorStorage} from "src/structs/connectors/MorphoConnectorStorage.sol";
 import {IMorphoBlue} from "src/connectors/lending_connectors/interfaces/IMorphoBlue.sol";
 import {LTVState} from "src/states/LTVState.sol";
-import {UMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/math/libraries/MulDiv.sol";
 
 contract MorphoConnector is LTVState, ILendingConnector {
     using UMulDiv for uint128;

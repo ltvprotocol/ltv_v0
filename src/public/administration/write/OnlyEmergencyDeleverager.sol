@@ -10,7 +10,7 @@ import {ApplyMaxGrowthFee} from "../../../state_transition/ApplyMaxGrowthFee.sol
 import {Lending} from "../../../state_transition/Lending.sol";
 import {MaxGrowthFeeStateReader} from "../../../state_reader/common/MaxGrowthFeeStateReader.sol";
 import {MaxGrowthFee} from "../../../math/abstracts/MaxGrowthFee.sol";
-import {UMulDiv, SMulDiv} from "../../../utils/MulDiv.sol";
+import {UMulDiv, SMulDiv} from "../../../math/libraries/MulDiv.sol";
 import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 

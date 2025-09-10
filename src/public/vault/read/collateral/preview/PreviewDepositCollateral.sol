@@ -8,7 +8,7 @@ import {PreviewCollateralVaultData} from "src/structs/data/vault/preview/Preview
 import {DeltaFuture} from "src/structs/state_transition/DeltaFuture.sol";
 import {VaultCollateral} from "src/math/abstracts/VaultCollateral.sol";
 import {DepositWithdraw} from "src/math/libraries/DepositWithdraw.sol";
-import {UMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/math/libraries/MulDiv.sol";
 
 abstract contract PreviewDepositCollateral is VaultCollateral {
     using UMulDiv for uint256;

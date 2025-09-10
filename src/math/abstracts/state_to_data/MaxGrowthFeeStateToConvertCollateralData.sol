@@ -8,7 +8,7 @@ import {TotalAssetsState} from "src/structs/state/vault/total_assets/TotalAssets
 import {TotalAssetsCollateralData} from "src/structs/data/vault/total_assets/TotalAssetsCollateralData.sol";
 import {TotalAssetsCollateral} from "src/public/vault/read/collateral/TotalAssetsCollateral.sol";
 import {MaxGrowthFee} from "src/math/abstracts/MaxGrowthFee.sol";
-import {UMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/math/libraries/MulDiv.sol";
 
 /**
  * @title MaxGrowthFeeStateToConvertCollateralData

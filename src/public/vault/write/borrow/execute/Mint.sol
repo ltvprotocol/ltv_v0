@@ -20,7 +20,7 @@ import {Lending} from "src/state_transition/Lending.sol";
 import {MaxMint} from "src/public/vault/read/borrow/max/MaxMint.sol";
 import {NextStep} from "src/math/libraries/NextStep.sol";
 import {CommonMath} from "src/math/libraries/CommonMath.sol";
-import {UMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/math/libraries/MulDiv.sol";
 
 abstract contract Mint is
     MaxDepositMintBorrowVaultStateReader,

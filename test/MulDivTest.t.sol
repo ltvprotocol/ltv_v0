@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {Test} from "forge-std/Test.sol";
-import {UMulDiv, SMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv, SMulDiv} from "src/math/libraries/MulDiv.sol";
 import {EuclidianMod} from "./utils/math/EuclidianMod.sol";
 import {UnsignedHelpers} from "./helpers/UnsignedHelpers.sol";
 import {SignedHelpers} from "./helpers/SignedHelpers.sol";

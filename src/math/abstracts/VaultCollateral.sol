@@ -8,7 +8,7 @@ import {MaxWithdrawRedeemCollateralStateToData} from
     "src/math/abstracts/state_to_data/max/MaxWithdrawRedeemCollateralStateToData.sol";
 import {MaxGrowthFeeStateToConvertCollateralData} from
     "src/math/abstracts/state_to_data/MaxGrowthFeeStateToConvertCollateralData.sol";
-import {UMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/math/libraries/MulDiv.sol";
 
 /**
  * @title VaultCollateral

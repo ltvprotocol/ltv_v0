@@ -11,7 +11,7 @@ import {DeltaSharesAndDeltaRealCollateral} from
 import {DeltaSharesAndDeltaRealBorrow} from "src/math/libraries/delta_future_borrow/DeltaSharesAndDeltaRealBorrow.sol";
 import {CommonBorrowCollateral} from "src/math/libraries/CommonBorrowCollateral.sol";
 import {CasesOperator} from "src/math/libraries/CasesOperator.sol";
-import {UMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/math/libraries/MulDiv.sol";
 
 /**
  * @title MintRedeem

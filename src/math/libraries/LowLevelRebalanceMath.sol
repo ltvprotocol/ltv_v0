@@ -6,7 +6,7 @@ import {Constants} from "src/Constants.sol";
 import {LowLevelRebalanceData} from "src/structs/data/low_level/LowLevelRebalanceData.sol";
 import {DeltaRealCollateralFromDeltaSharesData} from
     "src/structs/data/low_level/DeltaRealCollateralFromDeltaSharesData.sol";
-import {SMulDiv} from "src/utils/MulDiv.sol";
+import {SMulDiv} from "src/math/libraries/MulDiv.sol";
 
 /**
  * @title LowLevelRebalanceMath

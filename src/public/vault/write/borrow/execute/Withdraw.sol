@@ -20,7 +20,7 @@ import {TransferFromProtocol} from "src/state_transition/TransferFromProtocol.so
 import {MaxWithdraw} from "src/public/vault/read/borrow/max/MaxWithdraw.sol";
 import {NextStep} from "src/math/libraries/NextStep.sol";
 import {CommonMath} from "src/math/libraries/CommonMath.sol";
-import {UMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/math/libraries/MulDiv.sol";
 
 abstract contract Withdraw is
     MaxWithdrawRedeemBorrowVaultStateReader,

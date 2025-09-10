@@ -4,7 +4,7 @@ pragma solidity ^0.8.28;
 import {MaxGrowthFeeState} from "src/structs/state/common/MaxGrowthFeeState.sol";
 import {MaxGrowthFeeData} from "src/structs/data/common/MaxGrowthFeeData.sol";
 import {MaxGrowthFee} from "src/math/abstracts/MaxGrowthFee.sol";
-import {UMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/math/libraries/MulDiv.sol";
 
 abstract contract ConvertToAssets is MaxGrowthFee {
     using UMulDiv for uint256;

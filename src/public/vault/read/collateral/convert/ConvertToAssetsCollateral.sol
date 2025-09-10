@@ -4,7 +4,7 @@ pragma solidity ^0.8.28;
 import {MaxGrowthFeeState} from "src/structs/state/common/MaxGrowthFeeState.sol";
 import {ConvertCollateralData} from "src/structs/data/vault/convert/ConvertCollateralData.sol";
 import {VaultCollateral} from "src/math/abstracts/VaultCollateral.sol";
-import {UMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/math/libraries/MulDiv.sol";
 
 abstract contract ConvertToAssetsCollateral is VaultCollateral {
     using UMulDiv for uint256;

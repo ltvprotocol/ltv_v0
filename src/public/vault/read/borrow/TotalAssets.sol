@@ -5,7 +5,7 @@ import {Constants} from "src/Constants.sol";
 import {TotalAssetsData} from "src/structs/data/vault/total_assets/TotalAssetsData.sol";
 import {TotalAssetsState} from "src/structs/state/vault/total_assets/TotalAssetsState.sol";
 import {CommonMath} from "src/math/libraries/CommonMath.sol";
-import {UMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/math/libraries/MulDiv.sol";
 
 abstract contract TotalAssets {
     using UMulDiv for uint256;

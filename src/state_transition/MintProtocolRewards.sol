@@ -4,7 +4,7 @@ pragma solidity ^0.8.28;
 import {MintProtocolRewardsData} from "src/structs/data/vault/common/MintProtocolRewardsData.sol";
 import {Constants} from "src/Constants.sol";
 import {ERC20} from "src/state_transition/ERC20.sol";
-import {UMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/math/libraries/MulDiv.sol";
 
 abstract contract MintProtocolRewards is ERC20 {
     using UMulDiv for uint256;

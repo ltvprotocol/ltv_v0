@@ -5,7 +5,7 @@ import {Constants} from "src/Constants.sol";
 import {MaxLowLevelRebalanceCollateralStateData} from
     "src/structs/state/low_level/max/MaxLowLevelRebalanceCollateralStateData.sol";
 import {MaxGrowthFee} from "src/math/abstracts/MaxGrowthFee.sol";
-import {UMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/math/libraries/MulDiv.sol";
 
 abstract contract MaxLowLevelRebalanceCollateral is MaxGrowthFee {
     using UMulDiv for uint256;

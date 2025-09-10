@@ -8,7 +8,7 @@ import {DeltaFuture} from "src/structs/state_transition/DeltaFuture.sol";
 import {MintRedeemData} from "src/structs/data/vault/common/MintRedeemData.sol";
 import {MintRedeem} from "src/math/libraries/MintRedeem.sol";
 import {Vault} from "src/math/abstracts/Vault.sol";
-import {UMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/math/libraries/MulDiv.sol";
 
 abstract contract PreviewMint is Vault {
     using UMulDiv for uint256;

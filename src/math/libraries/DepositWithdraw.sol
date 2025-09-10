@@ -10,7 +10,7 @@ import {DeltaRealBorrowAndDeltaRealCollateral} from
     "src/math/libraries/delta_future_collateral/DeltaRealBorrowAndDeltaRealCollateral.sol";
 import {CommonBorrowCollateral} from "src/math/libraries/CommonBorrowCollateral.sol";
 import {CasesOperator} from "src/math/libraries/CasesOperator.sol";
-import {UMulDiv, SMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv, SMulDiv} from "src/math/libraries/MulDiv.sol";
 
 /**
  * @title DepositWithdraw

@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 import {BaseTest} from "test/utils/BaseTest.t.sol";
 import {FutureExecutorInvariant} from "test/auction/FutureExecutorInvariant.t.sol";
-import {UMulDiv, SMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv, SMulDiv} from "src/math/libraries/MulDiv.sol";
 
 // forge-lint: disable-start(unsafe-typecast)
 contract AuctionTestCommon is BaseTest, FutureExecutorInvariant {

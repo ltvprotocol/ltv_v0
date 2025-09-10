@@ -5,7 +5,7 @@ import {Constants} from "src/Constants.sol";
 import {ERC20} from "src/state_transition/ERC20.sol";
 import {TotalSupply} from "src/public/erc20/read/TotalSupply.sol";
 import {TotalAssets} from "src/public/vault/read/borrow/TotalAssets.sol";
-import {UMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/math/libraries/MulDiv.sol";
 
 abstract contract ApplyMaxGrowthFee is TotalAssets, TotalSupply, ERC20 {
     using UMulDiv for uint256;

@@ -4,7 +4,7 @@ pragma solidity ^0.8.28;
 import {IAuctionErrors} from "src/errors/IAuctionErrors.sol";
 import {AuctionData} from "src/structs/data/auction/AuctionData.sol";
 import {DeltaAuctionState} from "src/structs/state_transition/DeltaAuctionState.sol";
-import {SMulDiv} from "src/utils/MulDiv.sol";
+import {SMulDiv} from "src/math/libraries/MulDiv.sol";
 
 /**
  * @title AuctionMath

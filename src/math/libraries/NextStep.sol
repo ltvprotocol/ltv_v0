@@ -4,7 +4,7 @@ pragma solidity ^0.8.28;
 import {NextState} from "src/structs/state_transition/NextState.sol";
 import {NextStepData} from "src/structs/state_transition/NextStepData.sol";
 import {MergeAuctionData} from "src/structs/data/vault/common/MergeAuctionData.sol";
-import {SMulDiv, UMulDiv} from "src/utils/MulDiv.sol";
+import {SMulDiv, UMulDiv} from "src/math/libraries/MulDiv.sol";
 
 library NextStep {
     using SMulDiv for int256;

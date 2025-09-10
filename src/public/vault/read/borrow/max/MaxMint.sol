@@ -6,7 +6,7 @@ import {MaxDepositMintBorrowVaultState} from "src/structs/state/vault/max/MaxDep
 import {MaxDepositMintBorrowVaultData} from "src/structs/data/vault/max/MaxDepositMintBorrowVaultData.sol";
 import {PreviewDeposit} from "src/public/vault/read/borrow/preview/PreviewDeposit.sol";
 import {PreviewMint} from "src/public/vault/read/borrow/preview/PreviewMint.sol";
-import {UMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/math/libraries/MulDiv.sol";
 
 abstract contract MaxMint is PreviewMint, PreviewDeposit {
     using UMulDiv for uint256;
