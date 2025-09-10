@@ -9,6 +9,9 @@ interface IERC4626Collateral {
     );
 
     function assetCollateral() external view returns (address assetTokenAddress);
+    function totalAssetsCollateral() external view returns (uint256 totalManagedAssets);
+    function convertToSharesCollateral(uint256 assets) external view returns (uint256 shares);
+    function convertToAssetsCollateral(uint256 shares) external view returns (uint256 assets);
 
     function maxDepositCollateral(address receiver) external view returns (uint256 maxAssets);
     function previewDepositCollateral(uint256 assets) external view returns (uint256 shares);

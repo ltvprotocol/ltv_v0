@@ -33,7 +33,7 @@ contract ERC4626CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
     address testUser = makeAddr("testUser");
 
     function erc4626CallsWithCaller(address user) public pure returns (CallWithCaller[] memory) {
-        CallWithCaller[] memory calls = new CallWithCaller[](29);
+        CallWithCaller[] memory calls = new CallWithCaller[](32);
         uint256 amount = 100;
         uint256 i = 0;
 
@@ -54,6 +54,9 @@ contract ERC4626CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
         calls[i++] = CallWithCaller(abi.encodeCall(IERC4626.previewRedeem, (amount)), user);
         calls[i++] = CallWithCaller(abi.encodeCall(IERC4626.redeem, (amount, user, user)), user);
         calls[i++] = CallWithCaller(abi.encodeCall(IERC4626Collateral.assetCollateral, ()), user);
+        calls[i++] = CallWithCaller(abi.encodeCall(IERC4626Collateral.totalAssetsCollateral, ()), user);
+        calls[i++] = CallWithCaller(abi.encodeCall(IERC4626Collateral.convertToSharesCollateral, (amount)), user);
+        calls[i++] = CallWithCaller(abi.encodeCall(IERC4626Collateral.convertToAssetsCollateral, (amount)), user);
         calls[i++] = CallWithCaller(abi.encodeCall(IERC4626Collateral.maxDepositCollateral, (user)), user);
         calls[i++] = CallWithCaller(abi.encodeCall(IERC4626Collateral.previewDepositCollateral, (amount)), user);
         calls[i++] = CallWithCaller(abi.encodeCall(IERC4626Collateral.depositCollateral, (amount, user)), user);
@@ -130,7 +133,7 @@ contract ERC4626CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
         emit IERC4626.Deposit(address(0), address(0), 0, 0);
 
         vm.prank(testUser);
-        ltv.deposit(100, testUser);
+        ltv.deposit(10000, testUser);
     }
 
     function test_withdrawExecutesAndEmitsEvent(DefaultTestData memory data)
@@ -143,7 +146,7 @@ contract ERC4626CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
         emit IERC4626.Withdraw(address(0), address(0), address(0), 0, 0);
 
         vm.prank(testUser);
-        ltv.withdraw(100, testUser, testUser);
+        ltv.withdraw(10000, testUser, testUser);
     }
 
     function test_mintExecutesAndEmitsEvent(DefaultTestData memory data) public testWithPredefinedDefaultValues(data) {
@@ -153,7 +156,7 @@ contract ERC4626CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
         emit IERC4626.Deposit(address(0), address(0), 0, 0);
 
         vm.prank(testUser);
-        ltv.mint(100, testUser);
+        ltv.mint(10000, testUser);
     }
 
     function test_redeemExecutesAndEmitsEvent(DefaultTestData memory data)
@@ -166,7 +169,7 @@ contract ERC4626CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
         emit IERC4626.Withdraw(address(0), address(0), address(0), 0, 0);
 
         vm.prank(testUser);
-        ltv.redeem(100, testUser, testUser);
+        ltv.redeem(10000, testUser, testUser);
     }
 
     function test_depositCollateralExecutesAndEmitsEvent(DefaultTestData memory data)
@@ -179,7 +182,7 @@ contract ERC4626CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
         emit IERC4626Collateral.DepositCollateral(address(0), address(0), 0, 0);
 
         vm.prank(testUser);
-        ltv.depositCollateral(100, testUser);
+        ltv.depositCollateral(10000, testUser);
     }
 
     function test_withdrawCollateralExecutesAndEmitsEvent(DefaultTestData memory data)
@@ -192,7 +195,7 @@ contract ERC4626CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
         emit IERC4626Collateral.WithdrawCollateral(address(0), address(0), address(0), 0, 0);
 
         vm.prank(testUser);
-        ltv.withdrawCollateral(100, testUser, testUser);
+        ltv.withdrawCollateral(10000, testUser, testUser);
     }
 
     function test_mintCollateralExecutesAndEmitsEvent(DefaultTestData memory data)
@@ -205,7 +208,7 @@ contract ERC4626CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
         emit IERC4626Collateral.DepositCollateral(address(0), address(0), 0, 0);
 
         vm.prank(testUser);
-        ltv.mintCollateral(100, testUser);
+        ltv.mintCollateral(10000, testUser);
     }
 
     function test_redeemCollateralExecutesAndEmitsEvent(DefaultTestData memory data)
@@ -218,6 +221,6 @@ contract ERC4626CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
         emit IERC4626Collateral.WithdrawCollateral(address(0), address(0), address(0), 0, 0);
 
         vm.prank(testUser);
-        ltv.redeemCollateral(100, testUser, testUser);
+        ltv.redeemCollateral(10000, testUser, testUser);
     }
 }
