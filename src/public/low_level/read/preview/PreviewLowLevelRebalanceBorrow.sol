@@ -6,10 +6,10 @@ import {LowLevelRebalanceData} from "src/structs/data/low_level/LowLevelRebalanc
 import {PreviewLowLevelRebalanceStateToData} from
     "src/math/abstracts/state_to_data/preview/PreviewLowLevelRebalanceStateToData.sol";
 import {LowLevelRebalanceMath} from "src/math/libraries/LowLevelRebalanceMath.sol";
-import {uMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract PreviewLowLevelRebalanceBorrow is PreviewLowLevelRebalanceStateToData {
-    using uMulDiv for uint256;
+    using UMulDiv for uint256;
 
     function previewLowLevelRebalanceBorrow(int256 deltaBorrow, PreviewLowLevelRebalanceState memory state)
         public

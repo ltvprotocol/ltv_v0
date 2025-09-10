@@ -6,10 +6,10 @@ import {MaxDepositMintBorrowVaultState} from "src/structs/state/vault/max/MaxDep
 import {MaxDepositMintBorrowVaultData} from "src/structs/data/vault/max/MaxDepositMintBorrowVaultData.sol";
 import {PreviewDeposit} from "src/public/vault/read/borrow/preview/PreviewDeposit.sol";
 import {PreviewMint} from "src/public/vault/read/borrow/preview/PreviewMint.sol";
-import {uMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract MaxMint is PreviewMint, PreviewDeposit {
-    using uMulDiv for uint256;
+    using UMulDiv for uint256;
 
     function maxMint(MaxDepositMintBorrowVaultState memory state) public pure returns (uint256) {
         return _maxMint(maxDepositMintStateToData(state));

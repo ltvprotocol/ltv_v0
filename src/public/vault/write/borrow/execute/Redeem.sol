@@ -20,7 +20,7 @@ import {TransferFromProtocol} from "src/state_transition/TransferFromProtocol.so
 import {MaxRedeem} from "src/public/vault/read/borrow/max/MaxRedeem.sol";
 import {NextStep} from "src/math/libraries/NextStep.sol";
 import {CommonMath} from "src/math/libraries/CommonMath.sol";
-import {uMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract Redeem is
     MaxWithdrawRedeemBorrowVaultStateReader,
@@ -33,7 +33,7 @@ abstract contract Redeem is
     IERC4626Events,
     IVaultErrors
 {
-    using uMulDiv for uint256;
+    using UMulDiv for uint256;
 
     function redeem(uint256 shares, address receiver, address owner)
         external

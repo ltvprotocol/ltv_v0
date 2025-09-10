@@ -11,7 +11,7 @@ import {DeltaSharesAndDeltaRealCollateral} from
 import {DeltaSharesAndDeltaRealBorrow} from "src/math/libraries/delta_future_borrow/DeltaSharesAndDeltaRealBorrow.sol";
 import {CommonBorrowCollateral} from "src/math/libraries/CommonBorrowCollateral.sol";
 import {CasesOperator} from "src/math/libraries/CasesOperator.sol";
-import {uMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/utils/MulDiv.sol";
 
 /**
  * @title MintRedeem
@@ -21,7 +21,7 @@ import {uMulDiv} from "src/utils/MulDiv.sol";
  * @dev These calculations are derived from the ltv protocol paper.
  */
 library MintRedeem {
-    using uMulDiv for uint256;
+    using UMulDiv for uint256;
 
     function calculateMintRedeem(MintRedeemData memory data)
         public

@@ -8,10 +8,10 @@ import {PreviewCollateralVaultData} from "src/structs/data/vault/preview/Preview
 import {DeltaFuture} from "src/structs/state_transition/DeltaFuture.sol";
 import {VaultCollateral} from "src/math/abstracts/VaultCollateral.sol";
 import {MintRedeem} from "src/math/libraries/MintRedeem.sol";
-import {uMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract PreviewRedeemCollateral is VaultCollateral {
-    using uMulDiv for uint256;
+    using UMulDiv for uint256;
 
     function previewRedeemCollateral(uint256 shares, PreviewWithdrawVaultState memory state)
         public

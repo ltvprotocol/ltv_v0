@@ -6,10 +6,10 @@ import {MaxWithdrawRedeemCollateralVaultState} from "src/structs/state/vault/max
 import {MaxWithdrawRedeemCollateralVaultData} from "src/structs/data/vault/max/MaxWithdrawRedeemCollateralVaultData.sol";
 import {PreviewWithdrawCollateral} from "src/public/vault/read/collateral/preview/PreviewWithdrawCollateral.sol";
 import {PreviewRedeemCollateral} from "src/public/vault/read/collateral/preview/PreviewRedeemCollateral.sol";
-import {uMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract MaxWithdrawCollateral is PreviewWithdrawCollateral, PreviewRedeemCollateral {
-    using uMulDiv for uint256;
+    using UMulDiv for uint256;
 
     function maxWithdrawCollateral(MaxWithdrawRedeemCollateralVaultState memory state) public pure returns (uint256) {
         return

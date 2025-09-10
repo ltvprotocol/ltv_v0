@@ -2,15 +2,15 @@
 pragma solidity ^0.8.28;
 
 import {Constants} from "src/Constants.sol";
-import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv, SMulDiv} from "src/utils/MulDiv.sol";
 
 /**
  * @title CommonMath
  * @notice This library contains functions to precalculate state before vault operations.
  */
 library CommonMath {
-    using uMulDiv for uint256;
-    using sMulDiv for int256;
+    using UMulDiv for uint256;
+    using SMulDiv for int256;
 
     /**
      * @notice This function converts real collateral amount from collateral asset to underlying asset.

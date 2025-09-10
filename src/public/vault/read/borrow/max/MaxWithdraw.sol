@@ -6,10 +6,10 @@ import {MaxWithdrawRedeemBorrowVaultState} from "src/structs/state/vault/max/Max
 import {MaxWithdrawRedeemBorrowVaultData} from "src/structs/data/vault/max/MaxWithdrawRedeemBorrowVaultData.sol";
 import {PreviewWithdraw} from "src/public/vault/read/borrow/preview/PreviewWithdraw.sol";
 import {PreviewRedeem} from "src/public/vault/read/borrow/preview/PreviewRedeem.sol";
-import {uMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract MaxWithdraw is PreviewWithdraw, PreviewRedeem {
-    using uMulDiv for uint256;
+    using UMulDiv for uint256;
 
     function maxWithdraw(MaxWithdrawRedeemBorrowVaultState memory state) public pure returns (uint256) {
         return _maxWithdraw(maxWithdrawRedeemStateToData(state));

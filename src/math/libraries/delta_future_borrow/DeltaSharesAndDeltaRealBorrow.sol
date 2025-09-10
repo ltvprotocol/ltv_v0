@@ -10,7 +10,7 @@ import {DeltaSharesAndDeltaRealBorrowDividendData} from
 import {DeltaSharesAndDeltaRealBorrowDividerData} from
     "src/structs/data/vault/delta_real_borrow/DeltaSharesAndDeltaRealBorrowDividerData.sol";
 import {CasesOperator} from "src/math/libraries/CasesOperator.sol";
-import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv, SMulDiv} from "src/utils/MulDiv.sol";
 
 /**
  * @title DeltaSharesAndDeltaRealBorrow
@@ -22,8 +22,8 @@ import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
  * collateral to borrow auction is in progress, and vice versa.
  */
 library DeltaSharesAndDeltaRealBorrow {
-    using uMulDiv for uint256;
-    using sMulDiv for int256;
+    using UMulDiv for uint256;
+    using SMulDiv for int256;
 
     function calculateDividentByDeltaSharesAndDeltaRealBorrow(
         DeltaSharesAndDeltaRealBorrowDividendData memory data,

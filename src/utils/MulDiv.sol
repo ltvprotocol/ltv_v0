@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 // TODO: refactor to UMulDiv or UnsignedMulDiv
-library uMulDiv {
+library UMulDiv {
     uint256 internal constant MAX_UINT256 = 2 ** 256 - 1;
 
     function mulDivDown(uint256 factorA, uint256 factorB, uint256 denominator) internal pure returns (uint256 result) {
@@ -33,7 +33,7 @@ library uMulDiv {
 }
 
 // TODO: refactor to SMulDiv or SignedMulDiv
-library sMulDiv {
+library SMulDiv {
     // Maximum value of a signed 256-bit integer
     int256 internal constant MAX_INT256 = type(int256).max;
 

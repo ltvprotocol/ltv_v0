@@ -4,10 +4,10 @@ pragma solidity ^0.8.28;
 import {MaxGrowthFeeState} from "src/structs/state/common/MaxGrowthFeeState.sol";
 import {ConvertCollateralData} from "src/structs/data/vault/convert/ConvertCollateralData.sol";
 import {VaultCollateral} from "src/math/abstracts/VaultCollateral.sol";
-import {uMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract ConvertToSharesCollateral is VaultCollateral {
-    using uMulDiv for uint256;
+    using UMulDiv for uint256;
 
     function convertToSharesCollateral(uint256 assets, MaxGrowthFeeState memory state)
         external

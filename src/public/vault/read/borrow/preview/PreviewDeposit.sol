@@ -8,10 +8,10 @@ import {PreviewDepositBorrowVaultData} from "src/structs/data/vault/preview/Prev
 import {DeltaFuture} from "src/structs/state_transition/DeltaFuture.sol";
 import {DepositWithdraw} from "src/math/libraries/DepositWithdraw.sol";
 import {Vault} from "src/math/abstracts/Vault.sol";
-import {uMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract PreviewDeposit is Vault {
-    using uMulDiv for uint256;
+    using UMulDiv for uint256;
 
     function previewDeposit(uint256 assets, PreviewDepositVaultState memory state)
         public

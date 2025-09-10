@@ -20,7 +20,7 @@ import {Lending} from "src/state_transition/Lending.sol";
 import {MaxDeposit} from "src/public/vault/read/borrow/max/MaxDeposit.sol";
 import {NextStep} from "src/math/libraries/NextStep.sol";
 import {CommonMath} from "src/math/libraries/CommonMath.sol";
-import {uMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract Deposit is
     MaxDepositMintBorrowVaultStateReader,
@@ -32,7 +32,7 @@ abstract contract Deposit is
     IERC4626Events,
     IVaultErrors
 {
-    using uMulDiv for uint256;
+    using UMulDiv for uint256;
     using SafeERC20 for IERC20;
 
     function deposit(uint256 assets, address receiver) external isFunctionAllowed nonReentrant returns (uint256) {

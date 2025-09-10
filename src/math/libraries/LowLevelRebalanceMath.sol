@@ -6,7 +6,7 @@ import {Constants} from "src/Constants.sol";
 import {LowLevelRebalanceData} from "src/structs/data/low_level/LowLevelRebalanceData.sol";
 import {DeltaRealCollateralFromDeltaSharesData} from
     "src/structs/data/low_level/DeltaRealCollateralFromDeltaSharesData.sol";
-import {sMulDiv} from "src/utils/MulDiv.sol";
+import {SMulDiv} from "src/utils/MulDiv.sol";
 
 /**
  * @title LowLevelRebalanceMath
@@ -16,7 +16,7 @@ import {sMulDiv} from "src/utils/MulDiv.sol";
  * @dev These calculations are derived from the ltv protocol paper.
  */
 library LowLevelRebalanceMath {
-    using sMulDiv for int256;
+    using SMulDiv for int256;
 
     /**
      * @notice This function calculates delta real collateral from delta shares.

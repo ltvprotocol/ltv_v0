@@ -2,38 +2,38 @@
 pragma solidity ^0.8.28;
 
 import {Test} from "forge-std/Test.sol";
-import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv, SMulDiv} from "src/utils/MulDiv.sol";
 import {EuclidianMod} from "./utils/math/EuclidianMod.sol";
 import {UnsignedHelpers} from "./helpers/UnsignedHelpers.sol";
 import {SignedHelpers} from "./helpers/SignedHelpers.sol";
 
 contract MulDivTest is Test, EuclidianMod, UnsignedHelpers, SignedHelpers {
     /// forge-config: default.allow_internal_expect_revert = true
-    function test_uMulDivUpRevertsOnZeroDenominator(uint256 x, uint256 y) public {
+    function test_UMulDivUpRevertsOnZeroDenominator(uint256 x, uint256 y) public {
         vm.expectRevert(bytes(""));
-        uMulDiv.mulDivUp(x, y, 0);
+        UMulDiv.mulDivUp(x, y, 0);
     }
 
     /// forge-config: default.allow_internal_expect_revert = true
-    function test_uMulDivDownRevertsOnZeroDenominator(uint256 x, uint256 y) public {
+    function test_UMulDivDownRevertsOnZeroDenominator(uint256 x, uint256 y) public {
         vm.expectRevert(bytes(""));
-        uMulDiv.mulDivDown(x, y, 0);
+        UMulDiv.mulDivDown(x, y, 0);
     }
 
     /// forge-config: default.allow_internal_expect_revert = true
-    function test_sMulDivUpRevertsOnZeroDenominator(int256 x, int256 y) public {
+    function test_SMulDivUpRevertsOnZeroDenominator(int256 x, int256 y) public {
         vm.expectRevert(bytes(""));
-        sMulDiv.mulDivUp(x, y, 0);
+        SMulDiv.mulDivUp(x, y, 0);
     }
 
     /// forge-config: default.allow_internal_expect_revert = true
-    function test_sMulDivDownRevertsOnZeroDenominator(int256 x, int256 y) public {
+    function test_SMulDivDownRevertsOnZeroDenominator(int256 x, int256 y) public {
         vm.expectRevert(bytes(""));
-        sMulDiv.mulDivDown(x, y, 0);
+        SMulDiv.mulDivDown(x, y, 0);
     }
 
     /// forge-config: default.allow_internal_expect_revert = true
-    function test_uMulDivUpRevertsOnOverflow(uint256 x, uint256 y, uint256 denominator) public {
+    function test_UMulDivUpRevertsOnOverflow(uint256 x, uint256 y, uint256 denominator) public {
         x = uHandleZero(x);
         y = uHandleZero(y);
         denominator = uHandleZero(denominator);
@@ -41,11 +41,11 @@ contract MulDivTest is Test, EuclidianMod, UnsignedHelpers, SignedHelpers {
         (x, y) = uFindMulOverflow(x, y);
 
         vm.expectRevert(bytes(""));
-        uMulDiv.mulDivUp(x, y, denominator);
+        UMulDiv.mulDivUp(x, y, denominator);
     }
 
     /// forge-config: default.allow_internal_expect_revert = true
-    function test_uMulDivDownRevertsOnOverflow(uint256 x, uint256 y, uint256 denominator) public {
+    function test_UMulDivDownRevertsOnOverflow(uint256 x, uint256 y, uint256 denominator) public {
         x = uHandleZero(x);
         y = uHandleZero(y);
         denominator = uHandleZero(denominator);
@@ -53,11 +53,11 @@ contract MulDivTest is Test, EuclidianMod, UnsignedHelpers, SignedHelpers {
         (x, y) = uFindMulOverflow(x, y);
 
         vm.expectRevert(bytes(""));
-        uMulDiv.mulDivDown(x, y, denominator);
+        UMulDiv.mulDivDown(x, y, denominator);
     }
 
     /// forge-config: default.allow_internal_expect_revert = true
-    function test_sMulDivUpRevertsOnOverflow(int256 x, int256 y, int256 denominator) public {
+    function test_SMulDivUpRevertsOnOverflow(int256 x, int256 y, int256 denominator) public {
         x = sHandleZero(x);
         y = sHandleZero(y);
         denominator = sHandleZero(denominator);
@@ -65,11 +65,11 @@ contract MulDivTest is Test, EuclidianMod, UnsignedHelpers, SignedHelpers {
         (x, y) = sFindMulOverflow(x, y);
 
         vm.expectRevert(bytes(""));
-        sMulDiv.mulDivUp(x, y, denominator);
+        SMulDiv.mulDivUp(x, y, denominator);
     }
 
     /// forge-config: default.allow_internal_expect_revert = true
-    function test_sMulDivDownRevertsOnOverflow(int256 x, int256 y, int256 denominator) public {
+    function test_SMulDivDownRevertsOnOverflow(int256 x, int256 y, int256 denominator) public {
         x = sHandleZero(x);
         y = sHandleZero(y);
         denominator = sHandleZero(denominator);
@@ -77,161 +77,161 @@ contract MulDivTest is Test, EuclidianMod, UnsignedHelpers, SignedHelpers {
         (x, y) = sFindMulOverflow(x, y);
 
         vm.expectRevert(bytes(""));
-        sMulDiv.mulDivDown(x, y, denominator);
+        SMulDiv.mulDivDown(x, y, denominator);
     }
 
     /// forge-config: default.allow_internal_expect_revert = true
-    function test_sMulDivUpDivisionOverflow() public {
+    function test_SMulDivUpDivisionOverflow() public {
         int256 x = type(int256).min;
         int256 y = 1;
         int256 denominator = -1;
 
         vm.expectRevert(bytes(""));
-        sMulDiv.mulDivUp(x, y, denominator);
+        SMulDiv.mulDivUp(x, y, denominator);
     }
 
     /// forge-config: default.allow_internal_expect_revert = true
-    function test_sMulDivDownDivisionOverflow() public {
+    function test_SMulDivDownDivisionOverflow() public {
         int256 x = type(int256).min;
         int256 y = 1;
         int256 denominator = -1;
 
         vm.expectRevert(bytes(""));
-        sMulDiv.mulDivDown(x, y, denominator);
+        SMulDiv.mulDivDown(x, y, denominator);
     }
 
-    function test_uMulDivUpZeroWhenXEqZero(uint256 y, uint256 denominator) public pure {
+    function test_UMulDivUpZeroWhenXEqZero(uint256 y, uint256 denominator) public pure {
         denominator = uHandleZero(denominator);
 
-        uint256 result = uMulDiv.mulDivUp(0, y, denominator);
+        uint256 result = UMulDiv.mulDivUp(0, y, denominator);
         assertEq(result, 0);
     }
 
-    function test_uMulDivUpZeroWhenYEqZero(uint256 x, uint256 denominator) public pure {
+    function test_UMulDivUpZeroWhenYEqZero(uint256 x, uint256 denominator) public pure {
         denominator = uHandleZero(denominator);
 
-        uint256 result = uMulDiv.mulDivUp(x, 0, denominator);
+        uint256 result = UMulDiv.mulDivUp(x, 0, denominator);
         assertEq(result, 0);
     }
 
-    function test_uMulDivDownZeroWhenXEqZero(uint256 y, uint256 denominator) public pure {
+    function test_UMulDivDownZeroWhenXEqZero(uint256 y, uint256 denominator) public pure {
         denominator = uHandleZero(denominator);
 
-        uint256 result = uMulDiv.mulDivDown(0, y, denominator);
+        uint256 result = UMulDiv.mulDivDown(0, y, denominator);
         assertEq(result, 0);
     }
 
-    function test_uMulDivDownZeroWhenYEqZero(uint256 x, uint256 denominator) public pure {
+    function test_UMulDivDownZeroWhenYEqZero(uint256 x, uint256 denominator) public pure {
         denominator = uHandleZero(denominator);
 
-        uint256 result = uMulDiv.mulDivDown(x, 0, denominator);
+        uint256 result = UMulDiv.mulDivDown(x, 0, denominator);
         assertEq(result, 0);
     }
 
-    function test_sMulDivUpZeroWhenXEqZero(int256 y, int256 denominator) public pure {
+    function test_SMulDivUpZeroWhenXEqZero(int256 y, int256 denominator) public pure {
         denominator = sHandleZero(denominator);
 
-        int256 result = sMulDiv.mulDivUp(0, y, denominator);
+        int256 result = SMulDiv.mulDivUp(0, y, denominator);
         assertEq(result, 0);
     }
 
-    function test_sMulDivUpZeroWhenYEqZero(int256 x, int256 denominator) public pure {
+    function test_SMulDivUpZeroWhenYEqZero(int256 x, int256 denominator) public pure {
         denominator = sHandleZero(denominator);
 
-        int256 result = sMulDiv.mulDivUp(x, 0, denominator);
+        int256 result = SMulDiv.mulDivUp(x, 0, denominator);
         assertEq(result, 0);
     }
 
-    function test_sMulDivDownZeroWhenXEqZero(int256 y, int256 denominator) public pure {
+    function test_SMulDivDownZeroWhenXEqZero(int256 y, int256 denominator) public pure {
         denominator = sHandleZero(denominator);
 
-        int256 result = sMulDiv.mulDivDown(0, y, denominator);
+        int256 result = SMulDiv.mulDivDown(0, y, denominator);
         assertEq(result, 0);
     }
 
-    function test_sMulDivDownZeroWhenYEqZero(int256 x, int256 denominator) public pure {
+    function test_SMulDivDownZeroWhenYEqZero(int256 x, int256 denominator) public pure {
         denominator = sHandleZero(denominator);
 
-        int256 result = sMulDiv.mulDivDown(x, 0, denominator);
+        int256 result = SMulDiv.mulDivDown(x, 0, denominator);
         assertEq(result, 0);
     }
 
-    function test_uMulDivUpWithoutRemainder(uint256 x, uint256 y, uint256 denominator) public pure {
+    function test_UMulDivUpWithoutRemainder(uint256 x, uint256 y, uint256 denominator) public pure {
         (x, y, denominator) = uFilterInputs(x, y, denominator);
         x = uFindDivisionWithoutRemainder(x, y, denominator);
 
         uint256 product = x * y;
         uint256 expected = product / denominator;
-        uint256 result = uMulDiv.mulDivUp(x, y, denominator);
+        uint256 result = UMulDiv.mulDivUp(x, y, denominator);
 
         assertEq(result, expected);
     }
 
-    function test_uMulDivDownWithoutRemainder(uint256 x, uint256 y, uint256 denominator) public pure {
+    function test_UMulDivDownWithoutRemainder(uint256 x, uint256 y, uint256 denominator) public pure {
         (x, y, denominator) = uFilterInputs(x, y, denominator);
         x = uFindDivisionWithoutRemainder(x, y, denominator);
 
         uint256 product = x * y;
         uint256 expected = product / denominator;
-        uint256 result = uMulDiv.mulDivDown(x, y, denominator);
+        uint256 result = UMulDiv.mulDivDown(x, y, denominator);
 
         assertEq(result, expected);
     }
 
-    function test_uMulDivUpWithRemainder(uint256 x, uint256 y, uint256 denominator) public pure {
+    function test_UMulDivUpWithRemainder(uint256 x, uint256 y, uint256 denominator) public pure {
         (x, y, denominator) = uFilterInputs(x, y, denominator);
         (x, y, denominator) = uFindDivisionWithRemainder(x, y, denominator);
 
-        uint256 result = uMulDiv.mulDivUp(x, y, denominator);
+        uint256 result = UMulDiv.mulDivUp(x, y, denominator);
         uint256 remainder = uEuclidianMod(x * y, denominator);
         uint256 expected = (x * y - remainder) / denominator + 1;
 
         assertEq(result, expected);
-        assertEq(result, uMulDiv.mulDivDown(x, y, denominator) + 1);
+        assertEq(result, UMulDiv.mulDivDown(x, y, denominator) + 1);
     }
 
-    function test_uMulDivDownWithRemainder(uint256 x, uint256 y, uint256 denominator) public pure {
+    function test_UMulDivDownWithRemainder(uint256 x, uint256 y, uint256 denominator) public pure {
         (x, y, denominator) = uFilterInputs(x, y, denominator);
         (x, y, denominator) = uFindDivisionWithRemainder(x, y, denominator);
 
-        uint256 result = uMulDiv.mulDivDown(x, y, denominator);
+        uint256 result = UMulDiv.mulDivDown(x, y, denominator);
         uint256 remainder = uEuclidianMod(x * y, denominator);
         uint256 expected = (x * y - remainder) / denominator;
 
         assertEq(result, expected);
-        assertEq(result, uMulDiv.mulDivUp(x, y, denominator) - 1);
+        assertEq(result, UMulDiv.mulDivUp(x, y, denominator) - 1);
     }
 
-    function test_sMulDivUpWithoutRemainder(int256 x, int256 y, int256 denominator) public pure {
+    function test_SMulDivUpWithoutRemainder(int256 x, int256 y, int256 denominator) public pure {
         (x, y, denominator) = sFilterInputs(x, y, denominator);
         x = sFindDivisionWithoutRemainder(x, y, denominator);
         (x, y, denominator) = sEliminateDivOverflow(x, y, denominator);
 
-        int256 result = sMulDiv.mulDivUp(x, y, denominator);
+        int256 result = SMulDiv.mulDivUp(x, y, denominator);
         int256 expected = (x * y) / denominator;
 
         assertEq(result, expected);
-        assertEq(result, sMulDiv.mulDivDown(x, y, denominator));
+        assertEq(result, SMulDiv.mulDivDown(x, y, denominator));
     }
 
-    function test_sMulDivDownWithoutRemainder(int256 x, int256 y, int256 denominator) public pure {
+    function test_SMulDivDownWithoutRemainder(int256 x, int256 y, int256 denominator) public pure {
         (x, y, denominator) = sFilterInputs(x, y, denominator);
         x = sFindDivisionWithoutRemainder(x, y, denominator);
         (x, y, denominator) = sEliminateDivOverflow(x, y, denominator);
 
-        int256 result = sMulDiv.mulDivDown(x, y, denominator);
+        int256 result = SMulDiv.mulDivDown(x, y, denominator);
         int256 expected = (x * y) / denominator;
 
         assertEq(result, expected);
-        assertEq(result, sMulDiv.mulDivUp(x, y, denominator));
+        assertEq(result, SMulDiv.mulDivUp(x, y, denominator));
     }
 
-    function test_sMulDivUpWithRemainderPositiveDenominator(int256 x, int256 y, int256 denominator) public pure {
+    function test_SMulDivUpWithRemainderPositiveDenominator(int256 x, int256 y, int256 denominator) public pure {
         denominator = toPositive(denominator);
         (x, y, denominator) = sFilterInputs(x, y, denominator);
         (x, y, denominator) = sFindDivisionWithRemainder(x, y, denominator);
 
-        int256 result = sMulDiv.mulDivUp(x, y, denominator);
+        int256 result = SMulDiv.mulDivUp(x, y, denominator);
 
         int256 remainder = sEuclidianMod(x * y, denominator);
         int256 expected = (x * y - remainder) / denominator + 1;
@@ -239,12 +239,12 @@ contract MulDivTest is Test, EuclidianMod, UnsignedHelpers, SignedHelpers {
         assertEq(result, expected);
     }
 
-    function test_sMulDivUpWithRemainderNegativeDenominator(int256 x, int256 y, int256 denominator) public pure {
+    function test_SMulDivUpWithRemainderNegativeDenominator(int256 x, int256 y, int256 denominator) public pure {
         denominator = toNegative(denominator);
         (x, y, denominator) = sFilterInputs(x, y, denominator);
         (x, y, denominator) = sFindDivisionWithRemainder(x, y, denominator);
 
-        int256 result = sMulDiv.mulDivUp(x, y, denominator);
+        int256 result = SMulDiv.mulDivUp(x, y, denominator);
 
         int256 remainder = sEuclidianMod(x * y, denominator);
         int256 expected = (x * y - remainder) / denominator;
@@ -252,12 +252,12 @@ contract MulDivTest is Test, EuclidianMod, UnsignedHelpers, SignedHelpers {
         assertEq(result, expected);
     }
 
-    function test_sMulDivDownWithRemainderPositiveDenominator(int256 x, int256 y, int256 denominator) public pure {
+    function test_SMulDivDownWithRemainderPositiveDenominator(int256 x, int256 y, int256 denominator) public pure {
         denominator = toPositive(denominator);
         (x, y, denominator) = sFilterInputs(x, y, denominator);
         (x, y, denominator) = sFindDivisionWithRemainder(x, y, denominator);
 
-        int256 result = sMulDiv.mulDivDown(x, y, denominator);
+        int256 result = SMulDiv.mulDivDown(x, y, denominator);
 
         int256 remainder = sEuclidianMod(x * y, denominator);
         int256 expected = (x * y - remainder) / denominator;
@@ -265,12 +265,12 @@ contract MulDivTest is Test, EuclidianMod, UnsignedHelpers, SignedHelpers {
         assertEq(result, expected);
     }
 
-    function test_sMulDivDownWithRemainderNegativeDenominator(int256 x, int256 y, int256 denominator) public pure {
+    function test_SMulDivDownWithRemainderNegativeDenominator(int256 x, int256 y, int256 denominator) public pure {
         denominator = toNegative(denominator);
         (x, y, denominator) = sFilterInputs(x, y, denominator);
         (x, y, denominator) = sFindDivisionWithRemainder(x, y, denominator);
 
-        int256 result = sMulDiv.mulDivDown(x, y, denominator);
+        int256 result = SMulDiv.mulDivDown(x, y, denominator);
 
         int256 remainder = sEuclidianMod(x * y, denominator);
         int256 expected = (x * y - remainder) / denominator - 1;
@@ -280,229 +280,229 @@ contract MulDivTest is Test, EuclidianMod, UnsignedHelpers, SignedHelpers {
 
     // Special tests for unsigned MulDiv with hardcoded values
 
-    function test_uMulDivUpWithoutRemainderSpecial() public pure {
+    function test_UMulDivUpWithoutRemainderSpecial() public pure {
         uint256 x = 6;
         uint256 y = 2;
         uint256 denominator = 3;
-        uint256 result = uMulDiv.mulDivUp(x, y, denominator);
+        uint256 result = UMulDiv.mulDivUp(x, y, denominator);
         assertEq(result, 4); // 12 / 3 = 4
     }
 
-    function test_uMulDivUpWithRemainderSpecial() public pure {
+    function test_UMulDivUpWithRemainderSpecial() public pure {
         uint256 x = 7;
         uint256 y = 2;
         uint256 denominator = 3;
-        uint256 result = uMulDiv.mulDivUp(x, y, denominator);
+        uint256 result = UMulDiv.mulDivUp(x, y, denominator);
         assertEq(result, 5); // 14 / 3 = 4.666...
     }
 
-    function test_uMulDivDownWithoutRemainderSpecial() public pure {
+    function test_UMulDivDownWithoutRemainderSpecial() public pure {
         uint256 x = 6;
         uint256 y = 2;
         uint256 denominator = 3;
-        uint256 result = uMulDiv.mulDivDown(x, y, denominator);
+        uint256 result = UMulDiv.mulDivDown(x, y, denominator);
         assertEq(result, 4); // 12 / 3 = 4
     }
 
-    function test_uMulDivDownWithRemainderSpecial() public pure {
+    function test_UMulDivDownWithRemainderSpecial() public pure {
         uint256 x = 7;
         uint256 y = 2;
         uint256 denominator = 3;
-        uint256 result = uMulDiv.mulDivDown(x, y, denominator);
+        uint256 result = UMulDiv.mulDivDown(x, y, denominator);
         assertEq(result, 4); // 14 / 3 = 4.666...
     }
 
     // Special tests for signed MulDiv with hardcoded values
 
-    function test_sMulDivUpSamePositiveWithoutRemainderSpecial() public pure {
+    function test_SMulDivUpSamePositiveWithoutRemainderSpecial() public pure {
         int256 x = 6;
         int256 y = 2;
         int256 denominator = 3;
-        int256 result = sMulDiv.mulDivUp(x, y, denominator);
+        int256 result = SMulDiv.mulDivUp(x, y, denominator);
         assertEq(result, 4); // 12 / 3 = 4
     }
 
-    function test_sMulDivUpSamePositiveWithRemainderSpecial() public pure {
+    function test_SMulDivUpSamePositiveWithRemainderSpecial() public pure {
         int256 x = 7;
         int256 y = 2;
         int256 denominator = 3;
-        int256 result = sMulDiv.mulDivUp(x, y, denominator);
+        int256 result = SMulDiv.mulDivUp(x, y, denominator);
         assertEq(result, 5); // 14 / 3 = 4.666...
     }
 
-    function test_sMulDivDownSamePositiveWithoutRemainderSpecial() public pure {
+    function test_SMulDivDownSamePositiveWithoutRemainderSpecial() public pure {
         int256 x = 6;
         int256 y = 2;
         int256 denominator = 3;
-        int256 result = sMulDiv.mulDivDown(x, y, denominator);
+        int256 result = SMulDiv.mulDivDown(x, y, denominator);
         assertEq(result, 4); // 12 / 3 = 4
     }
 
-    function test_sMulDivDownSamePositiveWithRemainderSpecial() public pure {
+    function test_SMulDivDownSamePositiveWithRemainderSpecial() public pure {
         int256 x = 7;
         int256 y = 2;
         int256 denominator = 3;
-        int256 result = sMulDiv.mulDivDown(x, y, denominator);
+        int256 result = SMulDiv.mulDivDown(x, y, denominator);
         assertEq(result, 4); // 14 / 3 = 4.666...
     }
 
-    function test_sMulDivUpSecondNegativeWithoutRemainderSpecial() public pure {
+    function test_SMulDivUpSecondNegativeWithoutRemainderSpecial() public pure {
         int256 x = 6;
         int256 y = -2;
         int256 denominator = 3;
-        int256 result = sMulDiv.mulDivUp(x, y, denominator);
+        int256 result = SMulDiv.mulDivUp(x, y, denominator);
         assertEq(result, -4); // -12 / 3 = -4
     }
 
-    function test_sMulDivUpSecondNegativeWithRemainderSpecial() public pure {
+    function test_SMulDivUpSecondNegativeWithRemainderSpecial() public pure {
         int256 x = 7;
         int256 y = -2;
         int256 denominator = 3;
-        int256 result = sMulDiv.mulDivUp(x, y, denominator);
+        int256 result = SMulDiv.mulDivUp(x, y, denominator);
         assertEq(result, -4); // -14 / 3 = -4.666...
     }
 
-    function test_sMulDivDownSecondNegativeWithoutRemainderSpecial() public pure {
+    function test_SMulDivDownSecondNegativeWithoutRemainderSpecial() public pure {
         int256 x = 6;
         int256 y = -2;
         int256 denominator = 3;
-        int256 result = sMulDiv.mulDivDown(x, y, denominator);
+        int256 result = SMulDiv.mulDivDown(x, y, denominator);
         assertEq(result, -4); // -12 / 3 = -4
     }
 
-    function test_sMulDivDownSecondNegativeWithRemainderSpecial() public pure {
+    function test_SMulDivDownSecondNegativeWithRemainderSpecial() public pure {
         int256 x = 7;
         int256 y = -2;
         int256 denominator = 3;
-        int256 result = sMulDiv.mulDivDown(x, y, denominator);
+        int256 result = SMulDiv.mulDivDown(x, y, denominator);
         assertEq(result, -5); // -14 / 3 = -4.666...
     }
 
-    function test_sMulDivUpSamePositiveWithRemainderNegativeDenominatorSpecial() public pure {
+    function test_SMulDivUpSamePositiveWithRemainderNegativeDenominatorSpecial() public pure {
         int256 x = 7;
         int256 y = 2;
         int256 denominator = -3;
-        int256 result = sMulDiv.mulDivUp(x, y, denominator);
+        int256 result = SMulDiv.mulDivUp(x, y, denominator);
         assertEq(result, -4); // 14 / -3 = -4.666...
     }
 
-    function test_sMulDivDownSamePositiveWithRemainderNegativeDenominatorSpecial() public pure {
+    function test_SMulDivDownSamePositiveWithRemainderNegativeDenominatorSpecial() public pure {
         int256 x = 7;
         int256 y = 2;
         int256 denominator = -3;
-        int256 result = sMulDiv.mulDivDown(x, y, denominator);
+        int256 result = SMulDiv.mulDivDown(x, y, denominator);
         assertEq(result, -5); // 14 / -3 = -4.666...
     }
 
-    function test_sMulDivUpSameNegativeWithRemainderSpecial() public pure {
+    function test_SMulDivUpSameNegativeWithRemainderSpecial() public pure {
         int256 x = -7;
         int256 y = -2;
         int256 denominator = 3;
-        int256 result = sMulDiv.mulDivUp(x, y, denominator);
+        int256 result = SMulDiv.mulDivUp(x, y, denominator);
         assertEq(result, 5); // 14 / 3 = 4.666...
     }
 
-    function test_sMulDivDownSameNegativeWithRemainderSpecial() public pure {
+    function test_SMulDivDownSameNegativeWithRemainderSpecial() public pure {
         int256 x = -7;
         int256 y = -2;
         int256 denominator = 3;
-        int256 result = sMulDiv.mulDivDown(x, y, denominator);
+        int256 result = SMulDiv.mulDivDown(x, y, denominator);
         assertEq(result, 4); // 14 / 3 = 4.666...
     }
 
-    function test_sMulDivUpFirstNegativeWithRemainderNegativeDenominatorSpecial() public pure {
+    function test_SMulDivUpFirstNegativeWithRemainderNegativeDenominatorSpecial() public pure {
         int256 x = -7;
         int256 y = 2;
         int256 denominator = -3;
-        int256 result = sMulDiv.mulDivUp(x, y, denominator);
+        int256 result = SMulDiv.mulDivUp(x, y, denominator);
         assertEq(result, 5); // -14 / -3 = 4.666...
     }
 
-    function test_sMulDivDownFirstNegativeWithRemainderNegativeDenominatorSpecial() public pure {
+    function test_SMulDivDownFirstNegativeWithRemainderNegativeDenominatorSpecial() public pure {
         int256 x = -7;
         int256 y = 2;
         int256 denominator = -3;
-        int256 result = sMulDiv.mulDivDown(x, y, denominator);
+        int256 result = SMulDiv.mulDivDown(x, y, denominator);
         assertEq(result, 4); // -14 / -3 = 4.666...
     }
 
-    function test_sMulDivUpSecondNegativeWithRemainderNegativeDenominatorSpecial() public pure {
+    function test_SMulDivUpSecondNegativeWithRemainderNegativeDenominatorSpecial() public pure {
         int256 x = 7;
         int256 y = -2;
         int256 denominator = -3;
-        int256 result = sMulDiv.mulDivUp(x, y, denominator);
+        int256 result = SMulDiv.mulDivUp(x, y, denominator);
         assertEq(result, 5); // -14 / -3 = 4.666...
     }
 
-    function test_sMulDivDownSecondNegativeWithRemainderNegativeDenominatorSpecial() public pure {
+    function test_SMulDivDownSecondNegativeWithRemainderNegativeDenominatorSpecial() public pure {
         int256 x = 7;
         int256 y = -2;
         int256 denominator = -3;
-        int256 result = sMulDiv.mulDivDown(x, y, denominator);
+        int256 result = SMulDiv.mulDivDown(x, y, denominator);
         assertEq(result, 4); // -14 / -3 = 4.666...
     }
 
-    function test_sMulDivUpAllNegativeWithoutRemainderSpecial() public pure {
+    function test_SMulDivUpAllNegativeWithoutRemainderSpecial() public pure {
         int256 x = -6;
         int256 y = -2;
         int256 denominator = -3;
-        int256 result = sMulDiv.mulDivUp(x, y, denominator);
+        int256 result = SMulDiv.mulDivUp(x, y, denominator);
         assertEq(result, -4); // 12 / -3 = -4
     }
 
-    function test_sMulDivUpFirstNegativeWithoutRemainderSpecial() public pure {
+    function test_SMulDivUpFirstNegativeWithoutRemainderSpecial() public pure {
         int256 x = -6;
         int256 y = 2;
         int256 denominator = 3;
-        int256 result = sMulDiv.mulDivUp(x, y, denominator);
+        int256 result = SMulDiv.mulDivUp(x, y, denominator);
         assertEq(result, -4); // -12 / 3 = -4
     }
 
-    function test_sMulDivUpFirstNegativeWithRemainderSpecial() public pure {
+    function test_SMulDivUpFirstNegativeWithRemainderSpecial() public pure {
         int256 x = -7;
         int256 y = 2;
         int256 denominator = 3;
-        int256 result = sMulDiv.mulDivUp(x, y, denominator);
+        int256 result = SMulDiv.mulDivUp(x, y, denominator);
         assertEq(result, -4); // -14 / 3 = -4.666...
     }
 
-    function test_sMulDivDownFirstNegativeWithoutRemainderSpecial() public pure {
+    function test_SMulDivDownFirstNegativeWithoutRemainderSpecial() public pure {
         int256 x = -6;
         int256 y = 2;
         int256 denominator = 3;
-        int256 result = sMulDiv.mulDivDown(x, y, denominator);
+        int256 result = SMulDiv.mulDivDown(x, y, denominator);
         assertEq(result, -4); // -12 / 3 = -4
     }
 
-    function test_sMulDivDownFirstNegativeWithRemainderSpecial() public pure {
+    function test_SMulDivDownFirstNegativeWithRemainderSpecial() public pure {
         int256 x = -7;
         int256 y = 2;
         int256 denominator = 3;
-        int256 result = sMulDiv.mulDivDown(x, y, denominator);
+        int256 result = SMulDiv.mulDivDown(x, y, denominator);
         assertEq(result, -5); // -14 / 3 = -4.666...
     }
 
-    function test_sMulDivUpAllNegativeWithRemainderSpecial() public pure {
+    function test_SMulDivUpAllNegativeWithRemainderSpecial() public pure {
         int256 x = -7;
         int256 y = -2;
         int256 denominator = -3;
-        int256 result = sMulDiv.mulDivUp(x, y, denominator);
+        int256 result = SMulDiv.mulDivUp(x, y, denominator);
         assertEq(result, -4); // 14 / -3 = -4.666...
     }
 
-    function test_sMulDivDownAllNegativeWithoutRemainderSpecial() public pure {
+    function test_SMulDivDownAllNegativeWithoutRemainderSpecial() public pure {
         int256 x = -6;
         int256 y = -2;
         int256 denominator = -3;
-        int256 result = sMulDiv.mulDivDown(x, y, denominator);
+        int256 result = SMulDiv.mulDivDown(x, y, denominator);
         assertEq(result, -4); // 12 / -3 = -4
     }
 
-    function test_sMulDivDownAllNegativeWithRemainderSpecial() public pure {
+    function test_SMulDivDownAllNegativeWithRemainderSpecial() public pure {
         int256 x = -7;
         int256 y = -2;
         int256 denominator = -3;
-        int256 result = sMulDiv.mulDivDown(x, y, denominator);
+        int256 result = SMulDiv.mulDivDown(x, y, denominator);
         assertEq(result, -5); // 14 / -3 = -4.666...
     }
 }

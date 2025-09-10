@@ -8,10 +8,10 @@ import {DeltaFuture} from "src/structs/state_transition/DeltaFuture.sol";
 import {MintRedeemData} from "src/structs/data/vault/common/MintRedeemData.sol";
 import {MintRedeem} from "src/math/libraries/MintRedeem.sol";
 import {Vault} from "src/math/abstracts/Vault.sol";
-import {uMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract PreviewMint is Vault {
-    using uMulDiv for uint256;
+    using UMulDiv for uint256;
 
     function previewMint(uint256 shares, PreviewDepositVaultState memory state) public pure returns (uint256 assets) {
         (assets,) = _previewMint(shares, previewDepositStateToPreviewDepositData(state));

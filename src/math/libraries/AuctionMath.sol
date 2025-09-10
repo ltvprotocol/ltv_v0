@@ -4,7 +4,7 @@ pragma solidity ^0.8.28;
 import {IAuctionErrors} from "src/errors/IAuctionErrors.sol";
 import {AuctionData} from "src/structs/data/auction/AuctionData.sol";
 import {DeltaAuctionState} from "src/structs/state_transition/DeltaAuctionState.sol";
-import {sMulDiv} from "src/utils/MulDiv.sol";
+import {SMulDiv} from "src/utils/MulDiv.sol";
 
 /**
  * @title AuctionMath
@@ -17,7 +17,7 @@ import {sMulDiv} from "src/utils/MulDiv.sol";
  * executor <=> fee collector
  */
 library AuctionMath {
-    using sMulDiv for int256;
+    using SMulDiv for int256;
 
     /**
      * @notice This function calculates deltaFutureBorrowAssets from deltaUserBorrowAssets.

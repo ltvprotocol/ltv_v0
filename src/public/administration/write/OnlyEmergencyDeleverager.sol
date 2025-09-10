@@ -10,7 +10,7 @@ import {ApplyMaxGrowthFee} from "../../../state_transition/ApplyMaxGrowthFee.sol
 import {Lending} from "../../../state_transition/Lending.sol";
 import {MaxGrowthFeeStateReader} from "../../../state_reader/common/MaxGrowthFeeStateReader.sol";
 import {MaxGrowthFee} from "../../../math/abstracts/MaxGrowthFee.sol";
-import {uMulDiv, sMulDiv} from "../../../utils/MulDiv.sol";
+import {UMulDiv, SMulDiv} from "../../../utils/MulDiv.sol";
 import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 
@@ -22,8 +22,8 @@ abstract contract OnlyEmergencyDeleverager is
     AdministrationModifiers,
     Lending
 {
-    using uMulDiv for uint256;
-    using sMulDiv for int256;
+    using UMulDiv for uint256;
+    using SMulDiv for int256;
     using SafeERC20 for IERC20;
 
     function deleverageAndWithdraw(uint256 closeAmountBorrow, uint16 deleverageFeeDividend, uint16 deleverageFeeDivider)

@@ -10,7 +10,7 @@ import {TotalAssetsCollateralData} from "src/structs/data/vault/total_assets/Tot
 import {TotalAssetsCollateral} from "src/public/vault/read/collateral/TotalAssetsCollateral.sol";
 import {MaxGrowthFee} from "src/math/abstracts/MaxGrowthFee.sol";
 import {CommonMath} from "src/math/libraries/CommonMath.sol";
-import {uMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/utils/MulDiv.sol";
 
 /**
  * @title PreviewDepositVaultStateToCollateralData
@@ -18,7 +18,7 @@ import {uMulDiv} from "src/utils/MulDiv.sol";
  * data needed for preview collateral vault data calculations.
  */
 abstract contract PreviewDepositVaultStateToCollateralData is TotalAssetsCollateral, MaxGrowthFee {
-    using uMulDiv for uint256;
+    using UMulDiv for uint256;
 
     /**
      * @notice Precalculates pure preview deposit vault state to data needed for preview collateral vault data calculations.

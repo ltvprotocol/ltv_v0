@@ -10,7 +10,7 @@ import {DeltaRealBorrowAndDeltaRealCollateral} from
     "src/math/libraries/delta_future_collateral/DeltaRealBorrowAndDeltaRealCollateral.sol";
 import {CommonBorrowCollateral} from "src/math/libraries/CommonBorrowCollateral.sol";
 import {CasesOperator} from "src/math/libraries/CasesOperator.sol";
-import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv, SMulDiv} from "src/utils/MulDiv.sol";
 
 /**
  * @title DepositWithdraw
@@ -20,8 +20,8 @@ import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
  * @dev These calculations are derived from the ltv protocol paper.
  */
 library DepositWithdraw {
-    using uMulDiv for uint256;
-    using sMulDiv for int256;
+    using UMulDiv for uint256;
+    using SMulDiv for int256;
 
     function calculateDepositWithdraw(DepositWithdrawData memory data)
         public

@@ -6,10 +6,10 @@ import {TotalAssetsState} from "src/structs/state/vault/total_assets/TotalAssets
 import {TotalAssetsCollateralData} from "src/structs/data/vault/total_assets/TotalAssetsCollateralData.sol";
 import {TotalAssets} from "src/public/vault/read/borrow/TotalAssets.sol";
 import {CommonMath} from "src/math/libraries/CommonMath.sol";
-import {uMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract TotalAssetsCollateral is TotalAssets {
-    using uMulDiv for uint256;
+    using UMulDiv for uint256;
 
     function totalAssetsCollateral(TotalAssetsState memory state) public pure virtual returns (uint256) {
         // default behavior - don't overestimate our assets

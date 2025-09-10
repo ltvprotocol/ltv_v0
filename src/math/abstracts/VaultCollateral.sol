@@ -8,7 +8,7 @@ import {MaxWithdrawRedeemCollateralStateToData} from
     "src/math/abstracts/state_to_data/max/MaxWithdrawRedeemCollateralStateToData.sol";
 import {MaxGrowthFeeStateToConvertCollateralData} from
     "src/math/abstracts/state_to_data/MaxGrowthFeeStateToConvertCollateralData.sol";
-import {uMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/utils/MulDiv.sol";
 
 /**
  * @title VaultCollateral
@@ -19,7 +19,7 @@ abstract contract VaultCollateral is
     MaxWithdrawRedeemCollateralStateToData,
     MaxGrowthFeeStateToConvertCollateralData
 {
-    using uMulDiv for uint256;
+    using UMulDiv for uint256;
 
     /**
      * @notice Calculates available space according to maxTotalAssetsInUnderlying

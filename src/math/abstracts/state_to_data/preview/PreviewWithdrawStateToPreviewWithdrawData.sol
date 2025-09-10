@@ -7,7 +7,7 @@ import {TotalAssetsData} from "src/structs/data/vault/total_assets/TotalAssetsDa
 import {MaxGrowthFeeData} from "src/structs/data/common/MaxGrowthFeeData.sol";
 import {MaxGrowthFee} from "src/math/abstracts/MaxGrowthFee.sol";
 import {CommonMath} from "src/math/libraries/CommonMath.sol";
-import {uMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/utils/MulDiv.sol";
 
 /**
  * @title PreviewWithdrawStateToPreviewWithdrawData
@@ -15,7 +15,7 @@ import {uMulDiv} from "src/utils/MulDiv.sol";
  * data needed for preview withdraw calculations.
  */
 contract PreviewWithdrawStateToPreviewWithdrawData is MaxGrowthFee {
-    using uMulDiv for uint256;
+    using UMulDiv for uint256;
 
     /**
      * @notice Precalculates preview withdraw vault state to data needed for preview withdraw calculations.

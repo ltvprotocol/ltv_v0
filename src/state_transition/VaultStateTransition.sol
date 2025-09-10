@@ -4,10 +4,10 @@ pragma solidity ^0.8.28;
 import {Constants} from "src/Constants.sol";
 import {NextStateData} from "src/structs/state_transition/NextStateData.sol";
 import {LTVState} from "src/states/LTVState.sol";
-import {sMulDiv} from "src/utils/MulDiv.sol";
+import {SMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract VaultStateTransition is LTVState {
-    using sMulDiv for int256;
+    using SMulDiv for int256;
 
     function applyStateTransition(NextStateData memory nextStateData) internal {
         // Here we have conflict between HODLer and Future auction executor. Round in favor of HODLer

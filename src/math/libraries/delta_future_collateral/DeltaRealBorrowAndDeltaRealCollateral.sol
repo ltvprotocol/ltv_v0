@@ -11,7 +11,7 @@ import {DeltaRealBorrowAndDeltaRealCollateralDividendData} from
 import {DeltaRealBorrowAndDeltaRealCollateralDividerData} from
     "src/structs/data/vault/delta_real_collateral/DeltaRealBorrowAndDeltaRealCollateralDividerData.sol";
 import {CasesOperator} from "src/math/libraries/CasesOperator.sol";
-import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv, SMulDiv} from "src/utils/MulDiv.sol";
 
 /**
  * @title DeltaRealBorrowAndDeltaRealCollateral
@@ -24,8 +24,8 @@ import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
  *
  */
 library DeltaRealBorrowAndDeltaRealCollateral {
-    using uMulDiv for uint256;
-    using sMulDiv for int256;
+    using UMulDiv for uint256;
+    using SMulDiv for int256;
 
     // needs to be rounded down in any case
     function calculateDividendByDeltaRealBorrowAndDeltaRealCollateral(

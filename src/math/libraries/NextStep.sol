@@ -4,11 +4,11 @@ pragma solidity ^0.8.28;
 import {NextState} from "src/structs/state_transition/NextState.sol";
 import {NextStepData} from "src/structs/state_transition/NextStepData.sol";
 import {MergeAuctionData} from "src/structs/data/vault/common/MergeAuctionData.sol";
-import {sMulDiv, uMulDiv} from "src/utils/MulDiv.sol";
+import {SMulDiv, UMulDiv} from "src/utils/MulDiv.sol";
 
 library NextStep {
-    using sMulDiv for int256;
-    using uMulDiv for uint256;
+    using SMulDiv for int256;
+    using UMulDiv for uint256;
     // futureBorrow i+1 = futureBorrow i + ∆futureBorrow
     // futureCollateral i+1 = futureCollateral i + ∆futureCollateral
     // futureRewardBorrow i+1 = futureRewardBorrow i + ∆futurePaymentBorrow +

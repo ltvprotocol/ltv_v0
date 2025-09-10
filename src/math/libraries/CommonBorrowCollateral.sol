@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 import {Constants} from "src/Constants.sol";
 import {Cases} from "src/structs/data/vault/common/Cases.sol";
-import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv, SMulDiv} from "src/utils/MulDiv.sol";
 
 /**
  * @title CommonBorrowCollateral
@@ -12,8 +12,8 @@ import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
  * @dev These calculations are derived from the ltv protocol paper.
  */
 library CommonBorrowCollateral {
-    using uMulDiv for uint256;
-    using sMulDiv for int256;
+    using UMulDiv for uint256;
+    using SMulDiv for int256;
 
     /**
      * @notice This function calculates deltaFutureBorrow from deltaFutureCollateral.

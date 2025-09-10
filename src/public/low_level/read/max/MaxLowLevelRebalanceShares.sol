@@ -9,10 +9,10 @@ import {MaxLowLevelRebalanceSharesState} from "src/structs/state/low_level/max/M
 import {MaxLowLevelRebalanceSharesData} from "src/structs/data/low_level/MaxLowLevelRebalanceSharesData.sol";
 import {MaxGrowthFee} from "src/math/abstracts/MaxGrowthFee.sol";
 import {CommonMath} from "src/math/libraries/CommonMath.sol";
-import {sMulDiv} from "src/utils/MulDiv.sol";
+import {SMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract MaxLowLevelRebalanceShares is MaxGrowthFee {
-    using sMulDiv for int256;
+    using SMulDiv for int256;
 
     function maxLowLevelRebalanceShares(MaxLowLevelRebalanceSharesState memory state) public pure returns (int256) {
         return _maxLowLevelRebalanceShares(maxLowLevelRebalanceSharesStateToData(state));

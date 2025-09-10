@@ -8,10 +8,10 @@ import {DepositWithdrawData} from "src/structs/data/vault/common/DepositWithdraw
 import {DeltaFuture} from "src/structs/state_transition/DeltaFuture.sol";
 import {VaultCollateral} from "src/math/abstracts/VaultCollateral.sol";
 import {DepositWithdraw} from "src/math/libraries/DepositWithdraw.sol";
-import {uMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/utils/MulDiv.sol";
 
 abstract contract PreviewWithdrawCollateral is VaultCollateral {
-    using uMulDiv for uint256;
+    using UMulDiv for uint256;
 
     function previewWithdrawCollateral(uint256 assets, PreviewWithdrawVaultState memory state)
         public

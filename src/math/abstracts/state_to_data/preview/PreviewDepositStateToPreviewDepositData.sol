@@ -8,7 +8,7 @@ import {TotalAssetsState} from "src/structs/state/vault/total_assets/TotalAssets
 import {MaxGrowthFeeData} from "src/structs/data/common/MaxGrowthFeeData.sol";
 import {MaxGrowthFee} from "src/math/abstracts/MaxGrowthFee.sol";
 import {CommonMath} from "src/math/libraries/CommonMath.sol";
-import {uMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/utils/MulDiv.sol";
 
 /**
  * @title PreviewDepositStateToPreviewDepositData
@@ -16,7 +16,7 @@ import {uMulDiv} from "src/utils/MulDiv.sol";
  * data needed for preview deposit calculations.
  */
 contract PreviewDepositStateToPreviewDepositData is MaxGrowthFee {
-    using uMulDiv for uint256;
+    using UMulDiv for uint256;
 
     /**
      * @notice Precalculates pure preview deposit state to data needed for preview deposit calculations.

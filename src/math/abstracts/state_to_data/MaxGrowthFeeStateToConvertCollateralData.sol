@@ -8,7 +8,7 @@ import {TotalAssetsState} from "src/structs/state/vault/total_assets/TotalAssets
 import {TotalAssetsCollateralData} from "src/structs/data/vault/total_assets/TotalAssetsCollateralData.sol";
 import {TotalAssetsCollateral} from "src/public/vault/read/collateral/TotalAssetsCollateral.sol";
 import {MaxGrowthFee} from "src/math/abstracts/MaxGrowthFee.sol";
-import {uMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/utils/MulDiv.sol";
 
 /**
  * @title MaxGrowthFeeStateToConvertCollateralData
@@ -16,7 +16,7 @@ import {uMulDiv} from "src/utils/MulDiv.sol";
  * data needed for convert to assets/shares collateral calculations.
  */
 abstract contract MaxGrowthFeeStateToConvertCollateralData is TotalAssetsCollateral, MaxGrowthFee {
-    using uMulDiv for uint256;
+    using UMulDiv for uint256;
 
     /**
      * @notice Precalculates max growth fee state to data needed for convert to assets/shares collateral calculations.
