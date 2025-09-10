@@ -22,6 +22,10 @@ import {NextStep} from "src/math/NextStep.sol";
 import {CommonMath} from "src/math/CommonMath.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 
+/**
+ * @title RedeemCollateral
+ * @notice This contract contains redeem collateral function implementation.
+ */
 abstract contract RedeemCollateral is
     MaxWithdrawRedeemCollateralVaultStateReader,
     MaxRedeemCollateral,
@@ -35,6 +39,9 @@ abstract contract RedeemCollateral is
 {
     using uMulDiv for uint256;
 
+    /**
+     * @dev see ILTV.redeemCollateral
+     */
     function redeemCollateral(uint256 shares, address receiver, address owner)
         external
         isFunctionAllowed

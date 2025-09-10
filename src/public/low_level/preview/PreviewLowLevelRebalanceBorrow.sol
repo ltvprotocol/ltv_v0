@@ -8,9 +8,16 @@ import {PreviewLowLevelRebalanceStateToData} from
 import {LowLevelRebalanceMath} from "src/math/LowLevelRebalanceMath.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 
+/**
+ * @title PreviewLowLevelRebalanceBorrow
+ * @notice This contract contains preview low level rebalance borrow function implementation.
+ */
 abstract contract PreviewLowLevelRebalanceBorrow is PreviewLowLevelRebalanceStateToData {
     using uMulDiv for uint256;
 
+    /**
+     * @dev see ILowLevelRebalanceModule.previewLowLevelRebalanceBorrow
+     */
     function previewLowLevelRebalanceBorrow(int256 deltaBorrow, PreviewLowLevelRebalanceState memory state)
         public
         pure
@@ -19,6 +26,9 @@ abstract contract PreviewLowLevelRebalanceBorrow is PreviewLowLevelRebalanceStat
         return previewLowLevelRebalanceBorrowHint(deltaBorrow, true, state);
     }
 
+    /**
+     * @dev see ILowLevelRebalanceModule.previewLowLevelRebalanceBorrowHint
+     */
     function previewLowLevelRebalanceBorrowHint(
         int256 deltaBorrow,
         bool isSharesPositiveHint,
@@ -29,6 +39,9 @@ abstract contract PreviewLowLevelRebalanceBorrow is PreviewLowLevelRebalanceStat
         return (deltaRealCollateral, deltaShares);
     }
 
+    /**
+     * @dev base function to calculate preview low level rebalance borrow with hint
+     */
     function _previewLowLevelRebalanceBorrowHint(
         int256 deltaBorrow,
         bool isSharesPositiveHint,
@@ -45,6 +58,9 @@ abstract contract PreviewLowLevelRebalanceBorrow is PreviewLowLevelRebalanceStat
         return (deltaRealCollateralAssets, deltaShares, deltaProtocolFutureRewardShares);
     }
 
+    /**
+     * @dev base function to calculate preview low level rebalance borrow
+     */
     function _previewLowLevelRebalanceBorrow(int256 deltaBorrowAssets, LowLevelRebalanceData memory data)
         internal
         pure

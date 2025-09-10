@@ -9,6 +9,9 @@ import {LTVState} from "src/states/LTVState.sol";
  * ERC20 functions are handled by the LTVState.
  */
 abstract contract ERC20Read is LTVState {
+    /**
+     * @dev see ILTV.totalSupply
+     */
     function totalSupply() external view returns (uint256) {
         return modules.erc20Module().totalSupply(baseTotalSupply);
     }

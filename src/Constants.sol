@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
+/**
+ * @title Constants
+ * @notice contract contains constants for the LTV protocol
+ */
 library Constants {
     uint256 public constant ORACLE_DIVIDER = 10 ** 18;
     int256 public constant SLIPPAGE_PRECISION = 10 ** 18;

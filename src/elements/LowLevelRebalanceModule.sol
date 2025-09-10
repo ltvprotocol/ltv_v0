@@ -5,6 +5,10 @@ import {ExecuteLowLevelRebalanceCollateral} from "src/public/low_level/execute/E
 import {ExecuteLowLevelRebalanceBorrow} from "src/public/low_level/execute/ExecuteLowLevelRebalanceBorrow.sol";
 import {ExecuteLowLevelRebalanceShares} from "src/public/low_level/execute/ExecuteLowLevelRebalanceShares.sol";
 
+/**
+ * @title LowLevelRebalanceModule
+ * @notice Low level rebalance module for LTV protocol
+ */
 contract LowLevelRebalanceModule is
     ExecuteLowLevelRebalanceCollateral,
     ExecuteLowLevelRebalanceBorrow,

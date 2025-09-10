@@ -10,9 +10,16 @@ import {DepositWithdraw} from "src/math/DepositWithdraw.sol";
 import {Vault} from "src/math/Vault.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 
+/**
+ * @title PreviewDeposit
+ * @notice This contract contains preview deposit function implementation.
+ */
 abstract contract PreviewDeposit is Vault {
     using uMulDiv for uint256;
 
+    /**
+     * @dev see IBorrowVaultModule.previewDeposit
+     */
     function previewDeposit(uint256 assets, PreviewDepositVaultState memory state)
         public
         pure
@@ -21,6 +28,9 @@ abstract contract PreviewDeposit is Vault {
         (shares,) = _previewDeposit(assets, previewDepositStateToPreviewDepositData(state));
     }
 
+    /**
+     * @dev base function to calculate preview deposit
+     */
     function _previewDeposit(uint256 assets, PreviewDepositBorrowVaultData memory data)
         internal
         pure

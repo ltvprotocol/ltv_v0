@@ -12,6 +12,10 @@ import {ExecuteLowLevelRebalanceStateReader} from "src/state_reader/low_level/Ex
 import {PreviewLowLevelRebalanceCollateral} from "src/public/low_level/preview/PreviewLowLevelRebalanceCollateral.sol";
 import {MaxLowLevelRebalanceCollateral} from "src/public/low_level/max/MaxLowLevelRebalanceCollateral.sol";
 
+/**
+ * @title ExecuteLowLevelRebalanceCollateral
+ * @notice This contract contains execute low level rebalance collateral function implementation.
+ */
 abstract contract ExecuteLowLevelRebalanceCollateral is
     ExecuteLowLevelRebalanceStateReader,
     ExecuteLowLevelRebalance,
@@ -20,6 +24,9 @@ abstract contract ExecuteLowLevelRebalanceCollateral is
     ApplyMaxGrowthFee,
     ILowLevelRebalanceErrors
 {
+    /**
+     * @dev see ILTV.executeLowLevelRebalanceCollateral
+     */
     function executeLowLevelRebalanceCollateral(int256 deltaCollateral)
         external
         isFunctionAllowed
@@ -29,6 +36,9 @@ abstract contract ExecuteLowLevelRebalanceCollateral is
         return _executeLowLevelRebalanceCollateralHint(deltaCollateral, true);
     }
 
+    /**
+     * @dev see ILTV.executeLowLevelRebalanceCollateralHint
+     */
     function executeLowLevelRebalanceCollateralHint(int256 deltaCollateral, bool isSharesPositive)
         external
         isFunctionAllowed
@@ -38,6 +48,11 @@ abstract contract ExecuteLowLevelRebalanceCollateral is
         return _executeLowLevelRebalanceCollateralHint(deltaCollateral, isSharesPositive);
     }
 
+    /**
+     * @dev base function to calculate execute low level rebalance collateral with hint
+     * Hint is used to understand if user expects to receive or burn shares. Depending
+     * on that different rounding will be used. If hint is incorrect, recalculation will be performed.
+     */
     function _executeLowLevelRebalanceCollateralHint(int256 deltaCollateral, bool isSharesPositive)
         internal
         returns (int256, int256)

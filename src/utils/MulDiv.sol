@@ -53,6 +53,8 @@ library sMulDiv {
             if iszero(anyZero) {
                 // Perform multiplication
                 let product := mul(x, y)
+
+                // overflow checks
                 if eq(product, 0x8000000000000000000000000000000000000000000000000000000000000000) {
                     if or(
                         eq(y, 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff),
@@ -90,6 +92,8 @@ library sMulDiv {
             if iszero(anyZero) {
                 // Perform multiplication
                 let product := mul(x, y)
+
+                // overflow checks
                 if eq(product, 0x8000000000000000000000000000000000000000000000000000000000000000) {
                     if or(
                         eq(y, 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff),

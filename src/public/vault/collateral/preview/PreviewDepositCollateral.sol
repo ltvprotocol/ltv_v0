@@ -10,9 +10,16 @@ import {VaultCollateral} from "src/math/VaultCollateral.sol";
 import {DepositWithdraw} from "src/math/DepositWithdraw.sol";
 import {uMulDiv} from "src/utils/MulDiv.sol";
 
+/**
+ * @title PreviewDepositCollateral
+ * @notice This contract contains preview deposit collateral function implementation.
+ */
 abstract contract PreviewDepositCollateral is VaultCollateral {
     using uMulDiv for uint256;
 
+    /**
+     * @dev see ICollateralVaultModule.previewDepositCollateral
+     */
     function previewDepositCollateral(uint256 assets, PreviewDepositVaultState memory state)
         public
         pure
@@ -21,6 +28,9 @@ abstract contract PreviewDepositCollateral is VaultCollateral {
         (shares,) = _previewDepositCollateral(assets, previewDepositVaultStateToPreviewCollateralVaultData(state));
     }
 
+    /**
+     * @dev base function to calculate preview deposit collateral
+     */
     function _previewDepositCollateral(uint256 assets, PreviewCollateralVaultData memory data)
         internal
         pure

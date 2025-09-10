@@ -9,6 +9,10 @@ import {WhitelistModifier} from "src/modifiers/WhitelistModifier.sol";
 import {FunctionStopperModifier} from "src/modifiers/FunctionStopperModifier.sol";
 import {ERC20} from "src/state_transition/ERC20.sol";
 
+/**
+ * @title ERC20WriteImpl
+ * @notice This contract contains implementation of the ERC20 write functions.
+ */
 abstract contract ERC20WriteImpl is
     WhitelistModifier,
     FunctionStopperModifier,
@@ -17,6 +21,9 @@ abstract contract ERC20WriteImpl is
     IERC20Errors,
     ERC20
 {
+    /**
+     * @dev see ITLV.transferFrom
+     */
     function transferFrom(address sender, address recipient, uint256 amount)
         external
         isFunctionAllowed
@@ -34,6 +41,9 @@ abstract contract ERC20WriteImpl is
         return true;
     }
 
+    /**
+     * @dev see ITLV.transfer
+     */
     function transfer(address recipient, uint256 amount)
         external
         isFunctionAllowed
@@ -50,6 +60,9 @@ abstract contract ERC20WriteImpl is
         return true;
     }
 
+    /**
+     * @dev see ITLV.approve
+     */
     function approve(address spender, uint256 amount) external isFunctionAllowed nonReentrant returns (bool) {
         allowance[msg.sender][spender] = amount;
         emit Approval(msg.sender, spender, amount);

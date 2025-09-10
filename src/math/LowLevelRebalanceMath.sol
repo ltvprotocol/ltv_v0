@@ -8,10 +8,25 @@ import {DeltaRealCollateralFromDeltaSharesData} from
     "src/structs/data/low_level/DeltaRealCollateralFromDeltaSharesData.sol";
 import {sMulDiv} from "src/utils/MulDiv.sol";
 
+/**
+ * @title LowLevelRebalanceMath
+ * @notice This library contains functions to calculate full state transition in underlying assets
+ * for low level rebalance operations.
+ *
+ * @dev These calculations are derived from the ltv protocol paper.
+ */
 library LowLevelRebalanceMath {
     using sMulDiv for int256;
 
-    // HODLer <=> depositor/withdrawer conflict, round up to leave more collateral in protocol
+    /**
+     * @notice This function calculates delta real collateral from delta shares.
+     *
+     * @dev This function calculates delta real collateral from delta shares.
+     * Calculations are derived from the ltv protocol paper.
+     *
+     * ROUNDING:
+     * HODLer <=> depositor/withdrawer conflict, round up to leave more collateral in protocol
+     */
     function calculateDeltaRealCollateralFromDeltaShares(DeltaRealCollateralFromDeltaSharesData memory data)
         private
         pure
@@ -29,8 +44,17 @@ library LowLevelRebalanceMath {
         );
     }
 
-    // in shares case: HODLer <=> depositor/withdrawer conflict, round down to have lower debt in protocol
-    // in collateral case: No conflict, round down to have less borrow in the protocol
+    /**
+     * @notice This function calculates delta real borrow from delta real collateral.
+     *
+     * @dev This function calculates delta real borrow from delta real collateral.
+     * Calculations are derived from the ltv protocol paper. Hint: next real collateral
+     * and new real borrow need to be in targetLtv ratio.
+     *
+     * ROUNDING:
+     * in shares case: HODLer <=> depositor/withdrawer conflict, round down to have lower debt in protocol
+     * in collateral case: No conflict, round down to have less borrow in the protocol
+     */
     function calculateDeltaRealBorrowFromDeltaRealCollateral(
         int256 deltaCollateral,
         int256 realCollateral,
@@ -42,7 +66,15 @@ library LowLevelRebalanceMath {
             + deltaCollateral.mulDivDown(int256(uint256(targetLtvDividend)), int256(uint256(targetLtvDivider))) - realBorrow;
     }
 
-    // Borrow case, no conflict, rounding up to have more collateral in protocol
+    /**
+     * @notice This function calculates delta real collateral from delta real borrow.
+     *
+     * @dev This function calculates delta real collateral from delta real borrow.
+     * Calculations are derived from the ltv protocol paper. Hint: next real collateral
+     * and new real borrow need to be in targetLtv ratio.
+     * ROUNDING:
+     * Borrow case, no conflict, rounding up to have more collateral in protocol
+     */
     function calculateDeltaRealCollateralFromDeltaRealBorrow(
         int256 deltaBorrow,
         int256 realBorrow,
@@ -62,6 +94,15 @@ library LowLevelRebalanceMath {
         ) - realCollateral;
     }
 
+    /**
+     * @notice This function calculates delta shares from delta real collateral and delta real borrow.
+     *
+     * @dev This function calculates delta shares from delta real collateral and delta real borrow.
+     * Calculations are derived from the ltv protocol paper.
+     *
+     * ROUNDING:
+     * No conflict, round up to have more shares in protocol
+     */
     function calculateDeltaSharesFromDeltaRealCollateralAndDeltaRealBorrow(
         int256 deltaCollateral,
         int256 deltaBorrow,
@@ -74,6 +115,10 @@ library LowLevelRebalanceMath {
             + userFutureRewardBorrow;
     }
 
+    /**
+     * @notice From amount of shares user wants to burn or mint, calculates changes in real collateral,
+     * real borrow and amount of shares needed to mint to fee collector. Everything is in underlying assets.
+     */
     function calculateLowLevelRebalanceShares(int256 deltaShares, LowLevelRebalanceData memory data)
         external
         pure
@@ -120,6 +165,10 @@ library LowLevelRebalanceMath {
         return (deltaRealCollateralAssets, deltaRealBorrowAssets, deltaProtocolFutureRewardShares);
     }
 
+    /**
+     * @notice From amount of borrow user wants to deposit or withdraw, calculates changes in real collateral,
+     * amount of shares needed to mint or burn and amount of shares needed to mint to fee collector. Everything is in underlying assets.
+     */
     function calculateLowLevelRebalanceBorrow(int256 deltaBorrowAssets, LowLevelRebalanceData memory data)
         external
         pure
@@ -162,6 +211,10 @@ library LowLevelRebalanceMath {
         return (deltaRealCollateralAssets, deltaShares, deltaProtocolFutureRewardShares);
     }
 
+    /**
+     * @notice From amount of collateral user wants to deposit or withdraw, calculates changes in real borrow,
+     * amount of shares needed to mint or burn and amount of shares needed to mint to fee collector. Everything is in underlying assets.
+     */
     function calculateLowLevelRebalanceCollateral(int256 deltaCollateralAssets, LowLevelRebalanceData memory data)
         external
         pure

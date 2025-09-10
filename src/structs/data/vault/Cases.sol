@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
+/**
+ * @title Cases
+ * @notice This struct needed for vault calculations
+ */
 struct Cases {
     uint8 cna;
     uint8 cmcb;

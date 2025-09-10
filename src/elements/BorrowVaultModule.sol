@@ -9,6 +9,10 @@ import {ConvertToAssets} from "src/public/vault/borrow/convert/ConvertToAssets.s
 import {ConvertToShares} from "src/public/vault/borrow/convert/ConvertToShares.sol";
 import {Asset} from "src/public/vault/borrow/Asset.sol";
 
+/**
+ * @title BorrowVaultModule
+ * @notice Borrow vault module for LTV protocol
+ */
 contract BorrowVaultModule is Redeem, Withdraw, Deposit, Mint, ConvertToShares, ConvertToAssets, Asset {
     constructor() {
         _disableInitializers();
