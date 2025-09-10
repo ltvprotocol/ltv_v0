@@ -102,4 +102,8 @@ abstract contract BorrowVaultRead is
     function totalAssets(bool isDeposit) external view returns (uint256) {
         return modules.borrowVaultModule().totalAssets(isDeposit, totalAssetsState(isDeposit));
     }
+
+    function asset() external view returns (address) {
+        return modules.borrowVaultModule().asset();
+    }
 }
