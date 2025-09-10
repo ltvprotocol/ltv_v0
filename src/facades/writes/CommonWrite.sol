@@ -11,6 +11,9 @@ import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
  * fail if delegate call fails or if supplied implementation is not smart contract..
  */
 abstract contract CommonWrite {
+    /**
+     * @dev delegates call to the corresponding module
+     */
     function _delegate(address implementation, bytes memory encodedParams) internal {
         (bool success, bytes memory returndata) = implementation.delegatecall(bytes.concat(msg.sig, encodedParams));
 

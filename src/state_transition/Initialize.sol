@@ -6,7 +6,14 @@ import {OwnableUpgradeable} from "openzeppelin-contracts-upgradeable/contracts/a
 import {StateInitData} from "src/structs/state/initialize/StateInitData.sol";
 import {AdmistrationSetters} from "src/state_transition/AdmistrationSetters.sol";
 
+/**
+ * @title Initialize
+ * @notice contract contains functionality to initialize the vault
+ */
 abstract contract Initialize is AdmistrationSetters, OwnableUpgradeable {
+    /**
+     * @dev Initializes the vault
+     */
     function initialize(StateInitData memory initData) public onlyInitializing {
         __Ownable_init(initData.owner);
 

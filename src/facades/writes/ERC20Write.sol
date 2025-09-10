@@ -11,14 +11,23 @@ import {CommonWrite} from "src/facades/writes/CommonWrite.sol";
  * calls to the ERC20 module.
  */
 abstract contract ERC20Write is LTVState, CommonWrite {
+    /**
+     * @dev see ILTV.approve
+     */
     function approve(address spender, uint256 amount) external returns (bool) {
         _delegate(address(modules.erc20Module()), abi.encode(spender, amount));
     }
 
+    /**
+     * @dev see ILTV.transfer
+     */
     function transfer(address to, uint256 amount) external returns (bool) {
         _delegate(address(modules.erc20Module()), abi.encode(to, amount));
     }
 
+    /**
+     * @dev see ILTV.transferFrom
+     */
     function transferFrom(address from, address to, uint256 amount) external returns (bool) {
         _delegate(address(modules.erc20Module()), abi.encode(from, to, amount));
     }

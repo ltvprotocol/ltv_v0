@@ -13,6 +13,10 @@ import {PreviewLowLevelRebalanceShares} from "src/public/low_level/read/preview/
 import {MaxLowLevelRebalanceShares} from "src/public/low_level/read/max/MaxLowLevelRebalanceShares.sol";
 import {CommonMath} from "src/math/libraries/CommonMath.sol";
 
+/**
+ * @title ExecuteLowLevelRebalanceShares
+ * @notice This contract contains execute low level rebalance shares function implementation.
+ */
 abstract contract ExecuteLowLevelRebalanceShares is
     ExecuteLowLevelRebalanceStateReader,
     ExecuteLowLevelRebalance,
@@ -21,6 +25,11 @@ abstract contract ExecuteLowLevelRebalanceShares is
     ApplyMaxGrowthFee,
     ILowLevelRebalanceErrors
 {
+    /**
+     * @dev see ILTV.executeLowLevelRebalanceShares
+     * According to deltaShares it's either deposit or withdraw event. Depending
+     * from this different rounding is used
+     */
     function executeLowLevelRebalanceShares(int256 deltaShares)
         external
         isFunctionAllowed

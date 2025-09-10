@@ -7,6 +7,10 @@ import {IMorphoBlue} from "src/connectors/lending_connectors/interfaces/IMorphoB
 import {LTVState} from "src/states/LTVState.sol";
 import {UMulDiv} from "src/math/libraries/MulDiv.sol";
 
+/**
+ * @title MorphoConnector
+ * @notice Connector for Morpho protocol
+ */
 contract MorphoConnector is LTVState, ILendingConnector {
     using UMulDiv for uint128;
 
@@ -20,12 +24,18 @@ contract MorphoConnector is LTVState, ILendingConnector {
         MORPHO = IMorphoBlue(_morpho);
     }
 
+    /**
+     * @dev Get the Morpho connector storage
+     */
     function _getMorphoConnectorStorage() private pure returns (MorphoConnectorStorage storage s) {
         assembly {
             s.slot := MORPHO_CONNECTOR_STORAGE_LOCATION
         }
     }
 
+    /**
+     * @dev Create the Morpho market params
+     */
     function _createMarketParams() private view returns (IMorphoBlue.MarketParams memory) {
         MorphoConnectorStorage storage s = _getMorphoConnectorStorage();
         return IMorphoBlue.MarketParams({
@@ -37,30 +47,48 @@ contract MorphoConnector is LTVState, ILendingConnector {
         });
     }
 
+    /**
+     * @inheritdoc ILendingConnector
+     */
     function supply(uint256 amount) external {
         collateralToken.approve(address(MORPHO), amount);
         MORPHO.supplyCollateral(_createMarketParams(), amount, address(this), "");
     }
 
+    /**
+     * @inheritdoc ILendingConnector
+     */
     function withdraw(uint256 amount) external {
         MORPHO.withdrawCollateral(_createMarketParams(), amount, address(this), address(this));
     }
 
+    /**
+     * @inheritdoc ILendingConnector
+     */
     function borrow(uint256 amount) external {
         MORPHO.borrow(_createMarketParams(), amount, 0, address(this), address(this));
     }
 
+    /**
+     * @inheritdoc ILendingConnector
+     */
     function repay(uint256 amount) external {
         borrowToken.approve(address(MORPHO), amount);
         MORPHO.repay(_createMarketParams(), amount, 0, address(this), "");
     }
 
+    /**
+     * @inheritdoc ILendingConnector
+     */
     function getRealCollateralAssets(bool, bytes calldata marketIdData) external view returns (uint256) {
         bytes32 marketId = abi.decode(marketIdData, (bytes32));
         (,, uint128 collateral) = MORPHO.position(marketId, msg.sender);
         return collateral;
     }
 
+    /**
+     * @inheritdoc ILendingConnector
+     */
     function getRealBorrowAssets(bool isDeposit, bytes calldata marketIdData) external view returns (uint256) {
         bytes32 marketId = abi.decode(marketIdData, (bytes32));
 
@@ -73,6 +101,9 @@ contract MorphoConnector is LTVState, ILendingConnector {
         return borrowShares.mulDiv(totalBorrowAssets, totalBorrowShares, isDeposit);
     }
 
+    /**
+     * @inheritdoc ILendingConnector
+     */
     function initializeLendingConnectorData(bytes memory data) external {
         (address oracle, address irm, uint256 lltv, bytes32 marketId) =
             abi.decode(data, (address, address, uint256, bytes32));

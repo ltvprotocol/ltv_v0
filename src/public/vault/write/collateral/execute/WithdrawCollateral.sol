@@ -23,6 +23,10 @@ import {NextStep} from "src/math/libraries/NextStep.sol";
 import {CommonMath} from "src/math/libraries/CommonMath.sol";
 import {UMulDiv} from "src/math/libraries/MulDiv.sol";
 
+/**
+ * @title WithdrawCollateral
+ * @notice This contract contains withdraw collateral function implementation.
+ */
 abstract contract WithdrawCollateral is
     MaxWithdrawRedeemCollateralVaultStateReader,
     MaxWithdrawCollateral,
@@ -36,6 +40,9 @@ abstract contract WithdrawCollateral is
 {
     using UMulDiv for uint256;
 
+    /**
+     * @dev see ILTV.withdrawCollateral
+     */
     function withdrawCollateral(uint256 assets, address receiver, address owner)
         external
         isFunctionAllowed

@@ -10,13 +10,23 @@ import {MintRedeem} from "src/math/libraries/MintRedeem.sol";
 import {Vault} from "src/math/abstracts/Vault.sol";
 import {UMulDiv} from "src/math/libraries/MulDiv.sol";
 
+/**
+ * @title PreviewMint
+ * @notice This contract contains preview mint function implementation.
+ */
 abstract contract PreviewMint is Vault {
     using UMulDiv for uint256;
 
+    /**
+     * @dev see IBorrowVaultModule.previewMint
+     */
     function previewMint(uint256 shares, PreviewDepositVaultState memory state) public pure returns (uint256 assets) {
         (assets,) = _previewMint(shares, previewDepositStateToPreviewDepositData(state));
     }
 
+    /**
+     * @dev base function to calculate preview mint
+     */
     function _previewMint(uint256 shares, PreviewDepositBorrowVaultData memory data)
         internal
         pure

@@ -6,11 +6,18 @@ import {AuctionApplyDeltaState} from "src/state_transition/AuctionApplyDeltaStat
 import {GetAuctionStateReader} from "src/state_reader/common/GetAuctionStateReader.sol";
 import {PreviewExecuteAuctionCollateral} from "src/public/auction/read/PreviewExecuteAuctionCollateral.sol";
 
+/**
+ * @title ExecuteAuctionCollateral
+ * @notice This contract contains execute auction collateral function implementation.
+ */
 abstract contract ExecuteAuctionCollateral is
     PreviewExecuteAuctionCollateral,
     GetAuctionStateReader,
     AuctionApplyDeltaState
 {
+    /**
+     * @dev see IAuctionModule.executeAuctionCollateral
+     */
     function executeAuctionCollateral(int256 deltaUserCollateralAssets)
         external
         isFunctionAllowed

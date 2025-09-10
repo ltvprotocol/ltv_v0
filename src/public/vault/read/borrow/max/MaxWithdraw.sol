@@ -8,13 +8,23 @@ import {PreviewWithdraw} from "src/public/vault/read/borrow/preview/PreviewWithd
 import {PreviewRedeem} from "src/public/vault/read/borrow/preview/PreviewRedeem.sol";
 import {UMulDiv} from "src/math/libraries/MulDiv.sol";
 
+/**
+ * @title MaxWithdraw
+ * @notice This contract contains max withdraw function implementation.
+ */
 abstract contract MaxWithdraw is PreviewWithdraw, PreviewRedeem {
     using UMulDiv for uint256;
 
+    /**
+     * @dev see IBorrowVaultModule.maxWithdraw
+     */
     function maxWithdraw(MaxWithdrawRedeemBorrowVaultState memory state) public pure returns (uint256) {
         return _maxWithdraw(maxWithdrawRedeemStateToData(state));
     }
 
+    /**
+     * @dev base function to calculate max withdraw
+     */
     function _maxWithdraw(MaxWithdrawRedeemBorrowVaultData memory data) internal pure returns (uint256) {
         // round down to assume smaller border
         uint256 maxSafeRealBorrow =

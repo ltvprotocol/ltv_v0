@@ -8,13 +8,23 @@ import {PreviewMintCollateral} from "src/public/vault/read/collateral/preview/Pr
 import {PreviewDepositCollateral} from "src/public/vault/read/collateral/preview/PreviewDepositCollateral.sol";
 import {UMulDiv} from "src/math/libraries/MulDiv.sol";
 
+/**
+ * @title MaxMintCollateral
+ * @notice This contract contains max mint collateral function implementation.
+ */
 abstract contract MaxMintCollateral is PreviewMintCollateral, PreviewDepositCollateral {
     using UMulDiv for uint256;
 
+    /**
+     * @dev see ICollateralVaultModule.maxMintCollateral
+     */
     function maxMintCollateral(MaxDepositMintCollateralVaultState memory state) public pure returns (uint256) {
         return _maxMintCollateral(maxDepositMintCollateralVaultStateToMaxDepositMintCollateralVaultData(state));
     }
 
+    /**
+     * @dev base function to calculate max mint collateral
+     */
     function _maxMintCollateral(MaxDepositMintCollateralVaultData memory data) internal pure returns (uint256) {
         uint256 availableSpaceInShares = getAvailableSpaceInShares(
             data.previewCollateralVaultData.collateral,

@@ -3,6 +3,10 @@ pragma solidity ^0.8.28;
 
 import {MaxGrowthFeeState} from "src/structs/state/common/MaxGrowthFeeState.sol";
 
+/**
+ * @title PreviewDepositVaultState
+ * @notice This struct needed for preview deposit vault calculations
+ */
 struct PreviewDepositVaultState {
     MaxGrowthFeeState maxGrowthFeeState;
     uint256 depositRealBorrowAssets;

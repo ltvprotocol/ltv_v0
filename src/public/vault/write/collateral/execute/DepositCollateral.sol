@@ -23,6 +23,10 @@ import {NextStep} from "src/math/libraries/NextStep.sol";
 import {CommonMath} from "src/math/libraries/CommonMath.sol";
 import {UMulDiv} from "src/math/libraries/MulDiv.sol";
 
+/**
+ * @title DepositCollateral
+ * @notice This contract contains deposit collateral function implementation.
+ */
 abstract contract DepositCollateral is
     MaxDepositMintCollateralVaultStateReader,
     MaxDepositCollateral,
@@ -36,6 +40,9 @@ abstract contract DepositCollateral is
     using UMulDiv for uint256;
     using SafeERC20 for IERC20;
 
+    /**
+     * @dev see ILTV.depositCollateral
+     */
     function depositCollateral(uint256 assets, address receiver)
         external
         isFunctionAllowed

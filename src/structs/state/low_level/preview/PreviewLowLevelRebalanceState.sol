@@ -3,6 +3,10 @@ pragma solidity ^0.8.28;
 
 import {MaxGrowthFeeState} from "src/structs/state/common/MaxGrowthFeeState.sol";
 
+/**
+ * @title PreviewLowLevelRebalanceState
+ * @notice This struct needed for preview low level rebalance calculations
+ */
 struct PreviewLowLevelRebalanceState {
     MaxGrowthFeeState maxGrowthFeeState;
     uint256 depositRealBorrowAssets;

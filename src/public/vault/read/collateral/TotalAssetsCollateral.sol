@@ -8,14 +8,24 @@ import {TotalAssets} from "src/public/vault/read/borrow/TotalAssets.sol";
 import {CommonMath} from "src/math/libraries/CommonMath.sol";
 import {UMulDiv} from "src/math/libraries/MulDiv.sol";
 
+/**
+ * @title TotalAssetsCollateral
+ * @notice This contract contains total assets collateral function implementation.
+ */
 abstract contract TotalAssetsCollateral is TotalAssets {
     using UMulDiv for uint256;
 
+    /**
+     * @dev see ICollateralVaultModule.totalAssetsCollateral
+     */
     function totalAssetsCollateral(TotalAssetsState memory state) public pure virtual returns (uint256) {
         // default behavior - don't overestimate our assets
         return totalAssetsCollateral(false, state);
     }
 
+    /**
+     * @dev see ICollateralVaultModule.totalAssetsCollateral
+     */
     function totalAssetsCollateral(bool isDeposit, TotalAssetsState memory state)
         public
         pure
@@ -25,6 +35,9 @@ abstract contract TotalAssetsCollateral is TotalAssets {
         return _totalAssetsCollateral(isDeposit, totalAssetsStateToTotalAssetsCollateralData(state, isDeposit));
     }
 
+    /**
+     * @dev base function to calculate total assets collateral
+     */
     function _totalAssetsCollateral(bool isDeposit, TotalAssetsCollateralData memory data)
         internal
         pure
@@ -33,6 +46,9 @@ abstract contract TotalAssetsCollateral is TotalAssets {
         return data.totalAssets.mulDiv(data.borrowPrice, data.collateralPrice, isDeposit);
     }
 
+    /**
+     * @dev base function to calculate total assets collateral state to data
+     */
     function totalAssetsStateToTotalAssetsCollateralData(TotalAssetsState memory state, bool isDeposit)
         internal
         pure

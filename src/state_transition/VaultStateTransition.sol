@@ -6,9 +6,16 @@ import {NextStateData} from "src/structs/state_transition/NextStateData.sol";
 import {LTVState} from "src/states/LTVState.sol";
 import {SMulDiv} from "src/math/libraries/MulDiv.sol";
 
+/**
+ * @title VaultStateTransition
+ * @notice contract contains functionality to apply state transition after vault calculations
+ */
 abstract contract VaultStateTransition is LTVState {
     using SMulDiv for int256;
 
+    /**
+     * @dev applies state transition after vault calculations
+     */
     function applyStateTransition(NextStateData memory nextStateData) internal {
         // Here we have conflict between HODLer and Future auction executor. Round in favor of HODLer
         futureBorrowAssets = nextStateData.nextState.futureBorrow.mulDivDown(

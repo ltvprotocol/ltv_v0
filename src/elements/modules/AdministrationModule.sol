@@ -7,6 +7,10 @@ import {OnlyGuardian} from "../../public/administration/write/OnlyGuardian.sol";
 import {OnlyGovernor} from "../../public/administration/write/OnlyGovernor.sol";
 import {GetVaultBoolState} from "../../public/administration/read/GetVaultBoolState.sol";
 
+/**
+ * @title AdministrationModule
+ * @notice Administration module for LTV protocol
+ */
 contract AdministrationModule is OnlyEmergencyDeleverager, OnlyOwner, OnlyGuardian, OnlyGovernor, GetVaultBoolState {
     constructor() {
         _disableInitializers();

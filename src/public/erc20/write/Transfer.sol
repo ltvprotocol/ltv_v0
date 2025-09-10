@@ -9,6 +9,10 @@ import {WhitelistModifier} from "src/modifiers/WhitelistModifier.sol";
 import {FunctionStopperModifier} from "src/modifiers/FunctionStopperModifier.sol";
 import {ERC20} from "src/state_transition/ERC20.sol";
 
+/**
+ * @title Transfer
+ * @notice This contract contains transfer public function implementation.
+ */
 abstract contract Transfer is
     WhitelistModifier,
     FunctionStopperModifier,
@@ -17,6 +21,9 @@ abstract contract Transfer is
     IERC20Errors,
     ERC20
 {
+    /**
+     * @dev see ITLV.transfer
+     */
     function transfer(address recipient, uint256 amount)
         external
         isFunctionAllowed

@@ -5,7 +5,15 @@ import {MaxWithdrawRedeemCollateralVaultState} from
     "src/structs/state/vault/max/MaxWithdrawRedeemCollateralVaultState.sol";
 import {PreviewWithdrawVaultStateReader} from "src/state_reader/vault/PreviewWithdrawVaultStateReader.sol";
 
+/**
+ * @title MaxWithdrawRedeemCollateralVaultStateReader
+ * @notice contract contains functionality to retrieve pure state needed for
+ * max withdraw redeem collateral vault operations calculations
+ */
 contract MaxWithdrawRedeemCollateralVaultStateReader is PreviewWithdrawVaultStateReader {
+    /**
+     * @dev function to retrieve pure state needed for max withdraw redeem collateral vault operations
+     */
     function maxWithdrawRedeemCollateralVaultState(address owner)
         internal
         view

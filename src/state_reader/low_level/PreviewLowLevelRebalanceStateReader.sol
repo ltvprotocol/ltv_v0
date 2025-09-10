@@ -5,7 +5,15 @@ import {MaxGrowthFeeState} from "src/structs/state/common/MaxGrowthFeeState.sol"
 import {PreviewLowLevelRebalanceState} from "src/structs/state/low_level/preview/PreviewLowLevelRebalanceState.sol";
 import {MaxGrowthFeeStateReader} from "src/state_reader/common/MaxGrowthFeeStateReader.sol";
 
+/**
+ * @title PreviewLowLevelRebalanceStateReader
+ * @notice contract contains functionality to retrieve pure state needed for
+ * preview low level rebalance operations calculations
+ */
 contract PreviewLowLevelRebalanceStateReader is MaxGrowthFeeStateReader {
+    /**
+     * @dev function to retrieve pure state needed for preview low level rebalance operations
+     */
     function previewLowLevelRebalanceState() internal view returns (PreviewLowLevelRebalanceState memory) {
         MaxGrowthFeeState memory maxGrowthFeeState = maxGrowthFeeState();
         (uint256 depositRealCollateralAssets, uint256 depositRealBorrowAssets) =

@@ -7,7 +7,14 @@ import {DeltaAuctionState} from "src/structs/state_transition/DeltaAuctionState.
 import {AuctionStateToData} from "src/math/abstracts/AuctionStateToData.sol";
 import {AuctionMath} from "src/math/libraries/AuctionMath.sol";
 
+/**
+ * @title PreviewExecuteAuctionCollateral
+ * @notice This contract contains preview execute auction collateral function implementation.
+ */
 abstract contract PreviewExecuteAuctionCollateral is AuctionStateToData {
+    /**
+     * @dev see IAuctionModule.previewExecuteAuctionCollateral
+     */
     function previewExecuteAuctionCollateral(int256 deltaUserCollateralAssets, AuctionState memory auctionState)
         external
         view
@@ -17,6 +24,9 @@ abstract contract PreviewExecuteAuctionCollateral is AuctionStateToData {
             .deltaUserBorrowAssets;
     }
 
+    /**
+     * @dev main function to calculate preview execute auction collateral using transformed auction data
+     */
     function _previewExecuteAuctionCollateral(int256 deltaUserCollateralAssets, AuctionData memory auctionData)
         internal
         pure

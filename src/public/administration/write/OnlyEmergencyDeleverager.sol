@@ -14,6 +14,10 @@ import {UMulDiv, SMulDiv} from "../../../math/libraries/MulDiv.sol";
 import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 
+/**
+ * @title OnlyEmergencyDeleverager
+ * @notice This contract contains only emergency deleverager public function implementation.
+ */
 abstract contract OnlyEmergencyDeleverager is
     AdmistrationSetters,
     MaxGrowthFee,
@@ -26,6 +30,9 @@ abstract contract OnlyEmergencyDeleverager is
     using SMulDiv for int256;
     using SafeERC20 for IERC20;
 
+    /**
+     * @dev see ILTV.deleverageAndWithdraw
+     */
     function deleverageAndWithdraw(uint256 closeAmountBorrow, uint16 deleverageFeeDividend, uint16 deleverageFeeDivider)
         external
         onlyEmergencyDeleverager

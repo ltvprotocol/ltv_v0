@@ -3,6 +3,10 @@ pragma solidity ^0.8.28;
 
 import {Cases} from "src/structs/data/vault/common/Cases.sol";
 
+/**
+ * @title DeltaSharesAndDeltaRealCollateralDividerData
+ * @notice This struct needed for delta shares and delta real collateral divider calculations
+ */
 struct DeltaSharesAndDeltaRealCollateralDividerData {
     Cases cases;
     uint16 targetLtvDividend;

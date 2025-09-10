@@ -5,7 +5,16 @@ import {ILendingConnector} from "../../interfaces/connectors/ILendingConnector.s
 import {BoolReader} from "../../math/abstracts/BoolReader.sol";
 import {LTVState} from "../../states/LTVState.sol";
 
+/**
+ * @title GetRealCollateralAndRealBorrowAssetsReader
+ * @notice contract contains functionality to retrieve both real collateral and borrow assets
+ * from the appropriate lending connector based on vault state
+ */
 contract GetRealCollateralAndRealBorrowAssetsReader is LTVState, BoolReader {
+    /**
+     * @dev function to retrieve both real collateral and borrow assets from the appropriate lending connector
+     * Needed for optimizing isVaultDeleveraged and lendingConnectorGetterData reads
+     */
     function getRealCollateralAndRealBorrowAssets(bool isDeposit) internal view returns (uint256, uint256) {
         if (_isVaultDeleveraged(boolSlot)) {
             return (

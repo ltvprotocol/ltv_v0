@@ -9,13 +9,23 @@ import {PreviewRedeemCollateral} from "src/public/vault/read/collateral/preview/
 import {PreviewWithdrawCollateral} from "src/public/vault/read/collateral/preview/PreviewWithdrawCollateral.sol";
 import {UMulDiv} from "src/math/libraries/MulDiv.sol";
 
+/**
+ * @title MaxRedeemCollateral
+ * @notice This contract contains max redeem collateral function implementation.
+ */
 abstract contract MaxRedeemCollateral is PreviewWithdrawCollateral, PreviewRedeemCollateral {
     using UMulDiv for uint256;
 
+    /**
+     * @dev see ICollateralVaultModule.maxRedeemCollateral
+     */
     function maxRedeemCollateral(MaxWithdrawRedeemCollateralVaultState memory state) public pure returns (uint256) {
         return _maxRedeemCollateral(maxWithdrawRedeemCollateralVaultStateToMaxWithdrawRedeemCollateralVaultData(state));
     }
 
+    /**
+     * @dev base function to calculate max redeem collateral
+     */
     function _maxRedeemCollateral(MaxWithdrawRedeemCollateralVaultData memory data) internal pure returns (uint256) {
         // round up to assume smaller border
         uint256 maxSafeRealCollateral =

@@ -22,6 +22,10 @@ import {NextStep} from "src/math/libraries/NextStep.sol";
 import {CommonMath} from "src/math/libraries/CommonMath.sol";
 import {UMulDiv} from "src/math/libraries/MulDiv.sol";
 
+/**
+ * @title Withdraw
+ * @notice This contract contains withdraw function implementation.
+ */
 abstract contract Withdraw is
     MaxWithdrawRedeemBorrowVaultStateReader,
     MaxWithdraw,
@@ -35,6 +39,9 @@ abstract contract Withdraw is
 {
     using UMulDiv for uint256;
 
+    /**
+     * @dev see IBorrowVaultModule.withdraw
+     */
     function withdraw(uint256 assets, address receiver, address owner)
         external
         isFunctionAllowed

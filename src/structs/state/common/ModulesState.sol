@@ -9,6 +9,10 @@ import {IERC20Module} from "../../../interfaces/reads/IERC20Module.sol";
 import {IInitializeModule} from "../../../interfaces/writes/IInitializeModule.sol";
 import {IAdministrationModule} from "../../../interfaces/reads/IAdministrationModule.sol";
 
+/**
+ * @title ModulesState
+ * @notice This struct needed for module state calculations
+ */
 struct ModulesState {
     IBorrowVaultModule borrowVaultModule;
     ICollateralVaultModule collateralVaultModule;

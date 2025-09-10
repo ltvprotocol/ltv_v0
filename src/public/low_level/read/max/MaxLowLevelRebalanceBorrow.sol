@@ -10,6 +10,9 @@ import {UMulDiv} from "src/math/libraries/MulDiv.sol";
 abstract contract MaxLowLevelRebalanceBorrow is MaxGrowthFee {
     using UMulDiv for uint256;
 
+    /**
+     * @dev see ILowLevelRebalanceModule.maxLowLevelRebalanceBorrow
+     */
     function maxLowLevelRebalanceBorrow(MaxLowLevelRebalanceBorrowStateData memory state)
         public
         pure
@@ -18,6 +21,9 @@ abstract contract MaxLowLevelRebalanceBorrow is MaxGrowthFee {
         return _maxLowLevelRebalanceBorrow(state);
     }
 
+    /**
+     * @dev main function to calculate max low level rebalance borrow
+     */
     function _maxLowLevelRebalanceBorrow(MaxLowLevelRebalanceBorrowStateData memory data)
         internal
         pure

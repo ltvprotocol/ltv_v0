@@ -9,6 +9,10 @@ import {WhitelistModifier} from "src/modifiers/WhitelistModifier.sol";
 import {FunctionStopperModifier} from "src/modifiers/FunctionStopperModifier.sol";
 import {ERC20} from "src/state_transition/ERC20.sol";
 
+/**
+ * @title Approve
+ * @notice This contract contains approve public function implementation.
+ */
 abstract contract Approve is
     WhitelistModifier,
     FunctionStopperModifier,
@@ -17,6 +21,9 @@ abstract contract Approve is
     IERC20Errors,
     ERC20
 {
+    /**
+     * @dev see ITLV.approve
+     */
     function approve(address spender, uint256 amount) external isFunctionAllowed nonReentrant returns (bool) {
         allowance[msg.sender][spender] = amount;
         emit Approval(msg.sender, spender, amount);

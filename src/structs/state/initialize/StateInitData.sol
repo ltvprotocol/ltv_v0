@@ -5,6 +5,10 @@ import {ILendingConnector} from "src/interfaces/connectors/ILendingConnector.sol
 import {IOracleConnector} from "src/interfaces/connectors/IOracleConnector.sol";
 import {ISlippageConnector} from "src/interfaces/connectors/ISlippageConnector.sol";
 
+/**
+ * @title StateInitData
+ * @notice This struct needed for state initialization calculations
+ */
 struct StateInitData {
     string name;
     string symbol;

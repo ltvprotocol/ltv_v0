@@ -8,6 +8,11 @@ import {IWhitelistRegistry} from "src/interfaces/IWhitelistRegistry.sol";
 import {ISlippageConnector} from "src/interfaces/connectors/ISlippageConnector.sol";
 import {IModules} from "src/interfaces/IModules.sol";
 
+/**
+ * @title LTVState
+ * @notice contract contains an entire state of the vault
+ * except Ownable part (since it's inherited from OwnableUpgradeable)
+ */
 abstract contract LTVState {
     address public feeCollector;
     IERC20 public collateralToken;
