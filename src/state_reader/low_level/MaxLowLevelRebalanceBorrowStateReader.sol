@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {MaxLowLevelRebalanceBorrowStateData} from "src/structs/state/low_level/max/MaxLowLevelRebalanceBorrowStateData.sol";
+import {MaxLowLevelRebalanceBorrowStateData} from
+    "src/structs/state/low_level/max/MaxLowLevelRebalanceBorrowStateData.sol";
 import {GetRealBorrowAssetsReader} from "../common/GetRealBorrowAssetsReader.sol";
 
 contract MaxLowLevelRebalanceBorrowStateReader is GetRealBorrowAssetsReader {

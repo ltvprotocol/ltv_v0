@@ -4,7 +4,8 @@ pragma solidity ^0.8.28;
 import {PreviewDepositVaultState} from "src/structs/state/vault/preview/PreviewDepositVaultState.sol";
 import {PreviewWithdrawVaultState} from "src/structs/state/vault/preview/PreviewWithdrawVaultState.sol";
 import {MaxDepositMintCollateralVaultState} from "src/structs/state/vault/max/MaxDepositMintCollateralVaultState.sol";
-import {MaxWithdrawRedeemCollateralVaultState} from "src/structs/state/vault/max/MaxWithdrawRedeemCollateralVaultState.sol";
+import {MaxWithdrawRedeemCollateralVaultState} from
+    "src/structs/state/vault/max/MaxWithdrawRedeemCollateralVaultState.sol";
 import {MaxGrowthFeeState} from "src/structs/state/common/MaxGrowthFeeState.sol";
 import {TotalAssetsState} from "src/structs/state/vault/total_assets/TotalAssetsState.sol";
 

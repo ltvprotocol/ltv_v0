@@ -4,7 +4,8 @@ pragma solidity ^0.8.28;
 import {IVaultErrors} from "src/errors/IVaultErrors.sol";
 import {Constants} from "src/Constants.sol";
 import {Cases} from "src/structs/data/vault/common/Cases.sol";
-import {DeltaSharesAndDeltaRealCollateralData} from "src/structs/data/vault/delta_real_collateral/DeltaSharesAndDeltaRealCollateralData.sol";
+import {DeltaSharesAndDeltaRealCollateralData} from
+    "src/structs/data/vault/delta_real_collateral/DeltaSharesAndDeltaRealCollateralData.sol";
 import {DeltaSharesAndDeltaRealCollateralDividendData} from
     "src/structs/data/vault/delta_real_collateral/DeltaSharesAndDeltaRealCollateralDividendData.sol";
 import {DeltaSharesAndDeltaRealCollateralDividerData} from

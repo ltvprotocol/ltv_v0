@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {MaxWithdrawRedeemCollateralVaultState} from "src/structs/state/vault/max/MaxWithdrawRedeemCollateralVaultState.sol";
+import {MaxWithdrawRedeemCollateralVaultState} from
+    "src/structs/state/vault/max/MaxWithdrawRedeemCollateralVaultState.sol";
 import {MaxWithdrawRedeemCollateralVaultData} from "src/structs/data/vault/max/MaxWithdrawRedeemCollateralVaultData.sol";
 import {PreviewWithdrawVaultStateToCollateralData} from
     "src/math/abstracts/state_to_data/preview/PreviewWithdrawVaultStateToCollateralData.sol";

@@ -3,7 +3,8 @@ pragma solidity ^0.8.28;
 
 import {ExecuteLowLevelRebalanceState} from "src/structs/state/low_level/execute/ExecuteLowLevelRebalanceState.sol";
 import {LowLevelRebalanceData} from "src/structs/data/low_level/LowLevelRebalanceData.sol";
-import {MaxLowLevelRebalanceBorrowStateData} from "src/structs/state/low_level/max/MaxLowLevelRebalanceBorrowStateData.sol";
+import {MaxLowLevelRebalanceBorrowStateData} from
+    "src/structs/state/low_level/max/MaxLowLevelRebalanceBorrowStateData.sol";
 import {ILowLevelRebalanceErrors} from "src/errors/ILowLevelRebalanceErrors.sol";
 import {ApplyMaxGrowthFee} from "src/state_transition/ApplyMaxGrowthFee.sol";
 import {ExecuteLowLevelRebalance} from "src/state_transition/ExecuteLowLevelRebalance.sol";

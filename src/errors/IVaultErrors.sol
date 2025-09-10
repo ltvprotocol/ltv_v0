@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {DeltaSharesAndDeltaRealBorrowData} from "src/structs/data/vault/delta_real_borrow/DeltaSharesAndDeltaRealBorrowData.sol";
-import {DeltaSharesAndDeltaRealCollateralData} from "src/structs/data/vault/delta_real_collateral/DeltaSharesAndDeltaRealCollateralData.sol";
+import {DeltaSharesAndDeltaRealBorrowData} from
+    "src/structs/data/vault/delta_real_borrow/DeltaSharesAndDeltaRealBorrowData.sol";
+import {DeltaSharesAndDeltaRealCollateralData} from
+    "src/structs/data/vault/delta_real_collateral/DeltaSharesAndDeltaRealCollateralData.sol";
 import {DeltaRealBorrowAndDeltaRealCollateralData} from
     "src/structs/data/vault/delta_real_collateral/DeltaRealBorrowAndDeltaRealCollateralData.sol";
 

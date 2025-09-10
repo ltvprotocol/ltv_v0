@@ -7,7 +7,8 @@ import {NextState} from "src/structs/state_transition/NextState.sol";
 import {NextStateData} from "src/structs/state_transition/NextStateData.sol";
 import {NextStepData} from "src/structs/state_transition/NextStepData.sol";
 import {MaxWithdrawRedeemCollateralVaultData} from "src/structs/data/vault/max/MaxWithdrawRedeemCollateralVaultData.sol";
-import {MaxWithdrawRedeemCollateralVaultState} from "src/structs/state/vault/max/MaxWithdrawRedeemCollateralVaultState.sol";
+import {MaxWithdrawRedeemCollateralVaultState} from
+    "src/structs/state/vault/max/MaxWithdrawRedeemCollateralVaultState.sol";
 import {DeltaFuture} from "src/structs/state_transition/DeltaFuture.sol";
 import {MintProtocolRewardsData} from "src/structs/data/vault/common/MintProtocolRewardsData.sol";
 import {VaultStateTransition} from "src/state_transition/VaultStateTransition.sol";
