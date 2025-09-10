@@ -4,7 +4,7 @@ pragma solidity ^0.8.28;
 import {Test} from "forge-std/Test.sol";
 import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {ILTV} from "src/interfaces/ILTV.sol";
-import {Constants} from "src/Constants.sol";
+import {Constants} from "src/constants/Constants.sol";
 import {DummyOracleConnector} from "src/dummy/DummyOracleConnector.sol";
 import {ILendingConnector} from "src/interfaces/connectors/ILendingConnector.sol";
 

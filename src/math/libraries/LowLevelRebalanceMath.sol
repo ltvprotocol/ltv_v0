@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {ILowLevelRebalanceErrors} from "src/errors/ILowLevelRebalanceErrors.sol";
-import {Constants} from "src/Constants.sol";
+import {Constants} from "src/constants/Constants.sol";
 import {LowLevelRebalanceData} from "src/structs/data/low_level/LowLevelRebalanceData.sol";
 import {DeltaRealCollateralFromDeltaSharesData} from
     "src/structs/data/low_level/DeltaRealCollateralFromDeltaSharesData.sol";

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {Constants} from "../../../Constants.sol";
+import {Constants} from "../../../constants/Constants.sol";
 import {MaxGrowthFeeState} from "../../../structs/state/common/MaxGrowthFeeState.sol";
 import {MaxGrowthFeeData} from "../../../structs/data/common/MaxGrowthFeeData.sol";
 import {AdministrationModifiers} from "../../../modifiers/AdministrationModifiers.sol";

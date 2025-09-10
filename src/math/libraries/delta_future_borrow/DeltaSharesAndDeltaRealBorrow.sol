@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {IVaultErrors} from "src/errors/IVaultErrors.sol";
-import {Constants} from "src/Constants.sol";
+import {Constants} from "src/constants/Constants.sol";
 import {Cases} from "src/structs/data/vault/common/Cases.sol";
 import {DeltaSharesAndDeltaRealBorrowData} from
     "src/structs/data/vault/delta_real_borrow/DeltaSharesAndDeltaRealBorrowData.sol";

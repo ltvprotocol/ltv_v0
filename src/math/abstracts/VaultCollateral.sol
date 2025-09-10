@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {Constants} from "src/Constants.sol";
+import {Constants} from "src/constants/Constants.sol";
 import {MaxDepositMintCollateralStateToData} from
     "src/math/abstracts/state_to_data/max/MaxDepositMintCollateralStateToData.sol";
 import {MaxWithdrawRedeemCollateralStateToData} from

@@ -7,7 +7,7 @@ import {ILendingConnector} from "../interfaces/connectors/ILendingConnector.sol"
 import {IOracleConnector} from "../interfaces/connectors/IOracleConnector.sol";
 import {IAdministrationErrors} from "../errors/IAdministrationErrors.sol";
 import {IAdministrationEvents} from "../events/IAdministrationEvents.sol";
-import {Constants} from "../Constants.sol";
+import {Constants} from "../constants/Constants.sol";
 import {BoolReader} from "../math/abstracts/BoolReader.sol";
 import {BoolWriter} from "../state_transition/BoolWriter.sol";
 
