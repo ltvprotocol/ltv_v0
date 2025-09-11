@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {BaseScript} from "../utils/BaseScript.s.sol";
-import {LowLevelRebalanceModule} from "../../src/elements/LowLevelRebalanceModule.sol";
+import {LowLevelRebalanceModule} from "../../src/elements/modules/LowLevelRebalanceModule.sol";
 import {console} from "forge-std/console.sol";
 
 contract DeployLowLevelRebalanceModule is BaseScript {

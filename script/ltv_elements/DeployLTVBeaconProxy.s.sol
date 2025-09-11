@@ -2,11 +2,11 @@
 pragma solidity ^0.8.28;
 
 import {BaseScript} from "../utils/BaseScript.s.sol";
-import {StateInitData} from "src/structs/state/StateInitData.sol";
+import {StateInitData} from "src/structs/state/initialize/StateInitData.sol";
 import {ILTV} from "src/interfaces/ILTV.sol";
-import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
-import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
-import {ISlippageProvider} from "src/interfaces/ISlippageProvider.sol";
+import {ILendingConnector} from "src/interfaces/connectors/ILendingConnector.sol";
+import {IOracleConnector} from "src/interfaces/connectors/IOracleConnector.sol";
+import {ISlippageConnector} from "src/interfaces/connectors/ISlippageConnector.sol";
 import {IModules} from "src/interfaces/IModules.sol";
 import {BeaconProxy} from "openzeppelin-contracts/contracts/proxy/beacon/BeaconProxy.sol";
 import {console} from "forge-std/console.sol";
@@ -45,7 +45,7 @@ contract DeployLTVBeaconProxy is BaseScript {
         stateInitData.maxGrowthFeeDividend = uint16(vm.envUint("MAX_GROWTH_FEE_DIVIDEND"));
         stateInitData.maxGrowthFeeDivider = uint16(vm.envUint("MAX_GROWTH_FEE_DIVIDER"));
         stateInitData.maxTotalAssetsInUnderlying = vm.envUint("MAX_TOTAL_ASSETS_IN_UNDERLYING");
-        stateInitData.slippageProvider = ISlippageProvider(vm.envAddress("SLIPPAGE_CONNECTOR"));
+        stateInitData.slippageConnector = ISlippageConnector(vm.envAddress("SLIPPAGE_CONNECTOR"));
         stateInitData.maxDeleverageFeeDividend = uint16(vm.envUint("MAX_DELEVERAGE_FEE_DIVIDEND"));
         stateInitData.maxDeleverageFeeDivider = uint16(vm.envUint("MAX_DELEVERAGE_FEE_DIVIDER"));
         stateInitData.vaultBalanceAsLendingConnector =
@@ -58,7 +58,7 @@ contract DeployLTVBeaconProxy is BaseScript {
         string memory lendingConnectorName = vm.envString("LENDING_CONNECTOR_NAME");
         uint256 collateralSlippage = vm.envUint("COLLATERAL_SLIPPAGE");
         uint256 borrowSlippage = vm.envUint("BORROW_SLIPPAGE");
-        stateInitData.slippageProviderData = abi.encode(collateralSlippage, borrowSlippage);
+        stateInitData.slippageConnectorData = abi.encode(collateralSlippage, borrowSlippage);
 
         if (keccak256(abi.encodePacked(lendingConnectorName)) == keccak256(abi.encodePacked("AaveV3"))) {
             stateInitData.lendingConnectorData = abi.encode(vm.envUint("EMODE"));

@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {MintProtocolRewardsData} from "src/structs/data/MintProtocolRewardsData.sol";
-import {Constants} from "src/Constants.sol";
+import {MintProtocolRewardsData} from "src/structs/data/vault/common/MintProtocolRewardsData.sol";
+import {Constants} from "src/constants/Constants.sol";
 import {ERC20} from "src/state_transition/ERC20.sol";
-import {uMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/math/libraries/MulDiv.sol";
 
 /**
  * @title MintProtocolRewards
  * @notice contract contains functionality to mint protocol rewards
  */
 abstract contract MintProtocolRewards is ERC20 {
-    using uMulDiv for uint256;
+    using UMulDiv for uint256;
 
     /**
      * @dev If auction wasn't fully opened during cecb, cebc, ceccb or cecbc case calculations,

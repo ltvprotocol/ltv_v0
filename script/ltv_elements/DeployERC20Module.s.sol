@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {BaseScript} from "../utils/BaseScript.s.sol";
-import {ERC20Module} from "../../src/elements/ERC20Module.sol";
+import {ERC20Module} from "../../src/elements/modules/ERC20Module.sol";
 import {console} from "forge-std/console.sol";
 
 contract DeployERC20Module is BaseScript {

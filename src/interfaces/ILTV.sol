@@ -11,7 +11,7 @@ import {IAuctionEvent} from "src/events/IAuctionEvent.sol";
 import {IERC4626Events} from "src/events/IERC4626Events.sol";
 import {IERC20Events} from "src/events/IERC20Events.sol";
 import {ILowLevelRebalanceEvent} from "src/events/ILowLevelRebalanceEvent.sol";
-import {StateInitData} from "src/structs/state/StateInitData.sol";
+import {StateInitData} from "src/structs/state/initialize/StateInitData.sol";
 
 /**
  * @title ILTV
@@ -722,11 +722,11 @@ interface ILTV is
     function setOracleConnector(address _oracleConnector, bytes memory oracleConnectorData) external;
 
     /**
-     * @notice Sets the slippage provider address
-     * @param _slippageProvider The new slippage provider address
-     * @param slippageProviderData Additional data for the slippage provider
+     * @notice Sets the slippage connector address
+     * @param _slippageConnector The new slippage connector address
+     * @param slippageConnectorData Additional data for the slippage connector
      */
-    function setSlippageProvider(address _slippageProvider, bytes memory slippageProviderData) external;
+    function setSlippageConnector(address _slippageConnector, bytes memory slippageConnectorData) external;
 
     /**
      * @notice Sets the vault balance as lending connector
@@ -893,10 +893,10 @@ interface ILTV is
     function whitelistRegistry() external view returns (address);
 
     /**
-     * @notice Returns the slippage provider address
-     * @return The slippage provider address
+     * @notice Returns the slippage connector address
+     * @return The slippage connector address
      */
-    function slippageProvider() external view returns (address);
+    function slippageConnector() external view returns (address);
 
     /**
      * @notice Returns the vault balance as lending connector address
@@ -917,10 +917,10 @@ interface ILTV is
     function oracleConnectorGetterData() external view returns (bytes memory);
 
     /**
-     * @notice Returns the slippage provider getter data
-     * @return The slippage provider getter data
+     * @notice Returns the slippage connector getter data
+     * @return The slippage connector getter data
      */
-    function slippageProviderGetterData() external view returns (bytes memory);
+    function slippageConnectorGetterData() external view returns (bytes memory);
 
     /**
      * @notice Returns the vault balance connector getter data

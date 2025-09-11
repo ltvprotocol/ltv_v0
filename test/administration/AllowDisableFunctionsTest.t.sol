@@ -323,8 +323,8 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         selectors[24] = ILTV.setMinProfitLtv.selector;
         callers[24] = defaultData.governor;
 
-        calls[25] = abi.encodeCall(ILTV.setSlippageProvider, (address(1), abi.encode(10 ** 16, 10 ** 16)));
-        selectors[25] = ILTV.setSlippageProvider.selector;
+        calls[25] = abi.encodeCall(ILTV.setSlippageConnector, (address(1), abi.encode(10 ** 16, 10 ** 16)));
+        selectors[25] = ILTV.setSlippageConnector.selector;
         callers[25] = defaultData.governor;
 
         calls[26] = abi.encodeCall(ILTV.setTargetLtv, (75, 100));

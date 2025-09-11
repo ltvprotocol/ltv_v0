@@ -4,8 +4,9 @@ pragma solidity ^0.8.28;
 import {Test} from "forge-std/Test.sol";
 import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {ILTV} from "src/interfaces/ILTV.sol";
-import {Constants} from "src/Constants.sol";
+import {Constants} from "src/constants/Constants.sol";
 import {DummyOracleConnector} from "src/dummy/DummyOracleConnector.sol";
+import {ILendingConnector} from "src/interfaces/connectors/ILendingConnector.sol";
 
 /**
  * @title BaseInvariantWrapper
@@ -137,8 +138,8 @@ contract BaseInvariantWrapper is Test {
         _initialFutureBorrow = ltv.futureBorrowAssets();
         _initialRewardBorrow = ltv.futureRewardBorrowAssets();
         _initialRewardCollateral = ltv.futureRewardCollateralAssets();
-        _initialRealBorrow = int256(ltv.getRealBorrowAssets(false));
-        _initialRealCollateral = int256(ltv.getRealCollateralAssets(false));
+        _initialRealBorrow = _getRealBorrowAssets(false);
+        _initialRealCollateral = _getRealCollateralAssets(false);
 
         // Calculate current rewards value in underlying asset terms
         int256 borrowPrice =
@@ -177,13 +178,12 @@ contract BaseInvariantWrapper is Test {
         if (_auctionExecuted) {
             assertGe(
                 _initialFutureBorrow + _initialRewardBorrow + _initialRealBorrow,
-                int256(ltv.getRealBorrowAssets(false)) + ltv.futureRewardBorrowAssets() + ltv.futureBorrowAssets(),
+                _getRealBorrowAssets(false) + ltv.futureRewardBorrowAssets() + ltv.futureBorrowAssets(),
                 "Borrow assets stable after auction"
             );
             assertLe(
                 _initialFutureCollateral + _initialRewardCollateral + _initialRealCollateral,
-                int256(ltv.getRealCollateralAssets(false)) + ltv.futureRewardCollateralAssets()
-                    + ltv.futureCollateralAssets(),
+                _getRealCollateralAssets(false) + ltv.futureRewardCollateralAssets() + ltv.futureCollateralAssets(),
                 "Collateral assets stable after auction"
             );
         } else {
@@ -271,6 +271,22 @@ contract BaseInvariantWrapper is Test {
         return (
             _initialFutureCollateral > 0 && _initialFutureCollateral > ltv.futureCollateralAssets()
                 || _initialFutureCollateral < 0 && _initialFutureCollateral < ltv.futureCollateralAssets()
+        );
+    }
+
+    function _getRealBorrowAssets(bool isDeposit) internal view returns (int256) {
+        return int256(
+            ILendingConnector(ltv.getLendingConnector()).getRealBorrowAssets(
+                isDeposit, ltv.lendingConnectorGetterData()
+            )
+        );
+    }
+
+    function _getRealCollateralAssets(bool isDeposit) internal view returns (int256) {
+        return int256(
+            ILendingConnector(ltv.getLendingConnector()).getRealCollateralAssets(
+                isDeposit, ltv.lendingConnectorGetterData()
+            )
         );
     }
 }

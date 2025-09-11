@@ -11,22 +11,23 @@ import {ICollateralVaultModule} from "src/interfaces/reads/ICollateralVaultModul
 import {IBorrowVaultModule} from "src/interfaces/reads/IBorrowVaultModule.sol";
 import {ILowLevelRebalanceModule} from "src/interfaces/reads/ILowLevelRebalanceModule.sol";
 import {IInitializeModule} from "src/interfaces/writes/IInitializeModule.sol";
-import {StateInitData} from "src/structs/state/StateInitData.sol";
-import {ModulesState} from "src/structs/state/ModulesState.sol";
+import {IAdministrationModule} from "src/interfaces/reads/IAdministrationModule.sol";
+import {StateInitData} from "src/structs/state/initialize/StateInitData.sol";
+import {ModulesState} from "src/structs/state/common/ModulesState.sol";
 import {DummyLTV} from "test/utils/DummyLTV.t.sol";
 import {MockDummyLending} from "test/utils/MockDummyLending.t.sol";
 import {DummyOracle} from "src/dummy/DummyOracle.sol";
 import {DummyLendingConnector} from "src/dummy/DummyLendingConnector.sol";
 import {DummyOracleConnector} from "src/dummy/DummyOracleConnector.sol";
-import {ConstantSlippageProvider} from "src/connectors/slippage_providers/ConstantSlippageProvider.sol";
+import {ConstantSlippageConnector} from "src/connectors/slippage_connectors/ConstantSlippageConnector.sol";
 import {VaultBalanceAsLendingConnector} from "src/connectors/lending_connectors/VaultBalanceAsLendingConnector.sol";
-import {AuctionModule} from "src/elements/AuctionModule.sol";
-import {ERC20Module} from "src/elements/ERC20Module.sol";
-import {CollateralVaultModule} from "src/elements/CollateralVaultModule.sol";
-import {BorrowVaultModule} from "src/elements/BorrowVaultModule.sol";
-import {LowLevelRebalanceModule} from "src/elements/LowLevelRebalanceModule.sol";
-import {AdministrationModule} from "src/elements/AdministrationModule.sol";
-import {InitializeModule} from "src/elements/InitializeModule.sol";
+import {AuctionModule} from "src/elements/modules/AuctionModule.sol";
+import {ERC20Module} from "src/elements/modules/ERC20Module.sol";
+import {CollateralVaultModule} from "src/elements/modules/CollateralVaultModule.sol";
+import {BorrowVaultModule} from "src/elements/modules/BorrowVaultModule.sol";
+import {LowLevelRebalanceModule} from "src/elements/modules/LowLevelRebalanceModule.sol";
+import {AdministrationModule} from "src/elements/modules/AdministrationModule.sol";
+import {InitializeModule} from "src/elements/modules/InitializeModule.sol";
 import {ModulesProvider} from "src/elements/ModulesProvider.sol";
 
 struct BaseTestInit {
@@ -74,7 +75,7 @@ contract BaseTest is Test {
     MockDummyLending public lendingProtocol;
     IDummyOracle public oracle;
     ModulesProvider public modulesProvider;
-    ConstantSlippageProvider public slippageProvider;
+    ConstantSlippageConnector public slippageConnector;
     DummyOracleConnector public oracleConnector;
     DummyLendingConnector public lendingConnector;
 
@@ -92,10 +93,10 @@ contract BaseTest is Test {
 
         lendingProtocol = new MockDummyLending(init.owner);
         oracle = IDummyOracle(new DummyOracle());
-        slippageProvider = new ConstantSlippageProvider();
+        slippageConnector = new ConstantSlippageConnector();
         {
             ModulesState memory modulesState = ModulesState({
-                administrationModule: address(new AdministrationModule()),
+                administrationModule: IAdministrationModule(address(new AdministrationModule())),
                 auctionModule: IAuctionModule(address(new AuctionModule())),
                 erc20Module: IERC20Module(address(new ERC20Module())),
                 collateralVaultModule: ICollateralVaultModule(address(new CollateralVaultModule())),
@@ -127,7 +128,7 @@ contract BaseTest is Test {
                 maxGrowthFeeDividend: init.maxGrowthFeeDividend,
                 maxGrowthFeeDivider: init.maxGrowthFeeDivider,
                 maxTotalAssetsInUnderlying: init.maxTotalAssetsInUnderlying,
-                slippageProvider: slippageProvider,
+                slippageConnector: slippageConnector,
                 maxDeleverageFeeDividend: init.maxDeleverageFeeDividend,
                 maxDeleverageFeeDivider: init.maxDeleverageFeeDivider,
                 vaultBalanceAsLendingConnector: new VaultBalanceAsLendingConnector(),
@@ -138,7 +139,7 @@ contract BaseTest is Test {
                 auctionDuration: 1000,
                 lendingConnectorData: "",
                 oracleConnectorData: "",
-                slippageProviderData: abi.encode(init.collateralSlippage, init.borrowSlippage),
+                slippageConnectorData: abi.encode(init.collateralSlippage, init.borrowSlippage),
                 vaultBalanceAsLendingConnectorData: ""
             });
 

@@ -8,23 +8,24 @@ import {IERC20Module} from "src/interfaces/reads/IERC20Module.sol";
 import {ICollateralVaultModule} from "src/interfaces/reads/ICollateralVaultModule.sol";
 import {IBorrowVaultModule} from "src/interfaces/reads/IBorrowVaultModule.sol";
 import {ILowLevelRebalanceModule} from "src/interfaces/reads/ILowLevelRebalanceModule.sol";
-import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
-import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
+import {ILendingConnector} from "src/interfaces/connectors/ILendingConnector.sol";
+import {IOracleConnector} from "src/interfaces/connectors/IOracleConnector.sol";
 import {IInitializeModule} from "src/interfaces/writes/IInitializeModule.sol";
+import {IAdministrationModule} from "src/interfaces/reads/IAdministrationModule.sol";
 import {IMorphoBlue} from "src/connectors/lending_connectors/interfaces/IMorphoBlue.sol";
 import {IMorphoOracle} from "src/connectors/oracle_connectors/interfaces/IMorphoOracle.sol";
 import {MorphoConnector} from "src/connectors/lending_connectors/MorphoConnector.sol";
 import {MorphoOracleConnector} from "src/connectors/oracle_connectors/MorphoOracleConnector.sol";
-import {ConstantSlippageProvider} from "src/connectors/slippage_providers/ConstantSlippageProvider.sol";
-import {InitializeModule} from "src/elements/InitializeModule.sol";
-import {StateInitData} from "src/structs/state/StateInitData.sol";
+import {ConstantSlippageConnector} from "src/connectors/slippage_connectors/ConstantSlippageConnector.sol";
+import {InitializeModule} from "src/elements/modules/InitializeModule.sol";
+import {StateInitData} from "src/structs/state/initialize/StateInitData.sol";
 import {ModulesProvider, ModulesState} from "src/elements/ModulesProvider.sol";
-import {AuctionModule} from "src/elements/AuctionModule.sol";
-import {ERC20Module} from "src/elements/ERC20Module.sol";
-import {CollateralVaultModule} from "src/elements/CollateralVaultModule.sol";
-import {BorrowVaultModule} from "src/elements/BorrowVaultModule.sol";
-import {LowLevelRebalanceModule} from "src/elements/LowLevelRebalanceModule.sol";
-import {AdministrationModule} from "src/elements/AdministrationModule.sol";
+import {AuctionModule} from "src/elements/modules/AuctionModule.sol";
+import {ERC20Module} from "src/elements/modules/ERC20Module.sol";
+import {CollateralVaultModule} from "src/elements/modules/CollateralVaultModule.sol";
+import {BorrowVaultModule} from "src/elements/modules/BorrowVaultModule.sol";
+import {LowLevelRebalanceModule} from "src/elements/modules/LowLevelRebalanceModule.sol";
+import {AdministrationModule} from "src/elements/modules/AdministrationModule.sol";
 import {LTV} from "src/elements/LTV.sol";
 
 contract MorphoIntegrationTest is Test {
@@ -40,7 +41,7 @@ contract MorphoIntegrationTest is Test {
     LTV public ltv;
     IERC20 public weth;
     IERC20 public wsteth;
-    ConstantSlippageProvider public slippageProvider;
+    ConstantSlippageConnector public slippageConnector;
     ModulesProvider public modulesProvider;
 
     address public user;
@@ -60,13 +61,13 @@ contract MorphoIntegrationTest is Test {
 
         morphoLendingConnector = new MorphoConnector(0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb);
         morphoOracleConnector = new MorphoOracleConnector(IMorphoOracle(MORPHO_ORACLE));
-        slippageProvider = new ConstantSlippageProvider();
+        slippageConnector = new ConstantSlippageConnector();
 
         weth = IERC20(WETH);
         wsteth = IERC20(WSTETH);
 
         ModulesState memory modulesState = ModulesState({
-            administrationModule: address(new AdministrationModule()),
+            administrationModule: IAdministrationModule(address(new AdministrationModule())),
             auctionModule: IAuctionModule(address(new AuctionModule())),
             erc20Module: IERC20Module(address(new ERC20Module())),
             collateralVaultModule: ICollateralVaultModule(address(new CollateralVaultModule())),
@@ -95,7 +96,7 @@ contract MorphoIntegrationTest is Test {
             maxGrowthFeeDividend: 1,
             maxGrowthFeeDivider: 5,
             maxTotalAssetsInUnderlying: type(uint128).max,
-            slippageProvider: slippageProvider,
+            slippageConnector: slippageConnector,
             maxDeleverageFeeDividend: 1,
             maxDeleverageFeeDivider: 20,
             vaultBalanceAsLendingConnector: ILendingConnector(address(0)),
@@ -106,7 +107,7 @@ contract MorphoIntegrationTest is Test {
             auctionDuration: 1000,
             lendingConnectorData: abi.encode(MORPHO_ORACLE, IRM, 945000000000000000, keccak256(abi.encode(marketParams))),
             oracleConnectorData: "",
-            slippageProviderData: abi.encode(10 ** 16, 10 ** 16),
+            slippageConnectorData: abi.encode(10 ** 16, 10 ** 16),
             vaultBalanceAsLendingConnectorData: ""
         });
 

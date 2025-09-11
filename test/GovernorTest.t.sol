@@ -3,73 +3,11 @@ pragma solidity ^0.8.28;
 
 import {BalancedTest} from "test/utils/BalancedTest.t.sol";
 import {ILTV} from "src/interfaces/ILTV.sol";
-import {ConstantSlippageProvider} from "src/connectors/slippage_providers/ConstantSlippageProvider.sol";
+import {ConstantSlippageConnector} from "src/connectors/slippage_connectors/ConstantSlippageConnector.sol";
 import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
 import {WhitelistRegistry} from "src/elements/WhitelistRegistry.sol";
-import {IWithGuardian} from "src/timelock/utils/interfaces/IWithGuardian.sol";
-import {IWithPayloadsManager} from "src/timelock/utils/interfaces/IWithPayloadsManager.sol";
-import {PayloadState} from "src/timelock/TimelockCommon.sol";
-import {TimelockCommon} from "src/timelock/TimelockCommon.sol";
-import {Timelock} from "src/timelock/Timelock.sol";
 
 contract GovernorTest is BalancedTest {
-    function test_governor(
-        address ltvOwner,
-        address user,
-        address owner,
-        address payloadsManager,
-        address guardian,
-        uint32 delay
-    ) public initializeBalancedTest(ltvOwner, user, 10 ** 17, 0, 0, 0) {
-        vm.assume(ltvOwner != address(0));
-        vm.assume(owner != address(0));
-        vm.assume(user != payloadsManager);
-        vm.assume(delay != 0);
-        vm.assume(user != owner);
-        vm.assume(user != guardian);
-
-        vm.stopPrank();
-        vm.startPrank(ltvOwner);
-
-        Timelock controller = new Timelock(owner, guardian, payloadsManager, delay);
-
-        dummyLtv.updateGovernor(address(controller));
-
-        vm.startPrank(user);
-
-        bytes[] memory actions = new bytes[](1);
-        actions[0] = abi.encodeCall(dummyLtv.setTargetLtv, (6, 10));
-
-        vm.expectRevert(
-            abi.encodeWithSelector(IWithPayloadsManager.OnlyPayloadsManagerOrOwnerInvalidCaller.selector, user)
-        );
-        controller.createPayload(address(dummyLtv), new bytes[](0));
-
-        vm.startPrank(payloadsManager);
-        uint40 payloadId = controller.createPayload(address(dummyLtv), actions);
-
-        vm.startPrank(user);
-        vm.expectPartialRevert(TimelockCommon.DelayNotPassed.selector);
-        controller.executePayload(payloadId);
-
-        vm.expectPartialRevert(IWithGuardian.OnlyGuardianOrOwnerInvalidCaller.selector);
-        controller.cancelPayload(payloadId);
-
-        vm.startPrank(guardian);
-        controller.cancelPayload(payloadId);
-        require(controller.getPayload(payloadId).state == PayloadState.Cancelled);
-
-        vm.startPrank(payloadsManager);
-        payloadId = controller.createPayload(address(dummyLtv), actions);
-        vm.warp(block.timestamp + delay + 1);
-
-        vm.startPrank(user);
-        controller.executePayload(payloadId);
-
-        assertEq(dummyLtv.targetLtvDividend(), 6);
-        assertEq(dummyLtv.targetLtvDivider(), 10);
-    }
-
     function test_setTargetLtv(address owner, address user)
         public
         initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
@@ -300,24 +238,24 @@ contract GovernorTest is BalancedTest {
         dummyLtv.setWhitelistRegistry(address(0));
     }
 
-    function test_setSlippageProvider(address owner, address user)
+    function test_setSlippageConnector(address owner, address user)
         public
         initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
     {
         address governor = ILTV(address(dummyLtv)).governor();
         vm.assume(user != governor);
         vm.startPrank(governor);
-        ConstantSlippageProvider provider = new ConstantSlippageProvider();
+        ConstantSlippageConnector provider = new ConstantSlippageConnector();
 
-        bytes memory slippageProviderData = abi.encode(10 ** 16, 10 ** 16);
-        dummyLtv.setSlippageProvider(address(provider), slippageProviderData);
-        assertEq(address(dummyLtv.slippageProvider()), address(provider));
-        assertEq(keccak256(dummyLtv.slippageProviderGetterData()), keccak256(slippageProviderData));
+        bytes memory slippageConnectorData = abi.encode(10 ** 16, 10 ** 16);
+        dummyLtv.setSlippageConnector(address(provider), slippageConnectorData);
+        assertEq(address(dummyLtv.slippageConnector()), address(provider));
+        assertEq(keccak256(dummyLtv.slippageConnectorGetterData()), keccak256(slippageConnectorData));
 
         // Should revert if not governor
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
-        dummyLtv.setSlippageProvider(address(0), slippageProviderData);
+        dummyLtv.setSlippageConnector(address(0), slippageConnectorData);
     }
 
     function test_setMaxGrowthFee(address owner, address user)

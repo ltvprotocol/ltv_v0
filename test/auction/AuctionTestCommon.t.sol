@@ -3,12 +3,12 @@ pragma solidity ^0.8.28;
 
 import {BaseTest} from "test/utils/BaseTest.t.sol";
 import {FutureExecutorInvariant} from "test/auction/FutureExecutorInvariant.t.sol";
-import {uMulDiv, sMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv, SMulDiv} from "src/math/libraries/MulDiv.sol";
 
 // forge-lint: disable-start(unsafe-typecast)
 contract AuctionTestCommon is BaseTest, FutureExecutorInvariant {
-    using uMulDiv for uint256;
-    using sMulDiv for int256;
+    using UMulDiv for uint256;
+    using SMulDiv for int256;
 
     function prepareUser(address user) public {
         deal(address(collateralToken), user, type(uint256).max);

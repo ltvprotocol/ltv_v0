@@ -12,17 +12,18 @@ import {IERC20Module} from "src/interfaces/reads/IERC20Module.sol";
 import {ICollateralVaultModule} from "src/interfaces/reads/ICollateralVaultModule.sol";
 import {IBorrowVaultModule} from "src/interfaces/reads/IBorrowVaultModule.sol";
 import {ILowLevelRebalanceModule} from "src/interfaces/reads/ILowLevelRebalanceModule.sol";
+import {IAdministrationModule} from "src/interfaces/reads/IAdministrationModule.sol";
 import {IAdministrationEvents} from "src/events/IAdministrationEvents.sol";
 import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
-import {ModulesState} from "src/structs/state/ModulesState.sol";
+import {ModulesState} from "src/structs/state/common/ModulesState.sol";
 import {ModulesProvider} from "src/elements/ModulesProvider.sol";
-import {AuctionModule} from "src/elements/AuctionModule.sol";
-import {ERC20Module} from "src/elements/ERC20Module.sol";
-import {CollateralVaultModule} from "src/elements/CollateralVaultModule.sol";
-import {BorrowVaultModule} from "src/elements/BorrowVaultModule.sol";
-import {LowLevelRebalanceModule} from "src/elements/LowLevelRebalanceModule.sol";
-import {AdministrationModule} from "src/elements/AdministrationModule.sol";
-import {InitializeModule} from "src/elements/InitializeModule.sol";
+import {AuctionModule} from "src/elements/modules/AuctionModule.sol";
+import {ERC20Module} from "src/elements/modules/ERC20Module.sol";
+import {CollateralVaultModule} from "src/elements/modules/CollateralVaultModule.sol";
+import {BorrowVaultModule} from "src/elements/modules/BorrowVaultModule.sol";
+import {LowLevelRebalanceModule} from "src/elements/modules/LowLevelRebalanceModule.sol";
+import {AdministrationModule} from "src/elements/modules/AdministrationModule.sol";
+import {InitializeModule} from "src/elements/modules/InitializeModule.sol";
 import {WhitelistRegistry} from "src/elements/WhitelistRegistry.sol";
 
 address constant EOA_ADDRESS = address(1);
@@ -44,8 +45,8 @@ contract DummyModulesProvider is IModules {
         return IAuctionModule(EOA_ADDRESS);
     }
 
-    function administrationModule() external pure override returns (address) {
-        return EOA_ADDRESS;
+    function administrationModule() external pure override returns (IAdministrationModule) {
+        return IAdministrationModule(EOA_ADDRESS);
     }
 
     function erc20Module() external pure override returns (IERC20Module) {
@@ -176,7 +177,7 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setMaxTotalAssetsInUnderlying, (type(uint128).max)), governor);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setTargetLtv, (75, 100)), governor);
         calls[i++] =
-            CallWithCaller(abi.encodeCall(ILTV.setSlippageProvider, (user, abi.encode(10 ** 16, 10 ** 16))), governor);
+            CallWithCaller(abi.encodeCall(ILTV.setSlippageConnector, (user, abi.encode(10 ** 16, 10 ** 16))), governor);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setMinProfitLtv, (5, 10)), governor);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setWhitelistRegistry, (user)), governor);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.updateGovernor, (user)), owner);
@@ -197,7 +198,7 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
             collateralVaultModule: ICollateralVaultModule(address(new CollateralVaultModule())),
             lowLevelRebalanceModule: ILowLevelRebalanceModule(address(new LowLevelRebalanceModule())),
             auctionModule: IAuctionModule(address(new AuctionModule())),
-            administrationModule: address(new AdministrationModule()),
+            administrationModule: IAdministrationModule(address(new AdministrationModule())),
             erc20Module: IERC20Module(address(new ERC20Module())),
             initializeModule: IInitializeModule(address(new InitializeModule()))
         });
@@ -284,7 +285,7 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
             collateralVaultModule: ICollateralVaultModule(address(new CollateralVaultModule())),
             lowLevelRebalanceModule: ILowLevelRebalanceModule(address(new LowLevelRebalanceModule())),
             auctionModule: IAuctionModule(address(new AuctionModule())),
-            administrationModule: address(new AdministrationModule()),
+            administrationModule: IAdministrationModule(address(new AdministrationModule())),
             erc20Module: IERC20Module(address(new ERC20Module())),
             initializeModule: IInitializeModule(address(new InitializeModule()))
         });

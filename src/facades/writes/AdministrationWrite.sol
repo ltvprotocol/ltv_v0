@@ -72,10 +72,10 @@ abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeab
     }
 
     /**
-     * @dev see ILTV.setSlippageProvider
+     * @dev see ILTV.setSlippageConnector
      */
-    function setSlippageProvider(address _slippageProvider, bytes memory slippageProviderData) external {
-        _delegate(address(modules.administrationModule()), abi.encode(_slippageProvider, slippageProviderData));
+    function setSlippageConnector(address _slippageConnector, bytes memory slippageConnectorData) external {
+        _delegate(address(modules.administrationModule()), abi.encode(_slippageConnector, slippageConnectorData));
     }
 
     /**

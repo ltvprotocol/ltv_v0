@@ -10,9 +10,9 @@ import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {ITransparentUpgradeableProxy} from
     "openzeppelin-contracts/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 import {IModules} from "../../src/interfaces/IModules.sol";
-import {ISlippageProvider} from "../../src/interfaces/ISlippageProvider.sol";
-import {ILendingConnector} from "../../src/interfaces/ILendingConnector.sol";
-import {IOracleConnector} from "../../src/interfaces/IOracleConnector.sol";
+import {ISlippageConnector} from "../../src/interfaces/connectors/ISlippageConnector.sol";
+import {ILendingConnector} from "../../src/interfaces/connectors/ILendingConnector.sol";
+import {IOracleConnector} from "../../src/interfaces/connectors/IOracleConnector.sol";
 
 import {StdCheats} from "forge-std/StdCheats.sol";
 import {StdAssertions} from "forge-std/StdAssertions.sol";
@@ -57,7 +57,7 @@ struct OldStateBackup {
 
 struct NewFields {
     address vaultBalanceAsLendingConnector;
-    address slippageProvider;
+    address slippageConnector;
     address governor;
     address guardian;
     address emergencyDeleverager;
@@ -203,10 +203,10 @@ contract NewStateRemapper is LTVState {
             abi.encodeCall(IOracleConnector.initializeOracleConnectorData, (bytes("")))
         );
         require(success);
-        slippageProvider = ISlippageProvider(newFields.slippageProvider);
-        (success,) = address(slippageProvider).delegatecall(
+        slippageConnector = ISlippageConnector(newFields.slippageConnector);
+        (success,) = address(slippageConnector).delegatecall(
             abi.encodeCall(
-                ISlippageProvider.initializeSlippageProviderData,
+                ISlippageConnector.initializeSlippageConnectorData,
                 (abi.encode(newFields.collateralSlippage, newFields.borrowSlippage))
             )
         );
@@ -310,7 +310,7 @@ contract DeployGhostUpgrade is Script, StdCheats, StdAssertions {
         ApprovalData[] memory allowances = getApprovalLogs();
         NewFields memory newFields = NewFields({
             vaultBalanceAsLendingConnector: vm.envAddress("VAULT_BALANCE_AS_LENDING_CONNECTOR"),
-            slippageProvider: vm.envAddress("SLIPPAGE_CONNECTOR"),
+            slippageConnector: vm.envAddress("SLIPPAGE_CONNECTOR"),
             governor: vm.envAddress("GOVERNOR"),
             guardian: vm.envAddress("GUARDIAN"),
             emergencyDeleverager: vm.envAddress("EMERGENCY_DELEVERAGER"),

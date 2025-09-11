@@ -2,8 +2,8 @@
 pragma solidity ^0.8.28;
 
 import {MaxLowLevelRebalanceCollateralStateData} from
-    "src/structs/state/low_level/MaxLowLevelRebalanceCollateralStateData.sol";
-import {GetRealCollateralAssetsReader} from "../GetRealCollateralAssetsReader.sol";
+    "src/structs/state/low_level/max/MaxLowLevelRebalanceCollateralStateData.sol";
+import {GetRealCollateralAssetsReader} from "../common/GetRealCollateralAssetsReader.sol";
 
 /**
  * @title MaxLowLevelRebalanceCollateralStateReader
@@ -21,7 +21,7 @@ contract MaxLowLevelRebalanceCollateralStateReader is GetRealCollateralAssetsRea
     {
         return MaxLowLevelRebalanceCollateralStateData({
             // round up to assume smaller border
-            realCollateralAssets: getRealCollateralAssets(true),
+            realCollateralAssets: _getRealCollateralAssets(true),
             maxTotalAssetsInUnderlying: maxTotalAssetsInUnderlying,
             targetLtvDividend: targetLtvDividend,
             targetLtvDivider: targetLtvDivider,

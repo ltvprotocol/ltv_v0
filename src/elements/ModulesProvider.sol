@@ -1,14 +1,15 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {IModules} from "src/interfaces/IModules.sol";
-import {IAuctionModule} from "src/interfaces/reads/IAuctionModule.sol";
-import {IERC20Module} from "src/interfaces/reads/IERC20Module.sol";
-import {ICollateralVaultModule} from "src/interfaces/reads/ICollateralVaultModule.sol";
-import {IBorrowVaultModule} from "src/interfaces/reads/IBorrowVaultModule.sol";
-import {ILowLevelRebalanceModule} from "src/interfaces/reads/ILowLevelRebalanceModule.sol";
-import {IInitializeModule} from "src/interfaces/writes/IInitializeModule.sol";
-import {ModulesState} from "src/structs/state/ModulesState.sol";
+import {IModules} from "../interfaces/IModules.sol";
+import {IAuctionModule} from "../interfaces/reads/IAuctionModule.sol";
+import {IERC20Module} from "../interfaces/reads/IERC20Module.sol";
+import {ICollateralVaultModule} from "../interfaces/reads/ICollateralVaultModule.sol";
+import {IBorrowVaultModule} from "../interfaces/reads/IBorrowVaultModule.sol";
+import {ILowLevelRebalanceModule} from "../interfaces/reads/ILowLevelRebalanceModule.sol";
+import {IInitializeModule} from "../interfaces/writes/IInitializeModule.sol";
+import {ModulesState} from "../structs/state/common/ModulesState.sol";
+import {IAdministrationModule} from "../interfaces/reads/IAdministrationModule.sol";
 
 /**
  * @title ModulesProvider
@@ -90,8 +91,8 @@ contract ModulesProvider is IModules {
     /**
      * @inheritdoc IModules
      */
-    function administrationModule() external view override returns (address) {
-        return getModule(ADMINISTRATION_MODULE_SLOT);
+    function administrationModule() external view override returns (IAdministrationModule) {
+        return IAdministrationModule(getModule(ADMINISTRATION_MODULE_SLOT));
     }
 
     /**

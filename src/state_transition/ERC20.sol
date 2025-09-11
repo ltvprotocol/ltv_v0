@@ -3,10 +3,10 @@ pragma solidity ^0.8.28;
 
 import {ReentrancyGuardUpgradeable} from
     "openzeppelin-contracts-upgradeable/contracts/utils/ReentrancyGuardUpgradeable.sol";
-import {IERC20Events} from "src/events/IERC20Events.sol";
-import {IERC20Errors} from "src/errors/IERC20Errors.sol";
-import {WhitelistModifier} from "src/modifiers/WhitelistModifier.sol";
-import {FunctionStopperModifier} from "src/modifiers/FunctionStopperModifier.sol";
+import {IERC20Events} from "../events/IERC20Events.sol";
+import {IERC20Errors} from "../errors/IERC20Errors.sol";
+import {WhitelistModifier} from "../modifiers/WhitelistModifier.sol";
+import {FunctionStopperModifier} from "../modifiers/FunctionStopperModifier.sol";
 
 /**
  * @title ERC20
@@ -24,7 +24,7 @@ abstract contract ERC20 is
      * @dev Mints specified amount of tokens to the provided address
      */
     function _mint(address to, uint256 amount) internal isReceiverWhitelisted(to) {
-        require(!isDepositDisabled(), DepositIsDisabled());
+        require(!_isDepositDisabled(boolSlot), DepositIsDisabled());
         balanceOf[to] += amount;
         baseTotalSupply += amount;
         emit Transfer(address(0), to, amount);
@@ -34,7 +34,7 @@ abstract contract ERC20 is
      * @dev Burns specified amount of tokens from the provided address
      */
     function _burn(address from, uint256 amount) internal {
-        require(!isWithdrawDisabled(), WithdrawIsDisabled());
+        require(!_isWithdrawDisabled(boolSlot), WithdrawIsDisabled());
         balanceOf[from] -= amount;
         baseTotalSupply -= amount;
         emit Transfer(from, address(0), amount);

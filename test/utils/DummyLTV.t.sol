@@ -40,15 +40,23 @@ contract DummyLTV is LTV {
 
     function setCollateralSlippage(uint256 value) public {
         (uint256 collateralSlippage, uint256 borrowSlippage) =
-            abi.decode(slippageProviderGetterData, (uint256, uint256));
+            abi.decode(slippageConnectorGetterData, (uint256, uint256));
         collateralSlippage = value;
-        slippageProviderGetterData = abi.encode(collateralSlippage, borrowSlippage);
+        slippageConnectorGetterData = abi.encode(collateralSlippage, borrowSlippage);
     }
 
     function setBorrowSlippage(uint256 value) public {
         (uint256 collateralSlippage, uint256 borrowSlippage) =
-            abi.decode(slippageProviderGetterData, (uint256, uint256));
+            abi.decode(slippageConnectorGetterData, (uint256, uint256));
         borrowSlippage = value;
-        slippageProviderGetterData = abi.encode(collateralSlippage, borrowSlippage);
+        slippageConnectorGetterData = abi.encode(collateralSlippage, borrowSlippage);
+    }
+
+    function getRealBorrowAssets(bool isDeposit) public view returns (uint256) {
+        return _getRealBorrowAssets(isDeposit);
+    }
+
+    function getRealCollateralAssets(bool isDeposit) public view returns (uint256) {
+        return _getRealCollateralAssets(isDeposit);
     }
 }

@@ -3,14 +3,14 @@ pragma solidity ^0.8.28;
 
 import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {OwnableUpgradeable} from "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
-import {StateInitData} from "src/structs/state/StateInitData.sol";
-import {AdmistrationSetters} from "src/state_transition/AdmistrationSetters.sol";
+import {StateInitData} from "src/structs/state/initialize/StateInitData.sol";
+import {AdministrationSetters} from "src/state_transition/AdministrationSetters.sol";
 
 /**
  * @title Initialize
  * @notice contract contains functionality to initialize the vault
  */
-abstract contract Initialize is AdmistrationSetters, OwnableUpgradeable {
+abstract contract Initialize is AdministrationSetters, OwnableUpgradeable {
     /**
      * @dev Initializes the vault
      */
@@ -43,7 +43,7 @@ abstract contract Initialize is AdmistrationSetters, OwnableUpgradeable {
 
         _setLendingConnector(initData.lendingConnector, initData.lendingConnectorData);
         _setOracleConnector(initData.oracleConnector, initData.oracleConnectorData);
-        _setSlippageProvider(initData.slippageProvider, initData.slippageProviderData);
+        _setSlippageConnector(initData.slippageConnector, initData.slippageConnectorData);
         _setVaultBalanceAsLendingConnector(
             initData.vaultBalanceAsLendingConnector, initData.vaultBalanceAsLendingConnectorData
         );

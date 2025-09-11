@@ -164,15 +164,10 @@ interface IAdministrationErrors {
     error WhitelistIsActivated();
 
     /**
-     * @notice Error thrown when attempting to set a zero address as slippage provider
-     * @dev Prevents setting invalid slippage provider addresses
+     * @notice Error thrown when attempting to set a zero address as slippage connector
+     * @dev Prevents setting invalid slippage connector addresses
      */
-    error ZeroSlippageProvider();
-
-    /**
-     * @notice Error thrown when attempting to make a delegate call to an EOA (Externally Owned Account)
-     * @dev Prevents delegate calls to non-contract addresses
-     */
+    error ZeroSlippageConnector();
     error EOADelegateCall();
 
     /**
@@ -204,12 +199,12 @@ interface IAdministrationErrors {
     error FailedToSetOracleConnector(address oracleConnector, bytes oracleConnectorData);
 
     /**
-     * @notice Error thrown when setting slippage provider fails
-     * @param slippageProvider The address of the slippage provider that failed to set
-     * @param slippageProviderData The data used for setting the slippage provider
-     * @dev Used when configuration of slippage provider encounters an error
+     * @notice Error thrown when setting slippage connector fails
+     * @param slippageConnector The address of the slippage connector that failed to set
+     * @param slippageConnectorData The data used for setting the slippage connector
+     * @dev Used when configuration of slippage connector encounters an error
      */
-    error FailedToSetSlippageProvider(address slippageProvider, bytes slippageProviderData);
+    error FailedToSetSlippageConnector(address slippageConnector, bytes slippageConnectorData);
 
     /**
      * @notice Error thrown when setting vault balance as lending connector fails

@@ -10,7 +10,7 @@ import {LTVState} from "src/states/LTVState.sol";
  * @notice This contract contains modifiers for the function stopping functionality of the LTV protocol.
  * It checks if the function is allowed to be called.
  */
-abstract contract FunctionStopperModifier is LTVState, OwnableUpgradeable, IAdministrationErrors {
+abstract contract FunctionStopperModifier is LTVState, IAdministrationErrors, OwnableUpgradeable {
     /**
      * @dev modifier to check if the function is allowed to be called
      */

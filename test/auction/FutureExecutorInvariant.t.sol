@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 import {Test} from "forge-std/Test.sol";
 import {ILTV} from "src/interfaces/ILTV.sol";
-import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
+import {IOracleConnector} from "src/interfaces/connectors/IOracleConnector.sol";
 
 struct FutureExecutorInvariantState {
     int256 futureBorrowAssets;

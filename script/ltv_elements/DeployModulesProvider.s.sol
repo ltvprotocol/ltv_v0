@@ -4,13 +4,14 @@ pragma solidity ^0.8.28;
 import {BaseScript} from "../utils/BaseScript.s.sol";
 import {ModulesProvider} from "../../src/elements/ModulesProvider.sol";
 import {console} from "forge-std/console.sol";
-import {ModulesState} from "../../src/structs/state/ModulesState.sol";
+import {ModulesState} from "../../src/structs/state/common/ModulesState.sol";
 import {IERC20Module} from "../../src/interfaces/reads/IERC20Module.sol";
 import {IBorrowVaultModule} from "../../src/interfaces/reads/IBorrowVaultModule.sol";
 import {ICollateralVaultModule} from "../../src/interfaces/reads/ICollateralVaultModule.sol";
 import {ILowLevelRebalanceModule} from "../../src/interfaces/reads/ILowLevelRebalanceModule.sol";
 import {IAuctionModule} from "../../src/interfaces/reads/IAuctionModule.sol";
 import {IInitializeModule} from "../../src/interfaces/writes/IInitializeModule.sol";
+import {IAdministrationModule} from "../../src/interfaces/reads/IAdministrationModule.sol";
 
 contract DeployModulesProvider is BaseScript {
     function deploy() internal override {
@@ -37,7 +38,7 @@ contract DeployModulesProvider is BaseScript {
             collateralVaultModule: ICollateralVaultModule(collateralVaultModule),
             lowLevelRebalanceModule: ILowLevelRebalanceModule(lowLevelRebalanceModule),
             auctionModule: IAuctionModule(auctionModule),
-            administrationModule: administrationModule,
+            administrationModule: IAdministrationModule(administrationModule),
             initializeModule: IInitializeModule(initializeModule)
         });
     }

@@ -5,20 +5,21 @@ import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {DefaultTestData} from "test/utils/BaseTest.t.sol";
 import {PrepareEachFunctionSuccessfulExecution} from "test/administration/PrepareEachFunctionSuccessfulExecution.sol";
 import {IModules} from "src/interfaces/IModules.sol";
-import {ModulesState} from "src/structs/state/ModulesState.sol";
+import {ModulesState} from "src/structs/state/common/ModulesState.sol";
 import {IBorrowVaultModule} from "src/interfaces/reads/IBorrowVaultModule.sol";
 import {ICollateralVaultModule} from "src/interfaces/reads/ICollateralVaultModule.sol";
 import {ILowLevelRebalanceModule} from "src/interfaces/reads/ILowLevelRebalanceModule.sol";
 import {IAuctionModule} from "src/interfaces/reads/IAuctionModule.sol";
 import {IERC20Module} from "src/interfaces/reads/IERC20Module.sol";
 import {IInitializeModule} from "src/interfaces/writes/IInitializeModule.sol";
-import {BorrowVaultModule} from "src/elements/BorrowVaultModule.sol";
-import {CollateralVaultModule} from "src/elements/CollateralVaultModule.sol";
-import {LowLevelRebalanceModule} from "src/elements/LowLevelRebalanceModule.sol";
-import {AuctionModule} from "src/elements/AuctionModule.sol";
-import {AdministrationModule} from "src/elements/AdministrationModule.sol";
-import {ERC20Module} from "src/elements/ERC20Module.sol";
-import {InitializeModule} from "src/elements/InitializeModule.sol";
+import {IAdministrationModule} from "src/interfaces/reads/IAdministrationModule.sol";
+import {BorrowVaultModule} from "src/elements/modules/BorrowVaultModule.sol";
+import {CollateralVaultModule} from "src/elements/modules/CollateralVaultModule.sol";
+import {LowLevelRebalanceModule} from "src/elements/modules/LowLevelRebalanceModule.sol";
+import {AuctionModule} from "src/elements/modules/AuctionModule.sol";
+import {AdministrationModule} from "src/elements/modules/AdministrationModule.sol";
+import {ERC20Module} from "src/elements/modules/ERC20Module.sol";
+import {InitializeModule} from "src/elements/modules/InitializeModule.sol";
 import {ModulesProvider} from "src/elements/ModulesProvider.sol";
 import {WhitelistRegistry} from "src/elements/WhitelistRegistry.sol";
 
@@ -52,7 +53,7 @@ contract ERC20CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
             collateralVaultModule: ICollateralVaultModule(address(new CollateralVaultModule())),
             lowLevelRebalanceModule: ILowLevelRebalanceModule(address(new LowLevelRebalanceModule())),
             auctionModule: IAuctionModule(address(new AuctionModule())),
-            administrationModule: address(new AdministrationModule()),
+            administrationModule: IAdministrationModule(address(new AdministrationModule())),
             erc20Module: IERC20Module(address(new ERC20Module())),
             initializeModule: IInitializeModule(address(new InitializeModule()))
         });

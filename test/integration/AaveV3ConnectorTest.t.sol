@@ -3,26 +3,27 @@ pragma solidity ^0.8.28;
 
 import {Test} from "forge-std/Test.sol";
 import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
-import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
-import {IOracleConnector} from "src/interfaces/IOracleConnector.sol";
+import {ILendingConnector} from "src/interfaces/connectors/ILendingConnector.sol";
+import {IOracleConnector} from "src/interfaces/connectors/IOracleConnector.sol";
 import {IAuctionModule} from "src/interfaces/reads/IAuctionModule.sol";
 import {IERC20Module} from "src/interfaces/reads/IERC20Module.sol";
 import {ICollateralVaultModule} from "src/interfaces/reads/ICollateralVaultModule.sol";
 import {IBorrowVaultModule} from "src/interfaces/reads/IBorrowVaultModule.sol";
 import {ILowLevelRebalanceModule} from "src/interfaces/reads/ILowLevelRebalanceModule.sol";
 import {IInitializeModule} from "src/interfaces/writes/IInitializeModule.sol";
-import {StateInitData} from "src/structs/state/StateInitData.sol";
+import {IAdministrationModule} from "src/interfaces/reads/IAdministrationModule.sol";
+import {StateInitData} from "src/structs/state/initialize/StateInitData.sol";
 import {AaveV3Connector} from "src/connectors/lending_connectors/AaveV3Connector.sol";
 import {AaveV3OracleConnector} from "src/connectors/oracle_connectors/AaveV3OracleConnector.sol";
-import {ConstantSlippageProvider} from "src/connectors/slippage_providers/ConstantSlippageProvider.sol";
-import {InitializeModule} from "src/elements/InitializeModule.sol";
+import {ConstantSlippageConnector} from "src/connectors/slippage_connectors/ConstantSlippageConnector.sol";
+import {InitializeModule} from "src/elements/modules/InitializeModule.sol";
 import {ModulesProvider, ModulesState} from "src/elements/ModulesProvider.sol";
-import {AuctionModule} from "src/elements/AuctionModule.sol";
-import {ERC20Module} from "src/elements/ERC20Module.sol";
-import {CollateralVaultModule} from "src/elements/CollateralVaultModule.sol";
-import {BorrowVaultModule} from "src/elements/BorrowVaultModule.sol";
-import {LowLevelRebalanceModule} from "src/elements/LowLevelRebalanceModule.sol";
-import {AdministrationModule} from "src/elements/AdministrationModule.sol";
+import {AuctionModule} from "src/elements/modules/AuctionModule.sol";
+import {ERC20Module} from "src/elements/modules/ERC20Module.sol";
+import {CollateralVaultModule} from "src/elements/modules/CollateralVaultModule.sol";
+import {BorrowVaultModule} from "src/elements/modules/BorrowVaultModule.sol";
+import {LowLevelRebalanceModule} from "src/elements/modules/LowLevelRebalanceModule.sol";
+import {AdministrationModule} from "src/elements/modules/AdministrationModule.sol";
 import {LTV} from "src/elements/LTV.sol";
 
 contract AaveV3ConnectorTest is Test {
@@ -31,7 +32,7 @@ contract AaveV3ConnectorTest is Test {
 
     AaveV3Connector aaveLendingConnector;
     AaveV3OracleConnector aaveV3OracleConnector;
-    ConstantSlippageProvider slippageProvider;
+    ConstantSlippageConnector slippageConnector;
     ModulesProvider modulesProvider;
     IERC20 weth;
     IERC20 wsteth;
@@ -47,10 +48,10 @@ contract AaveV3ConnectorTest is Test {
 
         aaveLendingConnector = new AaveV3Connector(0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2);
         aaveV3OracleConnector = new AaveV3OracleConnector(0x54586bE62E3c3580375aE3723C145253060Ca0C2);
-        slippageProvider = new ConstantSlippageProvider();
+        slippageConnector = new ConstantSlippageConnector();
 
         ModulesState memory modulesState = ModulesState({
-            administrationModule: address(new AdministrationModule()),
+            administrationModule: IAdministrationModule(address(new AdministrationModule())),
             auctionModule: IAuctionModule(address(new AuctionModule())),
             erc20Module: IERC20Module(address(new ERC20Module())),
             collateralVaultModule: ICollateralVaultModule(address(new CollateralVaultModule())),
@@ -79,7 +80,7 @@ contract AaveV3ConnectorTest is Test {
             maxGrowthFeeDividend: 1,
             maxGrowthFeeDivider: 5,
             maxTotalAssetsInUnderlying: type(uint128).max,
-            slippageProvider: slippageProvider,
+            slippageConnector: slippageConnector,
             maxDeleverageFeeDividend: 1,
             maxDeleverageFeeDivider: 20,
             vaultBalanceAsLendingConnector: ILendingConnector(address(0)),
@@ -90,7 +91,7 @@ contract AaveV3ConnectorTest is Test {
             auctionDuration: 1000,
             lendingConnectorData: abi.encode(1),
             oracleConnectorData: "",
-            slippageProviderData: abi.encode(10 ** 16, 10 ** 16),
+            slippageConnectorData: abi.encode(10 ** 16, 10 ** 16),
             vaultBalanceAsLendingConnectorData: ""
         });
 

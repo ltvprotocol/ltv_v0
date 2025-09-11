@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {ILendingConnector} from "src/interfaces/ILendingConnector.sol";
+import {ILendingConnector} from "src/interfaces/connectors/ILendingConnector.sol";
 import {MorphoConnectorStorage} from "src/structs/connectors/MorphoConnectorStorage.sol";
 import {IMorphoBlue} from "src/connectors/lending_connectors/interfaces/IMorphoBlue.sol";
 import {LTVState} from "src/states/LTVState.sol";
-import {uMulDiv} from "src/utils/MulDiv.sol";
+import {UMulDiv} from "src/math/libraries/MulDiv.sol";
 
 /**
  * @title MorphoConnector
  * @notice Connector for Morpho protocol
  */
 contract MorphoConnector is LTVState, ILendingConnector {
-    using uMulDiv for uint128;
+    using UMulDiv for uint128;
 
     IMorphoBlue public immutable MORPHO;
 

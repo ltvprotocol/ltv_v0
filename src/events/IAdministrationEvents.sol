@@ -149,15 +149,14 @@ interface IAdministrationEvents {
     );
 
     /**
-     * @notice Emitted when the slippage provider is updated
-     * @param oldValue The previous slippage provider address
-     * @param oldSlippageProviderData The previous slippage provider configuration data
-     * @param newValue The new slippage provider address
-     * @param newSlippageProviderData The new slippage provider configuration data
-     * @dev Slippage provider calculates and manages slippage tolerance for trades
+     * @notice Emitted when the slippage connector is updated
+     * @param oldValue The previous slippage connector address
+     * @param oldSlippageConnectorData The previous slippage connector configuration data
+     * @param newValue The new slippage connector address
+     * @param newSlippageConnectorData The new slippage connector configuration data
      */
-    event SlippageProviderUpdated(
-        address oldValue, bytes oldSlippageProviderData, address newValue, bytes newSlippageProviderData
+    event SlippageConnectorUpdated(
+        address oldValue, bytes oldSlippageConnectorData, address newValue, bytes newSlippageConnectorData
     );
 
     /**
