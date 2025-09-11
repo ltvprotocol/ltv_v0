@@ -4,13 +4,13 @@ pragma solidity ^0.8.28;
 import {AdministrationModifiers} from "../../../modifiers/AdministrationModifiers.sol";
 import {ReentrancyGuardUpgradeable} from
     "openzeppelin-contracts-upgradeable/contracts/utils/ReentrancyGuardUpgradeable.sol";
-import {AdmistrationSetters} from "../../../state_transition/AdmistrationSetters.sol";
+import {AdministrationSetters} from "../../../state_transition/AdministrationSetters.sol";
 
 /**
  * @title OnlyGuardian
  * @notice This contract contains only guardian public function implementation.
  */
-abstract contract OnlyGuardian is AdmistrationSetters, ReentrancyGuardUpgradeable, AdministrationModifiers {
+abstract contract OnlyGuardian is AdministrationSetters, ReentrancyGuardUpgradeable, AdministrationModifiers {
     /**
      * @dev see ILTV.allowDisableFunctions
      */

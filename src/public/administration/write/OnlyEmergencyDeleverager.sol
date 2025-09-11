@@ -5,7 +5,7 @@ import {Constants} from "../../../constants/Constants.sol";
 import {MaxGrowthFeeState} from "../../../structs/state/common/MaxGrowthFeeState.sol";
 import {MaxGrowthFeeData} from "../../../structs/data/common/MaxGrowthFeeData.sol";
 import {AdministrationModifiers} from "../../../modifiers/AdministrationModifiers.sol";
-import {AdmistrationSetters} from "../../../state_transition/AdmistrationSetters.sol";
+import {AdministrationSetters} from "../../../state_transition/AdministrationSetters.sol";
 import {ApplyMaxGrowthFee} from "../../../state_transition/ApplyMaxGrowthFee.sol";
 import {Lending} from "../../../state_transition/Lending.sol";
 import {MaxGrowthFeeStateReader} from "../../../state_reader/common/MaxGrowthFeeStateReader.sol";
@@ -19,7 +19,7 @@ import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
  * @notice This contract contains only emergency deleverager public function implementation.
  */
 abstract contract OnlyEmergencyDeleverager is
-    AdmistrationSetters,
+    AdministrationSetters,
     MaxGrowthFee,
     ApplyMaxGrowthFee,
     MaxGrowthFeeStateReader,

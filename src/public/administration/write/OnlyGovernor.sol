@@ -4,7 +4,7 @@ pragma solidity ^0.8.28;
 import {AdministrationModifiers} from "../../../modifiers/AdministrationModifiers.sol";
 import {ReentrancyGuardUpgradeable} from
     "openzeppelin-contracts-upgradeable/contracts/utils/ReentrancyGuardUpgradeable.sol";
-import {AdmistrationSetters} from "../../../state_transition/AdmistrationSetters.sol";
+import {AdministrationSetters} from "../../../state_transition/AdministrationSetters.sol";
 import {FunctionStopperModifier} from "../../../modifiers/FunctionStopperModifier.sol";
 import {IWhitelistRegistry} from "../../../interfaces/IWhitelistRegistry.sol";
 import {ISlippageConnector} from "../../../interfaces/connectors/ISlippageConnector.sol";
@@ -14,7 +14,7 @@ import {ISlippageConnector} from "../../../interfaces/connectors/ISlippageConnec
  * @notice This contract contains only governor public function implementation.
  */
 abstract contract OnlyGovernor is
-    AdmistrationSetters,
+    AdministrationSetters,
     FunctionStopperModifier,
     ReentrancyGuardUpgradeable,
     AdministrationModifiers

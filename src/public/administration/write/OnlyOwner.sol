@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 import {ILendingConnector} from "../../../interfaces/connectors/ILendingConnector.sol";
 import {IOracleConnector} from "../../../interfaces/connectors/IOracleConnector.sol";
-import {AdmistrationSetters} from "../../../state_transition/AdmistrationSetters.sol";
+import {AdministrationSetters} from "../../../state_transition/AdministrationSetters.sol";
 import {OwnableUpgradeable} from "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
 import {ReentrancyGuardUpgradeable} from
     "openzeppelin-contracts-upgradeable/contracts/utils/ReentrancyGuardUpgradeable.sol";
@@ -12,7 +12,7 @@ import {ReentrancyGuardUpgradeable} from
  * @title OnlyOwner
  * @notice This contract contains only owner public function implementation.
  */
-abstract contract OnlyOwner is AdmistrationSetters, OwnableUpgradeable, ReentrancyGuardUpgradeable {
+abstract contract OnlyOwner is AdministrationSetters, OwnableUpgradeable, ReentrancyGuardUpgradeable {
     /**
      * @dev see ILTV.updateEmergencyDeleverager
      */

@@ -12,10 +12,10 @@ import {BoolReader} from "../math/abstracts/BoolReader.sol";
 import {BoolWriter} from "../state_transition/BoolWriter.sol";
 
 /**
- * @title AdmistrationSetters
+ * @title AdministrationSetters
  * @notice contract contains functionality to set administration state
  */
-contract AdmistrationSetters is BoolWriter, BoolReader, IAdministrationErrors, IAdministrationEvents {
+contract AdministrationSetters is BoolWriter, BoolReader, IAdministrationErrors, IAdministrationEvents {
     /**
      * @dev implementation of ILTV.setTargetLtv
      */
