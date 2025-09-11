@@ -19,13 +19,10 @@ contract WhitelistRegistry is IWhitelistRegistry, Ownable {
     address public signer;
 
     event AddressWhitelisted(address indexed account, bool isWhitelisted);
+    event SignerUpdated(address indexed signer);
 
     error InvalidSignature();
     error DoubleSignatureUse();
-
-    constructor(address initialOwner, address initialSigner) Ownable(initialOwner) {
-        signer = initialSigner;
-    }
 
     struct WhitelistApproval {
         address whitelistedAddress;
@@ -34,7 +31,9 @@ contract WhitelistRegistry is IWhitelistRegistry, Ownable {
         bytes32 s;
     }
 
-    event SignerUpdated(address indexed signer);
+    constructor(address initialOwner, address initialSigner) Ownable(initialOwner) {
+        signer = initialSigner;
+    }
 
     /**
      * @notice Add an address to the whitelist
