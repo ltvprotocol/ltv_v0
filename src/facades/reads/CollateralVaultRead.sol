@@ -100,6 +100,6 @@ abstract contract CollateralVaultRead is
     }
 
     function assetCollateral() external view returns (address) {
-        return modules.collateralVaultModule().assetCollateral();
+        return address(collateralToken);
     }
 }
