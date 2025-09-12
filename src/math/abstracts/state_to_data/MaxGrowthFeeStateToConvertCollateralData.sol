@@ -41,7 +41,9 @@ abstract contract MaxGrowthFeeStateToConvertCollateralData is TotalAssetsCollate
             TotalAssetsCollateralData({
                 totalAssets: withdrawTotalAssets,
                 collateralPrice: state.commonTotalAssetsState.collateralPrice,
-                borrowPrice: state.commonTotalAssetsState.borrowPrice
+                borrowPrice: state.commonTotalAssetsState.borrowPrice,
+                borrowTokenDecimals: state.commonTotalAssetsState.borrowTokenDecimals,
+                collateralTokenDecimals: state.commonTotalAssetsState.collateralTokenDecimals
             })
         );
 

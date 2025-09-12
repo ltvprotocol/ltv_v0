@@ -104,7 +104,9 @@ abstract contract PreviewWithdrawVaultStateToCollateralData is TotalAssetsCollat
             TotalAssetsCollateralData({
                 totalAssets: data.withdrawTotalAssets,
                 collateralPrice: state.maxGrowthFeeState.commonTotalAssetsState.collateralPrice,
-                borrowPrice: state.maxGrowthFeeState.commonTotalAssetsState.borrowPrice
+                borrowPrice: state.maxGrowthFeeState.commonTotalAssetsState.borrowPrice,
+                borrowTokenDecimals: state.maxGrowthFeeState.commonTotalAssetsState.borrowTokenDecimals,
+                collateralTokenDecimals: state.maxGrowthFeeState.commonTotalAssetsState.collateralTokenDecimals
             })
         );
 

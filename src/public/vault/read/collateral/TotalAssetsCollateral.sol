@@ -43,7 +43,9 @@ abstract contract TotalAssetsCollateral is TotalAssets {
         pure
         returns (uint256)
     {
-        return data.totalAssets.mulDiv(data.borrowPrice, data.collateralPrice, isDeposit);
+        return data.totalAssets.mulDiv(data.borrowPrice, data.collateralPrice, isDeposit).mulDiv(
+            10 ** data.collateralTokenDecimals, 10 ** data.borrowTokenDecimals, isDeposit
+        );
     }
 
     /**
@@ -93,6 +95,8 @@ abstract contract TotalAssetsCollateral is TotalAssets {
         );
         data.collateralPrice = state.commonTotalAssetsState.collateralPrice;
         data.borrowPrice = state.commonTotalAssetsState.borrowPrice;
+        data.borrowTokenDecimals = state.commonTotalAssetsState.borrowTokenDecimals;
+        data.collateralTokenDecimals = state.commonTotalAssetsState.collateralTokenDecimals;
 
         return data;
     }
