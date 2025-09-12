@@ -31,7 +31,7 @@ abstract contract MaxLowLevelRebalanceBorrow is MaxGrowthFee {
     {
         // rounding down assuming smaller border
         uint256 maxTotalAssetsInBorrow =
-            data.maxTotalAssetsInUnderlying.mulDivDown(Constants.ORACLE_DIVIDER, data.borrowPrice);
+            data.maxTotalAssetsInUnderlying.mulDivDown(10 ** data.borrowTokenDecimals, data.borrowPrice);
         // rounding down assuming smaller border
         uint256 maxBorrow = maxTotalAssetsInBorrow.mulDivDown(
             uint256(data.targetLtvDivider) * uint256(data.targetLtvDividend),

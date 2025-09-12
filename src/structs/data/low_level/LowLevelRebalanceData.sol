@@ -15,7 +15,9 @@ struct LowLevelRebalanceData {
     int256 protocolFutureRewardCollateral;
     int256 protocolFutureRewardBorrow;
     uint256 collateralPrice;
+    uint256 collateralTokenDecimals;
     uint256 borrowPrice;
+    uint256 borrowTokenDecimals;
     uint256 supplyAfterFee;
     uint256 totalAssets;
     uint16 targetLtvDividend;

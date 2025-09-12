@@ -49,7 +49,8 @@ abstract contract ExecuteLowLevelRebalanceShares is
                     maxTotalAssetsInUnderlying: state.maxTotalAssetsInUnderlying,
                     supplyAfterFee: data.supplyAfterFee,
                     borrowPrice: data.borrowPrice,
-                    depositTotalAssets: data.totalAssets
+                    depositTotalAssets: data.totalAssets,
+                    borrowTokenDecimals: data.borrowTokenDecimals
                 })
             );
         } else {
@@ -80,7 +81,8 @@ abstract contract ExecuteLowLevelRebalanceShares is
                     maxTotalAssetsInUnderlying: state.maxTotalAssetsInUnderlying,
                     supplyAfterFee: data.supplyAfterFee,
                     borrowPrice: data.borrowPrice,
-                    depositTotalAssets: depositTotalAssets
+                    depositTotalAssets: depositTotalAssets,
+                    borrowTokenDecimals: data.borrowTokenDecimals
                 })
             );
         }

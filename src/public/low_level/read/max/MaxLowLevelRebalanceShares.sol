@@ -29,7 +29,7 @@ abstract contract MaxLowLevelRebalanceShares is MaxGrowthFee {
             int256(data.maxTotalAssetsInUnderlying + data.depositRealBorrow) - int256(data.depositRealCollateral);
 
         // rounding down assuming smaller border
-        return maxDeltaSharesInUnderlying.mulDivDown(int256(Constants.ORACLE_DIVIDER), int256(data.borrowPrice))
+        return maxDeltaSharesInUnderlying.mulDivDown(int256(10 ** data.borrowTokenDecimals), int256(data.borrowPrice))
             .mulDivDown(int256(data.supplyAfterFee), int256(data.depositTotalAssets));
     }
 
@@ -107,5 +107,6 @@ abstract contract MaxLowLevelRebalanceShares is MaxGrowthFee {
 
         data.maxTotalAssetsInUnderlying = state.maxTotalAssetsInUnderlying;
         data.borrowPrice = state.maxGrowthFeeState.commonTotalAssetsState.borrowPrice;
+        data.borrowTokenDecimals = state.maxGrowthFeeState.commonTotalAssetsState.borrowTokenDecimals;
     }
 }

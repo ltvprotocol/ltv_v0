@@ -109,5 +109,8 @@ abstract contract PreviewLowLevelRebalanceStateToData is MaxGrowthFee {
 
         data.targetLtvDividend = state.targetLtvDividend;
         data.targetLtvDivider = state.targetLtvDivider;
+
+        data.borrowTokenDecimals = state.maxGrowthFeeState.commonTotalAssetsState.borrowTokenDecimals;
+        data.collateralTokenDecimals = state.maxGrowthFeeState.commonTotalAssetsState.collateralTokenDecimals;
     }
 }
