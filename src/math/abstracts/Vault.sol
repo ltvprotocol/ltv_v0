@@ -24,7 +24,8 @@ abstract contract Vault is MaxDepositMintStateToData, MaxWithdrawRedeemStateToDa
         uint256 maxTotalAssetsInUnderlying,
         uint256 supplyAfterFee,
         uint256 totalAssets,
-        uint256 borrowPrice
+        uint256 borrowPrice,
+        uint8 borrowTokenDecimals
     ) internal pure returns (uint256) {
         // casting to uint256 is safe because collateral is considered to be greater than borrow
         // forge-lint: disable-next-line(unsafe-typecast)
@@ -36,7 +37,7 @@ abstract contract Vault is MaxDepositMintStateToData, MaxWithdrawRedeemStateToDa
 
         // round down to assume less available space
         uint256 availableSpaceInShares = (maxTotalAssetsInUnderlying - totalAssetsInUnderlying).mulDivDown(
-            Constants.ORACLE_DIVIDER, borrowPrice
+            10 ** borrowTokenDecimals, borrowPrice
         ).mulDivDown(supplyAfterFee, totalAssets);
 
         return availableSpaceInShares;

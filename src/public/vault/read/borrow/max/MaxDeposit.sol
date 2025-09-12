@@ -32,7 +32,8 @@ abstract contract MaxDeposit is PreviewMint, PreviewDeposit {
             data.maxTotalAssetsInUnderlying,
             data.previewDepositBorrowVaultData.supplyAfterFee,
             data.previewDepositBorrowVaultData.depositTotalAssets,
-            data.previewDepositBorrowVaultData.borrowPrice
+            data.previewDepositBorrowVaultData.borrowPrice,
+            data.previewDepositBorrowVaultData.borrowTokenDecimals
         );
         (uint256 availableSpaceInAssets,) = _previewMint(availableSpaceInShares, data.previewDepositBorrowVaultData);
 

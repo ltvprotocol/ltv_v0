@@ -32,7 +32,8 @@ abstract contract MaxMint is PreviewMint, PreviewDeposit {
             data.maxTotalAssetsInUnderlying,
             data.previewDepositBorrowVaultData.supplyAfterFee,
             data.previewDepositBorrowVaultData.depositTotalAssets,
-            data.previewDepositBorrowVaultData.borrowPrice
+            data.previewDepositBorrowVaultData.borrowPrice,
+            data.previewDepositBorrowVaultData.borrowTokenDecimals
         );
 
         // round up to assume smaller border

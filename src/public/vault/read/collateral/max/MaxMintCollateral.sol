@@ -32,7 +32,8 @@ abstract contract MaxMintCollateral is PreviewMintCollateral, PreviewDepositColl
             data.maxTotalAssetsInUnderlying,
             data.previewCollateralVaultData.supplyAfterFee,
             data.previewCollateralVaultData.totalAssetsCollateral,
-            data.previewCollateralVaultData.collateralPrice
+            data.previewCollateralVaultData.collateralPrice,
+            data.previewCollateralVaultData.collateralTokenDecimals
         );
 
         // round down to assume smaller border
