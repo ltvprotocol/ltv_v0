@@ -76,6 +76,8 @@ abstract contract BaseLowLevelRebalanceInvariantWrapper is BaseInvariantWrapper 
             ) {
                 IERC20(ltv.collateralToken()).approve(address(ltv), uint256(_expectedCollateralDelta));
             }
+        } else {
+            deal(ltv.collateralToken(), _currentTestActor, 0);
         }
 
         // Handle borrow requirements (if negative, user needs to provide borrow tokens)
@@ -86,6 +88,8 @@ abstract contract BaseLowLevelRebalanceInvariantWrapper is BaseInvariantWrapper 
             if (IERC20(ltv.borrowToken()).allowance(_currentTestActor, address(ltv)) < uint256(-amount)) {
                 IERC20(ltv.borrowToken()).approve(address(ltv), uint256(-amount));
             }
+        } else {
+            deal(ltv.borrowToken(), _currentTestActor, 0);
         }
 
         // Capture state before operation
@@ -135,6 +139,8 @@ abstract contract BaseLowLevelRebalanceInvariantWrapper is BaseInvariantWrapper 
             ) {
                 IERC20(ltv.collateralToken()).approve(address(ltv), uint256(_expectedCollateralDelta));
             }
+        } else {
+            deal(ltv.collateralToken(), _currentTestActor, 0);
         }
 
         // Handle borrow requirements (if negative, user needs to provide borrow tokens)
@@ -145,6 +151,8 @@ abstract contract BaseLowLevelRebalanceInvariantWrapper is BaseInvariantWrapper 
             if (IERC20(ltv.borrowToken()).allowance(_currentTestActor, address(ltv)) < uint256(-amount)) {
                 IERC20(ltv.borrowToken()).approve(address(ltv), uint256(-amount));
             }
+        } else {
+            deal(ltv.borrowToken(), _currentTestActor, 0);
         }
 
         // Capture state before operation
@@ -191,6 +199,8 @@ abstract contract BaseLowLevelRebalanceInvariantWrapper is BaseInvariantWrapper 
             if (IERC20(ltv.borrowToken()).allowance(_currentTestActor, address(ltv)) < uint256(-_expectedBorrowDelta)) {
                 IERC20(ltv.borrowToken()).approve(address(ltv), uint256(-_expectedBorrowDelta));
             }
+        } else {
+            deal(ltv.borrowToken(), _currentTestActor, 0);
         }
 
         // Handle collateral requirements (if positive, user needs to provide collateral)
@@ -204,6 +214,8 @@ abstract contract BaseLowLevelRebalanceInvariantWrapper is BaseInvariantWrapper 
             ) {
                 IERC20(ltv.collateralToken()).approve(address(ltv), uint256(_expectedCollateralDelta));
             }
+        } else {
+            deal(ltv.collateralToken(), _currentTestActor, 0);
         }
 
         // Capture state before operation
@@ -250,6 +262,8 @@ abstract contract BaseLowLevelRebalanceInvariantWrapper is BaseInvariantWrapper 
             if (IERC20(ltv.borrowToken()).allowance(_currentTestActor, address(ltv)) < uint256(-_expectedBorrowDelta)) {
                 IERC20(ltv.borrowToken()).approve(address(ltv), uint256(-_expectedBorrowDelta));
             }
+        } else {
+            deal(ltv.borrowToken(), _currentTestActor, 0);
         }
 
         // Handle collateral requirements (if positive, user needs to provide collateral)
@@ -260,6 +274,8 @@ abstract contract BaseLowLevelRebalanceInvariantWrapper is BaseInvariantWrapper 
             if (IERC20(ltv.collateralToken()).allowance(_currentTestActor, address(ltv)) < uint256(amount)) {
                 IERC20(ltv.collateralToken()).approve(address(ltv), uint256(amount));
             }
+        } else {
+            deal(ltv.collateralToken(), _currentTestActor, 0);
         }
 
         // Capture state before operation
@@ -308,6 +324,8 @@ abstract contract BaseLowLevelRebalanceInvariantWrapper is BaseInvariantWrapper 
             ) {
                 IERC20(ltv.collateralToken()).approve(address(ltv), uint256(_expectedCollateralDelta));
             }
+        } else {
+            deal(ltv.collateralToken(), _currentTestActor, 0);
         }
 
         // Handle borrow requirements (if negative, user needs to provide borrow tokens)
@@ -318,6 +336,8 @@ abstract contract BaseLowLevelRebalanceInvariantWrapper is BaseInvariantWrapper 
             if (IERC20(ltv.borrowToken()).allowance(_currentTestActor, address(ltv)) < uint256(-_expectedBorrowDelta)) {
                 IERC20(ltv.borrowToken()).approve(address(ltv), uint256(-_expectedBorrowDelta));
             }
+        } else {
+            deal(ltv.borrowToken(), _currentTestActor, 0);
         }
 
         // Capture state before operation
