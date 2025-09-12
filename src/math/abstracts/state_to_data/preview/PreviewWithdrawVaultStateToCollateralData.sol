@@ -124,6 +124,7 @@ abstract contract PreviewWithdrawVaultStateToCollateralData is TotalAssetsCollat
         data.targetLtvDivider = state.targetLtvDivider;
         data.collateralSlippage = state.collateralSlippage;
         data.borrowSlippage = state.borrowSlippage;
+        data.collateralTokenDecimals = state.maxGrowthFeeState.commonTotalAssetsState.collateralTokenDecimals;
 
         return data;
     }

@@ -131,6 +131,7 @@ abstract contract PreviewDepositVaultStateToCollateralData is TotalAssetsCollate
         data.targetLtvDivider = state.targetLtvDivider;
         data.collateralSlippage = state.collateralSlippage;
         data.borrowSlippage = state.borrowSlippage;
+        data.collateralTokenDecimals = state.maxGrowthFeeState.commonTotalAssetsState.collateralTokenDecimals;
 
         return data;
     }

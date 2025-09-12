@@ -38,7 +38,7 @@ abstract contract PreviewMintCollateral is VaultCollateral {
     {
         // HODLer <=> depositor conflict, round in favor of HODLer, round up to receive more assets
         uint256 sharesInUnderlying = shares.mulDivUp(data.totalAssetsCollateral, data.supplyAfterFee).mulDivUp(
-            data.collateralPrice, Constants.ORACLE_DIVIDER
+            data.collateralPrice, 10 ** data.collateralTokenDecimals
         );
 
         (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = MintRedeem.calculateMintRedeem(

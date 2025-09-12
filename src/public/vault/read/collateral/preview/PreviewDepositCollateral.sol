@@ -37,7 +37,7 @@ abstract contract PreviewDepositCollateral is VaultCollateral {
         returns (uint256, DeltaFuture memory)
     {
         // depositor <=> HODLer conflict, assume user deposits less to mint less shares
-        uint256 realCollateralInUnderlying = assets.mulDivDown(data.collateralPrice, Constants.ORACLE_DIVIDER);
+        uint256 realCollateralInUnderlying = assets.mulDivDown(data.collateralPrice, 10 ** data.collateralTokenDecimals);
         (int256 sharesInUnderlying, DeltaFuture memory deltaFuture) = DepositWithdraw.calculateDepositWithdraw(
             DepositWithdrawData({
                 collateral: data.collateral,
