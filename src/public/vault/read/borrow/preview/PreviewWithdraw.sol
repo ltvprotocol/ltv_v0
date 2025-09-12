@@ -67,7 +67,7 @@ abstract contract PreviewWithdraw is Vault {
         return (
             // casting to uint256 is safe because sharesInUnderlying is checked to be negative
             // forge-lint: disable-next-line(unsafe-typecast)
-            uint256(-sharesInUnderlying).mulDivUp(Constants.ORACLE_DIVIDER, data.borrowPrice).mulDivUp(
+            uint256(-sharesInUnderlying).mulDivUp(10 ** data.borrowTokenDecimals, data.borrowPrice).mulDivUp(
                 data.supplyAfterFee, data.withdrawTotalAssets
             ),
             deltaFuture
