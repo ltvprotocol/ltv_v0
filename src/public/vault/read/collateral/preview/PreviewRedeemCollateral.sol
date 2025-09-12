@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {Constants} from "src/constants/Constants.sol";
 import {MintRedeemData} from "src/structs/data/vault/common/MintRedeemData.sol";
 import {PreviewWithdrawVaultState} from "src/structs/state/vault/preview/PreviewWithdrawVaultState.sol";
 import {PreviewCollateralVaultData} from "src/structs/data/vault/preview/PreviewCollateralVaultData.sol";
@@ -38,7 +37,7 @@ abstract contract PreviewRedeemCollateral is VaultCollateral {
     {
         // HODLer <=> withdrawer conflict, round in favor of HODLer, round down to give less collateral
         uint256 sharesInUnderlying = shares.mulDivDown(data.totalAssetsCollateral, data.supplyAfterFee).mulDivDown(
-            data.collateralPrice, Constants.ORACLE_DIVIDER
+            data.collateralPrice, 10 ** data.collateralTokenDecimals
         );
 
         (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = MintRedeem.calculateMintRedeem(
@@ -70,6 +69,9 @@ abstract contract PreviewRedeemCollateral is VaultCollateral {
         // casting to uint256 is safe because assetsInUnderlying is checked to be negative
         // and therefore it is smaller than type(uint256).max
         // forge-lint: disable-next-line(unsafe-typecast)
-        return (uint256(-assetsInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, data.collateralPrice), deltaFuture);
+        return (
+            uint256(-assetsInUnderlying).mulDivDown(10 ** data.collateralTokenDecimals, data.collateralPrice),
+            deltaFuture
+        );
     }
 }

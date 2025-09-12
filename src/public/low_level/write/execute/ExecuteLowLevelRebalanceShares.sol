@@ -57,11 +57,13 @@ abstract contract ExecuteLowLevelRebalanceShares is
             uint256 depositRealBorrow = CommonMath.convertRealBorrow(
                 state.previewLowLevelRebalanceState.depositRealBorrowAssets,
                 state.previewLowLevelRebalanceState.maxGrowthFeeState.commonTotalAssetsState.borrowPrice,
+                state.previewLowLevelRebalanceState.maxGrowthFeeState.commonTotalAssetsState.borrowTokenDecimals,
                 true
             );
             uint256 depositRealCollateral = CommonMath.convertRealCollateral(
                 state.previewLowLevelRebalanceState.depositRealCollateralAssets,
                 state.previewLowLevelRebalanceState.maxGrowthFeeState.commonTotalAssetsState.collateralPrice,
+                state.previewLowLevelRebalanceState.maxGrowthFeeState.commonTotalAssetsState.collateralTokenDecimals,
                 true
             );
 

@@ -67,7 +67,8 @@ abstract contract Deposit is
                 deltaProtocolFutureRewardCollateral: deltaFuture.deltaProtocolFutureRewardCollateral,
                 supply: data.previewDepositBorrowVaultData.supplyAfterFee,
                 totalAppropriateAssets: data.previewDepositBorrowVaultData.depositTotalAssets,
-                assetPrice: data.previewDepositBorrowVaultData.borrowPrice
+                assetPrice: data.previewDepositBorrowVaultData.borrowPrice,
+                assetTokenDecimals: data.previewDepositBorrowVaultData.borrowTokenDecimals
             })
         );
 
@@ -98,7 +99,13 @@ abstract contract Deposit is
             NextStateData({
                 nextState: nextState,
                 borrowPrice: data.previewDepositBorrowVaultData.borrowPrice,
-                collateralPrice: state.previewDepositVaultState.maxGrowthFeeState.commonTotalAssetsState.collateralPrice
+                collateralPrice: state.previewDepositVaultState.maxGrowthFeeState.commonTotalAssetsState.collateralPrice,
+                borrowTokenDecimals: data.previewDepositBorrowVaultData.borrowTokenDecimals,
+                collateralTokenDecimals: state
+                    .previewDepositVaultState
+                    .maxGrowthFeeState
+                    .commonTotalAssetsState
+                    .collateralTokenDecimals
             })
         );
 

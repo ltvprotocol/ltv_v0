@@ -73,7 +73,11 @@ abstract contract ExecuteLowLevelRebalanceCollateral is
                     .commonTotalAssetsState
                     .collateralPrice,
                 maxTotalAssetsInUnderlying: state.maxTotalAssetsInUnderlying,
-                collateralTokenDecimals: state.previewLowLevelRebalanceState.maxGrowthFeeState.commonTotalAssetsState.collateralTokenDecimals
+                collateralTokenDecimals: state
+                    .previewLowLevelRebalanceState
+                    .maxGrowthFeeState
+                    .commonTotalAssetsState
+                    .collateralTokenDecimals
             })
         );
 

@@ -2,7 +2,6 @@
 pragma solidity ^0.8.28;
 
 import {ILowLevelRebalanceErrors} from "src/errors/ILowLevelRebalanceErrors.sol";
-import {Constants} from "src/constants/Constants.sol";
 import {LowLevelRebalanceData} from "src/structs/data/low_level/LowLevelRebalanceData.sol";
 import {DeltaRealCollateralFromDeltaSharesData} from
     "src/structs/data/low_level/DeltaRealCollateralFromDeltaSharesData.sol";
@@ -231,8 +230,9 @@ library LowLevelRebalanceMath {
         int256 deltaSharesInUnderlying;
         {
             // Depositor/withdrawer <=> HODLer conflict, round down to assume smaller collateral increase in case of deposit or bigger collateral decrease in case of withdraw.
-            int256 deltaRealCollateral =
-                deltaCollateralAssets.mulDivDown(int256(data.collateralPrice), int256(10 ** data.collateralTokenDecimals));
+            int256 deltaRealCollateral = deltaCollateralAssets.mulDivDown(
+                int256(data.collateralPrice), int256(10 ** data.collateralTokenDecimals)
+            );
 
             deltaRealBorrow = calculateDeltaRealBorrowFromDeltaRealCollateral(
                 deltaRealCollateral, data.realCollateral, data.realBorrow, data.targetLtvDividend, data.targetLtvDivider

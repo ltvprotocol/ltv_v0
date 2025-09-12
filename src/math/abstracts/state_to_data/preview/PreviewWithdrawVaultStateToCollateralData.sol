@@ -30,11 +30,13 @@ abstract contract PreviewWithdrawVaultStateToCollateralData is TotalAssetsCollat
         uint256 realCollateral = CommonMath.convertRealCollateral(
             state.maxGrowthFeeState.withdrawRealCollateralAssets,
             state.maxGrowthFeeState.commonTotalAssetsState.collateralPrice,
+            state.maxGrowthFeeState.commonTotalAssetsState.collateralTokenDecimals,
             false
         );
         uint256 realBorrow = CommonMath.convertRealBorrow(
             state.maxGrowthFeeState.withdrawRealBorrowAssets,
             state.maxGrowthFeeState.commonTotalAssetsState.borrowPrice,
+            state.maxGrowthFeeState.commonTotalAssetsState.borrowTokenDecimals,
             false
         );
         return _previewWithdrawVaultStateToPreviewCollateralVaultData(realCollateral, realBorrow, state);
@@ -54,21 +56,25 @@ abstract contract PreviewWithdrawVaultStateToCollateralData is TotalAssetsCollat
         data.futureCollateral = CommonMath.convertFutureCollateral(
             state.maxGrowthFeeState.commonTotalAssetsState.futureCollateralAssets,
             state.maxGrowthFeeState.commonTotalAssetsState.collateralPrice,
+            state.maxGrowthFeeState.commonTotalAssetsState.collateralTokenDecimals,
             false
         );
         data.futureBorrow = CommonMath.convertFutureBorrow(
             state.maxGrowthFeeState.commonTotalAssetsState.futureBorrowAssets,
             state.maxGrowthFeeState.commonTotalAssetsState.borrowPrice,
+            state.maxGrowthFeeState.commonTotalAssetsState.borrowTokenDecimals,
             false
         );
         int256 futureRewardCollateral = CommonMath.convertFutureRewardCollateral(
             state.maxGrowthFeeState.commonTotalAssetsState.futureRewardCollateralAssets,
             state.maxGrowthFeeState.commonTotalAssetsState.collateralPrice,
+            state.maxGrowthFeeState.commonTotalAssetsState.collateralTokenDecimals,
             false
         );
         int256 futureRewardBorrow = CommonMath.convertFutureRewardBorrow(
             state.maxGrowthFeeState.commonTotalAssetsState.futureRewardBorrowAssets,
             state.maxGrowthFeeState.commonTotalAssetsState.borrowPrice,
+            state.maxGrowthFeeState.commonTotalAssetsState.borrowTokenDecimals,
             false
         );
 

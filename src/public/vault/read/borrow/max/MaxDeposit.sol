@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {Constants} from "src/constants/Constants.sol";
 import {MaxDepositMintBorrowVaultState} from "src/structs/state/vault/max/MaxDepositMintBorrowVaultState.sol";
 import {MaxDepositMintBorrowVaultData} from "src/structs/data/vault/max/MaxDepositMintBorrowVaultData.sol";
 import {PreviewMint} from "src/public/vault/read/borrow/preview/PreviewMint.sol";
@@ -46,7 +45,7 @@ abstract contract MaxDeposit is PreviewMint, PreviewDeposit {
 
         // round down to assume smaller border
         uint256 maxDepositInAssets = (uint256(data.realBorrow) - minProfitRealBorrow).mulDivDown(
-            Constants.ORACLE_DIVIDER, data.previewDepositBorrowVaultData.borrowPrice
+            10 ** data.previewDepositBorrowVaultData.borrowTokenDecimals, data.previewDepositBorrowVaultData.borrowPrice
         );
 
         return maxDepositInAssets > availableSpaceInAssets ? availableSpaceInAssets : maxDepositInAssets;

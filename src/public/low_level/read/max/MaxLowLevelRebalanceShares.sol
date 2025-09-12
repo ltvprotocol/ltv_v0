@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {Constants} from "src/constants/Constants.sol";
 import {MaxGrowthFeeData} from "src/structs/data/common/MaxGrowthFeeData.sol";
 import {TotalAssetsData} from "src/structs/data/vault/total_assets/TotalAssetsData.sol";
 import {TotalAssetsState} from "src/structs/state/vault/total_assets/TotalAssetsState.sol";
@@ -44,30 +43,40 @@ abstract contract MaxLowLevelRebalanceShares is MaxGrowthFee {
     {
         // true since we calculate top border
         data.depositRealCollateral = CommonMath.convertRealCollateral(
-            state.depositRealCollateralAssets, state.maxGrowthFeeState.commonTotalAssetsState.collateralPrice, true
+            state.depositRealCollateralAssets,
+            state.maxGrowthFeeState.commonTotalAssetsState.collateralPrice,
+            state.maxGrowthFeeState.commonTotalAssetsState.collateralTokenDecimals,
+            true
         );
         data.depositRealBorrow = CommonMath.convertRealBorrow(
-            state.depositRealBorrowAssets, state.maxGrowthFeeState.commonTotalAssetsState.borrowPrice, true
+            state.depositRealBorrowAssets,
+            state.maxGrowthFeeState.commonTotalAssetsState.borrowPrice,
+            state.maxGrowthFeeState.commonTotalAssetsState.borrowTokenDecimals,
+            true
         );
 
         int256 futureCollateral = CommonMath.convertFutureCollateral(
             state.maxGrowthFeeState.commonTotalAssetsState.futureCollateralAssets,
             state.maxGrowthFeeState.commonTotalAssetsState.collateralPrice,
+            state.maxGrowthFeeState.commonTotalAssetsState.collateralTokenDecimals,
             true
         );
         int256 futureBorrow = CommonMath.convertFutureBorrow(
             state.maxGrowthFeeState.commonTotalAssetsState.futureBorrowAssets,
             state.maxGrowthFeeState.commonTotalAssetsState.borrowPrice,
+            state.maxGrowthFeeState.commonTotalAssetsState.borrowTokenDecimals,
             true
         );
         int256 futureRewardCollateral = CommonMath.convertFutureRewardCollateral(
             state.maxGrowthFeeState.commonTotalAssetsState.futureRewardCollateralAssets,
             state.maxGrowthFeeState.commonTotalAssetsState.collateralPrice,
+            state.maxGrowthFeeState.commonTotalAssetsState.collateralTokenDecimals,
             true
         );
         int256 futureRewardBorrow = CommonMath.convertFutureRewardBorrow(
             state.maxGrowthFeeState.commonTotalAssetsState.futureRewardBorrowAssets,
             state.maxGrowthFeeState.commonTotalAssetsState.borrowPrice,
+            state.maxGrowthFeeState.commonTotalAssetsState.borrowTokenDecimals,
             true
         );
 

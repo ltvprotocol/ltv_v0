@@ -69,7 +69,11 @@ abstract contract ExecuteLowLevelRebalanceBorrow is
                 targetLtvDivider: state.previewLowLevelRebalanceState.targetLtvDivider,
                 borrowPrice: state.previewLowLevelRebalanceState.maxGrowthFeeState.commonTotalAssetsState.borrowPrice,
                 maxTotalAssetsInUnderlying: state.maxTotalAssetsInUnderlying,
-                borrowTokenDecimals: state.previewLowLevelRebalanceState.maxGrowthFeeState.commonTotalAssetsState.borrowTokenDecimals
+                borrowTokenDecimals: state
+                    .previewLowLevelRebalanceState
+                    .maxGrowthFeeState
+                    .commonTotalAssetsState
+                    .borrowTokenDecimals
             })
         );
 
