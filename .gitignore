@@ -19,3 +19,4 @@ docs/
 .venv/
 script/ghost/data/
 deploy/**/deployed_contracts*
+local_fork*

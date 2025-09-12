@@ -122,7 +122,7 @@ def get_expected_address(chain, contract, lending_protocol, args = {}):
         sys.exit(1)
 
 def get_deployed_contracts_file_path(chain, lending_protocol, args_filename):
-    return f"deploy/{chain}/{lending_protocol}/deployed_contracts_{args_filename}"
+    return f"deploy_out/{chain}/{lending_protocol}/deployed_contracts_{args_filename}"
 
 def get_args_file_path(chain, lending_protocol, args_filename):
     return f"deploy/{chain}/{lending_protocol}/{args_filename}"
