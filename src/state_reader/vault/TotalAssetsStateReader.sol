@@ -27,7 +27,9 @@ contract TotalAssetsStateReader is GetRealCollateralAndRealBorrowAssetsReader {
                 futureRewardBorrowAssets: futureRewardBorrowAssets,
                 futureRewardCollateralAssets: futureRewardCollateralAssets,
                 borrowPrice: oracleConnector.getPriceBorrowOracle(_oracleConnectorGetterData),
-                collateralPrice: oracleConnector.getPriceCollateralOracle(_oracleConnectorGetterData)
+                collateralPrice: oracleConnector.getPriceCollateralOracle(_oracleConnectorGetterData),
+                borrowTokenDecimals: borrowTokenDecimals,
+                collateralTokenDecimals: collateralTokenDecimals
             })
         });
     }

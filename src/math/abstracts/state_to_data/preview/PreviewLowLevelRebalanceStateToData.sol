@@ -80,7 +80,8 @@ abstract contract PreviewLowLevelRebalanceStateToData is MaxGrowthFee {
             TotalAssetsData({
                 collateral: data.realCollateral + data.futureCollateral + futureRewardCollateral,
                 borrow: data.realBorrow + data.futureBorrow + futureRewardBorrow,
-                borrowPrice: data.borrowPrice
+                borrowPrice: data.borrowPrice,
+                borrowTokenDecimals: state.maxGrowthFeeState.commonTotalAssetsState.borrowTokenDecimals
             })
         );
 

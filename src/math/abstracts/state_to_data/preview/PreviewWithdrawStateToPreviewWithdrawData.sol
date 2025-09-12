@@ -89,7 +89,13 @@ contract PreviewWithdrawStateToPreviewWithdrawData is MaxGrowthFee {
         data.protocolFutureRewardCollateral = futureRewardCollateral - data.userFutureRewardCollateral;
 
         data.withdrawTotalAssets = _totalAssets(
-            false, TotalAssetsData({collateral: data.collateral, borrow: data.borrow, borrowPrice: data.borrowPrice})
+            false,
+            TotalAssetsData({
+                collateral: data.collateral,
+                borrow: data.borrow,
+                borrowPrice: data.borrowPrice,
+                borrowTokenDecimals: state.maxGrowthFeeState.commonTotalAssetsState.borrowTokenDecimals
+            })
         );
 
         data.supplyAfterFee = _previewSupplyAfterFee(

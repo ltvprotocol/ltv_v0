@@ -80,7 +80,8 @@ abstract contract MaxLowLevelRebalanceShares is MaxGrowthFee {
                 TotalAssetsData({
                     collateral: depositCollateral,
                     borrow: depositBorrow,
-                    borrowPrice: state.maxGrowthFeeState.commonTotalAssetsState.borrowPrice
+                    borrowPrice: state.maxGrowthFeeState.commonTotalAssetsState.borrowPrice,
+                    borrowTokenDecimals: state.maxGrowthFeeState.commonTotalAssetsState.borrowTokenDecimals
                 })
             );
         }

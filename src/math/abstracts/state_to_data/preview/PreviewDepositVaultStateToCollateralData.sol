@@ -93,7 +93,8 @@ abstract contract PreviewDepositVaultStateToCollateralData is TotalAssetsCollate
             TotalAssetsData({
                 collateral: data.collateral,
                 borrow: data.borrow,
-                borrowPrice: state.maxGrowthFeeState.commonTotalAssetsState.borrowPrice
+                borrowPrice: state.maxGrowthFeeState.commonTotalAssetsState.borrowPrice,
+                borrowTokenDecimals: state.maxGrowthFeeState.commonTotalAssetsState.borrowTokenDecimals
             })
         );
         data.totalAssetsCollateral = _totalAssetsCollateral(

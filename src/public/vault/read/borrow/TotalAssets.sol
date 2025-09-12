@@ -35,8 +35,9 @@ abstract contract TotalAssets {
     function _totalAssets(bool isDeposit, TotalAssetsData memory data) internal pure virtual returns (uint256) {
         // Add 100 to avoid vault attack
         // in case of deposit need to overestimate our assets
-        return uint256(data.collateral - data.borrow).mulDiv(Constants.ORACLE_DIVIDER, data.borrowPrice, isDeposit)
-            + Constants.VIRTUAL_ASSETS_AMOUNT;
+        return uint256(data.collateral - data.borrow).mulDiv(
+            10 ** data.borrowTokenDecimals, data.borrowPrice, isDeposit
+        ) + Constants.VIRTUAL_ASSETS_AMOUNT;
     }
 
     /**
@@ -75,6 +76,7 @@ abstract contract TotalAssets {
         // forge-lint: disable-next-line(unsafe-typecast)
         data.borrow = int256(realBorrow) + futureBorrow + futureRewardBorrow;
         data.borrowPrice = state.commonTotalAssetsState.borrowPrice;
+        data.borrowTokenDecimals = state.commonTotalAssetsState.borrowTokenDecimals;
 
         return data;
     }

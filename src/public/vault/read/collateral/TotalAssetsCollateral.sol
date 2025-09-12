@@ -87,7 +87,8 @@ abstract contract TotalAssetsCollateral is TotalAssets {
             TotalAssetsData({
                 collateral: collateral,
                 borrow: borrow,
-                borrowPrice: state.commonTotalAssetsState.borrowPrice
+                borrowPrice: state.commonTotalAssetsState.borrowPrice,
+                borrowTokenDecimals: state.commonTotalAssetsState.borrowTokenDecimals
             })
         );
         data.collateralPrice = state.commonTotalAssetsState.collateralPrice;

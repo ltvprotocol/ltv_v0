@@ -86,7 +86,13 @@ contract PreviewDepositStateToPreviewDepositData is MaxGrowthFee {
         data.protocolFutureRewardCollateral = futureRewardCollateral - data.userFutureRewardCollateral;
 
         data.depositTotalAssets = _totalAssets(
-            true, TotalAssetsData({collateral: data.collateral, borrow: data.borrow, borrowPrice: data.borrowPrice})
+            true,
+            TotalAssetsData({
+                collateral: data.collateral,
+                borrow: data.borrow,
+                borrowPrice: data.borrowPrice,
+                borrowTokenDecimals: state.maxGrowthFeeState.commonTotalAssetsState.borrowTokenDecimals
+            })
         );
 
         data.withdrawTotalAssets = totalAssets(
