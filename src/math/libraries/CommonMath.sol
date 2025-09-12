@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {Constants} from "src/constants/Constants.sol";
 import {UMulDiv, SMulDiv} from "src/math/libraries/MulDiv.sol";
 
 /**
@@ -15,81 +14,90 @@ library CommonMath {
     /**
      * @notice This function converts real collateral amount from collateral asset to underlying asset.
      */
-    function convertRealCollateral(uint256 realCollateralAssets, uint256 collateralPrice, bool isDeposit)
-        internal
-        pure
-        returns (uint256)
-    {
+    function convertRealCollateral(
+        uint256 realCollateralAssets,
+        uint256 collateralPrice,
+        uint8 collateralTokenDecimals,
+        bool isDeposit
+    ) internal pure returns (uint256) {
         // in case of deposit we need to assume more assets in the protocol, so round collateral up
-        return realCollateralAssets.mulDiv(collateralPrice, Constants.ORACLE_DIVIDER, isDeposit);
+        return realCollateralAssets.mulDiv(collateralPrice, 10 ** collateralTokenDecimals, isDeposit);
     }
 
     /**
      * @notice This function converts real borrow amount from borrow asset to underlying asset.
      */
-    function convertRealBorrow(uint256 realBorrowAssets, uint256 borrowPrice, bool isDeposit)
+    function convertRealBorrow(uint256 realBorrowAssets, uint256 borrowPrice, uint8 borrowTokenDecimals, bool isDeposit)
         internal
         pure
         returns (uint256)
     {
         // in case of deposit we need to assume more assets in the protocol, so round borrow down
-        return realBorrowAssets.mulDiv(borrowPrice, Constants.ORACLE_DIVIDER, !isDeposit);
+        return realBorrowAssets.mulDiv(borrowPrice, 10 ** borrowTokenDecimals, !isDeposit);
     }
 
     /**
      * @notice This function converts future collateral amount from collateral asset to underlying asset.
      */
-    function convertFutureCollateral(int256 futureCollateralAssets, uint256 collateralPrice, bool isDeposit)
-        internal
-        pure
-        returns (int256)
-    {
+    function convertFutureCollateral(
+        int256 futureCollateralAssets,
+        uint256 collateralPrice,
+        uint8 collateralTokenDecimals,
+        bool isDeposit
+    ) internal pure returns (int256) {
         // in case of deposit we need to assume more assets in the protocol, so round collateral up
         // casting to int256 is safe because collateralPrice is considered to be smaller than type(int256).max
         // forge-lint: disable-next-line(unsafe-typecast)
-        return futureCollateralAssets.mulDiv(int256(collateralPrice), int256(Constants.ORACLE_DIVIDER), isDeposit);
+        return futureCollateralAssets.mulDiv(int256(collateralPrice), int256(10 ** collateralTokenDecimals), isDeposit);
     }
 
     /**
      * @notice This function converts future borrow amount from borrow asset to underlying asset.
      */
-    function convertFutureBorrow(int256 futureBorrowAssets, uint256 borrowPrice, bool isDeposit)
-        internal
-        pure
-        returns (int256)
-    {
+    function convertFutureBorrow(
+        int256 futureBorrowAssets,
+        uint256 borrowPrice,
+        uint8 borrowTokenDecimals,
+        bool isDeposit
+    ) internal pure returns (int256) {
         // in case of deposit we need to assume more assets in the protocol, so round borrow down
         // casting to int256 is safe because borrowPrice is considered to be smaller than type(int256).max
         // forge-lint: disable-next-line(unsafe-typecast)
-        return futureBorrowAssets.mulDiv(int256(borrowPrice), int256(Constants.ORACLE_DIVIDER), !isDeposit);
+        return futureBorrowAssets.mulDiv(int256(borrowPrice), int256(10 ** borrowTokenDecimals), !isDeposit);
     }
 
     /**
      * @notice This function converts future reward collateral amount from collateral asset to underlying asset.
      */
-    function convertFutureRewardCollateral(int256 futureRewardCollateralAssets, uint256 collateralPrice, bool isDeposit)
-        internal
-        pure
-        returns (int256)
-    {
-        // in case of deposit we need to assume more assets in the protocol, so round collateral up
-        // casting to int256 is safe because collateralPrice is considered to be smaller than type(int256).max
-        // forge-lint: disable-next-line(unsafe-typecast)
-        return futureRewardCollateralAssets.mulDiv(int256(collateralPrice), int256(Constants.ORACLE_DIVIDER), isDeposit);
+    function convertFutureRewardCollateral(
+        int256 futureRewardCollateralAssets,
+        uint256 collateralPrice,
+        uint8 collateralTokenDecimals,
+        bool isDeposit
+    ) internal pure returns (int256) {
+        return futureRewardCollateralAssets.mulDiv(
+            // in case of deposit we need to assume more assets in the protocol, so round collateral up
+            // casting to int256 is safe because collateralPrice is considered to be smaller than type(int256).max
+            // forge-lint: disable-next-line(unsafe-typecast)
+            int256(collateralPrice),
+            int256(10 ** collateralTokenDecimals),
+            isDeposit
+        );
     }
 
     /**
      * @notice This function converts future reward borrow amount from borrow asset to underlying asset.
      */
-    function convertFutureRewardBorrow(int256 futureRewardBorrowAssets, uint256 borrowPrice, bool isDeposit)
-        internal
-        pure
-        returns (int256)
-    {
+    function convertFutureRewardBorrow(
+        int256 futureRewardBorrowAssets,
+        uint256 borrowPrice,
+        uint8 borrowTokenDecimals,
+        bool isDeposit
+    ) internal pure returns (int256) {
         // in case of deposit we need to assume more assets in the protocol, so round borrow down
         // casting to int256 is safe because borrowPrice is considered to be smaller than type(int256).max
         // forge-lint: disable-next-line(unsafe-typecast)
-        return futureRewardBorrowAssets.mulDiv(int256(borrowPrice), int256(Constants.ORACLE_DIVIDER), !isDeposit);
+        return futureRewardBorrowAssets.mulDiv(int256(borrowPrice), int256(10 ** borrowTokenDecimals), !isDeposit);
     }
 
     /**

@@ -19,6 +19,7 @@ struct PreviewCollateralVaultData {
     uint16 targetLtvDividend;
     uint16 targetLtvDivider;
     uint256 collateralPrice;
+    uint8 collateralTokenDecimals;
     uint256 supplyAfterFee;
     uint256 totalAssetsCollateral;
     uint256 withdrawTotalAssets;

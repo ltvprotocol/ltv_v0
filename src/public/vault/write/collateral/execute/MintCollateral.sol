@@ -74,7 +74,8 @@ abstract contract MintCollateral is
                 deltaProtocolFutureRewardCollateral: deltaFuture.deltaProtocolFutureRewardCollateral,
                 supply: data.previewCollateralVaultData.supplyAfterFee,
                 totalAppropriateAssets: data.previewCollateralVaultData.totalAssetsCollateral,
-                assetPrice: data.previewCollateralVaultData.collateralPrice
+                assetPrice: data.previewCollateralVaultData.collateralPrice,
+                assetTokenDecimals: data.previewCollateralVaultData.collateralTokenDecimals
             })
         );
 
@@ -105,7 +106,13 @@ abstract contract MintCollateral is
             NextStateData({
                 nextState: nextState,
                 borrowPrice: state.previewDepositVaultState.maxGrowthFeeState.commonTotalAssetsState.borrowPrice,
-                collateralPrice: data.previewCollateralVaultData.collateralPrice
+                collateralPrice: data.previewCollateralVaultData.collateralPrice,
+                borrowTokenDecimals: state
+                    .previewDepositVaultState
+                    .maxGrowthFeeState
+                    .commonTotalAssetsState
+                    .borrowTokenDecimals,
+                collateralTokenDecimals: data.previewCollateralVaultData.collateralTokenDecimals
             })
         );
 

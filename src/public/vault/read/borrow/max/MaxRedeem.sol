@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {Constants} from "src/constants/Constants.sol";
 import {MaxWithdrawRedeemBorrowVaultState} from "src/structs/state/vault/max/MaxWithdrawRedeemBorrowVaultState.sol";
 import {MaxWithdrawRedeemBorrowVaultData} from "src/structs/data/vault/max/MaxWithdrawRedeemBorrowVaultData.sol";
 import {PreviewWithdraw} from "src/public/vault/read/borrow/preview/PreviewWithdraw.sol";
@@ -34,7 +33,8 @@ abstract contract MaxRedeem is PreviewWithdraw, PreviewRedeem {
         }
 
         uint256 maxWithdrawInAssets = (maxSafeRealBorrow - uint256(data.realBorrow)).mulDivDown(
-            Constants.ORACLE_DIVIDER, data.previewWithdrawBorrowVaultData.borrowPrice
+            10 ** data.previewWithdrawBorrowVaultData.borrowTokenDecimals,
+            data.previewWithdrawBorrowVaultData.borrowPrice
         );
 
         if (maxWithdrawInAssets <= 3) {

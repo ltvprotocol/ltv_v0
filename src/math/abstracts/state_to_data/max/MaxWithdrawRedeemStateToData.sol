@@ -26,11 +26,13 @@ contract MaxWithdrawRedeemStateToData is PreviewWithdrawStateToPreviewWithdrawDa
         data.realCollateral = CommonMath.convertRealCollateral(
             state.previewWithdrawVaultState.maxGrowthFeeState.withdrawRealCollateralAssets,
             state.previewWithdrawVaultState.maxGrowthFeeState.commonTotalAssetsState.collateralPrice,
+            state.previewWithdrawVaultState.maxGrowthFeeState.commonTotalAssetsState.collateralTokenDecimals,
             false
         );
         data.realBorrow = CommonMath.convertRealBorrow(
             state.previewWithdrawVaultState.maxGrowthFeeState.withdrawRealBorrowAssets,
             state.previewWithdrawVaultState.maxGrowthFeeState.commonTotalAssetsState.borrowPrice,
+            state.previewWithdrawVaultState.maxGrowthFeeState.commonTotalAssetsState.borrowTokenDecimals,
             false
         );
 

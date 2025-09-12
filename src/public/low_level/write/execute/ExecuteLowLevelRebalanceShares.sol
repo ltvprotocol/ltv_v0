@@ -49,18 +49,21 @@ abstract contract ExecuteLowLevelRebalanceShares is
                     maxTotalAssetsInUnderlying: state.maxTotalAssetsInUnderlying,
                     supplyAfterFee: data.supplyAfterFee,
                     borrowPrice: data.borrowPrice,
-                    depositTotalAssets: data.totalAssets
+                    depositTotalAssets: data.totalAssets,
+                    borrowTokenDecimals: data.borrowTokenDecimals
                 })
             );
         } else {
             uint256 depositRealBorrow = CommonMath.convertRealBorrow(
                 state.previewLowLevelRebalanceState.depositRealBorrowAssets,
                 state.previewLowLevelRebalanceState.maxGrowthFeeState.commonTotalAssetsState.borrowPrice,
+                state.previewLowLevelRebalanceState.maxGrowthFeeState.commonTotalAssetsState.borrowTokenDecimals,
                 true
             );
             uint256 depositRealCollateral = CommonMath.convertRealCollateral(
                 state.previewLowLevelRebalanceState.depositRealCollateralAssets,
                 state.previewLowLevelRebalanceState.maxGrowthFeeState.commonTotalAssetsState.collateralPrice,
+                state.previewLowLevelRebalanceState.maxGrowthFeeState.commonTotalAssetsState.collateralTokenDecimals,
                 true
             );
 
@@ -80,7 +83,8 @@ abstract contract ExecuteLowLevelRebalanceShares is
                     maxTotalAssetsInUnderlying: state.maxTotalAssetsInUnderlying,
                     supplyAfterFee: data.supplyAfterFee,
                     borrowPrice: data.borrowPrice,
-                    depositTotalAssets: depositTotalAssets
+                    depositTotalAssets: depositTotalAssets,
+                    borrowTokenDecimals: data.borrowTokenDecimals
                 })
             );
         }

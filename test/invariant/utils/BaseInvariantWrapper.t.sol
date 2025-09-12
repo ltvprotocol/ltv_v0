@@ -119,7 +119,7 @@ contract BaseInvariantWrapper is Test {
      */
     function captureInvariantState() internal virtual {
         // Capture protocol total assets
-        _initialTotalAssets = ltv.totalAssets();
+        _initialTotalAssets = ltv.totalAssets(true);
         // Get real total supply (can be affected by max growth fee)
         _initialTotalSupply = ltv.convertToShares(_initialTotalAssets);
 
@@ -178,19 +178,19 @@ contract BaseInvariantWrapper is Test {
         if (_auctionExecuted) {
             assertGe(
                 _initialFutureBorrow + _initialRewardBorrow + _initialRealBorrow,
-                _getRealBorrowAssets(false) + ltv.futureRewardBorrowAssets() + ltv.futureBorrowAssets(),
+                _getRealBorrowAssets(true) + ltv.futureRewardBorrowAssets() + ltv.futureBorrowAssets(),
                 "Borrow assets stable after auction"
             );
             assertLe(
                 _initialFutureCollateral + _initialRewardCollateral + _initialRealCollateral,
-                _getRealCollateralAssets(false) + ltv.futureRewardCollateralAssets() + ltv.futureCollateralAssets(),
+                _getRealCollateralAssets(true) + ltv.futureRewardCollateralAssets() + ltv.futureCollateralAssets(),
                 "Collateral assets stable after auction"
             );
         } else {
             // Invariant 1: Token price never decreases
             // This ensures the protocol doesn't lose value for existing holders
             assertGe(
-                ltv.totalAssets() * _initialTotalSupply,
+                ltv.totalAssets(true) * _initialTotalSupply,
                 _initialTotalAssets * ltv.totalSupply(),
                 "Token price became smaller"
             );

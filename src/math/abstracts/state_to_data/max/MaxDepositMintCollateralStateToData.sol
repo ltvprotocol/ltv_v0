@@ -23,11 +23,13 @@ contract MaxDepositMintCollateralStateToData is PreviewDepositVaultStateToCollat
         data.realCollateral = CommonMath.convertRealCollateral(
             state.previewDepositVaultState.depositRealCollateralAssets,
             state.previewDepositVaultState.maxGrowthFeeState.commonTotalAssetsState.collateralPrice,
+            state.previewDepositVaultState.maxGrowthFeeState.commonTotalAssetsState.collateralTokenDecimals,
             true
         );
         data.realBorrow = CommonMath.convertRealBorrow(
             state.previewDepositVaultState.depositRealBorrowAssets,
             state.previewDepositVaultState.maxGrowthFeeState.commonTotalAssetsState.borrowPrice,
+            state.previewDepositVaultState.maxGrowthFeeState.commonTotalAssetsState.borrowTokenDecimals,
             true
         );
         data.previewCollateralVaultData = _previewDepositVaultStateToPreviewCollateralVaultData(

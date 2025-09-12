@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {Constants} from "src/constants/Constants.sol";
 import {DepositWithdrawData} from "src/structs/data/vault/common/DepositWithdrawData.sol";
 import {PreviewDepositVaultState} from "src/structs/state/vault/preview/PreviewDepositVaultState.sol";
 import {PreviewDepositBorrowVaultData} from "src/structs/data/vault/preview/PreviewDepositBorrowVaultData.sol";
@@ -37,7 +36,7 @@ abstract contract PreviewDeposit is Vault {
         returns (uint256, DeltaFuture memory)
     {
         // depositor/withdrawer <=> HODLer conflict, assume user deposits less to mint less shares
-        uint256 assetsInUnderlying = assets.mulDivDown(data.borrowPrice, Constants.ORACLE_DIVIDER);
+        uint256 assetsInUnderlying = assets.mulDivDown(data.borrowPrice, 10 ** data.borrowTokenDecimals);
 
         (int256 sharesInUnderlying, DeltaFuture memory deltaFuture) = DepositWithdraw.calculateDepositWithdraw(
             DepositWithdrawData({
@@ -69,7 +68,7 @@ abstract contract PreviewDeposit is Vault {
             // casting to uint256 is safe because sharesInUnderlying is checked to be non negative
             // and therefore it is smaller than type(uint256).max
             // forge-lint: disable-next-line(unsafe-typecast)
-            uint256(sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, data.borrowPrice).mulDivDown(
+            uint256(sharesInUnderlying).mulDivDown(10 ** data.borrowTokenDecimals, data.borrowPrice).mulDivDown(
                 data.supplyAfterFee, data.depositTotalAssets
             ),
             deltaFuture

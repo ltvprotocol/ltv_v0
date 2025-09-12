@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {Constants} from "src/constants/Constants.sol";
 import {MaxWithdrawRedeemCollateralVaultState} from
     "src/structs/state/vault/max/MaxWithdrawRedeemCollateralVaultState.sol";
 import {MaxWithdrawRedeemCollateralVaultData} from "src/structs/data/vault/max/MaxWithdrawRedeemCollateralVaultData.sol";
@@ -73,7 +72,8 @@ abstract contract MaxWithdrawCollateral is PreviewWithdrawCollateral, PreviewRed
          */
         // round down to assume smaller border
         uint256 vaultWithdrawInAssets = (uint256(data.realCollateral) - maxSafeRealCollateral).mulDivDown(
-            Constants.ORACLE_DIVIDER, data.previewCollateralVaultData.collateralPrice
+            10 ** data.previewCollateralVaultData.collateralTokenDecimals,
+            data.previewCollateralVaultData.collateralPrice
         );
 
         if (data.ownerBalance <= 3) {

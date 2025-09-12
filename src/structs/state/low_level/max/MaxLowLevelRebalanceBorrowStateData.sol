@@ -11,4 +11,5 @@ struct MaxLowLevelRebalanceBorrowStateData {
     uint16 targetLtvDividend;
     uint16 targetLtvDivider;
     uint256 borrowPrice;
+    uint8 borrowTokenDecimals;
 }

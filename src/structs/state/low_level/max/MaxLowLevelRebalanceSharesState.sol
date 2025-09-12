@@ -12,4 +12,5 @@ struct MaxLowLevelRebalanceSharesState {
     uint256 depositRealBorrowAssets;
     uint256 depositRealCollateralAssets;
     uint256 maxTotalAssetsInUnderlying;
+    uint8 borrowTokenDecimals;
 }
