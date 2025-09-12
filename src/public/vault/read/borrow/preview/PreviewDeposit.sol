@@ -69,7 +69,7 @@ abstract contract PreviewDeposit is Vault {
             // casting to uint256 is safe because sharesInUnderlying is checked to be non negative
             // and therefore it is smaller than type(uint256).max
             // forge-lint: disable-next-line(unsafe-typecast)
-            uint256(sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, data.borrowPrice).mulDivDown(
+            uint256(sharesInUnderlying).mulDivDown(10 ** data.borrowTokenDecimals, data.borrowPrice).mulDivDown(
                 data.supplyAfterFee, data.depositTotalAssets
             ),
             deltaFuture

@@ -65,6 +65,6 @@ abstract contract PreviewMint is Vault {
         // casting to uint256 is safe because assetsInUnderlying is checked to be negative
         // and therefore it is smaller than type(uint256).max
         // forge-lint: disable-next-line(unsafe-typecast)
-        return (uint256(-assetsInUnderlying).mulDivUp(Constants.ORACLE_DIVIDER, data.borrowPrice), deltaFuture);
+        return (uint256(-assetsInUnderlying).mulDivUp(10 ** data.borrowTokenDecimals, data.borrowPrice), deltaFuture);
     }
 }

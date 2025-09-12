@@ -118,6 +118,7 @@ contract PreviewDepositStateToPreviewDepositData is MaxGrowthFee {
         data.targetLtvDivider = state.targetLtvDivider;
         data.collateralSlippage = state.collateralSlippage;
         data.borrowSlippage = state.borrowSlippage;
+        data.borrowTokenDecimals = state.maxGrowthFeeState.commonTotalAssetsState.borrowTokenDecimals;
 
         return data;
     }
