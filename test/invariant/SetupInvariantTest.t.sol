@@ -26,7 +26,7 @@ contract SetupInvariantTest is BaseInvariantTest {
     function test_auctionRewardCheck() public {
         _wrapper.fuzzDeposit(10 ** 20, 0, 1000);
         _wrapper.verifyAndResetInvariants();
-        _wrapper.fuzzRedeem(10 ** 16, 0, 100);
+        _wrapper.fuzzRedeem(10 ** 17, 0, 100);
         _wrapper.verifyAndResetInvariants();
         assertTrue(_wrapper.auctionRewardsReceived());
     }

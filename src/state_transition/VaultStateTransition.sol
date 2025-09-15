@@ -47,5 +47,13 @@ abstract contract VaultStateTransition is LTVState {
             futureRewardCollateralAssets = 0;
             startAuction = 0;
         }
+
+        if (futureBorrowAssets > 0) {
+            futureRewardBorrowAssets = 0;
+        }
+
+        if (futureCollateralAssets < 0) {
+            futureRewardCollateralAssets = 0;
+        }
     }
 }

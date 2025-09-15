@@ -40,7 +40,9 @@ abstract contract Initialize is AdministrationSetters, OwnableUpgradeable {
         _updateEmergencyDeleverager(initData.emergencyDeleverager);
 
         auctionDuration = initData.auctionDuration;
-        lastSeenTokenPrice = 10 ** 18;
+        collateralTokenDecimals = IERC20Metadata(initData.collateralToken).decimals();
+        borrowTokenDecimals = IERC20Metadata(initData.borrowToken).decimals();
+        lastSeenTokenPrice = 10**borrowTokenDecimals;
 
         _setLendingConnector(initData.lendingConnector, initData.lendingConnectorData);
         _setOracleConnector(initData.oracleConnector, initData.oracleConnectorData);
@@ -48,8 +50,5 @@ abstract contract Initialize is AdministrationSetters, OwnableUpgradeable {
         _setVaultBalanceAsLendingConnector(
             initData.vaultBalanceAsLendingConnector, initData.vaultBalanceAsLendingConnectorData
         );
-
-        collateralTokenDecimals = IERC20Metadata(initData.collateralToken).decimals();
-        borrowTokenDecimals = IERC20Metadata(initData.borrowToken).decimals();
     }
 }
