@@ -68,8 +68,8 @@ abstract contract PreviewRedeemCollateral is VaultCollateral {
         // HODLer <=> withdrawer conflict, round in favor of HODLer, round down to give less collateral
         // casting to uint256 is safe because assetsInUnderlying is checked to be negative
         // and therefore it is smaller than type(uint256).max
-        // forge-lint: disable-next-line(unsafe-typecast)
         return (
+            // forge-lint: disable-next-line(unsafe-typecast)
             uint256(-assetsInUnderlying).mulDivDown(10 ** data.collateralTokenDecimals, data.collateralPrice),
             deltaFuture
         );

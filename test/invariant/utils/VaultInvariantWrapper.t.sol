@@ -307,7 +307,7 @@ abstract contract BaseVaultInvariantWrapper is BaseInvariantWrapper {
         amount = bound(amount, 1, maxRedeem);
 
         // Capture state before operation
-        
+
         deal(ltv.collateralToken(), _currentTestActor, 0);
         captureInvariantState();
 

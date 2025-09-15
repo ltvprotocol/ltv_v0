@@ -67,9 +67,10 @@ abstract contract PreviewMintCollateral is VaultCollateral {
 
         // HODLer <=> depositor conflict, round in favor of HODLer, round up to get more collateral
         // casting to uint256 is safe because assetsInUnderlying is checked to be positive
-        // forge-lint: disable-next-line(unsafe-typecast)
         return (
-            uint256(assetsInUnderlying).mulDivUp(10 ** data.collateralTokenDecimals, data.collateralPrice), deltaFuture
+            // forge-lint: disable-next-line(unsafe-typecast)
+            uint256(assetsInUnderlying).mulDivUp(10 ** data.collateralTokenDecimals, data.collateralPrice),
+            deltaFuture
         );
     }
 }
