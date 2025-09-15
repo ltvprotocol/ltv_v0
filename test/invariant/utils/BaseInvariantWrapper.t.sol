@@ -3,6 +3,7 @@ pragma solidity ^0.8.28;
 
 import {Test} from "forge-std/Test.sol";
 import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {IERC20Metadata} from "openzeppelin-contracts/contracts/interfaces/IERC20Metadata.sol";
 import {ILTV} from "src/interfaces/ILTV.sol";
 import {Constants} from "src/constants/Constants.sol";
 import {DummyOracleConnector} from "src/dummy/DummyOracleConnector.sol";
@@ -147,9 +148,22 @@ contract BaseInvariantWrapper is Test {
         int256 collateralPrice = int256(
             DummyOracleConnector(ltv.oracleConnector()).getPriceCollateralOracle(ltv.oracleConnectorGetterData())
         );
-        _initialRewardsValue = (
-            ltv.futureRewardBorrowAssets() * borrowPrice - ltv.futureRewardCollateralAssets() * collateralPrice
-        ) / int256(Constants.ORACLE_DIVIDER);
+
+        uint8 borrowTokenDecimals = IERC20Metadata(ltv.borrowToken()).decimals();
+        uint8 collateralTokenDecimals = IERC20Metadata(ltv.collateralToken()).decimals();
+        if (borrowTokenDecimals > collateralTokenDecimals) {
+            _initialRewardsValue = (
+                ltv.futureRewardBorrowAssets() * borrowPrice
+                    / int256(10 ** (borrowTokenDecimals - collateralTokenDecimals))
+                    - ltv.futureRewardCollateralAssets() * collateralPrice
+            ) / int256(Constants.ORACLE_DIVIDER);
+        } else {
+            _initialRewardsValue = (
+                ltv.futureRewardBorrowAssets() * borrowPrice
+                    - ltv.futureRewardCollateralAssets() * collateralPrice
+                        / int256(10 ** (collateralTokenDecimals - borrowTokenDecimals))
+            ) / int256(Constants.ORACLE_DIVIDER);
+        }
 
         _initialAuctionStartBlock = ltv.startAuction();
 
@@ -222,9 +236,22 @@ contract BaseInvariantWrapper is Test {
         int256 collateralPrice = int256(
             DummyOracleConnector(ltv.oracleConnector()).getPriceCollateralOracle(ltv.oracleConnectorGetterData())
         );
-        int256 rewardsAfter = (
-            ltv.futureRewardBorrowAssets() * borrowPrice - ltv.futureRewardCollateralAssets() * collateralPrice
-        ) / int256(Constants.ORACLE_DIVIDER);
+        uint8 borrowTokenDecimals = IERC20Metadata(ltv.borrowToken()).decimals();
+        uint8 collateralTokenDecimals = IERC20Metadata(ltv.collateralToken()).decimals();
+        int256 rewardsAfter;
+        if (borrowTokenDecimals > collateralTokenDecimals) {
+            rewardsAfter = (
+                ltv.futureRewardBorrowAssets() * borrowPrice
+                    / int256(10 ** (borrowTokenDecimals - collateralTokenDecimals))
+                    - ltv.futureRewardCollateralAssets() * collateralPrice
+            ) / int256(Constants.ORACLE_DIVIDER);
+        } else {
+            rewardsAfter = (
+                ltv.futureRewardBorrowAssets() * borrowPrice
+                    - ltv.futureRewardCollateralAssets() * collateralPrice
+                        / int256(10 ** (collateralTokenDecimals - borrowTokenDecimals))
+            ) / int256(Constants.ORACLE_DIVIDER);
+        }
 
         // Check if auction was executed and rewards should be distributed
         // Multiply by 10 to account for rounding errors
