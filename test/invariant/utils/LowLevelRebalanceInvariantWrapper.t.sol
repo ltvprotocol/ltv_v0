@@ -92,6 +92,10 @@ abstract contract BaseLowLevelRebalanceInvariantWrapper is BaseInvariantWrapper 
             deal(ltv.borrowToken(), _currentTestActor, 0);
         }
 
+        if (-_expectedLtvDelta > int256(ltv.balanceOf(_currentTestActor))) {
+            deal(address(ltv), _currentTestActor, uint256(-_expectedLtvDelta));
+        }
+
         // Capture state before operation
         captureInvariantState();
 
@@ -153,6 +157,10 @@ abstract contract BaseLowLevelRebalanceInvariantWrapper is BaseInvariantWrapper 
             }
         } else {
             deal(ltv.borrowToken(), _currentTestActor, 0);
+        }
+
+        if (-_expectedLtvDelta > int256(ltv.balanceOf(_currentTestActor))) {
+            deal(address(ltv), _currentTestActor, uint256(-_expectedLtvDelta));
         }
 
         // Capture state before operation
@@ -218,6 +226,10 @@ abstract contract BaseLowLevelRebalanceInvariantWrapper is BaseInvariantWrapper 
             deal(ltv.collateralToken(), _currentTestActor, 0);
         }
 
+        if (-_expectedLtvDelta > int256(ltv.balanceOf(_currentTestActor))) {
+            deal(address(ltv), _currentTestActor, uint256(-_expectedLtvDelta));
+        }
+
         // Capture state before operation
         captureInvariantState();
 
@@ -276,6 +288,10 @@ abstract contract BaseLowLevelRebalanceInvariantWrapper is BaseInvariantWrapper 
             }
         } else {
             deal(ltv.collateralToken(), _currentTestActor, 0);
+        }
+
+        if (-_expectedLtvDelta > int256(ltv.balanceOf(_currentTestActor))) {
+            deal(address(ltv), _currentTestActor, uint256(-_expectedLtvDelta));
         }
 
         // Capture state before operation
@@ -338,6 +354,10 @@ abstract contract BaseLowLevelRebalanceInvariantWrapper is BaseInvariantWrapper 
             }
         } else {
             deal(ltv.borrowToken(), _currentTestActor, 0);
+        }
+
+        if (-_expectedLtvDelta > int256(ltv.balanceOf(_currentTestActor))) {
+            deal(address(ltv), _currentTestActor, uint256(-_expectedLtvDelta));
         }
 
         // Capture state before operation
