@@ -38,6 +38,26 @@ abstract contract PreviewWithdrawCollateral is VaultCollateral {
         // HODLer <=> withdrawer conflict, assume user withdraws more to burn more shares
         uint256 assetsInUnderlying = assets.mulDivUp(data.collateralPrice, 10 ** data.collateralTokenDecimals);
 
+        (uint256 sharesInUnderlying, DeltaFuture memory deltaFuture) =
+            _previewWithdrawCollateralInUnderlying(assetsInUnderlying, data);
+
+        // HODLer <=> withdrawer conflict, round in favor of HODLer, round up to burn more shares
+        return (
+            // casting to uint256 is safe because sharesInUnderlying is checked to be negative
+            // and therefore it is smaller than type(uint256).max
+            // forge-lint: disable-next-line(unsafe-typecast)
+            sharesInUnderlying.mulDivUp(10 ** data.collateralTokenDecimals, data.collateralPrice).mulDivUp(
+                data.supplyAfterFee, data.totalAssetsCollateral
+            ),
+            deltaFuture
+        );
+    }
+
+    function _previewWithdrawCollateralInUnderlying(uint256 assetsInUnderlying, PreviewCollateralVaultData memory data)
+        internal
+        pure
+        returns (uint256, DeltaFuture memory)
+    {
         (int256 sharesInUnderlying, DeltaFuture memory deltaFuture) = DepositWithdraw.calculateDepositWithdraw(
             DepositWithdrawData({
                 collateral: data.collateral,
@@ -63,15 +83,6 @@ abstract contract PreviewWithdrawCollateral is VaultCollateral {
             return (0, deltaFuture);
         }
 
-        // HODLer <=> withdrawer conflict, round in favor of HODLer, round up to burn more shares
-        return (
-            // casting to uint256 is safe because sharesInUnderlying is checked to be negative
-            // and therefore it is smaller than type(uint256).max
-            // forge-lint: disable-next-line(unsafe-typecast)
-            uint256(-sharesInUnderlying).mulDivUp(10 ** data.collateralTokenDecimals, data.collateralPrice).mulDivUp(
-                data.supplyAfterFee, data.totalAssetsCollateral
-            ),
-            deltaFuture
-        );
+        return (uint256(-sharesInUnderlying), deltaFuture);
     }
 }

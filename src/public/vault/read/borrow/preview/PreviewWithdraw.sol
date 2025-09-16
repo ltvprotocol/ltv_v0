@@ -37,6 +37,25 @@ abstract contract PreviewWithdraw is Vault {
     {
         // depositor/withdrawer <=> HODLer conflict, assume user withdraws more to burn more shares
         uint256 assetsInUnderlying = assets.mulDivUp(data.borrowPrice, 10 ** data.borrowTokenDecimals);
+        (uint256 sharesInUnderlying, DeltaFuture memory deltaFuture) =
+            _previewWithdrawInUnderlying(assetsInUnderlying, data);
+
+        // HODLer <=> withdrawer conflict, round in favor of HODLer, round up to burn more shares
+        return (
+            // casting to uint256 is safe because sharesInUnderlying is checked to be negative
+            // forge-lint: disable-next-line(unsafe-typecast)
+            sharesInUnderlying.mulDivUp(10 ** data.borrowTokenDecimals, data.borrowPrice).mulDivUp(
+                data.supplyAfterFee, data.withdrawTotalAssets
+            ),
+            deltaFuture
+        );
+    }
+
+    function _previewWithdrawInUnderlying(uint256 assetsInUnderlying, PreviewWithdrawBorrowVaultData memory data)
+        internal
+        pure
+        returns (uint256, DeltaFuture memory)
+    {
         (int256 sharesInUnderlying, DeltaFuture memory deltaFuture) = DepositWithdraw.calculateDepositWithdraw(
             DepositWithdrawData({
                 collateral: data.collateral,
@@ -62,14 +81,6 @@ abstract contract PreviewWithdraw is Vault {
             return (0, deltaFuture);
         }
 
-        // HODLer <=> withdrawer conflict, round in favor of HODLer, round up to burn more shares
-        return (
-            // casting to uint256 is safe because sharesInUnderlying is checked to be negative
-            // forge-lint: disable-next-line(unsafe-typecast)
-            uint256(-sharesInUnderlying).mulDivUp(10 ** data.borrowTokenDecimals, data.borrowPrice).mulDivUp(
-                data.supplyAfterFee, data.withdrawTotalAssets
-            ),
-            deltaFuture
-        );
+        return (uint256(-sharesInUnderlying), deltaFuture);
     }
 }

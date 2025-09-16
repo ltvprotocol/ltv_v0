@@ -37,6 +37,27 @@ abstract contract PreviewDepositCollateral is VaultCollateral {
     {
         // depositor <=> HODLer conflict, assume user deposits less to mint less shares
         uint256 realCollateralInUnderlying = assets.mulDivDown(data.collateralPrice, 10 ** data.collateralTokenDecimals);
+
+        (uint256 sharesInUnderlying, DeltaFuture memory deltaFuture) =
+            _previewDepositCollateralInUnderlying(realCollateralInUnderlying, data);
+
+        // HODLer <=> depositor conflict, round in favor of HODLer, round down to mint less shares
+        return (
+            // casting to uint256 is safe because sharesInUnderlying is checked to be non negative
+            // and therefore it is smaller than type(uint256).max
+            // forge-lint: disable-next-line(unsafe-typecast)
+            sharesInUnderlying.mulDivDown(10 ** data.collateralTokenDecimals, data.collateralPrice).mulDivDown(
+                data.supplyAfterFee, data.totalAssetsCollateral
+            ),
+            deltaFuture
+        );
+    }
+
+    function _previewDepositCollateralInUnderlying(uint256 assetsInUnderlying, PreviewCollateralVaultData memory data)
+        internal
+        pure
+        returns (uint256, DeltaFuture memory)
+    {
         (int256 sharesInUnderlying, DeltaFuture memory deltaFuture) = DepositWithdraw.calculateDepositWithdraw(
             DepositWithdrawData({
                 collateral: data.collateral,
@@ -53,7 +74,7 @@ abstract contract PreviewDepositCollateral is VaultCollateral {
                 targetLtvDivider: data.targetLtvDivider,
                 // casting to int256 is safe because realCollateralInUnderlying is considered to be smaller than type(int256).max
                 // forge-lint: disable-next-line(unsafe-typecast)
-                deltaRealCollateral: int256(realCollateralInUnderlying),
+                deltaRealCollateral: int256(assetsInUnderlying),
                 deltaRealBorrow: 0
             })
         );
@@ -62,15 +83,6 @@ abstract contract PreviewDepositCollateral is VaultCollateral {
             return (0, deltaFuture);
         }
 
-        // HODLer <=> depositor conflict, round in favor of HODLer, round down to mint less shares
-        return (
-            // casting to uint256 is safe because sharesInUnderlying is checked to be non negative
-            // and therefore it is smaller than type(uint256).max
-            // forge-lint: disable-next-line(unsafe-typecast)
-            uint256(sharesInUnderlying).mulDivDown(10 ** data.collateralTokenDecimals, data.collateralPrice).mulDivDown(
-                data.supplyAfterFee, data.totalAssetsCollateral
-            ),
-            deltaFuture
-        );
+        return (uint256(sharesInUnderlying), deltaFuture);
     }
 }

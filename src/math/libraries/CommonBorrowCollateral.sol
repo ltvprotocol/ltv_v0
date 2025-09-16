@@ -4,7 +4,6 @@ pragma solidity ^0.8.28;
 import {Constants} from "src/constants/Constants.sol";
 import {Cases} from "src/structs/data/vault/common/Cases.sol";
 import {UMulDiv, SMulDiv} from "src/math/libraries/MulDiv.sol";
-import {console} from "forge-std/console.sol";
 
 /**
  * @title CommonBorrowCollateral
@@ -98,9 +97,6 @@ library CommonBorrowCollateral {
         // + ceccb × −userFutureRewardCollateral
 
         int256 deltaUserFutureRewardCollateral = -int256(int8(ncase.ceccb)) * userFutureRewardCollateral;
-        console.log("user future reward collateral", userFutureRewardCollateral);
-        console.log("delta user future reward collateral", deltaUserFutureRewardCollateral);
-        console.log("case", ncase.ncase);
         if (futureCollateral == 0) {
             return deltaUserFutureRewardCollateral;
         }

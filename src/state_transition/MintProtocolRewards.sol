@@ -4,7 +4,6 @@ pragma solidity ^0.8.28;
 import {MintProtocolRewardsData} from "src/structs/data/vault/common/MintProtocolRewardsData.sol";
 import {ERC20} from "src/state_transition/ERC20.sol";
 import {UMulDiv} from "src/math/libraries/MulDiv.sol";
-import {console} from "forge-std/console.sol";
 
 /**
  * @title MintProtocolRewards

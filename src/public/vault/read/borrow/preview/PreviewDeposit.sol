@@ -38,6 +38,26 @@ abstract contract PreviewDeposit is Vault {
         // depositor/withdrawer <=> HODLer conflict, assume user deposits less to mint less shares
         uint256 assetsInUnderlying = assets.mulDivDown(data.borrowPrice, 10 ** data.borrowTokenDecimals);
 
+        (uint256 sharesInUnderlying, DeltaFuture memory deltaFuture) =
+            _previewDepositInUnderlying(assetsInUnderlying, data);
+
+        // HODLer <=> depositor conflict, resolve in favor of HODLer, round down to mint less shares
+        return (
+            // casting to uint256 is safe because sharesInUnderlying is checked to be non negative
+            // and therefore it is smaller than type(uint256).max
+            // forge-lint: disable-next-line(unsafe-typecast)
+            sharesInUnderlying.mulDivDown(10 ** data.borrowTokenDecimals, data.borrowPrice).mulDivDown(
+                data.supplyAfterFee, data.depositTotalAssets
+            ),
+            deltaFuture
+        );
+    }
+
+    function _previewDepositInUnderlying(uint256 assetsInUnderlying, PreviewDepositBorrowVaultData memory data)
+        internal
+        pure
+        returns (uint256, DeltaFuture memory)
+    {
         (int256 sharesInUnderlying, DeltaFuture memory deltaFuture) = DepositWithdraw.calculateDepositWithdraw(
             DepositWithdrawData({
                 collateral: data.collateral,
@@ -63,15 +83,6 @@ abstract contract PreviewDeposit is Vault {
             return (0, deltaFuture);
         }
 
-        // HODLer <=> depositor conflict, resolve in favor of HODLer, round down to mint less shares
-        return (
-            // casting to uint256 is safe because sharesInUnderlying is checked to be non negative
-            // and therefore it is smaller than type(uint256).max
-            // forge-lint: disable-next-line(unsafe-typecast)
-            uint256(sharesInUnderlying).mulDivDown(10 ** data.borrowTokenDecimals, data.borrowPrice).mulDivDown(
-                data.supplyAfterFee, data.depositTotalAssets
-            ),
-            deltaFuture
-        );
+        return (uint256(sharesInUnderlying), deltaFuture);
     }
 }

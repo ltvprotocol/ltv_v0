@@ -40,6 +40,20 @@ abstract contract PreviewRedeem is Vault {
             data.borrowPrice, 10 ** data.borrowTokenDecimals
         );
 
+        (uint256 assetsInUnderlying, DeltaFuture memory deltaFuture) =
+            _previewRedeemInUnderlying(sharesInUnderlying, data);
+
+        // HODLer <=> withdrawer conflict, round in favor of HODLer, give less assets
+        // casting to uint256 is safe because assetsInUnderlying is checked to be non negative
+        // forge-lint: disable-next-line(unsafe-typecast)
+        return (assetsInUnderlying.mulDivDown(10 ** data.borrowTokenDecimals, data.borrowPrice), deltaFuture);
+    }
+
+    function _previewRedeemInUnderlying(uint256 sharesInUnderlying, PreviewWithdrawBorrowVaultData memory data)
+        internal
+        pure
+        returns (uint256, DeltaFuture memory)
+    {
         (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = MintRedeem.calculateMintRedeem(
             MintRedeemData({
                 collateral: data.collateral,
@@ -65,9 +79,6 @@ abstract contract PreviewRedeem is Vault {
             return (0, deltaFuture);
         }
 
-        // HODLer <=> withdrawer conflict, round in favor of HODLer, give less assets
-        // casting to uint256 is safe because assetsInUnderlying is checked to be non negative
-        // forge-lint: disable-next-line(unsafe-typecast)
-        return (uint256(assetsInUnderlying).mulDivDown(10 ** data.borrowTokenDecimals, data.borrowPrice), deltaFuture);
+        return (uint256(assetsInUnderlying), deltaFuture);
     }
 }

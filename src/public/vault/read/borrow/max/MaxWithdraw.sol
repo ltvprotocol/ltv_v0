@@ -31,14 +31,17 @@ abstract contract MaxWithdraw is PreviewWithdraw, PreviewRedeem {
         if (maxSafeRealBorrow <= uint256(data.realBorrow)) {
             return 0;
         }
-        uint256 maxWithdrawInUnderlying = maxSafeRealBorrow - uint256(data.realBorrow);
+        uint256 maxVaultWithdrawInUnderlying = maxSafeRealBorrow - uint256(data.realBorrow);
         // round down to assume smaller border
-        uint256 vaultMaxWithdraw = maxWithdrawInUnderlying.mulDivDown(
-            10 ** data.previewWithdrawBorrowVaultData.borrowTokenDecimals,
-            data.previewWithdrawBorrowVaultData.borrowPrice
+
+        uint256 userBalanceInUnderlying = data.ownerBalance.mulDivDown(
+            data.previewWithdrawBorrowVaultData.withdrawTotalAssets, data.previewWithdrawBorrowVaultData.supplyAfterFee
+        ).mulDivDown(
+            data.previewWithdrawBorrowVaultData.borrowPrice,
+            10 ** data.previewWithdrawBorrowVaultData.borrowTokenDecimals
         );
 
-        if (data.ownerBalance <= 3) {
+        if (userBalanceInUnderlying <= 3) {
             return 0;
         }
 
@@ -78,16 +81,26 @@ abstract contract MaxWithdraw is PreviewWithdraw, PreviewRedeem {
          *  that never burns more shares than the user owns.
          */
         // round down to assume smaller border
-        (uint256 userBalanceInAssets,) = _previewRedeem(data.ownerBalance - 3, data.previewWithdrawBorrowVaultData);
-        (uint256 userBalanceWithDelta,) = _previewWithdraw(userBalanceInAssets, data.previewWithdrawBorrowVaultData);
-        if (userBalanceWithDelta > data.ownerBalance) {
-            uint256 delta = userBalanceWithDelta + 3 - data.ownerBalance;
-            if (userBalanceInAssets < 2 * delta) {
+
+        (uint256 userBalanceAssetsInUnderlying,) =
+            _previewRedeemInUnderlying(userBalanceInUnderlying - 3, data.previewWithdrawBorrowVaultData);
+        (uint256 userBalanceWithDelta,) =
+            _previewWithdrawInUnderlying(userBalanceAssetsInUnderlying, data.previewWithdrawBorrowVaultData);
+        if (userBalanceWithDelta > userBalanceInUnderlying) {
+            uint256 delta = userBalanceWithDelta + 3 - userBalanceInUnderlying;
+            if (userBalanceAssetsInUnderlying < 2 * delta) {
                 return 0;
             }
-            userBalanceInAssets = userBalanceInAssets - 2 * delta;
+            userBalanceAssetsInUnderlying = userBalanceAssetsInUnderlying - 2 * delta;
         }
 
-        return userBalanceInAssets < vaultMaxWithdraw ? userBalanceInAssets : vaultMaxWithdraw;
+        uint256 maxWithdrawInUnderlying = userBalanceAssetsInUnderlying < maxVaultWithdrawInUnderlying
+            ? userBalanceAssetsInUnderlying
+            : maxVaultWithdrawInUnderlying;
+
+        return maxWithdrawInUnderlying.mulDivDown(
+            10 ** data.previewWithdrawBorrowVaultData.borrowTokenDecimals,
+            data.previewWithdrawBorrowVaultData.borrowPrice
+        );
     }
 }
