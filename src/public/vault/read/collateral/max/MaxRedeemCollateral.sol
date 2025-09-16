@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {Constants} from "src/constants/Constants.sol";
 import {MaxWithdrawRedeemCollateralVaultState} from
     "src/structs/state/vault/max/MaxWithdrawRedeemCollateralVaultState.sol";
 import {MaxWithdrawRedeemCollateralVaultData} from "src/structs/data/vault/max/MaxWithdrawRedeemCollateralVaultData.sol";
@@ -36,28 +35,33 @@ abstract contract MaxRedeemCollateral is PreviewWithdrawCollateral, PreviewRedee
         }
 
         // round down to assume smaller border
-        uint256 maxWithdrawInAssets = (uint256(data.realCollateral) - maxSafeRealCollateral).mulDivDown(
-            Constants.ORACLE_DIVIDER, data.previewCollateralVaultData.collateralPrice
-        );
+        uint256 maxWithdrawInUnderlying = uint256(data.realCollateral) - maxSafeRealCollateral;
 
-        if (maxWithdrawInAssets <= 3) {
+        if (maxWithdrawInUnderlying <= 3) {
             return 0;
         }
 
-        (uint256 maxWithdrawInShares,) =
-            _previewWithdrawCollateral(maxWithdrawInAssets - 3, data.previewCollateralVaultData);
+        (uint256 maxWithdrawSharesInUnderlying,) =
+            _previewWithdrawCollateralInUnderlying(maxWithdrawInUnderlying - 3, data.previewCollateralVaultData);
 
         (uint256 maxWithdrawInAssetsWithDelta,) =
-            _previewRedeemCollateral(maxWithdrawInShares, data.previewCollateralVaultData);
+            _previewRedeemCollateralInUnderlying(maxWithdrawSharesInUnderlying, data.previewCollateralVaultData);
 
-        if (maxWithdrawInAssetsWithDelta > maxWithdrawInAssets) {
-            uint256 delta = maxWithdrawInAssetsWithDelta + 3 - maxWithdrawInAssets;
-            if (maxWithdrawInShares < 2 * delta) {
+        if (maxWithdrawInAssetsWithDelta > maxWithdrawInUnderlying) {
+            uint256 delta = maxWithdrawInAssetsWithDelta + 3 - maxWithdrawInUnderlying;
+            if (maxWithdrawSharesInUnderlying < 2 * delta) {
                 return 0;
             }
-            maxWithdrawInShares = maxWithdrawInShares - 2 * delta;
+            maxWithdrawSharesInUnderlying = maxWithdrawSharesInUnderlying - 2 * delta;
         }
 
-        return maxWithdrawInShares < data.ownerBalance ? maxWithdrawInShares : data.ownerBalance;
+        uint256 maxWithdrawShares = maxWithdrawSharesInUnderlying.mulDivDown(
+            10 ** data.previewCollateralVaultData.collateralTokenDecimals,
+            data.previewCollateralVaultData.collateralPrice
+        ).mulDivDown(
+            data.previewCollateralVaultData.supplyAfterFee, data.previewCollateralVaultData.totalAssetsCollateral
+        );
+
+        return maxWithdrawShares < data.ownerBalance ? maxWithdrawShares : data.ownerBalance;
     }
 }

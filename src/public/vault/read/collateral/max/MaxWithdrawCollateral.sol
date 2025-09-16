@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {Constants} from "src/constants/Constants.sol";
 import {MaxWithdrawRedeemCollateralVaultState} from
     "src/structs/state/vault/max/MaxWithdrawRedeemCollateralVaultState.sol";
 import {MaxWithdrawRedeemCollateralVaultData} from "src/structs/data/vault/max/MaxWithdrawRedeemCollateralVaultData.sol";
@@ -72,25 +71,38 @@ abstract contract MaxWithdrawCollateral is PreviewWithdrawCollateral, PreviewRed
          *  that never burns more shares than the user owns.
          */
         // round down to assume smaller border
-        uint256 vaultWithdrawInAssets = (uint256(data.realCollateral) - maxSafeRealCollateral).mulDivDown(
-            Constants.ORACLE_DIVIDER, data.previewCollateralVaultData.collateralPrice
+        uint256 vaultWithdrawInUnderlying = uint256(data.realCollateral) - maxSafeRealCollateral;
+        uint256 ownerBalanceInUnderlying = data.ownerBalance.mulDivDown(
+            data.previewCollateralVaultData.totalAssetsCollateral, data.previewCollateralVaultData.supplyAfterFee
+        ).mulDivDown(
+            data.previewCollateralVaultData.collateralPrice,
+            10 ** data.previewCollateralVaultData.collateralTokenDecimals
         );
 
-        if (data.ownerBalance <= 3) {
+        if (ownerBalanceInUnderlying <= 3) {
             return 0;
         }
 
-        (uint256 ownerBalanceAssets,) = _previewRedeemCollateral(data.ownerBalance - 3, data.previewCollateralVaultData);
+        (uint256 ownerBalanceAssetsInUnderlying,) =
+            _previewRedeemCollateralInUnderlying(ownerBalanceInUnderlying - 3, data.previewCollateralVaultData);
+
         (uint256 ownerBalanceWithDelta,) =
-            _previewWithdrawCollateral(ownerBalanceAssets, data.previewCollateralVaultData);
-        if (ownerBalanceWithDelta > data.ownerBalance) {
-            uint256 delta = ownerBalanceWithDelta + 3 - data.ownerBalance;
-            if (ownerBalanceAssets < 2 * delta) {
+            _previewWithdrawCollateralInUnderlying(ownerBalanceAssetsInUnderlying, data.previewCollateralVaultData);
+
+        if (ownerBalanceWithDelta > ownerBalanceInUnderlying) {
+            uint256 delta = ownerBalanceWithDelta + 3 - ownerBalanceInUnderlying;
+            if (ownerBalanceAssetsInUnderlying < 2 * delta) {
                 return 0;
             }
-            ownerBalanceAssets = ownerBalanceAssets - 2 * delta;
+            ownerBalanceAssetsInUnderlying = ownerBalanceAssetsInUnderlying - 2 * delta;
         }
 
-        return ownerBalanceAssets < vaultWithdrawInAssets ? ownerBalanceAssets : vaultWithdrawInAssets;
+        uint256 maxWithdrawInUnderlying = ownerBalanceAssetsInUnderlying < vaultWithdrawInUnderlying
+            ? ownerBalanceAssetsInUnderlying
+            : vaultWithdrawInUnderlying;
+        return maxWithdrawInUnderlying.mulDivDown(
+            10 ** data.previewCollateralVaultData.collateralTokenDecimals,
+            data.previewCollateralVaultData.collateralPrice
+        );
     }
 }

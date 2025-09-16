@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {Constants} from "src/constants/Constants.sol";
 import {MaxDepositMintCollateralStateToData} from
     "src/math/abstracts/state_to_data/max/MaxDepositMintCollateralStateToData.sol";
 import {MaxWithdrawRedeemCollateralStateToData} from
@@ -32,7 +31,8 @@ abstract contract VaultCollateral is
         uint256 maxTotalAssetsInUnderlying,
         uint256 supplyAfterFee,
         uint256 totalAssetsCollateral,
-        uint256 collateralPrice
+        uint256 collateralPrice,
+        uint8 collateralTokenDecimals
     ) internal pure returns (uint256) {
         // casting to uint256 is safe because collateral is considered to be greater than borrow
         // forge-lint: disable-next-line(unsafe-typecast)
@@ -44,7 +44,7 @@ abstract contract VaultCollateral is
 
         // round down to assume less available space
         uint256 availableSpaceInShares = (maxTotalAssetsInUnderlying - totalAssetsInUnderlying).mulDivDown(
-            Constants.ORACLE_DIVIDER, collateralPrice
+            10 ** collateralTokenDecimals, collateralPrice
         ).mulDivDown(supplyAfterFee, totalAssetsCollateral);
 
         return availableSpaceInShares;

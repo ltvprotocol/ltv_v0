@@ -2,7 +2,6 @@
 pragma solidity ^0.8.28;
 
 import {ILowLevelRebalanceErrors} from "src/errors/ILowLevelRebalanceErrors.sol";
-import {Constants} from "src/constants/Constants.sol";
 import {LowLevelRebalanceData} from "src/structs/data/low_level/LowLevelRebalanceData.sol";
 import {DeltaRealCollateralFromDeltaSharesData} from
     "src/structs/data/low_level/DeltaRealCollateralFromDeltaSharesData.sol";
@@ -127,7 +126,7 @@ library LowLevelRebalanceMath {
         // HODLer <=> Fee collector conflict, resolve in favor of HODLer, round down to give less rewards
         int256 deltaProtocolFutureRewardShares = (
             -data.protocolFutureRewardCollateral + data.protocolFutureRewardBorrow
-        ).mulDivDown(int256(Constants.ORACLE_DIVIDER), int256(data.borrowPrice)).mulDivDown(
+        ).mulDivDown(int256(10 ** data.borrowTokenDecimals), int256(data.borrowPrice)).mulDivDown(
             int256(data.supplyAfterFee), int256(data.totalAssets)
         );
 
@@ -135,7 +134,7 @@ library LowLevelRebalanceMath {
         // less burning in case of withdraw. It helps to get more assets in case of deposit, or give less assets in case of withdraw.
         int256 deltaSharesInAssets = deltaShares.mulDivUp(int256(data.totalAssets), int256(data.supplyAfterFee));
         int256 deltaSharesInUnderlying =
-            deltaSharesInAssets.mulDivUp(int256(data.borrowPrice), int256(Constants.ORACLE_DIVIDER));
+            deltaSharesInAssets.mulDivUp(int256(data.borrowPrice), int256(10 ** data.borrowTokenDecimals));
 
         int256 deltaRealCollateral = calculateDeltaRealCollateralFromDeltaShares(
             DeltaRealCollateralFromDeltaSharesData({
@@ -157,10 +156,10 @@ library LowLevelRebalanceMath {
 
         // round up to leave more collateral in protocol
         int256 deltaRealCollateralAssets =
-            deltaRealCollateral.mulDivUp(int256(Constants.ORACLE_DIVIDER), int256(data.collateralPrice));
+            deltaRealCollateral.mulDivUp(int256(10 ** data.collateralTokenDecimals), int256(data.collateralPrice));
         // round down to leave less borrow in protocol
         int256 deltaRealBorrowAssets =
-            deltaRealBorrow.mulDivDown(int256(Constants.ORACLE_DIVIDER), int256(data.borrowPrice));
+            deltaRealBorrow.mulDivDown(int256(10 ** data.borrowTokenDecimals), int256(data.borrowPrice));
 
         return (deltaRealCollateralAssets, deltaRealBorrowAssets, deltaProtocolFutureRewardShares);
     }
@@ -177,7 +176,7 @@ library LowLevelRebalanceMath {
         // HODLer <=> Fee collector conflict, resolve in favor of HODLer, round down to give less rewards
         int256 deltaProtocolFutureRewardShares = (
             -data.protocolFutureRewardCollateral + data.protocolFutureRewardBorrow
-        ).mulDivDown(int256(Constants.ORACLE_DIVIDER), int256(data.borrowPrice)).mulDivDown(
+        ).mulDivDown(int256(10 ** data.borrowTokenDecimals), int256(data.borrowPrice)).mulDivDown(
             int256(data.supplyAfterFee), int256(data.totalAssets)
         );
 
@@ -186,7 +185,7 @@ library LowLevelRebalanceMath {
         {
             // Depositor/withdrawer <=> HODLer conflict, round up to assume smaller debt decrease in case of deposit or bigger debt increase in case of withdraw.
             int256 deltaRealBorrow =
-                deltaBorrowAssets.mulDivUp(int256(data.borrowPrice), int256(Constants.ORACLE_DIVIDER));
+                deltaBorrowAssets.mulDivUp(int256(data.borrowPrice), int256(10 ** data.borrowTokenDecimals));
             deltaRealCollateral = calculateDeltaRealCollateralFromDeltaRealBorrow(
                 deltaRealBorrow, data.realBorrow, data.realCollateral, data.targetLtvDividend, data.targetLtvDivider
             );
@@ -202,11 +201,11 @@ library LowLevelRebalanceMath {
 
         // HODLer <=> depositor/withdrawer conflict, resolve in favor of HODLer, round down to give less shares
         int256 deltaShares = deltaSharesInUnderlying.mulDivDown(
-            int256(Constants.ORACLE_DIVIDER), int256(data.borrowPrice)
+            int256(10 ** data.borrowTokenDecimals), int256(data.borrowPrice)
         ).mulDivDown(int256(data.supplyAfterFee), int256(data.totalAssets));
         // HODLer <=> depositor/withdrawer conflict, resolve in favor of HODLer, round up to keep more collateral in the protocol
         int256 deltaRealCollateralAssets =
-            deltaRealCollateral.mulDivUp(int256(Constants.ORACLE_DIVIDER), int256(data.collateralPrice));
+            deltaRealCollateral.mulDivUp(int256(10 ** data.collateralTokenDecimals), int256(data.collateralPrice));
 
         return (deltaRealCollateralAssets, deltaShares, deltaProtocolFutureRewardShares);
     }
@@ -223,7 +222,7 @@ library LowLevelRebalanceMath {
         // HODLer <=> Fee collector conflict, resolve in favor of HODLer, round down to give less rewards
         int256 deltaProtocolFutureRewardShares = (
             -data.protocolFutureRewardCollateral + data.protocolFutureRewardBorrow
-        ).mulDivDown(int256(Constants.ORACLE_DIVIDER), int256(data.borrowPrice)).mulDivDown(
+        ).mulDivDown(int256(10 ** data.borrowTokenDecimals), int256(data.borrowPrice)).mulDivDown(
             int256(data.supplyAfterFee), int256(data.totalAssets)
         );
 
@@ -231,8 +230,9 @@ library LowLevelRebalanceMath {
         int256 deltaSharesInUnderlying;
         {
             // Depositor/withdrawer <=> HODLer conflict, round down to assume smaller collateral increase in case of deposit or bigger collateral decrease in case of withdraw.
-            int256 deltaRealCollateral =
-                deltaCollateralAssets.mulDivDown(int256(data.collateralPrice), int256(Constants.ORACLE_DIVIDER));
+            int256 deltaRealCollateral = deltaCollateralAssets.mulDivDown(
+                int256(data.collateralPrice), int256(10 ** data.collateralTokenDecimals)
+            );
 
             deltaRealBorrow = calculateDeltaRealBorrowFromDeltaRealCollateral(
                 deltaRealCollateral, data.realCollateral, data.realBorrow, data.targetLtvDividend, data.targetLtvDivider
@@ -250,11 +250,11 @@ library LowLevelRebalanceMath {
 
         // HODLer <=> depositor/withdrawer conflict, resolving in favor of HODLer, rounding down, less shares minted - bigger token price
         int256 deltaShares = deltaSharesInUnderlying.mulDivDown(
-            int256(Constants.ORACLE_DIVIDER), int256(data.borrowPrice)
+            int256(10 ** data.borrowTokenDecimals), int256(data.borrowPrice)
         ).mulDivDown(int256(data.supplyAfterFee), int256(data.totalAssets));
         // HODLer <=> depositor/withdrawer conflict, resolving in favor of HODLer, rounding down to keep less borrow in the protocol
         int256 deltaRealBorrowAssets =
-            deltaRealBorrow.mulDivDown(int256(Constants.ORACLE_DIVIDER), int256(data.borrowPrice));
+            deltaRealBorrow.mulDivDown(int256(10 ** data.borrowTokenDecimals), int256(data.borrowPrice));
 
         return (deltaRealBorrowAssets, deltaShares, deltaProtocolFutureRewardShares);
     }

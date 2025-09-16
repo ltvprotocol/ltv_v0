@@ -52,6 +52,7 @@ abstract contract BaseAuctionInvariantWrapper is BaseInvariantWrapper {
             if (IERC20(ltv.collateralToken()).allowance(_currentTestActor, address(ltv)) < uint256(-collateral)) {
                 IERC20(ltv.collateralToken()).approve(address(ltv), uint256(-collateral));
             }
+            deal(ltv.borrowToken(), _currentTestActor, 0);
         } else {
             amount = bound(amount, 1, maxDeltaUserBorrowAssets);
 
@@ -62,6 +63,7 @@ abstract contract BaseAuctionInvariantWrapper is BaseInvariantWrapper {
             if (IERC20(ltv.borrowToken()).allowance(_currentTestActor, address(ltv)) < uint256(amount)) {
                 IERC20(ltv.borrowToken()).approve(address(ltv), uint256(amount));
             }
+            deal(ltv.collateralToken(), _currentTestActor, 0);
         }
 
         captureInvariantState();
@@ -85,15 +87,15 @@ abstract contract BaseAuctionInvariantWrapper is BaseInvariantWrapper {
 
         if (maxDeltaUserCollateralAssets < 0) {
             amount = bound(amount, maxDeltaUserCollateralAssets, -1);
-            int256 borrow = -ltv.previewExecuteAuctionCollateral(amount);
 
-            if (IERC20(ltv.collateralToken()).balanceOf(_currentTestActor) < uint256(borrow)) {
-                deal(ltv.collateralToken(), _currentTestActor, uint256(borrow));
+            if (IERC20(ltv.collateralToken()).balanceOf(_currentTestActor) < uint256(amount)) {
+                deal(ltv.collateralToken(), _currentTestActor, uint256(amount));
             }
 
-            if (IERC20(ltv.collateralToken()).allowance(_currentTestActor, address(ltv)) < uint256(borrow)) {
-                IERC20(ltv.collateralToken()).approve(address(ltv), uint256(borrow));
+            if (IERC20(ltv.collateralToken()).allowance(_currentTestActor, address(ltv)) < uint256(amount)) {
+                IERC20(ltv.collateralToken()).approve(address(ltv), uint256(amount));
             }
+            deal(ltv.borrowToken(), _currentTestActor, 0);
         } else {
             amount = bound(amount, 1, maxDeltaUserCollateralAssets);
             int256 borrow = ltv.previewExecuteAuctionCollateral(amount);
@@ -105,6 +107,7 @@ abstract contract BaseAuctionInvariantWrapper is BaseInvariantWrapper {
             if (IERC20(ltv.borrowToken()).allowance(_currentTestActor, address(ltv)) < uint256(borrow)) {
                 IERC20(ltv.borrowToken()).approve(address(ltv), uint256(borrow));
             }
+            deal(ltv.collateralToken(), _currentTestActor, 0);
         }
 
         captureInvariantState();

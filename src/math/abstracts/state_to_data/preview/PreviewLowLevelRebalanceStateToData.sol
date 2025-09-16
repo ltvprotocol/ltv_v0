@@ -31,6 +31,7 @@ abstract contract PreviewLowLevelRebalanceStateToData is MaxGrowthFee {
             CommonMath.convertRealCollateral(
                 isDeposit ? state.depositRealCollateralAssets : state.maxGrowthFeeState.withdrawRealCollateralAssets,
                 state.maxGrowthFeeState.commonTotalAssetsState.collateralPrice,
+                state.maxGrowthFeeState.commonTotalAssetsState.collateralTokenDecimals,
                 isDeposit
             )
         );
@@ -38,27 +39,32 @@ abstract contract PreviewLowLevelRebalanceStateToData is MaxGrowthFee {
             CommonMath.convertRealBorrow(
                 isDeposit ? state.depositRealBorrowAssets : state.maxGrowthFeeState.withdrawRealBorrowAssets,
                 state.maxGrowthFeeState.commonTotalAssetsState.borrowPrice,
+                state.maxGrowthFeeState.commonTotalAssetsState.borrowTokenDecimals,
                 isDeposit
             )
         );
         data.futureCollateral = CommonMath.convertFutureCollateral(
             state.maxGrowthFeeState.commonTotalAssetsState.futureCollateralAssets,
             state.maxGrowthFeeState.commonTotalAssetsState.collateralPrice,
+            state.maxGrowthFeeState.commonTotalAssetsState.collateralTokenDecimals,
             isDeposit
         );
         data.futureBorrow = CommonMath.convertFutureBorrow(
             state.maxGrowthFeeState.commonTotalAssetsState.futureBorrowAssets,
             state.maxGrowthFeeState.commonTotalAssetsState.borrowPrice,
+            state.maxGrowthFeeState.commonTotalAssetsState.borrowTokenDecimals,
             isDeposit
         );
         int256 futureRewardCollateral = CommonMath.convertFutureRewardCollateral(
             state.maxGrowthFeeState.commonTotalAssetsState.futureRewardCollateralAssets,
             state.maxGrowthFeeState.commonTotalAssetsState.collateralPrice,
+            state.maxGrowthFeeState.commonTotalAssetsState.collateralTokenDecimals,
             isDeposit
         );
         int256 futureRewardBorrow = CommonMath.convertFutureRewardBorrow(
             state.maxGrowthFeeState.commonTotalAssetsState.futureRewardBorrowAssets,
             state.maxGrowthFeeState.commonTotalAssetsState.borrowPrice,
+            state.maxGrowthFeeState.commonTotalAssetsState.borrowTokenDecimals,
             isDeposit
         );
 
@@ -80,7 +86,8 @@ abstract contract PreviewLowLevelRebalanceStateToData is MaxGrowthFee {
             TotalAssetsData({
                 collateral: data.realCollateral + data.futureCollateral + futureRewardCollateral,
                 borrow: data.realBorrow + data.futureBorrow + futureRewardBorrow,
-                borrowPrice: data.borrowPrice
+                borrowPrice: data.borrowPrice,
+                borrowTokenDecimals: state.maxGrowthFeeState.commonTotalAssetsState.borrowTokenDecimals
             })
         );
 
@@ -108,5 +115,8 @@ abstract contract PreviewLowLevelRebalanceStateToData is MaxGrowthFee {
 
         data.targetLtvDividend = state.targetLtvDividend;
         data.targetLtvDivider = state.targetLtvDivider;
+
+        data.borrowTokenDecimals = state.maxGrowthFeeState.commonTotalAssetsState.borrowTokenDecimals;
+        data.collateralTokenDecimals = state.maxGrowthFeeState.commonTotalAssetsState.collateralTokenDecimals;
     }
 }

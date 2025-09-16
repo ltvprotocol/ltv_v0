@@ -21,7 +21,8 @@ contract MaxLowLevelRebalanceSharesStateReader is MaxGrowthFeeStateReader {
             maxGrowthFeeState: maxGrowthFeeState(),
             maxTotalAssetsInUnderlying: maxTotalAssetsInUnderlying,
             depositRealBorrowAssets: depositRealBorrowAssets,
-            depositRealCollateralAssets: depositRealCollateralAssets
+            depositRealCollateralAssets: depositRealCollateralAssets,
+            borrowTokenDecimals: borrowTokenDecimals
         });
     }
 }

@@ -19,6 +19,7 @@ struct PreviewWithdrawBorrowVaultData {
     uint16 targetLtvDividend;
     uint16 targetLtvDivider;
     uint256 borrowPrice;
+    uint8 borrowTokenDecimals;
     uint256 supplyAfterFee;
     uint256 withdrawTotalAssets;
 }

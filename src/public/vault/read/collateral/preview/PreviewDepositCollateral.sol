@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {Constants} from "src/constants/Constants.sol";
 import {DepositWithdrawData} from "src/structs/data/vault/common/DepositWithdrawData.sol";
 import {PreviewDepositVaultState} from "src/structs/state/vault/preview/PreviewDepositVaultState.sol";
 import {PreviewCollateralVaultData} from "src/structs/data/vault/preview/PreviewCollateralVaultData.sol";
@@ -37,7 +36,25 @@ abstract contract PreviewDepositCollateral is VaultCollateral {
         returns (uint256, DeltaFuture memory)
     {
         // depositor <=> HODLer conflict, assume user deposits less to mint less shares
-        uint256 realCollateralInUnderlying = assets.mulDivDown(data.collateralPrice, Constants.ORACLE_DIVIDER);
+        uint256 realCollateralInUnderlying = assets.mulDivDown(data.collateralPrice, 10 ** data.collateralTokenDecimals);
+
+        (uint256 sharesInUnderlying, DeltaFuture memory deltaFuture) =
+            _previewDepositCollateralInUnderlying(realCollateralInUnderlying, data);
+
+        // HODLer <=> depositor conflict, round in favor of HODLer, round down to mint less shares
+        return (
+            sharesInUnderlying.mulDivDown(10 ** data.collateralTokenDecimals, data.collateralPrice).mulDivDown(
+                data.supplyAfterFee, data.totalAssetsCollateral
+            ),
+            deltaFuture
+        );
+    }
+
+    function _previewDepositCollateralInUnderlying(uint256 assetsInUnderlying, PreviewCollateralVaultData memory data)
+        internal
+        pure
+        returns (uint256, DeltaFuture memory)
+    {
         (int256 sharesInUnderlying, DeltaFuture memory deltaFuture) = DepositWithdraw.calculateDepositWithdraw(
             DepositWithdrawData({
                 collateral: data.collateral,
@@ -54,7 +71,7 @@ abstract contract PreviewDepositCollateral is VaultCollateral {
                 targetLtvDivider: data.targetLtvDivider,
                 // casting to int256 is safe because realCollateralInUnderlying is considered to be smaller than type(int256).max
                 // forge-lint: disable-next-line(unsafe-typecast)
-                deltaRealCollateral: int256(realCollateralInUnderlying),
+                deltaRealCollateral: int256(assetsInUnderlying),
                 deltaRealBorrow: 0
             })
         );
@@ -63,15 +80,9 @@ abstract contract PreviewDepositCollateral is VaultCollateral {
             return (0, deltaFuture);
         }
 
-        // HODLer <=> depositor conflict, round in favor of HODLer, round down to mint less shares
-        return (
-            // casting to uint256 is safe because sharesInUnderlying is checked to be non negative
-            // and therefore it is smaller than type(uint256).max
-            // forge-lint: disable-next-line(unsafe-typecast)
-            uint256(sharesInUnderlying).mulDivDown(Constants.ORACLE_DIVIDER, data.collateralPrice).mulDivDown(
-                data.supplyAfterFee, data.totalAssetsCollateral
-            ),
-            deltaFuture
-        );
+        // casting to uint256 is safe because sharesInUnderlying is checked to be non negative
+        // and therefore it is smaller than type(uint256).max
+        // forge-lint: disable-next-line(unsafe-typecast)
+        return (uint256(sharesInUnderlying), deltaFuture);
     }
 }

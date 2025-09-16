@@ -74,7 +74,8 @@ abstract contract Redeem is
                 deltaProtocolFutureRewardCollateral: deltaFuture.deltaProtocolFutureRewardCollateral,
                 supply: data.previewWithdrawBorrowVaultData.supplyAfterFee,
                 totalAppropriateAssets: data.previewWithdrawBorrowVaultData.withdrawTotalAssets,
-                assetPrice: data.previewWithdrawBorrowVaultData.borrowPrice
+                assetPrice: data.previewWithdrawBorrowVaultData.borrowPrice,
+                assetTokenDecimals: data.previewWithdrawBorrowVaultData.borrowTokenDecimals
             })
         );
 
@@ -105,7 +106,13 @@ abstract contract Redeem is
             NextStateData({
                 nextState: nextState,
                 borrowPrice: data.previewWithdrawBorrowVaultData.borrowPrice,
-                collateralPrice: state.previewWithdrawVaultState.maxGrowthFeeState.commonTotalAssetsState.collateralPrice
+                collateralPrice: state.previewWithdrawVaultState.maxGrowthFeeState.commonTotalAssetsState.collateralPrice,
+                borrowTokenDecimals: data.previewWithdrawBorrowVaultData.borrowTokenDecimals,
+                collateralTokenDecimals: state
+                    .previewWithdrawVaultState
+                    .maxGrowthFeeState
+                    .commonTotalAssetsState
+                    .collateralTokenDecimals
             })
         );
 

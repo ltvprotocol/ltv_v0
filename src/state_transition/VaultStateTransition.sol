@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {Constants} from "src/constants/Constants.sol";
 import {NextStateData} from "src/structs/state_transition/NextStateData.sol";
 import {LTVState} from "src/states/LTVState.sol";
 import {SMulDiv} from "src/math/libraries/MulDiv.sol";
@@ -19,16 +18,16 @@ abstract contract VaultStateTransition is LTVState {
     function applyStateTransition(NextStateData memory nextStateData) internal {
         // Here we have conflict between HODLer and Future auction executor. Round in favor of HODLer
         futureBorrowAssets = nextStateData.nextState.futureBorrow.mulDivDown(
-            int256(Constants.ORACLE_DIVIDER), int256(nextStateData.borrowPrice)
+            int256(10 ** nextStateData.borrowTokenDecimals), int256(nextStateData.borrowPrice)
         );
         futureCollateralAssets = nextStateData.nextState.futureCollateral.mulDivUp(
-            int256(Constants.ORACLE_DIVIDER), int256(nextStateData.collateralPrice)
+            int256(10 ** nextStateData.collateralTokenDecimals), int256(nextStateData.collateralPrice)
         );
         futureRewardBorrowAssets = nextStateData.nextState.futureRewardBorrow.mulDivDown(
-            int256(Constants.ORACLE_DIVIDER), int256(nextStateData.borrowPrice)
+            int256(10 ** nextStateData.borrowTokenDecimals), int256(nextStateData.borrowPrice)
         );
         futureRewardCollateralAssets = nextStateData.nextState.futureRewardCollateral.mulDivUp(
-            int256(Constants.ORACLE_DIVIDER), int256(nextStateData.collateralPrice)
+            int256(10 ** nextStateData.collateralTokenDecimals), int256(nextStateData.collateralPrice)
         );
 
         if (nextStateData.nextState.merge) {
@@ -47,6 +46,14 @@ abstract contract VaultStateTransition is LTVState {
             futureRewardBorrowAssets = 0;
             futureRewardCollateralAssets = 0;
             startAuction = 0;
+        }
+
+        if (futureBorrowAssets > 0) {
+            futureRewardBorrowAssets = 0;
+        }
+
+        if (futureCollateralAssets < 0) {
+            futureRewardCollateralAssets = 0;
         }
     }
 }

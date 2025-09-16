@@ -11,4 +11,5 @@ struct MaxLowLevelRebalanceCollateralStateData {
     uint16 targetLtvDividend;
     uint16 targetLtvDivider;
     uint256 collateralPrice;
+    uint8 collateralTokenDecimals;
 }

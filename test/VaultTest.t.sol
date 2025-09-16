@@ -167,7 +167,7 @@ contract VaultTest is BalancedTest {
         IERC20(address(dummyLtv)).safeTransfer(user, dummyLtv.balanceOf(owner));
         ltv.setBorrowSlippage(10 ** 16);
 
-        assertEq(dummyLtv.maxRedeem(user), 625049);
+        assertEq(dummyLtv.maxRedeem(user), 625052);
         vm.startPrank(user);
         dummyLtv.redeem(dummyLtv.maxRedeem(user), user, user);
     }
@@ -238,7 +238,7 @@ contract VaultTest is BalancedTest {
         vm.startPrank(owner);
         IERC20(address(dummyLtv)).safeTransfer(user, dummyLtv.balanceOf(owner));
 
-        assertEq(dummyLtv.maxRedeemCollateral(user), 333361 * 2 - 6);
+        assertEq(dummyLtv.maxRedeemCollateral(user), 333361 * 2);
     }
 
     function test_totalAssetsWithBool(address owner, address user)
