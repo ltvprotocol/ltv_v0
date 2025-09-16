@@ -2,6 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {LTV} from "src/elements/LTV.sol";
+import {console} from "forge-std/console.sol";
 
 contract DummyLTV is LTV {
     function setLastSeenTokenPrice(uint256 value) public {
