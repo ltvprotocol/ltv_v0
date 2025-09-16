@@ -32,8 +32,8 @@ abstract contract BaseInvariantTest is BaseTest {
      * 4. Deploys and configures dynamic oracle and lending protocol mocks
      */
     function setUp() public virtual {
-        uint8 collateralTokenDecimals = 18;
-        uint8 borrowTokenDecimals = 18;
+        uint8 collateralTokenDecimals = 20;
+        uint8 borrowTokenDecimals = 6;
         // Initialize LTV protocol with test parameters
         BaseTestInit memory init = BaseTestInit({
             owner: address(1),
