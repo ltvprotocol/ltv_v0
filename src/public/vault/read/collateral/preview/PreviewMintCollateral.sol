@@ -44,12 +44,7 @@ abstract contract PreviewMintCollateral is VaultCollateral {
             _previewMintCollateralInUnderlying(sharesInUnderlying, data);
 
         // HODLer <=> depositor conflict, round in favor of HODLer, round up to get more collateral
-        // casting to uint256 is safe because assetsInUnderlying is checked to be positive
-        return (
-            // forge-lint: disable-next-line(unsafe-typecast)
-            assetsInUnderlying.mulDivUp(10 ** data.collateralTokenDecimals, data.collateralPrice),
-            deltaFuture
-        );
+        return (assetsInUnderlying.mulDivUp(10 ** data.collateralTokenDecimals, data.collateralPrice), deltaFuture);
     }
 
     function _previewMintCollateralInUnderlying(uint256 sharesInUnderlying, PreviewCollateralVaultData memory data)
@@ -82,6 +77,8 @@ abstract contract PreviewMintCollateral is VaultCollateral {
             return (0, deltaFuture);
         }
 
+        // casting to uint256 is safe because assetsInUnderlying is checked to be positive
+        // forge-lint: disable-next-line(unsafe-typecast)
         return (uint256(assetsInUnderlying), deltaFuture);
     }
 }

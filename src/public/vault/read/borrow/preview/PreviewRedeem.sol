@@ -44,8 +44,6 @@ abstract contract PreviewRedeem is Vault {
             _previewRedeemInUnderlying(sharesInUnderlying, data);
 
         // HODLer <=> withdrawer conflict, round in favor of HODLer, give less assets
-        // casting to uint256 is safe because assetsInUnderlying is checked to be non negative
-        // forge-lint: disable-next-line(unsafe-typecast)
         return (assetsInUnderlying.mulDivDown(10 ** data.borrowTokenDecimals, data.borrowPrice), deltaFuture);
     }
 
@@ -79,6 +77,8 @@ abstract contract PreviewRedeem is Vault {
             return (0, deltaFuture);
         }
 
+        // casting to uint256 is safe because assetsInUnderlying is checked to be non negative
+        // forge-lint: disable-next-line(unsafe-typecast)
         return (uint256(assetsInUnderlying), deltaFuture);
     }
 }

@@ -42,7 +42,7 @@ abstract contract Initialize is AdministrationSetters, OwnableUpgradeable {
         auctionDuration = initData.auctionDuration;
         collateralTokenDecimals = IERC20Metadata(initData.collateralToken).decimals();
         borrowTokenDecimals = IERC20Metadata(initData.borrowToken).decimals();
-        lastSeenTokenPrice = 10**borrowTokenDecimals;
+        lastSeenTokenPrice = 10 ** borrowTokenDecimals;
 
         _setLendingConnector(initData.lendingConnector, initData.lendingConnectorData);
         _setOracleConnector(initData.oracleConnector, initData.oracleConnectorData);

@@ -43,9 +43,6 @@ abstract contract PreviewWithdrawCollateral is VaultCollateral {
 
         // HODLer <=> withdrawer conflict, round in favor of HODLer, round up to burn more shares
         return (
-            // casting to uint256 is safe because sharesInUnderlying is checked to be negative
-            // and therefore it is smaller than type(uint256).max
-            // forge-lint: disable-next-line(unsafe-typecast)
             sharesInUnderlying.mulDivUp(10 ** data.collateralTokenDecimals, data.collateralPrice).mulDivUp(
                 data.supplyAfterFee, data.totalAssetsCollateral
             ),
@@ -83,6 +80,9 @@ abstract contract PreviewWithdrawCollateral is VaultCollateral {
             return (0, deltaFuture);
         }
 
+        // casting to uint256 is safe because sharesInUnderlying is checked to be negative
+        // and therefore it is smaller than type(uint256).max
+        // forge-lint: disable-next-line(unsafe-typecast)
         return (uint256(-sharesInUnderlying), deltaFuture);
     }
 }

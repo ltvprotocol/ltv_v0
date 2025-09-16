@@ -42,8 +42,6 @@ abstract contract PreviewWithdraw is Vault {
 
         // HODLer <=> withdrawer conflict, round in favor of HODLer, round up to burn more shares
         return (
-            // casting to uint256 is safe because sharesInUnderlying is checked to be negative
-            // forge-lint: disable-next-line(unsafe-typecast)
             sharesInUnderlying.mulDivUp(10 ** data.borrowTokenDecimals, data.borrowPrice).mulDivUp(
                 data.supplyAfterFee, data.withdrawTotalAssets
             ),
@@ -81,6 +79,8 @@ abstract contract PreviewWithdraw is Vault {
             return (0, deltaFuture);
         }
 
+        // casting to uint256 is safe because sharesInUnderlying is checked to be negative
+        // forge-lint: disable-next-line(unsafe-typecast)
         return (uint256(-sharesInUnderlying), deltaFuture);
     }
 }
