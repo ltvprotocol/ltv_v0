@@ -47,6 +47,9 @@ abstract contract PreviewMintCollateral is VaultCollateral {
         return (assetsInUnderlying.mulDivUp(10 ** data.collateralTokenDecimals, data.collateralPrice), deltaFuture);
     }
 
+    /**
+     * @dev base function to calculate preview deposit in underlying assets
+     */
     function _previewMintCollateralInUnderlying(uint256 sharesInUnderlying, PreviewCollateralVaultData memory data)
         internal
         pure

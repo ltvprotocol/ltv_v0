@@ -48,6 +48,9 @@ abstract contract PreviewRedeemCollateral is VaultCollateral {
         return (assetsInUnderlying.mulDivDown(10 ** data.collateralTokenDecimals, data.collateralPrice), deltaFuture);
     }
 
+    /**
+     * @dev base function to calculate preview deposit in underlying assets
+     */
     function _previewRedeemCollateralInUnderlying(uint256 sharesInUnderlying, PreviewCollateralVaultData memory data)
         internal
         pure

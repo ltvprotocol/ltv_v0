@@ -47,6 +47,9 @@ abstract contract PreviewRedeem is Vault {
         return (assetsInUnderlying.mulDivDown(10 ** data.borrowTokenDecimals, data.borrowPrice), deltaFuture);
     }
 
+    /**
+     * @dev base function to calculate preview deposit in underlying assets
+     */
     function _previewRedeemInUnderlying(uint256 sharesInUnderlying, PreviewWithdrawBorrowVaultData memory data)
         internal
         pure

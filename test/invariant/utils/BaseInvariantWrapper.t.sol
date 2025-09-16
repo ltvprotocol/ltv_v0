@@ -233,8 +233,11 @@ contract BaseInvariantWrapper is Test {
         // Multiply by 10 to account for rounding errors
         if (
             _initialAuctionStartBlock + ltv.auctionDuration() > uint56(block.number) && checkAuctionExecuted()
-                && (_initialRewardBorrow - ltv.futureRewardBorrowAssets() >= int256(10 * uint256(ltv.auctionDuration()))
-                || ltv.futureRewardCollateralAssets() - _initialRewardCollateral >= int256(10 * uint256(ltv.auctionDuration())))
+                && (
+                    _initialRewardBorrow - ltv.futureRewardBorrowAssets() >= int256(10 * uint256(ltv.auctionDuration()))
+                        || ltv.futureRewardCollateralAssets() - _initialRewardCollateral
+                            >= int256(10 * uint256(ltv.auctionDuration()))
+                )
         ) {
             // Verify that fee collector received rewards
             assertTrue(
