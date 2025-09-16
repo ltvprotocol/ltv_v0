@@ -68,7 +68,7 @@ library CommonBorrowCollateral {
             int256(int8(ncase.cna + ncase.cmcb + ncase.cmbc + ncase.ceccb + ncase.cecbc)) * deltaFutureBorrow;
         deltaFutureCollateral += int256(int8(ncase.ceccb + ncase.cecbc)) * (futureBorrow - futureCollateral);
 
-        if (futureCollateral == 0) {
+        if (futureBorrow == 0) {
             return deltaFutureCollateral;
         }
 

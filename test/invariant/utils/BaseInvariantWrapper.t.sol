@@ -5,7 +5,6 @@ import {Test} from "forge-std/Test.sol";
 import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "openzeppelin-contracts/contracts/interfaces/IERC20Metadata.sol";
 import {ILTV} from "src/interfaces/ILTV.sol";
-import {Constants} from "src/constants/Constants.sol";
 import {DummyOracleConnector} from "src/dummy/DummyOracleConnector.sol";
 import {ILendingConnector} from "src/interfaces/connectors/ILendingConnector.sol";
 import {UMulDiv} from "src/math/libraries/MulDiv.sol";
@@ -284,7 +283,9 @@ contract BaseInvariantWrapper is Test {
         int256 _futureRewardBorrowAssets,
         int256 _futureRewardCollateralAssets
     ) internal view returns (uint256, uint256) {
+        // forge-lint: disable-next-line(unsafe-typecast)
         uint256 futureRewardBorrowAssets = uint256(_futureRewardBorrowAssets);
+        // forge-lint: disable-next-line(unsafe-typecast)
         uint256 futureRewardCollateralAssets = uint256(-_futureRewardCollateralAssets);
         uint256 borrowPrice =
             DummyOracleConnector(ltv.oracleConnector()).getPriceBorrowOracle(ltv.oracleConnectorGetterData());
