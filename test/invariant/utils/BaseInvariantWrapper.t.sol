@@ -67,7 +67,6 @@ contract BaseInvariantWrapper is Test {
     int256 internal _initialRewardCollateral; // Future reward collateral assets
     int256 internal _initialRealBorrow; // Real borrow assets
     int256 internal _initialRealCollateral; // Real collateral assets
-    int256 internal _initialRewardsValue; // Calculated rewards value
     uint256 internal _initialAuctionStartBlock; // Auction start block
 
     // Block progression tracking
@@ -141,29 +140,6 @@ contract BaseInvariantWrapper is Test {
         _initialRewardCollateral = ltv.futureRewardCollateralAssets();
         _initialRealBorrow = _getRealBorrowAssets(false);
         _initialRealCollateral = _getRealCollateralAssets(false);
-
-        // Calculate current rewards value in underlying asset terms
-        int256 borrowPrice =
-            int256(DummyOracleConnector(ltv.oracleConnector()).getPriceBorrowOracle(ltv.oracleConnectorGetterData()));
-        int256 collateralPrice = int256(
-            DummyOracleConnector(ltv.oracleConnector()).getPriceCollateralOracle(ltv.oracleConnectorGetterData())
-        );
-
-        uint8 borrowTokenDecimals = IERC20Metadata(ltv.borrowToken()).decimals();
-        uint8 collateralTokenDecimals = IERC20Metadata(ltv.collateralToken()).decimals();
-        if (borrowTokenDecimals > collateralTokenDecimals) {
-            _initialRewardsValue = (
-                ltv.futureRewardBorrowAssets() * borrowPrice
-                    / int256(10 ** (borrowTokenDecimals - collateralTokenDecimals))
-                    - ltv.futureRewardCollateralAssets() * collateralPrice
-            ) / int256(Constants.ORACLE_DIVIDER);
-        } else {
-            _initialRewardsValue = (
-                ltv.futureRewardBorrowAssets() * borrowPrice
-                    - ltv.futureRewardCollateralAssets() * collateralPrice
-                        / int256(10 ** (collateralTokenDecimals - borrowTokenDecimals))
-            ) / int256(Constants.ORACLE_DIVIDER);
-        }
 
         _initialAuctionStartBlock = ltv.startAuction();
 
@@ -257,7 +233,8 @@ contract BaseInvariantWrapper is Test {
         // Multiply by 10 to account for rounding errors
         if (
             _initialAuctionStartBlock + ltv.auctionDuration() > uint56(block.number) && checkAuctionExecuted()
-                && _initialRewardsValue - rewardsAfter >= int256(uint256(ltv.auctionDuration()))
+                && (_initialRewardBorrow - ltv.futureRewardBorrowAssets() >= int256(10 * uint256(ltv.auctionDuration()))
+                || ltv.futureRewardCollateralAssets() - _initialRewardCollateral >= int256(10 * uint256(ltv.auctionDuration())))
         ) {
             // Verify that fee collector received rewards
             assertTrue(
