@@ -86,7 +86,7 @@ library LowLevelRebalanceMath {
         }
 
         if (targetLtvDividend == 0) {
-            revert ILowLevelRebalanceErrors.ZerotargetLtvDisablesBorrow();
+            revert ILowLevelRebalanceErrors.ZeroTargetLtvDisablesBorrow();
         }
         return (realBorrow + deltaBorrow).mulDivUp(
             int256(uint256(targetLtvDivider)), int256(uint256(targetLtvDividend))

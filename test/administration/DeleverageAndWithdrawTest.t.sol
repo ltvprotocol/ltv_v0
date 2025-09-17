@@ -167,7 +167,7 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         assertEq(ltv.maxLowLevelRebalanceBorrow(), 0);
 
         int256 amount = 10 ** 10;
-        vm.expectRevert(abi.encodeWithSelector(ILowLevelRebalanceErrors.ZerotargetLtvDisablesBorrow.selector));
+        vm.expectRevert(abi.encodeWithSelector(ILowLevelRebalanceErrors.ZeroTargetLtvDisablesBorrow.selector));
         ltv.executeLowLevelRebalanceBorrow(-amount);
 
         vm.expectRevert(
