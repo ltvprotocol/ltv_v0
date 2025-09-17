@@ -5,7 +5,7 @@ import {ILTV} from "src/interfaces/ILTV.sol";
 import {AllFunctionsInvariantWrapper} from "test/invariant/utils/AllFunctionsInvariantWrapper.t.sol";
 import {BaseInvariantTest} from "test/invariant/utils/BaseInvariantTest.t.sol";
 
-contract AllFunctionsInvariantTest is BaseInvariantTest {
+contract BaseAllFunctionsInvariantTest is BaseInvariantTest {
     AllFunctionsInvariantWrapper internal _wrapper;
 
     function wrapper() internal view override returns (address) {
@@ -23,14 +23,12 @@ contract AllFunctionsInvariantTest is BaseInvariantTest {
         vm.stopPrank();
     }
 
-    function invariant_allFunctions() public {}
-
     function afterInvariant() public view override {
-        // // Call parent to check max growth fee
-        // super.afterInvariant();
+        // Call parent to check max growth fee
+        super.afterInvariant();
 
-        // // Verify that auction rewards were received during testing
-        // // This ensures the auction mechanism is functioning properly
-        // assertTrue(_wrapper.auctionRewardsReceived());
+        // Verify that auction rewards were received during testing
+        // This ensures the auction mechanism is functioning properly
+        assertTrue(_wrapper.auctionRewardsReceived());
     }
 }

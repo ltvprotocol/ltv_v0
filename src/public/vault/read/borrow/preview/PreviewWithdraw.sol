@@ -49,6 +49,9 @@ abstract contract PreviewWithdraw is Vault {
         );
     }
 
+    /**
+     * @dev base function to calculate preview deposit in underlying assets
+     */
     function _previewWithdrawInUnderlying(uint256 assetsInUnderlying, PreviewWithdrawBorrowVaultData memory data)
         internal
         pure

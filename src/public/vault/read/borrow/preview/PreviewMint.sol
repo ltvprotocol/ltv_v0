@@ -42,6 +42,9 @@ abstract contract PreviewMint is Vault {
         return (assetsInUnderlying.mulDivUp(10 ** data.borrowTokenDecimals, data.borrowPrice), deltaFuture);
     }
 
+    /**
+     * @dev base function to calculate preview deposit in underlying assets
+     */
     function _previewMintInUnderlying(uint256 sharesInUnderlying, PreviewDepositBorrowVaultData memory data)
         internal
         pure

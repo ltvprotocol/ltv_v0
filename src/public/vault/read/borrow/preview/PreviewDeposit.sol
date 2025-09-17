@@ -50,6 +50,9 @@ abstract contract PreviewDeposit is Vault {
         );
     }
 
+    /**
+     * @dev base function to calculate preview deposit in underlying assets
+     */
     function _previewDepositInUnderlying(uint256 assetsInUnderlying, PreviewDepositBorrowVaultData memory data)
         internal
         pure

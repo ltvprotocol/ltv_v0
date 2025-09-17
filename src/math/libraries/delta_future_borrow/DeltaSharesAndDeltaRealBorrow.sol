@@ -108,7 +108,7 @@ library DeltaSharesAndDeltaRealBorrow {
         DeltaSharesAndDeltaRealBorrowData memory data,
         bool needToRoundUpDividend,
         bool needToRoundUpDivider
-    ) internal pure returns (int256, bool) {
+    ) private pure returns (int256, bool) {
         int256 dividend = calculateDividentByDeltaSharesAndDeltaRealBorrow(
             DeltaSharesAndDeltaRealBorrowDividendData({
                 borrow: data.borrow,
@@ -156,7 +156,7 @@ library DeltaSharesAndDeltaRealBorrow {
         bool needToRoundUpDividend,
         bool needToRoundUpDivider,
         int256 dividend
-    ) internal pure returns (int256, bool) {
+    ) private pure returns (int256, bool) {
         int256 divider = calculateDividerByDeltaSharesAndDeltaRealBorrow(
             DeltaSharesAndDeltaRealBorrowDividerData({
                 targetLtvDividend: data.targetLtvDividend,
@@ -185,7 +185,7 @@ library DeltaSharesAndDeltaRealBorrow {
         DeltaSharesAndDeltaRealBorrowData memory data,
         int256 cacheDividend,
         bool cache
-    ) internal pure returns (int256, Cases memory, bool) {
+    ) private pure returns (int256, Cases memory, bool) {
         data.cases = CasesOperator.generateCase(0); // cmcb case
 
         int256 deltaFutureBorrow;
@@ -205,7 +205,7 @@ library DeltaSharesAndDeltaRealBorrow {
         DeltaSharesAndDeltaRealBorrowData memory data,
         int256 cacheDividend,
         bool cache
-    ) internal pure returns (int256, Cases memory, bool) {
+    ) private pure returns (int256, Cases memory, bool) {
         data.cases = CasesOperator.generateCase(1); // cmbc case
 
         int256 deltaFutureBorrow;
@@ -224,7 +224,7 @@ library DeltaSharesAndDeltaRealBorrow {
     function calculateCaseCecbDeltaSharesAndDeltaRealBorrow(
         DeltaSharesAndDeltaRealBorrowData memory data,
         int256 cacheDividend
-    ) internal pure returns (int256, Cases memory, bool) {
+    ) private pure returns (int256, Cases memory, bool) {
         data.cases = CasesOperator.generateCase(2); // cecb case
         (int256 deltaFutureBorrow, bool success) =
             calculateSingleCaseCacheDividendDeltaSharesAndDeltaRealBorrow(data, false, false, cacheDividend);
@@ -234,7 +234,7 @@ library DeltaSharesAndDeltaRealBorrow {
     function calculateCaseCebcDeltaSharesAndDeltaRealBorrow(
         DeltaSharesAndDeltaRealBorrowData memory data,
         int256 cacheDividend
-    ) internal pure returns (int256, Cases memory, bool) {
+    ) private pure returns (int256, Cases memory, bool) {
         data.cases = CasesOperator.generateCase(3); // cebc case
         (int256 deltaFutureBorrow, bool success) =
             calculateSingleCaseCacheDividendDeltaSharesAndDeltaRealBorrow(data, true, false, cacheDividend);
@@ -242,7 +242,7 @@ library DeltaSharesAndDeltaRealBorrow {
     }
 
     function calculateCaseCeccbDeltaSharesAndDeltaRealBorrow(DeltaSharesAndDeltaRealBorrowData memory data)
-        internal
+        private
         pure
         returns (int256, Cases memory, bool)
     {
@@ -252,7 +252,7 @@ library DeltaSharesAndDeltaRealBorrow {
     }
 
     function calculateCaseCecbcDeltaSharesAndDeltaRealBorrow(DeltaSharesAndDeltaRealBorrowData memory data)
-        internal
+        private
         pure
         returns (int256, Cases memory, bool)
     {
@@ -270,7 +270,7 @@ library DeltaSharesAndDeltaRealBorrow {
     function neutralDividendDeltaSharesAndDeltaRealBorrow(
         DeltaSharesAndDeltaRealBorrowData memory data,
         bool needToRoundUpDividend
-    ) internal pure returns (int256 dividend) {
+    ) private pure returns (int256 dividend) {
         data.cases = CasesOperator.generateCase(6); // cna case - neutral case
 
         dividend = calculateDividentByDeltaSharesAndDeltaRealBorrow(
@@ -293,7 +293,7 @@ library DeltaSharesAndDeltaRealBorrow {
     }
 
     function positiveFutureBorrowBranchDeltaSharesAndDeltaRealBorrow(DeltaSharesAndDeltaRealBorrowData memory data)
-        internal
+        private
         pure
         returns (int256, Cases memory)
     {
@@ -348,7 +348,7 @@ library DeltaSharesAndDeltaRealBorrow {
     }
 
     function negativeFutureBorrowBranchDeltaSharesAndDeltaRealBorrow(DeltaSharesAndDeltaRealBorrowData memory data)
-        internal
+        private
         pure
         returns (int256, Cases memory)
     {
@@ -402,7 +402,7 @@ library DeltaSharesAndDeltaRealBorrow {
     }
 
     function zeroFutureBorrowBranchDeltaSharesAndDeltaRealBorrow(DeltaSharesAndDeltaRealBorrowData memory data)
-        internal
+        private
         pure
         returns (int256, Cases memory)
     {

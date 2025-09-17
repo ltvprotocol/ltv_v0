@@ -50,6 +50,9 @@ abstract contract PreviewDepositCollateral is VaultCollateral {
         );
     }
 
+    /**
+     * @dev base function to calculate preview deposit in underlying assets
+     */
     function _previewDepositCollateralInUnderlying(uint256 assetsInUnderlying, PreviewCollateralVaultData memory data)
         internal
         pure
