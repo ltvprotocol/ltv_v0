@@ -5,7 +5,7 @@ import {ILowLevelRebalanceErrors} from "src/errors/ILowLevelRebalanceErrors.sol"
 import {LowLevelRebalanceData} from "src/structs/data/low_level/LowLevelRebalanceData.sol";
 import {DeltaRealCollateralFromDeltaSharesData} from
     "src/structs/data/low_level/DeltaRealCollateralFromDeltaSharesData.sol";
-import {SMulDiv} from "src/math/libraries/MulDiv.sol";
+import {SMulDiv, UMulDiv} from "src/math/libraries/MulDiv.sol";
 
 /**
  * @title LowLevelRebalanceMath
@@ -16,6 +16,7 @@ import {SMulDiv} from "src/math/libraries/MulDiv.sol";
  */
 library LowLevelRebalanceMath {
     using SMulDiv for int256;
+    using UMulDiv for uint256;
 
     /**
      * @notice This function calculates delta real collateral from delta shares.
@@ -88,9 +89,10 @@ library LowLevelRebalanceMath {
         if (targetLtvDividend == 0) {
             revert ILowLevelRebalanceErrors.ZeroTargetLtvDisablesBorrow();
         }
-        return (realBorrow + deltaBorrow).mulDivUp(
-            int256(uint256(targetLtvDivider)), int256(uint256(targetLtvDividend))
-        ) - realCollateral;
+        // casting to uint256 is safe because realBorrow and deltaBorrow sum is considered to be greater than zero
+        // forge-lint: disable-next-line(unsafe-typecast)
+        return int256(uint256(realBorrow + deltaBorrow).mulDivUp(uint256(targetLtvDivider), uint256(targetLtvDividend)))
+            - realCollateral;
     }
 
     /**
