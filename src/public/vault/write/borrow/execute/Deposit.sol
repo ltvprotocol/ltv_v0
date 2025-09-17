@@ -111,7 +111,7 @@ abstract contract Deposit is
 
         emit Deposit(msg.sender, receiver, assets, sharesOut);
 
-        _mint(receiver, sharesOut);
+        _mintToUser(receiver, sharesOut);
 
         return sharesOut;
     }
