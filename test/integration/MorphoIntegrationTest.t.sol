@@ -81,7 +81,6 @@ contract MorphoIntegrationTest is Test {
         StateInitData memory stateInitData = StateInitData({
             name: "123",
             symbol: "123",
-            decimals: 18,
             collateralToken: WSTETH,
             borrowToken: WETH,
             feeCollector: address(this),

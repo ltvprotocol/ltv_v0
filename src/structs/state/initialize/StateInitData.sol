@@ -12,7 +12,6 @@ import {ISlippageConnector} from "src/interfaces/connectors/ISlippageConnector.s
 struct StateInitData {
     string name;
     string symbol;
-    uint8 decimals;
     address collateralToken;
     address borrowToken;
     address feeCollector;
