@@ -30,7 +30,6 @@ contract DeployLTVBeaconProxy is BaseScript {
 
         stateInitData.name = vm.envString("NAME");
         stateInitData.symbol = vm.envString("SYMBOL");
-        stateInitData.decimals = uint8(vm.envUint("DECIMALS"));
         stateInitData.collateralToken = vm.envAddress("COLLATERAL_ASSET");
         stateInitData.borrowToken = vm.envAddress("BORROW_ASSET");
         stateInitData.feeCollector = vm.envAddress("FEE_COLLECTOR");
