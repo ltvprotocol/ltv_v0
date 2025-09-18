@@ -149,7 +149,9 @@ def run_script(chain, contract, lending_protocol, private_key = {}, args = {}):
         private_key_part.append(private_key)
         env["DEPLOY"] = "true"
         private_key_part.append("--broadcast")
-
+        if (need_verify(chain)):
+            private_key_part.append("--verify")
+            
     else:
         env["DEPLOY"] = "false"
         
@@ -464,7 +466,7 @@ def upgrade_ghost(chain, lending_protocol, private_key, args_filename):
     run_script(chain, CONTRACTS.GHOST_UPGRADE, lending_protocol, private_key, data)
     print(f"✅ Ghost upgrade is successful")
 
-    
+
 def test_deployed_ltv_beacon_proxy(chain, lending_protocol, args_filename):
     with open(get_deployed_contracts_file_path(chain, lending_protocol, args_filename), "r") as f:
         data = json.load(f)
@@ -487,6 +489,7 @@ def main():
     parser.add_argument('--chain', help='Chain to deploy to. Possible values: mainnet, local-fork-mainnet, local-fork-sepolia, sepolia', required=True)
     parser.add_argument('--lending-protocol', help='Lending protocol to deploy for. Possible values: aave, ghost, morpho', required=True)
     parser.add_argument('--args-filename', help='Name of the args file, stored in the deploy/(chain)/(lending_protocol) folder', required=True)
+    parser.add_argument('--etherscan-api-key', help='Etherscan API key')
     parser.add_argument('--deploy-erc20-module', help='Deploy ERC20 module', action='store_true')
     parser.add_argument('--deploy-borrow-vault-module', help='Deploy Borrow vault module', action='store_true')
     parser.add_argument('--deploy-collateral-vault-module', help='Deploy Collateral vault module', action='store_true')
@@ -506,65 +509,70 @@ def main():
     parser.add_argument('--test-deployed-ltv-beacon-proxy', help='Test deployed LTV beacon proxy', action='store_true')
     parser.add_argument('--upgrade-ghost', help='Upgrade ghost testnet', action='store_true')
     parser.add_argument('--private-key', help='Private key to use for deployment (can also be set via PRIVATE_KEY env var)')
-    
+
     args = parser.parse_args()
-    
+
     # Check for private key from environment variable if not provided as argument
     if not args.private_key:
         args.private_key = os.getenv('PRIVATE_KEY')
         if not args.private_key:
             print("ERROR Private key must be provided either via --private-key argument or PRIVATE_KEY environment variable")
             sys.exit(1)
-    
-    
+
+    if need_verify(args.chain) and not os.getenv("ETHERSCAN_API_KEY"):
+        os.environ["ETHERSCAN_API_KEY"] = args.etherscan_api_key
+        if not os.getenv("ETHERSCAN_API_KEY"):
+            print("ERROR Etherscan API key must be provided via --etherscan-api-key argument or ETHERSCAN_API_KEY environment variable")
+            sys.exit(1)
+
     if args.deploy_erc20_module:
         deploy_erc20_module(args.chain, args.lending_protocol, args.private_key, args.args_filename)
-    
+
     if args.deploy_borrow_vault_module:
         deploy_borrow_vault_module(args.chain, args.lending_protocol, args.private_key, args.args_filename)
-    
+
     if args.deploy_collateral_vault_module:
         deploy_collateral_vault_module(args.chain, args.lending_protocol, args.private_key, args.args_filename)
-    
+
     if args.deploy_low_level_rebalance_module:
         deploy_low_level_rebalance_module(args.chain, args.lending_protocol, args.private_key, args.args_filename)
-    
+
     if args.deploy_auction_module:
         deploy_auction_module(args.chain, args.lending_protocol, args.private_key, args.args_filename)
-    
+
     if args.deploy_administration_module:
         deploy_administration_module(args.chain, args.lending_protocol, args.private_key, args.args_filename)
-    
+
     if args.deploy_initialize_module:
         deploy_initialize_module(args.chain, args.lending_protocol, args.private_key, args.args_filename)
-    
+
     if args.deploy_modules_provider:
         deploy_modules_provider(args.chain, args.lending_protocol, args.private_key, args.args_filename)
-    
+
     if args.deploy_ltv:
         deploy_ltv(args.chain, args.lending_protocol, args.private_key, args.args_filename)
-    
+
     if args.deploy_beacon:
         deploy_beacon(args.chain, args.lending_protocol, args.private_key, args.args_filename)
-    
+
     if args.deploy_whitelist_registry:
         deploy_whitelist_registry(args.chain, args.lending_protocol, args.private_key, args.args_filename)
-    
+
     if args.deploy_vault_balance_as_lending_connector:
         deploy_vault_balance_as_lending_connector(args.chain, args.lending_protocol, args.private_key, args.args_filename)
-    
+
     if args.deploy_constant_slippage_connector:
         deploy_constant_slippage_connector(args.chain, args.lending_protocol, args.private_key, args.args_filename)
-    
+
     if args.deploy_oracle_connector:
         deploy_oracle_connector(args.chain, args.lending_protocol, args.private_key, args.args_filename)
-    
+
     if args.deploy_lending_connector:
         deploy_lending_connector(args.chain, args.lending_protocol, args.private_key, args.args_filename)
-    
+
     if args.deploy_ltv_beacon_proxy:
         deploy_ltv_beacon_proxy(args.chain, args.lending_protocol, args.private_key, args.args_filename)
-    
+
     if args.full_deploy:
         deploy_erc20_module(args.chain, args.lending_protocol, args.private_key, args.args_filename)
         deploy_borrow_vault_module(args.chain, args.lending_protocol, args.private_key, args.args_filename)
@@ -600,7 +608,6 @@ def main():
         deploy_lending_connector(args.chain, args.lending_protocol, args.private_key, args.args_filename)
         upgrade_ghost(args.chain, args.lending_protocol, args.private_key, args.args_filename)
 
-    
     if args.test_deployed_ltv_beacon_proxy:
         test_deployed_ltv_beacon_proxy(args.chain, args.lending_protocol, args.args_filename)
 
