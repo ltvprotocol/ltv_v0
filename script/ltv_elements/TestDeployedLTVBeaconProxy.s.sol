@@ -17,7 +17,7 @@ contract TestDeployedOnForkLTVBeaconProxy is Script, StdCheats, StdAssertions {
         vm.startPrank(random);
         deal(collateralToken, random, type(uint256).max);
         IERC20(collateralToken).approve(address(ltv), type(uint256).max);
-        int256 maxLowLevelRebalanceCollateral = ltv.maxLowLevelRebalanceCollateral() / 10;
+        int256 maxLowLevelRebalanceCollateral = ltv.maxLowLevelRebalanceCollateral();
         ltv.executeLowLevelRebalanceCollateralHint(maxLowLevelRebalanceCollateral, true);
 
         address borrowToken = ltv.borrowToken();
