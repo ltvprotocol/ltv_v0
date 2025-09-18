@@ -130,7 +130,6 @@ contract BaseTest is Test {
             StateInitData memory initData = StateInitData({
                 name: "Dummy LTV",
                 symbol: "DLTV",
-                decimals: 18,
                 collateralToken: address(collateralToken),
                 borrowToken: address(borrowToken),
                 feeCollector: init.feeCollector,

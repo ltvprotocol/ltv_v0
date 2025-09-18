@@ -65,7 +65,6 @@ contract AaveV3ConnectorTest is Test {
         StateInitData memory stateInitData = StateInitData({
             name: "AAVE LTV",
             symbol: "ALTV",
-            decimals: 18,
             collateralToken: WSTETH,
             borrowToken: WETH,
             feeCollector: address(this),
