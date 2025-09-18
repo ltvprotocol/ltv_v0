@@ -23,7 +23,7 @@ contract AdministrationSetters is BoolWriter, BoolReader, IAdministrationErrors,
         require(dividend >= 0 && dividend < divider, UnexpectedtargetLtv(dividend, divider));
         require(
             uint256(dividend) * maxSafeLtvDivider <= uint256(divider) * maxSafeLtvDividend
-                && dividend * minProfitLtvDivider >= minProfitLtvDividend * divider,
+                && uint256(dividend) * minProfitLtvDivider >= minProfitLtvDividend * uint256(divider),
             InvalidLTVSet(
                 dividend, divider, maxSafeLtvDividend, maxSafeLtvDivider, minProfitLtvDividend, minProfitLtvDivider
             )
