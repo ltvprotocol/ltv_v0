@@ -24,8 +24,7 @@ abstract contract WhitelistModifier is LTVState, BoolReader, IAdministrationErro
      */
     function _isReceiverWhitelisted(address receiver) private view {
         require(
-            !_isWhitelistActivated(boolSlot) || receiver == feeCollector
-                || whitelistRegistry.isAddressWhitelisted(receiver),
+            !_isWhitelistActivated(boolSlot) || whitelistRegistry.isAddressWhitelisted(receiver),
             ReceiverNotWhitelisted(receiver)
         );
     }

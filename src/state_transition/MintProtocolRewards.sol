@@ -27,6 +27,6 @@ abstract contract MintProtocolRewards is ERC20 {
         uint256 shares = rewardsInUnderlying.mulDivDown(10 ** data.assetTokenDecimals, data.assetPrice).mulDivDown(
             data.supply, data.totalAppropriateAssets
         );
-        _mint(feeCollector, shares);
+        _mintToFeeCollector(shares);
     }
 }

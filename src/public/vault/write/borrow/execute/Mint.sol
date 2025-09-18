@@ -110,7 +110,7 @@ abstract contract Mint is
 
         emit Deposit(msg.sender, receiver, assetsOut, shares);
 
-        _mint(receiver, shares);
+        _mintToUser(receiver, shares);
 
         return assetsOut;
     }

@@ -129,8 +129,8 @@ library CommonBorrowCollateral {
             return deltaProtocolFutureRewardCollateral;
         }
 
-        deltaProtocolFutureRewardCollateral +=
-            int256(int8(ncase.cecb)) * protocolFutureRewardCollateral.mulDivUp(deltaFutureCollateral, futureCollateral);
+        deltaProtocolFutureRewardCollateral += int256(int8(ncase.cecb))
+            * protocolFutureRewardCollateral.mulDivDown(deltaFutureCollateral, futureCollateral);
         return deltaProtocolFutureRewardCollateral;
     }
 

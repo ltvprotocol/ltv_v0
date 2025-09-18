@@ -42,7 +42,7 @@ abstract contract ExecuteLowLevelRebalance is
             // casting to uint256 is safe because deltaProtocolFutureRewardShares is checked to be positive
             // and therefore it is smaller than type(uint256).max
             // forge-lint: disable-next-line(unsafe-typecast)
-            _mint(feeCollector, uint256(deltaProtocolFutureRewardShares));
+            _mintToFeeCollector(uint256(deltaProtocolFutureRewardShares));
         }
 
         if (deltaShares < 0) {
@@ -92,7 +92,7 @@ abstract contract ExecuteLowLevelRebalance is
             // casting to uint256 is safe because deltaShares is checked to be positive
             // and therefore it is smaller than type(uint256).max
             // forge-lint: disable-next-line(unsafe-typecast)
-            _mint(msg.sender, uint256(deltaShares));
+            _mintToUser(msg.sender, uint256(deltaShares));
         }
 
         emit LowLevelRebalanceExecuted(msg.sender, deltaRealCollateralAsset, deltaRealBorrowAssets, deltaShares);

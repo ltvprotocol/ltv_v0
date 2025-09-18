@@ -118,7 +118,7 @@ abstract contract MintCollateral is
 
         emit DepositCollateral(msg.sender, receiver, assetsOut, shares);
 
-        _mint(receiver, shares);
+        _mintToUser(receiver, shares);
 
         return assetsOut;
     }
