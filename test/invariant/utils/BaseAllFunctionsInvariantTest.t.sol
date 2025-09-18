@@ -23,7 +23,7 @@ contract BaseAllFunctionsInvariantTest is BaseInvariantTest {
         vm.stopPrank();
     }
 
-    function afterInvariant() public view override {
+    function afterInvariant() public view virtual override {
         // Call parent to check max growth fee
         super.afterInvariant();
 
