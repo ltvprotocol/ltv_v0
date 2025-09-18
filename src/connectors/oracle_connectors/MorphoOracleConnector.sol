@@ -20,7 +20,7 @@ contract MorphoOracleConnector is LTVState, IOracleConnector {
      * @inheritdoc IOracleConnector
      */
     function getPriceCollateralOracle(bytes calldata oracleConnectorData) external view returns (uint256) {
-        (,uint8 collateralTokenDecimals) = abi.decode(oracleConnectorData, (uint8, uint8));
+        (, uint8 collateralTokenDecimals) = abi.decode(oracleConnectorData, (uint8, uint8));
         return ORACLE.price() / 10 ** collateralTokenDecimals;
     }
 
