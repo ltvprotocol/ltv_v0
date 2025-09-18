@@ -1,5 +1,5 @@
 """
-Simple Foundry Build Script
+Deployment Orchestrator for LTV Protocol Contracts
 """
 
 import subprocess
@@ -458,11 +458,11 @@ def upgrade_ghost(chain, lending_protocol, private_key, args_filename):
         data.update(json.load(f))
     
     if not get_contract_is_deployed(chain, CONTRACTS.SLIPPAGE_CONNECTOR, lending_protocol, args_filename, data):
-        print(f"❌ Slippage connector must be deployed first")
+        print(f"ERROR Slippage connector must be deployed first")
         sys.exit(1)
     
     run_script(chain, CONTRACTS.GHOST_UPGRADE, lending_protocol, private_key, data)
-    print(f"✅ Ghost upgrade is successful")
+    print(f"SUCCESS Ghost upgrade is successful")
 
     
 def test_deployed_ltv_beacon_proxy(chain, lending_protocol, args_filename):
