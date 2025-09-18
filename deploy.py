@@ -520,10 +520,11 @@ def main():
             sys.exit(1)
 
     if need_verify(args.chain) and not os.getenv("ETHERSCAN_API_KEY"):
-        os.environ["ETHERSCAN_API_KEY"] = args.etherscan_api_key
-        if not os.getenv("ETHERSCAN_API_KEY"):
+        if not args.etherscan_api_key:
             print("ERROR Etherscan API key must be provided via --etherscan-api-key argument or ETHERSCAN_API_KEY environment variable")
             sys.exit(1)
+        else:
+            os.environ["ETHERSCAN_API_KEY"] = args.etherscan_api_key
 
     if args.deploy_erc20_module:
         deploy_erc20_module(args.chain, args.lending_protocol, args.private_key, args.args_filename)
