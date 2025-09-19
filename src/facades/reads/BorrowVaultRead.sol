@@ -104,6 +104,6 @@ abstract contract BorrowVaultRead is
     }
 
     function asset() external view returns (address) {
-        return modules.borrowVaultModule().asset();
+        return address(borrowToken);
     }
 }

@@ -7,7 +7,6 @@ import {RedeemCollateral} from "src/public/vault/write/collateral/execute/Redeem
 import {WithdrawCollateral} from "src/public/vault/write/collateral/execute/WithdrawCollateral.sol";
 import {ConvertToAssetsCollateral} from "src/public/vault/read/collateral/convert/ConvertToAssetsCollateral.sol";
 import {ConvertToSharesCollateral} from "src/public/vault/read/collateral/convert/ConvertToSharesCollateral.sol";
-import {AssetCollateral} from "src/public/vault/read/collateral/AssetCollateral.sol";
 
 /**
  * @title CollateralVaultModule
@@ -19,8 +18,7 @@ contract CollateralVaultModule is
     RedeemCollateral,
     WithdrawCollateral,
     ConvertToAssetsCollateral,
-    ConvertToSharesCollateral,
-    AssetCollateral
+    ConvertToSharesCollateral
 {
     constructor() {
         _disableInitializers();
