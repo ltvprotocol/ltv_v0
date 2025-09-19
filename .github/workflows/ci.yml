@@ -28,7 +28,7 @@ jobs:
         run: forge build --skip test --sizes
 
       - name: Run lint
-        run: $([ -n "$(export FOUNDRY_DISABLE_NIGHTLY_WARNING=1; forge lint 2>&1)" ] && exit 1 || exit 0)
+        run: FOUNDRY_DISABLE_NIGHTLY_WARNING=1 forge lint && $([ -n "$(forge lint -q 2>&1)" ] && exit 1 || exit 0)
 
   test:
     runs-on: ubuntu-latest

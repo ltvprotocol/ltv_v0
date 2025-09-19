@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {Constants} from "src/constants/Constants.sol";
 import {MaxWithdrawRedeemBorrowVaultState} from "src/structs/state/vault/max/MaxWithdrawRedeemBorrowVaultState.sol";
 import {MaxWithdrawRedeemBorrowVaultData} from "src/structs/data/vault/max/MaxWithdrawRedeemBorrowVaultData.sol";
 import {PreviewWithdraw} from "src/public/vault/read/borrow/preview/PreviewWithdraw.sol";
@@ -33,28 +32,34 @@ abstract contract MaxRedeem is PreviewWithdraw, PreviewRedeem {
             return 0;
         }
 
-        uint256 maxWithdrawInAssets = (maxSafeRealBorrow - uint256(data.realBorrow)).mulDivDown(
-            Constants.ORACLE_DIVIDER, data.previewWithdrawBorrowVaultData.borrowPrice
-        );
+        uint256 maxVaultWithdrawInUnderlying = maxSafeRealBorrow - uint256(data.realBorrow);
 
-        if (maxWithdrawInAssets <= 3) {
+        if (maxVaultWithdrawInUnderlying <= 3) {
             return 0;
         }
 
-        (uint256 maxWithdrawInShares,) = _previewWithdraw(maxWithdrawInAssets - 3, data.previewWithdrawBorrowVaultData);
+        (uint256 maxWithdrawSharesInUnderlying,) =
+            _previewWithdrawInUnderlying(maxVaultWithdrawInUnderlying - 3, data.previewWithdrawBorrowVaultData);
 
         (uint256 maxWithdrawInAssetsWithDelta,) =
-            _previewRedeem(maxWithdrawInShares, data.previewWithdrawBorrowVaultData);
+            _previewRedeemInUnderlying(maxWithdrawSharesInUnderlying, data.previewWithdrawBorrowVaultData);
 
-        if (maxWithdrawInAssetsWithDelta > maxWithdrawInAssets) {
-            uint256 delta = maxWithdrawInAssetsWithDelta + 3 - maxWithdrawInAssets;
-            if (maxWithdrawInShares < 2 * delta) {
+        if (maxWithdrawInAssetsWithDelta > maxVaultWithdrawInUnderlying) {
+            uint256 delta = maxWithdrawInAssetsWithDelta + 3 - maxVaultWithdrawInUnderlying;
+            if (maxWithdrawSharesInUnderlying < 2 * delta) {
                 return 0;
             }
-            maxWithdrawInShares = maxWithdrawInShares - 2 * delta;
+            maxWithdrawSharesInUnderlying = maxWithdrawSharesInUnderlying - 2 * delta;
         }
 
+        uint256 maxVaultWithdrawInShares = maxWithdrawSharesInUnderlying.mulDivDown(
+            10 ** data.previewWithdrawBorrowVaultData.borrowTokenDecimals,
+            data.previewWithdrawBorrowVaultData.borrowPrice
+        ).mulDivDown(
+            data.previewWithdrawBorrowVaultData.supplyAfterFee, data.previewWithdrawBorrowVaultData.withdrawTotalAssets
+        );
+
         // round down to assume smaller border
-        return data.ownerBalance < maxWithdrawInShares ? data.ownerBalance : maxWithdrawInShares;
+        return data.ownerBalance < maxVaultWithdrawInShares ? data.ownerBalance : maxVaultWithdrawInShares;
     }
 }

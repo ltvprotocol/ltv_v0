@@ -16,6 +16,7 @@ contract DeployWhitelistRegistry is BaseScript {
 
     function hashedCreationCode() internal view override returns (bytes32) {
         address owner = vm.envAddress("WHITELIST_OWNER");
-        return keccak256(abi.encodePacked(type(WhitelistRegistry).creationCode, abi.encode(owner)));
+        address whitelistSigner = vm.envAddress("WHITELIST_SIGNER");
+        return keccak256(abi.encodePacked(type(WhitelistRegistry).creationCode, abi.encode(owner, whitelistSigner)));
     }
 }

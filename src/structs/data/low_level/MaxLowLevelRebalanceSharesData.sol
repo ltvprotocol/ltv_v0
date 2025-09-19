@@ -11,5 +11,6 @@ struct MaxLowLevelRebalanceSharesData {
     uint256 maxTotalAssetsInUnderlying;
     uint256 supplyAfterFee;
     uint256 borrowPrice;
+    uint8 borrowTokenDecimals;
     uint256 depositTotalAssets;
 }

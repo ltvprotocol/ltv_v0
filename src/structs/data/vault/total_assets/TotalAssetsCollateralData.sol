@@ -9,4 +9,6 @@ struct TotalAssetsCollateralData {
     uint256 totalAssets;
     uint256 collateralPrice;
     uint256 borrowPrice;
+    uint8 borrowTokenDecimals;
+    uint8 collateralTokenDecimals;
 }

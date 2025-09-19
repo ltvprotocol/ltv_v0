@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {BaseTest, BaseTestInit} from "test/utils/BaseTest.t.sol";
+import {BaseTest, BaseTestInit, BaseTestInitWithSpecificDecimals} from "test/utils/BaseTest.t.sol";
 import {BaseInvariantWrapper} from "test/invariant/utils/BaseInvariantWrapper.t.sol";
 import {DynamicLending, MockDynamicLending} from "test/invariant/utils/DynamicLending.t.sol";
 import {DynamicOracle} from "test/invariant/utils/DynamicOracle.t.sol";
@@ -32,6 +32,8 @@ abstract contract BaseInvariantTest is BaseTest {
      * 4. Deploys and configures dynamic oracle and lending protocol mocks
      */
     function setUp() public virtual {
+        uint8 collateralTokenDecimals = _getCollateralTokenDecimals();
+        uint8 borrowTokenDecimals = _getBorrowTokenDecimals();
         // Initialize LTV protocol with test parameters
         BaseTestInit memory init = BaseTestInit({
             owner: address(1),
@@ -45,9 +47,9 @@ abstract contract BaseInvariantTest is BaseTest {
             startAuction: 0,
             collateralSlippage: 10 ** 16, // 1% slippage tolerance
             borrowSlippage: 10 ** 16, // 1% slippage tolerance
-            maxTotalAssetsInUnderlying: type(uint128).max,
-            collateralAssets: 2 * 10 ** 19, // 20 collateral tokens
-            borrowAssets: 35 * 10 ** 18, // 35 borrow tokens
+            maxTotalAssetsInUnderlying: type(uint120).max,
+            collateralAssets: 20 * 10 ** collateralTokenDecimals, // 20 collateral tokens
+            borrowAssets: 35 * 10 ** borrowTokenDecimals, // 35 borrow tokens
             maxSafeLtvDividend: 9, // 90% max safe LTV
             maxSafeLtvDivider: 10, // 90% max safe LTV
             minProfitLtvDividend: 5, // 50% min profit LTV
@@ -63,8 +65,14 @@ abstract contract BaseInvariantTest is BaseTest {
             zeroAddressTokens: 4 * 10 ** 19 - 35 * 10 ** 18 // adjust initial share price to be 1
         });
 
+        BaseTestInitWithSpecificDecimals memory initWithSpecificDecimals = BaseTestInitWithSpecificDecimals({
+            baseTestInit: init,
+            collateralTokenDecimals: collateralTokenDecimals,
+            borrowTokenDecimals: borrowTokenDecimals
+        });
+
         // Initialize the test environment
-        initializeTest(init);
+        initializeTestWithSpecificDecimals(initWithSpecificDecimals);
 
         // Start from block 0 for consistent testing
         vm.roll(0);
@@ -139,5 +147,21 @@ abstract contract BaseInvariantTest is BaseTest {
             _testActors[i] = address(uint160(i + 1));
         }
         return _testActors;
+    }
+
+    /**
+     * @dev Abstract function to return the collateral token decimals
+     * @return Collateral token decimals
+     */
+    function _getCollateralTokenDecimals() internal virtual returns (uint8) {
+        return 18;
+    }
+
+    /**
+     * @dev Abstract function to return the borrow token decimals
+     * @return Borrow token decimals
+     */
+    function _getBorrowTokenDecimals() internal virtual returns (uint8) {
+        return 18;
     }
 }

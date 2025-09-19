@@ -84,6 +84,7 @@ abstract contract BaseVaultInvariantWrapper is BaseInvariantWrapper {
         // Bound the amount to valid range
         amount = bound(amount, 1, maxWithdraw);
 
+        deal(ltv.borrowToken(), _currentTestActor, 0);
         // Capture state before operation
         captureInvariantState();
 
@@ -158,6 +159,7 @@ abstract contract BaseVaultInvariantWrapper is BaseInvariantWrapper {
         // Bound the amount to valid range
         amount = bound(amount, 1, maxRedeem);
 
+        deal(ltv.borrowToken(), _currentTestActor, 0);
         // Capture state before operation
         captureInvariantState();
 
@@ -229,6 +231,7 @@ abstract contract BaseVaultInvariantWrapper is BaseInvariantWrapper {
         // Bound the amount to valid range
         amount = bound(amount, 1, maxWithdraw);
 
+        deal(ltv.collateralToken(), _currentTestActor, 0);
         // Capture state before operation
         captureInvariantState();
 
@@ -304,6 +307,8 @@ abstract contract BaseVaultInvariantWrapper is BaseInvariantWrapper {
         amount = bound(amount, 1, maxRedeem);
 
         // Capture state before operation
+
+        deal(ltv.collateralToken(), _currentTestActor, 0);
         captureInvariantState();
 
         // Execute collateral redemption and track changes

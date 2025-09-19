@@ -88,6 +88,10 @@ abstract contract BaseLowLevelRebalanceInvariantWrapper is BaseInvariantWrapper 
             }
         }
 
+        if (-_expectedLtvDelta > int256(ltv.balanceOf(_currentTestActor))) {
+            deal(address(ltv), _currentTestActor, uint256(-_expectedLtvDelta));
+        }
+
         // Capture state before operation
         captureInvariantState();
 
@@ -145,6 +149,10 @@ abstract contract BaseLowLevelRebalanceInvariantWrapper is BaseInvariantWrapper 
             if (IERC20(ltv.borrowToken()).allowance(_currentTestActor, address(ltv)) < uint256(-amount)) {
                 IERC20(ltv.borrowToken()).approve(address(ltv), uint256(-amount));
             }
+        }
+
+        if (-_expectedLtvDelta > int256(ltv.balanceOf(_currentTestActor))) {
+            deal(address(ltv), _currentTestActor, uint256(-_expectedLtvDelta));
         }
 
         // Capture state before operation
@@ -206,6 +214,10 @@ abstract contract BaseLowLevelRebalanceInvariantWrapper is BaseInvariantWrapper 
             }
         }
 
+        if (-_expectedLtvDelta > int256(ltv.balanceOf(_currentTestActor))) {
+            deal(address(ltv), _currentTestActor, uint256(-_expectedLtvDelta));
+        }
+
         // Capture state before operation
         captureInvariantState();
 
@@ -260,6 +272,10 @@ abstract contract BaseLowLevelRebalanceInvariantWrapper is BaseInvariantWrapper 
             if (IERC20(ltv.collateralToken()).allowance(_currentTestActor, address(ltv)) < uint256(amount)) {
                 IERC20(ltv.collateralToken()).approve(address(ltv), uint256(amount));
             }
+        }
+
+        if (-_expectedLtvDelta > int256(ltv.balanceOf(_currentTestActor))) {
+            deal(address(ltv), _currentTestActor, uint256(-_expectedLtvDelta));
         }
 
         // Capture state before operation
@@ -318,6 +334,10 @@ abstract contract BaseLowLevelRebalanceInvariantWrapper is BaseInvariantWrapper 
             if (IERC20(ltv.borrowToken()).allowance(_currentTestActor, address(ltv)) < uint256(-_expectedBorrowDelta)) {
                 IERC20(ltv.borrowToken()).approve(address(ltv), uint256(-_expectedBorrowDelta));
             }
+        }
+
+        if (-_expectedLtvDelta > int256(ltv.balanceOf(_currentTestActor))) {
+            deal(address(ltv), _currentTestActor, uint256(-_expectedLtvDelta));
         }
 
         // Capture state before operation

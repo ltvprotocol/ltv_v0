@@ -184,7 +184,7 @@ library DeltaRealBorrowAndDeltaRealCollateral {
         DeltaRealBorrowAndDeltaRealCollateralData memory data,
         bool needToRoundUpDividend,
         bool needToRoundUpDivider
-    ) internal pure returns (int256, bool) {
+    ) private pure returns (int256, bool) {
         int256 deltaFutureCollateral;
 
         int256 dividend = calculateDividendByDeltaRealBorrowAndDeltaRealCollateral(
@@ -242,7 +242,7 @@ library DeltaRealBorrowAndDeltaRealCollateral {
         bool needToRoundUpDividend,
         bool needToRoundUpDivider,
         int256 dividend
-    ) internal pure returns (int256, bool) {
+    ) private pure returns (int256, bool) {
         int256 deltaFutureCollateral;
 
         int256 divider = calculateDividerByDeltaRealBorrowAndDeltaRealCollateral(
@@ -278,7 +278,7 @@ library DeltaRealBorrowAndDeltaRealCollateral {
         DeltaRealBorrowAndDeltaRealCollateralData memory data,
         int256 cacheDividend,
         bool cache
-    ) internal pure returns (int256, Cases memory, bool) {
+    ) private pure returns (int256, Cases memory, bool) {
         data.cases = CasesOperator.generateCase(0); // cmcb case
 
         int256 deltaFutureCollateral;
@@ -298,7 +298,7 @@ library DeltaRealBorrowAndDeltaRealCollateral {
         DeltaRealBorrowAndDeltaRealCollateralData memory data,
         int256 cacheDividend,
         bool cache
-    ) internal pure returns (int256, Cases memory, bool) {
+    ) private pure returns (int256, Cases memory, bool) {
         data.cases = CasesOperator.generateCase(1); // cmbc case
 
         int256 deltaFutureCollateral;
@@ -317,7 +317,7 @@ library DeltaRealBorrowAndDeltaRealCollateral {
     function calculateCaseCecbDeltaRealBorrowAndDeltaRealCollateral(
         DeltaRealBorrowAndDeltaRealCollateralData memory data,
         int256 cacheDividend
-    ) internal pure returns (int256, Cases memory, bool) {
+    ) private pure returns (int256, Cases memory, bool) {
         data.cases = CasesOperator.generateCase(2); // cecb case
         (int256 deltaFutureCollateral, bool success) =
             calculateSingleCaseCacheDividendDeltaRealBorrowAndDeltaRealCollateral(data, true, true, cacheDividend);
@@ -327,7 +327,7 @@ library DeltaRealBorrowAndDeltaRealCollateral {
     function calculateCaseCebcDeltaRealBorrowAndDeltaRealCollateral(
         DeltaRealBorrowAndDeltaRealCollateralData memory data,
         int256 cacheDividend
-    ) internal pure returns (int256, Cases memory, bool) {
+    ) private pure returns (int256, Cases memory, bool) {
         data.cases = CasesOperator.generateCase(3); // cebc case
         (int256 deltaFutureCollateral, bool success) =
             calculateSingleCaseCacheDividendDeltaRealBorrowAndDeltaRealCollateral(data, false, true, cacheDividend);
@@ -336,7 +336,7 @@ library DeltaRealBorrowAndDeltaRealCollateral {
 
     function calculateCaseCeccbDeltaRealBorrowAndDeltaRealCollateral(
         DeltaRealBorrowAndDeltaRealCollateralData memory data
-    ) internal pure returns (int256, Cases memory, bool) {
+    ) private pure returns (int256, Cases memory, bool) {
         data.cases = CasesOperator.generateCase(4); // ceccb case
         (int256 deltaFutureCollateral, bool success) =
             calculateSingleCaseDeltaRealBorrowAndDeltaRealCollateral(data, false, false);
@@ -345,7 +345,7 @@ library DeltaRealBorrowAndDeltaRealCollateral {
 
     function calculateCaseCecbcDeltaRealBorrowAndDeltaRealCollateral(
         DeltaRealBorrowAndDeltaRealCollateralData memory data
-    ) internal pure returns (int256, Cases memory, bool) {
+    ) private pure returns (int256, Cases memory, bool) {
         data.cases = CasesOperator.generateCase(5); // cecbc case
         (int256 deltaFutureCollateral, bool success) =
             calculateSingleCaseDeltaRealBorrowAndDeltaRealCollateral(data, true, false);
@@ -355,7 +355,7 @@ library DeltaRealBorrowAndDeltaRealCollateral {
     function neutralDividendDeltaRealBorrowAndDeltaRealCollateral(
         DeltaRealBorrowAndDeltaRealCollateralData memory data,
         bool needToRoundUpDividend
-    ) internal pure returns (int256 dividend) {
+    ) private pure returns (int256 dividend) {
         data.cases = CasesOperator.generateCase(6); // cna case - neutral case
 
         dividend = calculateDividendByDeltaRealBorrowAndDeltaRealCollateral(
@@ -382,7 +382,7 @@ library DeltaRealBorrowAndDeltaRealCollateral {
 
     function positiveFutureCollateralBranchDeltaRealBorrowAndDeltaRealCollateral(
         DeltaRealBorrowAndDeltaRealCollateralData memory data
-    ) internal pure returns (int256, Cases memory) {
+    ) private pure returns (int256, Cases memory) {
         int256 deltaFutureCollateral;
         Cases memory cases;
         bool success;
@@ -437,7 +437,7 @@ library DeltaRealBorrowAndDeltaRealCollateral {
 
     function negativeFutureCollateralBranchDeltaRealBorrowAndDeltaRealCollateral(
         DeltaRealBorrowAndDeltaRealCollateralData memory data
-    ) internal pure returns (int256, Cases memory) {
+    ) private pure returns (int256, Cases memory) {
         int256 deltaFutureCollateral;
         Cases memory cases;
         bool success;
@@ -492,7 +492,7 @@ library DeltaRealBorrowAndDeltaRealCollateral {
 
     function zeroFutureCollateralBranchDeltaRealBorrowAndDeltaRealCollateral(
         DeltaRealBorrowAndDeltaRealCollateralData memory data
-    ) internal pure returns (int256, Cases memory) {
+    ) private pure returns (int256, Cases memory) {
         int256 deltaFutureCollateral;
         Cases memory cases;
         bool success;

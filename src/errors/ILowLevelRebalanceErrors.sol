@@ -42,5 +42,5 @@ interface ILowLevelRebalanceErrors {
      * @dev This error occurs when the target Loan-to-Value ratio is set to zero,
      *      making it impossible to perform borrow operations during rebalancing
      */
-    error ZerotargetLtvDisablesBorrow();
+    error ZeroTargetLtvDisablesBorrow();
 }

@@ -13,4 +13,6 @@ struct CommonTotalAssetsState {
     int256 futureRewardCollateralAssets;
     uint256 borrowPrice;
     uint256 collateralPrice;
+    uint8 borrowTokenDecimals;
+    uint8 collateralTokenDecimals;
 }

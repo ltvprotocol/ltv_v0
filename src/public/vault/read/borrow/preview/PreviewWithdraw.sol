@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {Constants} from "src/constants/Constants.sol";
 import {DepositWithdrawData} from "src/structs/data/vault/common/DepositWithdrawData.sol";
 import {PreviewWithdrawVaultState} from "src/structs/state/vault/preview/PreviewWithdrawVaultState.sol";
 import {PreviewWithdrawBorrowVaultData} from "src/structs/data/vault/preview/PreviewWithdrawBorrowVaultData.sol";
@@ -37,7 +36,27 @@ abstract contract PreviewWithdraw is Vault {
         returns (uint256, DeltaFuture memory)
     {
         // depositor/withdrawer <=> HODLer conflict, assume user withdraws more to burn more shares
-        uint256 assetsInUnderlying = assets.mulDivUp(data.borrowPrice, Constants.ORACLE_DIVIDER);
+        uint256 assetsInUnderlying = assets.mulDivUp(data.borrowPrice, 10 ** data.borrowTokenDecimals);
+        (uint256 sharesInUnderlying, DeltaFuture memory deltaFuture) =
+            _previewWithdrawInUnderlying(assetsInUnderlying, data);
+
+        // HODLer <=> withdrawer conflict, round in favor of HODLer, round up to burn more shares
+        return (
+            sharesInUnderlying.mulDivUp(10 ** data.borrowTokenDecimals, data.borrowPrice).mulDivUp(
+                data.supplyAfterFee, data.withdrawTotalAssets
+            ),
+            deltaFuture
+        );
+    }
+
+    /**
+     * @dev base function to calculate preview deposit in underlying assets
+     */
+    function _previewWithdrawInUnderlying(uint256 assetsInUnderlying, PreviewWithdrawBorrowVaultData memory data)
+        internal
+        pure
+        returns (uint256, DeltaFuture memory)
+    {
         (int256 sharesInUnderlying, DeltaFuture memory deltaFuture) = DepositWithdraw.calculateDepositWithdraw(
             DepositWithdrawData({
                 collateral: data.collateral,
@@ -63,14 +82,8 @@ abstract contract PreviewWithdraw is Vault {
             return (0, deltaFuture);
         }
 
-        // HODLer <=> withdrawer conflict, round in favor of HODLer, round up to burn more shares
-        return (
-            // casting to uint256 is safe because sharesInUnderlying is checked to be negative
-            // forge-lint: disable-next-line(unsafe-typecast)
-            uint256(-sharesInUnderlying).mulDivUp(Constants.ORACLE_DIVIDER, data.borrowPrice).mulDivUp(
-                data.supplyAfterFee, data.withdrawTotalAssets
-            ),
-            deltaFuture
-        );
+        // casting to uint256 is safe because sharesInUnderlying is checked to be negative
+        // forge-lint: disable-next-line(unsafe-typecast)
+        return (uint256(-sharesInUnderlying), deltaFuture);
     }
 }

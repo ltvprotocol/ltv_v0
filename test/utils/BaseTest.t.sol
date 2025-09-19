@@ -60,6 +60,12 @@ struct BaseTestInit {
     uint256 zeroAddressTokens;
 }
 
+struct BaseTestInitWithSpecificDecimals {
+    BaseTestInit baseTestInit;
+    uint8 collateralTokenDecimals;
+    uint8 borrowTokenDecimals;
+}
+
 struct DefaultTestData {
     address owner;
     address guardian;
@@ -79,17 +85,28 @@ contract BaseTest is Test {
     DummyOracleConnector public oracleConnector;
     DummyLendingConnector public lendingConnector;
 
+    function initializeTestWithSpecificDecimals(BaseTestInitWithSpecificDecimals memory init) internal {
+        collateralToken = new MockERC20();
+        collateralToken.initialize("Collateral", "COL", init.collateralTokenDecimals);
+        borrowToken = new MockERC20();
+        borrowToken.initialize("Borrow", "BOR", init.borrowTokenDecimals);
+        _initializeTest(init.baseTestInit);
+    }
+
     function initializeTest(BaseTestInit memory init) internal {
+        collateralToken = new MockERC20();
+        collateralToken.initialize("Collateral", "COL", 18);
+        borrowToken = new MockERC20();
+        borrowToken.initialize("Borrow", "BOR", 18);
+        _initializeTest(init);
+    }
+
+    function _initializeTest(BaseTestInit memory init) private {
         vm.assume(init.owner != address(0));
         vm.assume(init.guardian != address(0));
         vm.assume(init.governor != address(0));
         vm.assume(init.emergencyDeleverager != address(0));
         vm.assume(init.feeCollector != address(0));
-
-        collateralToken = new MockERC20();
-        collateralToken.initialize("Collateral", "COL", 18);
-        borrowToken = new MockERC20();
-        borrowToken.initialize("Borrow", "BOR", 18);
 
         lendingProtocol = new MockDummyLending(init.owner);
         oracle = IDummyOracle(new DummyOracle());
@@ -113,7 +130,6 @@ contract BaseTest is Test {
             StateInitData memory initData = StateInitData({
                 name: "Dummy LTV",
                 symbol: "DLTV",
-                decimals: 18,
                 collateralToken: address(collateralToken),
                 borrowToken: address(borrowToken),
                 feeCollector: init.feeCollector,

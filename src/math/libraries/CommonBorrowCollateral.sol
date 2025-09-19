@@ -37,13 +37,14 @@ library CommonBorrowCollateral {
 
         int256 deltaFutureBorrow =
             int256(int8(ncase.cna + ncase.cmcb + ncase.cmbc + ncase.ceccb + ncase.cecbc)) * deltaFutureCollateral;
+        deltaFutureBorrow += int256(int8(ncase.ceccb + ncase.cecbc)) * (futureCollateral - futureBorrow);
+
         if (futureCollateral == 0) {
             return deltaFutureBorrow;
         }
 
         deltaFutureBorrow +=
             int256(int8(ncase.cecb + ncase.cebc)) * deltaFutureCollateral.mulDivUp(futureBorrow, futureCollateral);
-        deltaFutureBorrow += int256(int8(ncase.ceccb + ncase.cecbc)) * (futureCollateral - futureBorrow);
 
         return deltaFutureBorrow;
     }
@@ -65,13 +66,14 @@ library CommonBorrowCollateral {
     ) internal pure returns (int256) {
         int256 deltaFutureCollateral =
             int256(int8(ncase.cna + ncase.cmcb + ncase.cmbc + ncase.ceccb + ncase.cecbc)) * deltaFutureBorrow;
-        if (futureCollateral == 0) {
+        deltaFutureCollateral += int256(int8(ncase.ceccb + ncase.cecbc)) * (futureBorrow - futureCollateral);
+
+        if (futureBorrow == 0) {
             return deltaFutureCollateral;
         }
 
         deltaFutureCollateral +=
             int256(int8(ncase.cecb + ncase.cebc)) * deltaFutureBorrow.mulDivDown(futureCollateral, futureBorrow);
-        deltaFutureCollateral += int256(int8(ncase.ceccb + ncase.cecbc)) * (futureBorrow - futureCollateral);
 
         return deltaFutureCollateral;
     }
@@ -94,13 +96,13 @@ library CommonBorrowCollateral {
         // cecb × userFutureRewardCollateral × ∆futureCollateral / futureCollateral +
         // + ceccb × −userFutureRewardCollateral
 
+        int256 deltaUserFutureRewardCollateral = -int256(int8(ncase.ceccb)) * userFutureRewardCollateral;
         if (futureCollateral == 0) {
-            return 0;
+            return deltaUserFutureRewardCollateral;
         }
 
-        int256 deltaUserFutureRewardCollateral =
+        deltaUserFutureRewardCollateral +=
             int256(int8(ncase.cecb)) * userFutureRewardCollateral.mulDivDown(deltaFutureCollateral, futureCollateral);
-        deltaUserFutureRewardCollateral -= int256(int8(ncase.ceccb)) * userFutureRewardCollateral;
         return deltaUserFutureRewardCollateral;
     }
 
@@ -122,13 +124,13 @@ library CommonBorrowCollateral {
         // cecb × userFutureRewardCollateral × ∆futureCollateral / futureCollateral +
         // + ceccb × −userFutureRewardCollateral
 
+        int256 deltaProtocolFutureRewardCollateral = -int256(int8(ncase.ceccb)) * protocolFutureRewardCollateral;
         if (futureCollateral == 0) {
-            return 0;
+            return deltaProtocolFutureRewardCollateral;
         }
 
-        int256 deltaProtocolFutureRewardCollateral =
-            int256(int8(ncase.cecb)) * protocolFutureRewardCollateral.mulDivUp(deltaFutureCollateral, futureCollateral);
-        deltaProtocolFutureRewardCollateral -= int256(int8(ncase.ceccb)) * protocolFutureRewardCollateral;
+        deltaProtocolFutureRewardCollateral += int256(int8(ncase.cecb))
+            * protocolFutureRewardCollateral.mulDivDown(deltaFutureCollateral, futureCollateral);
         return deltaProtocolFutureRewardCollateral;
     }
 
@@ -178,13 +180,13 @@ library CommonBorrowCollateral {
         // cebc × userF utureRewardBorrow × ∆futureBorrow / futureBorrow +
         // + cecbc × −userFutureRewardBorrow
 
+        int256 deltaUserFutureRewardBorrow = -int256(int8(ncase.cecbc)) * userFutureRewardBorrow;
         if (futureBorrow == 0) {
-            return 0;
+            return deltaUserFutureRewardBorrow;
         }
 
-        int256 deltaUserFutureRewardBorrow =
+        deltaUserFutureRewardBorrow +=
             int256(int8(ncase.cebc)) * userFutureRewardBorrow.mulDivUp(deltaFutureBorrow, futureBorrow);
-        deltaUserFutureRewardBorrow -= int256(int8(ncase.cecbc)) * userFutureRewardBorrow;
 
         return deltaUserFutureRewardBorrow;
     }
@@ -204,13 +206,13 @@ library CommonBorrowCollateral {
         int256 protocolFutureRewardBorrow,
         int256 deltaFutureBorrow
     ) internal pure returns (int256) {
+        int256 deltaProtocolFutureRewardBorrow = -int256(int8(ncase.cecbc)) * protocolFutureRewardBorrow;
         if (futureBorrow == 0) {
-            return 0;
+            return deltaProtocolFutureRewardBorrow;
         }
 
-        int256 deltaProtocolFutureRewardBorrow =
+        deltaProtocolFutureRewardBorrow +=
             int256(int8(ncase.cebc)) * protocolFutureRewardBorrow.mulDivUp(deltaFutureBorrow, futureBorrow);
-        deltaProtocolFutureRewardBorrow -= int256(int8(ncase.cecbc)) * protocolFutureRewardBorrow;
 
         return deltaProtocolFutureRewardBorrow;
     }

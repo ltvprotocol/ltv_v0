@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {Constants} from "src/constants/Constants.sol";
 import {PreviewDepositVaultState} from "src/structs/state/vault/preview/PreviewDepositVaultState.sol";
 import {PreviewDepositBorrowVaultData} from "src/structs/data/vault/preview/PreviewDepositBorrowVaultData.sol";
 import {DeltaFuture} from "src/structs/state_transition/DeltaFuture.sol";
@@ -33,9 +32,24 @@ abstract contract PreviewMint is Vault {
         returns (uint256, DeltaFuture memory)
     {
         uint256 sharesInUnderlying = shares.mulDivUp(data.depositTotalAssets, data.supplyAfterFee).mulDivUp(
-            data.borrowPrice, Constants.ORACLE_DIVIDER
+            data.borrowPrice, 10 ** data.borrowTokenDecimals
         );
 
+        (uint256 assetsInUnderlying, DeltaFuture memory deltaFuture) =
+            _previewMintInUnderlying(sharesInUnderlying, data);
+
+        // HODLer <=> depositor conflict, resolve in favor of HODLer, round up to receive more assets
+        return (assetsInUnderlying.mulDivUp(10 ** data.borrowTokenDecimals, data.borrowPrice), deltaFuture);
+    }
+
+    /**
+     * @dev base function to calculate preview deposit in underlying assets
+     */
+    function _previewMintInUnderlying(uint256 sharesInUnderlying, PreviewDepositBorrowVaultData memory data)
+        internal
+        pure
+        returns (uint256, DeltaFuture memory)
+    {
         (int256 assetsInUnderlying, DeltaFuture memory deltaFuture) = MintRedeem.calculateMintRedeem(
             MintRedeemData({
                 collateral: data.collateral,
@@ -61,10 +75,9 @@ abstract contract PreviewMint is Vault {
             return (0, deltaFuture);
         }
 
-        // HODLer <=> depositor conflict, resolve in favor of HODLer, round up to receive more assets
         // casting to uint256 is safe because assetsInUnderlying is checked to be negative
         // and therefore it is smaller than type(uint256).max
         // forge-lint: disable-next-line(unsafe-typecast)
-        return (uint256(-assetsInUnderlying).mulDivUp(Constants.ORACLE_DIVIDER, data.borrowPrice), deltaFuture);
+        return (uint256(-assetsInUnderlying), deltaFuture);
     }
 }

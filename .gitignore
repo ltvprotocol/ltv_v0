@@ -16,6 +16,7 @@ docs/
 .cursor
 
 .DS_Store
-deploy/
 .venv/
 script/ghost/data/
+deploy/**/deployed_contracts*
+local_fork*

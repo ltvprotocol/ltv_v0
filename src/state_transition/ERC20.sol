@@ -21,16 +21,6 @@ abstract contract ERC20 is
     IERC20Errors
 {
     /**
-     * @dev Mints specified amount of tokens to the provided address
-     */
-    function _mint(address to, uint256 amount) internal isReceiverWhitelisted(to) {
-        require(!_isDepositDisabled(boolSlot), DepositIsDisabled());
-        balanceOf[to] += amount;
-        baseTotalSupply += amount;
-        emit Transfer(address(0), to, amount);
-    }
-
-    /**
      * @dev Burns specified amount of tokens from the provided address
      */
     function _burn(address from, uint256 amount) internal {
@@ -53,5 +43,31 @@ abstract contract ERC20 is
                 allowance[owner][spender] = currentAllowance - value;
             }
         }
+    }
+
+    /**
+     * @dev Mints specified amount of tokens to the provided address.
+     * Also checks if the receiver is whitelisted and if token minting is enabled.
+     */
+    function _mintToUser(address to, uint256 amount) internal isReceiverWhitelisted(to) {
+        require(!_isDepositDisabled(boolSlot), DepositIsDisabled());
+        _mint(to, amount);
+    }
+
+    /**
+     * @dev Mints specified amount of tokens to the fee collector.
+     * Omits all checks when called for the fee collector
+     */
+    function _mintToFeeCollector(uint256 amount) internal {
+        _mint(feeCollector, amount);
+    }
+
+    /**
+     * @dev Mints specified amount of tokens to the provided address
+     */
+    function _mint(address to, uint256 amount) private {
+        balanceOf[to] += amount;
+        baseTotalSupply += amount;
+        emit Transfer(address(0), to, amount);
     }
 }

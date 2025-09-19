@@ -35,8 +35,9 @@ abstract contract TotalAssets {
     function _totalAssets(bool isDeposit, TotalAssetsData memory data) internal pure virtual returns (uint256) {
         // Add 100 to avoid vault attack
         // in case of deposit need to overestimate our assets
-        return uint256(data.collateral - data.borrow).mulDiv(Constants.ORACLE_DIVIDER, data.borrowPrice, isDeposit)
-            + Constants.VIRTUAL_ASSETS_AMOUNT;
+        return uint256(data.collateral - data.borrow).mulDiv(
+            10 ** data.borrowTokenDecimals, data.borrowPrice, isDeposit
+        ) + Constants.VIRTUAL_ASSETS_AMOUNT;
     }
 
     /**
@@ -49,23 +50,40 @@ abstract contract TotalAssets {
     {
         TotalAssetsData memory data;
         uint256 realCollateral = CommonMath.convertRealCollateral(
-            state.realCollateralAssets, state.commonTotalAssetsState.collateralPrice, isDeposit
+            state.realCollateralAssets,
+            state.commonTotalAssetsState.collateralPrice,
+            state.commonTotalAssetsState.collateralTokenDecimals,
+            isDeposit
         );
-        uint256 realBorrow =
-            CommonMath.convertRealBorrow(state.realBorrowAssets, state.commonTotalAssetsState.borrowPrice, isDeposit);
+        uint256 realBorrow = CommonMath.convertRealBorrow(
+            state.realBorrowAssets,
+            state.commonTotalAssetsState.borrowPrice,
+            state.commonTotalAssetsState.borrowTokenDecimals,
+            isDeposit
+        );
         int256 futureCollateral = CommonMath.convertFutureCollateral(
-            state.commonTotalAssetsState.futureCollateralAssets, state.commonTotalAssetsState.collateralPrice, isDeposit
+            state.commonTotalAssetsState.futureCollateralAssets,
+            state.commonTotalAssetsState.collateralPrice,
+            state.commonTotalAssetsState.collateralTokenDecimals,
+            isDeposit
         );
         int256 futureBorrow = CommonMath.convertFutureBorrow(
-            state.commonTotalAssetsState.futureBorrowAssets, state.commonTotalAssetsState.borrowPrice, isDeposit
+            state.commonTotalAssetsState.futureBorrowAssets,
+            state.commonTotalAssetsState.borrowPrice,
+            state.commonTotalAssetsState.borrowTokenDecimals,
+            isDeposit
         );
         int256 futureRewardCollateral = CommonMath.convertFutureRewardCollateral(
             state.commonTotalAssetsState.futureRewardCollateralAssets,
             state.commonTotalAssetsState.collateralPrice,
+            state.commonTotalAssetsState.collateralTokenDecimals,
             isDeposit
         );
         int256 futureRewardBorrow = CommonMath.convertFutureRewardBorrow(
-            state.commonTotalAssetsState.futureRewardBorrowAssets, state.commonTotalAssetsState.borrowPrice, isDeposit
+            state.commonTotalAssetsState.futureRewardBorrowAssets,
+            state.commonTotalAssetsState.borrowPrice,
+            state.commonTotalAssetsState.borrowTokenDecimals,
+            isDeposit
         );
 
         // casting to int256 is safe because realCollateral is considered to be smaller than type(int256).max
@@ -75,6 +93,7 @@ abstract contract TotalAssets {
         // forge-lint: disable-next-line(unsafe-typecast)
         data.borrow = int256(realBorrow) + futureBorrow + futureRewardBorrow;
         data.borrowPrice = state.commonTotalAssetsState.borrowPrice;
+        data.borrowTokenDecimals = state.commonTotalAssetsState.borrowTokenDecimals;
 
         return data;
     }

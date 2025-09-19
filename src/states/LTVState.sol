@@ -16,7 +16,9 @@ import {IModules} from "src/interfaces/IModules.sol";
 abstract contract LTVState {
     address public feeCollector;
     IERC20 public collateralToken;
+    uint8 public collateralTokenDecimals;
     IERC20 public borrowToken;
+    uint8 public borrowTokenDecimals;
 
     ILendingConnector public lendingConnector;
     ILendingConnector public vaultBalanceAsLendingConnector;

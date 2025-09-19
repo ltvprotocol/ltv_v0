@@ -66,7 +66,8 @@ abstract contract Mint is
                 deltaProtocolFutureRewardCollateral: deltaFuture.deltaProtocolFutureRewardCollateral,
                 supply: data.previewDepositBorrowVaultData.supplyAfterFee,
                 totalAppropriateAssets: data.previewDepositBorrowVaultData.depositTotalAssets,
-                assetPrice: data.previewDepositBorrowVaultData.borrowPrice
+                assetPrice: data.previewDepositBorrowVaultData.borrowPrice,
+                assetTokenDecimals: data.previewDepositBorrowVaultData.borrowTokenDecimals
             })
         );
 
@@ -97,13 +98,19 @@ abstract contract Mint is
             NextStateData({
                 nextState: nextState,
                 borrowPrice: data.previewDepositBorrowVaultData.borrowPrice,
-                collateralPrice: state.previewDepositVaultState.maxGrowthFeeState.commonTotalAssetsState.collateralPrice
+                collateralPrice: state.previewDepositVaultState.maxGrowthFeeState.commonTotalAssetsState.collateralPrice,
+                borrowTokenDecimals: data.previewDepositBorrowVaultData.borrowTokenDecimals,
+                collateralTokenDecimals: state
+                    .previewDepositVaultState
+                    .maxGrowthFeeState
+                    .commonTotalAssetsState
+                    .collateralTokenDecimals
             })
         );
 
         emit Deposit(msg.sender, receiver, assetsOut, shares);
 
-        _mint(receiver, shares);
+        _mintToUser(receiver, shares);
 
         return assetsOut;
     }
