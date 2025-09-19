@@ -231,6 +231,8 @@ contract NewStateRemapper is LTVState {
         for (uint256 i = 0; i < newFields.allowances.length; i++) {
             allowance[newFields.allowances[i].owner][newFields.allowances[i].spender] = newFields.allowances[i].amount;
         }
+        collateralTokenDecimals = 18;
+        borrowTokenDecimals = 18;
     }
 }
 
