@@ -334,32 +334,13 @@ contract DeployGhostUpgrade is Script, StdCheats, StdAssertions {
             allowances: allowances
         });
         address[] memory holders = getHolders(vm);
-        // vm.startBroadcast();
-        vm.startPrank(msg.sender);
+        vm.startBroadcast();
         Upgrader upgrader = new Upgrader{salt: bytes32(0)}(msg.sender);
 
         vm.store(proxyAdmin, 0, bytes32(uint256(uint160(msg.sender))));
 
         ProxyAdmin(proxyAdmin).transferOwnership(address(upgrader));
         upgrader.upgrade(proxy, proxyAdmin, ltv, msg.sender, newFields, holders);
-        // vm.stopBroadcast();
-        vm.stopPrank();
-
-        // test part
-        ILTV _ltv = ILTV(vm.envAddress("PROXY"));
-        address collateralToken = _ltv.collateralToken();
-        address random = makeAddr("random");
-        vm.startPrank(random);
-        deal(collateralToken, random, type(uint256).max);
-        IERC20(collateralToken).approve(address(_ltv), type(uint256).max);
-        _ltv.executeLowLevelRebalanceCollateralHint(10 ** 18, true);
-
-        address borrowToken = _ltv.borrowToken();
-        _ltv.withdraw(_ltv.maxWithdraw(random), random, random);
-        assertGt(IERC20(borrowToken).balanceOf(random), 0);
-        assertGt(_ltv.balanceOf(random), 0);
-        assertGt(
-            _ltv.allowance(0xbd6158Bc84546E235dc8CB62fD6a98De2f7B17bF, 0xE2A7f267124AC3E4131f27b9159c78C521A44F3c), 0
-        );
+        vm.stopBroadcast();
     }
 }
