@@ -2,7 +2,6 @@
 pragma solidity ^0.8.28;
 
 import {Script} from "forge-std/Script.sol";
-import {ILTV} from "../../src/interfaces/ILTV.sol";
 import {LTVState} from "../../src/states/LTVState.sol";
 import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
 import {ProxyAdmin} from "openzeppelin-contracts/contracts/proxy/transparent/ProxyAdmin.sol";
@@ -16,7 +15,6 @@ import {IOracleConnector} from "../../src/interfaces/connectors/IOracleConnector
 
 import {StdCheats} from "forge-std/StdCheats.sol";
 import {StdAssertions} from "forge-std/StdAssertions.sol";
-import {ILTV} from "../../src/interfaces/ILTV.sol";
 import {stdJson} from "forge-std/StdJson.sol";
 import {Vm} from "forge-std/Vm.sol";
 
