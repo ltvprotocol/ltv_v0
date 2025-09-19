@@ -198,8 +198,12 @@ contract NewStateRemapper is LTVState {
         }
         require(baseTotalSupply == holdersBalance, Mismatch(baseTotalSupply, holdersBalance));
         vaultBalanceAsLendingConnector = ILendingConnector(newFields.vaultBalanceAsLendingConnector);
+        (bool success,) = address(vaultBalanceAsLendingConnector).delegatecall(
+            abi.encodeCall(ILendingConnector.initializeLendingConnectorData, (bytes("")))
+        );
+        require(success);
         oracleConnector = IOracleConnector(newFields.oracleConnector);
-        (bool success,) = address(oracleConnector).delegatecall(
+        (success,) = address(oracleConnector).delegatecall(
             abi.encodeCall(IOracleConnector.initializeOracleConnectorData, (bytes("")))
         );
         require(success);
