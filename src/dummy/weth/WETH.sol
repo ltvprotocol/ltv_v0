@@ -1,13 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+import {OwnableUpgradeable} from "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
+import {ERC20Upgradeable} from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
 
 contract WETH is OwnableUpgradeable, ERC20Upgradeable {
-
-    event  Deposit(address indexed dst, uint wad);
-    event  Withdrawal(address indexed src, uint wad);
+    event Deposit(address indexed dst, uint256 wad);
+    event Withdrawal(address indexed src, uint256 wad);
 
     function initialize(address _owner) public initializer {
         __Ownable_init(_owner);
@@ -24,11 +23,10 @@ contract WETH is OwnableUpgradeable, ERC20Upgradeable {
         emit Deposit(msg.sender, msg.value);
     }
 
-    function withdraw(uint wad) public {
+    function withdraw(uint256 wad) public {
         require(balanceOf(msg.sender) >= wad);
         _burn(msg.sender, wad);
         payable(msg.sender).transfer(wad);
         emit Withdrawal(msg.sender, wad);
     }
-
 }

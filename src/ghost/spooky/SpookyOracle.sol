@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import {OwnableUpgradeable} from "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
+import {Initializable} from "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
 
-
-contract SpookyOracle is Initializable, OwnableUpgradeable{
+contract SpookyOracle is Initializable, OwnableUpgradeable {
     mapping(address => uint256) private prices;
 
     function initialize(address _owner) public initializer {

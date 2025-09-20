@@ -25,7 +25,11 @@ jobs:
         run: forge build
 
       - name: Check contract sizes
-        run: forge build --sizes
+        run: forge build --skip test --sizes
+
+      - name: Run lint
+        run: FOUNDRY_DISABLE_NIGHTLY_WARNING=1 forge lint && $([ -n "$(forge lint -q 2>&1)" ] && exit 1 || exit 0)
+
   test:
     runs-on: ubuntu-latest
     steps:
@@ -40,21 +44,20 @@ jobs:
         run: forge --version
 
       - name: Run tests
-        run: forge test -vvv
+        run: forge build && forge test -vvv --no-match-path "test/integration/**"
 
-  # TODO: uncomment in the future
-  #fmt:
-  #  runs-on: ubuntu-latest
-  #  steps:
-  #    - uses: actions/checkout@v4
+  fmt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-  #    - name: Install Foundry
-  #      uses: foundry-rs/foundry-toolchain@v1
-  #      with:
-  #        version: nightly
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: nightly
 
-  #    - name: Print forge version
-  #      run: forge --version
+      - name: Print forge version
+        run: forge --version
 
-  #    - name: Check formatting
-  #      run: forge fmt --check
+      - name: Check formatting
+        run: forge fmt --check
