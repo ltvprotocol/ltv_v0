@@ -121,7 +121,7 @@ contract BaseInvariantWrapper is Test {
      */
     function captureInvariantState() internal virtual {
         // Capture protocol total assets
-        _initialTotalAssets = ltv.totalAssets(true);
+        _initialTotalAssets = ltv.totalAssets(false);
         // Get real total supply (can be affected by max growth fee)
         _initialTotalSupply = ltv.convertToShares(_initialTotalAssets);
 
@@ -170,12 +170,12 @@ contract BaseInvariantWrapper is Test {
         if (_auctionExecuted) {
             assertGe(
                 _initialFutureBorrow + _initialRewardBorrow + _initialRealBorrow,
-                _getRealBorrowAssets(true) + ltv.futureRewardBorrowAssets() + ltv.futureBorrowAssets(),
+                _getRealBorrowAssets(false) + ltv.futureRewardBorrowAssets() + ltv.futureBorrowAssets(),
                 "Borrow assets stable after auction"
             );
             assertLe(
                 _initialFutureCollateral + _initialRewardCollateral + _initialRealCollateral,
-                _getRealCollateralAssets(true) + ltv.futureRewardCollateralAssets() + ltv.futureCollateralAssets(),
+                _getRealCollateralAssets(false) + ltv.futureRewardCollateralAssets() + ltv.futureCollateralAssets(),
                 "Collateral assets stable after auction"
             );
         } else {
@@ -236,6 +236,7 @@ contract BaseInvariantWrapper is Test {
         if (ltv.lastSeenTokenPrice() > _initialLastSeenTokenPrice) {
             assertLt(_initialFeeCollectorLtvBalance, ltv.balanceOf(ltv.feeCollector()), "Max growth fee applied");
             maxGrowthFeeReceived = true;
+            _initialLastSeenTokenPrice = ltv.lastSeenTokenPrice();
         }
 
         // Reset state for next operation
@@ -247,7 +248,9 @@ contract BaseInvariantWrapper is Test {
      * @param blocksToAdvance Number of blocks to advance (bounded between 1 and auctionDuration)
      */
     function advanceBlocks(uint256 blocksToAdvance) internal {
-        _initialLastSeenTokenPrice = ltv.lastSeenTokenPrice();
+        if (_initialLastSeenTokenPrice == 0) {
+            _initialLastSeenTokenPrice = ltv.lastSeenTokenPrice();
+        }
         _blocksAdvanced = bound(blocksToAdvance, 1, ltv.auctionDuration());
         vm.roll(uint56(block.number) + _blocksAdvanced);
     }
