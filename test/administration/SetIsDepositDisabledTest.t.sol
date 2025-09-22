@@ -176,4 +176,26 @@ contract SetIsDepositDisabledTest is PrepareEachFunctionSuccessfulExecution {
         ltv.deleverageAndWithdraw(type(uint128).max, 0, 1);
         vm.stopPrank();
     }
+
+    function test_lowLevelEnabledFunctionAvailability(DefaultTestData memory data, address user)
+        public
+        testWithPredefinedDefaultValues(data)
+    {
+        vm.startPrank(data.guardian);
+        ltv.setIsDepositDisabled(true);
+        vm.stopPrank();
+
+        oracle.setAssetPrice(address(collateralToken), 21 * 10 ** 17); // make sure max growth fee is applied
+
+        vm.startPrank(address(0));
+        ltv.transfer(user, 10 ** 18);
+        vm.stopPrank();
+
+        vm.startPrank(user);
+        deal(address(ltv.borrowToken()), user, 10 ** 18);
+        deal(address(ltv.collateralToken()), user, 10 ** 18);
+        ltv.borrowToken().approve(address(ltv), 10 ** 18);
+        ltv.collateralToken().approve(address(ltv), 10 ** 18);
+        ltv.executeLowLevelRebalanceShares(-int256(10 ** 16));
+    }
 }
