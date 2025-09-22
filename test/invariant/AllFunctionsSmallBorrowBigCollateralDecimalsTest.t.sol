@@ -14,6 +14,4 @@ contract AllFunctionsSmallBorrowBigCollateralDecimalsTest is BaseAllFunctionsInv
     /// forge-config: default.invariant.runs = 120
 
     function invariant_allFunctionsSmallBorrowBigCollateralDecimals() public {}
-
-    function afterInvariant() public view override {}
 }
