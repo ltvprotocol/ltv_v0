@@ -27,7 +27,7 @@ contract MorphoOracleConnector is LTVState, IOracleConnector {
     /**
      * @inheritdoc IOracleConnector
      */
-    function getPriceBorrowOracle(bytes calldata oracleConnectorData) external view returns (uint256) {
+    function getPriceBorrowOracle(bytes calldata oracleConnectorData) external pure returns (uint256) {
         (uint8 borrowTokenDecimals,) = abi.decode(oracleConnectorData, (uint8, uint8));
         return 10 ** borrowTokenDecimals;
     }

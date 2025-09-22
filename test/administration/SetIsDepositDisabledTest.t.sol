@@ -5,8 +5,11 @@ import {DefaultTestData} from "test/utils/BaseTest.t.sol";
 import {ILTV} from "src/interfaces/ILTV.sol";
 import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
 import {PrepareEachFunctionSuccessfulExecution} from "test/administration/PrepareEachFunctionSuccessfulExecution.sol";
+import {SafeERC20, IERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract SetIsDepositDisabledTest is PrepareEachFunctionSuccessfulExecution {
+    using SafeERC20 for IERC20;
+
     struct UserBalance {
         uint256 collateral;
         uint256 borrow;
@@ -144,7 +147,7 @@ contract SetIsDepositDisabledTest is PrepareEachFunctionSuccessfulExecution {
         vm.stopPrank();
 
         vm.startPrank(address(0));
-        ltv.transfer(user, 10 ** 18);
+        IERC20(address(ltv)).safeTransfer(user, 10 ** 18);
         vm.stopPrank();
 
         vm.startPrank(user);
@@ -188,7 +191,7 @@ contract SetIsDepositDisabledTest is PrepareEachFunctionSuccessfulExecution {
         oracle.setAssetPrice(address(collateralToken), 21 * 10 ** 17); // make sure max growth fee is applied
 
         vm.startPrank(address(0));
-        ltv.transfer(user, 10 ** 18);
+        IERC20(address(ltv)).safeTransfer(user, 10 ** 18);
         vm.stopPrank();
 
         vm.startPrank(user);
