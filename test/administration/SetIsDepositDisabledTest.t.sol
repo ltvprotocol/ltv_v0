@@ -131,4 +131,49 @@ contract SetIsDepositDisabledTest is PrepareEachFunctionSuccessfulExecution {
         ltv.setIsDepositDisabled(true);
         vm.stopPrank();
     }
+
+    function test_withdrawFunctionAvailability(DefaultTestData memory data, address user)
+        public
+        testWithPredefinedDefaultValues(data)
+    {
+        vm.assume(user != data.guardian);
+        vm.assume(user != address(0));
+
+        vm.startPrank(data.guardian);
+        ltv.setIsDepositDisabled(true);
+        vm.stopPrank();
+
+        vm.startPrank(address(0));
+        ltv.transfer(user, 10 ** 18);
+        vm.stopPrank();
+
+        vm.startPrank(user);
+        deal(address(ltv.borrowToken()), user, 10 ** 16);
+        ltv.borrowToken().approve(address(ltv), 10 ** 16);
+        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.DepositIsDisabled.selector));
+        ltv.deposit(10 ** 16, user);
+        vm.stopPrank();
+
+        oracle.setAssetPrice(address(collateralToken), 21 * 10 ** 17); // make sure max growth fee is applied
+
+        vm.startPrank(user);
+        ltv.withdraw(10 ** 16, user, user);
+    }
+
+    function test_deleverageAndWithdrawFunctionAvailability(DefaultTestData memory data)
+        public
+        testWithPredefinedDefaultValues(data)
+    {
+        vm.startPrank(data.guardian);
+        ltv.setIsDepositDisabled(true);
+        vm.stopPrank();
+
+        oracle.setAssetPrice(address(collateralToken), 21 * 10 ** 17); // make sure max growth fee is applied
+
+        vm.startPrank(data.emergencyDeleverager);
+        deal(address(ltv.borrowToken()), data.emergencyDeleverager, type(uint128).max);
+        ltv.borrowToken().approve(address(ltv), type(uint128).max);
+        ltv.deleverageAndWithdraw(type(uint128).max, 0, 1);
+        vm.stopPrank();
+    }
 }
