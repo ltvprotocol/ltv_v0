@@ -112,7 +112,6 @@ contract MorphoConnector is LTVState, ILendingConnector {
         s.oracle = oracle;
         s.irm = irm;
         s.lltv = lltv;
-        s.marketId = marketId;
 
         lendingConnectorGetterData = abi.encode(marketId);
     }
