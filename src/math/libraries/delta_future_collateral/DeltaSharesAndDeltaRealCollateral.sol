@@ -26,6 +26,13 @@ library DeltaSharesAndDeltaRealCollateral {
     using UMulDiv for uint256;
     using SMulDiv for int256;
 
+    /**
+     * @notice Calculates the dividend component for delta future collateral calculation
+     * @dev This function computes the numerator of the delta future collateral formula based on the LTV protocol paper.
+     * @param data The dividend calculation data containing all necessary parameters
+     * @param needToRoundUp Whether to round up the calculation results (true = round up, false = round down)
+     * @return The calculated dividend value for delta future collateral
+     */
     function calculateDividentByDeltaSharesAndRealCollateral(
         DeltaSharesAndDeltaRealCollateralDividendData memory data,
         bool needToRoundUp
@@ -64,7 +71,13 @@ library DeltaSharesAndDeltaRealCollateral {
         return dividend;
     }
 
-    // divider is always negative
+    /**
+     * @notice Calculates the divider component for delta future collateral calculation
+     * @dev This function computes the denominator of the delta future collateral formula.
+     * @param data The divider calculation data containing all necessary parameters
+     * @param needToRoundUp Whether to round up the calculation results (true = round up, false = round down)
+     * @return The calculated divider value (always negative)
+     */
     function calculateDividerByDeltaSharesAndDeltaRealCollateral(
         DeltaSharesAndDeltaRealCollateralDividerData memory data,
         bool needToRoundUp
@@ -109,6 +122,16 @@ library DeltaSharesAndDeltaRealCollateral {
         return divider;
     }
 
+    /**
+     * @notice Calculates delta future collateral for a single case scenario
+     * @dev This function computes the delta future collateral by dividing the dividend by the divider.
+     *      It handles the case where divider is zero and applies appropriate rounding.
+     * @param data The input data for the calculation
+     * @param needToRoundUpDividend Whether to round up the dividend calculation (true = round up, false = round down)
+     * @param needToRoundUpDivider Whether to round up the divider calculation (true = round up, false = round down)
+     * @return deltaFutureCollateral The calculated delta future collateral value
+     * @return success Whether the calculation was successful (divider != 0)
+     */
     function calculateSingleCaseDeltaSharesAndDeltaRealCollateral(
         DeltaSharesAndDeltaRealCollateralData memory data,
         bool needToRoundUpDividend,
@@ -156,6 +179,17 @@ library DeltaSharesAndDeltaRealCollateral {
         return (deltaFutureCollateral, true);
     }
 
+    /**
+     * @notice Calculates delta future collateral using a cached dividend value
+     * @dev This function is an optimized version that reuses a pre-calculated dividend
+     *      to avoid redundant calculations when multiple cases share the same dividend.
+     * @param data The input data for the calculation
+     * @param needToRoundUpDividend Whether to round up the dividend calculation (true = round up, false = round down)
+     * @param needToRoundUpDivider Whether to round up the divider calculation (true = round up, false = round down)
+     * @param dividend The pre-calculated dividend value to use
+     * @return deltaFutureCollateral The calculated delta future collateral value
+     * @return success Whether the calculation was successful (divider != 0)
+     */
     function calculateSingleCaseCacheDividendDeltaSharesAndDeltaRealCollateral(
         DeltaSharesAndDeltaRealCollateralData memory data,
         bool needToRoundUpDividend,
@@ -186,6 +220,15 @@ library DeltaSharesAndDeltaRealCollateral {
         return (deltaFutureCollateral, true);
     }
 
+    /**
+     * @notice Calculates delta future collateral for case CMCB
+     * @param data The input data for the calculation
+     * @param cacheDividend Pre-calculated dividend value for optimization
+     * @param cache Whether to use the cached dividend value
+     * @return deltaFutureCollateral The calculated delta future collateral value
+     * @return cases The case configuration used
+     * @return success Whether the calculation was successful
+     */
     function calculateCaseCmcbDeltaSharesAndDeltaRealCollateral(
         DeltaSharesAndDeltaRealCollateralData memory data,
         int256 cacheDividend,
@@ -206,6 +249,15 @@ library DeltaSharesAndDeltaRealCollateral {
         return (deltaFutureCollateral, data.cases, success);
     }
 
+    /**
+     * @notice Calculates delta future collateral for case CMBC
+     * @param data The input data for the calculation
+     * @param cacheDividend Pre-calculated dividend value for optimization
+     * @param cache Whether to use the cached dividend value
+     * @return deltaFutureCollateral The calculated delta future collateral value
+     * @return cases The case configuration used
+     * @return success Whether the calculation was successful
+     */
     function calculateCaseCmbcDeltaSharesAndDeltaRealCollateral(
         DeltaSharesAndDeltaRealCollateralData memory data,
         int256 cacheDividend,
@@ -226,6 +278,14 @@ library DeltaSharesAndDeltaRealCollateral {
         return (deltaFutureCollateral, data.cases, success);
     }
 
+    /**
+     * @notice Calculates delta future collateral for case CECB
+     * @param data The input data for the calculation
+     * @param cacheDividend Pre-calculated dividend value for optimization
+     * @return deltaFutureCollateral The calculated delta future collateral value
+     * @return cases The case configuration used
+     * @return success Whether the calculation was successful
+     */
     function calculateCaseCecbDeltaSharesAndDeltaRealCollateral(
         DeltaSharesAndDeltaRealCollateralData memory data,
         int256 cacheDividend
@@ -236,6 +296,14 @@ library DeltaSharesAndDeltaRealCollateral {
         return (deltaFutureCollateral, data.cases, success);
     }
 
+    /**
+     * @notice Calculates delta future collateral for case CEBC
+     * @param data The input data for the calculation
+     * @param cacheDividend Pre-calculated dividend value for optimization
+     * @return deltaFutureCollateral The calculated delta future collateral value
+     * @return cases The case configuration used
+     * @return success Whether the calculation was successful
+     */
     function calculateCaseCebcDeltaSharesAndDeltaRealCollateral(
         DeltaSharesAndDeltaRealCollateralData memory data,
         int256 cacheDividend
@@ -246,6 +314,13 @@ library DeltaSharesAndDeltaRealCollateral {
         return (deltaFutureCollateral, data.cases, success);
     }
 
+    /**
+     * @notice Calculates delta future collateral for case CECCB
+     * @param data The input data for the calculation
+     * @return deltaFutureCollateral The calculated delta future collateral value
+     * @return cases The case configuration used
+     * @return success Whether the calculation was successful
+     */
     function calculateCaseCeccbDeltaSharesAndDeltaRealCollateral(DeltaSharesAndDeltaRealCollateralData memory data)
         private
         pure
@@ -257,6 +332,13 @@ library DeltaSharesAndDeltaRealCollateral {
         return (deltaFutureCollateral, data.cases, success);
     }
 
+    /**
+     * @notice Calculates delta future collateral for case CECBC
+     * @param data The input data for the calculation
+     * @return deltaFutureCollateral The calculated delta future collateral value
+     * @return cases The case configuration used
+     * @return success Whether the calculation was successful
+     */
     function calculateCaseCecbcDeltaSharesAndDeltaRealCollateral(DeltaSharesAndDeltaRealCollateralData memory data)
         private
         pure
@@ -268,6 +350,12 @@ library DeltaSharesAndDeltaRealCollateral {
         return (deltaFutureCollateral, data.cases, success);
     }
 
+    /**
+     * @notice Calculates the neutral dividend for delta shares and delta real collateral
+     * @param data The input data for the calculation
+     * @param needToRoundUpDividend Whether to round up the dividend calculation (true = round up, false = round down)
+     * @return dividend The calculated dividend value
+     */
     function neutralDividendDeltaSharesAndDeltaRealCollateral(
         DeltaSharesAndDeltaRealCollateralData memory data,
         bool needToRoundUpDividend
@@ -293,6 +381,14 @@ library DeltaSharesAndDeltaRealCollateral {
         );
     }
 
+    /**
+     * @notice Handles the calculation branch when future collateral is positive
+     * @dev This function processes cases where the current future collateral amount is positive.
+     *      It tries different cases in order of preference and applies specific validation logic.
+     * @param data The input data for the calculation
+     * @return deltaFutureCollateral The calculated delta future collateral value
+     * @return cases The case configuration that produced a valid result
+     */
     function positiveFutureCollateralBranchDeltaSharesAndDeltaRealCollateral(
         DeltaSharesAndDeltaRealCollateralData memory data
     ) private pure returns (int256, Cases memory) {
@@ -348,6 +444,14 @@ library DeltaSharesAndDeltaRealCollateral {
         return (deltaFutureCollateral, cases);
     }
 
+    /**
+     * @notice Handles the calculation branch when future collateral is negative
+     * @dev This function processes cases where the current future collateral amount is negative.
+     *      It tries different cases in order of preference and applies specific validation logic.
+     * @param data The input data for the calculation
+     * @return deltaFutureCollateral The calculated delta future collateral value
+     * @return cases The case configuration that produced a valid result
+     */
     function negativeFutureCollateralBranchDeltaSharesAndDeltaRealCollateral(
         DeltaSharesAndDeltaRealCollateralData memory data
     ) private pure returns (int256, Cases memory) {
@@ -403,6 +507,14 @@ library DeltaSharesAndDeltaRealCollateral {
         return (deltaFutureCollateral, cases);
     }
 
+    /**
+     * @notice Handles the calculation branch when future collateral is zero
+     * @dev This function processes cases where the current future collateral amount is zero.
+     *      It tries different cases and falls back to neutral case if no valid solution is found.
+     * @param data The input data for the calculation
+     * @return deltaFutureCollateral The calculated delta future collateral value
+     * @return cases The case configuration that produced a valid result
+     */
     function zeroFutureCollateralBranchDeltaSharesAndDeltaRealCollateral(
         DeltaSharesAndDeltaRealCollateralData memory data
     ) private pure returns (int256, Cases memory) {
@@ -456,6 +568,16 @@ library DeltaSharesAndDeltaRealCollateral {
      * ROUDNING DIVIDEND:
      * cmcb, ceccb, cebc - rounding up
      * cmcb, cecbc, cecb - rounding down
+     */
+
+    /**
+     * @notice Main function to calculate delta future collateral based on delta shares and delta real collateral
+     * @dev This is the primary entry point that determines which calculation branch to use
+     *      based on the current future collateral state (positive, negative, or zero).
+     *      It implements the complete math model from the LTV protocol paper.
+     * @param data The input data containing all necessary parameters for the calculation
+     * @return deltaFutureCollateral The calculated delta future collateral value
+     * @return cases The case configuration that produced the result
      */
     function calculateDeltaFutureCollateralByDeltaSharesAndDeltaRealCollateral(
         DeltaSharesAndDeltaRealCollateralData memory data

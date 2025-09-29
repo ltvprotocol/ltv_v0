@@ -26,6 +26,13 @@ library DeltaSharesAndDeltaRealBorrow {
     using UMulDiv for uint256;
     using SMulDiv for int256;
 
+    /**
+     * @notice Calculates the dividend component for delta future borrow calculation
+     * @dev This function computes the numerator of the delta future borrow formula based on the LTV protocol paper.
+     * @param data The dividend calculation data containing all necessary parameters
+     * @param needToRoundUp Whether to round up the calculation results (true = round up, false = round down)
+     * @return The calculated dividend value for delta future borrow
+     */
     function calculateDividentByDeltaSharesAndDeltaRealBorrow(
         DeltaSharesAndDeltaRealBorrowDividendData memory data,
         bool needToRoundUp
@@ -63,7 +70,13 @@ library DeltaSharesAndDeltaRealBorrow {
         return dividend;
     }
 
-    // divider always < 0
+    /**
+     * @notice Calculates the divider component for delta future borrow calculation
+     * @dev This function computes the denominator of the delta future borrow formula.
+     * @param data The divider calculation data containing all necessary parameters
+     * @param needToRoundUp Whether to round up the calculation results (true = round up, false = round down)
+     * @return The calculated divider value (always negative)
+     */
     function calculateDividerByDeltaSharesAndDeltaRealBorrow(
         DeltaSharesAndDeltaRealBorrowDividerData memory data,
         bool needToRoundUp
@@ -104,6 +117,16 @@ library DeltaSharesAndDeltaRealBorrow {
         return divider;
     }
 
+    /**
+     * @notice Calculates delta future borrow for a single case scenario
+     * @dev This function computes the delta future borrow by dividing the dividend by the divider.
+     *      It handles the case where divider is zero and applies appropriate rounding.
+     * @param data The input data for the calculation
+     * @param needToRoundUpDividend Whether to round up the dividend calculation (true = round up, false = round down)
+     * @param needToRoundUpDivider Whether to round up the divider calculation (true = round up, false = round down)
+     * @return deltaFutureBorrow The calculated delta future borrow value
+     * @return success Whether the calculation was successful (divider != 0)
+     */
     function calculateSingleCaseDeltaSharesAndDeltaRealBorrow(
         DeltaSharesAndDeltaRealBorrowData memory data,
         bool needToRoundUpDividend,
@@ -151,6 +174,17 @@ library DeltaSharesAndDeltaRealBorrow {
         return (deltaFutureBorrow, true);
     }
 
+    /**
+     * @notice Calculates delta future borrow using a cached dividend value
+     * @dev This function is an optimized version that reuses a pre-calculated dividend
+     *      to avoid redundant calculations when multiple cases share the same dividend.
+     * @param data The input data for the calculation
+     * @param needToRoundUpDividend Whether to round up the dividend calculation (true = round up, false = round down)
+     * @param needToRoundUpDivider Whether to round up the divider calculation (true = round up, false = round down)
+     * @param dividend The pre-calculated dividend value to use
+     * @return deltaFutureBorrow The calculated delta future borrow value
+     * @return success Whether the calculation was successful (divider != 0)
+     */
     function calculateSingleCaseCacheDividendDeltaSharesAndDeltaRealBorrow(
         DeltaSharesAndDeltaRealBorrowData memory data,
         bool needToRoundUpDividend,
@@ -181,6 +215,17 @@ library DeltaSharesAndDeltaRealBorrow {
         return (deltaFutureBorrow, true);
     }
 
+    /**
+     * @notice Calculates delta future borrow for case CMCB
+     * @dev This case represents a scenario where collateral is increased and borrow is decreased.
+     *      Uses specific rounding rules: dividend up, divider up.
+     * @param data The input data for the calculation
+     * @param cacheDividend Pre-calculated dividend value for optimization
+     * @param cache Whether to use the cached dividend value
+     * @return deltaFutureBorrow The calculated delta future borrow value
+     * @return cases The case configuration used
+     * @return success Whether the calculation was successful
+     */
     function calculateCaseCmcbDeltaSharesAndDeltaRealBorrow(
         DeltaSharesAndDeltaRealBorrowData memory data,
         int256 cacheDividend,
@@ -201,6 +246,15 @@ library DeltaSharesAndDeltaRealBorrow {
         return (deltaFutureBorrow, data.cases, success);
     }
 
+    /**
+     * @notice Calculates delta future borrow for case CMBC
+     * @param data The input data for the calculation
+     * @param cacheDividend Pre-calculated dividend value for optimization
+     * @param cache Whether to use the cached dividend value
+     * @return deltaFutureBorrow The calculated delta future borrow value
+     * @return cases The case configuration used
+     * @return success Whether the calculation was successful
+     */
     function calculateCaseCmbcDeltaSharesAndDeltaRealBorrow(
         DeltaSharesAndDeltaRealBorrowData memory data,
         int256 cacheDividend,
@@ -221,6 +275,14 @@ library DeltaSharesAndDeltaRealBorrow {
         return (deltaFutureBorrow, data.cases, success);
     }
 
+    /**
+     * @notice Calculates delta future borrow for case CECB
+     * @param data The input data for the calculation
+     * @param cacheDividend Pre-calculated dividend value for optimization
+     * @return deltaFutureBorrow The calculated delta future borrow value
+     * @return cases The case configuration used
+     * @return success Whether the calculation was successful
+     */
     function calculateCaseCecbDeltaSharesAndDeltaRealBorrow(
         DeltaSharesAndDeltaRealBorrowData memory data,
         int256 cacheDividend
@@ -231,6 +293,14 @@ library DeltaSharesAndDeltaRealBorrow {
         return (deltaFutureBorrow, data.cases, success);
     }
 
+    /**
+     * @notice Calculates delta future borrow for case CEBC
+     * @param data The input data for the calculation
+     * @param cacheDividend Pre-calculated dividend value for optimization
+     * @return deltaFutureBorrow The calculated delta future borrow value
+     * @return cases The case configuration used
+     * @return success Whether the calculation was successful
+     */
     function calculateCaseCebcDeltaSharesAndDeltaRealBorrow(
         DeltaSharesAndDeltaRealBorrowData memory data,
         int256 cacheDividend
@@ -241,6 +311,13 @@ library DeltaSharesAndDeltaRealBorrow {
         return (deltaFutureBorrow, data.cases, success);
     }
 
+    /**
+     * @notice Calculates delta future borrow for case CECCB
+     * @param data The input data for the calculation
+     * @return deltaFutureBorrow The calculated delta future borrow value
+     * @return cases The case configuration used
+     * @return success Whether the calculation was successful
+     */
     function calculateCaseCeccbDeltaSharesAndDeltaRealBorrow(DeltaSharesAndDeltaRealBorrowData memory data)
         private
         pure
@@ -251,6 +328,13 @@ library DeltaSharesAndDeltaRealBorrow {
         return (deltaFutureBorrow, data.cases, success);
     }
 
+    /**
+     * @notice Calculates delta future borrow for case CECBC
+     * @param data The input data for the calculation
+     * @return deltaFutureBorrow The calculated delta future borrow value
+     * @return cases The case configuration used
+     * @return success Whether the calculation was successful
+     */
     function calculateCaseCecbcDeltaSharesAndDeltaRealBorrow(DeltaSharesAndDeltaRealBorrowData memory data)
         private
         pure
@@ -262,9 +346,9 @@ library DeltaSharesAndDeltaRealBorrow {
     }
 
     /**
-     * Calculates the neutral (case 6) dividend for delta shares and delta real borrow
+     * Calculates the neutral dividend for delta shares and delta real borrow
      * @param data The input data for the calculation
-     * @param needToRoundUpDividend Whether to round up the dividend calculation
+     * @param needToRoundUpDividend Whether to round up the dividend calculation (true = round up, false = round down)
      * @return dividend The calculated dividend value
      */
     function neutralDividendDeltaSharesAndDeltaRealBorrow(
@@ -292,6 +376,13 @@ library DeltaSharesAndDeltaRealBorrow {
         );
     }
 
+    /**
+     * @notice Handles the calculation branch when future borrow is positive
+     * @dev This function processes cases where the current future borrow amount is positive.
+     * @param data The input data for the calculation
+     * @return deltaFutureBorrow The calculated delta future borrow value
+     * @return cases The case configuration that produced a valid result
+     */
     function positiveFutureBorrowBranchDeltaSharesAndDeltaRealBorrow(DeltaSharesAndDeltaRealBorrowData memory data)
         private
         pure
@@ -347,6 +438,13 @@ library DeltaSharesAndDeltaRealBorrow {
         return (deltaFutureBorrow, cases);
     }
 
+    /**
+     * @notice Handles the calculation branch when future borrow is negative
+     * @dev This function processes cases where the current future borrow amount is negative.
+     * @param data The input data for the calculation
+     * @return deltaFutureBorrow The calculated delta future borrow value
+     * @return cases The case configuration that produced a valid result
+     */
     function negativeFutureBorrowBranchDeltaSharesAndDeltaRealBorrow(DeltaSharesAndDeltaRealBorrowData memory data)
         private
         pure
@@ -401,6 +499,13 @@ library DeltaSharesAndDeltaRealBorrow {
         return (deltaFutureBorrow, cases);
     }
 
+    /**
+     * @notice Handles the calculation branch when future borrow is zero
+     * @dev This function processes cases where the current future borrow amount is zero.
+     * @param data The input data for the calculation
+     * @return deltaFutureBorrow The calculated delta future borrow value
+     * @return cases The case configuration that produced a valid result
+     */
     function zeroFutureBorrowBranchDeltaSharesAndDeltaRealBorrow(DeltaSharesAndDeltaRealBorrowData memory data)
         private
         pure
@@ -456,6 +561,16 @@ library DeltaSharesAndDeltaRealBorrow {
      * ROUDNING DIVIDEND:
      * cmcb, ceccb, cebc - rounding up
      * cmcb, cecbc, cecb - rounding down
+     */
+
+    /**
+     * @notice Main function to calculate delta future borrow based on delta shares and delta real borrow
+     * @dev This is the primary entry point that determines which calculation branch to use
+     *      based on the current future borrow state (positive, negative, or zero).
+     *      It implements the complete math model from the LTV protocol paper.
+     * @param data The input data containing all necessary parameters for the calculation
+     * @return deltaFutureBorrow The calculated delta future borrow value
+     * @return cases The case configuration that produced the result
      */
     function calculateDeltaFutureBorrowByDeltaSharesAndDeltaRealBorrow(DeltaSharesAndDeltaRealBorrowData memory data)
         external
