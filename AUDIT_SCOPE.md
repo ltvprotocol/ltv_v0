@@ -7,6 +7,7 @@ This document defines which parts of the `src/` directory in the LTV Protocol co
 | Folder             | Include in Audit? |
 |--------------------|-------------------|
 | connectors         | ✅ Yes            |
+| constants          | ✅ Yes            |
 | dummy              | ❌ No             |
 | elements           | ✅ Yes            |
 | errors             | ✅ Yes            |
@@ -21,6 +22,4 @@ This document defines which parts of the `src/` directory in the LTV Protocol co
 | state_transition   | ✅ Yes            |
 | states             | ✅ Yes            |
 | structs            | ✅ Yes            |
-| timelock           | ❌ No             |
 | utils              | ✅ Yes            |
-| Constants.sol      | ✅ Yes            |
