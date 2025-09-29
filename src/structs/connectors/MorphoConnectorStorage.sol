@@ -10,5 +10,4 @@ struct MorphoConnectorStorage {
     address oracle;
     address irm;
     uint256 lltv;
-    bytes32 marketId;
 }
