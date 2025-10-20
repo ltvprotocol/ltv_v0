@@ -52,6 +52,6 @@ contract AaveV3OracleConnector is LTVState, IOracleConnector {
             ORACLE.getSourceOfAsset(address(collateralToken)) != address(0),
             NoSourceOfAssetPrice(address(collateralToken))
         );
-        require(ORACLE.getSourceOfAsset(address(borrowToken)) != address(0), NoSourceOfAsset(address(borrowToken)));
+        require(ORACLE.getSourceOfAsset(address(borrowToken)) != address(0), NoSourceOfAssetPrice(address(borrowToken)));
     }
 }
