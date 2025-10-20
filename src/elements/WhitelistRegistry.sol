@@ -15,14 +15,8 @@ import {ECDSA} from "openzeppelin-contracts/contracts/utils/cryptography/ECDSA.s
  */
 contract WhitelistRegistry is IWhitelistRegistry, Ownable {
     mapping(address => bool) public isAddressWhitelisted;
-    mapping(address => bool) public wasWhitelistedBySignature;
+    mapping(address => bool) public isAddressWhitelistingBySignature;
     address public signer;
-
-    event AddressWhitelisted(address indexed account, bool isWhitelisted);
-    event SignerUpdated(address indexed signer);
-
-    error InvalidSignature();
-    error DoubleSignatureUse();
 
     struct WhitelistApproval {
         address whitelistedAddress;
@@ -48,6 +42,7 @@ contract WhitelistRegistry is IWhitelistRegistry, Ownable {
      */
     function removeAddressFromWhitelist(address account) external onlyOwner {
         isAddressWhitelisted[account] = false;
+        isAddressWhitelistingBySignature[account] = true;
         emit AddressWhitelisted(account, false);
     }
 
@@ -55,8 +50,9 @@ contract WhitelistRegistry is IWhitelistRegistry, Ownable {
      * @notice Update the signer
      */
     function updateSigner(address newSigner) external onlyOwner {
+        address oldSigner = signer;
         signer = newSigner;
-        emit SignerUpdated(signer);
+        emit SignerUpdated(oldSigner, newSigner);
     }
 
     /**
@@ -66,8 +62,8 @@ contract WhitelistRegistry is IWhitelistRegistry, Ownable {
         // forge-lint: disable-next-line(asm-keccak256)
         bytes32 digest = keccak256(abi.encodePacked(block.chainid, address(this), account));
         require(ECDSA.recover(digest, v, r, s) == signer, InvalidSignature());
-        require(!wasWhitelistedBySignature[account], DoubleSignatureUse());
-        wasWhitelistedBySignature[account] = true;
+        require(!isAddressWhitelistingBySignature[account], AddressSignatureWhitelistDisabled());
+        isAddressWhitelistingBySignature[account] = true;
         isAddressWhitelisted[account] = true;
         emit AddressWhitelisted(account, true);
     }
