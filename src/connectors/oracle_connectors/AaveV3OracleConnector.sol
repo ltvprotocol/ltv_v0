@@ -10,9 +10,15 @@ import {LTVState} from "src/states/LTVState.sol";
  * @notice Connector for Aave V3 Oracle
  */
 contract AaveV3OracleConnector is LTVState, IOracleConnector {
+    /**
+     * @notice Error thrown when oracle address is zero
+     */
+    error ZeroOracleAddress();
+
     IAaveV3Oracle public immutable ORACLE;
 
     constructor(address _oracle) {
+        require(_oracle != address(0), ZeroOracleAddress());
         ORACLE = IAaveV3Oracle(_oracle);
     }
 

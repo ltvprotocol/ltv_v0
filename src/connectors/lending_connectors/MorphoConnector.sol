@@ -14,6 +14,11 @@ import {UMulDiv} from "src/math/libraries/MulDiv.sol";
 contract MorphoConnector is LTVState, ILendingConnector {
     using UMulDiv for uint128;
 
+    /**
+     * @notice Error thrown when morpho address is zero
+     */
+    error ZeroMorphoAddress();
+
     IMorphoBlue public immutable MORPHO;
 
     // bytes32(uint256(keccak256("ltv.storage.MorphoConnector")) - 1)
@@ -21,6 +26,7 @@ contract MorphoConnector is LTVState, ILendingConnector {
         0x3ce092b68bc5f5a93dae5498ed388a510f95f75f908bb65f889a019a5a7397e4;
 
     constructor(address _morpho) {
+        require(_morpho != address(0), ZeroMorphoAddress());
         MORPHO = IMorphoBlue(_morpho);
     }
 

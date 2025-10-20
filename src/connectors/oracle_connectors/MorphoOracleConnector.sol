@@ -11,8 +11,13 @@ import {LTVState} from "src/states/LTVState.sol";
  */
 contract MorphoOracleConnector is LTVState, IOracleConnector {
     /**
+     * @notice Error thrown when oracle address is zero
+     */
+    error ZeroOracleAddress();
+    /**
      * @inheritdoc IOracleConnector
      */
+
     function getPriceCollateralOracle(bytes calldata oracleConnectorData) external view returns (uint256) {
         (, uint8 collateralTokenDecimals, address oracle) = abi.decode(oracleConnectorData, (uint8, uint8, address));
         return IMorphoOracle(oracle).price() / 10 ** (36 - collateralTokenDecimals);
@@ -31,6 +36,7 @@ contract MorphoOracleConnector is LTVState, IOracleConnector {
      */
     function initializeOracleConnectorData(bytes calldata _oracle) external {
         address oracle = abi.decode(_oracle, (address));
+        require(oracle != address(0), ZeroOracleAddress());
         oracleConnectorGetterData = abi.encode(borrowTokenDecimals, collateralTokenDecimals, oracle);
     }
 }

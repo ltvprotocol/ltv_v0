@@ -34,4 +34,9 @@ interface IAaveV3Pool {
     function getReserveData(address asset) external view returns (ReserveData memory);
 
     function setUserEMode(uint8 categoryId) external;
+
+    function getEModeCategoryCollateralConfig(uint8 id)
+        external
+        view
+        returns (uint16 ltv, uint16 liquidationThreshold, uint16 liquidationBonus);
 }

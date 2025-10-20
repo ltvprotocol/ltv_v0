@@ -11,9 +11,19 @@ import {LTVState} from "src/states/LTVState.sol";
  * @notice Connector for Aave V3 Pool
  */
 contract AaveV3Connector is LTVState, ILendingConnector {
+    /**
+     * @notice Error thrown when pool address is zero
+     */
+    error ZeroPoolAddress();
+    /**
+     * @notice Error thrown when E-Mode ID is invalid
+     */
+    error InvalidEModeId(uint8 emodeId);
+
     IAaveV3Pool public immutable POOL;
 
     constructor(address _pool) {
+        require(_pool != address(0), ZeroPoolAddress());
         POOL = IAaveV3Pool(_pool);
     }
 
@@ -71,6 +81,11 @@ contract AaveV3Connector is LTVState, ILendingConnector {
         address borrowAToken = POOL.getReserveData(address(borrowToken)).variableDebtTokenAddress;
 
         lendingConnectorGetterData = abi.encode(collateralAToken, borrowAToken);
-        POOL.setUserEMode(uint8(abi.decode(emode, (uint256))));
+        uint8 emodeId = uint8(abi.decode(emode, (uint256)));
+
+        (uint16 ltv, uint16 liquidationThreshold, uint16 liquidationBonus) =
+            POOL.getEModeCategoryCollateralConfig(emodeId);
+        require(ltv != 0 && liquidationThreshold != 0 && liquidationBonus != 0, InvalidEModeId(emodeId));
+        POOL.setUserEMode(emodeId);
     }
 }
