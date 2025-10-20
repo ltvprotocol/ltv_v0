@@ -15,6 +15,11 @@ contract AaveV3OracleConnector is LTVState, IOracleConnector {
      */
     error ZeroOracleAddress();
 
+    /**
+     * @notice Error thrown when no source of asset price is found
+     */
+    error NoSourceOfAssetPrice(address asset);
+
     IAaveV3Oracle public immutable ORACLE;
 
     constructor(address _oracle) {
@@ -43,5 +48,10 @@ contract AaveV3OracleConnector is LTVState, IOracleConnector {
      */
     function initializeOracleConnectorData(bytes calldata) external {
         oracleConnectorGetterData = abi.encode(address(collateralToken), address(borrowToken));
+        require(
+            ORACLE.getSourceOfAsset(address(collateralToken)) != address(0),
+            NoSourceOfAssetPrice(address(collateralToken))
+        );
+        require(ORACLE.getSourceOfAsset(address(borrowToken)) != address(0), NoSourceOfAsset(address(borrowToken)));
     }
 }
