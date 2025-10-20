@@ -5,7 +5,7 @@ import {IModules} from "src/interfaces/IModules.sol";
 import {IInitializeModule} from "src/interfaces/writes/IInitializeModule.sol";
 import {StateInitData} from "src/structs/state/initialize/StateInitData.sol";
 import {AdministrationWrite} from "src/facades/writes/AdministrationWrite.sol";
-import {RevertWithDataIfNeeded} from "src/utils/RevertWithDataIfNeeded.sol";
+import {DelegateCallPostCheck} from "src/utils/DelegateCallPostCheck.sol";
 
 /**
  * @title InitializeWrite
@@ -14,14 +14,15 @@ import {RevertWithDataIfNeeded} from "src/utils/RevertWithDataIfNeeded.sol";
  * the facade contract. After modules initialization, remaining part of LTV protocol can be initialized
  * via initialize module.
  */
-abstract contract InitializeWrite is AdministrationWrite, RevertWithDataIfNeeded {
+abstract contract InitializeWrite is AdministrationWrite, DelegateCallPostCheck {
     /**
      * @dev see ILTV.initialize
      */
     function initialize(StateInitData memory initData, IModules modules) external initializer {
         _setModules(modules);
+        address initializeModule = address(modules.initializeModule());
         (bool isSuccess, bytes memory data) =
-            address(modules.initializeModule()).delegatecall(abi.encodeCall(IInitializeModule.initialize, (initData)));
-        revertWithDataIfNeeded(isSuccess, data);
+            initializeModule.delegatecall(abi.encodeCall(IInitializeModule.initialize, (initData)));
+        delegateCallPostCheck(initializeModule, isSuccess, data);
     }
 }
