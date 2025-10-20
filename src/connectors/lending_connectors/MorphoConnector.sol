@@ -4,6 +4,7 @@ pragma solidity ^0.8.28;
 import {ILendingConnector} from "src/interfaces/connectors/ILendingConnector.sol";
 import {MorphoConnectorStorage} from "src/structs/connectors/MorphoConnectorStorage.sol";
 import {IMorphoBlue} from "src/connectors/lending_connectors/interfaces/IMorphoBlue.sol";
+import {IMorphoConnectorErrors} from "../../../src/errors/connectors/IMorphoConnectorErrors.sol";
 import {LTVState} from "src/states/LTVState.sol";
 import {UMulDiv} from "src/math/libraries/MulDiv.sol";
 
@@ -11,42 +12,8 @@ import {UMulDiv} from "src/math/libraries/MulDiv.sol";
  * @title MorphoConnector
  * @notice Connector for Morpho protocol
  */
-contract MorphoConnector is LTVState, ILendingConnector {
+contract MorphoConnector is LTVState, ILendingConnector, IMorphoConnectorErrors {
     using UMulDiv for uint128;
-
-    /**
-     * @notice Error thrown when morpho address is zero
-     */
-    error ZeroMorphoAddress();
-
-    /**
-     * @notice Error thrown when LLTv market param is zero
-     */
-    error ZeroLltvMarketParam();
-    /**
-     * @notice Error thrown when oracle market param is zero
-     */
-    error ZeroOracleMarketParam();
-    /**
-     * @notice Error thrown when IRM market param is zero
-     */
-    error ZeroIrmMarketParam();
-
-    /**
-     * @notice Error thrown when provided oracle address doesn't correspond
-     * to provided marketId
-     */
-    error InvalidOracle(address provided, address fetched);
-    /**
-     * @notice Error thrown when provided IRM address doesn't correspond
-     * to provided marketId
-     */
-    error InvalidIrm(address provided, address fetched);
-    /**
-     * @notice Error thrown when provided lltv doesn't correspond
-     * to marketId
-     */
-    error InvalidLltv(uint256 provided, uint256 fetched);
 
     IMorphoBlue public immutable MORPHO;
 
@@ -143,15 +110,28 @@ contract MorphoConnector is LTVState, ILendingConnector {
         (address oracle, address irm, uint256 lltv, bytes32 marketId) =
             abi.decode(data, (address, address, uint256, bytes32));
 
-        (address loanToken, address collateralToken, address fetchedOracle, address fetchedIrm, uint256 fetchedLltv) =
-            MORPHO.idToMarketParams(marketId);
+        (
+            address fetchedLoanToken,
+            address fetchedCollateralToken,
+            address fetchedOracle,
+            address fetchedIrm,
+            uint256 fetchedLltv
+        ) = MORPHO.idToMarketParams(marketId);
 
-        require(loanToken != address(0), ZeroLoanTokenMarketParam());
-        require(collateralToken != address(0), ZeroCollateralTokenMarketParam());
         require(fetchedLltv > 0, ZeroLltvMarketParam());
+        require(fetchedLoanToken != address(0), ZeroLoanTokenMarketParam());
+        require(fetchedCollateralToken != address(0), ZeroCollateralTokenMarketParam());
+        require(fetchedLoanToken != address(0), ZeroLoanTokenMarketParam());
+        require(fetchedCollateralToken != address(0), ZeroCollateralTokenMarketParam());
+
         require(fetchedOracle == oracle, InvalidOracle(oracle, fetchedOracle));
         require(fetchedIrm == irm, InvalidIrm(irm, fetchedIrm));
         require(fetchedLltv == lltv, InvalidLltv(lltv, fetchedLltv));
+        require(fetchedLoanToken == address(borrowToken), InvalidLoanToken(address(borrowToken), fetchedLoanToken));
+        require(
+            fetchedCollateralToken == address(collateralToken),
+            InvalidCollateralToken(address(collateralToken), fetchedCollateralToken)
+        );
 
         MorphoConnectorStorage storage s = _getMorphoConnectorStorage();
         s.oracle = oracle;

@@ -5,21 +5,13 @@ import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {ILendingConnector} from "src/interfaces/connectors/ILendingConnector.sol";
 import {IAaveV3Pool} from "src/connectors/lending_connectors/interfaces/IAaveV3Pool.sol";
 import {LTVState} from "src/states/LTVState.sol";
+import {IAaveV3ConnectorErrors} from "../../../src/errors/connectors/IAaveV3ConnectorErrors.sol";
 
 /**
  * @title AaveV3Connector
  * @notice Connector for Aave V3 Pool
  */
-contract AaveV3Connector is LTVState, ILendingConnector {
-    /**
-     * @notice Error thrown when pool address is zero
-     */
-    error ZeroPoolAddress();
-    /**
-     * @notice Error thrown when E-Mode ID is invalid
-     */
-    error InvalidEModeId(uint8 emodeId);
-
+contract AaveV3Connector is LTVState, ILendingConnector, IAaveV3ConnectorErrors {
     IAaveV3Pool public immutable POOL;
 
     constructor(address _pool) {
