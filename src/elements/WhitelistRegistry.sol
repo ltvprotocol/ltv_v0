@@ -4,6 +4,8 @@ pragma solidity ^0.8.28;
 import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
 import {IWhitelistRegistry} from "src/interfaces/IWhitelistRegistry.sol";
 import {ECDSA} from "openzeppelin-contracts/contracts/utils/cryptography/ECDSA.sol";
+import {IWhitelistRegistryErrors} from "../errors/IWhitelistRegistryErrors.sol";
+import {IWhitelistRegistryEvents} from "../events/IWhitelistRegistryEvents.sol";
 
 /**
  * @title WhitelistRegistry
@@ -13,7 +15,7 @@ import {ECDSA} from "openzeppelin-contracts/contracts/utils/cryptography/ECDSA.s
  * can add to whitelist himself by submitting signature of the signer. User can acquire whitelist
  * by signature only once.
  */
-contract WhitelistRegistry is IWhitelistRegistry, Ownable {
+contract WhitelistRegistry is IWhitelistRegistry, Ownable, IWhitelistRegistryErrors, IWhitelistRegistryEvents {
     mapping(address => bool) public isAddressWhitelisted;
     mapping(address => bool) public isAddressWhitelistingBySignature;
     address public signer;
@@ -62,7 +64,7 @@ contract WhitelistRegistry is IWhitelistRegistry, Ownable {
         // forge-lint: disable-next-line(asm-keccak256)
         bytes32 digest = keccak256(abi.encodePacked(block.chainid, address(this), account));
         require(ECDSA.recover(digest, v, r, s) == signer, InvalidSignature());
-        require(!isAddressWhitelistingBySignature[account], AddressSignatureWhitelistDisabled());
+        require(!isAddressWhitelistingBySignature[account], AddressWhitelistingBySignatureDisabled());
         isAddressWhitelistingBySignature[account] = true;
         isAddressWhitelisted[account] = true;
         emit AddressWhitelisted(account, true);
