@@ -6,7 +6,6 @@ pragma solidity ^0.8.28;
  * @notice Interface defining all events used in Whitelist Registry
  */
 interface IWhitelistRegistryEvents {
-
     /**
      * @notice Event emitted when an address is whitelisted or removed from the whitelist
      */

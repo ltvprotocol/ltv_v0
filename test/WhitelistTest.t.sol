@@ -81,7 +81,9 @@ contract WhitelistTest is BalancedTest {
         whitelistRegistry.removeAddressFromWhitelist(user);
         assertEq(whitelistRegistry.isAddressWhitelisted(user), false);
 
-        vm.expectRevert(abi.encodeWithSelector(IWhitelistRegistryErrors.AddressWhitelistingBySignatureDisabled.selector));
+        vm.expectRevert(
+            abi.encodeWithSelector(IWhitelistRegistryErrors.AddressWhitelistingBySignatureDisabled.selector)
+        );
         whitelistRegistry.addAddressToWhitelistBySignature(user, v, r, s);
     }
 
