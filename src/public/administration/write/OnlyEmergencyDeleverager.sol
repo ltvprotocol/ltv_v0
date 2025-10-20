@@ -93,8 +93,8 @@ abstract contract OnlyEmergencyDeleverager is
             collateralToken.safeTransfer(msg.sender, collateralToTransfer);
         }
         // Set the vault as deleveraged. After this operation collateral assets are transferred to the
-        // vault address. Users still will be able to burn their shares to withdraw this collateral(via 
-        // withdrawCollateral or redeemCollateral functions) 
+        // vault address. Users still will be able to burn their shares to withdraw this collateral(via
+        // withdrawCollateral or redeemCollateral functions)
         setBool(Constants.IS_VAULT_DELEVERAGED_BIT, true);
         lendingConnectorGetterData = "";
     }
