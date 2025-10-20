@@ -19,6 +19,35 @@ contract MorphoConnector is LTVState, ILendingConnector {
      */
     error ZeroMorphoAddress();
 
+    /**
+     * @notice Error thrown when LLTv market param is zero
+     */
+    error ZeroLltvMarketParam();
+    /**
+     * @notice Error thrown when oracle market param is zero
+     */
+    error ZeroOracleMarketParam();
+    /**
+     * @notice Error thrown when IRM market param is zero
+     */
+    error ZeroIrmMarketParam();
+
+    /**
+     * @notice Error thrown when provided oracle address doesn't correspond
+     * to provided marketId
+     */
+    error InvalidOracle(address provided, address fetched);
+    /**
+     * @notice Error thrown when provided IRM address doesn't correspond
+     * to provided marketId
+     */
+    error InvalidIrm(address provided, address fetched);
+    /**
+     * @notice Error thrown when provided lltv doesn't correspond
+     * to marketId
+     */
+    error InvalidLltv(uint256 provided, uint256 fetched);
+
     IMorphoBlue public immutable MORPHO;
 
     // bytes32(uint256(keccak256("ltv.storage.MorphoConnector")) - 1)
@@ -113,6 +142,16 @@ contract MorphoConnector is LTVState, ILendingConnector {
     function initializeLendingConnectorData(bytes memory data) external {
         (address oracle, address irm, uint256 lltv, bytes32 marketId) =
             abi.decode(data, (address, address, uint256, bytes32));
+
+        (address loanToken, address collateralToken, address fetchedOracle, address fetchedIrm, uint256 fetchedLltv) =
+            MORPHO.idToMarketParams(marketId);
+
+        require(loanToken != address(0), ZeroLoanTokenMarketParam());
+        require(collateralToken != address(0), ZeroCollateralTokenMarketParam());
+        require(fetchedLltv > 0, ZeroLltvMarketParam());
+        require(fetchedOracle == oracle, InvalidOracle(oracle, fetchedOracle));
+        require(fetchedIrm == irm, InvalidIrm(irm, fetchedIrm));
+        require(fetchedLltv == lltv, InvalidLltv(lltv, fetchedLltv));
 
         MorphoConnectorStorage storage s = _getMorphoConnectorStorage();
         s.oracle = oracle;
