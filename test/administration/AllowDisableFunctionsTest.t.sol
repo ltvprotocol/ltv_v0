@@ -2,7 +2,6 @@
 pragma solidity ^0.8.28;
 
 import {DefaultTestData} from "test/utils/BaseTest.t.sol";
-import {IModules} from "src/interfaces/IModules.sol";
 import {ILTV} from "src/interfaces/ILTV.sol";
 import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
 import {PrepareEachFunctionSuccessfulExecution} from "test/administration/PrepareEachFunctionSuccessfulExecution.sol";
@@ -147,9 +146,9 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         pure
         returns (bytes[] memory, bytes4[] memory, address[] memory)
     {
-        bytes[] memory calls = new bytes[](12);
-        bytes4[] memory selectors = new bytes4[](12);
-        address[] memory callers = new address[](12);
+        bytes[] memory calls = new bytes[](11);
+        bytes4[] memory selectors = new bytes4[](11);
+        address[] memory callers = new address[](11);
 
         // Core functions that cannot be disabled
         calls[0] = abi.encodeCall(ILTV.allowDisableFunctions, (new bytes4[](1), true));
@@ -165,8 +164,8 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         selectors[2] = ILTV.renounceOwnership.selector;
         callers[2] = defaultData.owner;
 
-        calls[3] = abi.encodeCall(ILTV.setModules, (IModules(address(1))));
-        selectors[3] = ILTV.setModules.selector;
+        calls[3] = abi.encodeCall(ILTV.transferOwnership, (defaultData.owner));
+        selectors[3] = ILTV.transferOwnership.selector;
         callers[3] = defaultData.owner;
 
         // Update functions
@@ -197,10 +196,6 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         calls[10] = abi.encodeCall(ILTV.setOracleConnector, (address(1), ""));
         selectors[10] = ILTV.setOracleConnector.selector;
         callers[10] = defaultData.owner;
-
-        calls[11] = abi.encodeCall(ILTV.transferOwnership, (defaultData.owner));
-        selectors[11] = ILTV.transferOwnership.selector;
-        callers[11] = defaultData.owner;
 
         return (calls, selectors, callers);
     }

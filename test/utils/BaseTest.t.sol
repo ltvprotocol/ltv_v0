@@ -159,12 +159,12 @@ contract BaseTest is Test {
                 vaultBalanceAsLendingConnectorData: ""
             });
 
-            ltv = new DummyLTV();
+            ltv = new DummyLTV(address(modulesProvider));
             // Enable initializers
             vm.store(
                 address(ltv), bytes32(0xf0c57e16840df040f15088dc2f81fe391c3923bec73e23a9662efc9c229c6a00), bytes32(0)
             );
-            ltv.initialize(initData, modulesProvider);
+            ltv.initialize(initData);
         }
 
         vm.startPrank(init.owner);

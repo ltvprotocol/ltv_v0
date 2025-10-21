@@ -4,6 +4,8 @@ pragma solidity ^0.8.28;
 import {LTV} from "src/elements/LTV.sol";
 
 contract DummyLTV is LTV {
+    constructor(address modules) LTV(modules) {}
+
     function setLastSeenTokenPrice(uint256 value) public {
         lastSeenTokenPrice = value;
     }
