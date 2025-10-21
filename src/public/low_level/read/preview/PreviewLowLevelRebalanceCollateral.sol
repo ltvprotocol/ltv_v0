@@ -7,7 +7,6 @@ import {PreviewLowLevelRebalanceStateToData} from
     "src/math/abstracts/state_to_data/preview/PreviewLowLevelRebalanceStateToData.sol";
 import {LowLevelRebalanceMath} from "src/math/libraries/LowLevelRebalanceMath.sol";
 import {UMulDiv} from "src/math/libraries/MulDiv.sol";
-
 /**
  * @title PreviewLowLevelRebalanceCollateral
  * @notice This contract contains preview low level rebalance collateral function implementation.
@@ -20,10 +19,13 @@ abstract contract PreviewLowLevelRebalanceCollateral is PreviewLowLevelRebalance
      */
     function previewLowLevelRebalanceCollateral(int256 deltaCollateral, PreviewLowLevelRebalanceState memory state)
         public
-        pure
+        view
+        nonReentrantRead
         returns (int256, int256)
     {
-        return previewLowLevelRebalanceCollateralHint(deltaCollateral, true, state);
+        (int256 deltaRealBorrow, int256 deltaShares,) =
+            _previewLowLevelRebalanceCollateralHint(deltaCollateral, true, state);
+        return (deltaRealBorrow, deltaShares);
     }
 
     /**
@@ -33,7 +35,7 @@ abstract contract PreviewLowLevelRebalanceCollateral is PreviewLowLevelRebalance
         int256 deltaCollateral,
         bool isSharesPositiveHint,
         PreviewLowLevelRebalanceState memory state
-    ) public pure returns (int256, int256) {
+    ) public view nonReentrantRead returns (int256, int256) {
         (int256 deltaRealBorrow, int256 deltaShares,) =
             _previewLowLevelRebalanceCollateralHint(deltaCollateral, isSharesPositiveHint, state);
         return (deltaRealBorrow, deltaShares);

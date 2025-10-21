@@ -5,7 +5,6 @@ import {MaxLowLevelRebalanceCollateralStateData} from
     "src/structs/state/low_level/max/MaxLowLevelRebalanceCollateralStateData.sol";
 import {MaxGrowthFee} from "src/math/abstracts/MaxGrowthFee.sol";
 import {UMulDiv} from "src/math/libraries/MulDiv.sol";
-
 /**
  * @title MaxLowLevelRebalanceCollateral
  * @notice This contract contains max low level rebalance collateral function implementation.
@@ -18,7 +17,8 @@ abstract contract MaxLowLevelRebalanceCollateral is MaxGrowthFee {
      */
     function maxLowLevelRebalanceCollateral(MaxLowLevelRebalanceCollateralStateData memory state)
         public
-        pure
+        view
+        nonReentrantRead
         returns (int256)
     {
         return _maxLowLevelRebalanceCollateral(state);

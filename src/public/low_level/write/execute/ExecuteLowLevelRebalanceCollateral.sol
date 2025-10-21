@@ -61,7 +61,7 @@ abstract contract ExecuteLowLevelRebalanceCollateral is
         ExecuteLowLevelRebalanceState memory state = executeLowLevelRebalanceState();
         LowLevelRebalanceData memory data =
             previewLowLevelRebalanceStateToData(state.previewLowLevelRebalanceState, isSharesPositive);
-        int256 max = maxLowLevelRebalanceCollateral(
+        int256 max = _maxLowLevelRebalanceCollateral(
             // using deposit real collateral assets since it overestimate collateral assets, so max value will be smaller
             MaxLowLevelRebalanceCollateralStateData({
                 realCollateralAssets: state.previewLowLevelRebalanceState.depositRealCollateralAssets,

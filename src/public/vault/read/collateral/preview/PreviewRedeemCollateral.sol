@@ -20,8 +20,9 @@ abstract contract PreviewRedeemCollateral is VaultCollateral {
      * @dev see ICollateralVaultModule.previewRedeemCollateral
      */
     function previewRedeemCollateral(uint256 shares, PreviewWithdrawVaultState memory state)
-        public
-        pure
+        external
+        view
+        nonReentrantRead
         returns (uint256 assets)
     {
         (assets,) = _previewRedeemCollateral(shares, previewWithdrawVaultStateToPreviewCollateralVaultData(state));
