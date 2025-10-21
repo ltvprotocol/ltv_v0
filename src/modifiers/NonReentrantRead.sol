@@ -14,7 +14,8 @@ abstract contract NonReentrantRead is ReentrancyGuardUpgradeable, INonReentrantR
         _nonReentrantRead();
         _;
     }
+
     function _nonReentrantRead() internal view {
         require(!_reentrancyGuardEntered(), ReentrantReadDuringWriteCallError());
-    }   
+    }
 }
