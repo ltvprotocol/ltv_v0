@@ -215,4 +215,9 @@ interface IAdministrationErrors {
     error FailedToSetVaultBalanceAsLendingConnector(
         address vaultBalanceAsLendingConnector, bytes vaultBalanceAsLendingConnectorGetterData
     );
+
+    /**
+     * @notice Error thrown when auction duration is set to zero during initialization
+     */
+    error ZeroAuctionDuration();
 }
