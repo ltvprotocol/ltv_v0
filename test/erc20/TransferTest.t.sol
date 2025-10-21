@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {stdError} from "forge-std/StdError.sol";
 import {BaseTest, DefaultTestData} from "test/utils/BaseTest.t.sol";
 import {IERC20Events} from "src/events/IERC20Events.sol";
 import {IERC20Errors} from "src/errors/IERC20Errors.sol";

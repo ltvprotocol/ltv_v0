@@ -4,7 +4,6 @@ pragma solidity ^0.8.28;
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import {BalancedTest} from "test/utils/BalancedTest.t.sol";
 import {ILTV} from "src/interfaces/ILTV.sol";
-import {DummyLendingConnector} from "../src/dummy/DummyLendingConnector.sol";
 import {MockLendingConnector, MockOracleConnector} from "./utils/MockConnectors.t.sol";
 
 contract OwnerTest is BalancedTest {

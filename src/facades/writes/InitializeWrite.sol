@@ -5,7 +5,6 @@ import {IModules} from "src/interfaces/IModules.sol";
 import {IInitializeModule} from "src/interfaces/writes/IInitializeModule.sol";
 import {StateInitData} from "src/structs/state/initialize/StateInitData.sol";
 import {AdministrationWrite} from "src/facades/writes/AdministrationWrite.sol";
-import {DelegateCallPostCheck} from "src/utils/DelegateCallPostCheck.sol";
 
 /**
  * @title InitializeWrite
