@@ -11,7 +11,10 @@ import {INonReentrantReadError} from "src/errors/INonReentrantReadError.sol";
  */
 abstract contract NonReentrantRead is ReentrancyGuardUpgradeable, INonReentrantReadError {
     modifier nonReentrantRead() {
-        require(!_reentrancyGuardEntered(), ReentrantReadDuringWriteCallError());
+        _nonReentrantRead();
         _;
     }
+    function _nonReentrantRead() internal view {
+        require(!_reentrancyGuardEntered(), ReentrantReadDuringWriteCallError());
+    }   
 }
