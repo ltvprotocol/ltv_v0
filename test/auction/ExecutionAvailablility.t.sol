@@ -43,6 +43,7 @@ contract ExecutionAvailablilityTest is AuctionTestCommon {
     {
         vm.assume(user != data.owner);
         vm.assume(user != data.feeCollector);
+        vm.assume(user != address(0));
         prepareUser(user);
         prepareDepositAuction(amount, data.owner);
 
