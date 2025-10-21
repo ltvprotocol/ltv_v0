@@ -65,4 +65,11 @@ abstract contract OnlyOwner is AdministrationSetters, OwnableUpgradeable, Reentr
     ) external onlyOwner nonReentrant {
         _setVaultBalanceAsLendingConnector(_vaultBalanceAsLendingConnector, vaultBalanceAsLendingConnectorGetterData);
     }
+
+    /**
+     * @dev see ILTV.sweep
+     */
+    function sweep(address token, uint256 amount) external onlyOwner nonReentrant {
+        IERC20(token).safeTransfer(owner(), amount);
+    }
 }
