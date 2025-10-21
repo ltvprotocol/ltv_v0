@@ -35,4 +35,9 @@ interface IERC20Errors {
      * @notice Error thrown when token owner has insufficient balance to perform the requested operation
      */
     error ERC20InsufficientBalance(address owner, uint256 ownerBalance, uint256 needed);
+
+    /**
+     * @notice Error thrown when trying to mint tokens to zero address
+     */
+    error ERC20MintToZeroAddress();
 }

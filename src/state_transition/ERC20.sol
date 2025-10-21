@@ -65,6 +65,7 @@ abstract contract ERC20 is
      * @dev Mints specified amount of tokens to the provided address
      */
     function _mint(address to, uint256 amount) private {
+        require(to != address(0), ERC20MintToZeroAddress());
         balanceOf[to] += amount;
         baseTotalSupply += amount;
         emit Transfer(address(0), to, amount);
