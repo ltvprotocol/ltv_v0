@@ -199,6 +199,15 @@ contract AdministrationSetters is BoolWriter, BoolReader, IAdministrationErrors,
     }
 
     /**
+     * @dev implementation of ILTV.setIsProtocolPaused
+     */
+    function _setIsProtocolPaused(bool value) internal {
+        bool oldValue = _isProtocolPaused(boolSlot);
+        setBool(Constants.IS_PROTOCOL_PAUSED_BIT, value);
+        emit IsProtocolPausedChanged(oldValue, value);
+    }
+
+    /**
      * @dev implementation of ILTV.setLendingConnector. Makes delegatecall to provided address to initialize
      */
     function _setLendingConnector(ILendingConnector _lendingConnector, bytes memory lendingConnectorData) internal {

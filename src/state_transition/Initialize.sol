@@ -52,5 +52,6 @@ abstract contract Initialize is AdministrationSetters, OwnableUpgradeable {
         _setVaultBalanceAsLendingConnector(
             initData.vaultBalanceAsLendingConnector, initData.vaultBalanceAsLendingConnectorData
         );
+        _setIsProtocolPaused(true);
     }
 }
