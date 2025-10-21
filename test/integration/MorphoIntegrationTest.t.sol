@@ -15,7 +15,6 @@ import {IAdministrationModule} from "src/interfaces/reads/IAdministrationModule.
 import {IMorphoBlue} from "src/connectors/lending_connectors/interfaces/IMorphoBlue.sol";
 import {MorphoConnector} from "src/connectors/lending_connectors/MorphoConnector.sol";
 import {MorphoOracleConnector} from "src/connectors/oracle_connectors/MorphoOracleConnector.sol";
-import {ConstantSlippageConnector} from "src/connectors/slippage_connectors/ConstantSlippageConnector.sol";
 import {InitializeModule} from "src/elements/modules/InitializeModule.sol";
 import {StateInitData} from "src/structs/state/initialize/StateInitData.sol";
 import {ModulesProvider, ModulesState} from "src/elements/ModulesProvider.sol";
@@ -27,6 +26,7 @@ import {LowLevelRebalanceModule} from "src/elements/modules/LowLevelRebalanceMod
 import {AdministrationModule} from "src/elements/modules/AdministrationModule.sol";
 import {LTV} from "src/elements/LTV.sol";
 import {MockLendingConnector} from "../utils/MockConnectors.t.sol";
+import {DummySlippageConnector} from "src/dummy/DummySlippageConnector.sol";
 
 contract MorphoIntegrationTest is Test {
     address constant MORPHO_BLUE = 0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb;
@@ -41,7 +41,7 @@ contract MorphoIntegrationTest is Test {
     LTV public ltv;
     IERC20 public weth;
     IERC20 public wsteth;
-    ConstantSlippageConnector public slippageConnector;
+    DummySlippageConnector public slippageConnector;
     ModulesProvider public modulesProvider;
 
     address public user;
@@ -61,7 +61,7 @@ contract MorphoIntegrationTest is Test {
 
         morphoLendingConnector = new MorphoConnector(0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb);
         morphoOracleConnector = new MorphoOracleConnector();
-        slippageConnector = new ConstantSlippageConnector();
+        slippageConnector = new DummySlippageConnector();
 
         weth = IERC20(WETH);
         wsteth = IERC20(WSTETH);
