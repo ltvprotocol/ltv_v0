@@ -9,6 +9,7 @@ import {UMulDiv} from "src/math/libraries/MulDiv.sol";
  * @title MaxLowLevelRebalanceCollateral
  * @notice This contract contains max low level rebalance collateral function implementation.
  */
+
 abstract contract MaxLowLevelRebalanceCollateral is MaxGrowthFee {
     using UMulDiv for uint256;
 

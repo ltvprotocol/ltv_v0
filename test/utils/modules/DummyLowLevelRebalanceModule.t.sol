@@ -18,7 +18,12 @@ contract DummyLowLevelRebalanceModule is LowLevelRebalanceModule, DummyTotalAsse
         return DummyTotalAssetsModule._totalAssets(isDeposit, data);
     }
 
-    function _totalSupply(uint256 supply) internal pure override(TotalSupply, DummyTotalSupplyModule) returns (uint256) {
+    function _totalSupply(uint256 supply)
+        internal
+        pure
+        override(TotalSupply, DummyTotalSupplyModule)
+        returns (uint256)
+    {
         return DummyTotalSupplyModule._totalSupply(supply);
     }
 }

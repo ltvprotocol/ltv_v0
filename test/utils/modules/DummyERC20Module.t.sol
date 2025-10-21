@@ -6,7 +6,12 @@ import {TotalSupply} from "src/public/erc20/read/TotalSupply.sol";
 import {DummyTotalSupplyModule} from "test/utils/modules/DummyTotalSupplyModule.t.sol";
 
 contract DummyERC20Module is ERC20Module, DummyTotalSupplyModule {
-    function _totalSupply(uint256 supply) internal pure override(TotalSupply, DummyTotalSupplyModule) returns (uint256) {
+    function _totalSupply(uint256 supply)
+        internal
+        pure
+        override(TotalSupply, DummyTotalSupplyModule)
+        returns (uint256)
+    {
         return DummyTotalSupplyModule._totalSupply(supply);
     }
 }

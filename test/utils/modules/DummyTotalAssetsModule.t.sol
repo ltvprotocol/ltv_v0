@@ -5,7 +5,6 @@ import {Constants} from "src/constants/Constants.sol";
 import {TotalAssetsData} from "src/structs/data/vault/total_assets/TotalAssetsData.sol";
 import {TotalAssets} from "src/public/vault/read/borrow/TotalAssets.sol";
 
-
 contract DummyTotalAssetsModule is TotalAssets {
     function _totalAssets(bool isDeposit, TotalAssetsData memory data)
         internal
