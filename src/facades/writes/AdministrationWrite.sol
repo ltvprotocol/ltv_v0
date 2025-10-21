@@ -169,7 +169,7 @@ abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeab
     /**
      * @dev see ILTV.sweep
      */
-    function sweep(address token, uint256 amount) external onlyOwner {
+    function sweep(address token, uint256 amount) external {
         _delegate(address(modules.administrationModule()), abi.encode(token, amount));
     }
 
