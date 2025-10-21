@@ -25,6 +25,7 @@ abstract contract ERC20 is
      */
     function _burn(address from, uint256 amount) internal {
         require(!_isWithdrawDisabled(boolSlot), WithdrawIsDisabled());
+        require(balanceOf[from] >= amount, ERC20InsufficientBalance(from, balanceOf[from], amount));
         balanceOf[from] -= amount;
         baseTotalSupply -= amount;
         emit Transfer(from, address(0), amount);
@@ -36,9 +37,7 @@ abstract contract ERC20 is
     function _spendAllowance(address owner, address spender, uint256 value) internal virtual {
         uint256 currentAllowance = allowance[owner][spender];
         if (currentAllowance < type(uint256).max) {
-            if (currentAllowance < value) {
-                revert ERC20InsufficientAllowance(spender, currentAllowance, value);
-            }
+            require(currentAllowance >= value, ERC20InsufficientAllowance(spender, currentAllowance, value));
             unchecked {
                 allowance[owner][spender] = currentAllowance - value;
             }
