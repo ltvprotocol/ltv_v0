@@ -41,7 +41,7 @@ abstract contract BoolReader {
     /**
      * @notice function to get bool value from bool slot for appropriate bit
      */
-    function _getBool(uint8 boolSlot, uint256 bit) private pure returns (bool) {
+    function _getBool(uint8 boolSlot, uint8 bit) private pure returns (bool) {
         return boolSlot & (2 ** bit) != 0;
     }
 }
