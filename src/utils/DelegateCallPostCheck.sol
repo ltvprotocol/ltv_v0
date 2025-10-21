@@ -18,6 +18,6 @@ abstract contract DelegateCallPostCheck is IDelegateCallError {
             }
         }
 
-        require(data.length != 0 || target.code.length != 0, DelegateCallFailed());
+        require(data.length != 0 || target.code.length != 0, EOADelegateCall());
     }
 }

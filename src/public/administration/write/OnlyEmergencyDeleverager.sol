@@ -45,7 +45,6 @@ abstract contract OnlyEmergencyDeleverager is
             )
         );
         require(!_isVaultDeleveraged(boolSlot), VaultAlreadyDeleveraged());
-        require(address(vaultBalanceAsLendingConnector) != address(0), VaultBalanceAsLendingConnectorNotSet());
 
         MaxGrowthFeeState memory state = maxGrowthFeeState();
         MaxGrowthFeeData memory data = maxGrowthFeeStateToData(state);

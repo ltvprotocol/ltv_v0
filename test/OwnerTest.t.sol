@@ -4,17 +4,19 @@ pragma solidity ^0.8.28;
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import {BalancedTest} from "test/utils/BalancedTest.t.sol";
 import {ILTV} from "src/interfaces/ILTV.sol";
+import {DummyLendingConnector} from "../src/dummy/DummyLendingConnector.sol";
+import {MockLendingConnector, MockOracleConnector} from "./utils/MockConnectors.t.sol";
 
 contract OwnerTest is BalancedTest {
     function test_setLendingConnector(address owner, address user)
         public
         initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
     {
+        MockLendingConnector mockLendingConnector = new MockLendingConnector();
         vm.startPrank(owner);
-        address mockConnector = address(0x9876);
 
-        dummyLtv.setLendingConnector(mockConnector, "");
-        assertEq(address(ILTV(address(dummyLtv)).lendingConnector()), mockConnector);
+        dummyLtv.setLendingConnector(address(mockLendingConnector), "");
+        assertEq(address(ILTV(address(dummyLtv)).lendingConnector()), address(mockLendingConnector));
 
         // Should revert if not owner
         vm.startPrank(user);
@@ -27,10 +29,10 @@ contract OwnerTest is BalancedTest {
         initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
     {
         vm.startPrank(owner);
-        address mockConnector = address(0x9876);
+        MockOracleConnector mockOracleConnector = new MockOracleConnector();
 
-        dummyLtv.setOracleConnector(mockConnector, "");
-        assertEq(address(dummyLtv.oracleConnector()), mockConnector);
+        dummyLtv.setOracleConnector(address(mockOracleConnector), "");
+        assertEq(address(dummyLtv.oracleConnector()), address(mockOracleConnector));
 
         // Should revert if not owner
         vm.startPrank(user);

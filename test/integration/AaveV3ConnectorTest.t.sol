@@ -25,6 +25,7 @@ import {BorrowVaultModule} from "src/elements/modules/BorrowVaultModule.sol";
 import {LowLevelRebalanceModule} from "src/elements/modules/LowLevelRebalanceModule.sol";
 import {AdministrationModule} from "src/elements/modules/AdministrationModule.sol";
 import {LTV} from "src/elements/LTV.sol";
+import {MockLendingConnector} from "../utils/MockConnectors.t.sol";
 
 contract AaveV3ConnectorTest is Test {
     address constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
@@ -82,7 +83,7 @@ contract AaveV3ConnectorTest is Test {
             slippageConnector: slippageConnector,
             maxDeleverageFeeDividend: 1,
             maxDeleverageFeeDivider: 20,
-            vaultBalanceAsLendingConnector: ILendingConnector(address(0)),
+            vaultBalanceAsLendingConnector: ILendingConnector(address(new MockLendingConnector())),
             owner: address(this),
             guardian: address(this),
             governor: address(this),

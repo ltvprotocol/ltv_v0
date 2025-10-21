@@ -97,6 +97,7 @@ contract RoundingExecuteAuctionBorrowTest is AuctionTestCommon {
         testWithPredefinedDefaultValues(data)
     {
         vm.assume(user != data.feeCollector);
+        vm.assume(user != address(0));
         prepareDepositAuction(2000000, data.owner);
 
         vm.roll(ltv.startAuction() + 243);

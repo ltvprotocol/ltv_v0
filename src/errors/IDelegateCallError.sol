@@ -7,7 +7,7 @@ pragma solidity ^0.8.28;
  */
 interface IDelegateCallError {
     /**
-     * @notice Error thrown when delegate call fails
+     * @notice Error thrown when executed delegate call to EOA
      */
-    error DelegateCallFailed();
+    error EOADelegateCall();
 }

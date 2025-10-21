@@ -14,7 +14,7 @@ import {DelegateCallPostCheck} from "src/utils/DelegateCallPostCheck.sol";
  * the facade contract. After modules initialization, remaining part of LTV protocol can be initialized
  * via initialize module.
  */
-abstract contract InitializeWrite is AdministrationWrite, DelegateCallPostCheck {
+abstract contract InitializeWrite is AdministrationWrite {
     /**
      * @dev see ILTV.initialize
      */

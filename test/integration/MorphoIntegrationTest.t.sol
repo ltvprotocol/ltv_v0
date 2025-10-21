@@ -26,6 +26,7 @@ import {BorrowVaultModule} from "src/elements/modules/BorrowVaultModule.sol";
 import {LowLevelRebalanceModule} from "src/elements/modules/LowLevelRebalanceModule.sol";
 import {AdministrationModule} from "src/elements/modules/AdministrationModule.sol";
 import {LTV} from "src/elements/LTV.sol";
+import {MockLendingConnector} from "../utils/MockConnectors.t.sol";
 
 contract MorphoIntegrationTest is Test {
     address constant MORPHO_BLUE = 0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb;
@@ -97,7 +98,7 @@ contract MorphoIntegrationTest is Test {
             slippageConnector: slippageConnector,
             maxDeleverageFeeDividend: 1,
             maxDeleverageFeeDivider: 20,
-            vaultBalanceAsLendingConnector: ILendingConnector(address(0)),
+            vaultBalanceAsLendingConnector: ILendingConnector(address(new MockLendingConnector())),
             owner: address(this),
             guardian: address(this),
             governor: address(this),
