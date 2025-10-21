@@ -10,6 +10,7 @@ import {FacadeImplementationState} from "../../states/FacadeImplementationState.
  * Since signature and return data of the module and facade are the same, this contract easily delegates
  * calls to the collateral vault module.
  */
+
 abstract contract CollateralVaultWrite is LTVState, CommonWrite, FacadeImplementationState {
     /**
      * @dev see ILTV.depositCollateral

@@ -8,6 +8,7 @@ import {FacadeImplementationState} from "../../states/FacadeImplementationState.
  * @notice This contract contains all the read functions for the auction part of the LTV protocol.
  * It retrieves auction state and delegates all the calculations to the auction module.
  */
+
 abstract contract AuctionRead is GetAuctionStateReader, FacadeImplementationState {
     /**
      * @dev see ILTV.previewExecuteAuctionBorrow

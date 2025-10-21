@@ -74,7 +74,6 @@ contract DeployLTVBeaconProxy is BaseScript {
             revert("Unknown LENDING_CONNECTOR_NAME");
         }
 
-
         return abi.encodeCall(ILTV.initialize, (stateInitData));
     }
 }

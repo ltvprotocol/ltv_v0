@@ -8,6 +8,7 @@ import {FacadeImplementationState} from "../../states/FacadeImplementationState.
  * @notice This contract contains totalSupply function of the LTV protocol. All the other
  * ERC20 functions are handled by the LTVState.
  */
+
 abstract contract ERC20Read is LTVState, FacadeImplementationState {
     /**
      * @dev see ILTV.totalSupply

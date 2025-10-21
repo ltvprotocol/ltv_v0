@@ -12,6 +12,7 @@ import {FacadeImplementationState} from "../../states/FacadeImplementationState.
  * @notice This contract contains all the read functions for the borrow vault part of the LTV protocol.
  * It retrieves appropriate function state and delegates all the calculations to the borrow vault module.
  */
+
 abstract contract BorrowVaultRead is
     PreviewDepositVaultStateReader,
     PreviewWithdrawVaultStateReader,
