@@ -6,12 +6,14 @@ import {MorphoConnectorStorage} from "src/structs/connectors/MorphoConnectorStor
 import {IMorphoBlue} from "src/connectors/lending_connectors/interfaces/IMorphoBlue.sol";
 import {LTVState} from "src/states/LTVState.sol";
 import {UMulDiv} from "src/math/libraries/MulDiv.sol";
+import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 
 /**
  * @title MorphoConnector
  * @notice Connector for Morpho protocol
  */
 contract MorphoConnector is LTVState, ILendingConnector {
+    using SafeERC20 for IERC20;
     using UMulDiv for uint128;
 
     IMorphoBlue public immutable MORPHO;
@@ -51,7 +53,7 @@ contract MorphoConnector is LTVState, ILendingConnector {
      * @inheritdoc ILendingConnector
      */
     function supply(uint256 amount) external {
-        collateralToken.approve(address(MORPHO), amount);
+        collateralToken.forceApprove(address(MORPHO), amount);
         MORPHO.supplyCollateral(_createMarketParams(), amount, address(this), "");
     }
 
@@ -73,7 +75,7 @@ contract MorphoConnector is LTVState, ILendingConnector {
      * @inheritdoc ILendingConnector
      */
     function repay(uint256 amount) external {
-        borrowToken.approve(address(MORPHO), amount);
+        borrowToken.forceApprove(address(MORPHO), amount);
         MORPHO.repay(_createMarketParams(), amount, 0, address(this), "");
     }
 
