@@ -66,7 +66,7 @@ library DeltaRealBorrowAndDeltaRealCollateral {
         dividend += int256(int8(data.cases.cecbc)) * int256(data.userFutureRewardBorrow);
 
         dividend += int256(int8(data.cases.ceccb))
-            * data.futureCollateral.mulDiv(int256(data.borrowSlippage), 10 ** 18, needToRoundUp);
+            * data.futureCollateral.mulDiv(int256(data.borrowSlippage), Constants.SLIPPAGE_PRECISION, needToRoundUp);
 
         dividend += int256(int8(data.cases.cecbc)) * int256(data.protocolFutureRewardBorrow);
 
@@ -75,7 +75,7 @@ library DeltaRealBorrowAndDeltaRealCollateral {
         dividendWithtargetLtv -= int256(int8(data.cases.ceccb)) * int256(data.userFutureRewardCollateral);
 
         dividendWithtargetLtv += int256(int8(data.cases.cecbc))
-            * (-data.futureCollateral).mulDiv(int256(data.collateralSlippage), 10 ** 18, needToRoundUp);
+            * (-data.futureCollateral).mulDiv(int256(data.collateralSlippage), Constants.SLIPPAGE_PRECISION, needToRoundUp);
 
         dividendWithtargetLtv -= int256(int8(data.cases.ceccb)) * int256(data.protocolFutureRewardCollateral);
 
