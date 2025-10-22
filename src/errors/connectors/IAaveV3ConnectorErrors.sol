@@ -14,4 +14,12 @@ interface IAaveV3ConnectorErrors {
      * @notice Error thrown when E-Mode ID is invalid
      */
     error InvalidEModeId(uint8 emodeId);
+    /**
+     * @notice Error thrown when collateral token is unsupported by aave v3 pool
+     */
+    error UnsupportedCollateralToken(address token);
+    /**
+     * @notice Error thrown when borrow token is unsupported by aave v3 pool
+     */
+    error UnsupportedBorrowToken(address token);
 }

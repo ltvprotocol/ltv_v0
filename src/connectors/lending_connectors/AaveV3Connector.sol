@@ -61,8 +61,8 @@ contract AaveV3Connector is LTVState, ILendingConnector, IAaveV3ConnectorErrors 
      * @inheritdoc ILendingConnector
      */
     function getRealBorrowAssets(bool, bytes calldata data) external view returns (uint256) {
-        (, address borrowAToken) = abi.decode(data, (address, address));
-        return IERC20(borrowAToken).balanceOf(msg.sender);
+        (, address borrowVToken) = abi.decode(data, (address, address));
+        return IERC20(borrowVToken).balanceOf(msg.sender);
     }
 
     /**
@@ -70,9 +70,12 @@ contract AaveV3Connector is LTVState, ILendingConnector, IAaveV3ConnectorErrors 
      */
     function initializeLendingConnectorData(bytes memory emode) external {
         address collateralAToken = POOL.getReserveData(address(collateralToken)).aTokenAddress;
-        address borrowAToken = POOL.getReserveData(address(borrowToken)).variableDebtTokenAddress;
+        address borrowVToken = POOL.getReserveData(address(borrowToken)).variableDebtTokenAddress;
 
-        lendingConnectorGetterData = abi.encode(collateralAToken, borrowAToken);
+        require(collateralAToken != address(0), UnsupportedCollateralToken(address(collateralToken)));
+        require(borrowVToken != address(0), UnsupportedBorrowToken(address(borrowToken)));
+
+        lendingConnectorGetterData = abi.encode(collateralAToken, borrowVToken);
         uint8 emodeId = uint8(abi.decode(emode, (uint256)));
 
         (uint16 ltv, uint16 liquidationThreshold, uint16 liquidationBonus) =
