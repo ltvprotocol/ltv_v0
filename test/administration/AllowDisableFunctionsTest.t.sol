@@ -206,7 +206,8 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
     }
 
     function functionsCanBeDisabled(DefaultTestData memory defaultData, address user)
-        public pure
+        public
+        pure
         returns (bytes[] memory, bytes4[] memory, address[] memory)
     {
         bytes[] memory calls = new bytes[](28);
