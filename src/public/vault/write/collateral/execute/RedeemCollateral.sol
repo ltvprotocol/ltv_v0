@@ -55,15 +55,15 @@ abstract contract RedeemCollateral is
         uint256 max = _maxRedeemCollateral(data);
         require(shares <= max, ExceedsMaxRedeemCollateral(owner, shares, max));
 
-        if (owner != msg.sender) {
-            _spendAllowance(owner, msg.sender, shares);
-        }
-
         (uint256 assetsOut, DeltaFuture memory deltaFuture) =
             _previewRedeemCollateral(shares, data.previewCollateralVaultData);
 
         if (assetsOut == 0) {
             return 0;
+        }
+
+        if (owner != msg.sender) {
+            _spendAllowance(owner, msg.sender, shares);
         }
 
         applyMaxGrowthFee(
