@@ -13,6 +13,7 @@ import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/Safe
  */
 contract AaveV3Connector is LTVState, ILendingConnector {
     using SafeERC20 for IERC20;
+
     IAaveV3Pool public immutable POOL;
 
     constructor(address _pool) {

@@ -6,7 +6,7 @@ import {MorphoConnectorStorage} from "src/structs/connectors/MorphoConnectorStor
 import {IMorphoBlue} from "src/connectors/lending_connectors/interfaces/IMorphoBlue.sol";
 import {LTVState} from "src/states/LTVState.sol";
 import {UMulDiv} from "src/math/libraries/MulDiv.sol";
-import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
+import {SafeERC20, IERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 
 /**
  * @title MorphoConnector
