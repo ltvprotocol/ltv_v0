@@ -17,7 +17,7 @@ import {IWhitelistRegistryEvents} from "../events/IWhitelistRegistryEvents.sol";
  */
 contract WhitelistRegistry is IWhitelistRegistry, Ownable, IWhitelistRegistryErrors, IWhitelistRegistryEvents {
     mapping(address => bool) public isAddressWhitelisted;
-    mapping(address => bool) public isAddressWhitelistingBySignature;
+    mapping(address => bool) public isAddressWhitelistingBySignatureDisabled;
     address public signer;
 
     struct WhitelistApproval {
@@ -44,7 +44,7 @@ contract WhitelistRegistry is IWhitelistRegistry, Ownable, IWhitelistRegistryErr
      */
     function removeAddressFromWhitelist(address account) external onlyOwner {
         isAddressWhitelisted[account] = false;
-        isAddressWhitelistingBySignature[account] = true;
+        isAddressWhitelistingBySignatureDisabled[account] = true;
         emit AddressWhitelisted(account, false);
     }
 
@@ -64,8 +64,8 @@ contract WhitelistRegistry is IWhitelistRegistry, Ownable, IWhitelistRegistryErr
         // forge-lint: disable-next-line(asm-keccak256)
         bytes32 digest = keccak256(abi.encodePacked(block.chainid, address(this), account));
         require(ECDSA.recover(digest, v, r, s) == signer, InvalidSignature());
-        require(!isAddressWhitelistingBySignature[account], AddressWhitelistingBySignatureDisabled());
-        isAddressWhitelistingBySignature[account] = true;
+        require(!isAddressWhitelistingBySignatureDisabled[account], AddressWhitelistingBySignatureDisabled());
+        isAddressWhitelistingBySignatureDisabled[account] = true;
         isAddressWhitelisted[account] = true;
         emit AddressWhitelisted(account, true);
     }
