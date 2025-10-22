@@ -729,6 +729,12 @@ interface ILTV is
     function setSlippageConnector(address _slippageConnector, bytes memory slippageConnectorData) external;
 
     /**
+     * @notice Sets the slippage connector data
+     * @param slippageConnectorData Additional data for the slippage connector
+     */
+    function setSlippageConnectorData(bytes memory slippageConnectorData) external;
+
+    /**
      * @notice Sets the vault balance as lending connector
      * @param _vaultBalanceAsLendingConnector The new vault balance connector address
      * @param vaultBalanceAsLendingConnectorGetterData Additional data for the connector
