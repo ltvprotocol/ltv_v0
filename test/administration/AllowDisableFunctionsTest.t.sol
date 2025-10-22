@@ -6,7 +6,7 @@ import {IModules} from "src/interfaces/IModules.sol";
 import {ILTV} from "src/interfaces/ILTV.sol";
 import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
 import {PrepareEachFunctionSuccessfulExecution} from "test/administration/PrepareEachFunctionSuccessfulExecution.sol";
-import {MockLendingConnector, MockOracleConnector, MockSlippageConnector} from "../utils/MockConnectors.t.sol";
+import {MockLendingConnector, MockOracleConnector} from "../utils/MockConnectors.t.sol";
 
 contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
     function test_disableRandomSelector(DefaultTestData memory defaultData, bytes4 randomSelector)
