@@ -84,10 +84,7 @@ library NextStep {
      * @dev In case of auction merging, recalculates auction start point and returns true.
      * Otherwise returns 0 and false.
      */
-    function mergingAuction(MergeAuctionData memory data) private pure returns (uint56 startAuction, bool merge) {
-        merge =
-            data.futureBorrow * data.deltaFutureBorrow >= 0 && data.futureCollateral * data.deltaFutureCollateral >= 0;
-
+    function mergingAuction(MergeAuctionData memory data) private pure returns (uint56 startAuction) {
         int256 auctionWeight = 0;
         if (data.futureRewardBorrow != 0) {
             auctionWeight = data.futureRewardBorrow;
@@ -104,26 +101,22 @@ library NextStep {
             deltaAuctionWeight = data.deltaFuturePaymentCollateral;
         }
 
-        if (merge) {
-            uint24 nextAuctionStep;
-            if (auctionWeight + deltaAuctionWeight == 0) {
-                nextAuctionStep = data.auctionStep;
-            } else {
-                // round down to make auction longer
-                nextAuctionStep = uint24(
-                    uint256(
-                        int256(uint256(data.auctionStep)).mulDivDown(auctionWeight, auctionWeight + deltaAuctionWeight)
-                    )
-                );
-            }
-            startAuction = data.blockNumber - nextAuctionStep;
+        uint24 nextAuctionStep;
+        if (auctionWeight + deltaAuctionWeight == 0) {
+            nextAuctionStep = data.auctionStep;
+        } else {
+            // round down to make auction longer
+            nextAuctionStep = uint24(
+                uint256(int256(uint256(data.auctionStep)).mulDivDown(auctionWeight, auctionWeight + deltaAuctionWeight))
+            );
         }
+        startAuction = data.blockNumber - nextAuctionStep;
     }
 
     /**
      * @notice Calculates next state using functions from this library.
      */
-    function calculateNextStep(NextStepData memory data) internal pure returns (NextState memory nextState) {
+    function calculateNextStep(NextStepData memory data) external pure returns (NextState memory nextState) {
         nextState.futureBorrow = calculateNextFutureBorrow(data.futureBorrow, data.deltaFutureBorrow);
         nextState.futureCollateral = calculateNextFutureCollateral(data.futureCollateral, data.deltaFutureCollateral);
         nextState.futureRewardBorrow = calculateNextFutureRewardBorrow(
@@ -138,19 +131,26 @@ library NextStep {
             data.deltaUserFutureRewardCollateral,
             data.deltaProtocolFutureRewardCollateral
         );
-        (nextState.startAuction, nextState.merge) = mergingAuction(
-            MergeAuctionData({
-                futureBorrow: data.futureBorrow,
-                futureCollateral: data.futureCollateral,
-                futureRewardBorrow: data.futureRewardBorrow,
-                futureRewardCollateral: data.futureRewardCollateral,
-                deltaFutureBorrow: data.deltaFutureBorrow,
-                deltaFutureCollateral: data.deltaFutureCollateral,
-                auctionStep: data.auctionStep,
-                deltaFuturePaymentBorrow: data.deltaFuturePaymentBorrow,
-                deltaFuturePaymentCollateral: data.deltaFuturePaymentCollateral,
-                blockNumber: data.blockNumber
-            })
-        );
+
+        if (data.cases.cmcb + data.cases.cmbc == 1) {
+            nextState.startAuction = mergingAuction(
+                MergeAuctionData({
+                    futureBorrow: data.futureBorrow,
+                    futureCollateral: data.futureCollateral,
+                    futureRewardBorrow: data.futureRewardBorrow,
+                    futureRewardCollateral: data.futureRewardCollateral,
+                    deltaFutureBorrow: data.deltaFutureBorrow,
+                    deltaFutureCollateral: data.deltaFutureCollateral,
+                    auctionStep: data.auctionStep,
+                    deltaFuturePaymentBorrow: data.deltaFuturePaymentBorrow,
+                    deltaFuturePaymentCollateral: data.deltaFuturePaymentCollateral,
+                    blockNumber: data.blockNumber
+                })
+            );
+        } else if (data.cases.ceccb + data.cases.cecbc == 1) {
+            nextState.startAuction = data.blockNumber;
+        } else {
+            nextState.startAuction = data.blockNumber - data.auctionStep;
+        }
     }
 }

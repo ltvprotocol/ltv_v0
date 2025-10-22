@@ -383,7 +383,7 @@ library DeltaSharesAndDeltaRealBorrow {
      * @return deltaFutureBorrow The calculated delta future borrow value
      * @return cases The case configuration that produced a valid result
      */
-    function positiveFutureBorrowBranchDeltaSharesAndDeltaRealBorrow(DeltaSharesAndDeltaRealBorrowData memory data)
+    function positiveBranchDeltaSharesAndDeltaRealBorrow(DeltaSharesAndDeltaRealBorrowData memory data)
         private
         pure
         returns (int256, Cases memory)
@@ -445,7 +445,7 @@ library DeltaSharesAndDeltaRealBorrow {
      * @return deltaFutureBorrow The calculated delta future borrow value
      * @return cases The case configuration that produced a valid result
      */
-    function negativeFutureBorrowBranchDeltaSharesAndDeltaRealBorrow(DeltaSharesAndDeltaRealBorrowData memory data)
+    function negativeBranchDeltaSharesAndDeltaRealBorrow(DeltaSharesAndDeltaRealBorrowData memory data)
         private
         pure
         returns (int256, Cases memory)
@@ -506,7 +506,7 @@ library DeltaSharesAndDeltaRealBorrow {
      * @return deltaFutureBorrow The calculated delta future borrow value
      * @return cases The case configuration that produced a valid result
      */
-    function zeroFutureBorrowBranchDeltaSharesAndDeltaRealBorrow(DeltaSharesAndDeltaRealBorrowData memory data)
+    function zeroBranchDeltaSharesAndDeltaRealBorrow(DeltaSharesAndDeltaRealBorrowData memory data)
         private
         pure
         returns (int256, Cases memory)
@@ -577,12 +577,12 @@ library DeltaSharesAndDeltaRealBorrow {
         pure
         returns (int256, Cases memory)
     {
-        if (data.futureBorrow > 0) {
-            return positiveFutureBorrowBranchDeltaSharesAndDeltaRealBorrow(data);
-        } else if (data.futureBorrow < 0) {
-            return negativeFutureBorrowBranchDeltaSharesAndDeltaRealBorrow(data);
+        if (data.futureBorrow > 0 || data.futureCollateral > 0) {
+            return positiveBranchDeltaSharesAndDeltaRealBorrow(data);
+        } else if (data.futureBorrow < 0 || data.futureCollateral < 0) {
+            return negativeBranchDeltaSharesAndDeltaRealBorrow(data);
         } else {
-            return zeroFutureBorrowBranchDeltaSharesAndDeltaRealBorrow(data);
+            return zeroBranchDeltaSharesAndDeltaRealBorrow(data);
         }
     }
 }

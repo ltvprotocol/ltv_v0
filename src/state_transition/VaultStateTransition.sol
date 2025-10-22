@@ -30,9 +30,7 @@ abstract contract VaultStateTransition is LTVState {
             int256(10 ** nextStateData.collateralTokenDecimals), int256(nextStateData.collateralPrice)
         );
 
-        if (nextStateData.nextState.merge) {
-            startAuction = nextStateData.nextState.startAuction;
-        }
+        startAuction = nextStateData.nextState.startAuction;
 
         // Because of precision loss, we can get futureCollateral assets to become zero, while futureBorrow assets is not zero.
         // In this case we assume auction is fully executed and set it to zero. We won't lose any assets since auction is considered
