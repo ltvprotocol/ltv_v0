@@ -91,6 +91,12 @@ abstract contract AuctionApplyDeltaState is
             transferBorrowToken(feeCollector, uint256(-deltaState.deltaProtocolFutureRewardBorrowAssets));
         }
 
-        emit AuctionExecuted(msg.sender, deltaState.deltaFutureCollateralAssets, deltaState.deltaFutureBorrowAssets);
+        emit AuctionExecuted(
+            msg.sender,
+            deltaState.deltaFutureCollateralAssets + deltaState.deltaProtocolFutureRewardCollateralAssets
+                + deltaState.deltaUserFutureRewardCollateralAssets,
+            deltaState.deltaFutureBorrowAssets + deltaState.deltaProtocolFutureRewardBorrowAssets
+                + deltaState.deltaUserFutureRewardBorrowAssets
+        );
     }
 }
