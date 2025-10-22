@@ -151,7 +151,7 @@ contract AdministrationSetters is BoolWriter, BoolReader, IAdministrationErrors,
      * @dev implementation of ILTV.setMaxGrowthFee
      */
     function _setMaxGrowthFee(uint16 dividend, uint16 divider) internal {
-        require(dividend >= 0 && divider > 0 && dividend <= divider, InvalidMaxGrowthFee(dividend, divider));
+        require(divider > 0 && dividend <= divider, InvalidMaxGrowthFee(dividend, divider));
         uint16 oldDividend = maxGrowthFeeDividend;
         uint16 oldDivider = maxGrowthFeeDivider;
         maxGrowthFeeDividend = dividend;
