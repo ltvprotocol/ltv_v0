@@ -473,9 +473,11 @@ library DeltaRealBorrowAndDeltaRealCollateral {
      * @return deltaFutureCollateral The calculated delta future collateral value
      * @return cases The case configuration that produced a valid result
      */
-    function positiveBranchDeltaRealBorrowAndDeltaRealCollateral(
-        DeltaRealBorrowAndDeltaRealCollateralData memory data
-    ) private pure returns (int256, Cases memory) {
+    function positiveBranchDeltaRealBorrowAndDeltaRealCollateral(DeltaRealBorrowAndDeltaRealCollateralData memory data)
+        private
+        pure
+        returns (int256, Cases memory)
+    {
         int256 deltaFutureCollateral;
         Cases memory cases;
         bool success;
@@ -534,9 +536,11 @@ library DeltaRealBorrowAndDeltaRealCollateral {
      * @return deltaFutureCollateral The calculated delta future collateral value
      * @return cases The case configuration that produced a valid result
      */
-    function negativeBranchDeltaRealBorrowAndDeltaRealCollateral(
-        DeltaRealBorrowAndDeltaRealCollateralData memory data
-    ) private pure returns (int256, Cases memory) {
+    function negativeBranchDeltaRealBorrowAndDeltaRealCollateral(DeltaRealBorrowAndDeltaRealCollateralData memory data)
+        private
+        pure
+        returns (int256, Cases memory)
+    {
         int256 deltaFutureCollateral;
         Cases memory cases;
         bool success;
@@ -595,9 +599,11 @@ library DeltaRealBorrowAndDeltaRealCollateral {
      * @return deltaFutureCollateral The calculated delta future collateral value
      * @return cases The case configuration that produced a valid result
      */
-    function zeroBranchDeltaRealBorrowAndDeltaRealCollateral(
-        DeltaRealBorrowAndDeltaRealCollateralData memory data
-    ) private pure returns (int256, Cases memory) {
+    function zeroBranchDeltaRealBorrowAndDeltaRealCollateral(DeltaRealBorrowAndDeltaRealCollateralData memory data)
+        private
+        pure
+        returns (int256, Cases memory)
+    {
         int256 deltaFutureCollateral;
         Cases memory cases;
         bool success;

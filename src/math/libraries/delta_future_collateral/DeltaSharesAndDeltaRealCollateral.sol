@@ -389,9 +389,11 @@ library DeltaSharesAndDeltaRealCollateral {
      * @return deltaFutureCollateral The calculated delta future collateral value
      * @return cases The case configuration that produced a valid result
      */
-    function positiveBranchDeltaSharesAndDeltaRealCollateral(
-        DeltaSharesAndDeltaRealCollateralData memory data
-    ) private pure returns (int256, Cases memory) {
+    function positiveBranchDeltaSharesAndDeltaRealCollateral(DeltaSharesAndDeltaRealCollateralData memory data)
+        private
+        pure
+        returns (int256, Cases memory)
+    {
         int256 deltaFutureCollateral;
         Cases memory cases;
         bool success;
@@ -452,9 +454,11 @@ library DeltaSharesAndDeltaRealCollateral {
      * @return deltaFutureCollateral The calculated delta future collateral value
      * @return cases The case configuration that produced a valid result
      */
-    function negativeBranchDeltaSharesAndDeltaRealCollateral(
-        DeltaSharesAndDeltaRealCollateralData memory data
-    ) private pure returns (int256, Cases memory) {
+    function negativeBranchDeltaSharesAndDeltaRealCollateral(DeltaSharesAndDeltaRealCollateralData memory data)
+        private
+        pure
+        returns (int256, Cases memory)
+    {
         int256 deltaFutureCollateral;
         Cases memory cases;
         bool success;
@@ -515,9 +519,11 @@ library DeltaSharesAndDeltaRealCollateral {
      * @return deltaFutureCollateral The calculated delta future collateral value
      * @return cases The case configuration that produced a valid result
      */
-    function zeroBranchDeltaSharesAndDeltaRealCollateral(
-        DeltaSharesAndDeltaRealCollateralData memory data
-    ) private pure returns (int256, Cases memory) {
+    function zeroBranchDeltaSharesAndDeltaRealCollateral(DeltaSharesAndDeltaRealCollateralData memory data)
+        private
+        pure
+        returns (int256, Cases memory)
+    {
         int256 deltaFutureCollateral;
         Cases memory cases;
         bool success;
