@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
+import {Cases} from "../data/vault/common/Cases.sol";
+
 /**
  * @title NextStepData
  * @notice This struct contains data to calculate next state in underlying assets
@@ -20,4 +22,5 @@ struct NextStepData {
     int256 deltaProtocolFutureRewardCollateral;
     uint56 blockNumber;
     uint24 auctionStep;
+    Cases cases;
 }

@@ -473,9 +473,11 @@ library DeltaRealBorrowAndDeltaRealCollateral {
      * @return deltaFutureCollateral The calculated delta future collateral value
      * @return cases The case configuration that produced a valid result
      */
-    function positiveFutureCollateralBranchDeltaRealBorrowAndDeltaRealCollateral(
-        DeltaRealBorrowAndDeltaRealCollateralData memory data
-    ) private pure returns (int256, Cases memory) {
+    function positiveBranchDeltaRealBorrowAndDeltaRealCollateral(DeltaRealBorrowAndDeltaRealCollateralData memory data)
+        private
+        pure
+        returns (int256, Cases memory)
+    {
         int256 deltaFutureCollateral;
         Cases memory cases;
         bool success;
@@ -534,9 +536,11 @@ library DeltaRealBorrowAndDeltaRealCollateral {
      * @return deltaFutureCollateral The calculated delta future collateral value
      * @return cases The case configuration that produced a valid result
      */
-    function negativeFutureCollateralBranchDeltaRealBorrowAndDeltaRealCollateral(
-        DeltaRealBorrowAndDeltaRealCollateralData memory data
-    ) private pure returns (int256, Cases memory) {
+    function negativeBranchDeltaRealBorrowAndDeltaRealCollateral(DeltaRealBorrowAndDeltaRealCollateralData memory data)
+        private
+        pure
+        returns (int256, Cases memory)
+    {
         int256 deltaFutureCollateral;
         Cases memory cases;
         bool success;
@@ -595,9 +599,11 @@ library DeltaRealBorrowAndDeltaRealCollateral {
      * @return deltaFutureCollateral The calculated delta future collateral value
      * @return cases The case configuration that produced a valid result
      */
-    function zeroFutureCollateralBranchDeltaRealBorrowAndDeltaRealCollateral(
-        DeltaRealBorrowAndDeltaRealCollateralData memory data
-    ) private pure returns (int256, Cases memory) {
+    function zeroBranchDeltaRealBorrowAndDeltaRealCollateral(DeltaRealBorrowAndDeltaRealCollateralData memory data)
+        private
+        pure
+        returns (int256, Cases memory)
+    {
         int256 deltaFutureCollateral;
         Cases memory cases;
         bool success;
@@ -663,12 +669,12 @@ library DeltaRealBorrowAndDeltaRealCollateral {
     function calculateDeltaFutureCollateralByDeltaRealBorrowAndDeltaRealCollateral(
         DeltaRealBorrowAndDeltaRealCollateralData memory data
     ) external pure returns (int256, Cases memory) {
-        if (data.futureCollateral > 0) {
-            return positiveFutureCollateralBranchDeltaRealBorrowAndDeltaRealCollateral(data);
-        } else if (data.futureCollateral < 0) {
-            return negativeFutureCollateralBranchDeltaRealBorrowAndDeltaRealCollateral(data);
+        if (data.futureCollateral > 0 || data.futureBorrow > 0) {
+            return positiveBranchDeltaRealBorrowAndDeltaRealCollateral(data);
+        } else if (data.futureCollateral < 0 || data.futureBorrow < 0) {
+            return negativeBranchDeltaRealBorrowAndDeltaRealCollateral(data);
         } else {
-            return zeroFutureCollateralBranchDeltaRealBorrowAndDeltaRealCollateral(data);
+            return zeroBranchDeltaRealBorrowAndDeltaRealCollateral(data);
         }
     }
 }
