@@ -38,6 +38,10 @@ abstract contract BoolReader {
         return _getBool(boolSlot, Constants.IS_WITHDRAW_DISABLED_BIT);
     }
 
+    function _isProtocolPaused(uint8 boolSlot) internal pure returns (bool) {
+        return _getBool(boolSlot, Constants.IS_PROTOCOL_PAUSED_BIT);
+    }
+
     /**
      * @notice implementation of isSoftLiquidationEnabledForAnyone
      */

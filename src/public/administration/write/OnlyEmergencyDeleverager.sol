@@ -20,6 +20,9 @@ import {console} from "forge-std/console.sol";
 /**
  * @title OnlyEmergencyDeleverager
  * @notice This contract contains only emergency deleverager public function implementation.
+ * @dev Emergency deleverege function can be executed only once and cannot be undone. It fully
+ * deleverages the vault by repaying all borrowed assets and withdrawing all collateral assets.
+ * After this operation only withdrawals of collateral assets are possible.
  */
 abstract contract OnlyEmergencyDeleverager is
     AdministrationSetters,
@@ -54,6 +57,9 @@ abstract contract OnlyEmergencyDeleverager is
         _setSoftLiquidationLtv(1, 1);
 
         _liquidate(closeAmountBorrow, deleverageFeeDividend, deleverageFeeDivider, false);
+        // Set the vault as deleveraged. After this operation collateral assets are transferred to the
+        // vault address. Users still will be able to burn their shares to withdraw this collateral(via
+        // withdrawCollateral or redeemCollateral functions)
         setBool(Constants.IS_VAULT_DELEVERAGED_BIT, true);
         lendingConnectorGetterData = "";
     }

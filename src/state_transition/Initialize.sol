@@ -54,5 +54,6 @@ abstract contract Initialize is AdministrationSetters, OwnableUpgradeable {
             initData.vaultBalanceAsLendingConnector, initData.vaultBalanceAsLendingConnectorData
         );
         _setSoftLiquidationFee(initData.softLiquidationFeeDividend, initData.softLiquidationFeeDivider);
+        _setIsProtocolPaused(true);
     }
 }

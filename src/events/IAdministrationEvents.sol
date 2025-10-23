@@ -125,6 +125,14 @@ interface IAdministrationEvents {
     event IsWithdrawDisabledChanged(bool oldValue, bool newValue);
 
     /**
+     * @notice Emitted when the protocol paused status is changed
+     * @param oldValue The previous protocol paused status
+     * @param newValue The new protocol paused status
+     * @dev Controls whether the protocol is paused
+     */
+    event IsProtocolPausedChanged(bool oldValue, bool newValue);
+
+    /**
      * @notice Emitted when the lending connector is updated
      * @param oldValue The previous lending connector address
      * @param oldLendingConnectorData The previous lending connector configuration data

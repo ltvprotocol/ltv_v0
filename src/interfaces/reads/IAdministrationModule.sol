@@ -29,6 +29,11 @@ interface IAdministrationModule {
     function isVaultDeleveraged(uint8 boolSlot) external view returns (bool);
 
     /**
+     * @dev mdoule function for ILTV.isProtocolPaused. Also receives cached state for subsequent calculations
+     */
+    function isProtocolPaused(uint8 boolSlot) external view returns (bool);
+
+    /**
      * @dev mdoule function for ILTV.getLendingConnector. Also receives cached state for subsequent calculations
      */
     function getLendingConnector(LendingConnectorState memory state) external view returns (address);

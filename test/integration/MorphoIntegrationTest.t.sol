@@ -13,7 +13,6 @@ import {IOracleConnector} from "src/interfaces/connectors/IOracleConnector.sol";
 import {IInitializeModule} from "src/interfaces/writes/IInitializeModule.sol";
 import {IAdministrationModule} from "src/interfaces/reads/IAdministrationModule.sol";
 import {IMorphoBlue} from "src/connectors/lending_connectors/interfaces/IMorphoBlue.sol";
-import {IMorphoOracle} from "src/connectors/oracle_connectors/interfaces/IMorphoOracle.sol";
 import {MorphoConnector} from "src/connectors/lending_connectors/MorphoConnector.sol";
 import {MorphoOracleConnector} from "src/connectors/oracle_connectors/MorphoOracleConnector.sol";
 import {ConstantSlippageConnector} from "src/connectors/slippage_connectors/ConstantSlippageConnector.sol";
@@ -60,7 +59,7 @@ contract MorphoIntegrationTest is Test {
         });
 
         morphoLendingConnector = new MorphoConnector(0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb);
-        morphoOracleConnector = new MorphoOracleConnector(IMorphoOracle(MORPHO_ORACLE));
+        morphoOracleConnector = new MorphoOracleConnector();
         slippageConnector = new ConstantSlippageConnector();
 
         weth = IERC20(WETH);
@@ -105,7 +104,7 @@ contract MorphoIntegrationTest is Test {
             emergencyDeleverager: address(this),
             auctionDuration: 1000,
             lendingConnectorData: abi.encode(MORPHO_ORACLE, IRM, 945000000000000000, keccak256(abi.encode(marketParams))),
-            oracleConnectorData: "",
+            oracleConnectorData: abi.encode(MORPHO_ORACLE),
             slippageConnectorData: abi.encode(10 ** 16, 10 ** 16),
             vaultBalanceAsLendingConnectorData: "",
             softLiquidationFeeDividend: 1,
@@ -119,6 +118,7 @@ contract MorphoIntegrationTest is Test {
         // Enable initializers
         vm.store(address(ltv), bytes32(0xf0c57e16840df040f15088dc2f81fe391c3923bec73e23a9662efc9c229c6a00), bytes32(0));
         ltv.initialize(stateInitData, modulesProvider);
+        ltv.setIsProtocolPaused(false);
 
         deal(WETH, address(this), 100 ether);
         deal(WSTETH, address(this), 100 ether);

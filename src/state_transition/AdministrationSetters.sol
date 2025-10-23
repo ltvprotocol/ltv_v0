@@ -175,7 +175,7 @@ contract AdministrationSetters is BoolWriter, BoolReader, IAdministrationErrors,
      * @dev implementation of ILTV.setMaxGrowthFee
      */
     function _setMaxGrowthFee(uint16 dividend, uint16 divider) internal {
-        require(dividend >= 0 && dividend <= divider, InvalidMaxGrowthFee(dividend, divider));
+        require(divider > 0 && dividend <= divider, InvalidMaxGrowthFee(dividend, divider));
         uint16 oldDividend = maxGrowthFeeDividend;
         uint16 oldDivider = maxGrowthFeeDivider;
         maxGrowthFeeDividend = dividend;
@@ -220,6 +220,15 @@ contract AdministrationSetters is BoolWriter, BoolReader, IAdministrationErrors,
         bool oldValue = _isWithdrawDisabled(boolSlot);
         setBool(Constants.IS_WITHDRAW_DISABLED_BIT, value);
         emit IsWithdrawDisabledChanged(oldValue, value);
+    }
+
+    /**
+     * @dev implementation of ILTV.setIsProtocolPaused
+     */
+    function _setIsProtocolPaused(bool value) internal {
+        bool oldValue = _isProtocolPaused(boolSlot);
+        setBool(Constants.IS_PROTOCOL_PAUSED_BIT, value);
+        emit IsProtocolPausedChanged(oldValue, value);
     }
 
     /**
