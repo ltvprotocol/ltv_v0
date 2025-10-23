@@ -6,86 +6,88 @@ import {PreviewWithdrawVaultStateReader} from "src/state_reader/vault/PreviewWit
 import {MaxDepositMintBorrowVaultStateReader} from "src/state_reader/vault/MaxDepositMintBorrowVaultStateReader.sol";
 import {MaxWithdrawRedeemBorrowVaultStateReader} from
     "src/state_reader/vault/MaxWithdrawRedeemBorrowVaultStateReader.sol";
-
+import {FacadeImplementationState} from "../../states/FacadeImplementationState.sol";
 /**
  * @title BorrowVaultRead
  * @notice This contract contains all the read functions for the borrow vault part of the LTV protocol.
  * It retrieves appropriate function state and delegates all the calculations to the borrow vault module.
  */
+
 abstract contract BorrowVaultRead is
     PreviewDepositVaultStateReader,
     PreviewWithdrawVaultStateReader,
     MaxDepositMintBorrowVaultStateReader,
-    MaxWithdrawRedeemBorrowVaultStateReader
+    MaxWithdrawRedeemBorrowVaultStateReader,
+    FacadeImplementationState
 {
     /**
      * @dev see ILTV.previewDeposit
      */
     function previewDeposit(uint256 assets) external view returns (uint256) {
-        return modules.borrowVaultModule().previewDeposit(assets, previewDepositVaultState());
+        return MODULES.borrowVaultModule().previewDeposit(assets, previewDepositVaultState());
     }
 
     /**
      * @dev see ILTV.previewWithdraw
      */
     function previewWithdraw(uint256 assets) external view returns (uint256) {
-        return modules.borrowVaultModule().previewWithdraw(assets, previewWithdrawVaultState());
+        return MODULES.borrowVaultModule().previewWithdraw(assets, previewWithdrawVaultState());
     }
 
     /**
      * @dev see ILTV.previewMint
      */
     function previewMint(uint256 shares) external view returns (uint256) {
-        return modules.borrowVaultModule().previewMint(shares, previewDepositVaultState());
+        return MODULES.borrowVaultModule().previewMint(shares, previewDepositVaultState());
     }
 
     /**
      * @dev see ILTV.previewRedeem
      */
     function previewRedeem(uint256 shares) external view returns (uint256) {
-        return modules.borrowVaultModule().previewRedeem(shares, previewWithdrawVaultState());
+        return MODULES.borrowVaultModule().previewRedeem(shares, previewWithdrawVaultState());
     }
 
     /**
      * @dev see ILTV.maxDeposit
      */
     function maxDeposit(address) external view returns (uint256) {
-        return modules.borrowVaultModule().maxDeposit(maxDepositMintBorrowVaultState());
+        return MODULES.borrowVaultModule().maxDeposit(maxDepositMintBorrowVaultState());
     }
 
     /**
      * @dev see ILTV.maxWithdraw
      */
     function maxWithdraw(address owner) external view returns (uint256) {
-        return modules.borrowVaultModule().maxWithdraw(maxWithdrawRedeemBorrowVaultState(owner));
+        return MODULES.borrowVaultModule().maxWithdraw(maxWithdrawRedeemBorrowVaultState(owner));
     }
 
     /**
      * @dev see ILTV.maxMint
      */
     function maxMint(address) external view returns (uint256) {
-        return modules.borrowVaultModule().maxMint(maxDepositMintBorrowVaultState());
+        return MODULES.borrowVaultModule().maxMint(maxDepositMintBorrowVaultState());
     }
 
     /**
      * @dev see ILTV.maxRedeem
      */
     function maxRedeem(address owner) external view returns (uint256) {
-        return modules.borrowVaultModule().maxRedeem(maxWithdrawRedeemBorrowVaultState(owner));
+        return MODULES.borrowVaultModule().maxRedeem(maxWithdrawRedeemBorrowVaultState(owner));
     }
 
     /**
      * @dev see ILTV.convertToShares
      */
     function convertToShares(uint256 assets) external view returns (uint256) {
-        return modules.borrowVaultModule().convertToShares(assets, maxGrowthFeeState());
+        return MODULES.borrowVaultModule().convertToShares(assets, maxGrowthFeeState());
     }
 
     /**
      * @dev see ILTV.convertToAssets
      */
     function convertToAssets(uint256 shares) external view returns (uint256) {
-        return modules.borrowVaultModule().convertToAssets(shares, maxGrowthFeeState());
+        return MODULES.borrowVaultModule().convertToAssets(shares, maxGrowthFeeState());
     }
 
     /**
@@ -93,14 +95,14 @@ abstract contract BorrowVaultRead is
      * Default behavior - don't overestimate our assets
      */
     function totalAssets() external view returns (uint256) {
-        return modules.borrowVaultModule().totalAssets(totalAssetsState(false));
+        return MODULES.borrowVaultModule().totalAssets(totalAssetsState(false));
     }
 
     /**
      * @dev see ILTV.totalAssets
      */
     function totalAssets(bool isDeposit) external view returns (uint256) {
-        return modules.borrowVaultModule().totalAssets(isDeposit, totalAssetsState(isDeposit));
+        return MODULES.borrowVaultModule().totalAssets(isDeposit, totalAssetsState(isDeposit));
     }
 
     function asset() external view returns (address) {

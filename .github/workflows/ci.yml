@@ -21,11 +21,11 @@ jobs:
       - name: Print forge version
         run: forge --version
 
-      - name: Forge build
-        run: forge build
-
       - name: Check contract sizes
         run: forge build --skip test --sizes
+
+      - name: Forge build
+        run: forge build
 
       - name: Run lint
         run: FOUNDRY_DISABLE_NIGHTLY_WARNING=1 forge lint && $([ -n "$(forge lint -q 2>&1)" ] && exit 1 || exit 0)
