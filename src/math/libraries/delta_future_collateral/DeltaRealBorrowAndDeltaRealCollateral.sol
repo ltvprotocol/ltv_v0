@@ -646,7 +646,7 @@ library DeltaRealBorrowAndDeltaRealCollateral {
      * cmcb, ceccb, cmbc, cecbc - rounding down
      * cebc, cecb - rounding up
      *
-     * ROUDNING DIVIDEND:
+     * ROUNDING DIVIDEND:
      * cmcb, ceccb, cebc - rounding down
      * cmcb, cecbc, cecb - rounding up
      */
