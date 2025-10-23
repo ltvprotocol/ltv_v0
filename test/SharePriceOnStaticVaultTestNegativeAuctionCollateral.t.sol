@@ -46,7 +46,11 @@ contract SharePriceOnStaticVaultTestNegativeAuctionCollateral is BaseTest {
             borrowPrice: 10 ** 18,
             maxDeleverageFeeDividend: 1,
             maxDeleverageFeeDivider: 50,
-            zeroAddressTokens: 991_000_000 + 15_000_000 - 746_850_000 - 15_000_000 - 150_000
+            zeroAddressTokens: 991_000_000 + 15_000_000 - 746_850_000 - 15_000_000 - 150_000,
+            softLiquidationFeeDividend: 1,
+            softLiquidationFeeDivider: 100,
+            softLiquidationLtvDividend: 1,
+            softLiquidationLtvDivider: 1
         });
         initializeTest(initData);
 

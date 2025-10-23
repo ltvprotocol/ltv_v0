@@ -77,7 +77,7 @@ abstract contract LTVState {
     uint16 public softLiquidationLtvDividend;
     uint16 public softLiquidationLtvDivider;
     // 32 bits occupied
-    
+
     uint16 public softLiquidationFeeDividend;
     uint16 public softLiquidationFeeDivider;
     // 64 bits occupied

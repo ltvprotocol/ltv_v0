@@ -250,4 +250,11 @@ interface IAdministrationErrors {
      * @dev Used when soft liquidation ltv parameters don't meet expected constraints
      */
     error InvalidSoftLiquidationLtv(uint16 softLiquidationLtvDividend, uint16 softLiquidationLtvDivider);
+
+    /**
+     * @notice Error thrown when soft liquidation fee is too high
+     * @dev Possible in a case of very high soft liquidation fee, which leads to a situation where
+     * soft liquidation only making ltv worse.
+     */
+    error SoftLiquidationFeeTooHigh();
 }

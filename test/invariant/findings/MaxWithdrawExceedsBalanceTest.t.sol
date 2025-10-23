@@ -38,7 +38,11 @@ contract MaxWithdrawExceedsBalanceTest is BaseTest {
             borrowPrice: 10 ** 18,
             maxDeleverageFeeDividend: 0,
             maxDeleverageFeeDivider: 1,
-            zeroAddressTokens: 10707579638052243058
+            zeroAddressTokens: 10707579638052243058,
+            softLiquidationFeeDividend: 1,
+            softLiquidationFeeDivider: 100,
+            softLiquidationLtvDividend: 1,
+            softLiquidationLtvDivider: 1
         });
 
         initializeTest(init);
@@ -77,7 +81,11 @@ contract MaxWithdrawExceedsBalanceTest is BaseTest {
             borrowPrice: 10 ** 18,
             maxDeleverageFeeDividend: 0,
             maxDeleverageFeeDivider: 1,
-            zeroAddressTokens: 4846916111069950582657841262132135
+            zeroAddressTokens: 4846916111069950582657841262132135,
+            softLiquidationFeeDividend: 1,
+            softLiquidationFeeDivider: 100,
+            softLiquidationLtvDividend: 1,
+            softLiquidationLtvDivider: 1
         });
 
         BaseTestInitWithSpecificDecimals memory initWithSpecificDecimals =

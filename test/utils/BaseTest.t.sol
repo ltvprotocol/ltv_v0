@@ -58,6 +58,10 @@ struct BaseTestInit {
     uint16 maxDeleverageFeeDividend;
     uint16 maxDeleverageFeeDivider;
     uint256 zeroAddressTokens;
+    uint16 softLiquidationFeeDividend;
+    uint16 softLiquidationFeeDivider;
+    uint16 softLiquidationLtvDividend;
+    uint16 softLiquidationLtvDivider;
 }
 
 struct BaseTestInitWithSpecificDecimals {
@@ -157,10 +161,10 @@ contract BaseTest is Test {
                 oracleConnectorData: "",
                 slippageConnectorData: abi.encode(init.collateralSlippage, init.borrowSlippage),
                 vaultBalanceAsLendingConnectorData: "",
-                softLiquidationFeeDividend: 1,
-                softLiquidationFeeDivider: 100,
-                softLiquidationLtvDividend: 1,
-                softLiquidationLtvDivider: 1
+                softLiquidationFeeDividend: init.softLiquidationFeeDividend,
+                softLiquidationFeeDivider: init.softLiquidationFeeDivider,
+                softLiquidationLtvDividend: init.softLiquidationLtvDividend,
+                softLiquidationLtvDivider: init.softLiquidationLtvDivider
             });
 
             ltv = new DummyLTV();
@@ -225,7 +229,11 @@ contract BaseTest is Test {
             borrowPrice: 10 ** 18,
             maxDeleverageFeeDividend: 1,
             maxDeleverageFeeDivider: 50,
-            zeroAddressTokens: 10 ** 18
+            zeroAddressTokens: 10 ** 18,
+            softLiquidationFeeDividend: 1,
+            softLiquidationFeeDivider: 100,
+            softLiquidationLtvDividend: 1,
+            softLiquidationLtvDivider: 1
         });
         initializeTest(initData);
         _;

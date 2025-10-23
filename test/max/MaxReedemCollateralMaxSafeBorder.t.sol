@@ -42,7 +42,11 @@ contract MaxReedemCollateralMaxSafeBorderTest is BaseTest {
             borrowPrice: 10 ** 18,
             maxDeleverageFeeDividend: 0,
             maxDeleverageFeeDivider: 1,
-            zeroAddressTokens: 25 * 10 ** 18
+            zeroAddressTokens: 25 * 10 ** 18,
+            softLiquidationFeeDividend: 1,
+            softLiquidationFeeDivider: 100,
+            softLiquidationLtvDividend: 1,
+            softLiquidationLtvDivider: 1
         });
 
         initializeTest(init);
