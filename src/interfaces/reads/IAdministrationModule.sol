@@ -37,4 +37,9 @@ interface IAdministrationModule {
      * @dev mdoule function for ILTV.getLendingConnector. Also receives cached state for subsequent calculations
      */
     function getLendingConnector(LendingConnectorState memory state) external view returns (address);
+
+    /**
+     * @dev mdoule function for ILTV.isSoftLiquidationEnabledForAnyone. Also receives cached state for subsequent calculations
+     */
+    function isSoftLiquidationEnabledForAnyone(uint8 boolSlot) external view returns (bool);
 }

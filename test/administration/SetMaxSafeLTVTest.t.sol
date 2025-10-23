@@ -21,7 +21,9 @@ contract SetmaxSafeLtvTest is BaseTest {
                 newmaxSafeLtvDividend,
                 newmaxSafeLtvDivider,
                 ltv.minProfitLtvDividend(),
-                ltv.minProfitLtvDivider()
+                ltv.minProfitLtvDivider(),
+                ltv.softLiquidationLtvDividend(),
+                ltv.softLiquidationLtvDivider()
             )
         );
         ltv.setMaxSafeLtv(newmaxSafeLtvDividend, newmaxSafeLtvDivider);

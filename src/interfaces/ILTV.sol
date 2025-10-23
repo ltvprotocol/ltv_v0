@@ -715,6 +715,20 @@ interface ILTV is
     function setMaxDeleverageFee(uint16 dividend, uint16 divider) external;
 
     /**
+     * @notice Sets the soft liquidation fee
+     * @param dividend The soft liquidation fee numerator
+     * @param divider The soft liquidation fee denominator
+     */
+    function setSoftLiquidationFee(uint16 dividend, uint16 divider) external;
+
+    /**
+     * @notice Sets the soft liquidation ltv
+     * @param dividend The soft liquidation ltv numerator
+     * @param divider The soft liquidation ltv denominator
+     */
+    function setSoftLiquidationLtv(uint16 dividend, uint16 divider) external;
+
+    /**
      * @notice Sets the oracle connector address
      * @param _oracleConnector The new oracle connector address
      * @param oracleConnectorData Additional data for the oracle connector
@@ -769,6 +783,12 @@ interface ILTV is
      * @param activate True to activate whitelist, false to deactivate
      */
     function setIsWhitelistActivated(bool activate) external;
+
+    /**
+     * @notice Sets whether anyone can perform soft liquidation
+     * @param value True to enable, false to disable
+     */
+    function setIsSoftLiquidationEnabledForAnyone(bool value) external;
 
     /**
      * @notice Sets the whitelist registry address
@@ -901,6 +921,12 @@ interface ILTV is
     function isVaultDeleveraged() external view returns (bool);
 
     /**
+     * @notice Returns whether anyone can perform soft liquidation
+     * @return True if anyone can perform soft liquidation
+     */
+    function isSoftLiquidationEnabledForAnyone() external view returns (bool);
+
+    /**
      * @notice Returns the whitelist registry address
      * @return The whitelist registry address
      */
@@ -982,6 +1008,12 @@ interface ILTV is
      */
     function deleverageAndWithdraw(uint256 closeAmountBorrow, uint16 deleverageFeeDividend, uint16 deleverageFeeDivider)
         external;
+
+    /**
+     * @notice Executes soft liquidation
+     * @param liquidationAmountBorrow The amount of borrow to liquidate
+     */
+    function softLiquidation(uint256 liquidationAmountBorrow) external;
 
     // ========================================
     // EVENTS

@@ -42,7 +42,11 @@ contract AuctionsOpeningTest is BaseTest {
             borrowPrice: 10 ** 18,
             maxDeleverageFeeDividend: 1,
             maxDeleverageFeeDivider: 50,
-            zeroAddressTokens: 984016000 + 16000000 - 734000000 - 16000000 - 16_000
+            zeroAddressTokens: 984016000 + 16000000 - 734000000 - 16000000 - 16_000,
+            softLiquidationFeeDividend: 1,
+            softLiquidationFeeDivider: 100,
+            softLiquidationLtvDividend: 1,
+            softLiquidationLtvDivider: 1
         });
         // The zero address holds the excess token balance to balance the system.
         // This ensures the initial price of the protocol's token is 1.
@@ -91,7 +95,11 @@ contract AuctionsOpeningTest is BaseTest {
             borrowPrice: 10 ** 18,
             maxDeleverageFeeDividend: 1,
             maxDeleverageFeeDivider: 50,
-            zeroAddressTokens: 1_016_000_000 + 16000000 - 765_984_000 - 16000000 - 16_000
+            zeroAddressTokens: 1_016_000_000 + 16000000 - 765_984_000 - 16000000 - 16_000,
+            softLiquidationFeeDividend: 1,
+            softLiquidationFeeDivider: 100,
+            softLiquidationLtvDividend: 1,
+            softLiquidationLtvDivider: 1
         });
         // The zero address holds the excess token balance to balance the system.
         // This ensures the initial price of the protocol's token is 1.

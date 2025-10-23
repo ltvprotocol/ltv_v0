@@ -57,7 +57,11 @@ contract SharePriceOnStaticVaultTestPositiveAuction is BaseTest {
             borrowPrice: 10 ** 18,
             maxDeleverageFeeDividend: 1,
             maxDeleverageFeeDivider: 50,
-            zeroAddressTokens: 984016000 + 16000000 - 734000000 - 16000000 - 16_000
+            zeroAddressTokens: 984016000 + 16000000 - 734000000 - 16000000 - 16_000,
+            softLiquidationFeeDividend: 1,
+            softLiquidationFeeDivider: 100,
+            softLiquidationLtvDividend: 1,
+            softLiquidationLtvDivider: 1
         });
         initializeTest(initData);
 

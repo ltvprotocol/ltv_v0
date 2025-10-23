@@ -69,6 +69,13 @@ abstract contract AdministrationWrite is LTVState, CommonWrite, FacadeImplementa
     }
 
     /**
+     * @dev see ILTV.setIsSoftLiquidationEnabledForAnyone
+     */
+    function setIsSoftLiquidationEnabledForAnyone(bool value) external {
+        _delegate(address(MODULES.administrationModule()), abi.encode(value));
+    }
+
+    /**
      * @dev see ILTV.setSlippageConnector
      */
     function setSlippageConnector(address _slippageConnector, bytes memory slippageConnectorData) external {
@@ -130,6 +137,13 @@ abstract contract AdministrationWrite is LTVState, CommonWrite, FacadeImplementa
     }
 
     /**
+     * @dev see ILTV.softLiquidation
+     */
+    function softLiquidation(uint256 liquidationAmountBorrow) external {
+        _delegate(address(MODULES.administrationModule()), abi.encode(liquidationAmountBorrow));
+    }
+
+    /**
      * @dev see ILTV.updateEmergencyDeleverager
      */
     function updateEmergencyDeleverager(address newEmergencyDeleverager) external {
@@ -182,5 +196,19 @@ abstract contract AdministrationWrite is LTVState, CommonWrite, FacadeImplementa
      */
     function sweep(address token, uint256 amount) external {
         _delegate(address(MODULES.administrationModule()), abi.encode(token, amount));
+    }
+
+    /**
+     * @dev see ILTV.setSoftLiquidationFee
+     */
+    function setSoftLiquidationFee(uint16 dividend, uint16 divider) external {
+        _delegate(address(MODULES.administrationModule()), abi.encode(dividend, divider));
+    }
+
+    /**
+     * @dev see ILTV.setSoftLiquidationLtv
+     */
+    function setSoftLiquidationLtv(uint16 dividend, uint16 divider) external {
+        _delegate(address(MODULES.administrationModule()), abi.encode(dividend, divider));
     }
 }

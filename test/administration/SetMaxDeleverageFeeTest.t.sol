@@ -58,7 +58,7 @@ contract SetMaxDeleverageFeeTest is BaseTest {
         uint256 zeroFeeAssets = borrowAssets * ltv.oracleConnector().getPriceBorrowOracle(oracleConnectorGetterData)
             / ltv.oracleConnector().getPriceCollateralOracle(oracleConnectorGetterData);
         // 2% fee with 3/4 ltv gives 6% of total assets as fee
-        assertEq(collateralToken.balanceOf(defaultData.emergencyDeleverager), zeroFeeAssets + 10 ** 16);
+        assertEq(collateralToken.balanceOf(defaultData.emergencyDeleverager), zeroFeeAssets + 3 * 10 ** 16);
     }
 
     function test_setAndCheckStorageSlot(DefaultTestData memory defaultData)

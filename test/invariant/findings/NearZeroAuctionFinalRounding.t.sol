@@ -38,7 +38,11 @@ contract NearZeroAuctionFinalRoundingTest is BaseTest {
             borrowPrice: 10 ** 18,
             maxDeleverageFeeDividend: 0,
             maxDeleverageFeeDivider: 50,
-            zeroAddressTokens: 10707579638052243058
+            zeroAddressTokens: 10707579638052243058,
+            softLiquidationFeeDividend: 1,
+            softLiquidationFeeDivider: 100,
+            softLiquidationLtvDividend: 1,
+            softLiquidationLtvDivider: 1
         });
 
         initializeTest(init);

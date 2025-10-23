@@ -40,7 +40,11 @@ contract GeneratedBaseTest is DummyModulesBaseTest {
             borrowPrice: 10 ** 20,
             maxDeleverageFeeDividend: 1,
             maxDeleverageFeeDivider: 50,
-            zeroAddressTokens: 0
+            zeroAddressTokens: 0,
+            softLiquidationFeeDividend: 1,
+            softLiquidationFeeDivider: 100,
+            softLiquidationLtvDividend: 1,
+            softLiquidationLtvDivider: 1
         });
         initializeDummyTest(initData);
         ltv.mintFreeTokens(ltv.totalAssets(), address(this));

@@ -43,6 +43,13 @@ abstract contract BoolReader {
     }
 
     /**
+     * @notice implementation of isSoftLiquidationEnabledForAnyone
+     */
+    function _isSoftLiquidationEnabledForAnyone(uint8 boolSlot) internal pure returns (bool) {
+        return _getBool(boolSlot, Constants.IS_SOFT_LIQUIDATION_ENABLED_FOR_ANYONE_BIT);
+    }
+
+    /**
      * @notice function to get bool value from bool slot for appropriate bit
      */
     function _getBool(uint8 boolSlot, uint8 bit) private pure returns (bool) {

@@ -62,7 +62,11 @@ abstract contract BaseInvariantTest is BaseTest {
             borrowPrice: 10 ** 18, // 1 borrow price
             maxDeleverageFeeDividend: 0, // No deleverage fee
             maxDeleverageFeeDivider: 1,
-            zeroAddressTokens: 40 * 10 ** borrowTokenDecimals - 35 * 10 ** borrowTokenDecimals // adjust initial share price to be 1
+            zeroAddressTokens: 40 * 10 ** borrowTokenDecimals - 35 * 10 ** borrowTokenDecimals, // adjust initial share price to be 1
+            softLiquidationFeeDividend: 1,
+            softLiquidationFeeDivider: 100,
+            softLiquidationLtvDividend: 1,
+            softLiquidationLtvDivider: 1
         });
 
         BaseTestInitWithSpecificDecimals memory initWithSpecificDecimals = BaseTestInitWithSpecificDecimals({

@@ -53,6 +53,10 @@ contract DeployLTVBeaconProxy is BaseScript {
         stateInitData.governor = vm.envAddress("GOVERNOR");
         stateInitData.emergencyDeleverager = vm.envAddress("EMERGENCY_DELEVERAGER");
         stateInitData.auctionDuration = uint24(vm.envUint("AUCTION_DURATION"));
+        stateInitData.softLiquidationFeeDividend = uint16(vm.envUint("SOFT_LIQUIDATION_FEE_DIVIDEND"));
+        stateInitData.softLiquidationFeeDivider = uint16(vm.envUint("SOFT_LIQUIDATION_FEE_DIVIDER"));
+        stateInitData.softLiquidationLtvDividend = uint16(vm.envUint("SOFT_LIQUIDATION_LTV_DIVIDEND"));
+        stateInitData.softLiquidationLtvDivider = uint16(vm.envUint("SOFT_LIQUIDATION_LTV_DIVIDER"));
         string memory lendingConnectorName = vm.envString("LENDING_CONNECTOR_NAME");
         uint256 collateralSlippage = vm.envUint("COLLATERAL_SLIPPAGE");
         uint256 borrowSlippage = vm.envUint("BORROW_SLIPPAGE");

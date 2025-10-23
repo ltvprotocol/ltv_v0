@@ -11,6 +11,8 @@ import {Lending} from "../../../state_transition/Lending.sol";
 import {MaxGrowthFeeStateReader} from "../../../state_reader/common/MaxGrowthFeeStateReader.sol";
 import {MaxGrowthFee} from "../../../math/abstracts/MaxGrowthFee.sol";
 import {UMulDiv, SMulDiv} from "../../../math/libraries/MulDiv.sol";
+import {TotalAssetsData} from "../../../structs/data/vault/total_assets/TotalAssetsData.sol";
+import {TotalAssetsState} from "../../../structs/state/vault/total_assets/TotalAssetsState.sol";
 import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 
@@ -48,55 +50,117 @@ abstract contract OnlyEmergencyDeleverager is
                 deleverageFeeDividend, deleverageFeeDivider, maxDeleverageFeeDividend, maxDeleverageFeeDivider
             )
         );
+
+        _setMinProfitLtv(0, 1);
+        _setTargetLtv(0, 1);
+        _setMaxSafeLtv(1, 1);
+        _setSoftLiquidationLtv(1, 1);
+
+        _liquidate(closeAmountBorrow, deleverageFeeDividend, deleverageFeeDivider, false);
+        // Set the vault as deleveraged. After this operation collateral assets are transferred to the
+        // vault address. Users still will be able to burn their shares to withdraw this collateral(via
+        // withdrawCollateral or redeemCollateral functions)
+        setBool(Constants.IS_VAULT_DELEVERAGED_BIT, true);
+        lendingConnectorGetterData = "";
+    }
+
+    /**
+     * @dev see ILTV.softLiquidation
+     */
+    function softLiquidation(uint256 liquidationAmountBorrow) external onlyEmergencyDeleveragerOrAnyone nonReentrant {
+        _liquidate(liquidationAmountBorrow, softLiquidationFeeDividend, softLiquidationFeeDivider, true);
+    }
+
+    function _liquidate(
+        uint256 liquidationAmountBorrow,
+        uint16 bonusDividend,
+        uint16 bonusDivider,
+        bool isSoftLiquidation
+    ) internal {
         require(!_isVaultDeleveraged(boolSlot), VaultAlreadyDeleveraged());
-
-        MaxGrowthFeeState memory state = maxGrowthFeeState();
-        MaxGrowthFeeData memory data = maxGrowthFeeStateToData(state);
-
-        applyMaxGrowthFee(_previewSupplyAfterFee(data), data.withdrawTotalAssets);
 
         futureBorrowAssets = 0;
         futureCollateralAssets = 0;
         futureRewardBorrowAssets = 0;
         futureRewardCollateralAssets = 0;
         startAuction = 0;
-        _setMinProfitLtv(0, 1);
-        _setTargetLtv(0, 1);
-        _setMaxSafeLtv(1, 1);
 
-        // round up to repay all assets
-        bytes memory _lendingConnectorGetterData = lendingConnectorGetterData;
-        uint256 realBorrowAssets = lendingConnector.getRealBorrowAssets(false, _lendingConnectorGetterData);
+        MaxGrowthFeeState memory state = maxGrowthFeeState();
 
-        require(closeAmountBorrow >= realBorrowAssets, ImpossibleToCoverDeleverage(realBorrowAssets, closeAmountBorrow));
+        if (!isSoftLiquidation) {
+            require(
+                liquidationAmountBorrow >= state.withdrawRealBorrowAssets,
+                ImpossibleToCoverDeleverage(state.withdrawRealBorrowAssets, liquidationAmountBorrow)
+            );
+            liquidationAmountBorrow = state.withdrawRealBorrowAssets;
+        }
 
-        uint256 collateralAssets = lendingConnector.getRealCollateralAssets(false, _lendingConnectorGetterData);
+        TotalAssetsData memory totalAssetsData = totalAssetsStateToData(
+            TotalAssetsState({
+                realCollateralAssets: state.withdrawRealCollateralAssets,
+                realBorrowAssets: state.withdrawRealBorrowAssets,
+                commonTotalAssetsState: state.commonTotalAssetsState
+            }),
+            false
+        );
+        uint256 withdrawTotalAssets = _totalAssets(false, totalAssetsData);
 
-        bytes memory _oracleConnectorGetterData = oracleConnectorGetterData;
-
-        uint256 collateralToTransfer = realBorrowAssets.mulDivDown(
-            oracleConnector.getPriceBorrowOracle(_oracleConnectorGetterData), 10 ** borrowTokenDecimals
-        ).mulDivDown(
-            10 ** collateralTokenDecimals, oracleConnector.getPriceCollateralOracle(_oracleConnectorGetterData)
+        applyMaxGrowthFee(
+            _previewSupplyAfterFee(
+                MaxGrowthFeeData({
+                    withdrawTotalAssets: withdrawTotalAssets,
+                    maxGrowthFeeDividend: state.maxGrowthFeeDividend,
+                    maxGrowthFeeDivider: state.maxGrowthFeeDivider,
+                    supply: _totalSupply(state.supply),
+                    lastSeenTokenPrice: state.lastSeenTokenPrice
+                })
+            ),
+            withdrawTotalAssets
         );
 
-        collateralToTransfer +=
-            (collateralAssets - collateralToTransfer).mulDivDown(deleverageFeeDividend, deleverageFeeDivider);
+        bytes memory _oracleConnectorGetterData = oracleConnectorGetterData;
+        uint256 liquidationAmountBorrowInUnderlying = liquidationAmountBorrow.mulDivDown(
+            oracleConnector.getPriceBorrowOracle(_oracleConnectorGetterData), 10 ** borrowTokenDecimals
+        );
+        uint256 liquidationAmountCollateralInUnderlying = liquidationAmountBorrowInUnderlying;
 
-        if (realBorrowAssets != 0) {
-            borrowToken.safeTransferFrom(msg.sender, address(this), realBorrowAssets);
-            repay(realBorrowAssets);
+        liquidationAmountCollateralInUnderlying +=
+            liquidationAmountCollateralInUnderlying.mulDivDown(bonusDividend, bonusDivider);
+
+        uint256 liquidationAmountCollateral = liquidationAmountCollateralInUnderlying.mulDivDown(
+            10 ** collateralTokenDecimals, oracleConnector.getPriceCollateralOracle(_oracleConnectorGetterData)
+        );
+        if (isSoftLiquidation) {
+            uint256 expectedCollateralInUnderlying =
+                (uint256(totalAssetsData.collateral) - liquidationAmountCollateralInUnderlying);
+            uint256 expectedBorrowInUnderlying = (uint256(totalAssetsData.borrow) - liquidationAmountBorrowInUnderlying);
+            require(
+                expectedBorrowInUnderlying * softLiquidationLtvDivider
+                    > expectedCollateralInUnderlying * softLiquidationLtvDividend,
+                SoftLiquidationResultBelowSoftLiquidationLtv(
+                    expectedBorrowInUnderlying,
+                    expectedCollateralInUnderlying,
+                    softLiquidationLtvDividend,
+                    softLiquidationLtvDivider
+                )
+            );
+            require(
+                uint256(totalAssetsData.borrow) * expectedCollateralInUnderlying
+                    > uint256(totalAssetsData.collateral) * expectedBorrowInUnderlying,
+                SoftLiquidationFeeTooHigh()
+            );
         }
 
-        withdraw(collateralAssets);
-
-        if (collateralToTransfer != 0) {
-            collateralToken.safeTransfer(msg.sender, collateralToTransfer);
+        if (liquidationAmountBorrow != 0) {
+            borrowToken.safeTransferFrom(msg.sender, address(this), liquidationAmountBorrow);
+            repay(liquidationAmountBorrow);
         }
-        // Set the vault as deleveraged. After this operation collateral assets are transferred to the
-        // vault address. Users still will be able to burn their shares to withdraw this collateral(via
-        // withdrawCollateral or redeemCollateral functions)
-        setBool(Constants.IS_VAULT_DELEVERAGED_BIT, true);
-        lendingConnectorGetterData = "";
+
+        if (isSoftLiquidation) {
+            withdraw(liquidationAmountCollateral);
+        } else {
+            withdraw(lendingConnector.getRealCollateralAssets(true, lendingConnectorGetterData));
+        }
+        collateralToken.safeTransfer(msg.sender, liquidationAmountCollateral);
     }
 }

@@ -190,4 +190,32 @@ interface IAdministrationEvents {
      * @dev This connector helps track vault balances in lending protocols
      */
     event VaultBalanceAsLendingConnectorUpdated(address oldValue, address newValue);
+
+    /**
+     * @notice Emitted when the soft liquidation enabled for anyone status is changed
+     * @param oldValue The previous soft liquidation enabled for anyone status
+     * @param newValue The new soft liquidation enabled for anyone status
+     * @dev Controls whether anyone can perform soft liquidation
+     */
+    event IsSoftLiquidationEnabledForAnyoneChanged(bool oldValue, bool newValue);
+
+    /**
+     * @notice Emitted when the soft liquidation fee is changed
+     * @param oldDividend The previous soft liquidation fee numerator
+     * @param oldDivider The previous soft liquidation fee denominator
+     * @param newDividend The new soft liquidation fee numerator
+     * @param newDivider The new soft liquidation fee denominator
+     * @dev Controls the fee charged during soft liquidation operations
+     */
+    event SoftLiquidationFeeChanged(uint16 oldDividend, uint16 oldDivider, uint16 newDividend, uint16 newDivider);
+
+    /**
+     * @notice Emitted when the soft liquidation ltv is changed
+     * @param oldDividend The previous soft liquidation ltv numerator
+     * @param oldDivider The previous soft liquidation ltv denominator
+     * @param newDividend The new soft liquidation ltv numerator
+     * @param newDivider The new soft liquidation ltv denominator
+     * @dev Controls the ltv threshold for soft liquidation operations
+     */
+    event SoftLiquidationLtvChanged(uint16 oldDividend, uint16 oldDivider, uint16 newDividend, uint16 newDivider);
 }

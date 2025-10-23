@@ -18,11 +18,12 @@ contract DeleverageAndWithdrawTest is BalancedTest {
         dummyLtv.deleverageAndWithdraw(dummyLtv.getRealBorrowAssets(true), uint16(1), uint16(200)); // 0.5% fee
         vm.stopPrank();
 
-        // total assets were reduced for 0.5%
-        assertEq(dummyLtv.totalAssets(), 995 * 10 ** 15);
+        // total assets were reduced for 1.5%, since 0.5% fee with 4x leverage (when 4x leverage,
+        // it's 4x collateral and 3x borrow assets. For exchanging borrow assets user receives reward)
+        assertEq(dummyLtv.totalAssets(), 985 * 10 ** 15);
 
         vm.startPrank(owner);
-        assertEq(dummyLtv.withdrawCollateral(995 * 10 ** 14, address(owner), address(owner)), 2 * 10 ** 17);
+        assertEq(dummyLtv.withdrawCollateral(985 * 10 ** 14, address(owner), address(owner)), 2 * 10 ** 17);
         dummyLtv.redeemCollateral(2 * 10 ** 17, address(owner), address(owner));
     }
 

@@ -62,7 +62,11 @@ contract BalancedTest is DummyModulesBaseTest {
                 borrowPrice: 10 ** 20,
                 maxDeleverageFeeDividend: 1,
                 maxDeleverageFeeDivider: 50,
-                zeroAddressTokens: borrowAmount * 10
+                zeroAddressTokens: borrowAmount * 10,
+                softLiquidationFeeDividend: 1,
+                softLiquidationFeeDivider: 100,
+                softLiquidationLtvDividend: 1,
+                softLiquidationLtvDivider: 1
             });
 
             initializeDummyTest(initData);

@@ -47,6 +47,13 @@ contract AdministrationRead is GetLendingConnectorStateReader, FacadeImplementat
     }
 
     /**
+     * @dev see ILTV.isSoftLiquidationEnabledForAnyone
+     */
+    function isSoftLiquidationEnabledForAnyone() external view returns (bool) {
+        return MODULES.administrationModule().isSoftLiquidationEnabledForAnyone(boolSlot);
+    }
+
+    /**
      * @dev see ILTV.getLendingConnector
      */
     function getLendingConnector() external view returns (ILendingConnector) {

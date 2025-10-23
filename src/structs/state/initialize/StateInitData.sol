@@ -39,4 +39,8 @@ struct StateInitData {
     bytes oracleConnectorData;
     bytes slippageConnectorData;
     bytes vaultBalanceAsLendingConnectorData;
+    uint16 softLiquidationFeeDividend;
+    uint16 softLiquidationFeeDivider;
+    uint16 softLiquidationLtvDividend;
+    uint16 softLiquidationLtvDivider;
 }

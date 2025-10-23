@@ -17,16 +17,20 @@ interface IAdministrationErrors {
      * @param maxSafeLtvDivider The denominator of the maximum safe LTV ratio
      * @param minProfitLtvDividend The numerator of the minimum profit LTV ratio
      * @param minProfitLtvDivider The denominator of the minimum profit LTV ratio
+     * @param softLiquidationLtvDividend The numerator of the soft liquidation ltv ratio
+     * @param softLiquidationLtvDivider The denominator of the soft liquidation ltv ratio
      * @dev This error occurs when LTV parameters don't satisfy the required relationships
      *      (e.g., target LTV should be between min profit and max safe LTV)
      */
     error InvalidLTVSet(
-        uint24 targetLtvDividend,
-        uint24 targetLtvDivider,
-        uint24 maxSafeLtvDividend,
-        uint24 maxSafeLtvDivider,
-        uint24 minProfitLtvDividend,
-        uint24 minProfitLtvDivider
+        uint16 targetLtvDividend,
+        uint16 targetLtvDivider,
+        uint16 maxSafeLtvDividend,
+        uint16 maxSafeLtvDivider,
+        uint16 minProfitLtvDividend,
+        uint16 minProfitLtvDivider,
+        uint16 softLiquidationLtvDividend,
+        uint16 softLiquidationLtvDivider
     );
 
     /**
@@ -35,7 +39,7 @@ interface IAdministrationErrors {
      * @param maxSafeLtvDivider The denominator of the max safe LTV ratio
      * @dev Used when the max safe LTV doesn't meet expected constraints
      */
-    error UnexpectedmaxSafeLtv(uint24 maxSafeLtvDividend, uint24 maxSafeLtvDivider);
+    error UnexpectedmaxSafeLtv(uint16 maxSafeLtvDividend, uint16 maxSafeLtvDivider);
 
     /**
      * @notice Error thrown when minProfitLtv is set to an unexpected value
@@ -43,7 +47,7 @@ interface IAdministrationErrors {
      * @param minProfitLtvDivider The denominator of the min profit LTV ratio
      * @dev Used when the min profit LTV doesn't meet expected constraints
      */
-    error UnexpectedminProfitLtv(uint24 minProfitLtvDividend, uint24 minProfitLtvDivider);
+    error UnexpectedminProfitLtv(uint16 minProfitLtvDividend, uint16 minProfitLtvDivider);
 
     /**
      * @notice Error thrown when targetLtv is set to an unexpected value
@@ -51,7 +55,7 @@ interface IAdministrationErrors {
      * @param targetLtvDivider The denominator of the target LTV ratio
      * @dev Used when the target LTV doesn't meet expected constraints
      */
-    error UnexpectedtargetLtv(uint24 targetLtvDividend, uint24 targetLtvDivider);
+    error UnexpectedtargetLtv(uint16 targetLtvDividend, uint16 targetLtvDivider);
 
     /**
      * @notice Error thrown when attempting to set a zero address as fee collector
@@ -180,6 +184,44 @@ interface IAdministrationErrors {
      * @dev Prevents setting invalid modules provider addresses
      */
     error ZeroModulesProvider();
+
+    /**
+     * @notice Error thrown when soft liquidation expected result is below configured threshold
+     * @param calculatedBorrowInUnderlying Expected borrow assets amount in lending protocol after liquidation
+     * @param calculatedCollateralInUnderlying Expected collateral assets amount in lending protocol after liquidation
+     * @param softLiquidationLtvDividend The dividend of the soft liquidation ltv
+     * @param softLiquidationLtvDivider The divider of the soft liquidation ltv
+     * @dev Used when soft liquidation result is below soft liquidation ltv
+     */
+    error SoftLiquidationResultBelowSoftLiquidationLtv(
+        uint256 calculatedBorrowInUnderlying,
+        uint256 calculatedCollateralInUnderlying,
+        uint16 softLiquidationLtvDividend,
+        uint16 softLiquidationLtvDivider
+    );
+
+    /**
+     * @notice Error thrown when soft liquidation fee parameters are invalid
+     * @param softLiquidationFeeDividend The numerator of the soft liquidation fee ratio
+     * @param softLiquidationFeeDivider The denominator of the soft liquidation fee ratio
+     * @dev Used when soft liquidation fee parameters don't meet expected constraints
+     */
+    error InvalidSoftLiquidationFee(uint16 softLiquidationFeeDividend, uint16 softLiquidationFeeDivider);
+
+    /**
+     * @notice Error thrown when soft liquidation ltv parameters are invalid
+     * @param softLiquidationLtvDividend The numerator of the soft liquidation ltv ratio
+     * @param softLiquidationLtvDivider The denominator of the soft liquidation ltv ratio
+     * @dev Used when soft liquidation ltv parameters don't meet expected constraints
+     */
+    error InvalidSoftLiquidationLtv(uint16 softLiquidationLtvDividend, uint16 softLiquidationLtvDivider);
+
+    /**
+     * @notice Error thrown when soft liquidation fee is too high
+     * @dev Possible in a case of very high soft liquidation fee, which leads to a situation where
+     * soft liquidation only making ltv worse.
+     */
+    error SoftLiquidationFeeTooHigh();
 
     /**
      * @notice Error thrown when setting lending connector fails

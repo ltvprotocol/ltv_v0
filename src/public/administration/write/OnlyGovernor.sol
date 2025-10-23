@@ -102,4 +102,35 @@ abstract contract OnlyGovernor is
     {
         _setSlippageConnectorData(slippageConnectorData);
     }
+
+    /**
+     * @dev see ILTV.setIsSoftLiquidationEnabledForAnyone
+     */
+    function setIsSoftLiquidationEnabledForAnyone(bool value) external isFunctionAllowed onlyGovernor nonReentrant {
+        _setIsSoftLiquidationEnabledForAnyone(value);
+    }
+
+    /**
+     * @dev see ILTV.setSoftLiquidationFee
+     */
+    function setSoftLiquidationFee(uint16 dividend, uint16 divider)
+        external
+        isFunctionAllowed
+        onlyGovernor
+        nonReentrant
+    {
+        _setSoftLiquidationFee(dividend, divider);
+    }
+
+    /**
+     * @dev see ILTV.setSoftLiquidationLtv
+     */
+    function setSoftLiquidationLtv(uint16 dividend, uint16 divider)
+        external
+        isFunctionAllowed
+        onlyGovernor
+        nonReentrant
+    {
+        _setSoftLiquidationLtv(dividend, divider);
+    }
 }

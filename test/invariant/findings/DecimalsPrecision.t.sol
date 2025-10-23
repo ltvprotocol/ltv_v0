@@ -39,7 +39,11 @@ contract DecimalsPrecision is BaseTest {
                 borrowPrice: 1000000000000000000,
                 maxDeleverageFeeDividend: 0,
                 maxDeleverageFeeDivider: 1,
-                zeroAddressTokens: 3600037169107918208239293372608589
+                zeroAddressTokens: 3600037169107918208239293372608589,
+                softLiquidationFeeDividend: 1,
+                softLiquidationFeeDivider: 100,
+                softLiquidationLtvDividend: 1,
+                softLiquidationLtvDivider: 1
             }),
             20,
             6

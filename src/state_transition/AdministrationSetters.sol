@@ -32,7 +32,14 @@ contract AdministrationSetters is
             uint256(dividend) * maxSafeLtvDivider <= uint256(divider) * maxSafeLtvDividend
                 && uint256(dividend) * minProfitLtvDivider >= minProfitLtvDividend * uint256(divider),
             InvalidLTVSet(
-                dividend, divider, maxSafeLtvDividend, maxSafeLtvDivider, minProfitLtvDividend, minProfitLtvDivider
+                dividend,
+                divider,
+                maxSafeLtvDividend,
+                maxSafeLtvDivider,
+                minProfitLtvDividend,
+                minProfitLtvDivider,
+                softLiquidationLtvDividend,
+                softLiquidationLtvDivider
             )
         );
         uint16 oldValue = targetLtvDividend;
@@ -48,9 +55,17 @@ contract AdministrationSetters is
     function _setMaxSafeLtv(uint16 dividend, uint16 divider) internal {
         require(dividend > 0 && dividend <= divider, UnexpectedmaxSafeLtv(dividend, divider));
         require(
-            uint256(dividend) * targetLtvDivider >= uint256(targetLtvDividend) * divider,
+            uint256(dividend) * targetLtvDivider >= uint256(targetLtvDividend) * divider
+                && uint256(dividend) * softLiquidationLtvDivider <= uint256(softLiquidationLtvDividend) * divider,
             InvalidLTVSet(
-                targetLtvDividend, targetLtvDivider, dividend, divider, minProfitLtvDividend, minProfitLtvDivider
+                targetLtvDividend,
+                targetLtvDivider,
+                dividend,
+                divider,
+                minProfitLtvDividend,
+                minProfitLtvDivider,
+                softLiquidationLtvDividend,
+                softLiquidationLtvDivider
             )
         );
         uint16 oldDividend = maxSafeLtvDividend;
@@ -67,7 +82,16 @@ contract AdministrationSetters is
         require(dividend >= 0 && dividend < divider, UnexpectedminProfitLtv(dividend, divider));
         require(
             uint256(dividend) * targetLtvDivider <= uint256(divider) * targetLtvDividend,
-            InvalidLTVSet(targetLtvDividend, targetLtvDivider, maxSafeLtvDividend, maxSafeLtvDivider, dividend, divider)
+            InvalidLTVSet(
+                targetLtvDividend,
+                targetLtvDivider,
+                maxSafeLtvDividend,
+                maxSafeLtvDivider,
+                dividend,
+                divider,
+                softLiquidationLtvDividend,
+                softLiquidationLtvDivider
+            )
         );
         uint16 oldDividend = minProfitLtvDividend;
         uint16 oldDivider = minProfitLtvDivider;
@@ -264,5 +288,45 @@ contract AdministrationSetters is
         address oldGuardian = guardian;
         guardian = newGuardian;
         emit GuardianUpdated(oldGuardian, newGuardian);
+    }
+
+    /**
+     * @dev implementation of ILTV.setIsSoftLiquidationEnabledForAnyone
+     */
+    function _setIsSoftLiquidationEnabledForAnyone(bool value) internal {
+        bool oldValue = _isSoftLiquidationEnabledForAnyone(boolSlot);
+        setBool(Constants.IS_SOFT_LIQUIDATION_ENABLED_FOR_ANYONE_BIT, value);
+        emit IsSoftLiquidationEnabledForAnyoneChanged(oldValue, value);
+    }
+
+    function _setSoftLiquidationFee(uint16 dividend, uint16 divider) internal {
+        require(dividend > 0 && dividend < divider, InvalidSoftLiquidationFee(dividend, divider));
+        uint16 oldDividend = softLiquidationFeeDividend;
+        uint16 oldDivider = softLiquidationFeeDivider;
+        softLiquidationFeeDividend = dividend;
+        softLiquidationFeeDivider = divider;
+        emit SoftLiquidationFeeChanged(oldDividend, oldDivider, dividend, divider);
+    }
+
+    function _setSoftLiquidationLtv(uint16 dividend, uint16 divider) internal {
+        require(dividend > 0 && dividend <= divider, InvalidSoftLiquidationLtv(dividend, divider));
+        require(
+            uint256(dividend) * maxSafeLtvDivider >= uint256(maxSafeLtvDividend) * divider,
+            InvalidLTVSet(
+                targetLtvDividend,
+                targetLtvDivider,
+                maxSafeLtvDividend,
+                maxSafeLtvDivider,
+                minProfitLtvDividend,
+                minProfitLtvDivider,
+                dividend,
+                divider
+            )
+        );
+        uint16 oldDividend = softLiquidationLtvDividend;
+        uint16 oldDivider = softLiquidationLtvDivider;
+        softLiquidationLtvDividend = dividend;
+        softLiquidationLtvDivider = divider;
+        emit SoftLiquidationLtvChanged(oldDividend, oldDivider, dividend, divider);
     }
 }

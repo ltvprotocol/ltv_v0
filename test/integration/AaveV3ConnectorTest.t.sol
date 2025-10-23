@@ -92,7 +92,11 @@ contract AaveV3ConnectorTest is Test {
             lendingConnectorData: abi.encode(1),
             oracleConnectorData: "",
             slippageConnectorData: abi.encode(10 ** 16, 10 ** 16),
-            vaultBalanceAsLendingConnectorData: ""
+            vaultBalanceAsLendingConnectorData: "",
+            softLiquidationFeeDividend: 1,
+            softLiquidationFeeDivider: 100,
+            softLiquidationLtvDividend: 1,
+            softLiquidationLtvDivider: 1
         });
 
         ltv = new LTV(address(modulesProvider));
