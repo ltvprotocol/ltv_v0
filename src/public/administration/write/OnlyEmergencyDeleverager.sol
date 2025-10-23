@@ -74,8 +74,9 @@ abstract contract OnlyEmergencyDeleverager is
         bytes memory _oracleConnectorGetterData = oracleConnectorGetterData;
 
         uint256 collateralToTransfer = realBorrowAssets.mulDivDown(
-            oracleConnector.getPriceBorrowOracle(_oracleConnectorGetterData),
-            oracleConnector.getPriceCollateralOracle(_oracleConnectorGetterData)
+            oracleConnector.getPriceBorrowOracle(_oracleConnectorGetterData), 10 ** borrowTokenDecimals
+        ).mulDivDown(
+            10 ** collateralTokenDecimals, oracleConnector.getPriceCollateralOracle(_oracleConnectorGetterData)
         );
 
         collateralToTransfer +=
