@@ -78,6 +78,7 @@ contract ValidValuesFuzzingExecution is AuctionTestCommon {
         uint128 executionSize
     ) public testWithPredefinedDefaultValues(data) {
         vm.assume(auctionSize >= 3);
+        vm.assume(user != address(0));
         prepareDepositAuctionWithCustomCollateralPrice(auctionSize, 2_111_111_111_111_111_111, data.owner);
 
         cacheFutureExecutorInvariantState(ILTV(address(ltv)));

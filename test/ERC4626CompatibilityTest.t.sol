@@ -5,23 +5,6 @@ import {IERC4626} from "openzeppelin-contracts/contracts/interfaces/IERC4626.sol
 import {IERC4626Collateral} from "test/interfaces/IERC4626Collateral.sol";
 import {DefaultTestData} from "test/utils/BaseTest.t.sol";
 import {PrepareEachFunctionSuccessfulExecution} from "test/administration/PrepareEachFunctionSuccessfulExecution.sol";
-import {IModules} from "src/interfaces/IModules.sol";
-import {ModulesState} from "src/structs/state/common/ModulesState.sol";
-import {IBorrowVaultModule} from "src/interfaces/reads/IBorrowVaultModule.sol";
-import {ICollateralVaultModule} from "src/interfaces/reads/ICollateralVaultModule.sol";
-import {ILowLevelRebalanceModule} from "src/interfaces/reads/ILowLevelRebalanceModule.sol";
-import {IAuctionModule} from "src/interfaces/reads/IAuctionModule.sol";
-import {IERC20Module} from "src/interfaces/reads/IERC20Module.sol";
-import {IAdministrationModule} from "src/interfaces/reads/IAdministrationModule.sol";
-import {IInitializeModule} from "src/interfaces/writes/IInitializeModule.sol";
-import {BorrowVaultModule} from "src/elements/modules/BorrowVaultModule.sol";
-import {CollateralVaultModule} from "src/elements/modules/CollateralVaultModule.sol";
-import {LowLevelRebalanceModule} from "src/elements/modules/LowLevelRebalanceModule.sol";
-import {AuctionModule} from "src/elements/modules/AuctionModule.sol";
-import {AdministrationModule} from "src/elements/modules/AdministrationModule.sol";
-import {ERC20Module} from "src/elements/modules/ERC20Module.sol";
-import {InitializeModule} from "src/elements/modules/InitializeModule.sol";
-import {ModulesProvider} from "src/elements/ModulesProvider.sol";
 import {WhitelistRegistry} from "src/elements/WhitelistRegistry.sol";
 
 contract ERC4626CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
@@ -74,26 +57,11 @@ contract ERC4626CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
     }
 
     function initExecutionEnvironment(DefaultTestData memory data) public {
-        ModulesState memory newModulesState = ModulesState({
-            borrowVaultModule: IBorrowVaultModule(address(new BorrowVaultModule())),
-            collateralVaultModule: ICollateralVaultModule(address(new CollateralVaultModule())),
-            lowLevelRebalanceModule: ILowLevelRebalanceModule(address(new LowLevelRebalanceModule())),
-            auctionModule: IAuctionModule(address(new AuctionModule())),
-            administrationModule: IAdministrationModule(address(new AdministrationModule())),
-            erc20Module: IERC20Module(address(new ERC20Module())),
-            initializeModule: IInitializeModule(address(new InitializeModule()))
-        });
         vm.assume(data.owner != address(0));
         vm.assume(data.guardian != address(0));
         vm.assume(data.governor != address(0));
         vm.assume(data.emergencyDeleverager != address(0));
         vm.assume(data.feeCollector != address(0));
-        IModules newModules = new ModulesProvider(newModulesState);
-
-        vm.prank(data.owner);
-        ltv.setModules(newModules);
-
-        assertEq(address(ltv.modules()), address(newModules));
 
         prepareEachFunctionSuccessfulExecution(testUser);
 

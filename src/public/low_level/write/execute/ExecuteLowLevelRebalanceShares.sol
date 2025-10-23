@@ -67,7 +67,7 @@ abstract contract ExecuteLowLevelRebalanceShares is
                 true
             );
 
-            uint256 depositTotalAssets = totalAssets(
+            uint256 depositTotalAssets = _totalAssets(
                 true,
                 TotalAssetsState({
                     realCollateralAssets: state.previewLowLevelRebalanceState.depositRealCollateralAssets,

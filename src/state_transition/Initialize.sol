@@ -16,7 +16,7 @@ abstract contract Initialize is AdministrationSetters, OwnableUpgradeable {
     /**
      * @dev Initializes the vault
      */
-    function initialize(StateInitData memory initData) public onlyInitializing {
+    function initialize(StateInitData memory initData) public initializer {
         __Ownable_init(initData.owner);
 
         collateralTokenDecimals = IERC20Metadata(initData.collateralToken).decimals();
@@ -43,6 +43,7 @@ abstract contract Initialize is AdministrationSetters, OwnableUpgradeable {
         _updateGuardian(initData.guardian);
         _updateEmergencyDeleverager(initData.emergencyDeleverager);
 
+        require(initData.auctionDuration != 0, ZeroAuctionDuration());
         auctionDuration = initData.auctionDuration;
         lastSeenTokenPrice = Constants.LAST_SEEN_PRICE_PRECISION;
 
@@ -52,5 +53,6 @@ abstract contract Initialize is AdministrationSetters, OwnableUpgradeable {
         _setVaultBalanceAsLendingConnector(
             initData.vaultBalanceAsLendingConnector, initData.vaultBalanceAsLendingConnectorData
         );
+        _setIsProtocolPaused(true);
     }
 }

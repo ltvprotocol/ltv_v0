@@ -1,12 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {IModules} from "src/interfaces/IModules.sol";
-import {IInitializeModule} from "src/interfaces/writes/IInitializeModule.sol";
 import {StateInitData} from "src/structs/state/initialize/StateInitData.sol";
-import {AdministrationWrite} from "src/facades/writes/AdministrationWrite.sol";
-import {RevertWithDataIfNeeded} from "src/utils/RevertWithDataIfNeeded.sol";
-
+import {FacadeImplementationState} from "../../states/FacadeImplementationState.sol";
+import {CommonWrite} from "src/facades/writes/CommonWrite.sol";
 /**
  * @title InitializeWrite
  * @notice This contract contains initialize part of the LTV protocol.
@@ -14,14 +11,12 @@ import {RevertWithDataIfNeeded} from "src/utils/RevertWithDataIfNeeded.sol";
  * the facade contract. After modules initialization, remaining part of LTV protocol can be initialized
  * via initialize module.
  */
-abstract contract InitializeWrite is AdministrationWrite, RevertWithDataIfNeeded {
+
+abstract contract InitializeWrite is CommonWrite, FacadeImplementationState {
     /**
      * @dev see ILTV.initialize
      */
-    function initialize(StateInitData memory initData, IModules modules) external initializer {
-        _setModules(modules);
-        (bool isSuccess, bytes memory data) =
-            address(modules.initializeModule()).delegatecall(abi.encodeCall(IInitializeModule.initialize, (initData)));
-        revertWithDataIfNeeded(isSuccess, data);
+    function initialize(StateInitData memory initData) external {
+        _delegate(address(MODULES.initializeModule()), abi.encode(initData));
     }
 }

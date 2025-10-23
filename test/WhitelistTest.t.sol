@@ -5,6 +5,7 @@ import {BalancedTest} from "test/utils/BalancedTest.t.sol";
 import {ILTV} from "src/interfaces/ILTV.sol";
 import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
 import {WhitelistRegistry} from "src/elements/WhitelistRegistry.sol";
+import {IWhitelistRegistryErrors} from "src/errors/IWhitelistRegistryErrors.sol";
 
 contract WhitelistTest is BalancedTest {
     function test_whitelist(address owner, address user, address randUser)
@@ -42,7 +43,7 @@ contract WhitelistTest is BalancedTest {
         address signer = vm.addr(signerPrivateKey);
         WhitelistRegistry whitelistRegistry = new WhitelistRegistry(owner, signer);
 
-        bytes32 hash = keccak256(abi.encodePacked(block.chainid, address(whitelistRegistry), user));
+        bytes32 hash = keccak256(abi.encode(block.chainid, address(whitelistRegistry), user));
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(signerPrivateKey, hash);
 
         assertEq(whitelistRegistry.isAddressWhitelisted(user), false);
@@ -66,7 +67,7 @@ contract WhitelistTest is BalancedTest {
         bytes32 s;
 
         {
-            bytes32 digest = keccak256(abi.encodePacked(block.chainid, address(whitelistRegistry), user));
+            bytes32 digest = keccak256(abi.encode(block.chainid, address(whitelistRegistry), user));
             (v, r, s) = vm.sign(signerPrivateKey, digest);
         }
         assertEq(whitelistRegistry.isAddressWhitelisted(user), false);
@@ -80,7 +81,9 @@ contract WhitelistTest is BalancedTest {
         whitelistRegistry.removeAddressFromWhitelist(user);
         assertEq(whitelistRegistry.isAddressWhitelisted(user), false);
 
-        vm.expectRevert(abi.encodeWithSelector(WhitelistRegistry.DoubleSignatureUse.selector));
+        vm.expectRevert(
+            abi.encodeWithSelector(IWhitelistRegistryErrors.AddressWhitelistingBySignatureDisabled.selector)
+        );
         whitelistRegistry.addAddressToWhitelistBySignature(user, v, r, s);
     }
 
@@ -90,7 +93,7 @@ contract WhitelistTest is BalancedTest {
         address differentUser
     ) internal view returns (uint8 v, bytes32 r, bytes32 s) {
         // Create signature for a different user to make it invalid
-        bytes32 digest = keccak256(abi.encodePacked(block.chainid, address(whitelistRegistry), differentUser));
+        bytes32 digest = keccak256(abi.encode(block.chainid, address(whitelistRegistry), differentUser));
         return vm.sign(signerPrivateKey, digest);
     }
 
@@ -108,7 +111,7 @@ contract WhitelistTest is BalancedTest {
 
         assertEq(whitelistRegistry.isAddressWhitelisted(user), false);
         vm.startPrank(user);
-        vm.expectRevert(abi.encodeWithSelector(WhitelistRegistry.InvalidSignature.selector));
+        vm.expectRevert(abi.encodeWithSelector(IWhitelistRegistryErrors.InvalidSignature.selector));
         whitelistRegistry.addAddressToWhitelistBySignature(user, v, r, s);
     }
 }

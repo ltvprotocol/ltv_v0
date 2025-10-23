@@ -20,8 +20,9 @@ abstract contract PreviewRedeem is Vault {
      * @dev see IBorrowVaultModule.previewRedeem
      */
     function previewRedeem(uint256 shares, PreviewWithdrawVaultState memory state)
-        public
-        pure
+        external
+        view
+        nonReentrantRead
         returns (uint256 assets)
     {
         (assets,) = _previewRedeem(shares, previewWithdrawStateToPreviewWithdrawData(state));

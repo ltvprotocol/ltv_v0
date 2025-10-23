@@ -16,7 +16,7 @@ abstract contract MaxGrowthFee is TotalAssets, TotalSupply {
      * @notice Calculates supply after applying max growth fee.
      *
      * @dev Calculations are derived from the ltv protocol paper.
-     * Makes sure fee collector receives fee by minting tokens untill
+     * Makes sure fee collector receives fee by minting tokens until
      * the deviation of current token price from last seen token
      * price will be equal to (100 - maxGrowthFee)%
      *
@@ -30,7 +30,7 @@ abstract contract MaxGrowthFee is TotalAssets, TotalSupply {
             return data.supply;
         }
 
-        // divident: asset * supply
+        // dividend: asset * supply
         // divisor: supply * maxGrowthFee * lastSeenTokenPrice + assets * (1 - maxGrowthFee)
 
         // underestimate new supply to mint less tokens
@@ -52,7 +52,7 @@ abstract contract MaxGrowthFee is TotalAssets, TotalSupply {
      */
     function maxGrowthFeeStateToData(MaxGrowthFeeState memory state) internal pure returns (MaxGrowthFeeData memory) {
         return MaxGrowthFeeData({
-            withdrawTotalAssets: totalAssets(
+            withdrawTotalAssets: _totalAssets(
                 false,
                 TotalAssetsState({
                     realCollateralAssets: state.withdrawRealCollateralAssets,
@@ -62,7 +62,7 @@ abstract contract MaxGrowthFee is TotalAssets, TotalSupply {
             ),
             maxGrowthFeeDividend: state.maxGrowthFeeDividend,
             maxGrowthFeeDivider: state.maxGrowthFeeDivider,
-            supply: totalSupply(state.supply),
+            supply: _totalSupply(state.supply),
             lastSeenTokenPrice: state.lastSeenTokenPrice
         });
     }

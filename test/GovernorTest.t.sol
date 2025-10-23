@@ -3,9 +3,9 @@ pragma solidity ^0.8.28;
 
 import {BalancedTest} from "test/utils/BalancedTest.t.sol";
 import {ILTV} from "src/interfaces/ILTV.sol";
-import {ConstantSlippageConnector} from "src/connectors/slippage_connectors/ConstantSlippageConnector.sol";
 import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
 import {WhitelistRegistry} from "src/elements/WhitelistRegistry.sol";
+import {DummySlippageConnector} from "src/dummy/DummySlippageConnector.sol";
 
 contract GovernorTest is BalancedTest {
     function test_setTargetLtv(address owner, address user)
@@ -245,7 +245,7 @@ contract GovernorTest is BalancedTest {
         address governor = ILTV(address(dummyLtv)).governor();
         vm.assume(user != governor);
         vm.startPrank(governor);
-        ConstantSlippageConnector provider = new ConstantSlippageConnector();
+        DummySlippageConnector provider = new DummySlippageConnector();
 
         bytes memory slippageConnectorData = abi.encode(10 ** 16, 10 ** 16);
         dummyLtv.setSlippageConnector(address(provider), slippageConnectorData);

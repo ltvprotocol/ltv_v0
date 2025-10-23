@@ -18,7 +18,12 @@ abstract contract MaxRedeemCollateral is PreviewWithdrawCollateral, PreviewRedee
     /**
      * @dev see ICollateralVaultModule.maxRedeemCollateral
      */
-    function maxRedeemCollateral(MaxWithdrawRedeemCollateralVaultState memory state) public pure returns (uint256) {
+    function maxRedeemCollateral(MaxWithdrawRedeemCollateralVaultState memory state)
+        external
+        view
+        nonReentrantRead
+        returns (uint256)
+    {
         return _maxRedeemCollateral(maxWithdrawRedeemCollateralVaultStateToMaxWithdrawRedeemCollateralVaultData(state));
     }
 

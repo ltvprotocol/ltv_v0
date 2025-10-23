@@ -16,7 +16,13 @@ abstract contract ConvertToShares is MaxGrowthFee {
     /**
      * @dev see IBorrowVaultModule.convertToShares
      */
-    function convertToShares(uint256 assets, MaxGrowthFeeState memory state) external view virtual returns (uint256) {
+    function convertToShares(uint256 assets, MaxGrowthFeeState memory state)
+        external
+        view
+        virtual
+        nonReentrantRead
+        returns (uint256)
+    {
         return _convertToShares(assets, maxGrowthFeeStateToData(state));
     }
 
