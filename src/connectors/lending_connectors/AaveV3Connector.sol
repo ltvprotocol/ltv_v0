@@ -6,6 +6,7 @@ import {ILendingConnector} from "src/interfaces/connectors/ILendingConnector.sol
 import {IAaveV3Pool} from "src/connectors/lending_connectors/interfaces/IAaveV3Pool.sol";
 import {LTVState} from "src/states/LTVState.sol";
 import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
+import {IAaveV3ConnectorErrors} from "src/errors/connectors/IAaveV3ConnectorErrors.sol";
 
 /**
  * @title AaveV3Connector
