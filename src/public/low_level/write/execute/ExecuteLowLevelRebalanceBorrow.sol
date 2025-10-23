@@ -61,7 +61,7 @@ abstract contract ExecuteLowLevelRebalanceBorrow is
 
         LowLevelRebalanceData memory data =
             previewLowLevelRebalanceStateToData(state.previewLowLevelRebalanceState, isSharesPositive);
-        int256 max = maxLowLevelRebalanceBorrow(
+        int256 max = _maxLowLevelRebalanceBorrow(
             MaxLowLevelRebalanceBorrowStateData({
                 // using withdraw real borrow assets since it overestimates assets, so max value will be smaller
                 realBorrowAssets: state.previewLowLevelRebalanceState.maxGrowthFeeState.withdrawRealBorrowAssets,

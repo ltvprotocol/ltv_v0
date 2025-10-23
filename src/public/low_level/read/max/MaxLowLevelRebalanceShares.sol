@@ -16,7 +16,12 @@ abstract contract MaxLowLevelRebalanceShares is MaxGrowthFee {
     /**
      * @dev see ILowLevelRebalanceModule.maxLowLevelRebalanceShares
      */
-    function maxLowLevelRebalanceShares(MaxLowLevelRebalanceSharesState memory state) public pure returns (int256) {
+    function maxLowLevelRebalanceShares(MaxLowLevelRebalanceSharesState memory state)
+        public
+        view
+        nonReentrantRead
+        returns (int256)
+    {
         return _maxLowLevelRebalanceShares(maxLowLevelRebalanceSharesStateToData(state));
     }
 
@@ -95,7 +100,7 @@ abstract contract MaxLowLevelRebalanceShares is MaxGrowthFee {
             );
         }
         {
-            uint256 withdrawTotalAssets = totalAssets(
+            uint256 withdrawTotalAssets = _totalAssets(
                 false,
                 TotalAssetsState({
                     commonTotalAssetsState: state.maxGrowthFeeState.commonTotalAssetsState,
@@ -108,7 +113,7 @@ abstract contract MaxLowLevelRebalanceShares is MaxGrowthFee {
                     withdrawTotalAssets: withdrawTotalAssets,
                     maxGrowthFeeDividend: state.maxGrowthFeeState.maxGrowthFeeDividend,
                     maxGrowthFeeDivider: state.maxGrowthFeeState.maxGrowthFeeDivider,
-                    supply: totalSupply(state.maxGrowthFeeState.supply),
+                    supply: _totalSupply(state.maxGrowthFeeState.supply),
                     lastSeenTokenPrice: state.maxGrowthFeeState.lastSeenTokenPrice
                 })
             );

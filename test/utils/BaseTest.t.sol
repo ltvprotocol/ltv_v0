@@ -19,7 +19,6 @@ import {MockDummyLending} from "test/utils/MockDummyLending.t.sol";
 import {DummyOracle} from "src/dummy/DummyOracle.sol";
 import {DummyLendingConnector} from "src/dummy/DummyLendingConnector.sol";
 import {DummyOracleConnector} from "src/dummy/DummyOracleConnector.sol";
-import {ConstantSlippageConnector} from "src/connectors/slippage_connectors/ConstantSlippageConnector.sol";
 import {VaultBalanceAsLendingConnector} from "src/connectors/lending_connectors/VaultBalanceAsLendingConnector.sol";
 import {AuctionModule} from "src/elements/modules/AuctionModule.sol";
 import {ERC20Module} from "src/elements/modules/ERC20Module.sol";
@@ -29,6 +28,7 @@ import {LowLevelRebalanceModule} from "src/elements/modules/LowLevelRebalanceMod
 import {AdministrationModule} from "src/elements/modules/AdministrationModule.sol";
 import {InitializeModule} from "src/elements/modules/InitializeModule.sol";
 import {ModulesProvider} from "src/elements/ModulesProvider.sol";
+import {DummySlippageConnector} from "src/dummy/DummySlippageConnector.sol";
 
 struct BaseTestInit {
     address owner;
@@ -85,7 +85,7 @@ contract BaseTest is Test {
     MockDummyLending public lendingProtocol;
     IDummyOracle public oracle;
     ModulesProvider public modulesProvider;
-    ConstantSlippageConnector public slippageConnector;
+    DummySlippageConnector public slippageConnector;
     DummyOracleConnector public oracleConnector;
     DummyLendingConnector public lendingConnector;
 
@@ -114,7 +114,7 @@ contract BaseTest is Test {
 
         lendingProtocol = new MockDummyLending(init.owner);
         oracle = IDummyOracle(new DummyOracle());
-        slippageConnector = new ConstantSlippageConnector();
+        slippageConnector = new DummySlippageConnector();
         {
             ModulesState memory modulesState = ModulesState({
                 administrationModule: IAdministrationModule(address(new AdministrationModule())),
@@ -167,12 +167,12 @@ contract BaseTest is Test {
                 softLiquidationLtvDivider: init.softLiquidationLtvDivider
             });
 
-            ltv = new DummyLTV();
+            ltv = new DummyLTV(address(modulesProvider));
             // Enable initializers
             vm.store(
                 address(ltv), bytes32(0xf0c57e16840df040f15088dc2f81fe391c3923bec73e23a9662efc9c229c6a00), bytes32(0)
             );
-            ltv.initialize(initData, modulesProvider);
+            ltv.initialize(initData);
             vm.prank(init.guardian);
             ltv.setIsProtocolPaused(false);
         }

@@ -20,8 +20,9 @@ abstract contract PreviewWithdrawCollateral is VaultCollateral {
      * @dev see ICollateralVaultModule.previewWithdrawCollateral
      */
     function previewWithdrawCollateral(uint256 assets, PreviewWithdrawVaultState memory state)
-        public
-        pure
+        external
+        view
+        nonReentrantRead
         returns (uint256 shares)
     {
         (shares,) = _previewWithdrawCollateral(assets, previewWithdrawVaultStateToPreviewCollateralVaultData(state));

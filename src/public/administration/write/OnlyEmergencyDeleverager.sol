@@ -110,7 +110,7 @@ abstract contract OnlyEmergencyDeleverager is
                     withdrawTotalAssets: withdrawTotalAssets,
                     maxGrowthFeeDividend: state.maxGrowthFeeDividend,
                     maxGrowthFeeDivider: state.maxGrowthFeeDivider,
-                    supply: totalSupply(state.supply),
+                    supply: _totalSupply(state.supply),
                     lastSeenTokenPrice: state.lastSeenTokenPrice
                 })
             ),

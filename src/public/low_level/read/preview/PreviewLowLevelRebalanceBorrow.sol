@@ -20,10 +20,13 @@ abstract contract PreviewLowLevelRebalanceBorrow is PreviewLowLevelRebalanceStat
      */
     function previewLowLevelRebalanceBorrow(int256 deltaBorrow, PreviewLowLevelRebalanceState memory state)
         public
-        pure
+        view
+        nonReentrantRead
         returns (int256, int256)
     {
-        return previewLowLevelRebalanceBorrowHint(deltaBorrow, true, state);
+        (int256 deltaRealCollateral, int256 deltaShares,) =
+            _previewLowLevelRebalanceBorrowHint(deltaBorrow, true, state);
+        return (deltaRealCollateral, deltaShares);
     }
 
     /**
@@ -33,7 +36,7 @@ abstract contract PreviewLowLevelRebalanceBorrow is PreviewLowLevelRebalanceStat
         int256 deltaBorrow,
         bool isSharesPositiveHint,
         PreviewLowLevelRebalanceState memory state
-    ) public pure returns (int256, int256) {
+    ) public view nonReentrantRead returns (int256, int256) {
         (int256 deltaRealCollateral, int256 deltaShares,) =
             _previewLowLevelRebalanceBorrowHint(deltaBorrow, isSharesPositiveHint, state);
         return (deltaRealCollateral, deltaShares);

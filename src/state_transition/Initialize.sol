@@ -16,7 +16,7 @@ abstract contract Initialize is AdministrationSetters, OwnableUpgradeable {
     /**
      * @dev Initializes the vault
      */
-    function initialize(StateInitData memory initData) public onlyInitializing {
+    function initialize(StateInitData memory initData) public initializer {
         __Ownable_init(initData.owner);
 
         collateralTokenDecimals = IERC20Metadata(initData.collateralToken).decimals();

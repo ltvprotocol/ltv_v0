@@ -2,10 +2,10 @@
 pragma solidity ^0.8.28;
 
 import {DefaultTestData} from "test/utils/BaseTest.t.sol";
-import {IModules} from "src/interfaces/IModules.sol";
 import {ILTV} from "src/interfaces/ILTV.sol";
 import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
 import {PrepareEachFunctionSuccessfulExecution} from "test/administration/PrepareEachFunctionSuccessfulExecution.sol";
+import {MockLendingConnector, MockOracleConnector, MockSlippageConnector} from "../utils/MockConnectors.t.sol";
 
 contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
     function test_disableRandomSelector(DefaultTestData memory defaultData, bytes4 randomSelector)
@@ -144,12 +144,11 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
 
     function functionsCannotBeDisabled(DefaultTestData memory defaultData)
         public
-        pure
         returns (bytes[] memory, bytes4[] memory, address[] memory)
     {
-        bytes[] memory calls = new bytes[](12);
-        bytes4[] memory selectors = new bytes4[](12);
-        address[] memory callers = new address[](12);
+        bytes[] memory calls = new bytes[](11);
+        bytes4[] memory selectors = new bytes4[](11);
+        address[] memory callers = new address[](11);
 
         // Core functions that cannot be disabled
         calls[0] = abi.encodeCall(ILTV.allowDisableFunctions, (new bytes4[](1), true));
@@ -165,8 +164,8 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         selectors[2] = ILTV.renounceOwnership.selector;
         callers[2] = defaultData.owner;
 
-        calls[3] = abi.encodeCall(ILTV.setModules, (IModules(address(1))));
-        selectors[3] = ILTV.setModules.selector;
+        calls[3] = abi.encodeCall(ILTV.transferOwnership, (defaultData.owner));
+        selectors[3] = ILTV.transferOwnership.selector;
         callers[3] = defaultData.owner;
 
         // Update functions
@@ -190,24 +189,19 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         selectors[8] = ILTV.setIsWithdrawDisabled.selector;
         callers[8] = defaultData.guardian;
 
-        calls[9] = abi.encodeCall(ILTV.setLendingConnector, (address(1), ""));
+        calls[9] = abi.encodeCall(ILTV.setLendingConnector, (address(new MockLendingConnector()), ""));
         selectors[9] = ILTV.setLendingConnector.selector;
         callers[9] = defaultData.owner;
 
-        calls[10] = abi.encodeCall(ILTV.setOracleConnector, (address(1), ""));
+        calls[10] = abi.encodeCall(ILTV.setOracleConnector, (address(new MockOracleConnector()), ""));
         selectors[10] = ILTV.setOracleConnector.selector;
         callers[10] = defaultData.owner;
-
-        calls[11] = abi.encodeCall(ILTV.transferOwnership, (defaultData.owner));
-        selectors[11] = ILTV.transferOwnership.selector;
-        callers[11] = defaultData.owner;
 
         return (calls, selectors, callers);
     }
 
     function functionsCanBeDisabled(DefaultTestData memory defaultData, address user)
         public
-        pure
         returns (bytes[] memory, bytes4[] memory, address[] memory)
     {
         bytes[] memory calls = new bytes[](28);
@@ -323,7 +317,9 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         selectors[24] = ILTV.setMinProfitLtv.selector;
         callers[24] = defaultData.governor;
 
-        calls[25] = abi.encodeCall(ILTV.setSlippageConnector, (address(1), abi.encode(10 ** 16, 10 ** 16)));
+        calls[25] = abi.encodeCall(
+            ILTV.setSlippageConnector, (address(new MockSlippageConnector()), abi.encode(10 ** 16, 10 ** 16))
+        );
         selectors[25] = ILTV.setSlippageConnector.selector;
         callers[25] = defaultData.governor;
 

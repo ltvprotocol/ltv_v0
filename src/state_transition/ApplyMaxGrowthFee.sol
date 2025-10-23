@@ -18,7 +18,7 @@ abstract contract ApplyMaxGrowthFee is TotalAssets, TotalSupply, ERC20 {
      * @dev sends provided max growth fee to the fee collector and updates last seen token price
      */
     function applyMaxGrowthFee(uint256 supplyAfterFee, uint256 withdrawTotalAssets) internal {
-        uint256 supply = totalSupply(baseTotalSupply);
+        uint256 supply = _totalSupply(baseTotalSupply);
         if (supplyAfterFee > supply) {
             _mintToFeeCollector(supplyAfterFee - supply);
             // round new token price to the top to underestimate next fee

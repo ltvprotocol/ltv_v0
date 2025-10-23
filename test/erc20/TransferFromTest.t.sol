@@ -192,7 +192,7 @@ contract TransferFromTest is BaseTest, IERC20Errors, IERC20Events {
         public
         testWithPredefinedDefaultValues(defaultData)
     {
-        vm.expectRevert(abi.encodeWithSelector(TransferToZeroAddress.selector));
+        vm.expectRevert(abi.encodeWithSelector(ERC20TransferToZeroAddress.selector));
         /// forge-lint: disable-next-line
         ltv.transferFrom(defaultData.owner, address(0), transferAmount);
     }
