@@ -24,20 +24,19 @@ abstract contract TransferFrom is
     /**
      * @dev see ITLV.transferFrom
      */
-    function transferFrom(address sender, address recipient, uint256 amount)
+    function transferFrom(address spender, address recipient, uint256 amount)
         external
         isFunctionAllowed
         isReceiverWhitelisted(recipient)
         nonReentrant
         returns (bool)
     {
-        if (recipient == address(0)) {
-            revert TransferToZeroAddress();
-        }
-        _spendAllowance(sender, msg.sender, amount);
-        balanceOf[sender] -= amount;
+        require(recipient != address(0), ERC20TransferToZeroAddress());
+        _spendAllowance(spender, msg.sender, amount);
+        require(balanceOf[spender] >= amount, ERC20InsufficientBalance(spender, balanceOf[spender], amount));
+        balanceOf[spender] -= amount;
         balanceOf[recipient] += amount;
-        emit Transfer(sender, recipient, amount);
+        emit Transfer(spender, recipient, amount);
         return true;
     }
 }

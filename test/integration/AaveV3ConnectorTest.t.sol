@@ -15,7 +15,6 @@ import {IAdministrationModule} from "src/interfaces/reads/IAdministrationModule.
 import {StateInitData} from "src/structs/state/initialize/StateInitData.sol";
 import {AaveV3Connector} from "src/connectors/lending_connectors/AaveV3Connector.sol";
 import {AaveV3OracleConnector} from "src/connectors/oracle_connectors/AaveV3OracleConnector.sol";
-import {ConstantSlippageConnector} from "src/connectors/slippage_connectors/ConstantSlippageConnector.sol";
 import {InitializeModule} from "src/elements/modules/InitializeModule.sol";
 import {ModulesProvider, ModulesState} from "src/elements/ModulesProvider.sol";
 import {AuctionModule} from "src/elements/modules/AuctionModule.sol";
@@ -25,6 +24,8 @@ import {BorrowVaultModule} from "src/elements/modules/BorrowVaultModule.sol";
 import {LowLevelRebalanceModule} from "src/elements/modules/LowLevelRebalanceModule.sol";
 import {AdministrationModule} from "src/elements/modules/AdministrationModule.sol";
 import {LTV} from "src/elements/LTV.sol";
+import {MockLendingConnector} from "../utils/MockConnectors.t.sol";
+import {DummySlippageConnector} from "src/dummy/DummySlippageConnector.sol";
 
 contract AaveV3ConnectorTest is Test {
     address constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
@@ -32,7 +33,7 @@ contract AaveV3ConnectorTest is Test {
 
     AaveV3Connector aaveLendingConnector;
     AaveV3OracleConnector aaveV3OracleConnector;
-    ConstantSlippageConnector slippageConnector;
+    DummySlippageConnector slippageConnector;
     ModulesProvider modulesProvider;
     IERC20 weth;
     IERC20 wsteth;
@@ -48,7 +49,7 @@ contract AaveV3ConnectorTest is Test {
 
         aaveLendingConnector = new AaveV3Connector(0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2);
         aaveV3OracleConnector = new AaveV3OracleConnector(0x54586bE62E3c3580375aE3723C145253060Ca0C2);
-        slippageConnector = new ConstantSlippageConnector();
+        slippageConnector = new DummySlippageConnector();
 
         ModulesState memory modulesState = ModulesState({
             administrationModule: IAdministrationModule(address(new AdministrationModule())),
@@ -82,7 +83,7 @@ contract AaveV3ConnectorTest is Test {
             slippageConnector: slippageConnector,
             maxDeleverageFeeDividend: 1,
             maxDeleverageFeeDivider: 20,
-            vaultBalanceAsLendingConnector: ILendingConnector(address(0)),
+            vaultBalanceAsLendingConnector: ILendingConnector(address(new MockLendingConnector())),
             owner: address(this),
             guardian: address(this),
             governor: address(this),

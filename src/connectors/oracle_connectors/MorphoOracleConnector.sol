@@ -4,12 +4,13 @@ pragma solidity ^0.8.28;
 import {IOracleConnector} from "src/interfaces/connectors/IOracleConnector.sol";
 import {IMorphoOracle} from "src/connectors/oracle_connectors/interfaces/IMorphoOracle.sol";
 import {LTVState} from "src/states/LTVState.sol";
+import {IMorphoOracleConnectorErrors} from "../../../src/errors/connectors/IMorphoOracleConnectorErrors.sol";
 
 /**
  * @title MorphoOracleConnector
  * @notice Connector for Morpho Oracle
  */
-contract MorphoOracleConnector is LTVState, IOracleConnector {
+contract MorphoOracleConnector is LTVState, IOracleConnector, IMorphoOracleConnectorErrors {
     /**
      * @inheritdoc IOracleConnector
      */
@@ -31,6 +32,7 @@ contract MorphoOracleConnector is LTVState, IOracleConnector {
      */
     function initializeOracleConnectorData(bytes calldata _oracle) external {
         address oracle = abi.decode(_oracle, (address));
+        require(oracle != address(0), ZeroOracleAddress());
         oracleConnectorGetterData = abi.encode(borrowTokenDecimals, collateralTokenDecimals, oracle);
     }
 }

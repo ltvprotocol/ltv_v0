@@ -5,15 +5,17 @@ import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {ILendingConnector} from "src/interfaces/connectors/ILendingConnector.sol";
 import {IAaveV3Pool} from "src/connectors/lending_connectors/interfaces/IAaveV3Pool.sol";
 import {LTVState} from "src/states/LTVState.sol";
+import {IAaveV3ConnectorErrors} from "../../../src/errors/connectors/IAaveV3ConnectorErrors.sol";
 
 /**
  * @title AaveV3Connector
  * @notice Connector for Aave V3 Pool
  */
-contract AaveV3Connector is LTVState, ILendingConnector {
+contract AaveV3Connector is LTVState, ILendingConnector, IAaveV3ConnectorErrors {
     IAaveV3Pool public immutable POOL;
 
     constructor(address _pool) {
+        require(_pool != address(0), ZeroPoolAddress());
         POOL = IAaveV3Pool(_pool);
     }
 
@@ -71,6 +73,11 @@ contract AaveV3Connector is LTVState, ILendingConnector {
         address borrowAToken = POOL.getReserveData(address(borrowToken)).variableDebtTokenAddress;
 
         lendingConnectorGetterData = abi.encode(collateralAToken, borrowAToken);
-        POOL.setUserEMode(uint8(abi.decode(emode, (uint256))));
+        uint8 emodeId = uint8(abi.decode(emode, (uint256)));
+
+        (uint16 ltv, uint16 liquidationThreshold, uint16 liquidationBonus) =
+            POOL.getEModeCategoryCollateralConfig(emodeId);
+        require(ltv != 0 && liquidationThreshold != 0 && liquidationBonus != 0, InvalidEModeId(emodeId));
+        POOL.setUserEMode(emodeId);
     }
 }

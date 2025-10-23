@@ -10,12 +10,19 @@ import {IAdministrationEvents} from "../events/IAdministrationEvents.sol";
 import {Constants} from "../constants/Constants.sol";
 import {BoolReader} from "../math/abstracts/BoolReader.sol";
 import {BoolWriter} from "../state_transition/BoolWriter.sol";
+import {DelegateCallPostCheck} from "src/utils/DelegateCallPostCheck.sol";
 
 /**
  * @title AdministrationSetters
  * @notice contract contains functionality to set administration state
  */
-contract AdministrationSetters is BoolWriter, BoolReader, IAdministrationErrors, IAdministrationEvents {
+contract AdministrationSetters is
+    BoolWriter,
+    BoolReader,
+    DelegateCallPostCheck,
+    IAdministrationErrors,
+    IAdministrationEvents
+{
     /**
      * @dev implementation of ILTV.setTargetLtv
      */
@@ -129,10 +136,10 @@ contract AdministrationSetters is BoolWriter, BoolReader, IAdministrationErrors,
         require(address(_slippageConnector) != address(0), ZeroSlippageConnector());
         address oldAddress = address(slippageConnector);
         slippageConnector = _slippageConnector;
-        (bool success,) = address(slippageConnector).delegatecall(
+        (bool success, bytes memory data) = address(slippageConnector).delegatecall(
             abi.encodeCall(ISlippageConnector.initializeSlippageConnectorData, (slippageConnectorData))
         );
-        require(success, FailedToSetSlippageConnector(address(_slippageConnector), slippageConnectorData));
+        delegateCallPostCheck(address(slippageConnector), success, data);
         emit SlippageConnectorUpdated(
             oldAddress, slippageConnectorData, address(_slippageConnector), slippageConnectorData
         );
@@ -168,15 +175,10 @@ contract AdministrationSetters is BoolWriter, BoolReader, IAdministrationErrors,
     ) internal {
         address oldAddress = address(vaultBalanceAsLendingConnector);
         vaultBalanceAsLendingConnector = ILendingConnector(_vaultBalanceAsLendingConnector);
-        (bool success,) = address(vaultBalanceAsLendingConnector).delegatecall(
+        (bool success, bytes memory data) = address(vaultBalanceAsLendingConnector).delegatecall(
             abi.encodeCall(ILendingConnector.initializeLendingConnectorData, (vaultBalanceAsLendingConnectorGetterData))
         );
-        require(
-            success,
-            FailedToSetVaultBalanceAsLendingConnector(
-                address(_vaultBalanceAsLendingConnector), vaultBalanceAsLendingConnectorGetterData
-            )
-        );
+        delegateCallPostCheck(address(vaultBalanceAsLendingConnector), success, data);
         emit VaultBalanceAsLendingConnectorUpdated(oldAddress, address(_vaultBalanceAsLendingConnector));
     }
 
@@ -213,10 +215,10 @@ contract AdministrationSetters is BoolWriter, BoolReader, IAdministrationErrors,
     function _setLendingConnector(ILendingConnector _lendingConnector, bytes memory lendingConnectorData) internal {
         address oldAddress = address(lendingConnector);
         lendingConnector = _lendingConnector;
-        (bool success,) = address(lendingConnector).delegatecall(
+        (bool success, bytes memory data) = address(lendingConnector).delegatecall(
             abi.encodeCall(ILendingConnector.initializeLendingConnectorData, (lendingConnectorData))
         );
-        require(success, FailedToSetLendingConnector(address(_lendingConnector), lendingConnectorData));
+        delegateCallPostCheck(address(lendingConnector), success, data);
         emit LendingConnectorUpdated(oldAddress, lendingConnectorData, address(_lendingConnector), lendingConnectorData);
     }
 
@@ -226,10 +228,10 @@ contract AdministrationSetters is BoolWriter, BoolReader, IAdministrationErrors,
     function _setOracleConnector(IOracleConnector _oracleConnector, bytes memory oracleConnectorData) internal {
         address oldAddress = address(oracleConnector);
         oracleConnector = _oracleConnector;
-        (bool success,) = address(oracleConnector).delegatecall(
+        (bool success, bytes memory data) = address(oracleConnector).delegatecall(
             abi.encodeCall(IOracleConnector.initializeOracleConnectorData, (oracleConnectorData))
         );
-        require(success, FailedToSetOracleConnector(address(_oracleConnector), oracleConnectorData));
+        delegateCallPostCheck(address(oracleConnector), success, data);
         emit OracleConnectorUpdated(oldAddress, oracleConnectorData, address(_oracleConnector), oracleConnectorData);
     }
 

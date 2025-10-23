@@ -19,7 +19,6 @@ import {MockDummyLending} from "test/utils/MockDummyLending.t.sol";
 import {DummyOracle} from "src/dummy/DummyOracle.sol";
 import {DummyLendingConnector} from "src/dummy/DummyLendingConnector.sol";
 import {DummyOracleConnector} from "src/dummy/DummyOracleConnector.sol";
-import {ConstantSlippageConnector} from "src/connectors/slippage_connectors/ConstantSlippageConnector.sol";
 import {VaultBalanceAsLendingConnector} from "src/connectors/lending_connectors/VaultBalanceAsLendingConnector.sol";
 import {AuctionModule} from "src/elements/modules/AuctionModule.sol";
 import {ERC20Module} from "src/elements/modules/ERC20Module.sol";
@@ -29,6 +28,7 @@ import {LowLevelRebalanceModule} from "src/elements/modules/LowLevelRebalanceMod
 import {AdministrationModule} from "src/elements/modules/AdministrationModule.sol";
 import {InitializeModule} from "src/elements/modules/InitializeModule.sol";
 import {ModulesProvider} from "src/elements/ModulesProvider.sol";
+import {DummySlippageConnector} from "src/dummy/DummySlippageConnector.sol";
 
 struct BaseTestInit {
     address owner;
@@ -81,7 +81,7 @@ contract BaseTest is Test {
     MockDummyLending public lendingProtocol;
     IDummyOracle public oracle;
     ModulesProvider public modulesProvider;
-    ConstantSlippageConnector public slippageConnector;
+    DummySlippageConnector public slippageConnector;
     DummyOracleConnector public oracleConnector;
     DummyLendingConnector public lendingConnector;
 
@@ -110,7 +110,7 @@ contract BaseTest is Test {
 
         lendingProtocol = new MockDummyLending(init.owner);
         oracle = IDummyOracle(new DummyOracle());
-        slippageConnector = new ConstantSlippageConnector();
+        slippageConnector = new DummySlippageConnector();
         {
             ModulesState memory modulesState = ModulesState({
                 administrationModule: IAdministrationModule(address(new AdministrationModule())),

@@ -77,6 +77,7 @@ contract SetIsWhitelistActivatedTest is PrepareEachFunctionSuccessfulExecution {
     /// forge-config: default.fuzz.runs = 8
     function test_failIfWhitelistIsActivatedBatch(DefaultTestData memory data, address user) public {
         vm.assume(user != data.feeCollector);
+        vm.assume(user != address(0));
 
         bytes[] memory calls = whitelistCalls(user);
 

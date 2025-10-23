@@ -4,15 +4,17 @@ pragma solidity ^0.8.28;
 import {IOracleConnector} from "src/interfaces/connectors/IOracleConnector.sol";
 import {IAaveV3Oracle} from "src/connectors/oracle_connectors/interfaces/IAaveV3Oracle.sol";
 import {LTVState} from "src/states/LTVState.sol";
-
+import {IAaveV3OracleConnectorErrors} from "../../../src/errors/connectors/IAaveV3OracleConnectorErrors.sol";
 /**
  * @title AaveV3OracleConnector
  * @notice Connector for Aave V3 Oracle
  */
-contract AaveV3OracleConnector is LTVState, IOracleConnector {
+
+contract AaveV3OracleConnector is LTVState, IOracleConnector, IAaveV3OracleConnectorErrors {
     IAaveV3Oracle public immutable ORACLE;
 
     constructor(address _oracle) {
+        require(_oracle != address(0), ZeroOracleAddress());
         ORACLE = IAaveV3Oracle(_oracle);
     }
 
@@ -37,5 +39,10 @@ contract AaveV3OracleConnector is LTVState, IOracleConnector {
      */
     function initializeOracleConnectorData(bytes calldata) external {
         oracleConnectorGetterData = abi.encode(address(collateralToken), address(borrowToken));
+        require(
+            ORACLE.getSourceOfAsset(address(collateralToken)) != address(0),
+            NoSourceOfAssetPrice(address(collateralToken))
+        );
+        require(ORACLE.getSourceOfAsset(address(borrowToken)) != address(0), NoSourceOfAssetPrice(address(borrowToken)));
     }
 }

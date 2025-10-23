@@ -25,6 +25,8 @@ import {LowLevelRebalanceModule} from "src/elements/modules/LowLevelRebalanceMod
 import {AdministrationModule} from "src/elements/modules/AdministrationModule.sol";
 import {InitializeModule} from "src/elements/modules/InitializeModule.sol";
 import {WhitelistRegistry} from "src/elements/WhitelistRegistry.sol";
+import {IDelegateCallError} from "src/errors/IDelegateCallError.sol";
+import {MockLendingConnector, MockOracleConnector, MockSlippageConnector} from "../utils/MockConnectors.t.sol";
 
 address constant EOA_ADDRESS = address(1);
 
@@ -99,7 +101,7 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
         address governor,
         address guardian,
         address emergencyDeleverager
-    ) public pure returns (CallWithCaller[] memory) {
+    ) public returns (CallWithCaller[] memory) {
         CallWithCaller[] memory calls = new CallWithCaller[](70);
         uint256 amount = 100;
         uint256 i = 0;
@@ -176,13 +178,19 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setMaxSafeLtv, (9, 10)), governor);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setMaxTotalAssetsInUnderlying, (type(uint128).max)), governor);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setTargetLtv, (75, 100)), governor);
-        calls[i++] =
-            CallWithCaller(abi.encodeCall(ILTV.setSlippageConnector, (user, abi.encode(10 ** 16, 10 ** 16))), governor);
+        calls[i++] = CallWithCaller(
+            abi.encodeCall(
+                ILTV.setSlippageConnector, (address(new MockSlippageConnector()), abi.encode(10 ** 16, 10 ** 16))
+            ),
+            governor
+        );
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setMinProfitLtv, (5, 10)), governor);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setWhitelistRegistry, (user)), governor);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.updateGovernor, (user)), owner);
-        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setLendingConnector, (user, "")), owner);
-        calls[i++] = CallWithCaller(abi.encodeCall(ILTV.setOracleConnector, (user, "")), owner);
+        calls[i++] =
+            CallWithCaller(abi.encodeCall(ILTV.setLendingConnector, (address(new MockLendingConnector()), "")), owner);
+        calls[i++] =
+            CallWithCaller(abi.encodeCall(ILTV.setOracleConnector, (address(new MockOracleConnector()), "")), owner);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.updateGuardian, (user)), owner);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.updateEmergencyDeleverager, (user)), owner);
         calls[i++] = CallWithCaller(abi.encodeCall(ILTV.totalSupply, ()), user);
@@ -248,7 +256,7 @@ contract SetModulesTest is PrepareEachFunctionSuccessfulExecution, IAdministrati
         CallWithCaller[] memory calls =
             modulesCallsWithCallers(data.owner, data.owner, data.governor, data.guardian, data.emergencyDeleverager);
 
-        bytes memory expectedEoaError = abi.encodeWithSelector(IAdministrationErrors.EOADelegateCall.selector);
+        bytes memory expectedEoaError = abi.encodeWithSelector(IDelegateCallError.EOADelegateCall.selector);
         bytes memory expectedNonContractError = getEoaError();
 
         for (uint256 i = 0; i < calls.length; i++) {
