@@ -2,16 +2,21 @@
 pragma solidity ^0.8.28;
 
 import {Constants} from "src/constants/Constants.sol";
+import {NonReentrantRead} from "src/modifiers/NonReentrantRead.sol";
 
 /**
  * @title TotalSupply
  * @notice This contract contains totalSupply function implementation.
  */
-abstract contract TotalSupply {
+abstract contract TotalSupply is NonReentrantRead {
     /**
      * @dev see IERC20Module.totalSupply
      */
-    function totalSupply(uint256 supply) public pure virtual returns (uint256) {
+    function totalSupply(uint256 supply) external view nonReentrantRead returns (uint256) {
+        return _totalSupply(supply);
+    }
+
+    function _totalSupply(uint256 supply) internal pure virtual returns (uint256) {
         // add 100 to avoid vault inflation attack
         return supply + Constants.VIRTUAL_ASSETS_AMOUNT;
     }

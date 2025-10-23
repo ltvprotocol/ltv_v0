@@ -118,7 +118,7 @@ abstract contract PreviewDepositVaultStateToCollateralData is TotalAssetsCollate
             })
         );
 
-        data.withdrawTotalAssets = totalAssets(
+        data.withdrawTotalAssets = _totalAssets(
             false,
             TotalAssetsState({
                 realCollateralAssets: state.maxGrowthFeeState.withdrawRealCollateralAssets,
@@ -132,7 +132,7 @@ abstract contract PreviewDepositVaultStateToCollateralData is TotalAssetsCollate
                 withdrawTotalAssets: data.withdrawTotalAssets,
                 maxGrowthFeeDividend: state.maxGrowthFeeState.maxGrowthFeeDividend,
                 maxGrowthFeeDivider: state.maxGrowthFeeState.maxGrowthFeeDivider,
-                supply: totalSupply(state.maxGrowthFeeState.supply),
+                supply: _totalSupply(state.maxGrowthFeeState.supply),
                 lastSeenTokenPrice: state.maxGrowthFeeState.lastSeenTokenPrice
             })
         );

@@ -875,6 +875,12 @@ interface ILTV is
     function isDepositDisabled() external view returns (bool);
 
     /**
+     * @notice Returns whether the protocol is paused
+     * @return True if the protocol is paused
+     */
+    function isProtocolPaused() external view returns (bool);
+
+    /**
      * @notice Returns whether withdrawals are disabled
      * @return True if withdrawals are disabled
      */

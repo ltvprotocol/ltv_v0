@@ -39,6 +39,13 @@ contract AdministrationRead is GetLendingConnectorStateReader {
     }
 
     /**
+     * @dev see ILTV.isProtocolPaused
+     */
+    function isProtocolPaused() external view returns (bool) {
+        return modules.administrationModule().isProtocolPaused(boolSlot);
+    }
+
+    /**
      * @dev see ILTV.getLendingConnector
      */
     function getLendingConnector() external view returns (ILendingConnector) {
