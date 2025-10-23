@@ -43,7 +43,7 @@ contract WhitelistTest is BalancedTest {
         address signer = vm.addr(signerPrivateKey);
         WhitelistRegistry whitelistRegistry = new WhitelistRegistry(owner, signer);
 
-        bytes32 hash = keccak256(abi.encodePacked(block.chainid, address(whitelistRegistry), user));
+        bytes32 hash = keccak256(abi.encode(block.chainid, address(whitelistRegistry), user));
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(signerPrivateKey, hash);
 
         assertEq(whitelistRegistry.isAddressWhitelisted(user), false);
@@ -67,7 +67,7 @@ contract WhitelistTest is BalancedTest {
         bytes32 s;
 
         {
-            bytes32 digest = keccak256(abi.encodePacked(block.chainid, address(whitelistRegistry), user));
+            bytes32 digest = keccak256(abi.encode(block.chainid, address(whitelistRegistry), user));
             (v, r, s) = vm.sign(signerPrivateKey, digest);
         }
         assertEq(whitelistRegistry.isAddressWhitelisted(user), false);
@@ -87,27 +87,27 @@ contract WhitelistTest is BalancedTest {
         whitelistRegistry.addAddressToWhitelistBySignature(user, v, r, s);
     }
 
-    function _createInvalidSignature(uint256 signerPrivateKey, WhitelistRegistry whitelistRegistry)
-        internal
-        view
-        returns (uint8 v, bytes32 r, bytes32 s)
-    {
+    function _createInvalidSignature(
+        uint256 signerPrivateKey,
+        WhitelistRegistry whitelistRegistry,
+        address differentUser
+    ) internal view returns (uint8 v, bytes32 r, bytes32 s) {
         // Create signature for a different user to make it invalid
-        address differentUser = address(0x1234567890123456789012345678901234567890);
-        bytes32 digest = keccak256(abi.encodePacked(block.chainid, address(whitelistRegistry), differentUser));
+        bytes32 digest = keccak256(abi.encode(block.chainid, address(whitelistRegistry), differentUser));
         return vm.sign(signerPrivateKey, digest);
     }
 
-    function test_incorrectSignature(address owner, uint256 signerPrivateKey, address user)
+    function test_incorrectSignature(address owner, uint256 signerPrivateKey, address user, address differentUser)
         public
         initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
     {
+        vm.assume(user != differentUser);
         signerPrivateKey = signerPrivateKey % SECP256K1_ORDER + 1;
         vm.stopPrank();
 
         address signer = vm.addr(signerPrivateKey);
         WhitelistRegistry whitelistRegistry = new WhitelistRegistry(owner, signer);
-        (uint8 v, bytes32 r, bytes32 s) = _createInvalidSignature(signerPrivateKey, whitelistRegistry);
+        (uint8 v, bytes32 r, bytes32 s) = _createInvalidSignature(signerPrivateKey, whitelistRegistry, differentUser);
 
         assertEq(whitelistRegistry.isAddressWhitelisted(user), false);
         vm.startPrank(user);

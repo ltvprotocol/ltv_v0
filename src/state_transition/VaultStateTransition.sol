@@ -30,7 +30,8 @@ abstract contract VaultStateTransition is LTVState {
             int256(10 ** nextStateData.collateralTokenDecimals), int256(nextStateData.collateralPrice)
         );
 
-        if (nextStateData.nextState.merge) {
+        // if found type(uint56).max flag - don not update start auction
+        if (nextStateData.nextState.startAuction != type(uint56).max) {
             startAuction = nextStateData.nextState.startAuction;
         }
 

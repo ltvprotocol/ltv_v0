@@ -17,7 +17,7 @@ abstract contract TotalSupply is NonReentrantRead {
     }
 
     function _totalSupply(uint256 supply) internal pure virtual returns (uint256) {
-        // add 100 to avoid vault inflation attack
+        // add virtual assets to avoid vault inflation attack
         return supply + Constants.VIRTUAL_ASSETS_AMOUNT;
     }
 }
