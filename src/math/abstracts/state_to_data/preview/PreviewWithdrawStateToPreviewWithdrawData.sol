@@ -109,7 +109,7 @@ contract PreviewWithdrawStateToPreviewWithdrawData is MaxGrowthFee {
                 withdrawTotalAssets: data.withdrawTotalAssets,
                 maxGrowthFeeDividend: state.maxGrowthFeeState.maxGrowthFeeDividend,
                 maxGrowthFeeDivider: state.maxGrowthFeeState.maxGrowthFeeDivider,
-                supply: totalSupply(state.maxGrowthFeeState.supply),
+                supply: _totalSupply(state.maxGrowthFeeState.supply),
                 lastSeenTokenPrice: state.maxGrowthFeeState.lastSeenTokenPrice
             })
         );

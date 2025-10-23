@@ -18,7 +18,8 @@ abstract contract ConvertToSharesCollateral is VaultCollateral {
      */
     function convertToSharesCollateral(uint256 assets, MaxGrowthFeeState memory state)
         external
-        pure
+        view
+        nonReentrantRead
         returns (uint256)
     {
         return _convertToSharesCollateral(assets, maxGrowthFeeStateToConvertCollateralData(state));

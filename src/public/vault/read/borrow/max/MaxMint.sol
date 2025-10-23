@@ -17,7 +17,7 @@ abstract contract MaxMint is PreviewMint, PreviewDeposit {
     /**
      * @dev see IBorrowVaultModule.maxMint
      */
-    function maxMint(MaxDepositMintBorrowVaultState memory state) public pure returns (uint256) {
+    function maxMint(MaxDepositMintBorrowVaultState memory state) external view nonReentrantRead returns (uint256) {
         return _maxMint(maxDepositMintStateToData(state));
     }
 
