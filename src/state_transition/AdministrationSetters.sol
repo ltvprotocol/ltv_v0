@@ -250,4 +250,13 @@ contract AdministrationSetters is BoolWriter, BoolReader, IAdministrationErrors,
         guardian = newGuardian;
         emit GuardianUpdated(oldGuardian, newGuardian);
     }
+
+    /**
+     * @dev implementation of ILTV.setIsSoftLiquidationEnabledForAnyone
+     */
+    function _setIsSoftLiquidationEnabledForAnyone(bool value) internal {
+        bool oldValue = _isSoftLiquidationEnabledForAnyone(boolSlot);
+        setBool(Constants.IS_SOFT_LIQUIDATION_ENABLED_FOR_ANYONE_BIT, value);
+        emit IsSoftLiquidationEnabledForAnyoneChanged(oldValue, value);
+    }
 }

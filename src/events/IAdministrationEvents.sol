@@ -182,4 +182,12 @@ interface IAdministrationEvents {
      * @dev This connector helps track vault balances in lending protocols
      */
     event VaultBalanceAsLendingConnectorUpdated(address oldValue, address newValue);
+
+    /**
+     * @notice Emitted when the soft liquidation enabled for anyone status is changed
+     * @param oldValue The previous soft liquidation enabled for anyone status
+     * @param newValue The new soft liquidation enabled for anyone status
+     * @dev Controls whether anyone can perform soft liquidation
+     */
+    event IsSoftLiquidationEnabledForAnyoneChanged(bool oldValue, bool newValue);
 }

@@ -757,6 +757,12 @@ interface ILTV is
     function setIsWhitelistActivated(bool activate) external;
 
     /**
+     * @notice Sets whether anyone can perform soft liquidation
+     * @param value True to enable, false to disable
+     */
+    function setIsSoftLiquidationEnabledForAnyone(bool value) external;
+
+    /**
      * @notice Sets the whitelist registry address
      * @param value The new whitelist registry address
      */
@@ -885,6 +891,12 @@ interface ILTV is
      * @return True if the vault is deleveraged
      */
     function isVaultDeleveraged() external view returns (bool);
+
+    /**
+     * @notice Returns whether anyone can perform soft liquidation
+     * @return True if anyone can perform soft liquidation
+     */
+    function isSoftLiquidationEnabledForAnyone() external view returns (bool);
 
     /**
      * @notice Returns the whitelist registry address

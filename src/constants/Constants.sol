@@ -19,4 +19,5 @@ library Constants {
     uint8 public constant IS_WITHDRAW_DISABLED_BIT = 1;
     uint8 public constant IS_WHITELIST_ACTIVATED_BIT = 2;
     uint8 public constant IS_VAULT_DELEVERAGED_BIT = 3;
+    uint8 public constant IS_SOFT_LIQUIDATION_ENABLED_FOR_ANYONE_BIT = 5;
 }

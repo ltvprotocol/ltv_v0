@@ -72,6 +72,13 @@ abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeab
     }
 
     /**
+     * @dev see ILTV.setIsSoftLiquidationEnabledForAnyone
+     */
+    function setIsSoftLiquidationEnabledForAnyone(bool value) external {
+        _delegate(address(modules.administrationModule()), abi.encode(value));
+    }
+
+    /**
      * @dev see ILTV.setSlippageConnector
      */
     function setSlippageConnector(address _slippageConnector, bytes memory slippageConnectorData) external {

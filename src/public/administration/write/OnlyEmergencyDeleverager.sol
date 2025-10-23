@@ -60,7 +60,7 @@ abstract contract OnlyEmergencyDeleverager is
     /**
      * @dev see ILTV.softLiquidation
      */
-    function softLiquidation(uint256 liquidationAmountBorrow) external onlyEmergencyDeleverager nonReentrant {
+    function softLiquidation(uint256 liquidationAmountBorrow) external onlyEmergencyDeleveragerOrAnyone nonReentrant {
         _liquidate(liquidationAmountBorrow, softLiquidationFeeDividend, softLiquidationFeeDivider, true);
     }
 

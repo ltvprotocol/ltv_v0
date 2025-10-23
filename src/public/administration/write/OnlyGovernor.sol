@@ -103,4 +103,11 @@ abstract contract OnlyGovernor is
     function setMaxGrowthFee(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor nonReentrant {
         _setMaxGrowthFee(dividend, divider);
     }
+
+    /**
+     * @dev see ILTV.setIsSoftLiquidationEnabledForAnyone
+     */
+    function setIsSoftLiquidationEnabledForAnyone(bool value) external isFunctionAllowed onlyGovernor nonReentrant {
+        _setIsSoftLiquidationEnabledForAnyone(value);
+    }
 }
