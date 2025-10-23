@@ -745,6 +745,14 @@ interface ILTV is
     ) external;
 
     /**
+     * @notice Sweeps tokens from the protocol to the owner,
+     * needed to withdraw tokens which were sent to the protocol by mistake.
+     * @param token The token to sweep
+     * @param amount The amount of tokens to sweep
+     */
+    function sweep(address token, uint256 amount) external;
+
+    /**
      * @notice Sets whether deposits are disabled
      * @param value True to disable deposits, false to enable
      */

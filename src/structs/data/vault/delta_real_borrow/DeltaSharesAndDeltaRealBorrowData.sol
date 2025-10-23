@@ -18,6 +18,7 @@ struct DeltaSharesAndDeltaRealBorrowData {
     int256 deltaRealBorrow;
     int256 userFutureRewardBorrow;
     int256 futureBorrow;
+    int256 futureCollateral;
     uint256 borrowSlippage;
     Cases cases;
 }

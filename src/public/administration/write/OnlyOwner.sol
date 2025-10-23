@@ -8,12 +8,16 @@ import {AdministrationSetters} from "../../../state_transition/AdministrationSet
 import {OwnableUpgradeable} from "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
 import {ReentrancyGuardUpgradeable} from
     "openzeppelin-contracts-upgradeable/contracts/utils/ReentrancyGuardUpgradeable.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 
 /**
  * @title OnlyOwner
  * @notice This contract contains only owner public function implementation.
  */
 abstract contract OnlyOwner is AdministrationSetters, OwnableUpgradeable, ReentrancyGuardUpgradeable {
+    using SafeERC20 for IERC20;
+
     /**
      * @dev see ILTV.updateEmergencyDeleverager
      */
@@ -76,5 +80,12 @@ abstract contract OnlyOwner is AdministrationSetters, OwnableUpgradeable, Reentr
         nonReentrant
     {
         _setSlippageConnector(_slippageConnector, slippageConnectorData);
+    }
+
+    /**
+     * @dev see ILTV.sweep
+     */
+    function sweep(address token, uint256 amount) external onlyOwner nonReentrant {
+        IERC20(token).safeTransfer(owner(), amount);
     }
 }
