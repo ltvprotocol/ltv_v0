@@ -145,6 +145,12 @@ interface IAdministrationErrors {
     error FunctionStopped(bytes4 functionSignature);
 
     /**
+     * @notice Error thrown when the protocol is paused
+     * @dev Used when the protocol is in a state where it is paused
+     */
+    error ProtocolIsPaused();
+
+    /**
      * @notice Error thrown when attempting to send assets to a non-whitelisted receiver
      * @param receiver The address of the non-whitelisted receiver
      * @dev Prevents unauthorized asset transfers

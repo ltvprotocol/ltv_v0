@@ -100,6 +100,13 @@ abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeab
     }
 
     /**
+     * @dev see ILTV.setIsProtocolPaused
+     */
+    function setIsProtocolPaused(bool value) external {
+        _delegate(address(modules.administrationModule()), abi.encode(value));
+    }
+
+    /**
      * @dev see ILTV.setLendingConnector
      */
     function setLendingConnector(address _lendingConnector, bytes memory lendingConnectorData) external {
