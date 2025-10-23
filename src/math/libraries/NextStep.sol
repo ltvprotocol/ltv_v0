@@ -150,7 +150,7 @@ library NextStep {
         } else if (data.cases.ceccb + data.cases.cecbc == 1) {
             nextState.startAuction = data.blockNumber;
         } else {
-            nextState.startAuction = data.blockNumber - data.auctionStep;
+            nextState.startAuction = type(uint56).max;
         }
     }
 }
