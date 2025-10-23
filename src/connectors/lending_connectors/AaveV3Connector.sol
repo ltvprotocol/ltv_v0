@@ -73,7 +73,8 @@ contract AaveV3Connector is LTVState, ILendingConnector, IAaveV3ConnectorErrors 
         address borrowAToken = POOL.getReserveData(address(borrowToken)).variableDebtTokenAddress;
 
         lendingConnectorGetterData = abi.encode(collateralAToken, borrowAToken);
-        uint8 emodeId = uint8(abi.decode(emode, (uint256)));
+
+        uint8 emodeId = uint8(abi.decode(emode, (uint8)));
 
         (uint16 ltv, uint16 liquidationThreshold, uint16 liquidationBonus) =
             POOL.getEModeCategoryCollateralConfig(emodeId);
