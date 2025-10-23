@@ -5,6 +5,7 @@ import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/Own
 import {BalancedTest} from "test/utils/BalancedTest.t.sol";
 import {ILTV} from "src/interfaces/ILTV.sol";
 import {MockLendingConnector, MockOracleConnector} from "./utils/MockConnectors.t.sol";
+import {DummySlippageConnector} from "src/dummy/DummySlippageConnector.sol";
 
 contract OwnerTest is BalancedTest {
     function test_setLendingConnector(address owner, address user)
@@ -116,5 +117,24 @@ contract OwnerTest is BalancedTest {
         assertEq(ILTV(address(dummyLtv)).owner(), address(0));
 
         vm.startPrank(owner);
+    }
+
+    function test_setSlippageConnector(address owner, address user)
+        public
+        initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
+    {
+        vm.assume(user != owner);
+        vm.startPrank(owner);
+
+        DummySlippageConnector provider = new DummySlippageConnector();
+        bytes memory slippageConnectorData = abi.encode(10 ** 16, 10 ** 16);
+        dummyLtv.setSlippageConnector(address(provider), slippageConnectorData);
+        assertEq(address(dummyLtv.slippageConnector()), address(provider));
+        assertEq(keccak256(dummyLtv.slippageConnectorGetterData()), keccak256(slippageConnectorData));
+
+        // Should revert if not governor
+        vm.startPrank(user);
+        vm.expectRevert(abi.encodeWithSelector(OwnableUpgradeable.OwnableUnauthorizedAccount.selector, user));
+        dummyLtv.setSlippageConnector(address(0), slippageConnectorData);
     }
 }

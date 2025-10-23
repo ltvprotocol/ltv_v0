@@ -5,7 +5,6 @@ import {BalancedTest} from "test/utils/BalancedTest.t.sol";
 import {ILTV} from "src/interfaces/ILTV.sol";
 import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
 import {WhitelistRegistry} from "src/elements/WhitelistRegistry.sol";
-import {DummySlippageConnector} from "src/dummy/DummySlippageConnector.sol";
 
 contract GovernorTest is BalancedTest {
     function test_setTargetLtv(address owner, address user)
@@ -246,24 +245,25 @@ contract GovernorTest is BalancedTest {
         dummyLtv.setWhitelistRegistry(address(0));
     }
 
-    function test_setSlippageConnector(address owner, address user)
+    function test_setSlippageConnectorData(address owner, address governor, address user)
         public
         initializeBalancedTest(owner, user, 10 ** 17, 0, 0, 0)
     {
-        address governor = ILTV(address(dummyLtv)).governor();
-        vm.assume(user != governor);
-        vm.startPrank(governor);
-        DummySlippageConnector provider = new DummySlippageConnector();
+        vm.assume(user != owner);
+        vm.assume(governor != owner);
 
-        bytes memory slippageConnectorData = abi.encode(10 ** 16, 10 ** 16);
-        dummyLtv.setSlippageConnector(address(provider), slippageConnectorData);
-        assertEq(address(dummyLtv.slippageConnector()), address(provider));
-        assertEq(keccak256(dummyLtv.slippageConnectorGetterData()), keccak256(slippageConnectorData));
+        vm.startPrank(owner);
+        ltv.updateGovernor(governor);
+        vm.startPrank(governor);
+
+        bytes memory slippageConnectorData = abi.encode(10 ** 13, 10 ** 13);
+        ltv.setSlippageConnectorData(slippageConnectorData);
+        assertEq(keccak256(ltv.slippageConnectorGetterData()), keccak256(slippageConnectorData));
 
         // Should revert if not governor
         vm.startPrank(user);
         vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.OnlyGovernorInvalidCaller.selector, user));
-        dummyLtv.setSlippageConnector(address(0), slippageConnectorData);
+        dummyLtv.setSlippageConnectorData(slippageConnectorData);
     }
 
     function test_setMaxGrowthFee(address owner, address user)

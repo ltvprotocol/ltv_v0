@@ -7,7 +7,6 @@ import {ReentrancyGuardUpgradeable} from
 import {AdministrationSetters} from "../../../state_transition/AdministrationSetters.sol";
 import {FunctionStopperModifier} from "../../../modifiers/FunctionStopperModifier.sol";
 import {IWhitelistRegistry} from "../../../interfaces/IWhitelistRegistry.sol";
-import {ISlippageConnector} from "../../../interfaces/connectors/ISlippageConnector.sol";
 
 /**
  * @title OnlyGovernor
@@ -86,22 +85,22 @@ abstract contract OnlyGovernor is
     }
 
     /**
-     * @dev see ILTV.setSlippageConnector
+     * @dev see ILTV.setMaxGrowthFee
      */
-    function setSlippageConnector(ISlippageConnector _slippageConnector, bytes memory slippageConnectorData)
+    function setMaxGrowthFee(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor nonReentrant {
+        _setMaxGrowthFee(dividend, divider);
+    }
+
+    /**
+     * @dev see ILTV.setSlippageConnectorData
+     */
+    function setSlippageConnectorData(bytes memory slippageConnectorData)
         external
         isFunctionAllowed
         onlyGovernor
         nonReentrant
     {
-        _setSlippageConnector(_slippageConnector, slippageConnectorData);
-    }
-
-    /**
-     * @dev see ILTV.setMaxGrowthFee
-     */
-    function setMaxGrowthFee(uint16 dividend, uint16 divider) external isFunctionAllowed onlyGovernor nonReentrant {
-        _setMaxGrowthFee(dividend, divider);
+        _setSlippageConnectorData(slippageConnectorData);
     }
 
     /**

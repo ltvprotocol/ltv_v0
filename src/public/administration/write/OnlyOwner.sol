@@ -3,6 +3,7 @@ pragma solidity ^0.8.28;
 
 import {ILendingConnector} from "../../../interfaces/connectors/ILendingConnector.sol";
 import {IOracleConnector} from "../../../interfaces/connectors/IOracleConnector.sol";
+import {ISlippageConnector} from "../../../interfaces/connectors/ISlippageConnector.sol";
 import {AdministrationSetters} from "../../../state_transition/AdministrationSetters.sol";
 import {OwnableUpgradeable} from "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
 import {ReentrancyGuardUpgradeable} from
@@ -68,6 +69,17 @@ abstract contract OnlyOwner is AdministrationSetters, OwnableUpgradeable, Reentr
         bytes memory vaultBalanceAsLendingConnectorGetterData
     ) external onlyOwner nonReentrant {
         _setVaultBalanceAsLendingConnector(_vaultBalanceAsLendingConnector, vaultBalanceAsLendingConnectorGetterData);
+    }
+
+    /**
+     * @dev see ILTV.setSlippageConnector
+     */
+    function setSlippageConnector(ISlippageConnector _slippageConnector, bytes memory slippageConnectorData)
+        external
+        onlyOwner
+        nonReentrant
+    {
+        _setSlippageConnector(_slippageConnector, slippageConnectorData);
     }
 
     /**

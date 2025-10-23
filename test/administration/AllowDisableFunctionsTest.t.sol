@@ -5,7 +5,7 @@ import {DefaultTestData} from "test/utils/BaseTest.t.sol";
 import {ILTV} from "src/interfaces/ILTV.sol";
 import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
 import {PrepareEachFunctionSuccessfulExecution} from "test/administration/PrepareEachFunctionSuccessfulExecution.sol";
-import {MockLendingConnector, MockOracleConnector, MockSlippageConnector} from "../utils/MockConnectors.t.sol";
+import {MockLendingConnector, MockOracleConnector} from "../utils/MockConnectors.t.sol";
 
 contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
     function test_disableRandomSelector(DefaultTestData memory defaultData, bytes4 randomSelector)
@@ -202,6 +202,7 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
 
     function functionsCanBeDisabled(DefaultTestData memory defaultData, address user)
         public
+        pure
         returns (bytes[] memory, bytes4[] memory, address[] memory)
     {
         bytes[] memory calls = new bytes[](28);
@@ -317,10 +318,8 @@ contract AllowDisableFunctionsTest is PrepareEachFunctionSuccessfulExecution {
         selectors[24] = ILTV.setMinProfitLtv.selector;
         callers[24] = defaultData.governor;
 
-        calls[25] = abi.encodeCall(
-            ILTV.setSlippageConnector, (address(new MockSlippageConnector()), abi.encode(10 ** 16, 10 ** 16))
-        );
-        selectors[25] = ILTV.setSlippageConnector.selector;
+        calls[25] = abi.encodeCall(ILTV.setSlippageConnectorData, abi.encode(10 ** 16, 10 ** 16));
+        selectors[25] = ILTV.setSlippageConnectorData.selector;
         callers[25] = defaultData.governor;
 
         calls[26] = abi.encodeCall(ILTV.setTargetLtv, (75, 100));

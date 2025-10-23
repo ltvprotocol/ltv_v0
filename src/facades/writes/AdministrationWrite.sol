@@ -185,6 +185,13 @@ abstract contract AdministrationWrite is LTVState, CommonWrite, FacadeImplementa
     }
 
     /**
+     * @dev see ILTV.setSlippageConnectorData
+     */
+    function setSlippageConnectorData(bytes memory slippageConnectorData) external {
+        _delegate(address(MODULES.administrationModule()), abi.encode(slippageConnectorData));
+    }
+
+    /**
      * @dev see ILTV.sweep
      */
     function sweep(address token, uint256 amount) external {

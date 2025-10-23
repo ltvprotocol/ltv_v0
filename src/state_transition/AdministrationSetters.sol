@@ -160,13 +160,17 @@ contract AdministrationSetters is
         require(address(_slippageConnector) != address(0), ZeroSlippageConnector());
         address oldAddress = address(slippageConnector);
         slippageConnector = _slippageConnector;
+        _setSlippageConnectorData(slippageConnectorData);
+        emit SlippageConnectorUpdated(
+            oldAddress, slippageConnectorData, address(_slippageConnector), slippageConnectorData
+        );
+    }
+
+    function _setSlippageConnectorData(bytes memory slippageConnectorData) internal {
         (bool success, bytes memory data) = address(slippageConnector).delegatecall(
             abi.encodeCall(ISlippageConnector.initializeSlippageConnectorData, (slippageConnectorData))
         );
         delegateCallPostCheck(address(slippageConnector), success, data);
-        emit SlippageConnectorUpdated(
-            oldAddress, slippageConnectorData, address(_slippageConnector), slippageConnectorData
-        );
     }
 
     /**

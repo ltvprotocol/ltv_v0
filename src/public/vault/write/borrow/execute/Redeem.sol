@@ -53,15 +53,15 @@ abstract contract Redeem is
         uint256 max = _maxRedeem(data);
         require(shares <= max, ExceedsMaxRedeem(owner, shares, max));
 
-        if (owner != msg.sender) {
-            _spendAllowance(owner, msg.sender, shares);
-        }
-
         (uint256 assetsOut, DeltaFuture memory deltaFuture) =
             _previewRedeem(shares, data.previewWithdrawBorrowVaultData);
 
         if (assetsOut == 0) {
             return 0;
+        }
+
+        if (owner != msg.sender) {
+            _spendAllowance(owner, msg.sender, shares);
         }
 
         applyMaxGrowthFee(
