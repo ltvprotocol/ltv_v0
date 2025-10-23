@@ -20,8 +20,9 @@ abstract contract PreviewWithdraw is Vault {
      * @dev see IBorrowVaultModule.previewWithdraw
      */
     function previewWithdraw(uint256 assets, PreviewWithdrawVaultState memory state)
-        public
-        pure
+        external
+        view
+        nonReentrantRead
         returns (uint256 shares)
     {
         (shares,) = _previewWithdraw(assets, previewWithdrawStateToPreviewWithdrawData(state));

@@ -20,8 +20,9 @@ abstract contract PreviewMintCollateral is VaultCollateral {
      * @dev see ICollateralVaultModule.previewMintCollateral
      */
     function previewMintCollateral(uint256 shares, PreviewDepositVaultState memory state)
-        public
-        pure
+        external
+        view
+        nonReentrantRead
         returns (uint256 assets)
     {
         (assets,) = _previewMintCollateral(shares, previewDepositVaultStateToPreviewCollateralVaultData(state));

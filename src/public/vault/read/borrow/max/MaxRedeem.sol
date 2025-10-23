@@ -17,7 +17,12 @@ abstract contract MaxRedeem is PreviewWithdraw, PreviewRedeem {
     /**
      * @dev see IBorrowVaultModule.maxRedeem
      */
-    function maxRedeem(MaxWithdrawRedeemBorrowVaultState memory state) public pure returns (uint256 max) {
+    function maxRedeem(MaxWithdrawRedeemBorrowVaultState memory state)
+        external
+        view
+        nonReentrantRead
+        returns (uint256 max)
+    {
         return _maxRedeem(maxWithdrawRedeemStateToData(state));
     }
 
