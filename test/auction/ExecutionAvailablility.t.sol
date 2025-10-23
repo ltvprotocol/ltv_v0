@@ -10,6 +10,7 @@ contract ExecutionAvailablilityTest is AuctionTestCommon {
         public
         testWithPredefinedDefaultValues(data)
     {
+        vm.assume(user != address(0));
         prepareWithdrawAuction(amount, data.governor, user);
 
         int256 deltaFutureBorrowAssetsOppositeSign = ltv.futureBorrowAssets() / 2;
@@ -43,6 +44,7 @@ contract ExecutionAvailablilityTest is AuctionTestCommon {
     {
         vm.assume(user != data.owner);
         vm.assume(user != data.feeCollector);
+        vm.assume(user != address(0));
         prepareUser(user);
         prepareDepositAuction(amount, data.owner);
 

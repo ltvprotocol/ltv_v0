@@ -70,6 +70,7 @@ contract DeployLTVBeaconProxy is BaseScript {
                 lltv,
                 keccak256(abi.encode(stateInitData.borrowToken, stateInitData.collateralToken, oracle, irm, lltv))
             );
+            stateInitData.oracleConnectorData = abi.encode(oracle);
         } else {
             revert("Unknown LENDING_CONNECTOR_NAME");
         }

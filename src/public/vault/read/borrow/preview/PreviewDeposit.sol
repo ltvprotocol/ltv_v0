@@ -20,8 +20,9 @@ abstract contract PreviewDeposit is Vault {
      * @dev see IBorrowVaultModule.previewDeposit
      */
     function previewDeposit(uint256 assets, PreviewDepositVaultState memory state)
-        public
-        pure
+        external
+        view
+        nonReentrantRead
         returns (uint256 shares)
     {
         (shares,) = _previewDeposit(assets, previewDepositStateToPreviewDepositData(state));

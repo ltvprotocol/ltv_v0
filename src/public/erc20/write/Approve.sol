@@ -25,6 +25,7 @@ abstract contract Approve is
      * @dev see ITLV.approve
      */
     function approve(address spender, uint256 amount) external isFunctionAllowed nonReentrant returns (bool) {
+        require(spender != address(0), ERC20ApproveToZeroAddress());
         allowance[msg.sender][spender] = amount;
         emit Approval(msg.sender, spender, amount);
         return true;

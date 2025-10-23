@@ -97,6 +97,13 @@ abstract contract AdministrationWrite is LTVState, CommonWrite, FacadeImplementa
     }
 
     /**
+     * @dev see ILTV.setIsProtocolPaused
+     */
+    function setIsProtocolPaused(bool value) external {
+        _delegate(address(MODULES.administrationModule()), abi.encode(value));
+    }
+
+    /**
      * @dev see ILTV.setLendingConnector
      */
     function setLendingConnector(address _lendingConnector, bytes memory lendingConnectorData) external {
