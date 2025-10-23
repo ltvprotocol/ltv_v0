@@ -150,6 +150,7 @@ library NextStep {
         } else if (data.cases.ceccb + data.cases.cecbc == 1) {
             nextState.startAuction = data.blockNumber;
         } else {
+            // type(uint56).max is used to indicate that start auction should not be updated
             nextState.startAuction = type(uint56).max;
         }
     }
