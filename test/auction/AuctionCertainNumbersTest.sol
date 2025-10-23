@@ -40,6 +40,7 @@ contract AuctionCertainNumbersTest is AuctionTestCommon {
         testWithPredefinedDefaultValues(data)
     {
         vm.assume(user != data.feeCollector);
+        vm.assume(user != address(0));
         prepareWithdrawAuctionWithCustomCollateralPrice(2000000, data.governor, user, 2_111_111_111_111_111_111);
         // making rounding unprecice
         ltv.setFutureCollateralAssets(ltv.futureCollateralAssets() - 7);
@@ -86,6 +87,7 @@ contract AuctionCertainNumbersTest is AuctionTestCommon {
         testWithPredefinedDefaultValues(data)
     {
         vm.assume(user != data.feeCollector);
+        vm.assume(user != address(0));
         prepareWithdrawAuctionWithCustomCollateralPrice(2000000, data.governor, user, 2_111_111_111_111_111_111);
         // making rounding unprecice
         ltv.setFutureCollateralAssets(ltv.futureCollateralAssets() - 7);
@@ -132,6 +134,7 @@ contract AuctionCertainNumbersTest is AuctionTestCommon {
         testWithPredefinedDefaultValues(data)
     {
         vm.assume(user != data.feeCollector);
+        vm.assume(user != address(0));
         prepareDepositAuctionWithCustomCollateralPrice(2000000, 2_111_111_111_111_111_111, data.owner);
         // making rounding unprecice
         ltv.setFutureCollateralAssets(ltv.futureCollateralAssets() - 7);
@@ -178,6 +181,7 @@ contract AuctionCertainNumbersTest is AuctionTestCommon {
         testWithPredefinedDefaultValues(data)
     {
         vm.assume(user != data.feeCollector);
+        vm.assume(user != address(0));
         prepareDepositAuctionWithCustomCollateralPrice(2000000, 2_111_111_111_111_111_111, data.owner);
         // making rounding unprecice
         ltv.setFutureCollateralAssets(ltv.futureCollateralAssets() - 7);

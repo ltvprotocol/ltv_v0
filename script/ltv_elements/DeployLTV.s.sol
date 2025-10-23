@@ -7,11 +7,12 @@ import {console} from "forge-std/console.sol";
 
 contract DeployLTV is BaseScript {
     function deploy() internal override {
-        LTV ltv = new LTV{salt: bytes32(0)}();
+        address modules = vm.envAddress("MODULES_PROVIDER");
+        LTV ltv = new LTV{salt: bytes32(0)}(modules);
         console.log("LTV deployed at: ", address(ltv));
     }
 
-    function hashedCreationCode() internal pure override returns (bytes32) {
-        return keccak256(type(LTV).creationCode);
+    function hashedCreationCode() internal view override returns (bytes32) {
+        return keccak256(abi.encodePacked(type(LTV).creationCode, abi.encode(vm.envAddress("MODULES_PROVIDER"))));
     }
 }

@@ -31,9 +31,8 @@ abstract contract Transfer is
         nonReentrant
         returns (bool)
     {
-        if (recipient == address(0)) {
-            revert TransferToZeroAddress();
-        }
+        require(recipient != address(0), ERC20TransferToZeroAddress());
+        require(balanceOf[msg.sender] >= amount, ERC20InsufficientBalance(msg.sender, balanceOf[msg.sender], amount));
         balanceOf[msg.sender] -= amount;
         balanceOf[recipient] += amount;
         emit Transfer(msg.sender, recipient, amount);

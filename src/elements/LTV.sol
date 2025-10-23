@@ -14,7 +14,8 @@ import {CollateralVaultWrite} from "../facades/writes/CollateralVaultWrite.sol";
 import {AdministrationWrite} from "../facades/writes/AdministrationWrite.sol";
 import {AdministrationRead} from "../facades/reads/AdministrationRead.sol";
 import {InitializeWrite} from "../facades/writes/InitializeWrite.sol";
-
+import {IModules} from "../interfaces/IModules.sol";
+import {OwnableUpgradeable} from "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
 /**
  * @title LTV
  * @notice Main facade of LTV protocol. This contract contains all the public function signatures of LTV protocol.
@@ -36,6 +37,7 @@ import {InitializeWrite} from "../facades/writes/InitializeWrite.sol";
  * - Collateral vault operations (read/write)
  * - Administration and initialization operations
  */
+
 contract LTV is
     AuctionRead,
     AuctionWrite,
@@ -49,9 +51,11 @@ contract LTV is
     CollateralVaultWrite,
     AdministrationWrite,
     AdministrationRead,
-    InitializeWrite
+    InitializeWrite,
+    OwnableUpgradeable
 {
-    constructor() {
+    constructor(address modules) {
         _disableInitializers();
+        MODULES = IModules(modules);
     }
 }

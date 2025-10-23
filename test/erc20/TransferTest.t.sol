@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {stdError} from "forge-std/StdError.sol";
 import {BaseTest, DefaultTestData} from "test/utils/BaseTest.t.sol";
 import {IERC20Events} from "src/events/IERC20Events.sol";
 import {IERC20Errors} from "src/errors/IERC20Errors.sol";
@@ -66,7 +65,9 @@ contract TransferTest is BaseTest {
         ltv.mintFreeTokens(mintAmount, userA);
 
         vm.startPrank(userB);
-        vm.expectRevert(stdError.arithmeticError);
+        vm.expectRevert(
+            abi.encodeWithSelector(IERC20Errors.ERC20InsufficientBalance.selector, userB, 0, transferAmount)
+        );
         /// forge-lint: disable-next-line
         ltv.transfer(userA, transferAmount);
         vm.stopPrank();
@@ -135,7 +136,7 @@ contract TransferTest is BaseTest {
         uint256 initialBalanceZero = ltv.balanceOf(address(0));
 
         vm.startPrank(userA);
-        vm.expectRevert(abi.encodeWithSelector(IERC20Errors.TransferToZeroAddress.selector));
+        vm.expectRevert(abi.encodeWithSelector(IERC20Errors.ERC20TransferToZeroAddress.selector));
         /// forge-lint: disable-next-line
         ltv.transfer(address(0), transferAmount);
         vm.stopPrank();

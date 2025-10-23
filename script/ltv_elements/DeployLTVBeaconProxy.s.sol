@@ -7,7 +7,6 @@ import {ILTV} from "src/interfaces/ILTV.sol";
 import {ILendingConnector} from "src/interfaces/connectors/ILendingConnector.sol";
 import {IOracleConnector} from "src/interfaces/connectors/IOracleConnector.sol";
 import {ISlippageConnector} from "src/interfaces/connectors/ISlippageConnector.sol";
-import {IModules} from "src/interfaces/IModules.sol";
 import {BeaconProxy} from "openzeppelin-contracts/contracts/proxy/beacon/BeaconProxy.sol";
 import {console} from "forge-std/console.sol";
 
@@ -71,12 +70,11 @@ contract DeployLTVBeaconProxy is BaseScript {
                 lltv,
                 keccak256(abi.encode(stateInitData.borrowToken, stateInitData.collateralToken, oracle, irm, lltv))
             );
+            stateInitData.oracleConnectorData = abi.encode(oracle);
         } else {
             revert("Unknown LENDING_CONNECTOR_NAME");
         }
 
-        IModules modules = IModules(vm.envAddress("MODULES_PROVIDER"));
-
-        return abi.encodeCall(ILTV.initialize, (stateInitData, modules));
+        return abi.encodeCall(ILTV.initialize, (stateInitData));
     }
 }
