@@ -4,6 +4,7 @@ pragma solidity ^0.8.28;
 import {ILendingConnector} from "src/interfaces/connectors/ILendingConnector.sol";
 import {MorphoConnectorStorage} from "src/structs/connectors/MorphoConnectorStorage.sol";
 import {IMorphoBlue} from "src/connectors/lending_connectors/interfaces/IMorphoBlue.sol";
+import {IMorphoConnectorErrors} from "../../../src/errors/connectors/IMorphoConnectorErrors.sol";
 import {LTVState} from "src/states/LTVState.sol";
 import {UMulDiv} from "src/math/libraries/MulDiv.sol";
 import {SafeERC20, IERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -12,7 +13,7 @@ import {SafeERC20, IERC20} from "openzeppelin-contracts/contracts/token/ERC20/ut
  * @title MorphoConnector
  * @notice Connector for Morpho protocol
  */
-contract MorphoConnector is LTVState, ILendingConnector {
+contract MorphoConnector is LTVState, ILendingConnector, IMorphoConnectorErrors {
     using SafeERC20 for IERC20;
     using UMulDiv for uint128;
 
@@ -23,6 +24,7 @@ contract MorphoConnector is LTVState, ILendingConnector {
         0x3ce092b68bc5f5a93dae5498ed388a510f95f75f908bb65f889a019a5a7397e4;
 
     constructor(address _morpho) {
+        require(_morpho != address(0), ZeroMorphoAddress());
         MORPHO = IMorphoBlue(_morpho);
     }
 
@@ -109,6 +111,29 @@ contract MorphoConnector is LTVState, ILendingConnector {
     function initializeLendingConnectorData(bytes memory data) external {
         (address oracle, address irm, uint256 lltv, bytes32 marketId) =
             abi.decode(data, (address, address, uint256, bytes32));
+
+        (
+            address fetchedLoanToken,
+            address fetchedCollateralToken,
+            address fetchedOracle,
+            address fetchedIrm,
+            uint256 fetchedLltv
+        ) = MORPHO.idToMarketParams(marketId);
+
+        require(fetchedLltv > 0, ZeroLltvMarketParam());
+        require(fetchedLoanToken != address(0), ZeroLoanTokenMarketParam());
+        require(fetchedCollateralToken != address(0), ZeroCollateralTokenMarketParam());
+        require(fetchedLoanToken != address(0), ZeroLoanTokenMarketParam());
+        require(fetchedCollateralToken != address(0), ZeroCollateralTokenMarketParam());
+
+        require(fetchedOracle == oracle, InvalidOracle(oracle, fetchedOracle));
+        require(fetchedIrm == irm, InvalidIrm(irm, fetchedIrm));
+        require(fetchedLltv == lltv, InvalidLltv(lltv, fetchedLltv));
+        require(fetchedLoanToken == address(borrowToken), InvalidLoanToken(address(borrowToken), fetchedLoanToken));
+        require(
+            fetchedCollateralToken == address(collateralToken),
+            InvalidCollateralToken(address(collateralToken), fetchedCollateralToken)
+        );
 
         MorphoConnectorStorage storage s = _getMorphoConnectorStorage();
         s.oracle = oracle;

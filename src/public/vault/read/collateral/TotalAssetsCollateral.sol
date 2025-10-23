@@ -16,20 +16,25 @@ abstract contract TotalAssetsCollateral is TotalAssetsCollateralStateToData {
     /**
      * @dev see ICollateralVaultModule.totalAssetsCollateral
      */
-    function totalAssetsCollateral(TotalAssetsState memory state) public pure virtual returns (uint256) {
+    function totalAssetsCollateral(TotalAssetsState memory state) external view nonReentrantRead returns (uint256) {
         // default behavior - don't overestimate our assets
-        return totalAssetsCollateral(false, state);
+        return _totalAssetsCollateral(false, state);
     }
 
     /**
      * @dev see ICollateralVaultModule.totalAssetsCollateral
      */
     function totalAssetsCollateral(bool isDeposit, TotalAssetsState memory state)
-        public
-        pure
+        external
+        view
         virtual
+        nonReentrantRead
         returns (uint256)
     {
+        return _totalAssetsCollateral(isDeposit, state);
+    }
+
+    function _totalAssetsCollateral(bool isDeposit, TotalAssetsState memory state) internal pure returns (uint256) {
         return _totalAssetsCollateral(isDeposit, totalAssetsStateToTotalAssetsCollateralData(state, isDeposit));
     }
 

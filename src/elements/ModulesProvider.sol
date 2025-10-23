@@ -10,13 +10,14 @@ import {ILowLevelRebalanceModule} from "../interfaces/reads/ILowLevelRebalanceMo
 import {IInitializeModule} from "../interfaces/writes/IInitializeModule.sol";
 import {ModulesState} from "../structs/state/common/ModulesState.sol";
 import {IAdministrationModule} from "../interfaces/reads/IAdministrationModule.sol";
-
+import {IModulesProviderErrors} from "../errors/IModulesProviderErrors.sol";
 /**
  * @title ModulesProvider
  * @notice This contract is used to provide access to the modules of the LTV protocol.
  * It is used to get the address of the requested module.
  */
-contract ModulesProvider is IModules {
+
+contract ModulesProvider is IModules, IModulesProviderErrors {
     // Module slot constants
     bytes32 public constant BORROW_VAULT_MODULE_SLOT = keccak256("BORROW_VAULT_MODULE");
     bytes32 public constant COLLATERAL_VAULT_MODULE_SLOT = keccak256("COLLATERAL_VAULT_MODULE");
@@ -26,7 +27,11 @@ contract ModulesProvider is IModules {
     bytes32 public constant ADMINISTRATION_MODULE_SLOT = keccak256("ADMINISTRATION_MODULE");
     bytes32 public constant INITIALIZE_MODULE_SLOT = keccak256("INITIALIZE_MODULE");
 
+    // Storage for modules
+    mapping(bytes32 => address) private _modules;
+
     constructor(ModulesState memory state) {
+        _validateModuleAddresses(state);
         _setModule(BORROW_VAULT_MODULE_SLOT, address(state.borrowVaultModule));
         _setModule(COLLATERAL_VAULT_MODULE_SLOT, address(state.collateralVaultModule));
         _setModule(LOW_LEVEL_REBALANCE_MODULE_SLOT, address(state.lowLevelRebalanceModule));
@@ -34,16 +39,6 @@ contract ModulesProvider is IModules {
         _setModule(ERC20_MODULE_SLOT, address(state.erc20Module));
         _setModule(ADMINISTRATION_MODULE_SLOT, address(state.administrationModule));
         _setModule(INITIALIZE_MODULE_SLOT, address(state.initializeModule));
-    }
-
-    // Storage for modules
-    mapping(bytes32 => address) private _modules;
-
-    /**
-     * @dev Set the module at the given slot
-     */
-    function _setModule(bytes32 slot, address module) internal {
-        _modules[slot] = module;
     }
 
     /**
@@ -100,5 +95,35 @@ contract ModulesProvider is IModules {
      */
     function initializeModule() external view override returns (IInitializeModule) {
         return IInitializeModule(getModule(INITIALIZE_MODULE_SLOT));
+    }
+
+    /**
+     * @dev Set the module at the given slot
+     */
+    function _setModule(bytes32 slot, address module) internal {
+        _modules[slot] = module;
+    }
+
+    /**
+     * @dev Validates that no two modules have the same address
+     * @param state The modules state to validate
+     */
+    function _validateModuleAddresses(ModulesState memory state) internal view virtual {
+        address[] memory addresses = new address[](7);
+
+        addresses[0] = address(state.borrowVaultModule);
+        addresses[1] = address(state.collateralVaultModule);
+        addresses[2] = address(state.lowLevelRebalanceModule);
+        addresses[3] = address(state.auctionModule);
+        addresses[4] = address(state.erc20Module);
+        addresses[5] = address(state.administrationModule);
+        addresses[6] = address(state.initializeModule);
+
+        for (uint256 i = 0; i < addresses.length; i++) {
+            require(addresses[i].code.length != 0, InvalidModuleAddress(addresses[i]));
+            for (uint256 j = i + 1; j < addresses.length; j++) {
+                require(addresses[i] != addresses[j], DuplicateModuleAddress(addresses[i]));
+            }
+        }
     }
 }

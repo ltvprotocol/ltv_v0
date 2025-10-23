@@ -27,18 +27,19 @@ contract DummyModulesBaseTest is BaseTest {
         DummyLowLevelRebalanceModule lowLevelRebalanceModule = new DummyLowLevelRebalanceModule();
 
         ModulesState memory modulesState = ModulesState({
-            administrationModule: IAdministrationModule(address(ltv.modules().administrationModule())),
-            auctionModule: IAuctionModule(address(ltv.modules().auctionModule())),
+            administrationModule: IAdministrationModule(address(ltv.MODULES().administrationModule())),
+            auctionModule: IAuctionModule(address(ltv.MODULES().auctionModule())),
             borrowVaultModule: IBorrowVaultModule(address(borrowVaultModule)),
             collateralVaultModule: ICollateralVaultModule(address(collateralVaultModule)),
             erc20Module: IERC20Module(address(erc20Module)),
             lowLevelRebalanceModule: ILowLevelRebalanceModule(address(lowLevelRebalanceModule)),
-            initializeModule: IInitializeModule(address(ltv.modules().initializeModule()))
+            initializeModule: IInitializeModule(address(ltv.MODULES().initializeModule()))
         });
 
-        vm.startPrank(ltv.owner());
-        ltv.setModules(new ModulesProvider(modulesState));
-        vm.stopPrank();
+        ModulesProvider modules = new ModulesProvider(modulesState);
+
+        address impl = address(new DummyLTV(address(modules)));
+        vm.etch(address(ltv), impl.code);
     }
 
     function initializeDummyTest(BaseTestInit memory init) internal {

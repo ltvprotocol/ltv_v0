@@ -17,7 +17,12 @@ abstract contract MaxDepositCollateral is PreviewMintCollateral, PreviewDepositC
     /**
      * @dev see ICollateralVaultModule.maxDepositCollateral
      */
-    function maxDepositCollateral(MaxDepositMintCollateralVaultState memory state) public pure returns (uint256) {
+    function maxDepositCollateral(MaxDepositMintCollateralVaultState memory state)
+        external
+        view
+        nonReentrantRead
+        returns (uint256)
+    {
         return _maxDepositCollateral(maxDepositMintCollateralVaultStateToMaxDepositMintCollateralVaultData(state));
     }
 

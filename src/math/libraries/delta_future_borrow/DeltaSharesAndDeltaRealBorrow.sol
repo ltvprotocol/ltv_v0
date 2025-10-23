@@ -33,7 +33,7 @@ library DeltaSharesAndDeltaRealBorrow {
      * @param needToRoundUp Whether to round up the calculation results (true = round up, false = round down)
      * @return The calculated dividend value for delta future borrow
      */
-    function calculateDividentByDeltaSharesAndDeltaRealBorrow(
+    function calculateDividendByDeltaSharesAndDeltaRealBorrow(
         DeltaSharesAndDeltaRealBorrowDividendData memory data,
         bool needToRoundUp
     ) private pure returns (int256) {
@@ -132,7 +132,7 @@ library DeltaSharesAndDeltaRealBorrow {
         bool needToRoundUpDividend,
         bool needToRoundUpDivider
     ) private pure returns (int256, bool) {
-        int256 dividend = calculateDividentByDeltaSharesAndDeltaRealBorrow(
+        int256 dividend = calculateDividendByDeltaSharesAndDeltaRealBorrow(
             DeltaSharesAndDeltaRealBorrowDividendData({
                 borrow: data.borrow,
                 collateral: data.collateral,
@@ -357,7 +357,7 @@ library DeltaSharesAndDeltaRealBorrow {
     ) private pure returns (int256 dividend) {
         data.cases = CasesOperator.generateCase(6); // cna case - neutral case
 
-        dividend = calculateDividentByDeltaSharesAndDeltaRealBorrow(
+        dividend = calculateDividendByDeltaSharesAndDeltaRealBorrow(
             DeltaSharesAndDeltaRealBorrowDividendData({
                 borrow: data.borrow,
                 collateral: data.collateral,
@@ -555,10 +555,10 @@ library DeltaSharesAndDeltaRealBorrow {
      * cecb, cecbc, cmbc - round up
      *
      * ROUNDING DIVIDER:
-     * cmcb, ceccb, cmbc, cecbc - roundind up
+     * cmcb, ceccb, cmbc, cecbc - rounding up
      * cebc, cecb - rounding down
      *
-     * ROUDNING DIVIDEND:
+     * ROUNDING DIVIDEND:
      * cmcb, ceccb, cebc - rounding up
      * cmcb, cecbc, cecb - rounding down
      */
