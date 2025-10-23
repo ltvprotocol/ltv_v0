@@ -43,11 +43,13 @@ abstract contract LTVState {
 
     uint56 public startAuction;
     uint24 public auctionDuration;
+    // 80 bits occupied
 
     uint16 public maxGrowthFeeDividend;
     uint16 public maxGrowthFeeDivider;
     uint16 public maxDeleverageFeeDividend;
     uint16 public maxDeleverageFeeDivider;
+    // 144 bits occupied
 
     uint16 public maxSafeLtvDividend;
     uint16 public maxSafeLtvDivider;
@@ -55,9 +57,11 @@ abstract contract LTVState {
     uint16 public minProfitLtvDivider;
     uint16 public targetLtvDividend;
     uint16 public targetLtvDivider;
+    // 240 bits occupied
 
     uint8 public decimals;
     uint8 public boolSlot;
+    // 256 bits occupied
 
     mapping(address => uint256) public balanceOf;
     mapping(address => mapping(address => uint256)) public allowance;
@@ -69,4 +73,12 @@ abstract contract LTVState {
     bytes public oracleConnectorGetterData;
     bytes public slippageConnectorGetterData;
     bytes public vaultBalanceAsLendingConnectorGetterData;
+
+    uint16 public softLiquidationLtvDividend;
+    uint16 public softLiquidationLtvDivider;
+    // 32 bits occupied
+    
+    uint16 public softLiquidationFeeDividend;
+    uint16 public softLiquidationFeeDivider;
+    // 64 bits occupied
 }

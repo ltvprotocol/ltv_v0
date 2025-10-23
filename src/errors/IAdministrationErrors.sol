@@ -215,4 +215,19 @@ interface IAdministrationErrors {
     error FailedToSetVaultBalanceAsLendingConnector(
         address vaultBalanceAsLendingConnector, bytes vaultBalanceAsLendingConnectorGetterData
     );
+
+    /**
+     * @notice Error thrown when soft liquidation expected result is below configured threshold
+     * @param calculatedBorrowInUnderlying Expected borrow assets amount in lending protocol after liquidation
+     * @param calculatedCollateralInUnderlying Expected collateral assets amount in lending protocol after liquidation
+     * @param softLiquidationLtvDividend The dividend of the soft liquidation ltv
+     * @param softLiquidationLtvDivider The divider of the soft liquidation ltv
+     * @dev Used when soft liquidation result is below soft liquidation ltv
+     */
+    error SoftLiquidationResultBelowSoftLiquidationLtv(
+        uint256 calculatedBorrowInUnderlying,
+        uint256 calculatedCollateralInUnderlying,
+        uint16 softLiquidationLtvDividend,
+        uint16 softLiquidationLtvDivider
+    );
 }

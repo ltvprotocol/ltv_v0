@@ -969,6 +969,12 @@ interface ILTV is
     function deleverageAndWithdraw(uint256 closeAmountBorrow, uint16 deleverageFeeDividend, uint16 deleverageFeeDivider)
         external;
 
+    /**
+     * @notice Executes soft liquidation
+     * @param liquidationAmountBorrow The amount of borrow to liquidate
+     */
+    function softLiquidation(uint256 liquidationAmountBorrow) external;
+
     // ========================================
     // EVENTS
     // ========================================
