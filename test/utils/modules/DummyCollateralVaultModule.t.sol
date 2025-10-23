@@ -18,7 +18,12 @@ contract DummyCollateralVaultModule is CollateralVaultModule, DummyTotalAssetsMo
         return DummyTotalAssetsModule._totalAssets(isDeposit, data);
     }
 
-    function totalSupply(uint256 supply) public pure override(TotalSupply, DummyTotalSupplyModule) returns (uint256) {
-        return DummyTotalSupplyModule.totalSupply(supply);
+    function _totalSupply(uint256 supply)
+        internal
+        pure
+        override(TotalSupply, DummyTotalSupplyModule)
+        returns (uint256)
+    {
+        return DummyTotalSupplyModule._totalSupply(supply);
     }
 }

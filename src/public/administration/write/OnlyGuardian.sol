@@ -31,4 +31,8 @@ abstract contract OnlyGuardian is AdministrationSetters, ReentrancyGuardUpgradea
     function setIsWithdrawDisabled(bool value) external onlyGuardian nonReentrant {
         _setIsWithdrawDisabled(value);
     }
+
+    function setIsProtocolPaused(bool value) external onlyGuardian nonReentrant {
+        _setIsProtocolPaused(value);
+    }
 }

@@ -4,7 +4,7 @@ pragma solidity ^0.8.28;
 import {BaseTest, DefaultTestData} from "test/utils/BaseTest.t.sol";
 import {ISlippageConnector} from "src/interfaces/connectors/ISlippageConnector.sol";
 import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
-import {ConstantSlippageConnector} from "src/connectors/slippage_connectors/ConstantSlippageConnector.sol";
+import {DummySlippageConnector} from "src/dummy/DummySlippageConnector.sol";
 
 contract SetSlippageConnectorTest is BaseTest {
     function test_failIfNotGovernor(DefaultTestData memory defaultData, address user)
@@ -19,7 +19,7 @@ contract SetSlippageConnectorTest is BaseTest {
 
     function test_checkSlot(DefaultTestData memory defaultData) public testWithPredefinedDefaultValues(defaultData) {
         vm.startPrank(defaultData.governor);
-        ConstantSlippageConnector provider = new ConstantSlippageConnector();
+        DummySlippageConnector provider = new DummySlippageConnector();
         ltv.setSlippageConnector(address(provider), abi.encode(10 ** 16, 10 ** 16));
         vm.stopPrank();
 
@@ -38,7 +38,7 @@ contract SetSlippageConnectorTest is BaseTest {
         vm.startPrank(defaultData.governor);
         uint256 newCollateralSlippage = 3 * 10 ** 16;
         uint256 newBorrowSlippage = 25 * 10 ** 15;
-        ConstantSlippageConnector provider = new ConstantSlippageConnector();
+        DummySlippageConnector provider = new DummySlippageConnector();
         ltv.setSlippageConnector(address(provider), abi.encode(newCollateralSlippage, newBorrowSlippage));
         vm.stopPrank();
 

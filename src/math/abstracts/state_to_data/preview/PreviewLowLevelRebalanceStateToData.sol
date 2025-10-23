@@ -94,7 +94,7 @@ abstract contract PreviewLowLevelRebalanceStateToData is MaxGrowthFee {
         // need to recalculate everything with another rounding
         data.withdrawTotalAssets = !isDeposit
             ? data.totalAssets
-            : totalAssets(
+            : _totalAssets(
                 false,
                 TotalAssetsState({
                     realBorrowAssets: state.maxGrowthFeeState.withdrawRealBorrowAssets,
@@ -108,7 +108,7 @@ abstract contract PreviewLowLevelRebalanceStateToData is MaxGrowthFee {
                 withdrawTotalAssets: data.withdrawTotalAssets,
                 maxGrowthFeeDividend: state.maxGrowthFeeState.maxGrowthFeeDividend,
                 maxGrowthFeeDivider: state.maxGrowthFeeState.maxGrowthFeeDivider,
-                supply: totalSupply(state.maxGrowthFeeState.supply),
+                supply: _totalSupply(state.maxGrowthFeeState.supply),
                 lastSeenTokenPrice: state.maxGrowthFeeState.lastSeenTokenPrice
             })
         );

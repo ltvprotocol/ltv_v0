@@ -762,12 +762,6 @@ interface ILTV is
      */
     function setWhitelistRegistry(address value) external;
 
-    /**
-     * @notice Sets the modules address
-     * @param _modules The new modules address
-     */
-    function setModules(IModules _modules) external;
-
     // ========================================
     // ACCESS CONTROL FUNCTIONS
     // ========================================
@@ -832,15 +826,15 @@ interface ILTV is
     /**
      * @notice Initializes the contract with initial state data
      * @param stateInitData The initial state data
-     * @param modules The modules contract address
      */
-    function initialize(StateInitData memory stateInitData, IModules modules) external;
+    function initialize(StateInitData memory stateInitData) external;
 
     /**
      * @notice Returns the modules contract address
      * @return The modules contract address
      */
-    function modules() external view returns (IModules);
+    // forge-lint: disable-next-line(mixed-case-function)
+    function MODULES() external view returns (IModules);
 
     /**
      * @notice Returns whether a function is disabled
@@ -867,6 +861,12 @@ interface ILTV is
      * @return True if deposits are disabled
      */
     function isDepositDisabled() external view returns (bool);
+
+    /**
+     * @notice Returns whether the protocol is paused
+     * @return True if the protocol is paused
+     */
+    function isProtocolPaused() external view returns (bool);
 
     /**
      * @notice Returns whether withdrawals are disabled
