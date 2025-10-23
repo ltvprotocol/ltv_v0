@@ -12,7 +12,6 @@ abstract contract TotalSupply is NonReentrantRead {
     /**
      * @dev see IERC20Module.totalSupply
      */
-
     function totalSupply(uint256 supply) external view nonReentrantRead returns (uint256) {
         return _totalSupply(supply);
     }
