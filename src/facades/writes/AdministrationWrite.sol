@@ -169,7 +169,7 @@ abstract contract AdministrationWrite is LTVState, CommonWrite, FacadeImplementa
             abi.encode(_vaultBalanceAsLendingConnector, vaultBalanceAsLendingConnectorGetterData)
         );
     }
-    
+
     /**
      * @dev see ILTV.sweep
      */
