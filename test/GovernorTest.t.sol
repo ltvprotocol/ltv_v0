@@ -39,7 +39,9 @@ contract GovernorTest is BalancedTest {
                 dummyLtv.maxSafeLtvDividend(),
                 dummyLtv.maxSafeLtvDivider(),
                 dummyLtv.minProfitLtvDividend(),
-                dummyLtv.minProfitLtvDivider()
+                dummyLtv.minProfitLtvDivider(),
+                dummyLtv.softLiquidationLtvDividend(),
+                dummyLtv.softLiquidationLtvDivider()
             )
         );
         dummyLtv.setTargetLtv(tooHighValue, tooHighDivider);
@@ -54,7 +56,9 @@ contract GovernorTest is BalancedTest {
                 dummyLtv.maxSafeLtvDividend(),
                 dummyLtv.maxSafeLtvDivider(),
                 dummyLtv.minProfitLtvDividend(),
-                dummyLtv.minProfitLtvDivider()
+                dummyLtv.minProfitLtvDivider(),
+                dummyLtv.softLiquidationLtvDividend(),
+                dummyLtv.softLiquidationLtvDivider()
             )
         );
         dummyLtv.setTargetLtv(tooLowValue, tooLowDivider);
@@ -90,7 +94,9 @@ contract GovernorTest is BalancedTest {
                 tooLowValue,
                 tooLowDivider,
                 dummyLtv.minProfitLtvDividend(),
-                dummyLtv.minProfitLtvDivider()
+                dummyLtv.minProfitLtvDivider(),
+                dummyLtv.softLiquidationLtvDividend(),
+                dummyLtv.softLiquidationLtvDivider()
             )
         );
         dummyLtv.setMaxSafeLtv(tooLowValue, tooLowDivider);
@@ -129,7 +135,9 @@ contract GovernorTest is BalancedTest {
                 dummyLtv.maxSafeLtvDividend(),
                 dummyLtv.maxSafeLtvDivider(),
                 tooHighValue,
-                tooHighDivider
+                tooHighDivider,
+                dummyLtv.softLiquidationLtvDividend(),
+                dummyLtv.softLiquidationLtvDivider()
             )
         );
         dummyLtv.setMinProfitLtv(tooHighValue, tooHighDivider);

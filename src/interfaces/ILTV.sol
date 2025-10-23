@@ -715,6 +715,20 @@ interface ILTV is
     function setMaxDeleverageFee(uint16 dividend, uint16 divider) external;
 
     /**
+     * @notice Sets the soft liquidation fee
+     * @param dividend The soft liquidation fee numerator
+     * @param divider The soft liquidation fee denominator
+     */
+    function setSoftLiquidationFee(uint16 dividend, uint16 divider) external;
+
+    /**
+     * @notice Sets the soft liquidation ltv
+     * @param dividend The soft liquidation ltv numerator
+     * @param divider The soft liquidation ltv denominator
+     */
+    function setSoftLiquidationLtv(uint16 dividend, uint16 divider) external;
+
+    /**
      * @notice Sets the oracle connector address
      * @param _oracleConnector The new oracle connector address
      * @param oracleConnectorData Additional data for the oracle connector

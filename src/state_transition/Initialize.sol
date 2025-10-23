@@ -29,6 +29,7 @@ abstract contract Initialize is AdministrationSetters, OwnableUpgradeable {
         collateralToken = IERC20(initData.collateralToken);
         borrowToken = IERC20(initData.borrowToken);
 
+        _setSoftLiquidationLtv(initData.softLiquidationLtvDividend, initData.softLiquidationLtvDivider);
         _setMaxSafeLtv(initData.maxSafeLtvDividend, initData.maxSafeLtvDivider);
         _setTargetLtv(initData.targetLtvDividend, initData.targetLtvDivider);
         _setMinProfitLtv(initData.minProfitLtvDividend, initData.minProfitLtvDivider);
@@ -52,5 +53,6 @@ abstract contract Initialize is AdministrationSetters, OwnableUpgradeable {
         _setVaultBalanceAsLendingConnector(
             initData.vaultBalanceAsLendingConnector, initData.vaultBalanceAsLendingConnectorData
         );
+        _setSoftLiquidationFee(initData.softLiquidationFeeDividend, initData.softLiquidationFeeDivider);
     }
 }

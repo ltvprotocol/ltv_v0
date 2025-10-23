@@ -180,6 +180,14 @@ abstract contract AdministrationWrite is LTVState, CommonWrite, OwnableUpgradeab
         );
     }
 
+    function setSoftLiquidationFee(uint16 dividend, uint16 divider) external {
+        _delegate(address(modules.administrationModule()), abi.encode(dividend, divider));
+    }
+
+    function setSoftLiquidationLtv(uint16 dividend, uint16 divider) external {
+        _delegate(address(modules.administrationModule()), abi.encode(dividend, divider));
+    }
+
     /**
      * @dev see ILTV.setModules
      */

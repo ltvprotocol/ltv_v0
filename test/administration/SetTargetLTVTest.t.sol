@@ -21,7 +21,9 @@ contract SettargetLtvTest is BaseTest {
                 ltv.maxSafeLtvDividend(),
                 ltv.maxSafeLtvDivider(),
                 ltv.minProfitLtvDividend(),
-                ltv.minProfitLtvDivider()
+                ltv.minProfitLtvDivider(),
+                ltv.softLiquidationLtvDividend(),
+                ltv.softLiquidationLtvDivider()
             )
         );
         ltv.setTargetLtv(targetLtvDividend, targetLtvDivider);
@@ -42,7 +44,9 @@ contract SettargetLtvTest is BaseTest {
                 ltv.maxSafeLtvDividend(),
                 ltv.maxSafeLtvDivider(),
                 ltv.minProfitLtvDividend(),
-                ltv.minProfitLtvDivider()
+                ltv.minProfitLtvDivider(),
+                ltv.softLiquidationLtvDividend(),
+                ltv.softLiquidationLtvDivider()
             )
         );
         ltv.setTargetLtv(targetLtvDividend, targetLtvDivider);

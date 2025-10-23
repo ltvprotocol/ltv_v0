@@ -21,7 +21,9 @@ contract SetminProfitLtvTest is BaseTest {
                 ltv.maxSafeLtvDividend(),
                 ltv.maxSafeLtvDivider(),
                 newminProfitLtvDividend,
-                newminProfitLtvDivider
+                newminProfitLtvDivider,
+                ltv.softLiquidationLtvDividend(),
+                ltv.softLiquidationLtvDivider()
             )
         );
         ltv.setMinProfitLtv(newminProfitLtvDividend, newminProfitLtvDivider);

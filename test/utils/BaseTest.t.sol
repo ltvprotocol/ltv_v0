@@ -156,7 +156,11 @@ contract BaseTest is Test {
                 lendingConnectorData: "",
                 oracleConnectorData: "",
                 slippageConnectorData: abi.encode(init.collateralSlippage, init.borrowSlippage),
-                vaultBalanceAsLendingConnectorData: ""
+                vaultBalanceAsLendingConnectorData: "",
+                softLiquidationFeeDividend: 1,
+                softLiquidationFeeDivider: 100,
+                softLiquidationLtvDividend: 1,
+                softLiquidationLtvDivider: 1
             });
 
             ltv = new DummyLTV();

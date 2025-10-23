@@ -3,13 +3,14 @@ pragma solidity ^0.8.28;
 
 import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
 import {LTVState} from "src/states/LTVState.sol";
+import {BoolReader} from "src/math/abstracts/BoolReader.sol";
 
 /**
  * @title AdministrationModifiers
  * @notice This contract contains modifiers for the administration part of the LTV protocol.
  * It checks if the caller is the governor, guardian, or emergency deleverager.
  */
-abstract contract AdministrationModifiers is LTVState, IAdministrationErrors {
+abstract contract AdministrationModifiers is LTVState, BoolReader, IAdministrationErrors {
     /**
      * @dev modifier to check if the caller is the governor
      */
