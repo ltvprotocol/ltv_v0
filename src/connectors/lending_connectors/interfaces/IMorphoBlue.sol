@@ -64,4 +64,9 @@ interface IMorphoBlue {
         external
         view
         returns (uint128 supplyShares, uint128 borrowShares, uint128 collateral);
+
+    function idToMarketParams(bytes32 marketId)
+        external
+        view
+        returns (address loanToken, address collateralToken, address oracle, address irm, uint256 lltv);
 }

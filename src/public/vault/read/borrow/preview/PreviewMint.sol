@@ -19,7 +19,12 @@ abstract contract PreviewMint is Vault {
     /**
      * @dev see IBorrowVaultModule.previewMint
      */
-    function previewMint(uint256 shares, PreviewDepositVaultState memory state) public pure returns (uint256 assets) {
+    function previewMint(uint256 shares, PreviewDepositVaultState memory state)
+        external
+        view
+        nonReentrantRead
+        returns (uint256 assets)
+    {
         (assets,) = _previewMint(shares, previewDepositStateToPreviewDepositData(state));
     }
 

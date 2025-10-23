@@ -311,24 +311,24 @@ def deploy_ltv(chain, lending_protocol, private_key, args_filename):
         print(f"ERROR Modules provider must be deployed first")
         sys.exit(1)
     
-    if get_contract_is_deployed(chain, CONTRACTS.LTV, lending_protocol, args_filename):
+    if get_contract_is_deployed(chain, CONTRACTS.LTV, lending_protocol, args_filename, data):
         print(f"SUCCESS LTV already deployed")
         return
     
-    deployed_address = deploy_contract(chain, CONTRACTS.LTV, lending_protocol, private_key)
-    write_to_deploy_file(CONTRACTS.LTV, chain, lending_protocol, deployed_address, args_filename)
+    deployed_address = deploy_contract(chain, CONTRACTS.LTV, lending_protocol, private_key, data)
+    write_to_deploy_file(CONTRACTS.LTV, chain, lending_protocol, deployed_address, args_filename, data)
     print(f"SUCCESS LTV deployed at {deployed_address}")
 
 def deploy_beacon(chain, lending_protocol, private_key, args_filename):
-    if not get_contract_is_deployed(chain, CONTRACTS.LTV, lending_protocol, args_filename):
-        print(f"ERROR LTV must be deployed first")
-        sys.exit(1)
-        
     with open(get_args_file_path(chain, lending_protocol, args_filename), "r") as f:
         data = json.load(f)
 
     with open(get_deployed_contracts_file_path(chain, lending_protocol, args_filename), "r") as f:
         data.update(json.load(f))
+    
+    if not get_contract_is_deployed(chain, CONTRACTS.LTV, lending_protocol, args_filename, data):
+        print(f"ERROR LTV must be deployed first")
+        sys.exit(1)
     
     if get_contract_is_deployed(chain, CONTRACTS.BEACON, lending_protocol, args_filename, data):
         print(f"SUCCESS Beacon already deployed")

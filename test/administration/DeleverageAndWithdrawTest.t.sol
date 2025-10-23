@@ -305,17 +305,6 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         assertEq(ltv.isVaultDeleveraged(), true);
     }
 
-    function test_failIfVaultBalanceAsLendingConnectorIsNotSet(DefaultTestData memory data)
-        public
-        testWithPredefinedDefaultValues(data)
-    {
-        vm.prank(data.owner);
-        ltv.setVaultBalanceAsLendingConnector(address(0), "");
-        vm.startPrank(data.emergencyDeleverager);
-        vm.expectRevert(abi.encodeWithSelector(IAdministrationErrors.VaultBalanceAsLendingConnectorNotSet.selector));
-        ltv.deleverageAndWithdraw(0, 0, 1);
-    }
-
     function test_failIfNotEnoughBorrowAssets(DefaultTestData memory data)
         public
         testWithPredefinedDefaultValues(data)

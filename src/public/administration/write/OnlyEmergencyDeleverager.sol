@@ -17,6 +17,9 @@ import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 /**
  * @title OnlyEmergencyDeleverager
  * @notice This contract contains only emergency deleverager public function implementation.
+ * @dev Emergency deleverege function can be executed only once and cannot be undone. It fully
+ * deleverages the vault by repaying all borrowed assets and withdrawing all collateral assets.
+ * After this operation only withdrawals of collateral assets are possible.
  */
 abstract contract OnlyEmergencyDeleverager is
     AdministrationSetters,
@@ -45,7 +48,6 @@ abstract contract OnlyEmergencyDeleverager is
             )
         );
         require(!_isVaultDeleveraged(boolSlot), VaultAlreadyDeleveraged());
-        require(address(vaultBalanceAsLendingConnector) != address(0), VaultBalanceAsLendingConnectorNotSet());
 
         MaxGrowthFeeState memory state = maxGrowthFeeState();
         MaxGrowthFeeData memory data = maxGrowthFeeStateToData(state);
@@ -89,6 +91,9 @@ abstract contract OnlyEmergencyDeleverager is
         if (collateralToTransfer != 0) {
             collateralToken.safeTransfer(msg.sender, collateralToTransfer);
         }
+        // Set the vault as deleveraged. After this operation collateral assets are transferred to the
+        // vault address. Users still will be able to burn their shares to withdraw this collateral(via
+        // withdrawCollateral or redeemCollateral functions)
         setBool(Constants.IS_VAULT_DELEVERAGED_BIT, true);
         lendingConnectorGetterData = "";
     }

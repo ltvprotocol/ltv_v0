@@ -6,7 +6,6 @@ import {ILendingConnector} from "src/interfaces/connectors/ILendingConnector.sol
 import {IOracleConnector} from "src/interfaces/connectors/IOracleConnector.sol";
 import {IWhitelistRegistry} from "src/interfaces/IWhitelistRegistry.sol";
 import {ISlippageConnector} from "src/interfaces/connectors/ISlippageConnector.sol";
-import {IModules} from "src/interfaces/IModules.sol";
 
 /**
  * @title LTVState
@@ -30,7 +29,7 @@ abstract contract LTVState {
     address public emergencyDeleverager;
 
     IWhitelistRegistry public whitelistRegistry;
-    IModules public modules;
+    uint256 private _placeholderSlot;
 
     int256 public futureBorrowAssets;
     int256 public futureCollateralAssets;

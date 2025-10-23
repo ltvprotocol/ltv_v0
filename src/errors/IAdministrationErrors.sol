@@ -145,6 +145,12 @@ interface IAdministrationErrors {
     error FunctionStopped(bytes4 functionSignature);
 
     /**
+     * @notice Error thrown when the protocol is paused
+     * @dev Used when the protocol is in a state where it is paused
+     */
+    error ProtocolIsPaused();
+
+    /**
      * @notice Error thrown when attempting to send assets to a non-whitelisted receiver
      * @param receiver The address of the non-whitelisted receiver
      * @dev Prevents unauthorized asset transfers
@@ -168,13 +174,6 @@ interface IAdministrationErrors {
      * @dev Prevents setting invalid slippage connector addresses
      */
     error ZeroSlippageConnector();
-    error EOADelegateCall();
-
-    /**
-     * @notice Error thrown when vault balance as lending connector is not configured
-     * @dev Occurs when trying to use lending connector functionality without proper setup
-     */
-    error VaultBalanceAsLendingConnectorNotSet();
 
     /**
      * @notice Error thrown when attempting to set a zero address as modules provider
@@ -215,4 +214,9 @@ interface IAdministrationErrors {
     error FailedToSetVaultBalanceAsLendingConnector(
         address vaultBalanceAsLendingConnector, bytes vaultBalanceAsLendingConnectorGetterData
     );
+
+    /**
+     * @notice Error thrown when auction duration is set to zero during initialization
+     */
+    error ZeroAuctionDuration();
 }
