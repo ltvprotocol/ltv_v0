@@ -11,7 +11,7 @@ import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/Safe
  * @title AaveV3Connector
  * @notice Connector for Aave V3 Pool
  */
-contract AaveV3Connector is LTVState, ILendingConnector, IAaveV3ConnectorErrors {{
+contract AaveV3Connector is LTVState, ILendingConnector, IAaveV3ConnectorErrors {
     using SafeERC20 for IERC20;
 
     IAaveV3Pool public immutable POOL;
