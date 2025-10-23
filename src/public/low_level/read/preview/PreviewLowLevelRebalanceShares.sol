@@ -20,7 +20,8 @@ abstract contract PreviewLowLevelRebalanceShares is PreviewLowLevelRebalanceStat
      */
     function previewLowLevelRebalanceShares(int256 deltaShares, PreviewLowLevelRebalanceState memory state)
         public
-        pure
+        view
+        nonReentrantRead
         returns (int256, int256)
     {
         (int256 deltaRealCollateral, int256 deltaRealBorrow,) =

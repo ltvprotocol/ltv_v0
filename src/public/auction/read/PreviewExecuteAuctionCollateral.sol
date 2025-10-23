@@ -6,18 +6,20 @@ import {AuctionData} from "src/structs/data/auction/AuctionData.sol";
 import {DeltaAuctionState} from "src/structs/state_transition/DeltaAuctionState.sol";
 import {AuctionStateToData} from "src/math/abstracts/AuctionStateToData.sol";
 import {AuctionMath} from "src/math/libraries/AuctionMath.sol";
-
+import {NonReentrantRead} from "src/modifiers/NonReentrantRead.sol";
 /**
  * @title PreviewExecuteAuctionCollateral
  * @notice This contract contains preview execute auction collateral function implementation.
  */
-abstract contract PreviewExecuteAuctionCollateral is AuctionStateToData {
+
+abstract contract PreviewExecuteAuctionCollateral is AuctionStateToData, NonReentrantRead {
     /**
      * @dev see IAuctionModule.previewExecuteAuctionCollateral
      */
     function previewExecuteAuctionCollateral(int256 deltaUserCollateralAssets, AuctionState memory auctionState)
         external
         view
+        nonReentrantRead
         returns (int256)
     {
         return _previewExecuteAuctionCollateral(deltaUserCollateralAssets, auctionStateToData(auctionState))

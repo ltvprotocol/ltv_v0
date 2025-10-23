@@ -185,6 +185,7 @@ contract SetIsDepositDisabledTest is PrepareEachFunctionSuccessfulExecution {
         testWithPredefinedDefaultValues(data)
     {
         vm.startPrank(data.guardian);
+        vm.assume(user != address(0));
         ltv.setIsDepositDisabled(true);
         vm.stopPrank();
 

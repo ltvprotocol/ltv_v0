@@ -14,7 +14,8 @@ abstract contract MaxLowLevelRebalanceBorrow is MaxGrowthFee {
      */
     function maxLowLevelRebalanceBorrow(MaxLowLevelRebalanceBorrowStateData memory state)
         public
-        pure
+        view
+        nonReentrantRead
         returns (int256)
     {
         return _maxLowLevelRebalanceBorrow(state);
