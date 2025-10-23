@@ -24,8 +24,8 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
         borrowToken.approve(address(ltv), borrowAssets);
         ltv.deleverageAndWithdraw(borrowAssets, 1, 100);
 
-        // equivalent to 30 * 10**17 borrow assets + 1% fee
-        uint256 expectedBalance = 15 * 10 ** 17 + 5 * 10 ** 15;
+        // equivalent to 30 * 10**17 borrow assets + 1(multiplied by 3 because of 4x leverage)% fee
+        uint256 expectedBalance = 15 * 10 ** 17 + 3 * 5 * 10 ** 15;
         assertEq(collateralToken.balanceOf(data.emergencyDeleverager), expectedBalance);
         assertEq(ltv.futureBorrowAssets(), 0);
         assertEq(ltv.futureCollateralAssets(), 0);
@@ -37,23 +37,6 @@ contract DeleverageAndWithdrawTest is PrepareEachFunctionSuccessfulExecution {
 
         assertEq(ltv.isVaultDeleveraged(), true);
         assertEq(address(ltv.getLendingConnector()), address(ltv.vaultBalanceAsLendingConnector()));
-    }
-
-    function test_getEverythingAsFee(DefaultTestData memory data) public testWithPredefinedDefaultValues(data) {
-        vm.prank(data.governor);
-        ltv.setMaxDeleverageFee(1, 1); // 100% fee
-
-        uint256 collateralAssets = ltv.getLendingConnector().getRealCollateralAssets(false, "");
-        uint256 borrowAssets = ltv.getLendingConnector().getRealBorrowAssets(false, "");
-
-        deal(address(borrowToken), data.emergencyDeleverager, borrowAssets);
-
-        vm.startPrank(data.emergencyDeleverager);
-
-        borrowToken.approve(address(ltv), borrowAssets);
-        ltv.deleverageAndWithdraw(borrowAssets, 1, 1);
-
-        assertEq(collateralToken.balanceOf(data.emergencyDeleverager), collateralAssets);
     }
 
     function test_failIfGreaterThanMaxDeleverageFee(DefaultTestData memory data)

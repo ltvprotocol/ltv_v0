@@ -118,20 +118,20 @@ abstract contract OnlyEmergencyDeleverager is
         );
         uint256 liquidationAmountCollateralInUnderlying = liquidationAmountBorrowInUnderlying;
 
-        liquidationAmountCollateralInUnderlying += (
-            uint256(totalAssetsData.collateral) - liquidationAmountCollateralInUnderlying
-        ).mulDivDown(bonusDividend, bonusDivider);
+        liquidationAmountCollateralInUnderlying +=
+            liquidationAmountCollateralInUnderlying.mulDivDown(bonusDividend, bonusDivider);
 
         uint256 liquidationAmountCollateral = liquidationAmountCollateralInUnderlying.mulDivDown(
             10 ** collateralTokenDecimals, oracleConnector.getPriceCollateralOracle(_oracleConnectorGetterData)
         );
         if (isSoftLiquidation) {
             require(
-                (uint256(totalAssetsData.collateral) - liquidationAmountCollateral) * softLiquidationLtvDivider
+                (uint256(totalAssetsData.collateral) - liquidationAmountCollateralInUnderlying)
+                    * softLiquidationLtvDivider
                     > (uint256(totalAssetsData.borrow) - liquidationAmountBorrowInUnderlying) * softLiquidationLtvDividend,
                 SoftLiquidationResultBelowSoftLiquidationLtv(
-                    uint256(totalAssetsData.collateral),
-                    uint256(totalAssetsData.borrow),
+                    uint256(totalAssetsData.collateral - liquidationAmountCollateralInUnderlying),
+                    uint256(totalAssetsData.borrow - liquidationAmountBorrowInUnderlying),
                     softLiquidationLtvDividend,
                     softLiquidationLtvDivider
                 )
