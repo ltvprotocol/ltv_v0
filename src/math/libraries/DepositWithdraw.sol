@@ -5,7 +5,6 @@ import {DeltaRealBorrowAndDeltaRealCollateralData} from
     "src/structs/data/vault/delta_real_collateral/DeltaRealBorrowAndDeltaRealCollateralData.sol";
 import {DepositWithdrawData} from "src/structs/data/vault/common/DepositWithdrawData.sol";
 import {DeltaFuture} from "src/structs/state_transition/DeltaFuture.sol";
-import {Cases} from "src/structs/data/vault/common/Cases.sol";
 import {DeltaRealBorrowAndDeltaRealCollateral} from
     "src/math/libraries/delta_future_collateral/DeltaRealBorrowAndDeltaRealCollateral.sol";
 import {CommonBorrowCollateral} from "src/math/libraries/CommonBorrowCollateral.sol";
@@ -28,12 +27,12 @@ library DepositWithdraw {
         pure
         returns (int256 sharesAsAssets, DeltaFuture memory deltaFuture)
     {
-        Cases memory cases = CasesOperator.generateCase(0);
+        deltaFuture.cases = CasesOperator.generateCase(0);
 
-        (deltaFuture.deltaFutureCollateral, cases) = DeltaRealBorrowAndDeltaRealCollateral
+        (deltaFuture.deltaFutureCollateral, deltaFuture.cases) = DeltaRealBorrowAndDeltaRealCollateral
             .calculateDeltaFutureCollateralByDeltaRealBorrowAndDeltaRealCollateral(
             DeltaRealBorrowAndDeltaRealCollateralData({
-                cases: cases,
+                cases: deltaFuture.cases,
                 borrow: data.borrow,
                 collateral: data.collateral,
                 protocolFutureRewardBorrow: data.protocolFutureRewardBorrow,
@@ -56,32 +55,35 @@ library DepositWithdraw {
         // ∆userBorrow = ∆realBorrow + ∆futureBorrow + ∆userFutureRewardBorrow + ∆futurePaymentBorrow
 
         deltaFuture.deltaFutureBorrow = CommonBorrowCollateral.calculateDeltaFutureBorrowFromDeltaFutureCollateral(
-            cases, data.futureCollateral, data.futureBorrow, deltaFuture.deltaFutureCollateral
+            deltaFuture.cases, data.futureCollateral, data.futureBorrow, deltaFuture.deltaFutureCollateral
         );
 
         deltaFuture.deltaUserFutureRewardCollateral = CommonBorrowCollateral.calculateDeltaUserFutureRewardCollateral(
-            cases, data.futureCollateral, data.userFutureRewardCollateral, deltaFuture.deltaFutureCollateral
+            deltaFuture.cases, data.futureCollateral, data.userFutureRewardCollateral, deltaFuture.deltaFutureCollateral
         );
 
         deltaFuture.deltaProtocolFutureRewardCollateral = CommonBorrowCollateral
             .calculateDeltaProtocolFutureRewardCollateral(
-            cases, data.futureCollateral, data.protocolFutureRewardCollateral, deltaFuture.deltaFutureCollateral
+            deltaFuture.cases,
+            data.futureCollateral,
+            data.protocolFutureRewardCollateral,
+            deltaFuture.deltaFutureCollateral
         );
 
         deltaFuture.deltaFuturePaymentCollateral = CommonBorrowCollateral.calculateDeltaFuturePaymentCollateral(
-            cases, data.futureCollateral, deltaFuture.deltaFutureCollateral, data.collateralSlippage
+            deltaFuture.cases, data.futureCollateral, deltaFuture.deltaFutureCollateral, data.collateralSlippage
         );
 
         deltaFuture.deltaUserFutureRewardBorrow = CommonBorrowCollateral.calculateDeltaUserFutureRewardBorrow(
-            cases, data.futureBorrow, data.userFutureRewardBorrow, deltaFuture.deltaFutureBorrow
+            deltaFuture.cases, data.futureBorrow, data.userFutureRewardBorrow, deltaFuture.deltaFutureBorrow
         );
 
         deltaFuture.deltaProtocolFutureRewardBorrow = CommonBorrowCollateral.calculateDeltaProtocolFutureRewardBorrow(
-            cases, data.futureBorrow, data.protocolFutureRewardBorrow, deltaFuture.deltaFutureBorrow
+            deltaFuture.cases, data.futureBorrow, data.protocolFutureRewardBorrow, deltaFuture.deltaFutureBorrow
         );
 
         deltaFuture.deltaFuturePaymentBorrow = CommonBorrowCollateral.calculateDeltaFuturePaymentBorrow(
-            cases, data.futureBorrow, deltaFuture.deltaFutureBorrow, data.borrowSlippage
+            deltaFuture.cases, data.futureBorrow, deltaFuture.deltaFutureBorrow, data.borrowSlippage
         );
 
         sharesAsAssets = data.deltaRealCollateral + deltaFuture.deltaFutureCollateral

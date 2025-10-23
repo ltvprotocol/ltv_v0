@@ -185,6 +185,13 @@ abstract contract AdministrationWrite is LTVState, CommonWrite, FacadeImplementa
     }
 
     /**
+     * @dev see ILTV.sweep
+     */
+    function sweep(address token, uint256 amount) external {
+        _delegate(address(MODULES.administrationModule()), abi.encode(token, amount));
+    }
+
+    /**
      * @dev see ILTV.setSoftLiquidationFee
      */
     function setSoftLiquidationFee(uint16 dividend, uint16 divider) external {

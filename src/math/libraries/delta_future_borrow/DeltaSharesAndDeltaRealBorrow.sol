@@ -33,7 +33,7 @@ library DeltaSharesAndDeltaRealBorrow {
      * @param needToRoundUp Whether to round up the calculation results (true = round up, false = round down)
      * @return The calculated dividend value for delta future borrow
      */
-    function calculateDividentByDeltaSharesAndDeltaRealBorrow(
+    function calculateDividendByDeltaSharesAndDeltaRealBorrow(
         DeltaSharesAndDeltaRealBorrowDividendData memory data,
         bool needToRoundUp
     ) private pure returns (int256) {
@@ -132,7 +132,7 @@ library DeltaSharesAndDeltaRealBorrow {
         bool needToRoundUpDividend,
         bool needToRoundUpDivider
     ) private pure returns (int256, bool) {
-        int256 dividend = calculateDividentByDeltaSharesAndDeltaRealBorrow(
+        int256 dividend = calculateDividendByDeltaSharesAndDeltaRealBorrow(
             DeltaSharesAndDeltaRealBorrowDividendData({
                 borrow: data.borrow,
                 collateral: data.collateral,
@@ -357,7 +357,7 @@ library DeltaSharesAndDeltaRealBorrow {
     ) private pure returns (int256 dividend) {
         data.cases = CasesOperator.generateCase(6); // cna case - neutral case
 
-        dividend = calculateDividentByDeltaSharesAndDeltaRealBorrow(
+        dividend = calculateDividendByDeltaSharesAndDeltaRealBorrow(
             DeltaSharesAndDeltaRealBorrowDividendData({
                 borrow: data.borrow,
                 collateral: data.collateral,
@@ -383,7 +383,7 @@ library DeltaSharesAndDeltaRealBorrow {
      * @return deltaFutureBorrow The calculated delta future borrow value
      * @return cases The case configuration that produced a valid result
      */
-    function positiveFutureBorrowBranchDeltaSharesAndDeltaRealBorrow(DeltaSharesAndDeltaRealBorrowData memory data)
+    function positiveBranchDeltaSharesAndDeltaRealBorrow(DeltaSharesAndDeltaRealBorrowData memory data)
         private
         pure
         returns (int256, Cases memory)
@@ -445,7 +445,7 @@ library DeltaSharesAndDeltaRealBorrow {
      * @return deltaFutureBorrow The calculated delta future borrow value
      * @return cases The case configuration that produced a valid result
      */
-    function negativeFutureBorrowBranchDeltaSharesAndDeltaRealBorrow(DeltaSharesAndDeltaRealBorrowData memory data)
+    function negativeBranchDeltaSharesAndDeltaRealBorrow(DeltaSharesAndDeltaRealBorrowData memory data)
         private
         pure
         returns (int256, Cases memory)
@@ -506,7 +506,7 @@ library DeltaSharesAndDeltaRealBorrow {
      * @return deltaFutureBorrow The calculated delta future borrow value
      * @return cases The case configuration that produced a valid result
      */
-    function zeroFutureBorrowBranchDeltaSharesAndDeltaRealBorrow(DeltaSharesAndDeltaRealBorrowData memory data)
+    function zeroBranchDeltaSharesAndDeltaRealBorrow(DeltaSharesAndDeltaRealBorrowData memory data)
         private
         pure
         returns (int256, Cases memory)
@@ -555,10 +555,10 @@ library DeltaSharesAndDeltaRealBorrow {
      * cecb, cecbc, cmbc - round up
      *
      * ROUNDING DIVIDER:
-     * cmcb, ceccb, cmbc, cecbc - roundind up
+     * cmcb, ceccb, cmbc, cecbc - rounding up
      * cebc, cecb - rounding down
      *
-     * ROUDNING DIVIDEND:
+     * ROUNDING DIVIDEND:
      * cmcb, ceccb, cebc - rounding up
      * cmcb, cecbc, cecb - rounding down
      */
@@ -577,12 +577,12 @@ library DeltaSharesAndDeltaRealBorrow {
         pure
         returns (int256, Cases memory)
     {
-        if (data.futureBorrow > 0) {
-            return positiveFutureBorrowBranchDeltaSharesAndDeltaRealBorrow(data);
-        } else if (data.futureBorrow < 0) {
-            return negativeFutureBorrowBranchDeltaSharesAndDeltaRealBorrow(data);
+        if (data.futureBorrow > 0 || data.futureCollateral > 0) {
+            return positiveBranchDeltaSharesAndDeltaRealBorrow(data);
+        } else if (data.futureBorrow < 0 || data.futureCollateral < 0) {
+            return negativeBranchDeltaSharesAndDeltaRealBorrow(data);
         } else {
-            return zeroFutureBorrowBranchDeltaSharesAndDeltaRealBorrow(data);
+            return zeroBranchDeltaSharesAndDeltaRealBorrow(data);
         }
     }
 }

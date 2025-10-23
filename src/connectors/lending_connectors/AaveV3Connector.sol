@@ -5,13 +5,16 @@ import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {ILendingConnector} from "src/interfaces/connectors/ILendingConnector.sol";
 import {IAaveV3Pool} from "src/connectors/lending_connectors/interfaces/IAaveV3Pool.sol";
 import {LTVState} from "src/states/LTVState.sol";
-import {IAaveV3ConnectorErrors} from "../../../src/errors/connectors/IAaveV3ConnectorErrors.sol";
+import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
+import {IAaveV3ConnectorErrors} from "src/errors/connectors/IAaveV3ConnectorErrors.sol";
 
 /**
  * @title AaveV3Connector
  * @notice Connector for Aave V3 Pool
  */
 contract AaveV3Connector is LTVState, ILendingConnector, IAaveV3ConnectorErrors {
+    using SafeERC20 for IERC20;
+
     IAaveV3Pool public immutable POOL;
 
     constructor(address _pool) {
@@ -23,7 +26,7 @@ contract AaveV3Connector is LTVState, ILendingConnector, IAaveV3ConnectorErrors 
      * @inheritdoc ILendingConnector
      */
     function supply(uint256 amount) external {
-        collateralToken.approve(address(POOL), amount);
+        collateralToken.forceApprove(address(POOL), amount);
         POOL.supply(address(collateralToken), amount, address(this), 0);
     }
 
@@ -45,7 +48,7 @@ contract AaveV3Connector is LTVState, ILendingConnector, IAaveV3ConnectorErrors 
      * @inheritdoc ILendingConnector
      */
     function repay(uint256 amount) external {
-        borrowToken.approve(address(POOL), amount);
+        borrowToken.forceApprove(address(POOL), amount);
         POOL.repay(address(borrowToken), amount, 2, address(this));
     }
 
@@ -73,7 +76,8 @@ contract AaveV3Connector is LTVState, ILendingConnector, IAaveV3ConnectorErrors 
         address borrowAToken = POOL.getReserveData(address(borrowToken)).variableDebtTokenAddress;
 
         lendingConnectorGetterData = abi.encode(collateralAToken, borrowAToken);
-        uint8 emodeId = uint8(abi.decode(emode, (uint256)));
+
+        uint8 emodeId = uint8(abi.decode(emode, (uint8)));
 
         (uint16 ltv, uint16 liquidationThreshold, uint16 liquidationBonus) =
             POOL.getEModeCategoryCollateralConfig(emodeId);

@@ -43,7 +43,7 @@ abstract contract TotalAssets is TotalAssetsStateToData, NonReentrantRead {
      * @dev base function to calculate total assets
      */
     function _totalAssets(bool isDeposit, TotalAssetsData memory data) internal pure virtual returns (uint256) {
-        // Add 100 to avoid vault attack
+        // Add virtual assets to avoid vault attack
         // in case of deposit need to overestimate our assets
         return uint256(data.collateral - data.borrow).mulDiv(
             10 ** data.borrowTokenDecimals, data.borrowPrice, isDeposit

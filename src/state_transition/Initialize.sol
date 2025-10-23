@@ -44,6 +44,7 @@ abstract contract Initialize is AdministrationSetters, OwnableUpgradeable {
         _updateGuardian(initData.guardian);
         _updateEmergencyDeleverager(initData.emergencyDeleverager);
 
+        require(initData.auctionDuration != 0, ZeroAuctionDuration());
         auctionDuration = initData.auctionDuration;
         lastSeenTokenPrice = Constants.LAST_SEEN_PRICE_PRECISION;
 

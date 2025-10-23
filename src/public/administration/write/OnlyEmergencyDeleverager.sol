@@ -44,7 +44,8 @@ abstract contract OnlyEmergencyDeleverager is
         nonReentrant
     {
         require(
-            deleverageFeeDividend * maxDeleverageFeeDivider <= deleverageFeeDivider * maxDeleverageFeeDividend,
+            uint256(deleverageFeeDividend) * maxDeleverageFeeDivider
+                <= uint256(deleverageFeeDivider) * maxDeleverageFeeDividend,
             ExceedsMaxDeleverageFee(
                 deleverageFeeDividend, deleverageFeeDivider, maxDeleverageFeeDividend, maxDeleverageFeeDivider
             )

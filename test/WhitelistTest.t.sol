@@ -43,7 +43,7 @@ contract WhitelistTest is BalancedTest {
         address signer = vm.addr(signerPrivateKey);
         WhitelistRegistry whitelistRegistry = new WhitelistRegistry(owner, signer);
 
-        bytes32 hash = keccak256(abi.encodePacked(block.chainid, address(whitelistRegistry), user));
+        bytes32 hash = keccak256(abi.encode(block.chainid, address(whitelistRegistry), user));
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(signerPrivateKey, hash);
 
         assertEq(whitelistRegistry.isAddressWhitelisted(user), false);
@@ -67,7 +67,7 @@ contract WhitelistTest is BalancedTest {
         bytes32 s;
 
         {
-            bytes32 digest = keccak256(abi.encodePacked(block.chainid, address(whitelistRegistry), user));
+            bytes32 digest = keccak256(abi.encode(block.chainid, address(whitelistRegistry), user));
             (v, r, s) = vm.sign(signerPrivateKey, digest);
         }
         assertEq(whitelistRegistry.isAddressWhitelisted(user), false);
@@ -92,7 +92,8 @@ contract WhitelistTest is BalancedTest {
         WhitelistRegistry whitelistRegistry,
         address differentUser
     ) internal view returns (uint8 v, bytes32 r, bytes32 s) {
-        bytes32 digest = keccak256(abi.encodePacked(block.chainid, address(whitelistRegistry), differentUser));
+        // Create signature for a different user to make it invalid
+        bytes32 digest = keccak256(abi.encode(block.chainid, address(whitelistRegistry), differentUser));
         return vm.sign(signerPrivateKey, digest);
     }
 
