@@ -167,10 +167,12 @@ contract AdministrationSetters is
     }
 
     function _setSlippageConnectorData(bytes memory slippageConnectorData) internal {
+        bytes memory oldSlippageConnectorData = slippageConnectorGetterData;
         (bool success, bytes memory data) = address(slippageConnector).delegatecall(
             abi.encodeCall(ISlippageConnector.initializeSlippageConnectorData, (slippageConnectorData))
         );
         delegateCallPostCheck(address(slippageConnector), success, data);
+        emit SlippageConnectorDataUpdated(oldSlippageConnectorData, slippageConnectorData);
     }
 
     /**
@@ -179,6 +181,7 @@ contract AdministrationSetters is
     function _allowDisableFunctions(bytes4[] memory signatures, bool isDisabled) internal {
         for (uint256 i = 0; i < signatures.length; i++) {
             _isFunctionDisabled[signatures[i]] = isDisabled;
+            emit FunctionPausedChanged(signatures[i], isDisabled);
         }
     }
 
