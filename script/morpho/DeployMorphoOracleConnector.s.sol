@@ -7,13 +7,14 @@ import {console} from "forge-std/console.sol";
 
 contract DeployMorphoOracleConnector is BaseScript {
     function deploy() internal override {
-        MorphoOracleConnector connector = new MorphoOracleConnector{salt: bytes32(0)}();
-        console.log("Morpho connector deployed at", address(connector));
+        address morpho = vm.envAddress("MORPHO");
+        MorphoOracleConnector connector = new MorphoOracleConnector{salt: bytes32(0)}(morpho);
+        console.log("Morpho oracle connector deployed at", address(connector));
     }
 
     function hashedCreationCode() internal view override returns (bytes32) {
-        address oracle = vm.envAddress("ORACLE");
+        address morpho = vm.envAddress("MORPHO");
 
-        return keccak256(abi.encodePacked(type(MorphoOracleConnector).creationCode, abi.encode(oracle)));
+        return keccak256(abi.encodePacked(type(MorphoOracleConnector).creationCode, abi.encode(morpho)));
     }
 }
