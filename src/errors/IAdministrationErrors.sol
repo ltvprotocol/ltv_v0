@@ -180,12 +180,6 @@ interface IAdministrationErrors {
     error ZeroSlippageConnector();
 
     /**
-     * @notice Error thrown when attempting to set a zero address as modules provider
-     * @dev Prevents setting invalid modules provider addresses
-     */
-    error ZeroModulesProvider();
-
-    /**
      * @notice Error thrown when soft liquidation expected result is below configured threshold
      * @param calculatedBorrowInUnderlying Expected borrow assets amount in lending protocol after liquidation
      * @param calculatedCollateralInUnderlying Expected collateral assets amount in lending protocol after liquidation
