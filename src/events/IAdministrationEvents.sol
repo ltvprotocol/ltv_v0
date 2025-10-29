@@ -176,14 +176,6 @@ interface IAdministrationEvents {
     event FeeCollectorUpdated(address oldValue, address newValue);
 
     /**
-     * @notice Emitted when the modules provider address is updated
-     * @param oldValue The previous modules provider address
-     * @param newValue The new modules provider address
-     * @dev Modules provider supplies additional functionality modules to the vault
-     */
-    event ModulesUpdated(address oldValue, address newValue);
-
-    /**
      * @notice Emitted when the vault balance as lending connector is updated
      * @param oldValue The previous vault balance connector address
      * @param newValue The new vault balance connector address

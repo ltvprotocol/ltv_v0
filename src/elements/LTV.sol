@@ -16,6 +16,7 @@ import {AdministrationRead} from "../facades/reads/AdministrationRead.sol";
 import {InitializeWrite} from "../facades/writes/InitializeWrite.sol";
 import {IModules} from "../interfaces/IModules.sol";
 import {OwnableUpgradeable} from "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
+import {IFacadeErrors} from "../errors/IFacadeErrors.sol";
 /**
  * @title LTV
  * @notice Main facade of LTV protocol. This contract contains all the public function signatures of LTV protocol.
@@ -52,10 +53,12 @@ contract LTV is
     AdministrationWrite,
     AdministrationRead,
     InitializeWrite,
-    OwnableUpgradeable
+    OwnableUpgradeable,
+    IFacadeErrors
 {
     constructor(address modules) {
         _disableInitializers();
+        require(modules != address(0), ZeroModulesProvider());
         MODULES = IModules(modules);
     }
 }
