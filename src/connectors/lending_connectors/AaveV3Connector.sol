@@ -84,7 +84,7 @@ contract AaveV3Connector is LTVState, ILendingConnector, IAaveV3ConnectorErrors 
         uint16 ltv;
         uint16 liquidationThreshold;
         uint16 liquidationBonus;
-        if (block.chainId == 11155111) {
+        if (block.chainid == 11155111) {
             (ltv, liquidationThreshold, liquidationBonus,,,) = POOL.getEModeCategoryData(emodeId);
         } else {
             (ltv, liquidationThreshold, liquidationBonus) = POOL.getEModeCategoryCollateralConfig(emodeId);

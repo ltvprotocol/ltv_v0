@@ -43,5 +43,5 @@ interface IAaveV3Pool {
     function getEModeCategoryData(uint8 id)
         external
         view
-        returns (uint16 ltv, uint16 liquidationThreshold, uint16 liquidationBonus, uint128, string, uint128);
+        returns (uint16 ltv, uint16 liquidationThreshold, uint16 liquidationBonus, uint128, string memory, uint128);
 }
