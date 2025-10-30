@@ -81,8 +81,14 @@ contract AaveV3Connector is LTVState, ILendingConnector, IAaveV3ConnectorErrors 
         lendingConnectorGetterData = abi.encode(collateralAToken, borrowVToken);
         uint8 emodeId = uint8(abi.decode(emode, (uint8)));
 
-        (uint16 ltv, uint16 liquidationThreshold, uint16 liquidationBonus) =
-            POOL.getEModeCategoryCollateralConfig(emodeId);
+        uint16 ltv;
+        uint16 liquidationThreshold;
+        uint16 liquidationBonus;
+        if (block.chainId == 11155111) {
+            (ltv, liquidationThreshold, liquidationBonus,,,) = POOL.getEModeCategoryData(emodeId);
+        } else {
+            (ltv, liquidationThreshold, liquidationBonus) = POOL.getEModeCategoryCollateralConfig(emodeId);
+        }
         require(ltv != 0 && liquidationThreshold != 0 && liquidationBonus != 0, InvalidEModeId(emodeId));
         POOL.setUserEMode(emodeId);
     }
