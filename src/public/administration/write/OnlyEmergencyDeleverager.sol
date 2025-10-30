@@ -162,5 +162,6 @@ abstract contract OnlyEmergencyDeleverager is
             withdraw(lendingConnector.getRealCollateralAssets(true, lendingConnectorGetterData));
         }
         collateralToken.safeTransfer(msg.sender, liquidationAmountCollateral);
+        emit LiquidationPerformed(liquidationAmountBorrow, bonusDividend, bonusDivider, isSoftLiquidation);
     }
 }

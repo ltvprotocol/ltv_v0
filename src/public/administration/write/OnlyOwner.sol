@@ -87,5 +87,6 @@ abstract contract OnlyOwner is AdministrationSetters, OwnableUpgradeable, Reentr
      */
     function sweep(address token, uint256 amount) external onlyOwner nonReentrant {
         IERC20(token).safeTransfer(owner(), amount);
+        emit TokenSwept(token, amount);
     }
 }

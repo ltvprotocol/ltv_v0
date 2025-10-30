@@ -210,4 +210,40 @@ interface IAdministrationEvents {
      * @dev Controls the ltv threshold for soft liquidation operations
      */
     event SoftLiquidationLtvChanged(uint16 oldDividend, uint16 oldDivider, uint16 newDividend, uint16 newDivider);
+
+    /**
+     * @notice Emitted when a function is paused
+     * @param functionSignature The function signature that is paused
+     * @param isPaused The new paused status
+     * @dev Used for emergency function disabling
+     */
+    event FunctionPausedChanged(bytes4 functionSignature, bool isPaused);
+
+    /**
+     * @notice Emitted when liquidation operation is performed
+     * @param liquidationAmountBorrow The amount of borrow repaid
+     * @param bonusDividend The bonus fee numerator
+     * @param bonusDivider The bonus fee denominator
+     * @param isSoftLiquidation The flag indicating if the liquidation is soft
+     * @dev Emitted when liquidation operation is performed
+     */
+    event LiquidationPerformed(
+        uint256 liquidationAmountBorrow, uint16 bonusDividend, uint16 bonusDivider, bool isSoftLiquidation
+    );
+
+    /**
+     * @notice Emitted when the slippage connector data is updated
+     * @param oldData The previous slippage connector data
+     * @param newData The new slippage connector data
+     * @dev Emitted when the slippage connector data is updated
+     */
+    event SlippageConnectorDataUpdated(bytes oldData, bytes newData);
+
+    /**
+     * @notice Emitted when token is transferred from the protocol balance to the owner
+     * @param token The token that is transferred
+     * @param amount The amount of tokens that is transferred
+     * @dev Emitted when token is transferred from the protocol balance to the owner
+     */
+    event TokenSwept(address token, uint256 amount);
 }
