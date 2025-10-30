@@ -30,6 +30,7 @@ class CONTRACTS(Enum):
     LENDING_CONNECTOR = "LENDING_CONNECTOR"
     LTV_BEACON_PROXY = "LTV_BEACON_PROXY"
     GHOST_UPGRADE = "GHOST_UPGRADE"
+    NOTHING = "NONE"
 
 
 CHAIN_TO_CHAIN_ID = {
@@ -149,6 +150,8 @@ def get_args_file_path(chain, lending_protocol, args_filename):
 
 
 def get_contract_is_deployed(chain, contract, lending_protocol, args_filename, args={}):
+    if contract == CONTRACTS.NOTHING:
+        return True
     expected_address = get_expected_address(chain, contract, lending_protocol, args)
     deployed_contracts_file_path = get_deployed_contracts_file_path(
         chain, lending_protocol, args_filename
@@ -805,6 +808,56 @@ def test_deployed_ltv_beacon_proxy(chain, lending_protocol, args_filename):
     print(f"SUCCESS LTV beacon proxy test passed")
 
 
+def deploy_ltv_implementation(args):
+    deploy_erc20_module(
+        args.chain, args.lending_protocol, args.private_key, args.args_filename
+    )
+    deploy_borrow_vault_module(
+        args.chain, args.lending_protocol, args.private_key, args.args_filename
+    )
+    deploy_collateral_vault_module(
+        args.chain, args.lending_protocol, args.private_key, args.args_filename
+    )
+    deploy_low_level_rebalance_module(
+        args.chain, args.lending_protocol, args.private_key, args.args_filename
+    )
+    deploy_auction_module(
+        args.chain, args.lending_protocol, args.private_key, args.args_filename
+    )
+    deploy_administration_module(
+        args.chain, args.lending_protocol, args.private_key, args.args_filename
+    )
+    deploy_initialize_module(
+        args.chain, args.lending_protocol, args.private_key, args.args_filename
+    )
+    deploy_modules_provider(
+        args.chain, args.lending_protocol, args.private_key, args.args_filename
+    )
+    deploy_ltv(args.chain, args.lending_protocol, args.private_key, args.args_filename)
+
+
+def deploy_connectors(args, contract=CONTRACTS.NOTHING):
+    deploy_whitelist_registry(
+        args.chain,
+        args.lending_protocol,
+        args.private_key,
+        args.args_filename,
+        contract,
+    )
+    deploy_vault_balance_as_lending_connector(
+        args.chain, args.lending_protocol, args.private_key, args.args_filename
+    )
+    deploy_constant_slippage_connector(
+        args.chain, args.lending_protocol, args.private_key, args.args_filename
+    )
+    deploy_oracle_connector(
+        args.chain, args.lending_protocol, args.private_key, args.args_filename
+    )
+    deploy_lending_connector(
+        args.chain, args.lending_protocol, args.private_key, args.args_filename
+    )
+
+
 def main():
     parser = argparse.ArgumentParser(description="Foundry Script")
     parser.add_argument(
@@ -901,6 +954,12 @@ def main():
         help="Private key to use for deployment (can also be set via PRIVATE_KEY env var)",
     )
 
+    parser.add_argument(
+        "--deploy-ltv-implementation",
+        help="Deploy LTV implementation",
+        action="store_true",
+    )
+
     args = parser.parse_args()
 
     # Check for private key from environment variable if not provided as argument
@@ -991,108 +1050,25 @@ def main():
         deploy_ltv_beacon_proxy(
             args.chain, args.lending_protocol, args.private_key, args.args_filename
         )
+    if args.deploy_ltv_implementation:
+        deploy_ltv_implementation(args)
+
+    if args.deploy_connectors:
+        deploy_connectors(args, CONTRACTS.NONE)
 
     if args.full_deploy:
-        deploy_erc20_module(
-            args.chain, args.lending_protocol, args.private_key, args.args_filename
-        )
-        deploy_borrow_vault_module(
-            args.chain, args.lending_protocol, args.private_key, args.args_filename
-        )
-        deploy_collateral_vault_module(
-            args.chain, args.lending_protocol, args.private_key, args.args_filename
-        )
-        deploy_low_level_rebalance_module(
-            args.chain, args.lending_protocol, args.private_key, args.args_filename
-        )
-        deploy_auction_module(
-            args.chain, args.lending_protocol, args.private_key, args.args_filename
-        )
-        deploy_administration_module(
-            args.chain, args.lending_protocol, args.private_key, args.args_filename
-        )
-        deploy_initialize_module(
-            args.chain, args.lending_protocol, args.private_key, args.args_filename
-        )
-        deploy_modules_provider(
-            args.chain, args.lending_protocol, args.private_key, args.args_filename
-        )
-        deploy_ltv(
-            args.chain, args.lending_protocol, args.private_key, args.args_filename
-        )
+        deploy_ltv_implementation(args)
         deploy_beacon(
             args.chain, args.lending_protocol, args.private_key, args.args_filename
         )
-        deploy_whitelist_registry(
-            args.chain, args.lending_protocol, args.private_key, args.args_filename
-        )
-        deploy_vault_balance_as_lending_connector(
-            args.chain, args.lending_protocol, args.private_key, args.args_filename
-        )
-        deploy_constant_slippage_connector(
-            args.chain, args.lending_protocol, args.private_key, args.args_filename
-        )
-        deploy_oracle_connector(
-            args.chain, args.lending_protocol, args.private_key, args.args_filename
-        )
-        deploy_lending_connector(
-            args.chain, args.lending_protocol, args.private_key, args.args_filename
-        )
+        deploy_connectors(args, CONTRACTS.BEACON)
         deploy_ltv_beacon_proxy(
             args.chain, args.lending_protocol, args.private_key, args.args_filename
         )
 
     if args.upgrade_ghost:
-        deploy_erc20_module(
-            args.chain, args.lending_protocol, args.private_key, args.args_filename
-        )
-        deploy_borrow_vault_module(
-            args.chain, args.lending_protocol, args.private_key, args.args_filename
-        )
-        deploy_collateral_vault_module(
-            args.chain, args.lending_protocol, args.private_key, args.args_filename
-        )
-        deploy_low_level_rebalance_module(
-            args.chain, args.lending_protocol, args.private_key, args.args_filename
-        )
-        deploy_auction_module(
-            args.chain, args.lending_protocol, args.private_key, args.args_filename
-        )
-        deploy_administration_module(
-            args.chain, args.lending_protocol, args.private_key, args.args_filename
-        )
-        deploy_initialize_module(
-            args.chain, args.lending_protocol, args.private_key, args.args_filename
-        )
-        deploy_modules_provider(
-            args.chain, args.lending_protocol, args.private_key, args.args_filename
-        )
-        deploy_ltv(
-            args.chain, args.lending_protocol, args.private_key, args.args_filename
-        )
-        deploy_whitelist_registry(
-            args.chain,
-            args.lending_protocol,
-            args.private_key,
-            args.args_filename,
-            CONTRACTS.LTV,
-        )
-        deploy_vault_balance_as_lending_connector(
-            args.chain, args.lending_protocol, args.private_key, args.args_filename
-        )
-        deploy_constant_slippage_connector(
-            args.chain, args.lending_protocol, args.private_key, args.args_filename
-        )
-        deploy_oracle_connector(
-            args.chain,
-            args.lending_protocol,
-            args.private_key,
-            args.args_filename,
-            CONTRACTS.SLIPPAGE_CONNECTOR,
-        )
-        deploy_lending_connector(
-            args.chain, args.lending_protocol, args.private_key, args.args_filename
-        )
+        deploy_ltv_implementation(args)
+        deploy_connectors(args, CONTRACTS.LTV)
         upgrade_ghost(
             args.chain, args.lending_protocol, args.private_key, args.args_filename
         )
