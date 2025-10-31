@@ -9,6 +9,7 @@ import {
 import {UpgradeableBeacon} from "openzeppelin-contracts/contracts/proxy/beacon/UpgradeableBeacon.sol";
 import {GetConnectorData} from "./utils/GetConnectorData.s.sol";
 import {console} from "forge-std/console.sol";
+import {ERC1967Utils} from "openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Utils.sol";
 
 contract UpgradeLtv is Script, GetConnectorData {
     function run() public {
@@ -27,17 +28,27 @@ contract UpgradeLtv is Script, GetConnectorData {
         require((proxyAdmin == address(0)) != (beacon == address(0)), "Only one of PROXY_ADMIN or BEACON must be set");
 
         address newImplementation = vm.envAddress("LTV");
-        address oldImplementation = UpgradeableBeacon(beacon).implementation();
-        if (oldImplementation != newImplementation) {
-            if (proxyAdmin == address(0)) {
+        if (proxyAdmin == address(0)) {
+            address oldImplementation = UpgradeableBeacon(beacon).implementation();
+            if (oldImplementation != newImplementation) {
                 vm.startBroadcast();
                 UpgradeableBeacon(beacon).upgradeTo(newImplementation);
+                vm.stopBroadcast();
+                console.log("LTV upgraded to ", newImplementation);
             } else {
+                console.log("LTV is already up to date");
+            }
+        } else {
+            address oldImplementation =
+                address(uint160(uint256(vm.load(address(ltv), ERC1967Utils.IMPLEMENTATION_SLOT))));
+            if (oldImplementation != newImplementation) {
                 vm.startBroadcast();
                 ProxyAdmin(proxyAdmin).upgradeAndCall(ITransparentUpgradeableProxy(ltv), newImplementation, "");
+                vm.stopBroadcast();
+                console.log("LTV upgraded to ", newImplementation);
+            } else {
+                console.log("LTV is already up to date");
             }
-            vm.stopBroadcast();
-            console.log("LTV upgraded to ", newImplementation);
         }
     }
 

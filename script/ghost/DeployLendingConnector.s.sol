@@ -8,7 +8,7 @@ import {BaseScript} from "../utils/BaseScript.s.sol";
 
 contract DeployHodlLendingConnector is BaseScript {
     function deploy() internal override {
-        address hodlMyBeerLending = vm.envAddress("HODL_MY_BEER_LENDING");
+        address hodlMyBeerLending = vm.envAddress("LENDING");
 
         HodlLendingConnector connector =
             new HodlLendingConnector{salt: bytes32(0)}(IHodlMyBeerLending(hodlMyBeerLending));
@@ -17,7 +17,7 @@ contract DeployHodlLendingConnector is BaseScript {
     }
 
     function hashedCreationCode() internal view override returns (bytes32) {
-        address hodlMyBeerLending = vm.envAddress("HODL_MY_BEER_LENDING");
+        address hodlMyBeerLending = vm.envAddress("LENDING");
 
         return keccak256(abi.encodePacked(type(HodlLendingConnector).creationCode, abi.encode(hodlMyBeerLending)));
     }

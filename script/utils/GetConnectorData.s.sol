@@ -15,6 +15,8 @@ contract GetConnectorData is Script {
             address collateralToken = vm.envAddress("COLLATERAL_ASSET");
             bytes32 marketId = keccak256(abi.encode(borrowToken, collateralToken, oracle, irm, lltv));
             return abi.encode(oracle, irm, lltv, marketId);
+        } else if (_isGhostConnector()) {
+            return "";
         } else {
             revert("Unknown lending connector");
         }
@@ -31,6 +33,8 @@ contract GetConnectorData is Script {
             address collateralToken = vm.envAddress("COLLATERAL_ASSET");
             bytes32 marketId = keccak256(abi.encode(borrowToken, collateralToken, oracle, irm, lltv));
             return abi.encode(oracle, marketId);
+        } else if (_isGhostConnector()) {
+            return "";
         } else {
             revert("Unknown oracle connector");
         }
@@ -54,5 +58,10 @@ contract GetConnectorData is Script {
     function _isMorphoConnector() internal view returns (bool) {
         string memory lendingConnectorName = vm.envString("LENDING_CONNECTOR_NAME");
         return keccak256(abi.encodePacked(lendingConnectorName)) == keccak256(abi.encodePacked("Morpho"));
+    }
+
+    function _isGhostConnector() internal view returns (bool) {
+        string memory lendingConnectorName = vm.envString("LENDING_CONNECTOR_NAME");
+        return keccak256(abi.encodePacked(lendingConnectorName)) == keccak256(abi.encodePacked("Ghost"));
     }
 }
