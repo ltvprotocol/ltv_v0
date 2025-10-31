@@ -29,8 +29,8 @@ class CONTRACTS(Enum):
     ORACLE_CONNECTOR = "ORACLE_CONNECTOR"
     LENDING_CONNECTOR = "LENDING_CONNECTOR"
     LTV_BEACON_PROXY = "LTV_BEACON_PROXY"
-    GHOST_UPGRADE = "GHOST_UPGRADE"
-    NOTHING = "NONE"
+    UPGRADE = "UPGRADE"
+    NONE = "NONE"
 
 
 CHAIN_TO_CHAIN_ID = {
@@ -59,7 +59,7 @@ def get_contract_to_deploy_file(lending_protocol, contract):
         CONTRACTS.VAULT_BALANCE_AS_LENDING_CONNECTOR: "script/ltv_elements/DeployVaultBalanceAsLendingConnector.s.sol",
         CONTRACTS.SLIPPAGE_CONNECTOR: "script/ltv_elements/DeployConstantSlippageConnector.s.sol",
         CONTRACTS.LTV_BEACON_PROXY: "script/ltv_elements/DeployLTVBeaconProxy.s.sol",
-        CONTRACTS.GHOST_UPGRADE: "script/ghost/DeployGhostUpgrade.s.sol:DeployGhostUpgrade",
+        CONTRACTS.UPGRADE: "script/UpgradeLtv.s.sol:UpgradeLtv",
     }
 
     # Handle protocol-specific connectors
@@ -106,6 +106,15 @@ def get_rpc_url(chain):
         sys.exit(1)
 
 
+def handle_script_result(result):
+    if result.returncode != 0:
+        print(result.stdout)
+        print(result.stderr)
+        print("ERROR Error running script")
+        sys.exit(1)
+    return result.stdout
+
+
 def get_latest_receipt_file(lending_protocol, contract, chain):
     deploy_file = get_contract_to_deploy_file(lending_protocol, contract)
     deploy_file_name = deploy_file.split("/")[-1]
@@ -150,7 +159,7 @@ def get_args_file_path(chain, lending_protocol, args_filename):
 
 
 def get_contract_is_deployed(chain, contract, lending_protocol, args_filename, args={}):
-    if contract == CONTRACTS.NOTHING:
+    if contract == CONTRACTS.NONE:
         return True
     expected_address = get_expected_address(chain, contract, lending_protocol, args)
     deployed_contracts_file_path = get_deployed_contracts_file_path(
@@ -191,13 +200,7 @@ def run_script(chain, contract, lending_protocol, private_key={}, args={}):
         capture_output=True,
     )
 
-    if result.returncode != 0:
-        print(result.stdout)
-        print(result.stderr)
-        print("ERROR Error running script")
-        sys.exit(1)
-
-    return result.stdout
+    return handle_script_result(result)
 
 
 def deploy_contract(chain, contract, lending_protocol, private_key, args={}):
@@ -653,7 +656,7 @@ def deploy_constant_slippage_connector(
 
 
 def deploy_oracle_connector(
-    chain, lending_protocol, private_key, args_filename, contract=CONTRACTS.BEACON
+    chain, lending_protocol, private_key, args_filename, contract=CONTRACTS.SLIPPAGE_CONNECTOR
 ):
     with open(get_args_file_path(chain, lending_protocol, args_filename), "r") as f:
         data = json.load(f)
@@ -765,25 +768,6 @@ def deploy_ltv_beacon_proxy(chain, lending_protocol, private_key, args_filename)
     print(f"SUCCESS LTV beacon proxy deployed at {deployed_address}")
 
 
-def upgrade_ghost(chain, lending_protocol, private_key, args_filename):
-    with open(
-        get_deployed_contracts_file_path(chain, lending_protocol, args_filename), "r"
-    ) as f:
-        data = json.load(f)
-
-    with open(get_args_file_path(chain, lending_protocol, args_filename), "r") as f:
-        data.update(json.load(f))
-
-    if not get_contract_is_deployed(
-        chain, CONTRACTS.SLIPPAGE_CONNECTOR, lending_protocol, args_filename, data
-    ):
-        print(f"ERROR Slippage connector must be deployed first")
-        sys.exit(1)
-
-    run_script(chain, CONTRACTS.GHOST_UPGRADE, lending_protocol, private_key, data)
-    print(f"SUCCESS Ghost upgrade is successful")
-
-
 def test_deployed_ltv_beacon_proxy(chain, lending_protocol, args_filename):
     with open(
         get_deployed_contracts_file_path(chain, lending_protocol, args_filename), "r"
@@ -800,11 +784,7 @@ def test_deployed_ltv_beacon_proxy(chain, lending_protocol, args_filename):
         capture_output=True,
     )
 
-    if result.returncode != 0:
-        print(result.stdout)
-        print(result.stderr)
-        print("ERROR Error testing deployed LTV beacon proxy")
-        sys.exit(1)
+    handle_script_result(result)
     print(f"SUCCESS LTV beacon proxy test passed")
 
 
@@ -836,7 +816,7 @@ def deploy_ltv_implementation(args):
     deploy_ltv(args.chain, args.lending_protocol, args.private_key, args.args_filename)
 
 
-def deploy_connectors(args, contract=CONTRACTS.NOTHING):
+def deploy_connectors(args, contract):
     deploy_whitelist_registry(
         args.chain,
         args.lending_protocol,
@@ -856,6 +836,109 @@ def deploy_connectors(args, contract=CONTRACTS.NOTHING):
     deploy_lending_connector(
         args.chain, args.lending_protocol, args.private_key, args.args_filename
     )
+
+
+def read_data(chain, lending_protocol, args_filename):
+    data = {}
+    with open(get_args_file_path(chain, lending_protocol, args_filename), "r") as f:
+        data.update(json.load(f))
+
+    deployed_contracts_file_path = get_deployed_contracts_file_path(
+        chain, lending_protocol, args_filename
+    )
+    if os.path.exists(deployed_contracts_file_path):
+        with open(deployed_contracts_file_path, "r") as f:
+            data.update(json.load(f))
+    return data
+
+
+def upgrade_ltv(args):
+    if args.chain.find("local") != -1:
+        upgrade_ltv_local(args)
+    else:
+        upgrade_ltv_real(args)
+
+
+def upgrade_ltv_real(args):
+    deploy_ltv_implementation(args)
+    deploy_connectors(args, CONTRACTS.NONE)
+    data = read_data(args.chain, args.lending_protocol, args.args_filename)
+    run_script(
+        args.chain, CONTRACTS.UPGRADE, args.lending_protocol, args.private_key, data
+    )
+    print(f"SUCCESS LTV upgraded successfully")
+
+
+def upgrade_ltv_local(args):
+    data = read_data(args.chain, args.lending_protocol, args.args_filename)
+
+    # print(f'cast call {data["BEACON"]} "owner()"')
+    print(f"Getting owner of beacon {data['BEACON']}")
+    result = subprocess.run(
+        [f'cast call {data["BEACON"]} "owner()"'], capture_output=True, shell=True, text=True
+    )
+    
+    owner = handle_script_result(result).strip()
+    owner = "0x" + owner[26:]
+    
+    print(f"Owner of beacon {data['BEACON']} is {owner}")
+
+    print(f"Impersonating owner {owner}")
+    result = subprocess.run(
+        [f"cast rpc anvil_impersonateAccount {owner}"],
+        text=True,
+        capture_output=True,
+        shell=True,
+    )
+    
+    handle_script_result(result)
+    print("SUCCESS Impersonating owner")
+
+    print("Transferring ownership of beacon to new owner")
+    result = subprocess.run(
+        [
+            "cast",
+            "send",
+            data["BEACON"],
+            "--from",
+            owner,
+            "transferOwnership(address)",
+            "0xF39FD6E51AAD88F6F4CE6AB8827279CFFFB92266",
+            "--unlocked",
+        ],
+        text=True,
+        capture_output=True,
+    )
+    handle_script_result(result)
+    print("SUCCESS Transferring ownership of beacon to new owner")
+    
+    print("Getting owner of beacon proxy")
+    result = subprocess.run(
+        [f'cast call {data["LTV_BEACON_PROXY"]} "owner()"'], capture_output=True, shell=True, text=True
+    )
+    owner = handle_script_result(result).strip()
+    owner = "0x" + owner[26:]
+    print(f"Owner of beacon proxy {data['LTV_BEACON_PROXY']} is {owner}")
+    
+    print("Transferring ownership of beacon proxy to new owner")
+    result = subprocess.run(
+        [
+            "cast",
+            "send",
+            data["LTV_BEACON_PROXY"],
+            "--from",
+            owner,
+            "transferOwnership(address)",
+            "0xF39FD6E51AAD88F6F4CE6AB8827279CFFFB92266",
+            "--unlocked",
+        ],
+        text=True,
+        capture_output=True,
+    )
+    handle_script_result(result)
+    print("SUCCESS Transferring ownership of beacon proxy to new owner")
+
+    upgrade_ltv_real(args)
 
 
 def main():
@@ -947,9 +1030,6 @@ def main():
         action="store_true",
     )
     parser.add_argument(
-        "--upgrade-ghost", help="Upgrade ghost testnet", action="store_true"
-    )
-    parser.add_argument(
         "--private-key",
         help="Private key to use for deployment (can also be set via PRIVATE_KEY env var)",
     )
@@ -960,10 +1040,24 @@ def main():
         action="store_true",
     )
 
+    parser.add_argument(
+        "--upgrade-ltv",
+        help="Upgrade LTV",
+        action="store_true",
+    )
+
+    parser.add_argument(
+        "--deploy-connectors", help="Deploy connectors", action="store_true"
+    )
+
     args = parser.parse_args()
 
-    # Check for private key from environment variable if not provided as argument
-    if not args.private_key:
+    if args.chain.find("local") != -1:
+        args.private_key = (
+            "0xAC0974BEC39A17E36BA4A6B4D238FF944BACB478CBED5EFCAE784D7BF4F2FF80"
+        )
+    elif not args.private_key:
+        # Check for private key from environment variable if not provided as argument
         args.private_key = os.getenv("PRIVATE_KEY")
         if not args.private_key:
             print(
@@ -1066,12 +1160,8 @@ def main():
             args.chain, args.lending_protocol, args.private_key, args.args_filename
         )
 
-    if args.upgrade_ghost:
-        deploy_ltv_implementation(args)
-        deploy_connectors(args, CONTRACTS.LTV)
-        upgrade_ghost(
-            args.chain, args.lending_protocol, args.private_key, args.args_filename
-        )
+    if args.upgrade_ltv:
+        upgrade_ltv(args)
 
     if args.test_deployed_ltv_beacon_proxy:
         test_deployed_ltv_beacon_proxy(

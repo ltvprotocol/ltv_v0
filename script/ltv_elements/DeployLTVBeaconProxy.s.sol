@@ -8,9 +8,10 @@ import {ILendingConnector} from "src/interfaces/connectors/ILendingConnector.sol
 import {IOracleConnector} from "src/interfaces/connectors/IOracleConnector.sol";
 import {ISlippageConnector} from "src/interfaces/connectors/ISlippageConnector.sol";
 import {BeaconProxy} from "openzeppelin-contracts/contracts/proxy/beacon/BeaconProxy.sol";
+import {GetConnectorData} from "../utils/GetConnectorData.s.sol";
 import {console} from "forge-std/console.sol";
 
-contract DeployLTVBeaconProxy is BaseScript {
+contract DeployLTVBeaconProxy is BaseScript, GetConnectorData {
     function deploy() internal override {
         address beacon = vm.envAddress("BEACON");
 
@@ -57,24 +58,10 @@ contract DeployLTVBeaconProxy is BaseScript {
         stateInitData.softLiquidationFeeDivider = uint16(vm.envUint("SOFT_LIQUIDATION_FEE_DIVIDER"));
         stateInitData.softLiquidationLtvDividend = uint16(vm.envUint("SOFT_LIQUIDATION_LTV_DIVIDEND"));
         stateInitData.softLiquidationLtvDivider = uint16(vm.envUint("SOFT_LIQUIDATION_LTV_DIVIDER"));
-        string memory lendingConnectorName = vm.envString("LENDING_CONNECTOR_NAME");
-        uint256 collateralSlippage = vm.envUint("COLLATERAL_SLIPPAGE");
-        uint256 borrowSlippage = vm.envUint("BORROW_SLIPPAGE");
-        stateInitData.slippageConnectorData = abi.encode(collateralSlippage, borrowSlippage);
-
-        if (keccak256(abi.encodePacked(lendingConnectorName)) == keccak256(abi.encodePacked("AaveV3"))) {
-            stateInitData.lendingConnectorData = abi.encode(vm.envUint("EMODE"));
-        } else if (keccak256(abi.encodePacked(lendingConnectorName)) == keccak256(abi.encodePacked("Morpho"))) {
-            address oracle = vm.envAddress("ORACLE");
-            address irm = vm.envAddress("IRM");
-            uint256 lltv = vm.envUint("LLTV");
-            bytes32 marketId =
-                keccak256(abi.encode(stateInitData.borrowToken, stateInitData.collateralToken, oracle, irm, lltv));
-            stateInitData.lendingConnectorData = abi.encode(oracle, irm, lltv, marketId);
-            stateInitData.oracleConnectorData = abi.encode(oracle, marketId);
-        } else {
-            revert("Unknown LENDING_CONNECTOR_NAME");
-        }
+        stateInitData.slippageConnectorData = getSlippageConnectorInitData();
+        stateInitData.vaultBalanceAsLendingConnectorData = getVaultBalanceAsLendingConnectorInitData();
+        stateInitData.lendingConnectorData = getLendingConnectorInitData();
+        stateInitData.oracleConnectorData = getOracleConnectorInitData();
 
         return abi.encodeCall(ILTV.initialize, (stateInitData));
     }
