@@ -446,10 +446,7 @@ def deploy_initialize_module(chain, lending_protocol, private_key, args_filename
 
 
 def deploy_modules_provider(chain, lending_protocol, private_key, args_filename):
-    with open(
-        get_deployed_contracts_file_path(chain, lending_protocol, args_filename), "r"
-    ) as f:
-        data = json.load(f)
+    data = read_data(chain, lending_protocol, args_filename)
     if not get_contract_is_deployed(
         chain, CONTRACTS.ADMINISTRATION_MODULE, lending_protocol, args_filename
     ):
@@ -477,10 +474,7 @@ def deploy_modules_provider(chain, lending_protocol, private_key, args_filename)
 
 
 def deploy_ltv(chain, lending_protocol, private_key, args_filename):
-    with open(
-        get_deployed_contracts_file_path(chain, lending_protocol, args_filename), "r"
-    ) as f:
-        data = json.load(f)
+    data = read_data(chain, lending_protocol, args_filename)
     if not get_contract_is_deployed(
         chain, CONTRACTS.MODULES_PROVIDER, lending_protocol, args_filename, data
     ):
@@ -503,13 +497,7 @@ def deploy_ltv(chain, lending_protocol, private_key, args_filename):
 
 
 def deploy_beacon(chain, lending_protocol, private_key, args_filename):
-    with open(get_args_file_path(chain, lending_protocol, args_filename), "r") as f:
-        data = json.load(f)
-
-    with open(
-        get_deployed_contracts_file_path(chain, lending_protocol, args_filename), "r"
-    ) as f:
-        data.update(json.load(f))
+    data = read_data(chain, lending_protocol, args_filename)
 
     if not get_contract_is_deployed(
         chain, CONTRACTS.LTV, lending_protocol, args_filename, data
@@ -535,13 +523,7 @@ def deploy_beacon(chain, lending_protocol, private_key, args_filename):
 def deploy_whitelist_registry(
     chain, lending_protocol, private_key, args_filename, contract=CONTRACTS.BEACON
 ):
-    with open(get_args_file_path(chain, lending_protocol, args_filename), "r") as f:
-        data = json.load(f)
-
-    with open(
-        get_deployed_contracts_file_path(chain, lending_protocol, args_filename), "r"
-    ) as f:
-        data.update(json.load(f))
+    data = read_data(chain, lending_protocol, args_filename)
 
     if not get_contract_is_deployed(
         chain, contract, lending_protocol, args_filename, data
@@ -572,13 +554,7 @@ def deploy_whitelist_registry(
 def deploy_vault_balance_as_lending_connector(
     chain, lending_protocol, private_key, args_filename
 ):
-    with open(get_args_file_path(chain, lending_protocol, args_filename), "r") as f:
-        data = json.load(f)
-
-    with open(
-        get_deployed_contracts_file_path(chain, lending_protocol, args_filename), "r"
-    ) as f:
-        data.update(json.load(f))
+    data = read_data(chain, lending_protocol, args_filename)
 
     if not get_contract_is_deployed(
         chain, CONTRACTS.WHITELIST_REGISTRY, lending_protocol, args_filename, data
@@ -617,13 +593,7 @@ def deploy_vault_balance_as_lending_connector(
 def deploy_constant_slippage_connector(
     chain, lending_protocol, private_key, args_filename
 ):
-    with open(get_args_file_path(chain, lending_protocol, args_filename), "r") as f:
-        data = json.load(f)
-
-    with open(
-        get_deployed_contracts_file_path(chain, lending_protocol, args_filename), "r"
-    ) as f:
-        data.update(json.load(f))
+    data = read_data(chain, lending_protocol, args_filename)
 
     if not get_contract_is_deployed(
         chain,
@@ -662,13 +632,7 @@ def deploy_oracle_connector(
     args_filename,
     contract=CONTRACTS.SLIPPAGE_CONNECTOR,
 ):
-    with open(get_args_file_path(chain, lending_protocol, args_filename), "r") as f:
-        data = json.load(f)
-
-    with open(
-        get_deployed_contracts_file_path(chain, lending_protocol, args_filename), "r"
-    ) as f:
-        data.update(json.load(f))
+    data = read_data(chain, lending_protocol, args_filename)
 
     if not get_contract_is_deployed(
         chain, contract, lending_protocol, args_filename, data
@@ -703,13 +667,7 @@ def deploy_lending_connector(
     args_filename,
     contract=CONTRACTS.ORACLE_CONNECTOR,
 ):
-    with open(get_args_file_path(chain, lending_protocol, args_filename), "r") as f:
-        data = json.load(f)
-
-    with open(
-        get_deployed_contracts_file_path(chain, lending_protocol, args_filename), "r"
-    ) as f:
-        data.update(json.load(f))
+    data = read_data(chain, lending_protocol, args_filename)
 
     if not get_contract_is_deployed(
         chain, contract, lending_protocol, args_filename, data
@@ -738,13 +696,7 @@ def deploy_lending_connector(
 
 
 def deploy_ltv_beacon_proxy(chain, lending_protocol, private_key, args_filename):
-    with open(get_args_file_path(chain, lending_protocol, args_filename), "r") as f:
-        data = json.load(f)
-
-    with open(
-        get_deployed_contracts_file_path(chain, lending_protocol, args_filename), "r"
-    ) as f:
-        data.update(json.load(f))
+    data = read_data(chain, lending_protocol, args_filename)
 
     if not get_contract_is_deployed(
         chain, CONTRACTS.LENDING_CONNECTOR, lending_protocol, args_filename, data
@@ -773,10 +725,7 @@ def deploy_ltv_beacon_proxy(chain, lending_protocol, private_key, args_filename)
 
 
 def test_deployed_ltv_beacon_proxy(chain, lending_protocol, args_filename):
-    with open(
-        get_deployed_contracts_file_path(chain, lending_protocol, args_filename), "r"
-    ) as f:
-        data = json.load(f)
+    data = read_data(chain, lending_protocol, args_filename)
 
     env = os.environ.copy()
     env["LTV_BEACON_PROXY"] = data["LTV_BEACON_PROXY"]
