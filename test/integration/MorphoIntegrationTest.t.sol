@@ -59,8 +59,8 @@ contract MorphoIntegrationTest is Test {
             lltv: 945000000000000000
         });
 
-        morphoLendingConnector = new MorphoConnector(0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb);
-        morphoOracleConnector = new MorphoOracleConnector();
+        morphoLendingConnector = new MorphoConnector(MORPHO_BLUE);
+        morphoOracleConnector = new MorphoOracleConnector(MORPHO_BLUE);
         slippageConnector = new DummySlippageConnector();
 
         weth = IERC20(WETH);
@@ -105,7 +105,7 @@ contract MorphoIntegrationTest is Test {
             emergencyDeleverager: address(this),
             auctionDuration: 1000,
             lendingConnectorData: abi.encode(MORPHO_ORACLE, IRM, 945000000000000000, keccak256(abi.encode(marketParams))),
-            oracleConnectorData: abi.encode(MORPHO_ORACLE),
+            oracleConnectorData: abi.encode(MORPHO_ORACLE, keccak256(abi.encode(marketParams))),
             slippageConnectorData: abi.encode(10 ** 16, 10 ** 16),
             vaultBalanceAsLendingConnectorData: "",
             softLiquidationFeeDividend: 1,

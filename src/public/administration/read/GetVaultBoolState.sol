@@ -35,4 +35,18 @@ contract GetVaultBoolState is BoolReader {
     function isVaultDeleveraged(uint8 boolSlot) public pure returns (bool) {
         return _isVaultDeleveraged(boolSlot);
     }
+
+    /**
+     * @dev see IAdministrationModule.isProtocolPaused
+     */
+    function isProtocolPaused(uint8 boolSlot) public pure returns (bool) {
+        return _isProtocolPaused(boolSlot);
+    }
+
+    /**
+     * @dev see IAdministrationModule.isSoftLiquidationEnabledForAnyone
+     */
+    function isSoftLiquidationEnabledForAnyone(uint8 boolSlot) public pure returns (bool) {
+        return _isSoftLiquidationEnabledForAnyone(boolSlot);
+    }
 }

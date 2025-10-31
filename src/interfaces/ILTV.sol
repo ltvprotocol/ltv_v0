@@ -545,6 +545,18 @@ interface ILTV is
     function collateralToken() external view returns (address);
 
     /**
+     * @notice Returns the number of decimal places for the borrow token
+     * @return The number of decimal places for the borrow token
+     */
+    function borrowTokenDecimals() external view returns (uint8);
+
+    /**
+     * @notice Returns the number of decimal places for the collateral token
+     * @return The number of decimal places for the collateral token
+     */
+    function collateralTokenDecimals() external view returns (uint8);
+
+    /**
      * @notice Returns the current amount of borrow assets in the auction system
      * @return The current auction borrow assets
      */
@@ -567,22 +579,6 @@ interface ILTV is
      * @return The current auction reward in collateral assets
      */
     function futureRewardCollateralAssets() external view returns (int256);
-
-    /**
-     * @notice Returns protocol's current debt in lending protocol in borrow assets
-     * @param isDeposit Rounding hint for the calculation. Result can be different
-     * depending on estimating for deposit or withdraw.
-     * @return The current debt in borrow assets
-     */
-    function getRealBorrowAssets(bool isDeposit) external view returns (uint256);
-
-    /**
-     * @notice Returns protocol's current collateral in lending protocol in collateral assets
-     * @param isDeposit Rounding hint for the calculation. Result can be different
-     * depending on estimating for deposit or withdraw.
-     * @return The current collateral in collateral assets
-     */
-    function getRealCollateralAssets(bool isDeposit) external view returns (uint256);
 
     /**
      * @notice Returns the maximum safe loan-to-value ratio (numerator)
@@ -1014,6 +1010,30 @@ interface ILTV is
      * @param liquidationAmountBorrow The amount of borrow to liquidate
      */
     function softLiquidation(uint256 liquidationAmountBorrow) external;
+
+    /**
+     * @notice Returns the soft liquidation ltv dividend
+     * @return The soft liquidation ltv dividend
+     */
+    function softLiquidationLtvDividend() external view returns (uint16);
+
+    /**
+     * @notice Returns the soft liquidation ltv divider
+     * @return The soft liquidation ltv divider
+     */
+    function softLiquidationLtvDivider() external view returns (uint16);
+
+    /**
+     * @notice Returns the soft liquidation fee dividend
+     * @return The soft liquidation fee dividend
+     */
+    function softLiquidationFeeDividend() external view returns (uint16);
+
+    /**
+     * @notice Returns the soft liquidation fee divider
+     * @return The soft liquidation fee divider
+     */
+    function softLiquidationFeeDivider() external view returns (uint16);
 
     // ========================================
     // EVENTS
