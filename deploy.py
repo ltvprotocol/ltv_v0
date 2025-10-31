@@ -8,7 +8,7 @@ import argparse
 import os
 import json
 import re
-
+import time
 from enum import Enum
 
 
@@ -764,12 +764,34 @@ def main():
         "--deploy-connectors", help="Deploy connectors", action="store_true"
     )
 
+    parser.add_argument(
+        "--skip-anvil",
+        help="Skip Anvil",
+        action="store_true",
+    )
+
     args = parser.parse_args()
 
     if args.chain.find("local") != -1:
         args.private_key = (
             "0xAC0974BEC39A17E36BA4A6B4D238FF944BACB478CBED5EFCAE784D7BF4F2FF80"
         )
+        if args.chain == "local_fork_mainnet":
+            rpc_url = " --fork-url " + os.environ["RPC_MAINNET"]
+            block_number = " --fork-block-number 23699610"
+        elif args.chain == "local_fork_sepolia":
+            rpc_url = " --fork-url " + os.environ["RPC_SEPOLIA"]
+            block_number = " --fork-block-number 9532361"
+        else:
+            rpc_url = ""
+            block_number = ""
+
+        if not args.skip_anvil:
+            print("Please run the following command to start anvil:")
+            print("anvil --port 8545" + rpc_url + block_number)
+            print("Press Enter to continue...")
+            input()
+
     elif not args.private_key:
         # Check for private key from environment variable if not provided as argument
         args.private_key = os.getenv("PRIVATE_KEY")
