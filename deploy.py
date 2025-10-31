@@ -873,64 +873,20 @@ def upgrade_ltv_real(args):
     print(f"SUCCESS LTV upgraded successfully")
 
 
-def impersonate_beacon_owner_if_needed(data):
-    if not "BEACON" in data.keys():
+def impersonate_owner_if_needed(data, dataKey):
+    if not dataKey in data.keys():
         return
 
-    print(f"Getting owner of beacon {data['BEACON']}")
+    print(f"Getting owner of {dataKey} {data[dataKey]}")
     result = subprocess.run(
-        [f'cast call {data["BEACON"]} "owner()"'],
-        capture_output=True,
-        shell=True,
-        text=True,
-    )
-
-    owner = handle_script_result(result).strip()
-    owner = "0x" + owner[26:]
-
-    print(f"Owner of beacon {data['BEACON']} is {owner}")
-
-    print(f"Impersonating owner {owner}")
-    result = subprocess.run(
-        [f"cast rpc anvil_impersonateAccount {owner}"],
-        text=True,
-        capture_output=True,
-        shell=True,
-    )
-
-    handle_script_result(result)
-    print("SUCCESS Impersonating owner")
-
-    print("Transferring ownership of beacon to new owner")
-    result = subprocess.run(
-        [
-            "cast",
-            "send",
-            data["BEACON"],
-            "--from",
-            owner,
-            "transferOwnership(address)",
-            "0xF39FD6E51AAD88F6F4CE6AB8827279CFFFB92266",
-            "--unlocked",
-        ],
-        text=True,
-        capture_output=True,
-    )
-    handle_script_result(result)
-    print("SUCCESS Transferring ownership of beacon to new owner")
-
-
-def impersonate_contract_owner(data):
-    print("Getting owner of ltv contract")
-    result = subprocess.run(
-        [f'cast call {data["LTV_BEACON_PROXY"]} "owner()"'],
+        [f'cast call {data[dataKey]} "owner()"'],
         capture_output=True,
         shell=True,
         text=True,
     )
     owner = handle_script_result(result).strip()
     owner = "0x" + owner[26:]
-    print(f"Owner of ltv contract {data['LTV_BEACON_PROXY']} is {owner}")
+    print(f"Owner of {dataKey} {data[dataKey]} is {owner}")
 
     print(f"Impersonating owner {owner}")
     result = subprocess.run(
@@ -942,12 +898,12 @@ def impersonate_contract_owner(data):
     handle_script_result(result)
     print("SUCCESS Impersonating owner")
 
-    print("Transferring ownership of ltv contract to new owner")
+    print(f"Transferring ownership of {dataKey} {data[dataKey]} to new owner")
     result = subprocess.run(
         [
             "cast",
             "send",
-            data["LTV_BEACON_PROXY"],
+            data[dataKey],
             "--from",
             owner,
             "transferOwnership(address)",
@@ -958,58 +914,14 @@ def impersonate_contract_owner(data):
         capture_output=True,
     )
     handle_script_result(result)
-    print("SUCCESS Transferring ownership of ltv contract to new owner")
-
-
-def impersonate_proxy_admin_owner_if_needed(data):
-    if not "PROXY_ADMIN" in data.keys():
-        return
-
-    proxy_admin = data["PROXY_ADMIN"]
-    print(f"Getting owner of proxy admin {proxy_admin}")
-    result = subprocess.run(
-        [f'cast call {proxy_admin} "owner()"'],
-        capture_output=True,
-        shell=True,
-        text=True,
-    )
-    owner = handle_script_result(result).strip()
-    owner = "0x" + owner[26:]
-    print(f"Owner of proxy admin {proxy_admin} is {owner}")
-
-    print(f"Impersonating owner {owner}")
-    result = subprocess.run(
-        [f"cast rpc anvil_impersonateAccount {owner}"],
-        text=True,
-        capture_output=True,
-        shell=True,
-    )
-    handle_script_result(result)
-    print("SUCCESS Impersonating owner")
-    print("Transferring ownership of proxy admin to new owner")
-    result = subprocess.run(
-        [
-            "cast",
-            "send",
-            proxy_admin,
-            "--from",
-            owner,
-            "transferOwnership(address)",
-            "0xF39FD6E51AAD88F6F4CE6AB8827279CFFFB92266",
-            "--unlocked",
-        ],
-        text=True,
-        capture_output=True,
-    )
-    handle_script_result(result)
-    print("SUCCESS Transferring ownership of proxy admin to new owner")
+    print(f"SUCCESS Transferring ownership of {dataKey} {data[dataKey]} to new owner")
 
 
 def upgrade_ltv_local(args):
     data = read_data(args.chain, args.lending_protocol, args.args_filename)
-    impersonate_beacon_owner_if_needed(data)
-    impersonate_proxy_admin_owner_if_needed(data)
-    impersonate_contract_owner(data)
+    impersonate_owner_if_needed(data, "BEACON")
+    impersonate_owner_if_needed(data, "PROXY_ADMIN")
+    impersonate_owner_if_needed(data, "LTV_BEACON_PROXY")
 
     upgrade_ltv_real(args)
 
