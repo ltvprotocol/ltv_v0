@@ -96,7 +96,9 @@ contract AaveV3ConnectorTest is Test {
             softLiquidationFeeDividend: 1,
             softLiquidationFeeDivider: 100,
             softLiquidationLtvDividend: 1,
-            softLiquidationLtvDivider: 1
+            softLiquidationLtvDivider: 1,
+            whitelistRegistry: address(0),
+            isWhitelistActivated: false
         });
 
         ltv = new LTV(address(modulesProvider));

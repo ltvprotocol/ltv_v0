@@ -11,6 +11,11 @@ import re
 import time
 from enum import Enum
 
+TEST_USER_ADDRESS = "0xF39FD6E51AAD88F6F4CE6AB8827279CFFFB92266"
+TEST_USER_PRIVATE_KEY = (
+    "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+)
+
 
 class CONTRACTS(Enum):
     ERC20_MODULE = "ERC20_MODULE"
@@ -30,6 +35,8 @@ class CONTRACTS(Enum):
     LENDING_CONNECTOR = "LENDING_CONNECTOR"
     LTV_BEACON_PROXY = "LTV_BEACON_PROXY"
     UPGRADE = "UPGRADE"
+    GENERAL_TEST = "GENERAL_TEST"
+    LIDO_TEST = "LIDO_TEST"
     NONE = "NONE"
 
 
@@ -60,6 +67,8 @@ def get_contract_to_deploy_file(lending_protocol, contract):
         CONTRACTS.SLIPPAGE_CONNECTOR: "script/ltv_elements/DeployConstantSlippageConnector.s.sol",
         CONTRACTS.LTV_BEACON_PROXY: "script/ltv_elements/DeployLTVBeaconProxy.s.sol",
         CONTRACTS.UPGRADE: "script/UpgradeLtv.s.sol:UpgradeLtv",
+        CONTRACTS.GENERAL_TEST: "script/ltv_elements/TestGeneralDeployedLTVBeaconProxy.s.sol",
+        CONTRACTS.LIDO_TEST: "script/ltv_elements/TestLidoDeployedLtvBeaconProxy.s.sol",
     }
 
     # Handle protocol-specific connectors
@@ -504,23 +513,6 @@ def deploy_ltv_beacon_proxy(chain, lending_protocol, private_key, args_filename)
     )
 
 
-def test_deployed_ltv_beacon_proxy(chain, lending_protocol, args_filename):
-    data = read_data(chain, lending_protocol, args_filename)
-
-    env = os.environ.copy()
-    env["LTV_BEACON_PROXY"] = data["LTV_BEACON_PROXY"]
-
-    result = subprocess.run(
-        ["forge", "script", "script/ltv_elements/TestDeployedLTVBeaconProxy.s.sol"],
-        env=env,
-        text=True,
-        capture_output=True,
-    )
-
-    handle_script_result(result)
-    print(f"SUCCESS LTV beacon proxy test passed")
-
-
 def deploy_ltv_implementation(args):
     deploy_erc20_module(
         args.chain, args.lending_protocol, args.private_key, args.args_filename
@@ -602,9 +594,29 @@ def upgrade_ltv_real(args):
     print(f"SUCCESS LTV upgraded successfully")
 
 
-def change_role(data, dataKey, owner, role_signature, role_name):
+def parse_address_from_result(output):
+    return "0x" + output.strip()[26:]
+
+
+def change_role_if_needed(data, dataKey, owner, role_signature, role_getter_signature):
     print(
-        f"Transferring {role_name} role of {dataKey} {data[dataKey]} to new {role_name}"
+        f"Getting {role_getter_signature} role of {dataKey} {data[dataKey]}"
+    )
+    role_getter_result = subprocess.run(
+        [f'cast call {data[dataKey]} "{role_getter_signature}"'],
+        capture_output=True,
+        shell=True,
+        text=True,
+    )
+    output = handle_script_result(role_getter_result)
+    role = parse_address_from_result(output)
+    if role.lower() == TEST_USER_ADDRESS.lower():
+        print(
+            f"SUCCESS {role_getter_signature} role of {dataKey} {data[dataKey]} is already owned by {TEST_USER_ADDRESS}"
+        )
+        return
+    print(
+        f"Transferring {role_getter_signature} role of {dataKey} {data[dataKey]} to new {role_getter_signature}"
     )
     result = subprocess.run(
         [
@@ -614,7 +626,7 @@ def change_role(data, dataKey, owner, role_signature, role_name):
             "--from",
             owner,
             role_signature,
-            "0xF39FD6E51AAD88F6F4CE6AB8827279CFFFB92266",
+            TEST_USER_ADDRESS,
             "--unlocked",
         ],
         text=True,
@@ -622,7 +634,7 @@ def change_role(data, dataKey, owner, role_signature, role_name):
     )
     handle_script_result(result)
     print(
-        f"SUCCESS Transferring {role_name} role of {dataKey} {data[dataKey]} to new {role_name}"
+        f"SUCCESS Transferring {role_getter_signature} role of {dataKey} {data[dataKey]} to new {role_getter_signature}"
     )
 
 
@@ -637,8 +649,8 @@ def impersonate_owner_if_needed(data, dataKey):
         shell=True,
         text=True,
     )
-    owner = handle_script_result(result).strip()
-    owner = "0x" + owner[26:]
+    output = handle_script_result(result)
+    owner = parse_address_from_result(output)
     print(f"Owner of {dataKey} {data[dataKey]} is {owner}")
 
     print(f"Impersonating owner {owner}")
@@ -651,8 +663,7 @@ def impersonate_owner_if_needed(data, dataKey):
     handle_script_result(result)
     print("SUCCESS Impersonating owner")
 
-    print(f"Transferring ownership of {dataKey} {data[dataKey]} to new owner")
-    change_role(data, dataKey, owner, "transferOwnership(address)", "owner")
+    change_role_if_needed(data, dataKey, owner, "transferOwnership(address)", "owner()")
 
 
 def fake_ltv_roles(args):
@@ -660,27 +671,28 @@ def fake_ltv_roles(args):
     impersonate_owner_if_needed(data, "BEACON")
     impersonate_owner_if_needed(data, "PROXY_ADMIN")
     impersonate_owner_if_needed(data, "LTV_BEACON_PROXY")
-    change_role(
+    change_role_if_needed(
         data,
         "LTV_BEACON_PROXY",
-        "0xF39FD6E51AAD88F6F4CE6AB8827279CFFFB92266",
+        TEST_USER_ADDRESS,
         "updateGuardian(address)",
-        "guardian",
+        "guardian()",
     )
-    change_role(
+    change_role_if_needed(
         data,
         "LTV_BEACON_PROXY",
-        "0xF39FD6E51AAD88F6F4CE6AB8827279CFFFB92266",
+        TEST_USER_ADDRESS,
         "updateEmergencyDeleverager(address)",
-        "emergency deleverager",
+        "emergencyDeleverager()",
     )
-    change_role(
+    change_role_if_needed(
         data,
         "LTV_BEACON_PROXY",
-        "0xF39FD6E51AAD88F6F4CE6AB8827279CFFFB92266",
+        TEST_USER_ADDRESS,
         "updateGovernor(address)",
-        "governor",
+        "governor()",
     )
+    impersonate_owner_if_needed(data, "WHITELIST_REGISTRY")
 
 
 def upgrade_ltv_local(args):
@@ -772,11 +784,6 @@ def main():
         "--deploy-ltv-beacon-proxy", help="Deploy LTV beacon proxy", action="store_true"
     )
     parser.add_argument(
-        "--test-deployed-ltv-beacon-proxy",
-        help="Test deployed LTV beacon proxy",
-        action="store_true",
-    )
-    parser.add_argument(
         "--private-key",
         help="Private key to use for deployment (can also be set via PRIVATE_KEY env var)",
     )
@@ -803,12 +810,22 @@ def main():
         action="store_true",
     )
 
+    parser.add_argument(
+        "--test-deployed-ltv-beacon-proxy-general-case",
+        help="Test general deployed LTV beacon proxy",
+        action="store_true",
+    )
+
+    parser.add_argument(
+        "--test-deployed-ltv-beacon-proxy-lido",
+        help="Test deployed LTV beacon proxy Lido",
+        action="store_true",
+    )
+
     args = parser.parse_args()
 
     if args.chain.find("local") != -1:
-        args.private_key = (
-            "0xAC0974BEC39A17E36BA4A6B4D238FF944BACB478CBED5EFCAE784D7BF4F2FF80"
-        )
+        args.private_key = TEST_USER_PRIVATE_KEY
         if args.chain == "local_fork_mainnet":
             rpc_url = " --fork-url " + os.environ["RPC_MAINNET"]
             block_number = " --fork-block-number 23699610"
@@ -932,11 +949,29 @@ def main():
     if args.upgrade_ltv:
         upgrade_ltv(args)
 
-    if args.test_deployed_ltv_beacon_proxy:
-        test_deployed_ltv_beacon_proxy(
-            args.chain, args.lending_protocol, args.args_filename
+    if args.test_deployed_ltv_beacon_proxy_general_case:
+        fake_ltv_roles(args)
+        data = read_data(args.chain, args.lending_protocol, args.args_filename)
+        run_script(
+            args.chain,
+            CONTRACTS.GENERAL_TEST,
+            args.lending_protocol,
+            args.private_key,
+            data,
         )
-
+        print("SUCCESS Test general deployed LTV beacon proxy completed")
+        
+    if args.test_deployed_ltv_beacon_proxy_lido:
+        fake_ltv_roles(args)
+        data = read_data(args.chain, args.lending_protocol, args.args_filename)
+        run_script(
+            args.chain,
+            CONTRACTS.LIDO_TEST,
+            args.lending_protocol,
+            args.private_key,
+            data,
+        )
+        print("SUCCESS Test deployed LTV beacon proxy Lido completed")
 
 if __name__ == "__main__":
     main()

@@ -58,6 +58,10 @@ contract DeployLTVBeaconProxy is BaseScript, GetConnectorData {
         stateInitData.softLiquidationFeeDivider = uint16(vm.envUint("SOFT_LIQUIDATION_FEE_DIVIDER"));
         stateInitData.softLiquidationLtvDividend = uint16(vm.envUint("SOFT_LIQUIDATION_LTV_DIVIDEND"));
         stateInitData.softLiquidationLtvDivider = uint16(vm.envUint("SOFT_LIQUIDATION_LTV_DIVIDER"));
+        stateInitData.isWhitelistActivated = vm.envBool("ACTIVATE_WHITELIST");
+        if (stateInitData.isWhitelistActivated) {
+            stateInitData.whitelistRegistry = vm.envAddress("WHITELIST_REGISTRY");
+        }
         stateInitData.slippageConnectorData = getSlippageConnectorInitData();
         stateInitData.vaultBalanceAsLendingConnectorData = getVaultBalanceAsLendingConnectorInitData();
         stateInitData.lendingConnectorData = getLendingConnectorInitData();

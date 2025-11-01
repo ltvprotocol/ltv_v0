@@ -262,6 +262,8 @@ interface ILTV is
      */
     function redeemCollateral(uint256 shares, address receiver, address owner) external returns (uint256);
 
+    function assetCollateral() external view returns (address);
+
     /**
      * @notice Returns the total collateral assets in the vault using conservative pricing (isDeposit = false)
      * @return The total amount of collateral assets managed by the vault
@@ -785,6 +787,12 @@ interface ILTV is
      * @param value True to enable, false to disable
      */
     function setIsSoftLiquidationEnabledForAnyone(bool value) external;
+
+    /**
+     * @notice Sets whether the protocol is paused
+     * @param value True to pause the protocol, false to unpause
+     */
+    function setIsProtocolPaused(bool value) external;
 
     /**
      * @notice Sets the whitelist registry address

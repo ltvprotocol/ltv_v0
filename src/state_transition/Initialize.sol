@@ -5,7 +5,7 @@ import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "openzeppelin-contracts/contracts/interfaces/IERC20Metadata.sol";
 import {OwnableUpgradeable} from "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
 import {StateInitData} from "src/structs/state/initialize/StateInitData.sol";
-import {AdministrationSetters} from "src/state_transition/AdministrationSetters.sol";
+import {AdministrationSetters, IWhitelistRegistry} from "src/state_transition/AdministrationSetters.sol";
 import {Constants} from "src/constants/Constants.sol";
 
 /**
@@ -37,6 +37,9 @@ abstract contract Initialize is AdministrationSetters, OwnableUpgradeable {
         _setFeeCollector(initData.feeCollector);
         _setMaxGrowthFee(initData.maxGrowthFeeDividend, initData.maxGrowthFeeDivider);
         _setMaxDeleverageFee(initData.maxDeleverageFeeDividend, initData.maxDeleverageFeeDivider);
+
+        _setWhitelistRegistry(IWhitelistRegistry(initData.whitelistRegistry));
+        _setIsWhitelistActivated(initData.isWhitelistActivated);
 
         _setMaxTotalAssetsInUnderlying(initData.maxTotalAssetsInUnderlying);
 
