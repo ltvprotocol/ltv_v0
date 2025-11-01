@@ -602,6 +602,30 @@ def upgrade_ltv_real(args):
     print(f"SUCCESS LTV upgraded successfully")
 
 
+def change_role(data, dataKey, owner, role_signature, role_name):
+    print(
+        f"Transferring {role_name} role of {dataKey} {data[dataKey]} to new {role_name}"
+    )
+    result = subprocess.run(
+        [
+            "cast",
+            "send",
+            data[dataKey],
+            "--from",
+            owner,
+            role_signature,
+            "0xF39FD6E51AAD88F6F4CE6AB8827279CFFFB92266",
+            "--unlocked",
+        ],
+        text=True,
+        capture_output=True,
+    )
+    handle_script_result(result)
+    print(
+        f"SUCCESS Transferring {role_name} role of {dataKey} {data[dataKey]} to new {role_name}"
+    )
+
+
 def impersonate_owner_if_needed(data, dataKey):
     if not dataKey in data.keys():
         return
@@ -628,30 +652,39 @@ def impersonate_owner_if_needed(data, dataKey):
     print("SUCCESS Impersonating owner")
 
     print(f"Transferring ownership of {dataKey} {data[dataKey]} to new owner")
-    result = subprocess.run(
-        [
-            "cast",
-            "send",
-            data[dataKey],
-            "--from",
-            owner,
-            "transferOwnership(address)",
-            "0xF39FD6E51AAD88F6F4CE6AB8827279CFFFB92266",
-            "--unlocked",
-        ],
-        text=True,
-        capture_output=True,
-    )
-    handle_script_result(result)
-    print(f"SUCCESS Transferring ownership of {dataKey} {data[dataKey]} to new owner")
+    change_role(data, dataKey, owner, "transferOwnership(address)", "owner")
 
 
-def upgrade_ltv_local(args):
+def fake_ltv_roles(args):
     data = read_data(args.chain, args.lending_protocol, args.args_filename)
     impersonate_owner_if_needed(data, "BEACON")
     impersonate_owner_if_needed(data, "PROXY_ADMIN")
     impersonate_owner_if_needed(data, "LTV_BEACON_PROXY")
+    change_role(
+        data,
+        "LTV_BEACON_PROXY",
+        "0xF39FD6E51AAD88F6F4CE6AB8827279CFFFB92266",
+        "updateGuardian(address)",
+        "guardian",
+    )
+    change_role(
+        data,
+        "LTV_BEACON_PROXY",
+        "0xF39FD6E51AAD88F6F4CE6AB8827279CFFFB92266",
+        "updateEmergencyDeleverager(address)",
+        "emergency deleverager",
+    )
+    change_role(
+        data,
+        "LTV_BEACON_PROXY",
+        "0xF39FD6E51AAD88F6F4CE6AB8827279CFFFB92266",
+        "updateGovernor(address)",
+        "governor",
+    )
 
+
+def upgrade_ltv_local(args):
+    fake_ltv_roles(args)
     upgrade_ltv_real(args)
 
 
