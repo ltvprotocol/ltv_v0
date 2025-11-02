@@ -142,7 +142,6 @@ contract TestGeneralDeployedLTVBeaconProxy is Script, StdCheats, StdAssertions {
             abi.encodeWithSelector(IAdministrationErrors.ReceiverNotWhitelisted.selector, user)
         );
 
-
         whitelistRegistry.addAddressToWhitelist(user);
 
         _performRedeemWithLowLevelRebalance(
@@ -186,7 +185,7 @@ contract TestGeneralDeployedLTVBeaconProxy is Script, StdCheats, StdAssertions {
             expectedResults.borrowAfter1WithdrawAuctionExecution
         );
 
-        assertGe(ltv.convertToAssets(10**18), 10**18, "Convert to assets should be greater than 1");
+        assertGe(ltv.convertToAssets(10 ** 18), 10 ** 18, "Convert to assets should be greater than 1");
     }
 
     function _makeSafeDeposit(uint256 expectedAssets, uint256 expectedShares) internal virtual {

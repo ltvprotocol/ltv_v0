@@ -91,8 +91,7 @@ contract TestLidoDeployedLtvBeaconProxy is TestGeneralDeployedLTVBeaconProxy {
     }
 
     function _previewRedeemWithLowLevelRebalance(int256 shares) internal view override returns (int256, int256) {
-        uint256 borrowAmount =
-            flashLoanLidoRedeemHelper.previewRedeemSharesWithCurveAndFlashLoanBorrow(uint256(shares));
+        uint256 borrowAmount = flashLoanLidoRedeemHelper.previewRedeemSharesWithCurveAndFlashLoanBorrow(uint256(shares));
         return (0, -int256(borrowAmount));
     }
 

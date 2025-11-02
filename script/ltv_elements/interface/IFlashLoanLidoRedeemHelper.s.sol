@@ -6,5 +6,7 @@ interface IFlashLoanLidoRedeemHelper {
         external
         view
         returns (uint256 assetsBorrow);
-    function redeemSharesWithCurveAndFlashLoanBorrow(uint256 sharesToRedeem, uint256 minWeth) external returns (uint256 assetsBorrow);
+    function redeemSharesWithCurveAndFlashLoanBorrow(uint256 sharesToRedeem, uint256 minWeth)
+        external
+        returns (uint256 assetsBorrow);
 }

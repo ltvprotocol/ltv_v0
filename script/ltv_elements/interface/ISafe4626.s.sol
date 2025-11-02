@@ -15,5 +15,4 @@ interface ISafe4626 {
     function safeRedeem(address vault, uint256 shares, address receiver, uint256 minAssetsOut)
         external
         returns (uint256 assets);
-        
 }
