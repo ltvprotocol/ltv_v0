@@ -81,14 +81,14 @@ abstract contract AuctionApplyDeltaState is
         if (deltaState.deltaProtocolFutureRewardCollateralAssets > 0) {
             // casting to uint256 is safe because deltaState.deltaProtocolFutureRewardCollateralAssets is checked to be positive
             // forge-lint: disable-start(unsafe-typecast)
-            transferCollateralToken(feeCollector, uint256(deltaState.deltaProtocolFutureRewardCollateralAssets));
+            collateralToken.safeTransfer(feeCollector, uint256(deltaState.deltaProtocolFutureRewardCollateralAssets));
             // forge-lint: disable-end(unsafe-typecast)
         }
 
         if (deltaState.deltaProtocolFutureRewardBorrowAssets < 0) {
             // casting to uint256 is safe because deltaState.deltaProtocolFutureRewardBorrowAssets is checked to be negative
             // forge-lint: disable-start(unsafe-typecast)
-            transferBorrowToken(feeCollector, uint256(-deltaState.deltaProtocolFutureRewardBorrowAssets));
+            borrowToken.safeTransfer(feeCollector, uint256(-deltaState.deltaProtocolFutureRewardBorrowAssets));
         }
 
         emit AuctionExecuted(
