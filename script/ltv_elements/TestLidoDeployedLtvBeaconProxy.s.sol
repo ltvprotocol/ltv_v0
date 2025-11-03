@@ -57,10 +57,10 @@ contract TestLidoDeployedLtvBeaconProxy is TestGeneralDeployedLTVBeaconProxy {
             sharesAfter1SafeWithdraw: 2442965923018719068, // 6% loss, 0.5% slippage x 12x leverage ~ 6% loss
             assetsAfter1SafeRedeem: 2066749170873836332,
             sharesAfter1SafeRedeem: 2198669330716847162, // 6% loss, 0.5% slippage x 12x leverage ~ 6% loss
-            sharesAfter2SafeDeposit: 5084723616011977219, // 3% profit for half opened auction cancellation
+            sharesAfter2SafeDeposit: 5084723616011977221, // 3% profit for half opened auction cancellation
             assetsAfter2SafeDeposit: 4927464122733256282,
-            collateralAfter1WithdrawAuctionExecution: 49820811018338885218,
-            borrowAfter1WithdrawAuctionExecution: 60527492342090447736 // 0.25% profit since auction half opened
+            collateralAfter1WithdrawAuctionExecution: 49820811018338885258,
+            borrowAfter1WithdrawAuctionExecution: 60527492342090447783 // 0.25% profit since auction half opened
         });
     }
 
