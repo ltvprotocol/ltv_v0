@@ -131,6 +131,10 @@ abstract contract OnlyEmergencyDeleverager is
             10 ** collateralTokenDecimals, oracleConnector.getPriceCollateralOracle(_oracleConnectorGetterData)
         );
         if (isSoftLiquidation) {
+            require(
+                liquidationAmountCollateralInUnderlying <= uint256(totalAssetsData.collateral),
+                SoftLiquidationIncorrectAmount()
+            );
             uint256 expectedCollateralInUnderlying =
                 (uint256(totalAssetsData.collateral) - liquidationAmountCollateralInUnderlying);
             uint256 expectedBorrowInUnderlying = (uint256(totalAssetsData.borrow) - liquidationAmountBorrowInUnderlying);
@@ -156,10 +160,14 @@ abstract contract OnlyEmergencyDeleverager is
             repay(liquidationAmountBorrow);
         }
 
+        uint256 realCollateralAssets = lendingConnector.getRealCollateralAssets(true, lendingConnectorGetterData);
+
         if (isSoftLiquidation) {
+            require(liquidationAmountCollateral <= realCollateralAssets, SoftLiquidationIncorrectAmount());
+
             withdraw(liquidationAmountCollateral);
         } else {
-            withdraw(lendingConnector.getRealCollateralAssets(true, lendingConnectorGetterData));
+            withdraw(realCollateralAssets);
         }
         collateralToken.safeTransfer(msg.sender, liquidationAmountCollateral);
         emit LiquidationPerformed(liquidationAmountBorrow, bonusDividend, bonusDivider, isSoftLiquidation);

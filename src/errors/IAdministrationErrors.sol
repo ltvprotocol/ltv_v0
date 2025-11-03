@@ -218,6 +218,14 @@ interface IAdministrationErrors {
     error SoftLiquidationFeeTooHigh();
 
     /**
+     * @notice Error thrown when soft liquidation amount exceeds available collateral assets
+     * @dev This error is thrown in two scenarios:
+     *      1. When the liquidation amount in underlying terms exceeds the total collateral assets
+     *      2. When the liquidation amount in collateral token terms exceeds the real collateral assets
+     */
+    error SoftLiquidationIncorrectAmount();
+
+    /**
      * @notice Error thrown when auction duration is set to zero during initialization
      */
     error ZeroAuctionDuration();
