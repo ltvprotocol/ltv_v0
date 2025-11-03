@@ -163,7 +163,7 @@ abstract contract OnlyEmergencyDeleverager is
         if (isSoftLiquidation) {
             withdraw(liquidationAmountCollateral);
         } else {
-            withdraw(realCollateralAssets);
+            withdraw(lendingConnector.getRealCollateralAssets(true, lendingConnectorGetterData));
         }
         collateralToken.safeTransfer(msg.sender, liquidationAmountCollateral);
         emit LiquidationPerformed(liquidationAmountBorrow, bonusDividend, bonusDivider, isSoftLiquidation);
