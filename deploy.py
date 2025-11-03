@@ -269,6 +269,9 @@ def write_to_deploy_file(
         library_address = temp[2]
         data[library_name] = library_address
 
+    for additional_contract in latest_data["transactions"][0]["additionalContracts"]:
+        data[additional_contract["contractName"]] = additional_contract["address"]
+
     with open(deployed_contracts_file_path, "w") as f:
         json.dump(data, f, indent=4)
 
@@ -599,9 +602,7 @@ def parse_address_from_result(output):
 
 
 def change_role_if_needed(data, dataKey, owner, role_signature, role_getter_signature):
-    print(
-        f"Getting {role_getter_signature} role of {dataKey} {data[dataKey]}"
-    )
+    print(f"Getting {role_getter_signature} role of {dataKey} {data[dataKey]}")
     role_getter_result = subprocess.run(
         [f'cast call {data[dataKey]} "{role_getter_signature}"'],
         capture_output=True,
@@ -960,7 +961,7 @@ def main():
             data,
         )
         print("SUCCESS Test general deployed LTV beacon proxy completed")
-        
+
     if args.test_deployed_ltv_beacon_proxy_lido:
         fake_ltv_roles(args)
         data = read_data(args.chain, args.lending_protocol, args.args_filename)
@@ -972,6 +973,7 @@ def main():
             data,
         )
         print("SUCCESS Test deployed LTV beacon proxy Lido completed")
+
 
 if __name__ == "__main__":
     main()

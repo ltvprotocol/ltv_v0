@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {ITransparentUpgradeableBeaconProxy} from "./UpgradeableBeaconProxy.sol";
+import {ITransparentUpgradeableBeaconProxy} from "./TransparentUpgradeableBeaconProxy.sol";
 import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
 
 contract BeaconProxyAdmin is Ownable {
