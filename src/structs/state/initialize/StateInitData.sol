@@ -43,4 +43,6 @@ struct StateInitData {
     uint16 softLiquidationFeeDivider;
     uint16 softLiquidationLtvDividend;
     uint16 softLiquidationLtvDivider;
+    address whitelistRegistry;
+    bool isWhitelistActivated;
 }

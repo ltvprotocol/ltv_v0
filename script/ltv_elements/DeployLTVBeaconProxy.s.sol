@@ -68,13 +68,10 @@ contract DeployLTVBeaconProxy is BaseScript {
             address oracle = vm.envAddress("ORACLE");
             address irm = vm.envAddress("IRM");
             uint256 lltv = vm.envUint("LLTV");
-            stateInitData.lendingConnectorData = abi.encode(
-                oracle,
-                irm,
-                lltv,
-                keccak256(abi.encode(stateInitData.borrowToken, stateInitData.collateralToken, oracle, irm, lltv))
-            );
-            stateInitData.oracleConnectorData = abi.encode(oracle);
+            bytes32 marketId =
+                keccak256(abi.encode(stateInitData.borrowToken, stateInitData.collateralToken, oracle, irm, lltv));
+            stateInitData.lendingConnectorData = abi.encode(oracle, irm, lltv, marketId);
+            stateInitData.oracleConnectorData = abi.encode(oracle, marketId);
         } else {
             revert("Unknown LENDING_CONNECTOR_NAME");
         }

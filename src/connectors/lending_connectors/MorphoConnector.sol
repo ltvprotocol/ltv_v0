@@ -123,8 +123,8 @@ contract MorphoConnector is LTVState, ILendingConnector, IMorphoConnectorErrors 
         require(fetchedLltv > 0, ZeroLltvMarketParam());
         require(fetchedLoanToken != address(0), ZeroLoanTokenMarketParam());
         require(fetchedCollateralToken != address(0), ZeroCollateralTokenMarketParam());
-        require(fetchedLoanToken != address(0), ZeroLoanTokenMarketParam());
-        require(fetchedCollateralToken != address(0), ZeroCollateralTokenMarketParam());
+        require(fetchedIrm != address(0), ZeroIrmMarketParam());
+        require(fetchedLltv != 0, ZeroLltvMarketParam());
 
         require(fetchedOracle == oracle, InvalidOracle(oracle, fetchedOracle));
         require(fetchedIrm == irm, InvalidIrm(irm, fetchedIrm));

@@ -180,12 +180,6 @@ interface IAdministrationErrors {
     error ZeroSlippageConnector();
 
     /**
-     * @notice Error thrown when attempting to set a zero address as modules provider
-     * @dev Prevents setting invalid modules provider addresses
-     */
-    error ZeroModulesProvider();
-
-    /**
      * @notice Error thrown when soft liquidation expected result is below configured threshold
      * @param calculatedBorrowInUnderlying Expected borrow assets amount in lending protocol after liquidation
      * @param calculatedCollateralInUnderlying Expected collateral assets amount in lending protocol after liquidation
@@ -224,38 +218,9 @@ interface IAdministrationErrors {
     error SoftLiquidationFeeTooHigh();
 
     /**
-     * @notice Error thrown when setting lending connector fails
-     * @param lendingConnector The address of the lending connector that failed to set
-     * @param lendingConnectorData The data used for setting the lending connector
-     * @dev Used when configuration of lending connector encounters an error
+     * @notice Error thrown when soft liquidation amount exceeds available collateral assets
      */
-    error FailedToSetLendingConnector(address lendingConnector, bytes lendingConnectorData);
-
-    /**
-     * @notice Error thrown when setting oracle connector fails
-     * @param oracleConnector The address of the oracle connector that failed to set
-     * @param oracleConnectorData The data used for setting the oracle connector
-     * @dev Used when configuration of oracle connector encounters an error
-     */
-    error FailedToSetOracleConnector(address oracleConnector, bytes oracleConnectorData);
-
-    /**
-     * @notice Error thrown when setting slippage connector fails
-     * @param slippageConnector The address of the slippage connector that failed to set
-     * @param slippageConnectorData The data used for setting the slippage connector
-     * @dev Used when configuration of slippage connector encounters an error
-     */
-    error FailedToSetSlippageConnector(address slippageConnector, bytes slippageConnectorData);
-
-    /**
-     * @notice Error thrown when setting vault balance as lending connector fails
-     * @param vaultBalanceAsLendingConnector The address of the vault balance connector that failed to set
-     * @param vaultBalanceAsLendingConnectorGetterData The data used for setting the vault balance connector
-     * @dev Used when configuration of vault balance as lending connector encounters an error
-     */
-    error FailedToSetVaultBalanceAsLendingConnector(
-        address vaultBalanceAsLendingConnector, bytes vaultBalanceAsLendingConnectorGetterData
-    );
+    error SoftLiquidationIncorrectAmount();
 
     /**
      * @notice Error thrown when auction duration is set to zero during initialization

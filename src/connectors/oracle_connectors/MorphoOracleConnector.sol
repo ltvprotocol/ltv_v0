@@ -3,14 +3,22 @@ pragma solidity ^0.8.28;
 
 import {IOracleConnector} from "src/interfaces/connectors/IOracleConnector.sol";
 import {IMorphoOracle} from "src/connectors/oracle_connectors/interfaces/IMorphoOracle.sol";
+import {IMorphoBlue} from "src/connectors/lending_connectors/interfaces/IMorphoBlue.sol";
 import {LTVState} from "src/states/LTVState.sol";
-import {IMorphoOracleConnectorErrors} from "../../../src/errors/connectors/IMorphoOracleConnectorErrors.sol";
+import {IMorphoConnectorErrors} from "../../../src/errors/connectors/IMorphoConnectorErrors.sol";
 
 /**
  * @title MorphoOracleConnector
  * @notice Connector for Morpho Oracle
  */
-contract MorphoOracleConnector is LTVState, IOracleConnector, IMorphoOracleConnectorErrors {
+contract MorphoOracleConnector is LTVState, IOracleConnector, IMorphoConnectorErrors {
+    IMorphoBlue public immutable MORPHO;
+
+    constructor(address _morpho) {
+        require(_morpho != address(0), ZeroMorphoAddress());
+        MORPHO = IMorphoBlue(_morpho);
+    }
+
     /**
      * @inheritdoc IOracleConnector
      */
@@ -30,9 +38,19 @@ contract MorphoOracleConnector is LTVState, IOracleConnector, IMorphoOracleConne
     /**
      * @inheritdoc IOracleConnector
      */
-    function initializeOracleConnectorData(bytes calldata _oracle) external {
-        address oracle = abi.decode(_oracle, (address));
-        require(oracle != address(0), ZeroOracleAddress());
+    function initializeOracleConnectorData(bytes calldata data) external {
+        (address oracle, bytes32 marketId) = abi.decode(data, (address, bytes32));
+        (address fetchedLoanToken, address fetchedCollateralToken, address fetchedOracle,,) =
+            MORPHO.idToMarketParams(marketId);
+
+        require(fetchedOracle != address(0), ZeroOracleMarketParam());
+        require(fetchedOracle == oracle, InvalidOracle(oracle, fetchedOracle));
+        require(fetchedLoanToken == address(borrowToken), InvalidLoanToken(address(borrowToken), fetchedLoanToken));
+        require(
+            fetchedCollateralToken == address(collateralToken),
+            InvalidCollateralToken(address(collateralToken), fetchedCollateralToken)
+        );
+
         oracleConnectorGetterData = abi.encode(borrowTokenDecimals, collateralTokenDecimals, oracle);
     }
 }
