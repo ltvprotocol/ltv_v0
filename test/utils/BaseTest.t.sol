@@ -164,7 +164,9 @@ contract BaseTest is Test {
                 softLiquidationFeeDividend: init.softLiquidationFeeDividend,
                 softLiquidationFeeDivider: init.softLiquidationFeeDivider,
                 softLiquidationLtvDividend: init.softLiquidationLtvDividend,
-                softLiquidationLtvDivider: init.softLiquidationLtvDivider
+                softLiquidationLtvDivider: init.softLiquidationLtvDivider,
+                whitelistRegistry: address(0),
+                isWhitelistActivated: false
             });
 
             ltv = new DummyLTV(address(modulesProvider));
