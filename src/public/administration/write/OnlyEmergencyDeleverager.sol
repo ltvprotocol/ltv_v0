@@ -130,6 +130,10 @@ abstract contract OnlyEmergencyDeleverager is
         uint256 liquidationAmountCollateral = liquidationAmountCollateralInUnderlying.mulDivDown(
             10 ** collateralTokenDecimals, oracleConnector.getPriceCollateralOracle(_oracleConnectorGetterData)
         );
+        require(
+            liquidationAmountCollateralInUnderlying <= uint256(totalAssetsData.collateral),
+            SoftLiquidationIncorrectAmount()
+        );
         if (isSoftLiquidation) {
             uint256 expectedCollateralInUnderlying =
                 (uint256(totalAssetsData.collateral) - liquidationAmountCollateralInUnderlying);

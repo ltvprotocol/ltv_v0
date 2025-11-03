@@ -218,6 +218,11 @@ interface IAdministrationErrors {
     error SoftLiquidationFeeTooHigh();
 
     /**
+     * @notice Error thrown when soft liquidation amount exceeds available collateral assets
+     */
+    error SoftLiquidationIncorrectAmount();
+
+    /**
      * @notice Error thrown when auction duration is set to zero during initialization
      */
     error ZeroAuctionDuration();
