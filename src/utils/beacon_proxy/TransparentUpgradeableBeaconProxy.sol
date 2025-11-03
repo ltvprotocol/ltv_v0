@@ -12,15 +12,15 @@ interface ITransparentUpgradeableBeaconProxy is IERC1967 {
 }
 
 contract TransparentUpgradeableBeaconProxy is Proxy {
-    address private immutable _admin;
+    address private immutable ADMIN;
 
     error ProxyDeniedAdminAccess();
 
     constructor(address beacon, address initialOwner, bytes memory data) payable {
         ERC1967Utils.upgradeBeaconToAndCall(beacon, data);
 
-        _admin = address(new BeaconProxyAdmin(initialOwner));
-        ERC1967Utils.changeAdmin(_admin);
+        ADMIN = address(new BeaconProxyAdmin(initialOwner));
+        ERC1967Utils.changeAdmin(ADMIN);
     }
 
     function _implementation() internal view override returns (address) {
@@ -28,7 +28,7 @@ contract TransparentUpgradeableBeaconProxy is Proxy {
     }
 
     function _fallback() internal virtual override {
-        if (msg.sender == _admin) {
+        if (msg.sender == ADMIN) {
             if (msg.sig != ITransparentUpgradeableBeaconProxy.upgradeBeaconToAndCall.selector) {
                 revert ProxyDeniedAdminAccess();
             } else {
