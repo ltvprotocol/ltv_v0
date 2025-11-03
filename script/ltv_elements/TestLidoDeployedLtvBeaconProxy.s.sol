@@ -45,10 +45,10 @@ contract TestLidoDeployedLtvBeaconProxy is TestGeneralDeployedLTVBeaconProxy {
             sharesAfter1SafeMint: 3153741551064982290,
             assetsAfter1SafeDepositCollateral: 2745531904897363969, // 5.2% loss, 0.5% slippage x (12-1)x leverage ~ 5.5% loss
             sharesAfter1SafeDepositCollateral: 3169589498557771146,
-            assetsAfter1SafeMintCollateral: 2470978714407627572, // 5.2% loss, 0.5% slippage x (12-1)x leverage ~ 5.5% loss
-            sharesAfter1SafeMintCollateral: 2852630548701994032,
-            borrowAfter1DepositAuctionExecution: 146540687816654286186,
-            collateralAfter1DepositAuctionExecution: 120016828442730243901, // 0.25% profit since auction half opened
+            assetsAfter1SafeMintCollateral: 2470978714407627571, // 5.2% loss, 0.5% slippage x (12-1)x leverage ~ 5.5% loss
+            sharesAfter1SafeMintCollateral: 2852630548701994031,
+            borrowAfter1DepositAuctionExecution: 146540687816654286202,
+            collateralAfter1DepositAuctionExecution: 120016828442730243914, // 0.25% profit since auction half opened
             assetsAfter1SafeWithdrawCollateral: 2506778395218842440,
             sharesAfter1SafeWithdrawCollateral: 3231767835484402340, // 5.5% loss, 0.5% slippage x (12-1)x leverage ~ 5.5% loss
             assetsAfter1SafeRedeemCollateral: 2256100555696958196,
@@ -57,10 +57,10 @@ contract TestLidoDeployedLtvBeaconProxy is TestGeneralDeployedLTVBeaconProxy {
             sharesAfter1SafeWithdraw: 2442965923018719068, // 6% loss, 0.5% slippage x 12x leverage ~ 6% loss
             assetsAfter1SafeRedeem: 2066749170873836332,
             sharesAfter1SafeRedeem: 2198669330716847162, // 6% loss, 0.5% slippage x 12x leverage ~ 6% loss
-            sharesAfter2SafeDeposit: 5084723616011977221, // 3% profit for half opened auction cancellation
+            sharesAfter2SafeDeposit: 5084723616011977219, // 3% profit for half opened auction cancellation
             assetsAfter2SafeDeposit: 4927464122733256282,
-            collateralAfter1WithdrawAuctionExecution: 49820811018338885258,
-            borrowAfter1WithdrawAuctionExecution: 60527492342090447783 // 0.25% profit since auction half opened
+            collateralAfter1WithdrawAuctionExecution: 49820811018338885239,
+            borrowAfter1WithdrawAuctionExecution: 60527492342090447761 // 0.25% profit since auction half opened
         });
     }
 

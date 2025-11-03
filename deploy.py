@@ -842,6 +842,8 @@ def main():
             print("anvil --port 8545" + rpc_url + block_number)
             print("Press Enter to continue...")
             input()
+            
+        subprocess.run(["cast", "rpc", "anvil_setBlockTimestampInterval", "1"], text=True, capture_output=True)
 
     elif not args.private_key:
         # Check for private key from environment variable if not provided as argument
