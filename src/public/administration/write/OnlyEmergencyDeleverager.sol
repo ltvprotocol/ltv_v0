@@ -130,11 +130,11 @@ abstract contract OnlyEmergencyDeleverager is
         uint256 liquidationAmountCollateral = liquidationAmountCollateralInUnderlying.mulDivDown(
             10 ** collateralTokenDecimals, oracleConnector.getPriceCollateralOracle(_oracleConnectorGetterData)
         );
+        require(
+            liquidationAmountCollateralInUnderlying <= uint256(totalAssetsData.collateral),
+            SoftLiquidationIncorrectAmount()
+        );
         if (isSoftLiquidation) {
-            require(
-                liquidationAmountCollateralInUnderlying <= uint256(totalAssetsData.collateral),
-                SoftLiquidationIncorrectAmount()
-            );
             uint256 expectedCollateralInUnderlying =
                 (uint256(totalAssetsData.collateral) - liquidationAmountCollateralInUnderlying);
             uint256 expectedBorrowInUnderlying = (uint256(totalAssetsData.borrow) - liquidationAmountBorrowInUnderlying);
@@ -160,11 +160,7 @@ abstract contract OnlyEmergencyDeleverager is
             repay(liquidationAmountBorrow);
         }
 
-        uint256 realCollateralAssets = lendingConnector.getRealCollateralAssets(true, lendingConnectorGetterData);
-
         if (isSoftLiquidation) {
-            require(liquidationAmountCollateral <= realCollateralAssets, SoftLiquidationIncorrectAmount());
-
             withdraw(liquidationAmountCollateral);
         } else {
             withdraw(realCollateralAssets);
