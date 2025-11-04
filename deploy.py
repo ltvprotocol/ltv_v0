@@ -582,14 +582,20 @@ def read_data(chain, lending_protocol, args_filename):
 
 def upgrade_ltv(args):
     if args.chain.find("local") != -1:
-        upgrade_ltv_local(args)
+        prepare_upgrade_ltv(args)
+        fake_ltv_roles(args)
+        make_upgrade_ltv(args)
     else:
-        upgrade_ltv_real(args)
+        prepare_upgrade_ltv(args)
+        make_upgrade_ltv(args)
 
 
-def upgrade_ltv_real(args):
+def prepare_upgrade_ltv(args):
     deploy_ltv_implementation(args)
     deploy_connectors(args, CONTRACTS.NONE)
+
+
+def make_upgrade_ltv(args):
     data = read_data(args.chain, args.lending_protocol, args.args_filename)
     run_script(
         args.chain, CONTRACTS.UPGRADE, args.lending_protocol, args.private_key, data
@@ -619,6 +625,12 @@ def change_role_if_needed(data, dataKey, owner, role_signature, role_getter_sign
     print(
         f"Transferring {role_getter_signature} role of {dataKey} {data[dataKey]} to new {role_getter_signature}"
     )
+    result = subprocess.run(
+        ["cast", "rpc", "anvil_setBalance", owner, "0x152d02c7e14af6800000"],
+        text=True,
+        capture_output=True,
+    )
+    handle_script_result(result)
     result = subprocess.run(
         [
             "cast",
@@ -672,6 +684,7 @@ def fake_ltv_roles(args):
     impersonate_owner_if_needed(data, "BEACON")
     impersonate_owner_if_needed(data, "PROXY_ADMIN")
     impersonate_owner_if_needed(data, "LTV_BEACON_PROXY")
+    impersonate_owner_if_needed(data, "WHITELIST_REGISTRY")
     change_role_if_needed(
         data,
         "LTV_BEACON_PROXY",
@@ -693,12 +706,6 @@ def fake_ltv_roles(args):
         "updateGovernor(address)",
         "governor()",
     )
-    impersonate_owner_if_needed(data, "WHITELIST_REGISTRY")
-
-
-def upgrade_ltv_local(args):
-    fake_ltv_roles(args)
-    upgrade_ltv_real(args)
 
 
 def main():
@@ -842,8 +849,12 @@ def main():
             print("anvil --port 8545" + rpc_url + block_number)
             print("Press Enter to continue...")
             input()
-            
-        subprocess.run(["cast", "rpc", "anvil_setBlockTimestampInterval", "1"], text=True, capture_output=True)
+
+        subprocess.run(
+            ["cast", "rpc", "anvil_setBlockTimestampInterval", "1"],
+            text=True,
+            capture_output=True,
+        )
 
     elif not args.private_key:
         # Check for private key from environment variable if not provided as argument
