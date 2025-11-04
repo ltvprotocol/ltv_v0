@@ -261,16 +261,17 @@ def write_to_deploy_file(
         sys.exit(1)
 
     latest_receipt_file = get_latest_receipt_file(lending_protocol, contract, chain)
-    with open(latest_receipt_file, "r") as f:
-        latest_data = json.load(f)
-    for library in latest_data["libraries"]:
-        temp = library.split(":")
-        library_name = temp[1]
-        library_address = temp[2]
-        data[library_name] = library_address
+    if os.path.exists(latest_receipt_file):
+        with open(latest_receipt_file, "r") as f:
+            latest_data = json.load(f)
+        for library in latest_data["libraries"]:
+            temp = library.split(":")
+            library_name = temp[1]
+            library_address = temp[2]
+            data[library_name] = library_address
 
-    for additional_contract in latest_data["transactions"][0]["additionalContracts"]:
-        data[additional_contract["contractName"]] = additional_contract["address"]
+        for additional_contract in latest_data["transactions"][0]["additionalContracts"]:
+            data[additional_contract["contractName"]] = additional_contract["address"]
 
     with open(deployed_contracts_file_path, "w") as f:
         json.dump(data, f, indent=4)
