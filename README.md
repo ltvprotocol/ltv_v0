@@ -4,9 +4,6 @@
 [![Solidity](https://img.shields.io/badge/Solidity-^0.8.28-blue.svg)](https://soliditylang.org/)
 [![Foundry](https://img.shields.io/badge/Built%20with-Foundry-FFDB1C.svg)](https://getfoundry.sh/)
 
-> **⚠️ SECURITY WARNING**  
-> This protocol has **NOT** been audited and may contain critical vulnerabilities.  
-
 ## Overview
 
 The LTV Protocol is a revolutionary **Curatorless Leveraged Tokenized Vault** that maintains a constant target Loan-To-Value (LTV) ratio without requiring a central curator. Built on the foundation of two interconnected EIP-4626 vaults, it enables users to deposit and withdraw funds while receiving tokenized shares representing their leveraged positions.
@@ -49,6 +46,12 @@ forge test -vvv --no-match-path "test/integration/**"
 ## License
 
 This project is licensed under the Business Source License 1.1 (BUSL-1.1). See the [LICENSE](LICENSE) file for details.
+
+## Security Audit
+
+The protocol has undergone a security audit by Oxorio:
+
+- **Oxorio**: [LTV v0 Security Audit Report](audits/oxorio_ltv_v0_security_audit.pdf)
 
 ## Links
 
