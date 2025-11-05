@@ -12,6 +12,7 @@ contract ValidValuesFuzzingExecution is AuctionTestCommon {
         uint120 auctionSize,
         uint128 executionSize
     ) public testWithPredefinedDefaultValues(data) {
+        vm.assume(user != address(0));
         vm.assume(auctionSize >= 3);
 
         prepareWithdrawAuctionWithCustomCollateralPrice(auctionSize, data.governor, user, 2_111_111_111_111_111_111);
@@ -33,6 +34,7 @@ contract ValidValuesFuzzingExecution is AuctionTestCommon {
         uint120 auctionSize,
         uint128 executionSize
     ) public testWithPredefinedDefaultValues(data) {
+        vm.assume(user != address(0));
         vm.assume(auctionSize >= 3);
         prepareDepositAuctionWithCustomCollateralPrice(auctionSize, 2_111_111_111_111_111_111, data.owner);
 
