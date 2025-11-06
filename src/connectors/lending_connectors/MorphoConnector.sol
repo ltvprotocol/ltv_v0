@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 import {ILendingConnector} from "../../interfaces/connectors/ILendingConnector.sol";
 import {MorphoConnectorStorage} from "../../structs/connectors/MorphoConnectorStorage.sol";
-import {IMorphoBlue} from "interfaces/IMorphoBlue.sol";
+import {IMorphoBlue} from "./interfaces/IMorphoBlue.sol";
 import {IMorphoConnectorErrors} from "../../../src/errors/connectors/IMorphoConnectorErrors.sol";
 import {LTVState} from "../../states/LTVState.sol";
 import {UMulDiv} from "../../math/libraries/MulDiv.sol";

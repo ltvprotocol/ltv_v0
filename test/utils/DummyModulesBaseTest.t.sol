@@ -12,10 +12,10 @@ import {IInitializeModule} from "../../src/interfaces/writes/IInitializeModule.s
 import {IAdministrationModule} from "../../src/interfaces/reads/IAdministrationModule.sol";
 import {ModulesState} from "../../src/structs/state/common/ModulesState.sol";
 import {ModulesProvider} from "../../src/elements/ModulesProvider.sol";
-import {DummyBorrowVaultModule} from "modules/DummyBorrowVaultModule.t.sol";
-import {DummyCollateralVaultModule} from "modules/DummyCollateralVaultModule.t.sol";
-import {DummyERC20Module} from "modules/DummyERC20Module.t.sol";
-import {DummyLowLevelRebalanceModule} from "modules/DummyLowLevelRebalanceModule.t.sol";
+import {DummyBorrowVaultModule} from "./modules/DummyBorrowVaultModule.t.sol";
+import {DummyCollateralVaultModule} from "./modules/DummyCollateralVaultModule.t.sol";
+import {DummyERC20Module} from "./modules/DummyERC20Module.t.sol";
+import {DummyLowLevelRebalanceModule} from "./modules/DummyLowLevelRebalanceModule.t.sol";
 
 contract DummyModulesBaseTest is BaseTest {
     DummyLTV public dummyLtv;

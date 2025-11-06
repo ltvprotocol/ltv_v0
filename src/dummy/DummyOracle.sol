@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {IDummyOracle} from "interfaces/IDummyOracle.sol";
+import {IDummyOracle} from "./interfaces/IDummyOracle.sol";
 
 contract DummyOracle is IDummyOracle {
     mapping(address => uint256) private prices;

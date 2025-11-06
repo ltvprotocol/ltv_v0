@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 import {Constants} from "../../constants/Constants.sol";
 import {Cases} from "../../structs/data/vault/common/Cases.sol";
-import {UMulDiv, SMulDiv} from "MulDiv.sol";
+import {UMulDiv, SMulDiv} from "./MulDiv.sol";
 
 /**
  * @title CommonBorrowCollateral

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {IOracleConnector} from "../../interfaces/connectors/IOracleConnector.sol";
-import {IMorphoOracle} from "interfaces/IMorphoOracle.sol";
+import {IMorphoOracle} from "./interfaces/IMorphoOracle.sol";
 import {IMorphoBlue} from "../lending_connectors/interfaces/IMorphoBlue.sol";
 import {LTVState} from "../../states/LTVState.sol";
 import {IMorphoConnectorErrors} from "../../../src/errors/connectors/IMorphoConnectorErrors.sol";

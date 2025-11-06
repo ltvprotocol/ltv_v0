@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {LTVState} from "../../states/LTVState.sol";
-import {CommonWrite} from "CommonWrite.sol";
+import {CommonWrite} from "./CommonWrite.sol";
 import {FacadeImplementationState} from "../../states/FacadeImplementationState.sol";
 /**
  * @title CollateralVaultWrite

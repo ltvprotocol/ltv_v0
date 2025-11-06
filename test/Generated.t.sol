@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {GeneratedBaseTest} from "utils/GeneratedBaseTest.t.sol";
+import {GeneratedBaseTest} from "./utils/GeneratedBaseTest.t.sol";
 
 contract GeneratedTests is GeneratedBaseTest {
     function test_borrow_cna_deposit() public initializeGeneratedTest(56000, 75050, 5000, 5000, -50, 600.0) {

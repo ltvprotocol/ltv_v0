@@ -6,10 +6,10 @@ import {DeltaRealBorrowAndDeltaRealCollateralData} from
 import {DepositWithdrawData} from "../../structs/data/vault/common/DepositWithdrawData.sol";
 import {DeltaFuture} from "../../structs/state_transition/DeltaFuture.sol";
 import {DeltaRealBorrowAndDeltaRealCollateral} from
-    "delta_future_collateral/DeltaRealBorrowAndDeltaRealCollateral.sol";
-import {CommonBorrowCollateral} from "CommonBorrowCollateral.sol";
-import {CasesOperator} from "CasesOperator.sol";
-import {UMulDiv, SMulDiv} from "MulDiv.sol";
+    "./delta_future_collateral/DeltaRealBorrowAndDeltaRealCollateral.sol";
+import {CommonBorrowCollateral} from "./CommonBorrowCollateral.sol";
+import {CasesOperator} from "./CasesOperator.sol";
+import {UMulDiv, SMulDiv} from "./MulDiv.sol";
 
 /**
  * @title DepositWithdraw

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {IOracleConnector} from "../interfaces/connectors/IOracleConnector.sol";
-import {IDummyOracle} from "interfaces/IDummyOracle.sol";
+import {IDummyOracle} from "./interfaces/IDummyOracle.sol";
 import {LTVState} from "../states/LTVState.sol";
 
 contract DummyOracleConnector is LTVState, IOracleConnector {

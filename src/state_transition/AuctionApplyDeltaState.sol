@@ -8,8 +8,8 @@ import {ReentrancyGuardUpgradeable} from
 import {DeltaAuctionState} from "../structs/state_transition/DeltaAuctionState.sol";
 import {IAuctionEvent} from "../events/IAuctionEvent.sol";
 import {FunctionStopperModifier} from "../modifiers/FunctionStopperModifier.sol";
-import {Lending} from "Lending.sol";
-import {TransferFromProtocol} from "TransferFromProtocol.sol";
+import {Lending} from "./Lending.sol";
+import {TransferFromProtocol} from "./TransferFromProtocol.sol";
 
 /**
  * @title AuctionApplyDeltaState

@@ -5,7 +5,7 @@ import {ILowLevelRebalanceErrors} from "../../errors/ILowLevelRebalanceErrors.so
 import {LowLevelRebalanceData} from "../../structs/data/low_level/LowLevelRebalanceData.sol";
 import {DeltaRealCollateralFromDeltaSharesData} from
     "../../structs/data/low_level/DeltaRealCollateralFromDeltaSharesData.sol";
-import {SMulDiv, UMulDiv} from "MulDiv.sol";
+import {SMulDiv, UMulDiv} from "./MulDiv.sol";
 
 /**
  * @title LowLevelRebalanceMath

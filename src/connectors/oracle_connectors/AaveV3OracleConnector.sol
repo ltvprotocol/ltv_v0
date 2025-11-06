@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {IOracleConnector} from "../../interfaces/connectors/IOracleConnector.sol";
-import {IAaveV3Oracle} from "interfaces/IAaveV3Oracle.sol";
+import {IAaveV3Oracle} from "./interfaces/IAaveV3Oracle.sol";
 import {LTVState} from "../../states/LTVState.sol";
 import {IAaveV3OracleConnectorErrors} from "../../../src/errors/connectors/IAaveV3OracleConnectorErrors.sol";
 /**

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {MintProtocolRewardsData} from "../structs/data/vault/common/MintProtocolRewardsData.sol";
-import {ERC20} from "ERC20.sol";
+import {ERC20} from "./ERC20.sol";
 import {UMulDiv} from "../math/libraries/MulDiv.sol";
 
 /**

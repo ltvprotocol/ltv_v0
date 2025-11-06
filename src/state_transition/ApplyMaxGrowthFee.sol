@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {Constants} from "../constants/Constants.sol";
-import {ERC20} from "ERC20.sol";
+import {ERC20} from "./ERC20.sol";
 import {TotalSupply} from "../public/erc20/read/TotalSupply.sol";
 import {TotalAssets} from "../public/vault/read/borrow/TotalAssets.sol";
 import {UMulDiv} from "../math/libraries/MulDiv.sol";

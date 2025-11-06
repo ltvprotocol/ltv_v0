@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {ILendingConnector} from "../../interfaces/connectors/ILendingConnector.sol";
-import {IAaveV3Pool} from "interfaces/IAaveV3Pool.sol";
+import {IAaveV3Pool} from "./interfaces/IAaveV3Pool.sol";
 import {LTVState} from "../../states/LTVState.sol";
 import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 import {IAaveV3ConnectorErrors} from "../../errors/connectors/IAaveV3ConnectorErrors.sol";

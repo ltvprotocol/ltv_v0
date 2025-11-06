@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {MaxDepositMintBorrowVaultState} from "../../structs/state/vault/max/MaxDepositMintBorrowVaultState.sol";
-import {PreviewDepositVaultStateReader} from "PreviewDepositVaultStateReader.sol";
+import {PreviewDepositVaultStateReader} from "./PreviewDepositVaultStateReader.sol";
 
 /**
  * @title MaxDepositMintBorrowVaultStateReader

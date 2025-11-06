@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {BaseInvariantTest} from "utils/BaseInvariantTest.t.sol";
-import {VaultInvariantWrapper, ILTV} from "utils/VaultInvariantWrapper.t.sol";
+import {BaseInvariantTest} from "./utils/BaseInvariantTest.t.sol";
+import {VaultInvariantWrapper, ILTV} from "./utils/VaultInvariantWrapper.t.sol";
 
 /**
  * @title VaultInvariantTest

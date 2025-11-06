@@ -8,11 +8,11 @@ import {DeltaSharesAndDeltaRealCollateralData} from
 import {DeltaSharesAndDeltaRealBorrowData} from
     "../../structs/data/vault/delta_real_borrow/DeltaSharesAndDeltaRealBorrowData.sol";
 import {DeltaSharesAndDeltaRealCollateral} from
-    "delta_future_collateral/DeltaSharesAndDeltaRealCollateral.sol";
-import {DeltaSharesAndDeltaRealBorrow} from "delta_future_borrow/DeltaSharesAndDeltaRealBorrow.sol";
-import {CommonBorrowCollateral} from "CommonBorrowCollateral.sol";
-import {CasesOperator} from "CasesOperator.sol";
-import {UMulDiv} from "MulDiv.sol";
+    "./delta_future_collateral/DeltaSharesAndDeltaRealCollateral.sol";
+import {DeltaSharesAndDeltaRealBorrow} from "./delta_future_borrow/DeltaSharesAndDeltaRealBorrow.sol";
+import {CommonBorrowCollateral} from "./CommonBorrowCollateral.sol";
+import {CasesOperator} from "./CasesOperator.sol";
+import {UMulDiv} from "./MulDiv.sol";
 
 /**
  * @title MintRedeem

@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 import {StateInitData} from "../../structs/state/initialize/StateInitData.sol";
 import {FacadeImplementationState} from "../../states/FacadeImplementationState.sol";
-import {CommonWrite} from "CommonWrite.sol";
+import {CommonWrite} from "./CommonWrite.sol";
 /**
  * @title InitializeWrite
  * @notice This contract contains initialize part of the LTV protocol.
