@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {ILendingConnector} from "src/interfaces/connectors/ILendingConnector.sol";
-import {MorphoConnectorStorage} from "src/structs/connectors/MorphoConnectorStorage.sol";
-import {IMorphoBlue} from "src/connectors/lending_connectors/interfaces/IMorphoBlue.sol";
+import {ILendingConnector} from "../../interfaces/connectors/ILendingConnector.sol";
+import {MorphoConnectorStorage} from "../../structs/connectors/MorphoConnectorStorage.sol";
+import {IMorphoBlue} from "interfaces/IMorphoBlue.sol";
 import {IMorphoConnectorErrors} from "../../../src/errors/connectors/IMorphoConnectorErrors.sol";
-import {LTVState} from "src/states/LTVState.sol";
-import {UMulDiv} from "src/math/libraries/MulDiv.sol";
+import {LTVState} from "../../states/LTVState.sol";
+import {UMulDiv} from "../../math/libraries/MulDiv.sol";
 import {SafeERC20, IERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 
 /**

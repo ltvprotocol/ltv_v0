@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {MaxLowLevelRebalanceCollateralStateData} from
-    "src/structs/state/low_level/max/MaxLowLevelRebalanceCollateralStateData.sol";
+    "../../structs/state/low_level/max/MaxLowLevelRebalanceCollateralStateData.sol";
 import {GetRealCollateralAssetsReader} from "../common/GetRealCollateralAssetsReader.sol";
 
 /**

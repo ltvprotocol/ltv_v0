@@ -2,8 +2,8 @@
 pragma solidity ^0.8.28;
 
 import {console} from "forge-std/console.sol";
-import {IHodlMyBeerLending} from "src/ghost/hodlmybeer/IHodlMyBeerLending.sol";
-import {HodlLendingConnector} from "src/ghost/connectors/HodlLendingConnector.sol";
+import {IHodlMyBeerLending} from "../../src/ghost/hodlmybeer/IHodlMyBeerLending.sol";
+import {HodlLendingConnector} from "../../src/ghost/connectors/HodlLendingConnector.sol";
 import {BaseScript} from "../utils/BaseScript.s.sol";
 
 contract DeployHodlLendingConnector is BaseScript {

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {LTVState} from "src/states/LTVState.sol";
+import {LTVState} from "../../states/LTVState.sol";
 import {FacadeImplementationState} from "../../states/FacadeImplementationState.sol";
 /**
  * @title ERC20Read

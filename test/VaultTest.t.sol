@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {BalancedTest} from "test/utils/BalancedTest.t.sol";
-import {ILTV} from "src/interfaces/ILTV.sol";
+import {BalancedTest} from "utils/BalancedTest.t.sol";
+import {ILTV} from "../src/interfaces/ILTV.sol";
 import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 

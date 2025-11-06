@@ -3,11 +3,11 @@ pragma solidity ^0.8.28;
 
 import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
-import {ILowLevelRebalanceEvent} from "src/events/ILowLevelRebalanceEvent.sol";
-import {FunctionStopperModifier} from "src/modifiers/FunctionStopperModifier.sol";
-import {ERC20} from "src/state_transition/ERC20.sol";
-import {TransferFromProtocol} from "src/state_transition/TransferFromProtocol.sol";
-import {Lending} from "src/state_transition/Lending.sol";
+import {ILowLevelRebalanceEvent} from "../events/ILowLevelRebalanceEvent.sol";
+import {FunctionStopperModifier} from "../modifiers/FunctionStopperModifier.sol";
+import {ERC20} from "ERC20.sol";
+import {TransferFromProtocol} from "TransferFromProtocol.sol";
+import {Lending} from "Lending.sol";
 
 /**
  * @title ExecuteLowLevelRebalance

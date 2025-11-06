@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
-import {IWhitelistRegistry} from "src/interfaces/IWhitelistRegistry.sol";
+import {IWhitelistRegistry} from "../interfaces/IWhitelistRegistry.sol";
 import {ECDSA} from "openzeppelin-contracts/contracts/utils/cryptography/ECDSA.sol";
 import {IWhitelistRegistryErrors} from "../errors/IWhitelistRegistryErrors.sol";
 import {IWhitelistRegistryEvents} from "../events/IWhitelistRegistryEvents.sol";

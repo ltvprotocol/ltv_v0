@@ -3,8 +3,8 @@ pragma solidity ^0.8.28;
 
 import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
-import {WhitelistModifier} from "src/modifiers/WhitelistModifier.sol";
-import {ITransferFromProtocolErrors} from "src/errors/ITransferFromProtocolErrors.sol";
+import {WhitelistModifier} from "../modifiers/WhitelistModifier.sol";
+import {ITransferFromProtocolErrors} from "../errors/ITransferFromProtocolErrors.sol";
 
 /**
  * @title TransferFromProtocol

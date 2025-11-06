@@ -2,12 +2,12 @@
 pragma solidity ^0.8.28;
 
 import {MaxDepositMintCollateralStateToData} from
-    "src/math/abstracts/state_to_data/max/MaxDepositMintCollateralStateToData.sol";
+    "state_to_data/max/MaxDepositMintCollateralStateToData.sol";
 import {MaxWithdrawRedeemCollateralStateToData} from
-    "src/math/abstracts/state_to_data/max/MaxWithdrawRedeemCollateralStateToData.sol";
+    "state_to_data/max/MaxWithdrawRedeemCollateralStateToData.sol";
 import {MaxGrowthFeeStateToConvertCollateralData} from
-    "src/math/abstracts/state_to_data/MaxGrowthFeeStateToConvertCollateralData.sol";
-import {UMulDiv} from "src/math/libraries/MulDiv.sol";
+    "state_to_data/MaxGrowthFeeStateToConvertCollateralData.sol";
+import {UMulDiv} from "../libraries/MulDiv.sol";
 
 /**
  * @title VaultCollateral

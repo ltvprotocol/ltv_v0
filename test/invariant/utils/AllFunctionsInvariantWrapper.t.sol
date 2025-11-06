@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {ILTV} from "src/interfaces/ILTV.sol";
-import {BaseAuctionInvariantWrapper} from "test/invariant/utils/AuctionInvariantWrapper.t.sol";
-import {BaseVaultInvariantWrapper, BaseInvariantWrapper} from "test/invariant/utils/VaultInvariantWrapper.t.sol";
-import {BaseLowLevelRebalanceInvariantWrapper} from "test/invariant/utils/LowLevelRebalanceInvariantWrapper.t.sol";
+import {ILTV} from "../../../src/interfaces/ILTV.sol";
+import {BaseAuctionInvariantWrapper} from "./AuctionInvariantWrapper.t.sol";
+import {BaseVaultInvariantWrapper, BaseInvariantWrapper} from "./VaultInvariantWrapper.t.sol";
+import {BaseLowLevelRebalanceInvariantWrapper} from "./LowLevelRebalanceInvariantWrapper.t.sol";
 
 contract AllFunctionsInvariantWrapper is
     BaseAuctionInvariantWrapper,

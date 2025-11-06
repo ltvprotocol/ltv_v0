@@ -4,9 +4,9 @@ pragma solidity ^0.8.28;
 import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "openzeppelin-contracts/contracts/interfaces/IERC20Metadata.sol";
 import {OwnableUpgradeable} from "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
-import {StateInitData} from "src/structs/state/initialize/StateInitData.sol";
-import {AdministrationSetters, IWhitelistRegistry} from "src/state_transition/AdministrationSetters.sol";
-import {Constants} from "src/constants/Constants.sol";
+import {StateInitData} from "../structs/state/initialize/StateInitData.sol";
+import {AdministrationSetters, IWhitelistRegistry} from "AdministrationSetters.sol";
+import {Constants} from "../constants/Constants.sol";
 
 /**
  * @title Initialize

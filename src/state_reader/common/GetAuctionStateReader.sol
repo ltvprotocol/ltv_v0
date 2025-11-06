@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {AuctionState} from "src/structs/state/auction/AuctionState.sol";
-import {LTVState} from "src/states/LTVState.sol";
+import {AuctionState} from "../../structs/state/auction/AuctionState.sol";
+import {LTVState} from "../../states/LTVState.sol";
 
 /**
  * @title GetAuctionStateReader

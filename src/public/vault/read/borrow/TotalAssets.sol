@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {Constants} from "src/constants/Constants.sol";
-import {TotalAssetsData} from "src/structs/data/vault/total_assets/TotalAssetsData.sol";
-import {TotalAssetsState} from "src/structs/state/vault/total_assets/TotalAssetsState.sol";
-import {TotalAssetsStateToData} from "src/math/abstracts/state_to_data/TotalAssetsStateToData.sol";
-import {UMulDiv} from "src/math/libraries/MulDiv.sol";
-import {NonReentrantRead} from "src/modifiers/NonReentrantRead.sol";
+import {Constants} from "../../../../constants/Constants.sol";
+import {TotalAssetsData} from "../../../../structs/data/vault/total_assets/TotalAssetsData.sol";
+import {TotalAssetsState} from "../../../../structs/state/vault/total_assets/TotalAssetsState.sol";
+import {TotalAssetsStateToData} from "../../../../math/abstracts/state_to_data/TotalAssetsStateToData.sol";
+import {UMulDiv} from "../../../../math/libraries/MulDiv.sol";
+import {NonReentrantRead} from "../../../../modifiers/NonReentrantRead.sol";
 
 /**
  * @title TotalAssets

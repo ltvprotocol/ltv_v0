@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {ILendingConnector} from "src/interfaces/connectors/ILendingConnector.sol";
-import {IHodlMyBeerLending} from "src/ghost/hodlmybeer/IHodlMyBeerLending.sol";
+import {ILendingConnector} from "../../interfaces/connectors/ILendingConnector.sol";
+import {IHodlMyBeerLending} from "../hodlmybeer/IHodlMyBeerLending.sol";
 import {LTVState} from "../../states/LTVState.sol";
 
 contract HodlLendingConnector is LTVState, ILendingConnector {

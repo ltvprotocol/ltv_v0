@@ -4,10 +4,10 @@ pragma solidity ^0.8.28;
 import {Test} from "forge-std/Test.sol";
 import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "openzeppelin-contracts/contracts/interfaces/IERC20Metadata.sol";
-import {ILTV} from "src/interfaces/ILTV.sol";
-import {DummyOracleConnector} from "src/dummy/DummyOracleConnector.sol";
-import {ILendingConnector} from "src/interfaces/connectors/ILendingConnector.sol";
-import {UMulDiv} from "src/math/libraries/MulDiv.sol";
+import {ILTV} from "../../../src/interfaces/ILTV.sol";
+import {DummyOracleConnector} from "../../../src/dummy/DummyOracleConnector.sol";
+import {ILendingConnector} from "../../../src/interfaces/connectors/ILendingConnector.sol";
+import {UMulDiv} from "../../../src/math/libraries/MulDiv.sol";
 
 /**
  * @title BaseInvariantWrapper

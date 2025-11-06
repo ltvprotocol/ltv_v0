@@ -1,26 +1,26 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {IERC4626Events} from "src/events/IERC4626Events.sol";
-import {IVaultErrors} from "src/errors/IVaultErrors.sol";
-import {MaxWithdrawRedeemBorrowVaultState} from "src/structs/state/vault/max/MaxWithdrawRedeemBorrowVaultState.sol";
+import {IERC4626Events} from "../../../../../events/IERC4626Events.sol";
+import {IVaultErrors} from "../../../../../errors/IVaultErrors.sol";
+import {MaxWithdrawRedeemBorrowVaultState} from "../../../../../structs/state/vault/max/MaxWithdrawRedeemBorrowVaultState.sol";
 import {MaxWithdrawRedeemBorrowVaultStateReader} from
-    "src/state_reader/vault/MaxWithdrawRedeemBorrowVaultStateReader.sol";
-import {MaxWithdrawRedeemBorrowVaultData} from "src/structs/data/vault/max/MaxWithdrawRedeemBorrowVaultData.sol";
-import {DeltaFuture} from "src/structs/state_transition/DeltaFuture.sol";
-import {NextState} from "src/structs/state_transition/NextState.sol";
-import {NextStateData} from "src/structs/state_transition/NextStateData.sol";
-import {NextStepData} from "src/structs/state_transition/NextStepData.sol";
-import {MintProtocolRewardsData} from "src/structs/data/vault/common/MintProtocolRewardsData.sol";
-import {VaultStateTransition} from "src/state_transition/VaultStateTransition.sol";
-import {ApplyMaxGrowthFee} from "src/state_transition/ApplyMaxGrowthFee.sol";
-import {MintProtocolRewards} from "src/state_transition/MintProtocolRewards.sol";
-import {Lending} from "src/state_transition/Lending.sol";
-import {TransferFromProtocol} from "src/state_transition/TransferFromProtocol.sol";
-import {MaxWithdraw} from "src/public/vault/read/borrow/max/MaxWithdraw.sol";
-import {NextStep} from "src/math/libraries/NextStep.sol";
-import {CommonMath} from "src/math/libraries/CommonMath.sol";
-import {UMulDiv} from "src/math/libraries/MulDiv.sol";
+    "../../../../../state_reader/vault/MaxWithdrawRedeemBorrowVaultStateReader.sol";
+import {MaxWithdrawRedeemBorrowVaultData} from "../../../../../structs/data/vault/max/MaxWithdrawRedeemBorrowVaultData.sol";
+import {DeltaFuture} from "../../../../../structs/state_transition/DeltaFuture.sol";
+import {NextState} from "../../../../../structs/state_transition/NextState.sol";
+import {NextStateData} from "../../../../../structs/state_transition/NextStateData.sol";
+import {NextStepData} from "../../../../../structs/state_transition/NextStepData.sol";
+import {MintProtocolRewardsData} from "../../../../../structs/data/vault/common/MintProtocolRewardsData.sol";
+import {VaultStateTransition} from "../../../../../state_transition/VaultStateTransition.sol";
+import {ApplyMaxGrowthFee} from "../../../../../state_transition/ApplyMaxGrowthFee.sol";
+import {MintProtocolRewards} from "../../../../../state_transition/MintProtocolRewards.sol";
+import {Lending} from "../../../../../state_transition/Lending.sol";
+import {TransferFromProtocol} from "../../../../../state_transition/TransferFromProtocol.sol";
+import {MaxWithdraw} from "../../../read/borrow/max/MaxWithdraw.sol";
+import {NextStep} from "../../../../../math/libraries/NextStep.sol";
+import {CommonMath} from "../../../../../math/libraries/CommonMath.sol";
+import {UMulDiv} from "../../../../../math/libraries/MulDiv.sol";
 
 /**
  * @title Withdraw

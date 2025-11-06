@@ -2,9 +2,9 @@
 pragma solidity ^0.8.28;
 
 import {MaxDepositMintCollateralVaultStateReader} from
-    "src/state_reader/vault/MaxDepositMintCollateralVaultStateReader.sol";
+    "../../state_reader/vault/MaxDepositMintCollateralVaultStateReader.sol";
 import {MaxWithdrawRedeemCollateralVaultStateReader} from
-    "src/state_reader/vault/MaxWithdrawRedeemCollateralVaultStateReader.sol";
+    "../../state_reader/vault/MaxWithdrawRedeemCollateralVaultStateReader.sol";
 import {FacadeImplementationState} from "../../states/FacadeImplementationState.sol";
 /**
  * @title CollateralVaultRead

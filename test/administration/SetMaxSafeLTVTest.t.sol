@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {BaseTest, DefaultTestData} from "test/utils/BaseTest.t.sol";
-import {IAdministrationEvents} from "src/events/IAdministrationEvents.sol";
-import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
+import {BaseTest, DefaultTestData} from "../utils/BaseTest.t.sol";
+import {IAdministrationEvents} from "../../src/events/IAdministrationEvents.sol";
+import {IAdministrationErrors} from "../../src/errors/IAdministrationErrors.sol";
 
 contract SetmaxSafeLtvTest is BaseTest {
     function test_failIfLessThantargetLtv(DefaultTestData memory defaultData)

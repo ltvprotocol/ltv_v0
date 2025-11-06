@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {DepositWithdrawData} from "src/structs/data/vault/common/DepositWithdrawData.sol";
-import {PreviewDepositVaultState} from "src/structs/state/vault/preview/PreviewDepositVaultState.sol";
-import {PreviewCollateralVaultData} from "src/structs/data/vault/preview/PreviewCollateralVaultData.sol";
-import {DeltaFuture} from "src/structs/state_transition/DeltaFuture.sol";
-import {VaultCollateral} from "src/math/abstracts/VaultCollateral.sol";
-import {DepositWithdraw} from "src/math/libraries/DepositWithdraw.sol";
-import {UMulDiv} from "src/math/libraries/MulDiv.sol";
+import {DepositWithdrawData} from "../../../../../structs/data/vault/common/DepositWithdrawData.sol";
+import {PreviewDepositVaultState} from "../../../../../structs/state/vault/preview/PreviewDepositVaultState.sol";
+import {PreviewCollateralVaultData} from "../../../../../structs/data/vault/preview/PreviewCollateralVaultData.sol";
+import {DeltaFuture} from "../../../../../structs/state_transition/DeltaFuture.sol";
+import {VaultCollateral} from "../../../../../math/abstracts/VaultCollateral.sol";
+import {DepositWithdraw} from "../../../../../math/libraries/DepositWithdraw.sol";
+import {UMulDiv} from "../../../../../math/libraries/MulDiv.sol";
 
 /**
  * @title PreviewDepositCollateral

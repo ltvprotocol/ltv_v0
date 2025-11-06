@@ -3,11 +3,11 @@ pragma solidity ^0.8.28;
 
 import {ReentrancyGuardUpgradeable} from
     "openzeppelin-contracts-upgradeable/contracts/utils/ReentrancyGuardUpgradeable.sol";
-import {IERC20Events} from "src/events/IERC20Events.sol";
-import {IERC20Errors} from "src/errors/IERC20Errors.sol";
-import {WhitelistModifier} from "src/modifiers/WhitelistModifier.sol";
-import {FunctionStopperModifier} from "src/modifiers/FunctionStopperModifier.sol";
-import {ERC20} from "src/state_transition/ERC20.sol";
+import {IERC20Events} from "../../../events/IERC20Events.sol";
+import {IERC20Errors} from "../../../errors/IERC20Errors.sol";
+import {WhitelistModifier} from "../../../modifiers/WhitelistModifier.sol";
+import {FunctionStopperModifier} from "../../../modifiers/FunctionStopperModifier.sol";
+import {ERC20} from "../../../state_transition/ERC20.sol";
 
 /**
  * @title Transfer

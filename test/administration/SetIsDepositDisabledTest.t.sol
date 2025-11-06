@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {DefaultTestData} from "test/utils/BaseTest.t.sol";
-import {ILTV} from "src/interfaces/ILTV.sol";
-import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
-import {PrepareEachFunctionSuccessfulExecution} from "test/administration/PrepareEachFunctionSuccessfulExecution.sol";
+import {DefaultTestData} from "../utils/BaseTest.t.sol";
+import {ILTV} from "../../src/interfaces/ILTV.sol";
+import {IAdministrationErrors} from "../../src/errors/IAdministrationErrors.sol";
+import {PrepareEachFunctionSuccessfulExecution} from "./PrepareEachFunctionSuccessfulExecution.sol";
 import {SafeERC20, IERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract SetIsDepositDisabledTest is PrepareEachFunctionSuccessfulExecution {

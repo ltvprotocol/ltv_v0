@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {PreviewDepositVaultState} from "src/structs/state/vault/preview/PreviewDepositVaultState.sol";
-import {PreviewDepositBorrowVaultData} from "src/structs/data/vault/preview/PreviewDepositBorrowVaultData.sol";
-import {TotalAssetsData} from "src/structs/data/vault/total_assets/TotalAssetsData.sol";
-import {TotalAssetsState} from "src/structs/state/vault/total_assets/TotalAssetsState.sol";
-import {MaxGrowthFeeData} from "src/structs/data/common/MaxGrowthFeeData.sol";
-import {MaxGrowthFee} from "src/math/abstracts/MaxGrowthFee.sol";
-import {CommonMath} from "src/math/libraries/CommonMath.sol";
-import {UMulDiv} from "src/math/libraries/MulDiv.sol";
+import {PreviewDepositVaultState} from "../../../../structs/state/vault/preview/PreviewDepositVaultState.sol";
+import {PreviewDepositBorrowVaultData} from "../../../../structs/data/vault/preview/PreviewDepositBorrowVaultData.sol";
+import {TotalAssetsData} from "../../../../structs/data/vault/total_assets/TotalAssetsData.sol";
+import {TotalAssetsState} from "../../../../structs/state/vault/total_assets/TotalAssetsState.sol";
+import {MaxGrowthFeeData} from "../../../../structs/data/common/MaxGrowthFeeData.sol";
+import {MaxGrowthFee} from "../../MaxGrowthFee.sol";
+import {CommonMath} from "../../../libraries/CommonMath.sol";
+import {UMulDiv} from "../../../libraries/MulDiv.sol";
 
 /**
  * @title PreviewDepositStateToPreviewDepositData

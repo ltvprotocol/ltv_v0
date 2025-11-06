@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {IVaultErrors} from "src/errors/IVaultErrors.sol";
-import {Constants} from "src/constants/Constants.sol";
-import {Cases} from "src/structs/data/vault/common/Cases.sol";
+import {IVaultErrors} from "../../../errors/IVaultErrors.sol";
+import {Constants} from "../../../constants/Constants.sol";
+import {Cases} from "../../../structs/data/vault/common/Cases.sol";
 import {DeltaSharesAndDeltaRealBorrowData} from
-    "src/structs/data/vault/delta_real_borrow/DeltaSharesAndDeltaRealBorrowData.sol";
+    "../../../structs/data/vault/delta_real_borrow/DeltaSharesAndDeltaRealBorrowData.sol";
 import {DeltaSharesAndDeltaRealBorrowDividendData} from
-    "src/structs/data/vault/delta_real_borrow/DeltaSharesAndDeltaRealBorrowDividendData.sol";
+    "../../../structs/data/vault/delta_real_borrow/DeltaSharesAndDeltaRealBorrowDividendData.sol";
 import {DeltaSharesAndDeltaRealBorrowDividerData} from
-    "src/structs/data/vault/delta_real_borrow/DeltaSharesAndDeltaRealBorrowDividerData.sol";
-import {CasesOperator} from "src/math/libraries/CasesOperator.sol";
-import {UMulDiv, SMulDiv} from "src/math/libraries/MulDiv.sol";
+    "../../../structs/data/vault/delta_real_borrow/DeltaSharesAndDeltaRealBorrowDividerData.sol";
+import {CasesOperator} from "../CasesOperator.sol";
+import {UMulDiv, SMulDiv} from "../MulDiv.sol";
 
 /**
  * @title DeltaSharesAndDeltaRealBorrow

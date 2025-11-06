@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {DeltaAuctionState} from "src/structs/state_transition/DeltaAuctionState.sol";
-import {AuctionApplyDeltaState} from "src/state_transition/AuctionApplyDeltaState.sol";
-import {GetAuctionStateReader} from "src/state_reader/common/GetAuctionStateReader.sol";
-import {PreviewExecuteAuctionCollateral} from "src/public/auction/read/PreviewExecuteAuctionCollateral.sol";
+import {DeltaAuctionState} from "../../../structs/state_transition/DeltaAuctionState.sol";
+import {AuctionApplyDeltaState} from "../../../state_transition/AuctionApplyDeltaState.sol";
+import {GetAuctionStateReader} from "../../../state_reader/common/GetAuctionStateReader.sol";
+import {PreviewExecuteAuctionCollateral} from "../read/PreviewExecuteAuctionCollateral.sol";
 
 /**
  * @title ExecuteAuctionCollateral

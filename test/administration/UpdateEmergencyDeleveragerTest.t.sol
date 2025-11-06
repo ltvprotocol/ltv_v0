@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {BaseTest, DefaultTestData} from "test/utils/BaseTest.t.sol";
-import {ILendingConnector} from "src/interfaces/connectors/ILendingConnector.sol";
-import {IAdministrationEvents} from "src/events/IAdministrationEvents.sol";
-import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
+import {BaseTest, DefaultTestData} from "../utils/BaseTest.t.sol";
+import {ILendingConnector} from "../../src/interfaces/connectors/ILendingConnector.sol";
+import {IAdministrationEvents} from "../../src/events/IAdministrationEvents.sol";
+import {IAdministrationErrors} from "../../src/errors/IAdministrationErrors.sol";
 
 contract UpdateEmergencyDeleveragerTest is BaseTest {
     function test_setAndCheckChangesApplied(DefaultTestData memory data, address newAddress)

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {BaseTest, DefaultTestData} from "test/utils/BaseTest.t.sol";
+import {BaseTest, DefaultTestData} from "../utils/BaseTest.t.sol";
 
 contract ApproveTest is BaseTest {
     function test_approveAllowance(DefaultTestData memory defaultData, address user, uint256 approveAmount)

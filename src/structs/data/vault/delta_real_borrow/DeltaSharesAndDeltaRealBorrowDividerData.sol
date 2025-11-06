@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {Cases} from "src/structs/data/vault/common/Cases.sol";
+import {Cases} from "../common/Cases.sol";
 
 /**
  * @title DeltaSharesAndDeltaRealBorrowDividerData

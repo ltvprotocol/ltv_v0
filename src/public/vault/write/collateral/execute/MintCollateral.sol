@@ -3,25 +3,25 @@ pragma solidity ^0.8.28;
 
 import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
-import {IERC4626Events} from "src/events/IERC4626Events.sol";
-import {IVaultErrors} from "src/errors/IVaultErrors.sol";
-import {NextState} from "src/structs/state_transition/NextState.sol";
-import {NextStateData} from "src/structs/state_transition/NextStateData.sol";
-import {NextStepData} from "src/structs/state_transition/NextStepData.sol";
-import {MaxDepositMintCollateralVaultData} from "src/structs/data/vault/max/MaxDepositMintCollateralVaultData.sol";
-import {MaxDepositMintCollateralVaultState} from "src/structs/state/vault/max/MaxDepositMintCollateralVaultState.sol";
-import {DeltaFuture} from "src/structs/state_transition/DeltaFuture.sol";
-import {MintProtocolRewardsData} from "src/structs/data/vault/common/MintProtocolRewardsData.sol";
-import {VaultStateTransition} from "src/state_transition/VaultStateTransition.sol";
-import {ApplyMaxGrowthFee} from "src/state_transition/ApplyMaxGrowthFee.sol";
-import {MintProtocolRewards} from "src/state_transition/MintProtocolRewards.sol";
-import {Lending} from "src/state_transition/Lending.sol";
+import {IERC4626Events} from "../../../../../events/IERC4626Events.sol";
+import {IVaultErrors} from "../../../../../errors/IVaultErrors.sol";
+import {NextState} from "../../../../../structs/state_transition/NextState.sol";
+import {NextStateData} from "../../../../../structs/state_transition/NextStateData.sol";
+import {NextStepData} from "../../../../../structs/state_transition/NextStepData.sol";
+import {MaxDepositMintCollateralVaultData} from "../../../../../structs/data/vault/max/MaxDepositMintCollateralVaultData.sol";
+import {MaxDepositMintCollateralVaultState} from "../../../../../structs/state/vault/max/MaxDepositMintCollateralVaultState.sol";
+import {DeltaFuture} from "../../../../../structs/state_transition/DeltaFuture.sol";
+import {MintProtocolRewardsData} from "../../../../../structs/data/vault/common/MintProtocolRewardsData.sol";
+import {VaultStateTransition} from "../../../../../state_transition/VaultStateTransition.sol";
+import {ApplyMaxGrowthFee} from "../../../../../state_transition/ApplyMaxGrowthFee.sol";
+import {MintProtocolRewards} from "../../../../../state_transition/MintProtocolRewards.sol";
+import {Lending} from "../../../../../state_transition/Lending.sol";
 import {MaxDepositMintCollateralVaultStateReader} from
-    "src/state_reader/vault/MaxDepositMintCollateralVaultStateReader.sol";
-import {MaxMintCollateral} from "src/public/vault/read/collateral/max/MaxMintCollateral.sol";
-import {NextStep} from "src/math/libraries/NextStep.sol";
-import {CommonMath} from "src/math/libraries/CommonMath.sol";
-import {UMulDiv} from "src/math/libraries/MulDiv.sol";
+    "../../../../../state_reader/vault/MaxDepositMintCollateralVaultStateReader.sol";
+import {MaxMintCollateral} from "../../../read/collateral/max/MaxMintCollateral.sol";
+import {NextStep} from "../../../../../math/libraries/NextStep.sol";
+import {CommonMath} from "../../../../../math/libraries/CommonMath.sol";
+import {UMulDiv} from "../../../../../math/libraries/MulDiv.sol";
 
 /**
  * @title MintCollateral

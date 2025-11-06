@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {UMulDiv, SMulDiv} from "src/math/libraries/MulDiv.sol";
+import {UMulDiv, SMulDiv} from "MulDiv.sol";
 
 /**
  * @title CommonMath

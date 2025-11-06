@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {LTVState} from "src/states/LTVState.sol";
-import {CommonWrite} from "src/facades/writes/CommonWrite.sol";
+import {LTVState} from "../../states/LTVState.sol";
+import {CommonWrite} from "CommonWrite.sol";
 import {FacadeImplementationState} from "../../states/FacadeImplementationState.sol";
 /**
  * @title BorrowVaultWrite

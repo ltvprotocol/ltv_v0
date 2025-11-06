@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {PreviewDepositBorrowVaultData} from "src/structs/data/vault/preview/PreviewDepositBorrowVaultData.sol";
+import {PreviewDepositBorrowVaultData} from "../preview/PreviewDepositBorrowVaultData.sol";
 
 /**
  * @title MaxDepositMintBorrowVaultData

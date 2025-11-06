@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {ExecuteLowLevelRebalanceState} from "src/structs/state/low_level/execute/ExecuteLowLevelRebalanceState.sol";
-import {PreviewLowLevelRebalanceStateReader} from "src/state_reader/low_level/PreviewLowLevelRebalanceStateReader.sol";
+import {ExecuteLowLevelRebalanceState} from "../../structs/state/low_level/execute/ExecuteLowLevelRebalanceState.sol";
+import {PreviewLowLevelRebalanceStateReader} from "PreviewLowLevelRebalanceStateReader.sol";
 
 /**
  * @title ExecuteLowLevelRebalanceStateReader

@@ -2,8 +2,8 @@
 pragma solidity ^0.8.28;
 
 import {MaxWithdrawRedeemCollateralVaultState} from
-    "src/structs/state/vault/max/MaxWithdrawRedeemCollateralVaultState.sol";
-import {PreviewWithdrawVaultStateReader} from "src/state_reader/vault/PreviewWithdrawVaultStateReader.sol";
+    "../../structs/state/vault/max/MaxWithdrawRedeemCollateralVaultState.sol";
+import {PreviewWithdrawVaultStateReader} from "PreviewWithdrawVaultStateReader.sol";
 
 /**
  * @title MaxWithdrawRedeemCollateralVaultStateReader

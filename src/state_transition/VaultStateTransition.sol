@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {NextStateData} from "src/structs/state_transition/NextStateData.sol";
-import {LTVState} from "src/states/LTVState.sol";
-import {SMulDiv} from "src/math/libraries/MulDiv.sol";
+import {NextStateData} from "../structs/state_transition/NextStateData.sol";
+import {LTVState} from "../states/LTVState.sol";
+import {SMulDiv} from "../math/libraries/MulDiv.sol";
 
 /**
  * @title VaultStateTransition

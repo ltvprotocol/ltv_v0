@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {LendingConnectorState} from "src/structs/state/common/LendingConnectorState.sol";
+import {LendingConnectorState} from "../../structs/state/common/LendingConnectorState.sol";
 
 /**
  * @title IAdministrationModule

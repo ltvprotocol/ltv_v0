@@ -5,11 +5,11 @@ import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 import {ReentrancyGuardUpgradeable} from
     "openzeppelin-contracts-upgradeable/contracts/utils/ReentrancyGuardUpgradeable.sol";
-import {DeltaAuctionState} from "src/structs/state_transition/DeltaAuctionState.sol";
-import {IAuctionEvent} from "src/events/IAuctionEvent.sol";
-import {FunctionStopperModifier} from "src/modifiers/FunctionStopperModifier.sol";
-import {Lending} from "src/state_transition/Lending.sol";
-import {TransferFromProtocol} from "src/state_transition/TransferFromProtocol.sol";
+import {DeltaAuctionState} from "../structs/state_transition/DeltaAuctionState.sol";
+import {IAuctionEvent} from "../events/IAuctionEvent.sol";
+import {FunctionStopperModifier} from "../modifiers/FunctionStopperModifier.sol";
+import {Lending} from "Lending.sol";
+import {TransferFromProtocol} from "TransferFromProtocol.sol";
 
 /**
  * @title AuctionApplyDeltaState

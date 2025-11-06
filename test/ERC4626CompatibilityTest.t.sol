@@ -2,10 +2,10 @@
 pragma solidity ^0.8.28;
 
 import {IERC4626} from "openzeppelin-contracts/contracts/interfaces/IERC4626.sol";
-import {IERC4626Collateral} from "test/interfaces/IERC4626Collateral.sol";
-import {DefaultTestData} from "test/utils/BaseTest.t.sol";
-import {PrepareEachFunctionSuccessfulExecution} from "test/administration/PrepareEachFunctionSuccessfulExecution.sol";
-import {WhitelistRegistry} from "src/elements/WhitelistRegistry.sol";
+import {IERC4626Collateral} from "interfaces/IERC4626Collateral.sol";
+import {DefaultTestData} from "utils/BaseTest.t.sol";
+import {PrepareEachFunctionSuccessfulExecution} from "administration/PrepareEachFunctionSuccessfulExecution.sol";
+import {WhitelistRegistry} from "../src/elements/WhitelistRegistry.sol";
 
 contract ERC4626CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
     struct CallWithCaller {
