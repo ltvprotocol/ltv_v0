@@ -1,6 +1,7 @@
 {
     "LENDING_CONNECTOR_NAME": "AaveV3",
     "BEACON_OWNER": "0xde1d9ff8d1396a98688d7e07eda88a19cf2bb6cf",
+    "BEACON_PROXY_OWNER": "0xde1d9ff8d1396a98688d7e07eda88a19cf2bb6cf",
     "WHITELIST_OWNER": "0xdbd5bcfd943e7666fcd3585382ca808bef61c8ae",
     "NAME": "weth/wbtc x4 on Aave v3",
     "SYMBOL": "WETH_WBTC_x4_AAVEV3",
