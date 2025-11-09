@@ -2,11 +2,11 @@
 pragma solidity ^0.8.28;
 
 import {DeltaSharesAndDeltaRealBorrowData} from
-    "src/structs/data/vault/delta_real_borrow/DeltaSharesAndDeltaRealBorrowData.sol";
+    "../structs/data/vault/delta_real_borrow/DeltaSharesAndDeltaRealBorrowData.sol";
 import {DeltaSharesAndDeltaRealCollateralData} from
-    "src/structs/data/vault/delta_real_collateral/DeltaSharesAndDeltaRealCollateralData.sol";
+    "../structs/data/vault/delta_real_collateral/DeltaSharesAndDeltaRealCollateralData.sol";
 import {DeltaRealBorrowAndDeltaRealCollateralData} from
-    "src/structs/data/vault/delta_real_collateral/DeltaRealBorrowAndDeltaRealCollateralData.sol";
+    "../structs/data/vault/delta_real_collateral/DeltaRealBorrowAndDeltaRealCollateralData.sol";
 
 /**
  * @title IVaultErrors

@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 import {ReentrancyGuardUpgradeable} from
     "openzeppelin-contracts-upgradeable/contracts/utils/ReentrancyGuardUpgradeable.sol";
-import {INonReentrantReadError} from "src/errors/INonReentrantReadError.sol";
+import {INonReentrantReadError} from "../errors/INonReentrantReadError.sol";
 
 /**
  * @title NonReentrantRead

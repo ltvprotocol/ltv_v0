@@ -2,11 +2,11 @@
 pragma solidity ^0.8.28;
 
 import {MaxWithdrawRedeemCollateralVaultState} from
-    "src/structs/state/vault/max/MaxWithdrawRedeemCollateralVaultState.sol";
-import {MaxWithdrawRedeemCollateralVaultData} from "src/structs/data/vault/max/MaxWithdrawRedeemCollateralVaultData.sol";
+    "../../../../structs/state/vault/max/MaxWithdrawRedeemCollateralVaultState.sol";
+import {MaxWithdrawRedeemCollateralVaultData} from "../../../../structs/data/vault/max/MaxWithdrawRedeemCollateralVaultData.sol";
 import {PreviewWithdrawVaultStateToCollateralData} from
-    "src/math/abstracts/state_to_data/preview/PreviewWithdrawVaultStateToCollateralData.sol";
-import {CommonMath} from "src/math/libraries/CommonMath.sol";
+    "../preview/PreviewWithdrawVaultStateToCollateralData.sol";
+import {CommonMath} from "../../../libraries/CommonMath.sol";
 
 /**
  * @title MaxWithdrawRedeemCollateralStateToData

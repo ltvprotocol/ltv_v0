@@ -2,9 +2,9 @@
 pragma solidity ^0.8.28;
 
 import {OwnableUpgradeable} from "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
-import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
-import {LTVState} from "src/states/LTVState.sol";
-import {BoolReader} from "src/math/abstracts/BoolReader.sol";
+import {IAdministrationErrors} from "../errors/IAdministrationErrors.sol";
+import {LTVState} from "../states/LTVState.sol";
+import {BoolReader} from "../math/abstracts/BoolReader.sol";
 
 /**
  * @title FunctionStopperModifier

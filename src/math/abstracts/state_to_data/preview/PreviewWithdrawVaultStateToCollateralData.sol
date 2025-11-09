@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {PreviewWithdrawVaultState} from "src/structs/state/vault/preview/PreviewWithdrawVaultState.sol";
-import {PreviewCollateralVaultData} from "src/structs/data/vault/preview/PreviewCollateralVaultData.sol";
-import {MaxGrowthFeeData} from "src/structs/data/common/MaxGrowthFeeData.sol";
-import {TotalAssetsData} from "src/structs/data/vault/total_assets/TotalAssetsData.sol";
-import {TotalAssetsCollateralData} from "src/structs/data/vault/total_assets/TotalAssetsCollateralData.sol";
-import {TotalAssetsCollateral} from "src/public/vault/read/collateral/TotalAssetsCollateral.sol";
-import {MaxGrowthFee} from "src/math/abstracts/MaxGrowthFee.sol";
-import {CommonMath} from "src/math/libraries/CommonMath.sol";
-import {UMulDiv} from "src/math/libraries/MulDiv.sol";
+import {PreviewWithdrawVaultState} from "../../../../structs/state/vault/preview/PreviewWithdrawVaultState.sol";
+import {PreviewCollateralVaultData} from "../../../../structs/data/vault/preview/PreviewCollateralVaultData.sol";
+import {MaxGrowthFeeData} from "../../../../structs/data/common/MaxGrowthFeeData.sol";
+import {TotalAssetsData} from "../../../../structs/data/vault/total_assets/TotalAssetsData.sol";
+import {TotalAssetsCollateralData} from "../../../../structs/data/vault/total_assets/TotalAssetsCollateralData.sol";
+import {TotalAssetsCollateral} from "../../../../public/vault/read/collateral/TotalAssetsCollateral.sol";
+import {MaxGrowthFee} from "../../MaxGrowthFee.sol";
+import {CommonMath} from "../../../libraries/CommonMath.sol";
+import {UMulDiv} from "../../../libraries/MulDiv.sol";
 
 /**
  * @title PreviewWithdrawVaultStateToCollateralData

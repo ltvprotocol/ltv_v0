@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {BaseInvariantTest} from "test/invariant/utils/BaseInvariantTest.t.sol";
-import {LowLevelRebalanceInvariantWrapper, ILTV} from "test/invariant/utils/LowLevelRebalanceInvariantWrapper.t.sol";
+import {BaseInvariantTest} from "./utils/BaseInvariantTest.t.sol";
+import {LowLevelRebalanceInvariantWrapper, ILTV} from "./utils/LowLevelRebalanceInvariantWrapper.t.sol";
 
 /**
  * @title LowLevelRebalanceInvariantTest

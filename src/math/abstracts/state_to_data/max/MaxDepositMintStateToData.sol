@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {MaxDepositMintBorrowVaultState} from "src/structs/state/vault/max/MaxDepositMintBorrowVaultState.sol";
-import {MaxDepositMintBorrowVaultData} from "src/structs/data/vault/max/MaxDepositMintBorrowVaultData.sol";
+import {MaxDepositMintBorrowVaultState} from "../../../../structs/state/vault/max/MaxDepositMintBorrowVaultState.sol";
+import {MaxDepositMintBorrowVaultData} from "../../../../structs/data/vault/max/MaxDepositMintBorrowVaultData.sol";
 import {PreviewDepositStateToPreviewDepositData} from
-    "src/math/abstracts/state_to_data/preview/PreviewDepositStateToPreviewDepositData.sol";
-import {CommonMath} from "src/math/libraries/CommonMath.sol";
+    "../preview/PreviewDepositStateToPreviewDepositData.sol";
+import {CommonMath} from "../../../libraries/CommonMath.sol";
 
 /**
  * @title MaxDepositMintStateToData

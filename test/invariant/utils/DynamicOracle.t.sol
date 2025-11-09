@@ -2,8 +2,8 @@
 pragma solidity ^0.8.28;
 
 import {CommonBase} from "forge-std/Base.sol";
-import {IDummyOracle} from "src/dummy/interfaces/IDummyOracle.sol";
-import {RateMath} from "test/invariant/utils/RateMath.sol";
+import {IDummyOracle} from "../../../src/dummy/interfaces/IDummyOracle.sol";
+import {RateMath} from "./RateMath.sol";
 
 /**
  * @title DynamicOracle

@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {ISlippageConnector} from "src/interfaces/connectors/ISlippageConnector.sol";
-import {LTVState} from "src/states/LTVState.sol";
-import {Constants} from "src/constants/Constants.sol";
-import {IConstantSlippageConnectorErrors} from "src/errors/connectors/IConstantSlippageConnectorErrors.sol";
+import {ISlippageConnector} from "../../interfaces/connectors/ISlippageConnector.sol";
+import {LTVState} from "../../states/LTVState.sol";
+import {Constants} from "../../constants/Constants.sol";
+import {IConstantSlippageConnectorErrors} from "../../errors/connectors/IConstantSlippageConnectorErrors.sol";
 
 /**
  * @title ConstantSlippageConnector

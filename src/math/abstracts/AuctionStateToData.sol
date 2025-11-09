@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {AuctionState} from "src/structs/state/auction/AuctionState.sol";
-import {AuctionData} from "src/structs/data/auction/AuctionData.sol";
-import {CommonMath} from "src/math/libraries/CommonMath.sol";
+import {AuctionState} from "../../structs/state/auction/AuctionState.sol";
+import {AuctionData} from "../../structs/data/auction/AuctionData.sol";
+import {CommonMath} from "../libraries/CommonMath.sol";
 
 /**
  * @title AuctionStateToData

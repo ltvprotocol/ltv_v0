@@ -2,9 +2,9 @@
 pragma solidity ^0.8.28;
 
 import {MaxLowLevelRebalanceBorrowStateData} from
-    "src/structs/state/low_level/max/MaxLowLevelRebalanceBorrowStateData.sol";
-import {MaxGrowthFee} from "src/math/abstracts/MaxGrowthFee.sol";
-import {UMulDiv} from "src/math/libraries/MulDiv.sol";
+    "../../../../structs/state/low_level/max/MaxLowLevelRebalanceBorrowStateData.sol";
+import {MaxGrowthFee} from "../../../../math/abstracts/MaxGrowthFee.sol";
+import {UMulDiv} from "../../../../math/libraries/MulDiv.sol";
 
 abstract contract MaxLowLevelRebalanceBorrow is MaxGrowthFee {
     using UMulDiv for uint256;

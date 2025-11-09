@@ -2,14 +2,14 @@
 pragma solidity ^0.8.28;
 
 import {DeltaRealBorrowAndDeltaRealCollateralData} from
-    "src/structs/data/vault/delta_real_collateral/DeltaRealBorrowAndDeltaRealCollateralData.sol";
-import {DepositWithdrawData} from "src/structs/data/vault/common/DepositWithdrawData.sol";
-import {DeltaFuture} from "src/structs/state_transition/DeltaFuture.sol";
+    "../../structs/data/vault/delta_real_collateral/DeltaRealBorrowAndDeltaRealCollateralData.sol";
+import {DepositWithdrawData} from "../../structs/data/vault/common/DepositWithdrawData.sol";
+import {DeltaFuture} from "../../structs/state_transition/DeltaFuture.sol";
 import {DeltaRealBorrowAndDeltaRealCollateral} from
-    "src/math/libraries/delta_future_collateral/DeltaRealBorrowAndDeltaRealCollateral.sol";
-import {CommonBorrowCollateral} from "src/math/libraries/CommonBorrowCollateral.sol";
-import {CasesOperator} from "src/math/libraries/CasesOperator.sol";
-import {UMulDiv, SMulDiv} from "src/math/libraries/MulDiv.sol";
+    "./delta_future_collateral/DeltaRealBorrowAndDeltaRealCollateral.sol";
+import {CommonBorrowCollateral} from "./CommonBorrowCollateral.sol";
+import {CasesOperator} from "./CasesOperator.sol";
+import {UMulDiv, SMulDiv} from "./MulDiv.sol";
 
 /**
  * @title DepositWithdraw

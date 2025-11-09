@@ -2,9 +2,9 @@
 pragma solidity ^0.8.28;
 
 import {MaxLowLevelRebalanceCollateralStateData} from
-    "src/structs/state/low_level/max/MaxLowLevelRebalanceCollateralStateData.sol";
-import {MaxGrowthFee} from "src/math/abstracts/MaxGrowthFee.sol";
-import {UMulDiv} from "src/math/libraries/MulDiv.sol";
+    "../../../../structs/state/low_level/max/MaxLowLevelRebalanceCollateralStateData.sol";
+import {MaxGrowthFee} from "../../../../math/abstracts/MaxGrowthFee.sol";
+import {UMulDiv} from "../../../../math/libraries/MulDiv.sol";
 /**
  * @title MaxLowLevelRebalanceCollateral
  * @notice This contract contains max low level rebalance collateral function implementation.

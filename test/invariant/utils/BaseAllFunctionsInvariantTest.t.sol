@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {ILTV} from "src/interfaces/ILTV.sol";
-import {AllFunctionsInvariantWrapper} from "test/invariant/utils/AllFunctionsInvariantWrapper.t.sol";
-import {BaseInvariantTest} from "test/invariant/utils/BaseInvariantTest.t.sol";
+import {ILTV} from "../../../src/interfaces/ILTV.sol";
+import {AllFunctionsInvariantWrapper} from "./AllFunctionsInvariantWrapper.t.sol";
+import {BaseInvariantTest} from "./BaseInvariantTest.t.sol";
 
 contract BaseAllFunctionsInvariantTest is BaseInvariantTest {
     AllFunctionsInvariantWrapper internal _wrapper;

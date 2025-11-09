@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {BaseAllFunctionsInvariantTest} from "test/invariant/utils/BaseAllFunctionsInvariantTest.t.sol";
+import {BaseAllFunctionsInvariantTest} from "./utils/BaseAllFunctionsInvariantTest.t.sol";
 
 contract AllFunctionsSmallBorrowBigCollateralDecimalsTest is BaseAllFunctionsInvariantTest {
     function _getBorrowTokenDecimals() internal pure override returns (uint8) {

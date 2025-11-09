@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {Constants} from "src/constants/Constants.sol";
-import {ERC20} from "src/state_transition/ERC20.sol";
-import {TotalSupply} from "src/public/erc20/read/TotalSupply.sol";
-import {TotalAssets} from "src/public/vault/read/borrow/TotalAssets.sol";
-import {UMulDiv} from "src/math/libraries/MulDiv.sol";
+import {Constants} from "../constants/Constants.sol";
+import {ERC20} from "./ERC20.sol";
+import {TotalSupply} from "../public/erc20/read/TotalSupply.sol";
+import {TotalAssets} from "../public/vault/read/borrow/TotalAssets.sol";
+import {UMulDiv} from "../math/libraries/MulDiv.sol";
 
 /**
  * @title ApplyMaxGrowthFee

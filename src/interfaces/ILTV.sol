@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {IModules} from "src/interfaces/IModules.sol";
-import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
-import {IVaultErrors} from "src/errors/IVaultErrors.sol";
-import {ILowLevelRebalanceErrors} from "src/errors/ILowLevelRebalanceErrors.sol";
-import {IAuctionErrors} from "src/errors/IAuctionErrors.sol";
-import {IAdministrationEvents} from "src/events/IAdministrationEvents.sol";
-import {IAuctionEvent} from "src/events/IAuctionEvent.sol";
-import {IERC4626Events} from "src/events/IERC4626Events.sol";
-import {IERC20Events} from "src/events/IERC20Events.sol";
-import {ILowLevelRebalanceEvent} from "src/events/ILowLevelRebalanceEvent.sol";
-import {StateInitData} from "src/structs/state/initialize/StateInitData.sol";
+import {IModules} from "./IModules.sol";
+import {IAdministrationErrors} from "../errors/IAdministrationErrors.sol";
+import {IVaultErrors} from "../errors/IVaultErrors.sol";
+import {ILowLevelRebalanceErrors} from "../errors/ILowLevelRebalanceErrors.sol";
+import {IAuctionErrors} from "../errors/IAuctionErrors.sol";
+import {IAdministrationEvents} from "../events/IAdministrationEvents.sol";
+import {IAuctionEvent} from "../events/IAuctionEvent.sol";
+import {IERC4626Events} from "../events/IERC4626Events.sol";
+import {IERC20Events} from "../events/IERC20Events.sol";
+import {ILowLevelRebalanceEvent} from "../events/ILowLevelRebalanceEvent.sol";
+import {StateInitData} from "../structs/state/initialize/StateInitData.sol";
 
 /**
  * @title ILTV

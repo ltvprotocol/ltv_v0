@@ -2,9 +2,9 @@
 pragma solidity ^0.8.28;
 
 import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
-import {DefaultTestData} from "test/utils/BaseTest.t.sol";
-import {PrepareEachFunctionSuccessfulExecution} from "test/administration/PrepareEachFunctionSuccessfulExecution.sol";
-import {WhitelistRegistry} from "src/elements/WhitelistRegistry.sol";
+import {DefaultTestData} from "./utils/BaseTest.t.sol";
+import {PrepareEachFunctionSuccessfulExecution} from "./administration/PrepareEachFunctionSuccessfulExecution.sol";
+import {WhitelistRegistry} from "../src/elements/WhitelistRegistry.sol";
 
 contract ERC20CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
     struct CallWithCaller {

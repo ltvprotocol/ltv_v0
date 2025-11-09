@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {Constants} from "src/constants/Constants.sol";
-import {MaxGrowthFeeState} from "src/structs/state/common/MaxGrowthFeeState.sol";
-import {MaxGrowthFeeData} from "src/structs/data/common/MaxGrowthFeeData.sol";
-import {TotalAssetsState} from "src/structs/state/vault/total_assets/TotalAssetsState.sol";
-import {TotalAssets} from "src/public/vault/read/borrow/TotalAssets.sol";
-import {TotalSupply} from "src/public/erc20/read/TotalSupply.sol";
-import {UMulDiv} from "src/math/libraries/MulDiv.sol";
+import {Constants} from "../../constants/Constants.sol";
+import {MaxGrowthFeeState} from "../../structs/state/common/MaxGrowthFeeState.sol";
+import {MaxGrowthFeeData} from "../../structs/data/common/MaxGrowthFeeData.sol";
+import {TotalAssetsState} from "../../structs/state/vault/total_assets/TotalAssetsState.sol";
+import {TotalAssets} from "../../public/vault/read/borrow/TotalAssets.sol";
+import {TotalSupply} from "../../public/erc20/read/TotalSupply.sol";
+import {UMulDiv} from "../libraries/MulDiv.sol";
 
 abstract contract MaxGrowthFee is TotalAssets, TotalSupply {
     using UMulDiv for uint256;

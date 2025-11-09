@@ -2,11 +2,11 @@
 pragma solidity ^0.8.28;
 
 import {MaxWithdrawRedeemCollateralVaultState} from
-    "src/structs/state/vault/max/MaxWithdrawRedeemCollateralVaultState.sol";
-import {MaxWithdrawRedeemCollateralVaultData} from "src/structs/data/vault/max/MaxWithdrawRedeemCollateralVaultData.sol";
-import {PreviewWithdrawCollateral} from "src/public/vault/read/collateral/preview/PreviewWithdrawCollateral.sol";
-import {PreviewRedeemCollateral} from "src/public/vault/read/collateral/preview/PreviewRedeemCollateral.sol";
-import {UMulDiv} from "src/math/libraries/MulDiv.sol";
+    "../../../../../structs/state/vault/max/MaxWithdrawRedeemCollateralVaultState.sol";
+import {MaxWithdrawRedeemCollateralVaultData} from "../../../../../structs/data/vault/max/MaxWithdrawRedeemCollateralVaultData.sol";
+import {PreviewWithdrawCollateral} from "../preview/PreviewWithdrawCollateral.sol";
+import {PreviewRedeemCollateral} from "../preview/PreviewRedeemCollateral.sol";
+import {UMulDiv} from "../../../../../math/libraries/MulDiv.sol";
 
 /**
  * @title MaxWithdrawCollateral

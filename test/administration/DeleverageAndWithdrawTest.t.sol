@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {DefaultTestData} from "test/utils/BaseTest.t.sol";
-import {PrepareEachFunctionSuccessfulExecution} from "test/administration/PrepareEachFunctionSuccessfulExecution.sol";
-import {IAuctionErrors} from "src/errors/IAuctionErrors.sol";
-import {ILowLevelRebalanceErrors} from "src/errors/ILowLevelRebalanceErrors.sol";
-import {IVaultErrors} from "src/errors/IVaultErrors.sol";
-import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
-import {VaultBalanceAsLendingConnector} from "src/connectors/lending_connectors/VaultBalanceAsLendingConnector.sol";
+import {DefaultTestData} from "../utils/BaseTest.t.sol";
+import {PrepareEachFunctionSuccessfulExecution} from "./PrepareEachFunctionSuccessfulExecution.sol";
+import {IAuctionErrors} from "../../src/errors/IAuctionErrors.sol";
+import {ILowLevelRebalanceErrors} from "../../src/errors/ILowLevelRebalanceErrors.sol";
+import {IVaultErrors} from "../../src/errors/IVaultErrors.sol";
+import {IAdministrationErrors} from "../../src/errors/IAdministrationErrors.sol";
+import {VaultBalanceAsLendingConnector} from "../../src/connectors/lending_connectors/VaultBalanceAsLendingConnector.sol";
 import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 

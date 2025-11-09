@@ -2,11 +2,11 @@
 pragma solidity ^0.8.28;
 
 import {BaseScript} from "../utils/BaseScript.s.sol";
-import {StateInitData} from "src/structs/state/initialize/StateInitData.sol";
-import {ILTV} from "src/interfaces/ILTV.sol";
-import {ILendingConnector} from "src/interfaces/connectors/ILendingConnector.sol";
-import {IOracleConnector} from "src/interfaces/connectors/IOracleConnector.sol";
-import {ISlippageConnector} from "src/interfaces/connectors/ISlippageConnector.sol";
+import {StateInitData} from "../../src/structs/state/initialize/StateInitData.sol";
+import {ILTV} from "../../src/interfaces/ILTV.sol";
+import {ILendingConnector} from "../../src/interfaces/connectors/ILendingConnector.sol";
+import {IOracleConnector} from "../../src/interfaces/connectors/IOracleConnector.sol";
+import {ISlippageConnector} from "../../src/interfaces/connectors/ISlippageConnector.sol";
 import {BeaconProxy} from "openzeppelin-contracts/contracts/proxy/beacon/BeaconProxy.sol";
 import {GetConnectorData} from "../utils/GetConnectorData.s.sol";
 import {console} from "forge-std/console.sol";

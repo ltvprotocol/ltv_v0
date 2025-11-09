@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {IAdministrationErrors} from "src/errors/IAdministrationErrors.sol";
-import {LTVState} from "src/states/LTVState.sol";
-import {BoolReader} from "src/math/abstracts/BoolReader.sol";
+import {IAdministrationErrors} from "../errors/IAdministrationErrors.sol";
+import {LTVState} from "../states/LTVState.sol";
+import {BoolReader} from "../math/abstracts/BoolReader.sol";
 
 /**
  * @title AdministrationModifiers

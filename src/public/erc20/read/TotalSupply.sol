@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {Constants} from "src/constants/Constants.sol";
-import {NonReentrantRead} from "src/modifiers/NonReentrantRead.sol";
+import {Constants} from "../../../constants/Constants.sol";
+import {NonReentrantRead} from "../../../modifiers/NonReentrantRead.sol";
 
 /**
  * @title TotalSupply

@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {MaxGrowthFeeState} from "src/structs/state/common/MaxGrowthFeeState.sol";
-import {MaxGrowthFeeData} from "src/structs/data/common/MaxGrowthFeeData.sol";
-import {MaxGrowthFee} from "src/math/abstracts/MaxGrowthFee.sol";
-import {UMulDiv} from "src/math/libraries/MulDiv.sol";
+import {MaxGrowthFeeState} from "../../../../../structs/state/common/MaxGrowthFeeState.sol";
+import {MaxGrowthFeeData} from "../../../../../structs/data/common/MaxGrowthFeeData.sol";
+import {MaxGrowthFee} from "../../../../../math/abstracts/MaxGrowthFee.sol";
+import {UMulDiv} from "../../../../../math/libraries/MulDiv.sol";
 
 /**
  * @title ConvertToShares

@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {MintProtocolRewardsData} from "src/structs/data/vault/common/MintProtocolRewardsData.sol";
-import {ERC20} from "src/state_transition/ERC20.sol";
-import {UMulDiv} from "src/math/libraries/MulDiv.sol";
+import {MintProtocolRewardsData} from "../structs/data/vault/common/MintProtocolRewardsData.sol";
+import {ERC20} from "./ERC20.sol";
+import {UMulDiv} from "../math/libraries/MulDiv.sol";
 
 /**
  * @title MintProtocolRewards

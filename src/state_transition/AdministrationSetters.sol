@@ -10,7 +10,7 @@ import {IAdministrationEvents} from "../events/IAdministrationEvents.sol";
 import {Constants} from "../constants/Constants.sol";
 import {BoolReader} from "../math/abstracts/BoolReader.sol";
 import {BoolWriter} from "../state_transition/BoolWriter.sol";
-import {DelegateCallPostCheck} from "src/utils/DelegateCallPostCheck.sol";
+import {DelegateCallPostCheck} from "../utils/DelegateCallPostCheck.sol";
 
 /**
  * @title AdministrationSetters

@@ -2,10 +2,10 @@
 pragma solidity ^0.8.28;
 
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import {BalancedTest} from "test/utils/BalancedTest.t.sol";
-import {ILTV} from "src/interfaces/ILTV.sol";
+import {BalancedTest} from "./utils/BalancedTest.t.sol";
+import {ILTV} from "../src/interfaces/ILTV.sol";
 import {MockLendingConnector, MockOracleConnector} from "./utils/MockConnectors.t.sol";
-import {DummySlippageConnector} from "src/dummy/DummySlippageConnector.sol";
+import {DummySlippageConnector} from "../src/dummy/DummySlippageConnector.sol";
 
 contract OwnerTest is BalancedTest {
     function test_setLendingConnector(address owner, address user)

@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {IAuctionErrors} from "src/errors/IAuctionErrors.sol";
-import {AuctionData} from "src/structs/data/auction/AuctionData.sol";
-import {DeltaAuctionState} from "src/structs/state_transition/DeltaAuctionState.sol";
-import {SMulDiv} from "src/math/libraries/MulDiv.sol";
+import {IAuctionErrors} from "../../errors/IAuctionErrors.sol";
+import {AuctionData} from "../../structs/data/auction/AuctionData.sol";
+import {DeltaAuctionState} from "../../structs/state_transition/DeltaAuctionState.sol";
+import {SMulDiv} from "./MulDiv.sol";
 
 /**
  * @title AuctionMath

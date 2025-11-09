@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {CommonTotalAssetsState} from "src/structs/state/vault/total_assets/CommonTotalAssetsState.sol";
+import {CommonTotalAssetsState} from "../vault/total_assets/CommonTotalAssetsState.sol";
 
 /**
  * @title MaxGrowthFeeState

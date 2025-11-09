@@ -4,7 +4,7 @@ pragma solidity ^0.8.28;
 import {Script} from "forge-std/Script.sol";
 import {console} from "forge-std/console.sol";
 import {Upgrades} from "openzeppelin-foundry-upgrades/Upgrades.sol";
-import {SpookyOracle} from "src/ghost/spooky/SpookyOracle.sol";
+import {SpookyOracle} from "../../src/ghost/spooky/SpookyOracle.sol";
 
 contract DeploySpookyOracle is Script {
     function run() public {

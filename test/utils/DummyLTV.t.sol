@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {LTV} from "src/elements/LTV.sol";
+import {LTV} from "../../src/elements/LTV.sol";
 
 contract DummyLTV is LTV {
     constructor(address modules) LTV(modules) {}
