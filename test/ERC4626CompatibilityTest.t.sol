@@ -7,7 +7,6 @@ import {DefaultTestData} from "test/utils/BaseTest.t.sol";
 import {PrepareEachFunctionSuccessfulExecution} from "test/administration/PrepareEachFunctionSuccessfulExecution.sol";
 import {WhitelistRegistry} from "src/elements/WhitelistRegistry.sol";
 
-// forge-lint: disable-start
 contract ERC4626CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
     struct CallWithCaller {
         bytes callData;
@@ -193,4 +192,3 @@ contract ERC4626CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
         ltv.redeemCollateral(10000, testUser, testUser);
     }
 }
-// forge-lint: disable-end

@@ -6,7 +6,6 @@ import {DefaultTestData} from "test/utils/BaseTest.t.sol";
 import {PrepareEachFunctionSuccessfulExecution} from "test/administration/PrepareEachFunctionSuccessfulExecution.sol";
 import {WhitelistRegistry} from "src/elements/WhitelistRegistry.sol";
 
-// forge-lint: disable-start
 contract ERC20CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
     struct CallWithCaller {
         bytes callData;
@@ -119,4 +118,3 @@ contract ERC20CompatibilityTest is PrepareEachFunctionSuccessfulExecution {
         require(success);
     }
 }
-// forge-lint: disable-end
