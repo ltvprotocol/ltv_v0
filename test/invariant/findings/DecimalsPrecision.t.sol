@@ -47,7 +47,7 @@ contract DecimalsPrecision is BaseTest {
             }),
             collateralTokenDecimals: 20,
             borrowTokenDecimals: 6
-    });
+        });
 
         initializeTestWithSpecificDecimals(init);
 
