@@ -13,3 +13,6 @@ fs_permissions = [{ access = "read", path = "./script/ghost/data"}]
 
 [invariant]
 fail_on_revert=true
+
+[lint]
+lint_on_build = false
