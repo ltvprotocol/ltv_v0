@@ -9,7 +9,8 @@ import {IOracleConnector} from "src/interfaces/connectors/IOracleConnector.sol";
 import {ISlippageConnector} from "src/interfaces/connectors/ISlippageConnector.sol";
 import {GetConnectorData} from "../utils/GetConnectorData.s.sol";
 import {console} from "forge-std/console.sol";
-import {TransparentUpgradeableBeaconProxy} from "transparent_upgradeable_beacon_proxy/TransparentUpgradeableBeaconProxy.sol";
+import {TransparentUpgradeableBeaconProxy} from
+    "transparent_upgradeable_beacon_proxy/TransparentUpgradeableBeaconProxy.sol";
 
 contract DeployLTVBeaconProxy is BaseScript, GetConnectorData {
     function deploy() internal override {
