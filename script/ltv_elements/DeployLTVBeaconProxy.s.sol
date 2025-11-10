@@ -7,22 +7,31 @@ import {ILTV} from "src/interfaces/ILTV.sol";
 import {ILendingConnector} from "src/interfaces/connectors/ILendingConnector.sol";
 import {IOracleConnector} from "src/interfaces/connectors/IOracleConnector.sol";
 import {ISlippageConnector} from "src/interfaces/connectors/ISlippageConnector.sol";
-import {BeaconProxy} from "openzeppelin-contracts/contracts/proxy/beacon/BeaconProxy.sol";
 import {GetConnectorData} from "../utils/GetConnectorData.s.sol";
 import {console} from "forge-std/console.sol";
+import {TransparentUpgradeableBeaconProxy} from
+    "transparent_upgradeable_beacon_proxy/TransparentUpgradeableBeaconProxy.sol";
 
 contract DeployLTVBeaconProxy is BaseScript, GetConnectorData {
     function deploy() internal override {
         address beacon = vm.envAddress("BEACON");
+        address beaconProxyOwner = vm.envAddress("BEACON_PROXY_OWNER");
 
-        BeaconProxy beaconProxy = new BeaconProxy{salt: bytes32(0)}(beacon, getInitializeFunctionCall());
+        TransparentUpgradeableBeaconProxy beaconProxy = new TransparentUpgradeableBeaconProxy{salt: bytes32(0)}(
+            beacon, beaconProxyOwner, getInitializeFunctionCall()
+        );
         console.log("Beacon proxy deployed at: ", address(beaconProxy));
     }
 
     function hashedCreationCode() internal view override returns (bytes32) {
         address beacon = vm.envAddress("BEACON");
-        return
-            keccak256(abi.encodePacked(type(BeaconProxy).creationCode, abi.encode(beacon, getInitializeFunctionCall())));
+        address beaconProxyOwner = vm.envAddress("BEACON_PROXY_OWNER");
+        return keccak256(
+            abi.encodePacked(
+                type(TransparentUpgradeableBeaconProxy).creationCode,
+                abi.encode(beacon, beaconProxyOwner, getInitializeFunctionCall())
+            )
+        );
     }
 
     function getInitializeFunctionCall() internal view returns (bytes memory) {
