@@ -16,7 +16,7 @@ jobs:
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
         with:
-          version: nightly-567ac47f2b4bf6e295c9ab876a781c563da7b3f1
+          version: nightly-cca5d6f7dc60a9a5318af523c187c2a2416377d2
 
       - name: Print forge version
         run: forge --version
@@ -38,7 +38,7 @@ jobs:
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
         with:
-          version: nightly-567ac47f2b4bf6e295c9ab876a781c563da7b3f1
+          version: nightly-cca5d6f7dc60a9a5318af523c187c2a2416377d2
 
       - name: Print forge version
         run: forge --version
@@ -54,7 +54,7 @@ jobs:
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
         with:
-          version: nightly-567ac47f2b4bf6e295c9ab876a781c563da7b3f1
+          version: nightly-cca5d6f7dc60a9a5318af523c187c2a2416377d2
 
       - name: Print forge version
         run: forge --version

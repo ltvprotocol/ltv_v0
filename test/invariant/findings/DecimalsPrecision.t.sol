@@ -11,8 +11,8 @@ contract DecimalsPrecision is BaseTest {
     address internal user = address(42);
 
     function setUp() public {
-        BaseTestInitWithSpecificDecimals memory init = BaseTestInitWithSpecificDecimals(
-            BaseTestInit({
+        BaseTestInitWithSpecificDecimals memory init = BaseTestInitWithSpecificDecimals({
+            baseTestInit: BaseTestInit({
                 owner: address(1),
                 guardian: address(2),
                 governor: address(3),
@@ -45,9 +45,9 @@ contract DecimalsPrecision is BaseTest {
                 softLiquidationLtvDividend: 1,
                 softLiquidationLtvDivider: 1
             }),
-            20,
-            6
-        );
+            collateralTokenDecimals: 20,
+            borrowTokenDecimals: 6
+    });
 
         initializeTestWithSpecificDecimals(init);
 
