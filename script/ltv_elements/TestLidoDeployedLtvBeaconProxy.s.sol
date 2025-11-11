@@ -32,35 +32,34 @@ contract TestLidoDeployedLtvBeaconProxy is TestGeneralDeployedLTVBeaconProxy {
 
     function _expectedResults() internal pure override returns (ExpectedResults memory) {
         return ExpectedResults({
-            // price borrow / collateral = 0.8210526666117071
-            sharesAfter1LowLevelRebalanceDeposit: 206414624751756084009,
-            collateralAfter1LowLevelRebalanceDeposit: 169477278080277037591, // 0 loss
+            sharesAfter1LowLevelRebalanceDeposit: 129009140469847552506,
+            collateralAfter1LowLevelRebalanceDeposit: 105923298800173148496,
             borrowAfter1LowLevelRebalanceDeposit: 0,
-            sharesAfter1LowLevelRebalanceWithdraw: 20641462475175608400,
+            sharesAfter1LowLevelRebalanceWithdraw: 12900914046984755250,
             collateralAfter1LowLevelRebalanceWithdraw: 0,
-            borrowAfter1LowLevelRebalanceWithdraw: 20563262716780913683, // 0.38% loss
-            assetsAfter1SafeDeposit: 3715463245531609512, // 5.7% loss, 0.5% slippage x 12x leverage ~ 6% loss
-            sharesAfter1SafeDeposit: 3504157278961091433,
-            assetsAfter1SafeMint: 3343916920978448560, // 5.7% loss, 0.5% slippage x 12x leverage ~ 6% loss
-            sharesAfter1SafeMint: 3153741551064982290,
-            assetsAfter1SafeDepositCollateral: 2745531904897363969, // 5.2% loss, 0.5% slippage x (12-1)x leverage ~ 5.5% loss
-            sharesAfter1SafeDepositCollateral: 3169589498557771146,
-            assetsAfter1SafeMintCollateral: 2470978714407627571, // 5.2% loss, 0.5% slippage x (12-1)x leverage ~ 5.5% loss
-            sharesAfter1SafeMintCollateral: 2852630548701994031,
-            borrowAfter1DepositAuctionExecution: 146540687816654286202,
-            collateralAfter1DepositAuctionExecution: 120016828442730243914, // 0.25% profit since auction half opened
-            assetsAfter1SafeWithdrawCollateral: 2506778395218842440,
-            sharesAfter1SafeWithdrawCollateral: 3231767835484402340, // 5.5% loss, 0.5% slippage x (12-1)x leverage ~ 5.5% loss
-            assetsAfter1SafeRedeemCollateral: 2256100555696958196,
-            sharesAfter1SafeRedeemCollateral: 2908591051935962105, // 5.5% loss, 0.5% slippage x (12-1)x leverage ~ 5.5% loss
-            assetsAfter1SafeWithdraw: 2296387967637595924,
-            sharesAfter1SafeWithdraw: 2442965923018719068, // 6% loss, 0.5% slippage x 12x leverage ~ 6% loss
-            assetsAfter1SafeRedeem: 2066749170873836332,
-            sharesAfter1SafeRedeem: 2198669330716847162, // 6% loss, 0.5% slippage x 12x leverage ~ 6% loss
-            sharesAfter2SafeDeposit: 5084723616011977219, // 3% profit for half opened auction cancellation
-            assetsAfter2SafeDeposit: 4927464122733256282,
-            collateralAfter1WithdrawAuctionExecution: 49820811018338885239,
-            borrowAfter1WithdrawAuctionExecution: 60527492342090447761 // 0.25% profit since auction half opened
+            borrowAfter1LowLevelRebalanceWithdraw: 12852763152687249351,
+            assetsAfter1SafeDeposit: 682989567193310572,
+            sharesAfter1SafeDeposit: 663048265961389094,
+            sharesAfter1SafeMint: 596743439365250185,
+            assetsAfter1SafeMint: 614690610473979515,
+            assetsAfter1SafeDepositCollateral: 498181192420892655,
+            sharesAfter1SafeDepositCollateral: 590519823577545659,
+            sharesAfter1SafeMintCollateral: 531467841219791094,
+            assetsAfter1SafeMintCollateral: 448363073178803391,
+            borrowAfter1DepositAuctionExecution: 27497253249031026534,
+            collateralAfter1DepositAuctionExecution: 22548472238233581124,
+            assetsAfter1SafeWithdrawCollateral: 1167438422678020829,
+            sharesAfter1SafeWithdrawCollateral: 1462191102414486265,
+            sharesAfter1SafeRedeemCollateral: 1315971992173037637,
+            assetsAfter1SafeRedeemCollateral: 1050694580410218746,
+            assetsAfter1SafeWithdraw: 1066410052136880959,
+            sharesAfter1SafeWithdraw: 1099391806326681402,
+            sharesAfter1SafeRedeem: 989452625694013261,
+            assetsAfter1SafeRedeem: 959769046923192863,
+            sharesAfter2SafeDeposit: 1163658442973837539,
+            assetsAfter2SafeDeposit: 1145937756024997376,
+            collateralAfter1WithdrawAuctionExecution: 34095007275773684324,
+            borrowAfter1WithdrawAuctionExecution: 41474061167361209100
         });
     }
 

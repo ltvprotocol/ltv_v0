@@ -329,15 +329,15 @@ contract TestGeneralDeployedLTVBeaconProxy is Script, StdCheats, StdAssertions {
         }
 
         uint256 shares = ltv.previewWithdrawCollateral(expectedAssets);
-        uint256 maxRedeemBefore = ltv.maxRedeemCollateral(user);
+        uint256 initialBalance = ltv.balanceOf(user);
         ltv.approve(address(safe4626Collateral), shares);
         uint256 sharesOut = safe4626Collateral.safeWithdrawCollateral(address(ltv), expectedAssets, user, shares);
 
         assertEq(sharesOut, shares, "Safe withdraw collateral returned incorrect number of shares compared to preview");
 
-        uint256 maxRedeemAfter = ltv.maxRedeemCollateral(user);
-        assertGe(
-            maxRedeemBefore, maxRedeemAfter + shares, "Safe withdraw collateral should decrease the collateral balance"
+        uint256 balanceAfter = ltv.balanceOf(user);
+        assertEq(
+            initialBalance - shares, balanceAfter, "Safe withdraw collateral should decrease the collateral balance"
         );
         if (expectedShares != type(uint256).max) {
             assertEq(
@@ -356,15 +356,15 @@ contract TestGeneralDeployedLTVBeaconProxy is Script, StdCheats, StdAssertions {
             console.log("sharesAfterSafeRedeemCollateral", expectedShares);
         }
         uint256 assets = ltv.previewRedeemCollateral(expectedShares);
-        uint256 maxRedeemBefore = ltv.maxRedeemCollateral(user);
+        uint256 initialBalance = ltv.balanceOf(user);
         ltv.approve(address(safe4626Collateral), expectedShares);
         uint256 assetsOut = safe4626Collateral.safeRedeemCollateral(address(ltv), expectedShares, user, assets);
         assertEq(assetsOut, assets, "Safe redeem collateral returned incorrect number of assets compared to preview");
 
-        uint256 maxRedeemAfter = ltv.maxRedeemCollateral(user);
-        assertGe(
-            maxRedeemBefore,
-            maxRedeemAfter + expectedShares,
+        uint256 balanceAfter = ltv.balanceOf(user);
+        assertEq(
+            initialBalance - expectedShares,
+            balanceAfter,
             "Safe redeem collateral should decrease the collateral balance"
         );
         if (expectedAssets != type(uint256).max) {
