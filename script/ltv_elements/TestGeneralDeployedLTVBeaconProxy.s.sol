@@ -363,7 +363,9 @@ contract TestGeneralDeployedLTVBeaconProxy is Script, StdCheats, StdAssertions {
 
         uint256 balanceAfter = ltv.balanceOf(user);
         assertEq(
-            initialBalance - expectedShares, balanceAfter, "Safe redeem collateral should decrease the collateral balance"
+            initialBalance - expectedShares,
+            balanceAfter,
+            "Safe redeem collateral should decrease the collateral balance"
         );
         if (expectedAssets != type(uint256).max) {
             assertEq(
