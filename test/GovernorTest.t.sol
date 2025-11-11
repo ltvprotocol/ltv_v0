@@ -251,6 +251,7 @@ contract GovernorTest is BalancedTest {
     {
         vm.assume(user != owner);
         vm.assume(governor != owner);
+        vm.assume(user != governor);
 
         vm.startPrank(owner);
         ltv.updateGovernor(governor);
