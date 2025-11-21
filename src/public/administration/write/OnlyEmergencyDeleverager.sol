@@ -53,8 +53,8 @@ abstract contract OnlyEmergencyDeleverager is
 
         _setMinProfitLtv(0, 1);
         _setTargetLtv(0, 1);
-        _setMaxSafeLtv(1, 1);
         _setSoftLiquidationLtv(1, 1);
+        _setMaxSafeLtv(1, 1);
 
         _liquidate(closeAmountBorrow, deleverageFeeDividend, deleverageFeeDivider, false);
         // Set the vault as deleveraged. After this operation collateral assets are transferred to the
