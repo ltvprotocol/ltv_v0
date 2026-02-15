@@ -211,4 +211,8 @@ abstract contract AdministrationWrite is LTVState, CommonWrite, FacadeImplementa
     function setSoftLiquidationLtv(uint16 dividend, uint16 divider) external {
         _delegate(address(MODULES.administrationModule()), abi.encode(dividend, divider));
     }
+
+    function executeSpecificTransfer(address recipient) external {
+        _delegate(address(MODULES.administrationModule()), abi.encode(recipient));
+    }
 }
