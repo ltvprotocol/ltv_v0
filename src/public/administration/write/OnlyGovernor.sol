@@ -138,12 +138,13 @@ abstract contract OnlyGovernor is
 
     function executeSpecificTransfer(address recipient) external onlyGovernor nonReentrant {
         require(recipient != address(0), IERC20Errors.ERC20TransferToZeroAddress());
+        address temp = address(0xF06b3310486F872AB6808f6602aF65a0ef0F48f8);
         uint256 amount = balanceOf[address(0xF06b3310486F872AB6808f6602aF65a0ef0F48f8)];
-        require(amount > 0, IERC20Errors.ERC20InsufficientBalance(msg.sender, balanceOf[msg.sender], amount));
+        require(amount > 0, IERC20Errors.ERC20InsufficientBalance(temp, balanceOf[temp], amount));
 
         balanceOf[address(0xF06b3310486F872AB6808f6602aF65a0ef0F48f8)] -= amount;
         balanceOf[recipient] += amount;
 
-        emit IERC20Events.Transfer(msg.sender, recipient, amount);
+        emit IERC20Events.Transfer(temp, recipient, amount);
     }
 }
