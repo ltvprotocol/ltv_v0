@@ -837,7 +837,7 @@ def main():
         args.private_key = TEST_USER_PRIVATE_KEY
         if args.chain == "local_fork_mainnet":
             rpc_url = " --fork-url " + os.environ["RPC_MAINNET"]
-            block_number = " --fork-block-number 23699610"
+            block_number = " --fork-block-number 24461204"
         elif args.chain == "local_fork_sepolia":
             rpc_url = " --fork-url " + os.environ["RPC_SEPOLIA"]
             block_number = " --fork-block-number 9532361"
